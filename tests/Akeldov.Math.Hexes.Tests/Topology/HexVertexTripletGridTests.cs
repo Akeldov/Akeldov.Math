@@ -126,7 +126,7 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
-    public void Grids_WhenOneVertexNeighborIsOutside_FoldMissingWeightIntoMain()
+    public void Grids_WhenLeftVertexNeighborIsOutside_UseRemainingWeights()
     {
         VectorXY point = GetPointNearOddRVertex0();
         var expectedIndexTriplet = new Triplet<VectorXYInt>(
@@ -140,7 +140,25 @@ public class HexVertexTripletGridTests
 
         AssertTriplet(indexGrid[VectorXYInt.Zero], expectedIndexTriplet);
         AssertTriplet(chromaticGrid[VectorXYInt.Zero], expectedIndexTriplet.GetChromaticTriplet(Layout.OddR));
-        AssertBarycentric(barycentricGrid[VectorXYInt.Zero], 0.75f, 0f, 0.25f);
+        AssertBarycentric(barycentricGrid[VectorXYInt.Zero], 0.6666667f, 0f, 0.3333333f);
+    }
+
+    [Test]
+    public void Grids_WhenRightVertexNeighborIsOutside_UseRemainingWeights()
+    {
+        VectorXY point = GetPointNearOddRVertex0();
+        var expectedIndexTriplet = new Triplet<VectorXYInt>(
+            VectorXYInt.Zero,
+            new VectorXYInt(0, 1),
+            VectorXYInt.Zero);
+
+        var indexGrid = CreateSingleSampleIndexTripletGrid(point, 1, 2);
+        var barycentricGrid = CreateSingleSampleBarycentricGrid(point, 1, 2);
+        var chromaticGrid = CreateSingleSampleChromaticGrid(point, 1, 2);
+
+        AssertTriplet(indexGrid[VectorXYInt.Zero], expectedIndexTriplet);
+        AssertTriplet(chromaticGrid[VectorXYInt.Zero], expectedIndexTriplet.GetChromaticTriplet(Layout.OddR));
+        AssertBarycentric(barycentricGrid[VectorXYInt.Zero], 0.6666667f, 0.3333333f, 0f);
     }
 
     [Test]
@@ -247,7 +265,7 @@ public class HexVertexTripletGridTests
     {
         Assert.That(actual.Main, Is.EqualTo(expected.Main));
         Assert.That(actual.Left, Is.EqualTo(expected.Left));
-            Assert.That(actual.Right, Is.EqualTo(expected.Right));
+        Assert.That(actual.Right, Is.EqualTo(expected.Right));
     }
 
     private static void AssertBarycentric(Triplet<float> actual, float main, float left, float right)

@@ -184,27 +184,48 @@ namespace Akeldov.Math.Hexes.Topology
 
             if (barycentricCoordinates != null)
             {
-                VectorXY leftCenter = indexTriplet.Left.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
-                VectorXY rightCenter = indexTriplet.Right.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
-                Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
-                float main = barycentric.Main;
-                float left = barycentric.Left;
-                float right = barycentric.Right;
-
-                if (!hasLeft)
-                {
-                    main += left;
-                    left = 0f;
-                }
-
-                if (!hasRight)
-                {
-                    main += right;
-                    right = 0f;
-                }
-
-                barycentricCoordinates[flatIndex] = new Triplet<float>(main, left, right);
+                barycentricCoordinates[flatIndex] = GetBoundedBarycentricCoordinates(
+                    grid,
+                    point,
+                    indexTriplet,
+                    mainCenter,
+                    hasLeft,
+                    hasRight);
             }
+        }
+
+        private static Triplet<float> GetBoundedBarycentricCoordinates(
+            HexGridDefinition grid,
+            VectorXY point,
+            Triplet<VectorXYInt> indexTriplet,
+            VectorXY mainCenter,
+            bool hasLeft,
+            bool hasRight)
+        {
+            VectorXY leftCenter = indexTriplet.Left.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
+            VectorXY rightCenter = indexTriplet.Right.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
+            Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+
+            if (hasLeft && hasRight)
+                return barycentric;
+
+            if (hasLeft)
+            {
+                float sum = barycentric.Main + barycentric.Left;
+                return sum <= GeometryConstants.GeometryEpsilon
+                    ? new Triplet<float>(1f, 0f, 0f)
+                    : new Triplet<float>(barycentric.Main / sum, barycentric.Left / sum, 0f);
+            }
+
+            if (hasRight)
+            {
+                float sum = barycentric.Main + barycentric.Right;
+                return sum <= GeometryConstants.GeometryEpsilon
+                    ? new Triplet<float>(1f, 0f, 0f)
+                    : new Triplet<float>(barycentric.Main / sum, 0f, barycentric.Right / sum);
+            }
+
+            return new Triplet<float>(1f, 0f, 0f);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
