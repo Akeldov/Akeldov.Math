@@ -17,8 +17,9 @@ namespace Akeldov.Math.Hexes.Topology
             Layout layout,
             VectorXY hexOrigin,
             float hexApothem,
-            VectorXYInt resolution)
-            : this(HexGridDefinition.Create(hexWidth, hexHeight, layout, hexOrigin, hexApothem, resolution))
+            VectorXYInt resolution,
+            HexVertexTripletGridFillMode fillMode = HexVertexTripletGridFillMode.HitHexesOnly)
+            : this(HexGridDefinition.Create(hexWidth, hexHeight, layout, hexOrigin, hexApothem, resolution), fillMode)
         {
         }
 
@@ -30,18 +31,20 @@ namespace Akeldov.Math.Hexes.Topology
             float hexApothem,
             VectorXY gridOrigin,
             VectorXY gridSize,
-            VectorXYInt resolution)
-            : this(HexGridDefinition.Create(hexWidth, hexHeight, layout, hexOrigin, hexApothem, gridOrigin, gridSize, resolution))
+            VectorXYInt resolution,
+            HexVertexTripletGridFillMode fillMode = HexVertexTripletGridFillMode.HitHexesOnly)
+            : this(HexGridDefinition.Create(hexWidth, hexHeight, layout, hexOrigin, hexApothem, gridOrigin, gridSize, resolution), fillMode)
         {
         }
 
-        private HexVertexBarycentricGrid(HexGridDefinition grid)
+        private HexVertexBarycentricGrid(HexGridDefinition grid, HexVertexTripletGridFillMode fillMode)
         {
             _grid = grid;
+            FillMode = fillMode;
             _barycentricCoordinates = new Triplet<float>[grid.Count];
             _hasHex = new bool[grid.Count];
 
-            HexVertexTripletGridBuilder.Fill(grid, null, _barycentricCoordinates, null, _hasHex);
+            HexVertexTripletGridBuilder.Fill(grid, null, _barycentricCoordinates, null, _hasHex, fillMode);
         }
 
         public VectorXYInt HexResolution => _grid.HexResolution;
@@ -58,6 +61,7 @@ namespace Akeldov.Math.Hexes.Topology
         public int Count => _barycentricCoordinates.Length;
         public Triplet<float>[] BarycentricCoordinates => _barycentricCoordinates;
         public bool[] HasHex => _hasHex;
+        public HexVertexTripletGridFillMode FillMode { get; }
 
         public Triplet<float> this[VectorXYInt index]
         {
