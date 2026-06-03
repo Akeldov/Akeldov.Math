@@ -31,5 +31,21 @@ namespace Akeldov.Math.Hexes.Geometry
 
             return new Triplet<float>(wA, wB, wC);
         }
+
+        public static Pair<float> BarycentricCoordinates(this VectorXY p, VectorXY a, VectorXY b)
+        {
+            VectorXY ab = b - a;
+            VectorXY ap = p - a;
+
+            float denominator = VectorXY.Dot(ab, ab);
+
+            if (denominator == 0f)
+                return new Pair<float>(1f, 0f);
+
+            float wB = VectorXY.Dot(ap, ab) / denominator;
+            float wA = 1f - wB;
+
+            return new Pair<float>(wA, wB);
+        }
     }
 }

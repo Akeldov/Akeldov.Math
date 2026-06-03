@@ -240,10 +240,11 @@ namespace Akeldov.Math.Hexes.Topology
                 hasRight ? indexTriplet.Right : fallbackIndex);
             Triplet<float> boundedBarycentricCoordinates = includeBarycentricCoordinates
                 ? GetBoundedBarycentricCoordinates(
-                    grid,
                     point,
-                    indexTriplet,
-                    mainCenter,
+                    new Triplet<VectorXY>(
+                        mainCenter,
+                        indexTriplet.Left.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout),
+                        indexTriplet.Right.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout)),
                     hasMain,
                     hasLeft,
                     hasRight)
@@ -323,30 +324,57 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         private static Triplet<float> GetBoundedBarycentricCoordinates(
-            HexGridDefinition grid,
             VectorXY point,
-            Triplet<VectorXYInt> indexTriplet,
-            VectorXY mainCenter,
+            Triplet<VectorXY> centerTriplet,
             bool hasMain,
             bool hasLeft,
             bool hasRight)
         {
-            VectorXY leftCenter = indexTriplet.Left.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
-            VectorXY rightCenter = indexTriplet.Right.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
-            Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+            Triplet<float> barycentric = point.BarycentricCoordinates(
+                centerTriplet.Main,
+                centerTriplet.Left,
+                centerTriplet.Right);
 
-            if (hasMain && hasLeft && hasRight)
-                return barycentric;
+            //if (hasMain && hasLeft && hasRight)
+            //    return barycentric;
 
             float main = hasMain ? barycentric.Main : 0f;
             float left = hasLeft ? barycentric.Left : 0f;
             float right = hasRight ? barycentric.Right : 0f;
             float sum = main + left + right;
 
-            if (sum <= GeometryConstants.GeometryEpsilon)
-                return GetSingleAvailableWeight(hasMain, hasLeft, hasRight);
+            //if (sum <= GeometryConstants.GeometryEpsilon)
+            //    return GetSingleAvailableWeight(hasMain, hasLeft, hasRight);
 
-            return new Triplet<float>(main / sum, left / sum, right / sum);
+            switch (hasMain, hasLeft, hasRight)
+            {
+                case (false, false, false):
+                    return new Triplet<float>(1f, 0f, 0f);
+                case (false, false, true):
+                    return new Triplet<float>(0f, 0f, 1f);
+                case (false, true, false):
+                    return new Triplet<float>(0f, 1f, 0f);
+                case (false, true, true):
+                    (left, right) = point.BarycentricCoordinates(centerTriplet.Left, centerTriplet.Right);
+                    sum = left + right;
+                    return new Triplet<float>(0f, left / sum, right / sum);
+                case (true, false, false):
+                    return new Triplet<float>(1f, 0f, 0f);
+                case (true, false, true):
+                    (main, right) = point.BarycentricCoordinates(centerTriplet.Main, centerTriplet.Right);
+                    sum = main + right;
+                    return new Triplet<float>(main / sum, 0f, right / sum);
+                case (true, true, false):
+                    (main, left) = point.BarycentricCoordinates(centerTriplet.Main, centerTriplet.Left);
+                    sum = main + left;
+                    return new Triplet<float>(main / sum, left / sum, 0f);
+                case (true, true, true):
+                    (main, left, right) = point.BarycentricCoordinates(
+                    centerTriplet.Main,
+                    centerTriplet.Left,
+                    centerTriplet.Right);
+                    return new Triplet<float>(main / sum, left / sum, right / sum);
+            }
         }
 
         private static Triplet<float> GetSingleAvailableWeight(
