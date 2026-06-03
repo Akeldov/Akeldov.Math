@@ -8,4 +8,8 @@
     <PackageReference Include="Akeldov.Math.Spatial2D" Version="0.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Topology\Grids\" />
+  </ItemGroup>
+
 </Project>
