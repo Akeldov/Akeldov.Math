@@ -1,10 +1,10 @@
-using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Akeldov.Math.Hexes.Topology
+namespace Akeldov.Math.Hexes.Geometry
 {
     public sealed class HexAdjacencyGrid
     {

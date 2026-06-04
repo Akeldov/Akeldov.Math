@@ -2,20 +2,21 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using System;
+using GeometryHexAdjacencyGrid = Akeldov.Math.Hexes.Geometry.HexAdjacencyGrid;
 
 namespace Akeldov.Math.Hexes.Topology
 {
     public static class HexAdjacencyGridExtensions
     {
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexAdjacencyGrid grid,
+            this GeometryHexAdjacencyGrid grid,
             Func<IndexedHexAdjacency, RGBA16BitColor> adjacencyToColor)
         {
             return grid.ToRGBA16BitRaster(adjacencyToColor, default(RGBA16BitColor));
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexAdjacencyGrid grid,
+            this GeometryHexAdjacencyGrid grid,
             Func<IndexedHexAdjacency, RGBA16BitColor> adjacencyToColor,
             RGBA16BitColor emptyColor)
         {
@@ -40,14 +41,14 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexAdjacencyGrid grid,
+            this GeometryHexAdjacencyGrid grid,
             Func<int, HexAdjacency, RGBA16BitColor> hexToColor)
         {
             return grid.ToRGBA16BitRaster(hexToColor, default(RGBA16BitColor));
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexAdjacencyGrid grid,
+            this GeometryHexAdjacencyGrid grid,
             Func<int, HexAdjacency, RGBA16BitColor> hexToColor,
             RGBA16BitColor emptyColor)
         {
@@ -84,7 +85,7 @@ namespace Akeldov.Math.Hexes.Topology
                 adjacency.Adjacent5Index);
         }
 
-        private static RasterGrid CreateRasterGrid(HexAdjacencyGrid grid)
+        private static RasterGrid CreateRasterGrid(GeometryHexAdjacencyGrid grid)
         {
             return new RasterGrid(
                 (PointXY)grid.Origin,

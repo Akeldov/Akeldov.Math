@@ -1,62 +1,52 @@
-using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
+using Akeldov.Math.Hexes.Topology.Grids.Rasterization;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
-using HexAdjacencyGrid = Akeldov.Math.Hexes.Geometry.HexAdjacencyGrid;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class HexAdjacencyGridRGBA16BitRasterSnapshotTests
+public class IndexedHexAdjacencyGridRasterizationSnapshotTests
 {
-    [TestCase(Layout.OddR, "hex-adjacency-grid-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-adjacency-grid-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-adjacency-grid-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-adjacency-grid-even-q-rgba16.png")]
-    public void ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
+    [TestCase(Layout.OddR, "indexed-hex-adjacency-grid-main-index-rgba16.png")]
+    [TestCase(Layout.EvenR, "indexed-hex-adjacency-grid-main-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "indexed-hex-adjacency-grid-main-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "indexed-hex-adjacency-grid-main-index-even-q-rgba16.png")]
+    public void Rasterize_WithMainIndexColor_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
     {
-        var adjacencyMap = new HexAdjacencyMap(
-            width: 5,
-            height: 4,
+        var adjacencyMap = new IndexedHexAdjacencyMap(
+            width: 12,
+            height: 8,
             layout: layout);
-        var adjacencyGrid = new HexAdjacencyGrid(
+        var adjacencyGrid = new IndexedHexAdjacencyGrid(
             adjacencyMap,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = adjacencyGrid.ToRGBA16BitRaster(
-            ToSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
+            resolution: new VectorXYInt(480, 360));
+
+        RGBA16BitRaster raster = adjacencyGrid.Rasterize(adjacency => ToMainIndexColor(adjacency, adjacencyMap.Width));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    private static RGBA16BitColor ToSnapshotColor(int hexFlatIndex, HexAdjacency adjacency)
+    private static RGBA16BitColor ToMainIndexColor(IndexedHexAdjacency adjacency, int mapWidth)
     {
-        int adjacentCount = CountBits(adjacency.Flags);
-        float red = 0.16f + 0.045f * hexFlatIndex;
-        float green = 0.20f + 0.10f * adjacentCount;
-        float blue = 0.72f - 0.035f * hexFlatIndex;
+        if (!adjacency.HasOwnIndex)
+            return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
+
+        int index = adjacency.Index;
+        int x = index % mapWidth;
+        int y = index / mapWidth;
+        float red = 0.12f + 0.07f * x;
+        float green = 0.18f + 0.14f * y;
+        float blue = 0.82f - 0.012f * index;
 
         return new RGBA16BitColor(
             ToChannel(red),
             ToChannel(green),
             ToChannel(blue),
             ushort.MaxValue);
-    }
-
-    private static int CountBits(HexAdjacencyFlags flags)
-    {
-        byte value = (byte)flags;
-        int count = 0;
-
-        for (int i = 0; i < 6; i++)
-        {
-            count += (value >> i) & 1;
-        }
-
-        return count;
     }
 
     private static ushort ToChannel(float value)
@@ -83,8 +73,8 @@ public class HexAdjacencyGridRGBA16BitRasterSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex adjacency grid raster snapshot");
-            Assert.Fail($"Hex adjacency grid approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual indexed hex adjacency grid raster snapshot");
+            Assert.Fail($"Indexed hex adjacency grid approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -92,8 +82,8 @@ public class HexAdjacencyGridRGBA16BitRasterSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex adjacency grid raster snapshot");
-            Assert.Fail($"Hex adjacency grid raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual indexed hex adjacency grid raster snapshot");
+            Assert.Fail($"Indexed hex adjacency grid raster snapshot changed. Actual image: {actualPath}");
         }
     }
 

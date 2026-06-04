@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using HexAdjacencyGrid = Akeldov.Math.Hexes.Geometry.HexAdjacencyGrid;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
