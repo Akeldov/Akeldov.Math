@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class HexAdjacencyMap : IHexMap<HexAdjacency>
+    public sealed class HexAdjacencyMap : IHexMap<Septuplet<int>>
     {
-        private readonly HexAdjacency[] _adjacent;
+        private readonly Septuplet<int>[] _adjacent;
 
         public HexAdjacencyMap(
             int width,
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Hexes.Topology
             Width = width;
             Height = height;
             Layout = layout;
-            _adjacent = new HexAdjacency[checked(width * height)];
+            _adjacent = new Septuplet<int>[checked(width * height)];
 
             switch (layout)
             {
@@ -52,9 +52,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         public Layout Layout { get; }
 
-        public HexAdjacency[] Adjacent => _adjacent;
+        public Septuplet<int>[] Adjacent => _adjacent;
 
-        public HexAdjacency this[VectorXYInt index]
+        public Septuplet<int> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -67,7 +67,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        public HexAdjacency this[int index]
+        public Septuplet<int> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _adjacent[index];
@@ -105,23 +105,21 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        private HexAdjacency CreateAdjacency(
+        private Septuplet<int> CreateAdjacency(
             int x,
             int y,
             int flatIndex,
             sbyte[] offsets)
         {
-            var flags = HexAdjacencyFlags.None;
+            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex);
+            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex);
+            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex);
+            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex);
+            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex);
+            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex);
 
-            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex, HexAdjacencyFlags.Adjacent0, ref flags);
-            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex, HexAdjacencyFlags.Adjacent1, ref flags);
-            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex, HexAdjacencyFlags.Adjacent2, ref flags);
-            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex, HexAdjacencyFlags.Adjacent3, ref flags);
-            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex, HexAdjacencyFlags.Adjacent4, ref flags);
-            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex, HexAdjacencyFlags.Adjacent5, ref flags);
-
-            return new HexAdjacency(
-                flags,
+            return new Septuplet<int>(
+                flatIndex,
                 adjacent0Index,
                 adjacent1Index,
                 adjacent2Index,
@@ -133,14 +131,11 @@ namespace Akeldov.Math.Hexes.Topology
         private int GetAdjacentFlatIndex(
             int x,
             int y,
-            int fallbackFlatIndex,
-            HexAdjacencyFlags flag,
-            ref HexAdjacencyFlags flags)
+            int fallbackFlatIndex)
         {
             if ((uint)x >= (uint)Width || (uint)y >= (uint)Height)
                 return fallbackFlatIndex;
 
-            flags |= flag;
             return y * Width + x;
         }
     }

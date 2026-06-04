@@ -21,9 +21,9 @@ public class HexFieldTopologyTests
     [Test]
     public void HexFieldTopology_ImplementsIHexMap()
     {
-        IHexMap<HexAdjacency> topology = new HexAdjacencyMap(3, 2, Layout.OddR);
+        IHexMap<Septuplet<int>> topology = new HexAdjacencyMap(3, 2, Layout.OddR);
 
-        HexAdjacency adjacency = topology[new VectorXYInt(1, 0)];
+        Septuplet<int> adjacency = topology[new VectorXYInt(1, 0)];
 
         Assert.That(topology.Width, Is.EqualTo(3));
         Assert.That(topology.Height, Is.EqualTo(2));
@@ -34,19 +34,15 @@ public class HexFieldTopologyTests
     public void Constructor_CreatesAdjacency()
     {
         var topology = new HexAdjacencyMap(3, 2, Layout.OddR);
-        HexAdjacency adjacency = topology[new VectorXYInt(1, 0)];
+        Septuplet<int> adjacency = topology[new VectorXYInt(1, 0)];
 
-        Assert.That(adjacency.Flags, Is.EqualTo(
-            HexAdjacencyFlags.Adjacent0 |
-            HexAdjacencyFlags.Adjacent1 |
-            HexAdjacencyFlags.Adjacent2 |
-            HexAdjacencyFlags.Adjacent3));
-        Assert.That(adjacency.Adjacent0Index, Is.EqualTo(2));
-        Assert.That(adjacency.Adjacent1Index, Is.EqualTo(4));
-        Assert.That(adjacency.Adjacent2Index, Is.EqualTo(3));
-        Assert.That(adjacency.Adjacent3Index, Is.EqualTo(0));
-        Assert.That(adjacency.Adjacent4Index, Is.EqualTo(1));
-        Assert.That(adjacency.Adjacent5Index, Is.EqualTo(1));
+        Assert.That(adjacency.Main, Is.EqualTo(1));
+        Assert.That(adjacency.Adjacent0, Is.EqualTo(2));
+        Assert.That(adjacency.Adjacent1, Is.EqualTo(4));
+        Assert.That(adjacency.Adjacent2, Is.EqualTo(3));
+        Assert.That(adjacency.Adjacent3, Is.EqualTo(0));
+        Assert.That(adjacency.Adjacent4, Is.EqualTo(1));
+        Assert.That(adjacency.Adjacent5, Is.EqualTo(1));
     }
 
     [TestCase(Layout.OddQ, 5, 1, 3, 6, 7, 8)]
@@ -62,15 +58,15 @@ public class HexFieldTopologyTests
     {
         var topology = new HexAdjacencyMap(3, 3, layout);
 
-        HexAdjacency adjacency = topology[new VectorXYInt(1, 1)];
+        Septuplet<int> adjacency = topology[new VectorXYInt(1, 1)];
 
-        Assert.That(adjacency.Flags, Is.EqualTo(HexAdjacencyFlags.AllAdjacent));
-        Assert.That(adjacency.Adjacent0Index, Is.EqualTo(adjacent0Index));
-        Assert.That(adjacency.Adjacent1Index, Is.EqualTo(adjacent1Index));
-        Assert.That(adjacency.Adjacent2Index, Is.EqualTo(adjacent2Index));
-        Assert.That(adjacency.Adjacent3Index, Is.EqualTo(adjacent3Index));
-        Assert.That(adjacency.Adjacent4Index, Is.EqualTo(adjacent4Index));
-        Assert.That(adjacency.Adjacent5Index, Is.EqualTo(adjacent5Index));
+        Assert.That(adjacency.Main, Is.EqualTo(4));
+        Assert.That(adjacency.Adjacent0, Is.EqualTo(adjacent0Index));
+        Assert.That(adjacency.Adjacent1, Is.EqualTo(adjacent1Index));
+        Assert.That(adjacency.Adjacent2, Is.EqualTo(adjacent2Index));
+        Assert.That(adjacency.Adjacent3, Is.EqualTo(adjacent3Index));
+        Assert.That(adjacency.Adjacent4, Is.EqualTo(adjacent4Index));
+        Assert.That(adjacency.Adjacent5, Is.EqualTo(adjacent5Index));
     }
 
     [Test]
