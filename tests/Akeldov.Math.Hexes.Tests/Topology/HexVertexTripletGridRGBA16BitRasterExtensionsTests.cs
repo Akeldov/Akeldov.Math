@@ -16,7 +16,6 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
             1,
             Layout.OddR,
             VectorXY.Zero,
-            2f,
             new VectorXY(-1f, -2f),
             new VectorXY(4f, 5f),
             new VectorXYInt(3, 2));
@@ -33,7 +32,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void IndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByIndexTriplet()
     {
-        var grid = new HexVertexIndexTripletGrid(2, 1, Layout.OddR, VectorXY.Zero, 2f, new VectorXYInt(4, 1));
+        var grid = new HexVertexIndexTripletGrid(2, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(4, 1));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
@@ -81,32 +80,6 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     }
 
     [Test]
-    public void ToRGBA16BitRaster_UsesEmptyColorForMissCells()
-    {
-        var grid = new HexVertexIndexTripletGrid(
-            1,
-            1,
-            Layout.OddR,
-            VectorXY.Zero,
-            2f,
-            new VectorXY(100f, 100f),
-            VectorXY.One,
-            VectorXYInt.One);
-        var emptyColor = new RGBA16BitColor(1, 2, 3, 4);
-        var mapperWasCalled = false;
-
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            _ =>
-            {
-                mapperWasCalled = true;
-                return new RGBA16BitColor(9, 9, 9, 9);
-            });
-
-        Assert.That(mapperWasCalled, Is.False);
-        Assert.That(raster.Values, Is.EqualTo(new[] { emptyColor }));
-    }
-
-    [Test]
     public void ToRGBA16BitRaster_WhenGridIsNull_Throws()
     {
         HexVertexIndexTripletGrid indexTripletGrid = null!;
@@ -121,7 +94,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void ToRGBA16BitRaster_WhenMapperIsNull_Throws()
     {
-        var indexTripletGrid = new HexVertexIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
+        var indexTripletGrid = new HexVertexIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One);
         var barycentricGrid = new HexVertexBarycentricGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
         var chromaticIndexTripletGrid = new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
 

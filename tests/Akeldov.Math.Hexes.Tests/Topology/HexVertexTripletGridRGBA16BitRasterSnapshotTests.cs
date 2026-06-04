@@ -21,30 +21,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             hexHeight: 4,
             layout: layout,
             hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexTripletSnapshotColor);
-        byte[] actual = SaveToPngBytes(raster, approvedFileName);
-
-        AssertMatchesApprovedPng(approvedFileName, actual);
-    }
-
-    [TestCase(Layout.OddR, "hex-vertex-index-triplet-grid-fill-empty-cells-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-index-triplet-grid-fill-empty-cells-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-index-triplet-grid-fill-empty-cells-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-index-triplet-grid-fill-empty-cells-even-q-rgba16.png")]
-    public void IndexTripletGrid_ToRGBA16BitRaster_WithFillEmptyCells_MatchesApprovedImage(
-        Layout layout,
-        string approvedFileName)
-    {
-        var grid = new HexVertexIndexTripletGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64),
-            fillMode: HexVertexTripletGridFillMode.FillEmptyCells);
         RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

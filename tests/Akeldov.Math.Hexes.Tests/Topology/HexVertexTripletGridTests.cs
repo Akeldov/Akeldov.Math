@@ -13,7 +13,7 @@ public class HexVertexTripletGridTests
     {
         var origin = new VectorXY(10f, -20f);
 
-        var grid = new HexVertexIndexTripletGrid(2, 1, Layout.OddR, origin, 2f, new VectorXYInt(4, 2));
+        var grid = new HexVertexIndexTripletGrid(2, 1, Layout.OddR, origin, new VectorXYInt(4, 2));
 
         Assert.That(grid.HexResolution, Is.EqualTo(new VectorXYInt(2, 1)));
         Assert.That(grid.Layout, Is.EqualTo(Layout.OddR));
@@ -166,19 +166,13 @@ public class HexVertexTripletGridTests
             VectorXYInt.Zero,
             VectorXYInt.Zero);
 
-        var defaultGrid = CreateSingleSampleIndexTripletGrid(point, 1, 1);
-        var indexGrid = CreateSingleSampleIndexTripletGrid(point, 1, 1, HexVertexTripletGridFillMode.FillEmptyCells);
         var barycentricGrid = CreateSingleSampleBarycentricGrid(point, 1, 1, HexVertexTripletGridFillMode.FillEmptyCells);
         var chromaticGrid = CreateSingleSampleChromaticGrid(point, 1, 1, HexVertexTripletGridFillMode.FillEmptyCells);
 
-        Assert.That(defaultGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.HitHexesOnly));
-        Assert.That(defaultGrid.TryGetIndexTriplet(VectorXYInt.Zero, out _), Is.False);
-        Assert.That(indexGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.FillEmptyCells));
         Assert.That(barycentricGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.FillEmptyCells));
         Assert.That(chromaticGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.FillEmptyCells));
         Assert.That(barycentricGrid.HasHexAt(VectorXYInt.Zero), Is.True);
         Assert.That(chromaticGrid.HasHexAt(VectorXYInt.Zero), Is.True);
-        AssertTriplet(indexGrid[VectorXYInt.Zero], expectedIndexTriplet);
         AssertTriplet(chromaticGrid[VectorXYInt.Zero], expectedIndexTriplet.GetChromaticTriplet(Layout.OddR));
         AssertBarycentric(barycentricGrid[VectorXYInt.Zero], 0f, 1f, 0f);
     }
@@ -189,14 +183,6 @@ public class HexVertexTripletGridTests
     [TestCase(Layout.EvenQ)]
     public void Grids_WithFillEmptyCells_FillEveryCellInDefaultBounds(Layout layout)
     {
-        var indexGrid = new HexVertexIndexTripletGrid(
-            5,
-            4,
-            layout,
-            VectorXY.Zero,
-            8f,
-            new VectorXYInt(64, 64),
-            HexVertexTripletGridFillMode.FillEmptyCells);
         var barycentricGrid = new HexVertexBarycentricGrid(
             5,
             4,
@@ -219,38 +205,12 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
-    public void Grids_WhenCellDoesNotHitHex_ReturnFalseAndThrowOnIndexer()
-    {
-        var grid = new HexVertexIndexTripletGrid(
-            1,
-            1,
-            Layout.OddR,
-            VectorXY.Zero,
-            2f,
-            new VectorXY(100f, 100f),
-            VectorXY.One,
-            VectorXYInt.One);
-
-        Assert.That(grid.TryGetIndexTriplet(VectorXYInt.Zero, out Triplet<VectorXYInt> triplet), Is.False);
-        Assert.That(triplet.Main, Is.EqualTo(new VectorXYInt(-1, -1)));
-        Assert.Throws<InvalidOperationException>(() => _ = grid[VectorXYInt.Zero]);
-    }
-
-    [Test]
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, 1f, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexBarycentricGrid(1, 0, Layout.OddR, VectorXY.Zero, 1f, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 0f, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 1f, new VectorXYInt(0, 1)));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexIndexTripletGrid(
-            1,
-            1,
-            Layout.OddR,
-            VectorXY.Zero,
-            1f,
-            VectorXYInt.One,
-            (HexVertexTripletGridFillMode)int.MaxValue));
     }
 
     private static VectorXY GetPointNearOddRVertex0()
@@ -270,19 +230,16 @@ public class HexVertexTripletGridTests
     private static HexVertexIndexTripletGrid CreateSingleSampleIndexTripletGrid(
         VectorXY point,
         int hexWidth,
-        int hexHeight,
-        HexVertexTripletGridFillMode fillMode = HexVertexTripletGridFillMode.HitHexesOnly)
+        int hexHeight)
     {
         return new HexVertexIndexTripletGrid(
             hexWidth,
             hexHeight,
             Layout.OddR,
             VectorXY.Zero,
-            2f,
             point - new VectorXY(0.5f, 0.5f),
             VectorXY.One,
-            VectorXYInt.One,
-            fillMode);
+            VectorXYInt.One);
     }
 
     private static HexVertexBarycentricGrid CreateSingleSampleBarycentricGrid(VectorXY point)
