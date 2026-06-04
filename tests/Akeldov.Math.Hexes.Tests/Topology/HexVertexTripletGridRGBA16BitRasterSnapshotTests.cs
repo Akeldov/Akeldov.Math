@@ -48,6 +48,24 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "hex-vertex-barycentric-partial-triplet-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-vertex-barycentric-partial-triplet-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-vertex-barycentric-partial-triplet-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-vertex-barycentric-partial-triplet-grid-even-q-rgba16.png")]
+    public void BarycentricPartialTripletGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        var map = new IndexedHexAdjacencyMap(width: 5, height: 4, layout: layout);
+        var grid = new HexVertexBarycentricPartialTripletGrid(
+            map,
+            resolution: new VectorXYInt(64, 64));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToBarycentricPartialTripletSnapshotColor);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     [TestCase(Layout.OddR, "hex-vertex-chromatic-index-triplet-grid-odd-r-rgba16.png")]
     [TestCase(Layout.EvenR, "hex-vertex-chromatic-index-triplet-grid-even-r-rgba16.png")]
     [TestCase(Layout.OddQ, "hex-vertex-chromatic-index-triplet-grid-odd-q-rgba16.png")]
@@ -86,6 +104,29 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "hex-vertex-partial-chromatic-barycentric-blend-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-vertex-partial-chromatic-barycentric-blend-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-vertex-partial-chromatic-barycentric-blend-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-vertex-partial-chromatic-barycentric-blend-grid-even-q-rgba16.png")]
+    public void BarycentricPartialAndChromaticPartialTripletGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        var map = new IndexedHexAdjacencyMap(width: 5, height: 4, layout: layout);
+        var barycentricGrid = new HexVertexBarycentricPartialTripletGrid(
+            map,
+            resolution: new VectorXYInt(64, 64));
+        var chromaticGrid = new HexVertexChromaticIndexPartialTripletGrid(
+            map,
+            resolution: new VectorXYInt(64, 64));
+        RGBA16BitRaster raster = barycentricGrid.ToRGBA16BitRaster(
+            chromaticGrid,
+            ToChromaticBarycentricPartialBlendSnapshotColor);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     private static RGBA16BitColor ToIndexTripletSnapshotColor(Triplet<VectorXYInt> triplet)
     {
         float main = EncodeIndex(triplet.Main);
@@ -103,6 +144,15 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
     {
         ushort main = ToChannel(barycentricCoordinates.Main);
         return new RGBA16BitColor(main, main, main, ushort.MaxValue);
+    }
+
+    private static RGBA16BitColor ToBarycentricPartialTripletSnapshotColor(PartialTriplet<float> barycentricCoordinates)
+    {
+        return new RGBA16BitColor(
+            ToPresenceWeightChannel(barycentricCoordinates.Main, barycentricCoordinates.HasMain),
+            ToPresenceWeightChannel(barycentricCoordinates.Left, barycentricCoordinates.HasLeft),
+            ToPresenceWeightChannel(barycentricCoordinates.Right, barycentricCoordinates.HasRight),
+            ushort.MaxValue);
     }
 
     private static RGBA16BitColor ToChromaticIndexTripletSnapshotColor(Triplet<byte> chromaticIndices)
@@ -123,6 +173,63 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ushort.MaxValue);
     }
 
+    private static RGBA16BitColor ToChromaticBarycentricPartialBlendSnapshotColor(
+        PartialTriplet<float> barycentricCoordinates,
+        PartialTriplet<byte> chromaticIndices)
+    {
+        float red = GetChromaticBarycentricChannel(
+            barycentricCoordinates.Main,
+            chromaticIndices.Main,
+            barycentricCoordinates.HasMain && chromaticIndices.HasMain,
+            0) +
+            GetChromaticBarycentricChannel(
+                barycentricCoordinates.Left,
+                chromaticIndices.Left,
+                barycentricCoordinates.HasLeft && chromaticIndices.HasLeft,
+                0) +
+            GetChromaticBarycentricChannel(
+                barycentricCoordinates.Right,
+                chromaticIndices.Right,
+                barycentricCoordinates.HasRight && chromaticIndices.HasRight,
+                0);
+        float green = GetChromaticBarycentricChannel(
+            barycentricCoordinates.Main,
+            chromaticIndices.Main,
+            barycentricCoordinates.HasMain && chromaticIndices.HasMain,
+            1) +
+            GetChromaticBarycentricChannel(
+                barycentricCoordinates.Left,
+                chromaticIndices.Left,
+                barycentricCoordinates.HasLeft && chromaticIndices.HasLeft,
+                1) +
+            GetChromaticBarycentricChannel(
+                barycentricCoordinates.Right,
+                chromaticIndices.Right,
+                barycentricCoordinates.HasRight && chromaticIndices.HasRight,
+                1);
+        float blue = GetChromaticBarycentricChannel(
+            barycentricCoordinates.Main,
+            chromaticIndices.Main,
+            barycentricCoordinates.HasMain && chromaticIndices.HasMain,
+            2) +
+            GetChromaticBarycentricChannel(
+                barycentricCoordinates.Left,
+                chromaticIndices.Left,
+                barycentricCoordinates.HasLeft && chromaticIndices.HasLeft,
+                2) +
+            GetChromaticBarycentricChannel(
+                barycentricCoordinates.Right,
+                chromaticIndices.Right,
+                barycentricCoordinates.HasRight && chromaticIndices.HasRight,
+                2);
+
+        return new RGBA16BitColor(
+            ToChannel(red),
+            ToChannel(green),
+            ToChannel(blue),
+            ushort.MaxValue);
+    }
+
     private static float EncodeIndex(VectorXYInt index)
     {
         return 0.08f + 0.075f * (index.X + 1) + 0.12f * (index.Y + 1);
@@ -139,6 +246,24 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         return hasValue
             ? ToChannel(0.25f + 0.30f * chromaticIndex)
             : (ushort)0;
+    }
+
+    private static ushort ToPresenceWeightChannel(float weight, bool hasValue)
+    {
+        return hasValue
+            ? ToChannel(0.10f + 0.90f * weight)
+            : (ushort)0;
+    }
+
+    private static float GetChromaticBarycentricChannel(
+        float barycentricWeight,
+        byte chromaticIndex,
+        bool hasValue,
+        byte channelIndex)
+    {
+        return hasValue && chromaticIndex == channelIndex
+            ? barycentricWeight
+            : 0f;
     }
 
     private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)

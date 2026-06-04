@@ -30,5 +30,55 @@ namespace Akeldov.Math.Hexes.Topology
 
             return new RGBA16BitRaster(rasterGrid, values);
         }
+
+        public static RGBA16BitRaster ToRGBA16BitRaster(
+            this HexVertexBarycentricPartialTripletGrid grid,
+            Func<PartialTriplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
+        {
+            if (grid == null)
+                throw new ArgumentNullException(nameof(grid));
+
+            if (barycentricCoordinatesToColor == null)
+                throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
+
+            var values = new RGBA16BitColor[grid.Count];
+            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
+
+            for (int i = 0; i < values.Length; i++)
+                values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i]);
+
+            var rasterGrid = new RasterGrid(
+                (PointXY)grid.Origin,
+                grid.Size,
+                grid.Resolution);
+
+            return new RGBA16BitRaster(rasterGrid, values);
+        }
+
+        public static RGBA16BitRaster ToRGBA16BitRaster(
+            this HexVertexBarycentricPartialTripletGrid grid,
+            HexVertexChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
+            Func<PartialTriplet<float>, PartialTriplet<byte>, RGBA16BitColor> barycentricCoordinatesToColor)
+        {
+            if (grid == null)
+                throw new ArgumentNullException(nameof(grid));
+
+            if (barycentricCoordinatesToColor == null)
+                throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
+
+            var values = new RGBA16BitColor[grid.Count];
+            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
+            PartialTriplet<byte>[] chromaticIndices = chromaticIndexPartialTripletGrid.ChromaticIndices;
+
+            for (int i = 0; i < values.Length; i++)
+                values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i], chromaticIndices[i]);
+
+            var rasterGrid = new RasterGrid(
+                (PointXY)grid.Origin,
+                grid.Size,
+                grid.Resolution);
+
+            return new RGBA16BitRaster(rasterGrid, values);
+        }
     }
 }
