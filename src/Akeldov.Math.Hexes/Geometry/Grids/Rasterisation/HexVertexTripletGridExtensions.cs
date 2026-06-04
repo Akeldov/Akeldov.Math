@@ -8,38 +8,6 @@ namespace Akeldov.Math.Hexes.Topology
     public static partial class HexVertexTripletGridExtensions
     {
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexBarycentricGrid grid,
-            Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
-        {
-            return grid.ToRGBA16BitRaster(barycentricCoordinatesToColor, default(RGBA16BitColor));
-        }
-
-        public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexBarycentricGrid grid,
-            Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor,
-            RGBA16BitColor emptyColor)
-        {
-            if (grid == null)
-                throw new ArgumentNullException(nameof(grid));
-
-            if (barycentricCoordinatesToColor == null)
-                throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
-
-            var values = new RGBA16BitColor[grid.Count];
-            bool[] hasHex = grid.HasHex;
-            Triplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                values[i] = hasHex[i]
-                    ? barycentricCoordinatesToColor(barycentricCoordinates[i])
-                    : emptyColor;
-            }
-
-            return new RGBA16BitRaster(CreateRasterGrid(grid), values);
-        }
-
-        public static RGBA16BitRaster ToRGBA16BitRaster(
             this HexVertexChromaticIndexTripletGrid grid,
             Func<Triplet<byte>, RGBA16BitColor> chromaticIndicesToColor)
         {
@@ -69,14 +37,6 @@ namespace Akeldov.Math.Hexes.Topology
             }
 
             return new RGBA16BitRaster(CreateRasterGrid(grid), values);
-        }
-
-        private static RasterGrid CreateRasterGrid(HexVertexBarycentricGrid grid)
-        {
-            return new RasterGrid(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
         }
 
         private static RasterGrid CreateRasterGrid(HexVertexChromaticIndexTripletGrid grid)

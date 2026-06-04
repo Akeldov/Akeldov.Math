@@ -49,24 +49,6 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     }
 
     [Test]
-    public void BarycentricGrid_ToRGBA16BitRaster_MapsHitCellsByBarycentricCoordinates()
-    {
-        var grid = new HexVertexBarycentricGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
-        var color = new RGBA16BitColor(1, 2, 3, 4);
-        Triplet<float> mapped = default;
-
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            coordinates =>
-            {
-                mapped = coordinates;
-                return color;
-            });
-
-        Assert.That(raster.Values, Is.EqualTo(new[] { color }));
-        Assert.That(mapped.Main + mapped.Left + mapped.Right, Is.EqualTo(1f).Within(0.000001f));
-    }
-
-    [Test]
     public void ChromaticIndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByChromaticIndices()
     {
         var grid = new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
@@ -83,23 +65,11 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     public void ToRGBA16BitRaster_WhenGridIsNull_Throws()
     {
         HexVertexIndexTripletGrid indexTripletGrid = null!;
-        HexVertexBarycentricGrid barycentricGrid = null!;
+        HexVertexBarycentricTripletGrid barycentricGrid = null!;
         HexVertexChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
 
         Assert.Throws<ArgumentNullException>(() => indexTripletGrid.ToRGBA16BitRaster(_ => default));
         Assert.Throws<ArgumentNullException>(() => barycentricGrid.ToRGBA16BitRaster(_ => default));
         Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.ToRGBA16BitRaster(_ => default));
-    }
-
-    [Test]
-    public void ToRGBA16BitRaster_WhenMapperIsNull_Throws()
-    {
-        var indexTripletGrid = new HexVertexIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One);
-        var barycentricGrid = new HexVertexBarycentricGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
-        var chromaticIndexTripletGrid = new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
-
-        Assert.Throws<ArgumentNullException>(() => indexTripletGrid.ToRGBA16BitRaster(null!));
-        Assert.Throws<ArgumentNullException>(() => barycentricGrid.ToRGBA16BitRaster(null!));
-        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.ToRGBA16BitRaster(null!));
     }
 }

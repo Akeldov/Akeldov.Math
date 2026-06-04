@@ -28,48 +28,21 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "hex-vertex-barycentric-grid-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-barycentric-grid-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-barycentric-grid-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-barycentric-grid-even-q-rgba16.png")]
-    public void BarycentricGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
+    [TestCase(Layout.OddR, "hex-vertex-barycentric-triplet-grid-main-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-vertex-barycentric-triplet-grid-main-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-vertex-barycentric-triplet-grid-main-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-vertex-barycentric-triplet-grid-main-even-q-rgba16.png")]
+    public void BarycentricTripletGrid_ToRGBA16BitRaster_WithMainWeight_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var grid = new HexVertexBarycentricGrid(
+        var grid = new HexVertexBarycentricTripletGrid(
             hexWidth: 5,
             hexHeight: 4,
             layout: layout,
             hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            ToBarycentricSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
-        byte[] actual = SaveToPngBytes(raster, approvedFileName);
-
-        AssertMatchesApprovedPng(approvedFileName, actual);
-    }
-
-    [TestCase(Layout.OddR, "hex-vertex-barycentric-grid-fill-empty-cells-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-barycentric-grid-fill-empty-cells-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-barycentric-grid-fill-empty-cells-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-barycentric-grid-fill-empty-cells-even-q-rgba16.png")]
-    public void BarycentricGrid_ToRGBA16BitRaster_WithFillEmptyCells_MatchesApprovedImage(
-        Layout layout,
-        string approvedFileName)
-    {
-        var grid = new HexVertexBarycentricGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64),
-            fillMode: HexVertexTripletGridFillMode.FillEmptyCells);
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            ToBarycentricSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToBarycentricMainSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -122,70 +95,6 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "hex-vertex-chromatic-barycentric-blend-grid-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-chromatic-barycentric-blend-grid-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-chromatic-barycentric-blend-grid-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-chromatic-barycentric-blend-grid-even-q-rgba16.png")]
-    public void ChromaticIndexTripletAndBarycentricGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
-        Layout layout,
-        string approvedFileName)
-    {
-        var chromaticGrid = new HexVertexChromaticIndexTripletGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64));
-        var barycentricGrid = new HexVertexBarycentricGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = ToChromaticBarycentricBlendRaster(
-            chromaticGrid,
-            barycentricGrid,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
-        byte[] actual = SaveToPngBytes(raster, approvedFileName);
-
-        AssertMatchesApprovedPng(approvedFileName, actual);
-    }
-
-    [TestCase(Layout.OddR, "hex-vertex-chromatic-barycentric-blend-grid-fill-empty-cells-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-chromatic-barycentric-blend-grid-fill-empty-cells-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-chromatic-barycentric-blend-grid-fill-empty-cells-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-chromatic-barycentric-blend-grid-fill-empty-cells-even-q-rgba16.png")]
-    public void ChromaticIndexTripletAndBarycentricGrid_ToRGBA16BitRaster_WithFillEmptyCells_MatchesApprovedImage(
-        Layout layout,
-        string approvedFileName)
-    {
-        var chromaticGrid = new HexVertexChromaticIndexTripletGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64),
-            fillMode: HexVertexTripletGridFillMode.FillEmptyCells);
-        var barycentricGrid = new HexVertexBarycentricGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64),
-            fillMode: HexVertexTripletGridFillMode.FillEmptyCells);
-        RGBA16BitRaster raster = ToChromaticBarycentricBlendRaster(
-            chromaticGrid,
-            barycentricGrid,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
-        byte[] actual = SaveToPngBytes(raster, approvedFileName);
-
-        AssertMatchesApprovedPng(approvedFileName, actual);
-    }
-
     private static RGBA16BitColor ToIndexTripletSnapshotColor(Triplet<VectorXYInt> triplet)
     {
         float main = EncodeIndex(triplet.Main);
@@ -208,6 +117,12 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ushort.MaxValue);
     }
 
+    private static RGBA16BitColor ToBarycentricMainSnapshotColor(Triplet<float> barycentricCoordinates)
+    {
+        ushort main = ToChannel(barycentricCoordinates.Main);
+        return new RGBA16BitColor(main, main, main, ushort.MaxValue);
+    }
+
     private static RGBA16BitColor ToChromaticIndexTripletSnapshotColor(Triplet<byte> chromaticIndices)
     {
         return new RGBA16BitColor(
@@ -215,29 +130,6 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ToChannel(0.18f + 0.34f * chromaticIndices.Left),
             ToChannel(0.18f + 0.34f * chromaticIndices.Right),
             ushort.MaxValue);
-    }
-
-    private static RGBA16BitRaster ToChromaticBarycentricBlendRaster(
-        HexVertexChromaticIndexTripletGrid chromaticGrid,
-        HexVertexBarycentricGrid barycentricGrid,
-        RGBA16BitColor emptyColor)
-    {
-        var values = new RGBA16BitColor[chromaticGrid.Count];
-        bool[] chromaticHasHex = chromaticGrid.HasHex;
-        bool[] barycentricHasHex = barycentricGrid.HasHex;
-        Triplet<byte>[] chromaticIndices = chromaticGrid.ChromaticIndices;
-        Triplet<float>[] barycentricCoordinates = barycentricGrid.BarycentricCoordinates;
-
-        for (int i = 0; i < values.Length; i++)
-        {
-            values[i] = chromaticHasHex[i] && barycentricHasHex[i]
-                ? ToChromaticBarycentricBlendSnapshotColor(chromaticIndices[i], barycentricCoordinates[i])
-                : emptyColor;
-        }
-
-        return new RGBA16BitRaster(
-            new RasterGrid((PointXY)chromaticGrid.Origin, chromaticGrid.Size, chromaticGrid.Resolution),
-            values);
     }
 
     private static RGBA16BitColor ToChromaticBarycentricBlendSnapshotColor(
