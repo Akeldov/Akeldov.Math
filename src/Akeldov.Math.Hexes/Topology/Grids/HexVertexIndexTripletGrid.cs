@@ -26,20 +26,20 @@ namespace Akeldov.Math.Hexes.Topology
         private VectorXY CellSize { get; set; }
 
         public HexVertexIndexTripletGrid(
-            IndexedHexAdjacencyMap indexedHexAdjacencyMap,
+            HexAdjacencyMap hexAdjacencyMap,
             VectorXYInt resolution)
         {
-            if (indexedHexAdjacencyMap == null)
-                throw new ArgumentNullException(nameof(indexedHexAdjacencyMap));
+            if (hexAdjacencyMap == null)
+                throw new ArgumentNullException(nameof(hexAdjacencyMap));
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            VectorXY gridSize = indexedHexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
+            VectorXY gridSize = hexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
 
             Initialize(
-                indexedHexAdjacencyMap.Width,
-                indexedHexAdjacencyMap.Height,
-                indexedHexAdjacencyMap.Layout,
-                GetDefaultHexOrigin(indexedHexAdjacencyMap.Layout, apothem, DefaultHexRadius),
+                hexAdjacencyMap.Width,
+                hexAdjacencyMap.Height,
+                hexAdjacencyMap.Layout,
+                GetDefaultHexOrigin(hexAdjacencyMap.Layout, apothem, DefaultHexRadius),
                 apothem,
                 DefaultHexRadius,
                 VectorXY.Zero,

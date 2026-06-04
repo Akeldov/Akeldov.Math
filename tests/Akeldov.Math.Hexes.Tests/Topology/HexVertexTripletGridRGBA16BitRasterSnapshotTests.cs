@@ -56,7 +56,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexedHexAdjacencyMap(width: 5, height: 4, layout: layout);
+        var map = new HexAdjacencyMap(width: 5, height: 4, layout: layout);
         var grid = new HexVertexBarycentricPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
@@ -94,7 +94,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexedHexAdjacencyMap(width: 5, height: 4, layout: layout);
+        var map = new HexAdjacencyMap(width: 5, height: 4, layout: layout);
         var grid = new HexVertexChromaticIndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
@@ -112,7 +112,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexedHexAdjacencyMap(width: 5, height: 4, layout: layout);
+        var map = new HexAdjacencyMap(width: 5, height: 4, layout: layout);
         var barycentricGrid = new HexVertexBarycentricPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));

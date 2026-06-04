@@ -111,12 +111,12 @@ namespace Akeldov.Math.Hexes.Topology
             int flatIndex,
             sbyte[] offsets)
         {
-            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex);
-            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex);
-            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex);
-            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex);
-            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex);
-            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex);
+            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1]);
+            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3]);
+            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5]);
+            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7]);
+            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9]);
+            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11]);
 
             return new Septuplet<int>(
                 flatIndex,
@@ -130,11 +130,10 @@ namespace Akeldov.Math.Hexes.Topology
 
         private int GetAdjacentFlatIndex(
             int x,
-            int y,
-            int fallbackFlatIndex)
+            int y)
         {
             if ((uint)x >= (uint)Width || (uint)y >= (uint)Height)
-                return fallbackFlatIndex;
+                return -1;
 
             return y * Width + x;
         }

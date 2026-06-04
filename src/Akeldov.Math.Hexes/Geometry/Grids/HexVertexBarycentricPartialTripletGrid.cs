@@ -30,23 +30,23 @@ namespace Akeldov.Math.Hexes.Topology
         private VectorXY CellSize { get; set; }
 
         public HexVertexBarycentricPartialTripletGrid(
-            IndexedHexAdjacencyMap indexedHexAdjacencyMap,
+            HexAdjacencyMap hexAdjacencyMap,
             VectorXYInt resolution)
         {
-            if (indexedHexAdjacencyMap == null)
-                throw new ArgumentNullException(nameof(indexedHexAdjacencyMap));
+            if (hexAdjacencyMap == null)
+                throw new ArgumentNullException(nameof(hexAdjacencyMap));
 
             if (resolution.X <= 0 || resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            VectorXY gridSize = indexedHexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
+            VectorXY gridSize = hexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
 
             Initialize(
-                indexedHexAdjacencyMap.Width,
-                indexedHexAdjacencyMap.Height,
-                indexedHexAdjacencyMap.Layout,
-                GetDefaultHexOrigin(indexedHexAdjacencyMap.Layout, apothem, DefaultHexRadius),
+                hexAdjacencyMap.Width,
+                hexAdjacencyMap.Height,
+                hexAdjacencyMap.Layout,
+                GetDefaultHexOrigin(hexAdjacencyMap.Layout, apothem, DefaultHexRadius),
                 apothem,
                 DefaultHexRadius,
                 VectorXY.Zero,

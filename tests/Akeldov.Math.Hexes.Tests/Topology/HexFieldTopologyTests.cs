@@ -41,8 +41,8 @@ public class HexFieldTopologyTests
         Assert.That(adjacency.Adjacent1, Is.EqualTo(4));
         Assert.That(adjacency.Adjacent2, Is.EqualTo(3));
         Assert.That(adjacency.Adjacent3, Is.EqualTo(0));
-        Assert.That(adjacency.Adjacent4, Is.EqualTo(1));
-        Assert.That(adjacency.Adjacent5, Is.EqualTo(1));
+        Assert.That(adjacency.Adjacent4, Is.EqualTo(-1));
+        Assert.That(adjacency.Adjacent5, Is.EqualTo(-1));
     }
 
     [TestCase(Layout.OddQ, 5, 1, 3, 6, 7, 8)]

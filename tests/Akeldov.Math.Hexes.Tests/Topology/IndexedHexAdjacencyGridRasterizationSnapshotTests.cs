@@ -16,7 +16,7 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var adjacencyMap = new IndexedHexAdjacencyMap(
+        var adjacencyMap = new HexAdjacencyMap(
             width: 12,
             height: 8,
             layout: layout);
@@ -38,7 +38,7 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var adjacencyMap = new IndexedHexAdjacencyMap(
+        var adjacencyMap = new HexAdjacencyMap(
             width: 12,
             height: 8,
             layout: layout);
@@ -52,20 +52,20 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    private static RGBA16BitColor ToMainIndexColor(IndexedHexAdjacency adjacency, int mapWidth)
+    private static RGBA16BitColor ToMainIndexColor(Septuplet<int> adjacency, int mapWidth)
     {
-        if (!adjacency.HasOwnIndex)
+        if (adjacency.Main < 0)
             return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
 
-        return ToIndexColor(adjacency.Index, mapWidth);
+        return ToIndexColor(adjacency.Main, mapWidth);
     }
 
-    private static RGBA16BitColor ToAdjacent1IndexColor(IndexedHexAdjacency adjacency, int mapWidth)
+    private static RGBA16BitColor ToAdjacent1IndexColor(Septuplet<int> adjacency, int mapWidth)
     {
-        if (!adjacency.HasAdjacent1)
+        if (adjacency.Adjacent1 < 0)
             return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
 
-        return ToIndexColor(adjacency.Adjacent1Index, mapWidth);
+        return ToIndexColor(adjacency.Adjacent1, mapWidth);
     }
 
     private static RGBA16BitColor ToIndexColor(int index, int mapWidth)
