@@ -23,9 +23,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             hexOrigin: VectorXY.Zero,
             hexApothem: 8f,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            ToIndexTripletSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -47,9 +45,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             hexApothem: 8f,
             resolution: new VectorXYInt(64, 64),
             fillMode: HexVertexTripletGridFillMode.FillEmptyCells);
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            ToIndexTripletSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);

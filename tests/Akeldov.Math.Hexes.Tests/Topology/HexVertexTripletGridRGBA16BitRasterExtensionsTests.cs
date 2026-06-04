@@ -100,8 +100,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
             {
                 mapperWasCalled = true;
                 return new RGBA16BitColor(9, 9, 9, 9);
-            },
-            emptyColor);
+            });
 
         Assert.That(mapperWasCalled, Is.False);
         Assert.That(raster.Values, Is.EqualTo(new[] { emptyColor }));

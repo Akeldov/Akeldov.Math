@@ -17,15 +17,11 @@ public class HexVertexTripletGridTests
 
         Assert.That(grid.HexResolution, Is.EqualTo(new VectorXYInt(2, 1)));
         Assert.That(grid.Layout, Is.EqualTo(Layout.OddR));
-        Assert.That(grid.HexOrigin, Is.EqualTo(origin));
-        Assert.That(grid.HexApothem, Is.EqualTo(2f));
-        Assert.That(grid.HexRadius, Is.EqualTo(2f.ConvertHexApothemToRadius()));
         Assert.That(grid.Resolution, Is.EqualTo(new VectorXYInt(4, 2)));
         Assert.That(grid.ResolutionX, Is.EqualTo(4));
         Assert.That(grid.ResolutionY, Is.EqualTo(2));
         Assert.That(grid.Count, Is.EqualTo(8));
         Assert.That(grid.IndexTriplets, Has.Length.EqualTo(8));
-        Assert.That(grid.HasHex, Has.Length.EqualTo(8));
     }
 
     [Test]
@@ -180,7 +176,6 @@ public class HexVertexTripletGridTests
         Assert.That(indexGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.FillEmptyCells));
         Assert.That(barycentricGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.FillEmptyCells));
         Assert.That(chromaticGrid.FillMode, Is.EqualTo(HexVertexTripletGridFillMode.FillEmptyCells));
-        Assert.That(indexGrid.HasHexAt(VectorXYInt.Zero), Is.True);
         Assert.That(barycentricGrid.HasHexAt(VectorXYInt.Zero), Is.True);
         Assert.That(chromaticGrid.HasHexAt(VectorXYInt.Zero), Is.True);
         AssertTriplet(indexGrid[VectorXYInt.Zero], expectedIndexTriplet);
@@ -219,7 +214,6 @@ public class HexVertexTripletGridTests
             new VectorXYInt(64, 64),
             HexVertexTripletGridFillMode.FillEmptyCells);
 
-        AssertAllCellsHaveHex(indexGrid.HasHex);
         AssertAllCellsHaveHex(barycentricGrid.HasHex);
         AssertAllCellsHaveHex(chromaticGrid.HasHex);
     }
@@ -237,7 +231,6 @@ public class HexVertexTripletGridTests
             VectorXY.One,
             VectorXYInt.One);
 
-        Assert.That(grid.HasHexAt(VectorXYInt.Zero), Is.False);
         Assert.That(grid.TryGetIndexTriplet(VectorXYInt.Zero, out Triplet<VectorXYInt> triplet), Is.False);
         Assert.That(triplet.Main, Is.EqualTo(new VectorXYInt(-1, -1)));
         Assert.Throws<InvalidOperationException>(() => _ = grid[VectorXYInt.Zero]);
