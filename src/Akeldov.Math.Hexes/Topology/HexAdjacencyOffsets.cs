@@ -8,6 +8,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private static readonly sbyte[] RowUnshifted = new sbyte[]
         {
+            // Pointy-top neighbor order: E, SE, SW, W, NW, NE.
             1, 0,
             0, 1,
             -1, 1,
@@ -18,6 +19,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         private static readonly sbyte[] RowShifted = new sbyte[]
         {
+            // Pointy-top neighbor order: E, SE, SW, W, NW, NE.
             1, 0,
             1, 1,
             0, 1,
@@ -31,22 +33,24 @@ namespace Akeldov.Math.Hexes.Topology
 
         private static readonly sbyte[] ColumnUnshifted = new sbyte[]
         {
-            0, 1,
-            1, 0,
+            // Flat-top neighbor order: NE, N, NW, SW, S, SE.
             1, -1,
             0, -1,
             -1, -1,
-            -1, 0
+            -1, 0,
+            0, 1,
+            1, 0
         };
 
         private static readonly sbyte[] ColumnShifted = new sbyte[]
         {
-            0, 1,
-            1, 1,
+            // Flat-top neighbor order: NE, N, NW, SW, S, SE.
             1, 0,
             0, -1,
             -1, 0,
-            -1, 1
+            -1, 1,
+            0, 1,
+            1, 1
         };
 
         internal static sbyte[] GetRowOffsets(int y, bool evenRowsAreShifted)

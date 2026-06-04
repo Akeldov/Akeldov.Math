@@ -49,6 +49,30 @@ public class HexFieldTopologyTests
         Assert.That(adjacency.Adjacent5Index, Is.EqualTo(1));
     }
 
+    [TestCase(Layout.OddQ, 5, 1, 3, 6, 7, 8)]
+    [TestCase(Layout.EvenQ, 2, 1, 0, 3, 7, 5)]
+    public void Constructor_ForFlatTopLayouts_UsesAdjacent0AsNorthEast(
+        Layout layout,
+        int adjacent0Index,
+        int adjacent1Index,
+        int adjacent2Index,
+        int adjacent3Index,
+        int adjacent4Index,
+        int adjacent5Index)
+    {
+        var topology = new HexAdjacencyMap(3, 3, layout);
+
+        HexAdjacency adjacency = topology[new VectorXYInt(1, 1)];
+
+        Assert.That(adjacency.Flags, Is.EqualTo(HexAdjacencyFlags.AllAdjacent));
+        Assert.That(adjacency.Adjacent0Index, Is.EqualTo(adjacent0Index));
+        Assert.That(adjacency.Adjacent1Index, Is.EqualTo(adjacent1Index));
+        Assert.That(adjacency.Adjacent2Index, Is.EqualTo(adjacent2Index));
+        Assert.That(adjacency.Adjacent3Index, Is.EqualTo(adjacent3Index));
+        Assert.That(adjacency.Adjacent4Index, Is.EqualTo(adjacent4Index));
+        Assert.That(adjacency.Adjacent5Index, Is.EqualTo(adjacent5Index));
+    }
+
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {

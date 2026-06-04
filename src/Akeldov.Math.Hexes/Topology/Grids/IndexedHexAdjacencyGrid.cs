@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class IndexedHexAdjacencyGrid : IHexMap<IndexedHexAdjacency>
+    public sealed class IndexedHexAdjacencyGrid : IGrid<IndexedHexAdjacency>
     {
         private IndexedHexAdjacency[] _adjacent;
 

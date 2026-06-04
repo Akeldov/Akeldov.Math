@@ -30,12 +30,46 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "indexed-hex-adjacency-grid-adjacent-1-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "indexed-hex-adjacency-grid-adjacent-1-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "indexed-hex-adjacency-grid-adjacent-1-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "indexed-hex-adjacency-grid-adjacent-1-index-even-q-rgba16.png")]
+    public void Rasterize_WithAdjacent1IndexColor_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        var adjacencyMap = new IndexedHexAdjacencyMap(
+            width: 12,
+            height: 8,
+            layout: layout);
+        var adjacencyGrid = new IndexedHexAdjacencyGrid(
+            adjacencyMap,
+            resolution: new VectorXYInt(480, 360));
+
+        RGBA16BitRaster raster = adjacencyGrid.Rasterize(adjacency => ToAdjacent1IndexColor(adjacency, adjacencyMap.Width));
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     private static RGBA16BitColor ToMainIndexColor(IndexedHexAdjacency adjacency, int mapWidth)
     {
         if (!adjacency.HasOwnIndex)
             return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
 
-        int index = adjacency.Index;
+        return ToIndexColor(adjacency.Index, mapWidth);
+    }
+
+    private static RGBA16BitColor ToAdjacent1IndexColor(IndexedHexAdjacency adjacency, int mapWidth)
+    {
+        if (!adjacency.HasAdjacent1)
+            return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
+
+        return ToIndexColor(adjacency.Adjacent1Index, mapWidth);
+    }
+
+    private static RGBA16BitColor ToIndexColor(int index, int mapWidth)
+    {
         int x = index % mapWidth;
         int y = index / mapWidth;
         float red = 0.12f + 0.07f * x;
