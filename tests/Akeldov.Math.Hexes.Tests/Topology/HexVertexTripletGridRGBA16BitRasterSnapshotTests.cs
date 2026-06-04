@@ -68,6 +68,24 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "hex-vertex-chromatic-index-partial-triplet-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-vertex-chromatic-index-partial-triplet-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-vertex-chromatic-index-partial-triplet-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-vertex-chromatic-index-partial-triplet-grid-even-q-rgba16.png")]
+    public void ChromaticIndexPartialTripletGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        var map = new IndexedHexAdjacencyMap(width: 5, height: 4, layout: layout);
+        var grid = new HexVertexChromaticIndexPartialTripletGrid(
+            map,
+            resolution: new VectorXYInt(64, 64));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToChromaticIndexPartialTripletSnapshotColor);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     private static RGBA16BitColor ToIndexTripletSnapshotColor(Triplet<VectorXYInt> triplet)
     {
         float main = EncodeIndex(triplet.Main);
@@ -96,6 +114,15 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ushort.MaxValue);
     }
 
+    private static RGBA16BitColor ToChromaticIndexPartialTripletSnapshotColor(PartialTriplet<byte> chromaticIndices)
+    {
+        return new RGBA16BitColor(
+            ToPresenceChannel(chromaticIndices.Main, chromaticIndices.HasMain),
+            ToPresenceChannel(chromaticIndices.Left, chromaticIndices.HasLeft),
+            ToPresenceChannel(chromaticIndices.Right, chromaticIndices.HasRight),
+            ushort.MaxValue);
+    }
+
     private static float EncodeIndex(VectorXYInt index)
     {
         return 0.08f + 0.075f * (index.X + 1) + 0.12f * (index.Y + 1);
@@ -105,6 +132,13 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
     {
         value = MathF.Min(MathF.Max(value, 0f), 1f);
         return (ushort)MathF.Round(value * ushort.MaxValue);
+    }
+
+    private static ushort ToPresenceChannel(byte chromaticIndex, bool hasValue)
+    {
+        return hasValue
+            ? ToChannel(0.25f + 0.30f * chromaticIndex)
+            : (ushort)0;
     }
 
     private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
