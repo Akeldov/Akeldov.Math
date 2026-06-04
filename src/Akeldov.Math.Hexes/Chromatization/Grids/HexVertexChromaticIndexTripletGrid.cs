@@ -1,3 +1,6 @@
+using Akeldov.Math.Hexes.Chromatization;
+using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
@@ -5,22 +8,44 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class HexVertexChromaticIndexTripletGrid
+    public sealed class HexVertexChromaticIndexTripletGrid : IGrid<Triplet<byte>>
     {
-        private readonly HexGridDefinition _grid;
-        private readonly Triplet<byte>[] _chromaticIndices;
-        private readonly bool[] _hasHex;
+        private const float DefaultHexRadius = 1f;
+
+        private Triplet<byte>[] _chromaticIndices;
+
+        private VectorXY HexOrigin { get; set; }
+
+        private float HexApothem { get; set; }
+
+        private float HexRadius { get; set; }
+
+        internal VectorXY Origin { get; set; }
+
+        internal VectorXY Size { get; set; }
+
+        private VectorXY CellSize { get; set; }
 
         public HexVertexChromaticIndexTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            float hexApothem,
-            VectorXYInt resolution,
-            HexVertexTripletGridFillMode fillMode = HexVertexTripletGridFillMode.HitHexesOnly)
-            : this(HexGridDefinition.Create(hexWidth, hexHeight, layout, hexOrigin, hexApothem, resolution), fillMode)
+            IndexedHexAdjacencyMap indexedHexAdjacencyMap,
+            VectorXYInt resolution)
         {
+            if (indexedHexAdjacencyMap == null)
+                throw new ArgumentNullException(nameof(indexedHexAdjacencyMap));
+
+            float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
+            VectorXY gridSize = indexedHexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
+
+            Initialize(
+                indexedHexAdjacencyMap.Width,
+                indexedHexAdjacencyMap.Height,
+                indexedHexAdjacencyMap.Layout,
+                GetDefaultHexOrigin(indexedHexAdjacencyMap.Layout, apothem, DefaultHexRadius),
+                apothem,
+                DefaultHexRadius,
+                VectorXY.Zero,
+                gridSize,
+                resolution);
         }
 
         public HexVertexChromaticIndexTripletGrid(
@@ -28,96 +53,168 @@ namespace Akeldov.Math.Hexes.Topology
             int hexHeight,
             Layout layout,
             VectorXY hexOrigin,
-            float hexApothem,
+            VectorXYInt resolution)
+        {
+            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
+
+            float hexApothem = DefaultHexRadius.ConvertHexRadiusToApothem();
+            Bounds bounds = GetBounds(hexWidth, hexHeight, layout, hexOrigin, hexApothem, DefaultHexRadius);
+
+            Initialize(
+                hexWidth,
+                hexHeight,
+                layout,
+                hexOrigin,
+                hexApothem,
+                DefaultHexRadius,
+                new VectorXY(bounds.MinX, bounds.MinY),
+                new VectorXY(bounds.Width, bounds.Height),
+                resolution);
+        }
+
+        public HexVertexChromaticIndexTripletGrid(
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
+            VectorXY hexOrigin,
             VectorXY gridOrigin,
             VectorXY gridSize,
-            VectorXYInt resolution,
-            HexVertexTripletGridFillMode fillMode = HexVertexTripletGridFillMode.HitHexesOnly)
-            : this(HexGridDefinition.Create(hexWidth, hexHeight, layout, hexOrigin, hexApothem, gridOrigin, gridSize, resolution), fillMode)
+            VectorXYInt resolution)
         {
+            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
+
+            if (!gridOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
+
+            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
+
+            Initialize(
+                hexWidth,
+                hexHeight,
+                layout,
+                hexOrigin,
+                DefaultHexRadius.ConvertHexRadiusToApothem(),
+                DefaultHexRadius,
+                gridOrigin,
+                gridSize,
+                resolution);
         }
 
-        private HexVertexChromaticIndexTripletGrid(HexGridDefinition grid, HexVertexTripletGridFillMode fillMode)
-        {
-            _grid = grid;
-            FillMode = fillMode;
-            _chromaticIndices = new Triplet<byte>[grid.Count];
-            _hasHex = new bool[grid.Count];
+        public VectorXYInt HexResolution { get; private set; }
 
-            HexVertexTripletGridBuilder.Fill(grid, null, null, _chromaticIndices, _hasHex, fillMode);
-        }
+        public Layout Layout { get; private set; }
 
-        public VectorXYInt HexResolution => _grid.HexResolution;
-        public Layout Layout => _grid.Layout;
-        public VectorXY HexOrigin => _grid.HexOrigin;
-        public float HexApothem => _grid.HexApothem;
-        public float HexRadius => _grid.HexRadius;
-        public VectorXY Origin => _grid.Origin;
-        public VectorXY Size => _grid.Size;
-        public VectorXY CellSize => _grid.CellSize;
-        public VectorXYInt Resolution => _grid.Resolution;
-        public int ResolutionX => _grid.ResolutionX;
-        public int ResolutionY => _grid.ResolutionY;
+        public VectorXYInt Resolution { get; private set; }
+
+        public int ResolutionX { get; private set; }
+
+        public int ResolutionY { get; private set; }
+
         public int Count => _chromaticIndices.Length;
+
         public Triplet<byte>[] ChromaticIndices => _chromaticIndices;
-        public bool[] HasHex => _hasHex;
-        public HexVertexTripletGridFillMode FillMode { get; }
+
+        public int Width => ResolutionX;
+
+        public int Height => ResolutionY;
 
         public Triplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _chromaticIndices[GetHitFlatIndex(index)];
+            get
+            {
+                ThrowIfGridIndexOutOfBounds(index);
+                return _chromaticIndices[GetFlatIndex(index)];
+            }
         }
 
         public Triplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                ThrowIfNoHex(index);
-                return _chromaticIndices[index];
-            }
+            get => _chromaticIndices[index];
         }
 
         public VectorXY GetCellCenter(VectorXYInt index)
         {
             ThrowIfGridIndexOutOfBounds(index);
-            return _grid.GetCellCenterUnchecked(index.X, index.Y);
-        }
-
-        public bool HasHexAt(VectorXYInt index)
-        {
-            ThrowIfGridIndexOutOfBounds(index);
-            return _hasHex[_grid.GetFlatIndex(index)];
+            return GetCellCenterUnchecked(index.X, index.Y);
         }
 
         public bool TryGetChromaticIndices(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
         {
             ThrowIfGridIndexOutOfBounds(gridIndex);
 
-            int flatIndex = _grid.GetFlatIndex(gridIndex);
+            int flatIndex = GetFlatIndex(gridIndex);
             chromaticIndices = _chromaticIndices[flatIndex];
-            return _hasHex[flatIndex];
+            return true;
         }
 
         public Triplet<byte> GetChromaticIndices(VectorXYInt gridIndex)
         {
-            return _chromaticIndices[GetHitFlatIndex(gridIndex)];
+            ThrowIfGridIndexOutOfBounds(gridIndex);
+            return _chromaticIndices[GetFlatIndex(gridIndex)];
         }
 
-        private int GetHitFlatIndex(VectorXYInt index)
+        private void Initialize(
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
+            VectorXY hexOrigin,
+            float hexApothem,
+            float hexRadius,
+            VectorXY gridOrigin,
+            VectorXY gridSize,
+            VectorXYInt resolution)
         {
-            ThrowIfGridIndexOutOfBounds(index);
+            HexResolution = new VectorXYInt(hexWidth, hexHeight);
+            Layout = layout;
+            HexOrigin = hexOrigin;
+            HexApothem = hexApothem;
+            HexRadius = hexRadius;
+            Origin = gridOrigin;
+            Size = gridSize;
+            CellSize = new VectorXY(gridSize.X / resolution.X, gridSize.Y / resolution.Y);
+            Resolution = resolution;
+            ResolutionX = resolution.X;
+            ResolutionY = resolution.Y;
 
-            int flatIndex = _grid.GetFlatIndex(index);
-            ThrowIfNoHex(flatIndex);
-            return flatIndex;
+            _chromaticIndices = new Triplet<byte>[checked(resolution.X * resolution.Y)];
+
+            Fill();
         }
 
-        private void ThrowIfNoHex(int flatIndex)
+        private void Fill()
         {
-            if (!_hasHex[flatIndex])
-                throw new InvalidOperationException("Grid cell does not hit a hex in the vertex chromatic index triplet grid.");
+            VectorXY[] normalizedHexVertexes = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertexes(Layout);
+
+            for (int y = 0; y < ResolutionY; y++)
+            {
+                int rowStart = y * ResolutionX;
+
+                for (int x = 0; x < ResolutionX; x++)
+                {
+                    int flatIndex = rowStart + x;
+                    VectorXY point = GetCellCenterUnchecked(x, y);
+                    VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
+                    _chromaticIndices[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertexes);
+                }
+            }
+        }
+
+        private Triplet<byte> CreateChromaticIndices(
+            VectorXY point,
+            VectorXYInt mainIndex,
+            VectorXY[] normalizedHexVertexes)
+        {
+            VectorXY mainCenter = GetHexCenter(mainIndex);
+            HexVertex nearestVertex = (HexVertex)GetClosestVertexIndex(
+                point,
+                mainCenter,
+                HexRadius,
+                normalizedHexVertexes,
+                out _);
+            return mainIndex.GetAdjacentTriplet(nearestVertex, Layout).GetChromaticTriplet(Layout);
         }
 
         private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
@@ -125,6 +222,170 @@ namespace Akeldov.Math.Hexes.Topology
             if (index.X < 0 || index.X >= ResolutionX ||
                 index.Y < 0 || index.Y >= ResolutionY)
                 throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+        }
+
+        private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
+
+        private VectorXY GetCellCenterUnchecked(int x, int y)
+        {
+            return new VectorXY(
+                Origin.X + (x + 0.5f) * CellSize.X,
+                Origin.Y + (y + 0.5f) * CellSize.Y);
+        }
+
+        private VectorXY GetHexCenter(VectorXYInt index)
+        {
+            switch (Layout)
+            {
+                case Layout.OddR:
+                    return new VectorXY(
+                        HexOrigin.X + index.X * 2f * HexApothem + ((index.Y & 1) == 1 ? HexApothem : 0f),
+                        HexOrigin.Y + 1.5f * HexRadius * index.Y);
+                case Layout.EvenR:
+                    return new VectorXY(
+                        HexOrigin.X + index.X * 2f * HexApothem + ((index.Y & 1) == 1 ? -HexApothem : 0f),
+                        HexOrigin.Y + 1.5f * HexRadius * index.Y);
+                case Layout.OddQ:
+                    return new VectorXY(
+                        HexOrigin.X + 1.5f * HexRadius * index.X,
+                        HexOrigin.Y + index.Y * 2f * HexApothem + ((index.X & 1) == 1 ? HexApothem : 0f));
+                case Layout.EvenQ:
+                    return new VectorXY(
+                        HexOrigin.X + 1.5f * HexRadius * index.X,
+                        HexOrigin.Y + index.Y * 2f * HexApothem + ((index.X & 1) == 1 ? -HexApothem : 0f));
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Layout));
+            }
+        }
+
+        private static int GetClosestVertexIndex(
+            VectorXY point,
+            VectorXY hexCenter,
+            float hexRadius,
+            VectorXY[] normalizedHexVertexes,
+            out float minSquaredDistance)
+        {
+            minSquaredDistance = float.MaxValue;
+            int closestVertexIndex = 0;
+
+            for (int i = 0; i < normalizedHexVertexes.Length; i++)
+            {
+                VectorXY vertex = hexCenter + normalizedHexVertexes[i] * hexRadius;
+                float squaredDistance = SquaredDistance(point, vertex);
+
+                if (squaredDistance < minSquaredDistance)
+                {
+                    minSquaredDistance = squaredDistance;
+                    closestVertexIndex = i;
+                }
+            }
+
+            return closestVertexIndex;
+        }
+
+        private static VectorXY GetDefaultHexOrigin(Layout layout, float apothem, float radius)
+        {
+            switch (layout)
+            {
+                case Layout.OddR:
+                    return new VectorXY(apothem, radius);
+                case Layout.EvenR:
+                    return new VectorXY(2f * apothem, radius);
+                case Layout.OddQ:
+                    return new VectorXY(radius, apothem);
+                case Layout.EvenQ:
+                    return new VectorXY(radius, 2f * apothem);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+        }
+
+        private static Bounds GetBounds(
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
+            VectorXY origin,
+            float apothem,
+            float radius)
+        {
+            switch (layout)
+            {
+                case Layout.OddR:
+                    return new Bounds(
+                        origin.X - Geometry.Constants.Cos30Deg * radius,
+                        origin.Y - radius,
+                        origin.X + 2f * apothem * (hexWidth - 1) + (hexHeight > 1 ? apothem : 0f) + Geometry.Constants.Cos30Deg * radius,
+                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
+                case Layout.EvenR:
+                    return new Bounds(
+                        origin.X - (hexHeight > 1 ? apothem : 0f) - Geometry.Constants.Cos30Deg * radius,
+                        origin.Y - radius,
+                        origin.X + 2f * apothem * (hexWidth - 1) + Geometry.Constants.Cos30Deg * radius,
+                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
+                case Layout.OddQ:
+                    return new Bounds(
+                        origin.X - radius,
+                        origin.Y - Geometry.Constants.Sin60Deg * radius,
+                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
+                        origin.Y + 2f * apothem * (hexHeight - 1) + (hexWidth > 1 ? apothem : 0f) + Geometry.Constants.Sin60Deg * radius);
+                case Layout.EvenQ:
+                    return new Bounds(
+                        origin.X - radius,
+                        origin.Y - (hexWidth > 1 ? apothem : 0f) - Geometry.Constants.Sin60Deg * radius,
+                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
+                        origin.Y + 2f * apothem * (hexHeight - 1) + Geometry.Constants.Sin60Deg * radius);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+        }
+
+        private static void ValidateHexGrid(
+            int hexWidth,
+            int hexHeight,
+            VectorXY hexOrigin,
+            VectorXYInt resolution)
+        {
+            if (hexWidth <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexWidth), hexWidth, "Hex grid dimensions must be positive.");
+
+            if (hexHeight <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexHeight), hexHeight, "Hex grid dimensions must be positive.");
+
+            if (!hexOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexOrigin), hexOrigin, "Hex origin components must be finite.");
+
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
+        }
+
+        private static float SquaredDistance(VectorXY left, VectorXY right)
+        {
+            float x = left.X - right.X;
+            float y = left.Y - right.Y;
+            return x * x + y * y;
+        }
+
+        private readonly struct Bounds
+        {
+            public Bounds(float minX, float minY, float maxX, float maxY)
+            {
+                MinX = minX;
+                MinY = minY;
+                MaxX = maxX;
+                MaxY = maxY;
+            }
+
+            public float MinX { get; }
+
+            public float MinY { get; }
+
+            public float MaxX { get; }
+
+            public float MaxY { get; }
+
+            public float Width => MaxX - MinX;
+
+            public float Height => MaxY - MinY;
         }
     }
 }

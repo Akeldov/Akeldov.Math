@@ -51,7 +51,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void ChromaticIndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByChromaticIndices()
     {
-        var grid = new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 2f, VectorXYInt.One);
+        var grid = new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One);
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 

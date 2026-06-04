@@ -61,35 +61,8 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             hexHeight: 4,
             layout: layout,
             hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            ToChromaticIndexTripletSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
-        byte[] actual = SaveToPngBytes(raster, approvedFileName);
-
-        AssertMatchesApprovedPng(approvedFileName, actual);
-    }
-
-    [TestCase(Layout.OddR, "hex-vertex-chromatic-index-triplet-grid-fill-empty-cells-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-chromatic-index-triplet-grid-fill-empty-cells-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-chromatic-index-triplet-grid-fill-empty-cells-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-chromatic-index-triplet-grid-fill-empty-cells-even-q-rgba16.png")]
-    public void ChromaticIndexTripletGrid_ToRGBA16BitRaster_WithFillEmptyCells_MatchesApprovedImage(
-        Layout layout,
-        string approvedFileName)
-    {
-        var grid = new HexVertexChromaticIndexTripletGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            hexApothem: 8f,
-            resolution: new VectorXYInt(64, 64),
-            fillMode: HexVertexTripletGridFillMode.FillEmptyCells);
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
-            ToChromaticIndexTripletSnapshotColor,
-            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToChromaticIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -108,15 +81,6 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ushort.MaxValue);
     }
 
-    private static RGBA16BitColor ToBarycentricSnapshotColor(Triplet<float> barycentricCoordinates)
-    {
-        return new RGBA16BitColor(
-            ToChannel(barycentricCoordinates.Main),
-            ToChannel(barycentricCoordinates.Left),
-            ToChannel(barycentricCoordinates.Right),
-            ushort.MaxValue);
-    }
-
     private static RGBA16BitColor ToBarycentricMainSnapshotColor(Triplet<float> barycentricCoordinates)
     {
         ushort main = ToChannel(barycentricCoordinates.Main);
@@ -130,32 +94,6 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ToChannel(0.18f + 0.34f * chromaticIndices.Left),
             ToChannel(0.18f + 0.34f * chromaticIndices.Right),
             ushort.MaxValue);
-    }
-
-    private static RGBA16BitColor ToChromaticBarycentricBlendSnapshotColor(
-        Triplet<byte> chromaticIndices,
-        Triplet<float> barycentricCoordinates)
-    {
-        float red = GetChromaticChannel(chromaticIndices.Main, 0) * barycentricCoordinates.Main +
-            GetChromaticChannel(chromaticIndices.Left, 0) * barycentricCoordinates.Left +
-            GetChromaticChannel(chromaticIndices.Right, 0) * barycentricCoordinates.Right;
-        float green = GetChromaticChannel(chromaticIndices.Main, 1) * barycentricCoordinates.Main +
-            GetChromaticChannel(chromaticIndices.Left, 1) * barycentricCoordinates.Left +
-            GetChromaticChannel(chromaticIndices.Right, 1) * barycentricCoordinates.Right;
-        float blue = GetChromaticChannel(chromaticIndices.Main, 2) * barycentricCoordinates.Main +
-            GetChromaticChannel(chromaticIndices.Left, 2) * barycentricCoordinates.Left +
-            GetChromaticChannel(chromaticIndices.Right, 2) * barycentricCoordinates.Right;
-
-        return new RGBA16BitColor(
-            ToChannel(red),
-            ToChannel(green),
-            ToChannel(blue),
-            ushort.MaxValue);
-    }
-
-    private static float GetChromaticChannel(byte chromaticIndex, byte channelIndex)
-    {
-        return chromaticIndex == channelIndex ? 1f : 0f;
     }
 
     private static float EncodeIndex(VectorXYInt index)

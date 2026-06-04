@@ -11,14 +11,6 @@ namespace Akeldov.Math.Hexes.Topology
             this HexVertexChromaticIndexTripletGrid grid,
             Func<Triplet<byte>, RGBA16BitColor> chromaticIndicesToColor)
         {
-            return grid.ToRGBA16BitRaster(chromaticIndicesToColor, default(RGBA16BitColor));
-        }
-
-        public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexChromaticIndexTripletGrid grid,
-            Func<Triplet<byte>, RGBA16BitColor> chromaticIndicesToColor,
-            RGBA16BitColor emptyColor)
-        {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
@@ -26,15 +18,10 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(chromaticIndicesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            bool[] hasHex = grid.HasHex;
             Triplet<byte>[] chromaticIndices = grid.ChromaticIndices;
 
             for (int i = 0; i < values.Length; i++)
-            {
-                values[i] = hasHex[i]
-                    ? chromaticIndicesToColor(chromaticIndices[i])
-                    : emptyColor;
-            }
+                values[i] = chromaticIndicesToColor(chromaticIndices[i]);
 
             return new RGBA16BitRaster(CreateRasterGrid(grid), values);
         }

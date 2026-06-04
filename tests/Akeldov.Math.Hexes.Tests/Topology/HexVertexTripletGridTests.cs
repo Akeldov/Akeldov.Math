@@ -84,14 +84,13 @@ public class HexVertexTripletGridTests
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 0f, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, 1f, new VectorXYInt(0, 1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(0, 1)));
     }
 
     private static VectorXY GetPointNearOddRVertex0()
     {
-        const float hexApothem = 2f;
-        float hexRadius = hexApothem.ConvertHexApothemToRadius();
+        const float hexRadius = 1f;
         return new VectorXY(
             Akeldov.Math.Hexes.Geometry.Constants.Cos30Deg * hexRadius * 0.75f,
             Akeldov.Math.Hexes.Geometry.Constants.Sin30Deg * hexRadius * 0.75f);
@@ -125,19 +124,16 @@ public class HexVertexTripletGridTests
     private static HexVertexChromaticIndexTripletGrid CreateSingleSampleChromaticGrid(
         VectorXY point,
         int hexWidth,
-        int hexHeight,
-        HexVertexTripletGridFillMode fillMode = HexVertexTripletGridFillMode.HitHexesOnly)
+        int hexHeight)
     {
         return new HexVertexChromaticIndexTripletGrid(
             hexWidth,
             hexHeight,
             Layout.OddR,
             VectorXY.Zero,
-            2f,
             point - new VectorXY(0.5f, 0.5f),
             VectorXY.One,
-            VectorXYInt.One,
-            fillMode);
+            VectorXYInt.One);
     }
 
     private static void AssertTriplet<T>(Triplet<T> actual, Triplet<T> expected)
@@ -147,17 +143,4 @@ public class HexVertexTripletGridTests
         Assert.That(actual.Right, Is.EqualTo(expected.Right));
     }
 
-    private static void AssertAllCellsHaveHex(bool[] hasHex)
-    {
-        for (int i = 0; i < hasHex.Length; i++)
-            Assert.That(hasHex[i], Is.True, $"Expected cell {i} to be filled.");
-    }
-
-    private static void AssertBarycentric(Triplet<float> actual, float main, float left, float right)
-    {
-        Assert.That(actual.Main, Is.EqualTo(main).Within(0.000001f));
-        Assert.That(actual.Left, Is.EqualTo(left).Within(0.000001f));
-        Assert.That(actual.Right, Is.EqualTo(right).Within(0.000001f));
-        Assert.That(actual.Main + actual.Left + actual.Right, Is.EqualTo(1f).Within(0.000001f));
-    }
 }
