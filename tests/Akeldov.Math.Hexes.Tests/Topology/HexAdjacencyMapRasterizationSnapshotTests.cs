@@ -6,12 +6,12 @@ using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class IndexedHexAdjacencyGridRasterizationSnapshotTests
+public class HexAdjacencyMapRasterizationSnapshotTests
 {
-    [TestCase(Layout.OddR, "indexed-hex-adjacency-grid-main-index-rgba16.png")]
-    [TestCase(Layout.EvenR, "indexed-hex-adjacency-grid-main-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "indexed-hex-adjacency-grid-main-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "indexed-hex-adjacency-grid-main-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "hex-adjacency-map-main-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-adjacency-map-main-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-adjacency-map-main-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-adjacency-map-main-index-even-q-rgba16.png")]
     public void Rasterize_WithMainIndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
@@ -30,10 +30,10 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "indexed-hex-adjacency-grid-adjacent-1-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "indexed-hex-adjacency-grid-adjacent-1-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "indexed-hex-adjacency-grid-adjacent-1-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "indexed-hex-adjacency-grid-adjacent-1-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "hex-adjacency-map-adjacent-1-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-adjacency-map-adjacent-1-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-adjacency-map-adjacent-1-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-adjacency-map-adjacent-1-index-even-q-rgba16.png")]
     public void Rasterize_WithAdjacent1IndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
@@ -107,8 +107,8 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual indexed hex adjacency grid raster snapshot");
-            Assert.Fail($"Indexed hex adjacency grid approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual hex adjacency map raster snapshot");
+            Assert.Fail($"Hex adjacency map approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -116,8 +116,8 @@ public class IndexedHexAdjacencyGridRasterizationSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual indexed hex adjacency grid raster snapshot");
-            Assert.Fail($"Indexed hex adjacency grid raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual hex adjacency map raster snapshot");
+            Assert.Fail($"Hex adjacency map raster snapshot changed. Actual image: {actualPath}");
         }
     }
 
