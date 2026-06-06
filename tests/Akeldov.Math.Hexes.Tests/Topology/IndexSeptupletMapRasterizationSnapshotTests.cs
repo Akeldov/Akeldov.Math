@@ -25,7 +25,7 @@ public class IndexSeptupletMapRasterizationSnapshotTests
             resolution: new VectorXYInt(480, 360));
 
         RGBA16BitRaster raster = adjacencyGrid.Rasterize(
-            adjacency => ToMainIndexColor(adjacency, indexSeptupletMap.Width, indexSeptupletMap.Height));
+            adjacency => ToMainIndexColor(adjacency, indexSeptupletMap.Width));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -48,25 +48,19 @@ public class IndexSeptupletMapRasterizationSnapshotTests
             resolution: new VectorXYInt(480, 360));
 
         RGBA16BitRaster raster = adjacencyGrid.Rasterize(
-            adjacency => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Width, indexSeptupletMap.Height));
+            adjacency => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Width));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    private static RGBA16BitColor ToMainIndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth, int mapHeight)
+    private static RGBA16BitColor ToMainIndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth)
     {
-        if (!ContainsIndex(adjacency.Main, mapWidth, mapHeight))
-            return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
-
         return ToIndexColor(adjacency.Main, mapWidth);
     }
 
-    private static RGBA16BitColor ToAdjacent1IndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth, int mapHeight)
+    private static RGBA16BitColor ToAdjacent1IndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth)
     {
-        if (!ContainsIndex(adjacency.Adjacent1, mapWidth, mapHeight))
-            return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
-
         return ToIndexColor(adjacency.Adjacent1, mapWidth);
     }
 
@@ -82,12 +76,6 @@ public class IndexSeptupletMapRasterizationSnapshotTests
             ToChannel(green),
             ToChannel(blue),
             ushort.MaxValue);
-    }
-
-    private static bool ContainsIndex(VectorXYInt index, int mapWidth, int mapHeight)
-    {
-        return (uint)index.X < (uint)mapWidth &&
-            (uint)index.Y < (uint)mapHeight;
     }
 
     private static ushort ToChannel(float value)
