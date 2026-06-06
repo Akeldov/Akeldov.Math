@@ -14,7 +14,6 @@ namespace Akeldov.Math.Hexes.Benchmarks.Rasterization;
 public class HexRasterizationBenchmarks
 {
     private HexAdjacencyMap _adjacencyMap = null!;
-    private HexFieldTopologySoA _topology = null!;
     private HexFieldTopologyRGBA16BitRasterizer _topologyRasterizer = null!;
     private IndexedHexAdjacencyGrid _adjacencyGrid = null!;
     private RasterGrid _topologyGrid;
@@ -29,12 +28,11 @@ public class HexRasterizationBenchmarks
     public void Setup()
     {
         _adjacencyMap = new HexAdjacencyMap(Size, Size, Layout);
-        _topology = new HexFieldTopologySoA(Size, Size, Layout);
         _topologyRasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             origin: VectorXY.Zero,
             apothem: 8f,
             indexToColor: ToIndexColor);
-        _topologyGrid = _topologyRasterizer.CreateGrid(_topology, pixelsPerApothem: 2f);
+        _topologyGrid = _topologyRasterizer.CreateGrid(_adjacencyMap, pixelsPerApothem: 2f);
         _adjacencyGrid = new IndexedHexAdjacencyGrid(
             _adjacencyMap,
             resolution: new VectorXYInt(Size * 8, Size * 8));
@@ -51,7 +49,7 @@ public class HexRasterizationBenchmarks
     [Benchmark]
     public RGBA16BitRaster RasterizeTopology()
     {
-        return _topologyRasterizer.Rasterize(_topology, _topologyGrid);
+        return _topologyRasterizer.Rasterize(_adjacencyMap, _topologyGrid);
     }
 
     [Benchmark]

@@ -8,7 +8,7 @@ using System;
 namespace Akeldov.Math.Hexes.Rasterization
 {
     public sealed class HexFieldTopologyRGBA16BitRasterizer :
-        IRasterizer<HexFieldTopologySoA, RGBA16BitRaster>
+        IRasterizer<HexAdjacencyMap, RGBA16BitRaster>
     {
         private const float ApothemToRadius = 1.1547005f;
 
@@ -49,7 +49,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             _indexToColor = indexToColor ?? throw new ArgumentNullException(nameof(indexToColor));
         }
 
-        public RGBA16BitRaster Rasterize(HexFieldTopologySoA source, RasterGrid grid)
+        public RGBA16BitRaster Rasterize(HexAdjacencyMap source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -74,7 +74,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new RGBA16BitRaster(grid, values);
         }
 
-        public RasterGrid CreateGrid(HexFieldTopologySoA source, float pixelsPerApothem)
+        public RasterGrid CreateGrid(HexAdjacencyMap source, float pixelsPerApothem)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -188,7 +188,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         }
 
         private RasterBounds GetBounds(
-            HexFieldTopologySoA source,
+            HexAdjacencyMap source,
             float radius,
             VectorXY[] normalizedVertexes)
         {
@@ -231,21 +231,15 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new RasterBounds(minX, minY, maxX, maxY);
         }
 
-        private static void ValidateSource(HexFieldTopologySoA source)
+        private static void ValidateSource(HexAdjacencyMap source)
         {
             if (source.Width <= 0 || source.Height <= 0)
                 throw new ArgumentException("Hex field topology must contain at least one hex.", nameof(source));
 
             int expectedCount = checked(source.Width * source.Height);
-            if (source.HasAdjacent.Length != expectedCount ||
-                source.Adjacent0Index.Length != expectedCount ||
-                source.Adjacent1Index.Length != expectedCount ||
-                source.Adjacent2Index.Length != expectedCount ||
-                source.Adjacent3Index.Length != expectedCount ||
-                source.Adjacent4Index.Length != expectedCount ||
-                source.Adjacent5Index.Length != expectedCount)
+            if (source.Adjacent.Length != expectedCount)
             {
-                throw new ArgumentException("Hex field topology array lengths must match its dimensions.", nameof(source));
+                throw new ArgumentException("Hex adjacency map array length must match its dimensions.", nameof(source));
             }
         }
 

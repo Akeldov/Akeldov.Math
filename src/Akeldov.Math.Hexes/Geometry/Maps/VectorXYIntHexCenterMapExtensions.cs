@@ -6,15 +6,15 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYIntExtensions
     {
-        public static HexCenterMap ToHexGeometrySoA(this VectorXYInt resolution, Layout layout, float apothem)
+        public static HexCenterMap ToHexCenterMap(this VectorXYInt resolution, Layout layout, float apothem)
         {
-            var radius = apothem.ConvertHexApothemToRadius();
-            var origin = GetDefaultOrigin(apothem, radius, layout);
+            float radius = apothem.ConvertHexApothemToRadius();
+            VectorXY origin = GetDefaultOrigin(apothem, radius, layout);
 
             return new HexCenterMap(resolution.X, resolution.Y, origin, apothem, layout);
         }
 
-        public static HexCenterMap ToHexGeometrySoA(
+        public static HexCenterMap ToHexCenterMap(
             this VectorXYInt resolution,
             Layout layout,
             VectorXY origin,

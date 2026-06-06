@@ -10,7 +10,6 @@ namespace Akeldov.Math.Hexes.Benchmarks.Topology;
 public class HexAdjacencyMapBenchmarks
 {
     private HexAdjacencyMap _adjacencyMap = null!;
-    private HexFieldTopologySoA _topologySoA = null!;
     private VectorXYInt[] _indices = null!;
 
     [Params(32, 128)]
@@ -23,7 +22,6 @@ public class HexAdjacencyMapBenchmarks
     public void Setup()
     {
         _adjacencyMap = new HexAdjacencyMap(Size, Size, Layout);
-        _topologySoA = new HexFieldTopologySoA(Size, Size, Layout);
         _indices = CreateIndices(Size, Size);
     }
 
@@ -31,12 +29,6 @@ public class HexAdjacencyMapBenchmarks
     public HexAdjacencyMap ConstructAdjacencyMap()
     {
         return new HexAdjacencyMap(Size, Size, Layout);
-    }
-
-    [Benchmark]
-    public HexFieldTopologySoA ConstructTopologySoA()
-    {
-        return new HexFieldTopologySoA(Size, Size, Layout);
     }
 
     [Benchmark]
@@ -53,24 +45,6 @@ public class HexAdjacencyMapBenchmarks
             sum += adjacency.Adjacent3;
             sum += adjacency.Adjacent4;
             sum += adjacency.Adjacent5;
-        }
-
-        return sum;
-    }
-
-    [Benchmark]
-    public int SumTopologySoANeighbors()
-    {
-        int sum = 0;
-
-        for (int i = 0; i < _topologySoA.Adjacent0Index.Length; i++)
-        {
-            sum += _topologySoA.Adjacent0Index[i];
-            sum += _topologySoA.Adjacent1Index[i];
-            sum += _topologySoA.Adjacent2Index[i];
-            sum += _topologySoA.Adjacent3Index[i];
-            sum += _topologySoA.Adjacent4Index[i];
-            sum += _topologySoA.Adjacent5Index[i];
         }
 
         return sum;

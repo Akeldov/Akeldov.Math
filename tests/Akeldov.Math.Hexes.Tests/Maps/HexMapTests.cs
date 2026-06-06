@@ -9,7 +9,7 @@ public class HexMapTests
     [Test]
     public void Constructor_UsesTopology()
     {
-        var topology = new HexFieldTopologySoA(3, 2, Layout.EvenQ);
+        var topology = new HexAdjacencyMap(3, 2, Layout.EvenQ);
 
         var map = new HexMap<int>(topology);
 
@@ -22,7 +22,7 @@ public class HexMapTests
     [Test]
     public void Indexer_UsesTopologyWidthForFlatIndex()
     {
-        var topology = new HexFieldTopologySoA(3, 2, Layout.OddR);
+        var topology = new HexAdjacencyMap(3, 2, Layout.OddR);
         var map = new HexMap<int>(topology);
 
         map[new VectorXYInt(2, 1)] = 42;
@@ -33,7 +33,7 @@ public class HexMapTests
     [Test]
     public void HexMap_ImplementsIHexMap()
     {
-        var topology = new HexFieldTopologySoA(3, 2, Layout.OddR);
+        var topology = new HexAdjacencyMap(3, 2, Layout.OddR);
         var source = new HexMap<int>(topology);
         IHexMap<int> map = source;
 
@@ -47,7 +47,7 @@ public class HexMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
-        var topology = new HexFieldTopologySoA(3, 2, Layout.OddR);
+        var topology = new HexAdjacencyMap(3, 2, Layout.OddR);
         var map = new HexMap<int>(topology);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = map[new VectorXYInt(3, 0)]);

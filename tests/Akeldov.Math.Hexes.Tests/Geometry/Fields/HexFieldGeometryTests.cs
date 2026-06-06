@@ -30,9 +30,9 @@ public class HexFieldGeometryTests
     [TestCase(Layout.EvenR, 6f, 2.3094f)]
     [TestCase(Layout.OddQ, 2.3094f, 2f)]
     [TestCase(Layout.EvenQ, 2.3094f, 6f)]
-    public void ToHexGeometrySoA_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
+    public void ToHexCenterMap_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
     {
-        var geometry = new VectorXYInt(1, 1).ToHexGeometrySoA(layout, 2f);
+        var geometry = new VectorXYInt(1, 1).ToHexCenterMap(layout, 2f);
 
         VectorAssert.AreEqual(geometry.Centers[0], expectedX, expectedY);
     }

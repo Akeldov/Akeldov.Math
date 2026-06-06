@@ -33,10 +33,9 @@ public class HexGeometryMapBenchmarks
     }
 
     [Benchmark]
-    public HexCenterMap ConstructCenterMapFromTopology()
+    public HexCenterMap ConstructCenterMapWithDefaultOrigin()
     {
-        var topology = new HexFieldTopologySoA(Size, Size, Layout);
-        return topology.ToHexFieldGeometry(VectorXY.Zero, apothem: 8f);
+        return new VectorXYInt(Size, Size).ToHexCenterMap(Layout, apothem: 8f);
     }
 
     [Benchmark]
