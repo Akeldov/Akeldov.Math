@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class HexAdjacencyMap : IHexMap<Septuplet<int>>
+    public sealed class IndexSeptupletMap : IHexMap<Septuplet<VectorXYInt>>
     {
-        private readonly Septuplet<int>[] _adjacent;
+        private readonly Septuplet<VectorXYInt>[] _adjacent;
 
-        public HexAdjacencyMap(
+        public IndexSeptupletMap(
             int width,
             int height,
             Layout layout)
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Hexes.Topology
             Width = width;
             Height = height;
             Layout = layout;
-            _adjacent = new Septuplet<int>[checked(width * height)];
+            _adjacent = new Septuplet<VectorXYInt>[checked(width * height)];
 
             switch (layout)
             {
@@ -52,9 +52,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         public Layout Layout { get; }
 
-        public Septuplet<int>[] Adjacent => _adjacent;
+        public Septuplet<VectorXYInt>[] Adjacent => _adjacent;
 
-        public Septuplet<int> this[VectorXYInt index]
+        public Septuplet<VectorXYInt> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -67,7 +67,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        public Septuplet<int> this[int index]
+        public Septuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _adjacent[index];
@@ -84,8 +84,7 @@ namespace Akeldov.Math.Hexes.Topology
 
                 for (int x = 0; x < Width; x++)
                 {
-                    var flatIndex = rowStart + x;
-                    _adjacent[flatIndex] = CreateAdjacency(x, y, flatIndex, offsets);
+                    _adjacent[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
         }
@@ -99,43 +98,24 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < Width; x++)
                 {
                     var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
-                    var flatIndex = rowStart + x;
-                    _adjacent[flatIndex] = CreateAdjacency(x, y, flatIndex, offsets);
+                    _adjacent[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
         }
 
-        private Septuplet<int> CreateAdjacency(
+        private static Septuplet<VectorXYInt> CreateAdjacency(
             int x,
             int y,
-            int flatIndex,
             sbyte[] offsets)
         {
-            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1]);
-            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3]);
-            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5]);
-            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7]);
-            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9]);
-            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11]);
-
-            return new Septuplet<int>(
-                flatIndex,
-                adjacent0Index,
-                adjacent1Index,
-                adjacent2Index,
-                adjacent3Index,
-                adjacent4Index,
-                adjacent5Index);
-        }
-
-        private int GetAdjacentFlatIndex(
-            int x,
-            int y)
-        {
-            if ((uint)x >= (uint)Width || (uint)y >= (uint)Height)
-                return -1;
-
-            return y * Width + x;
+            return new Septuplet<VectorXYInt>(
+                new VectorXYInt(x, y),
+                new VectorXYInt(x + offsets[0], y + offsets[1]),
+                new VectorXYInt(x + offsets[2], y + offsets[3]),
+                new VectorXYInt(x + offsets[4], y + offsets[5]),
+                new VectorXYInt(x + offsets[6], y + offsets[7]),
+                new VectorXYInt(x + offsets[8], y + offsets[9]),
+                new VectorXYInt(x + offsets[10], y + offsets[11]));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Akeldov.Math.Hexes.Benchmarks.Rasterization;
 [ShortRunJob]
 public class HexRasterizationBenchmarks
 {
-    private HexAdjacencyMap _adjacencyMap = null!;
+    private IndexSeptupletMap _adjacencyMap = null!;
     private HexFieldTopologyRGBA16BitRasterizer _topologyRasterizer = null!;
     private IndexedHexAdjacencyGrid _adjacencyGrid = null!;
     private RasterGrid _topologyGrid;
@@ -27,7 +27,7 @@ public class HexRasterizationBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _adjacencyMap = new HexAdjacencyMap(Size, Size, Layout);
+        _adjacencyMap = new IndexSeptupletMap(Size, Size, Layout);
         _topologyRasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             origin: VectorXY.Zero,
             apothem: 8f,
@@ -55,7 +55,7 @@ public class HexRasterizationBenchmarks
     [Benchmark]
     public RGBA16BitRaster RasterizeAdjacencyGrid()
     {
-        return _adjacencyGrid.Rasterize(adjacency => ToFlatIndexColor(adjacency.Main));
+        return _adjacencyGrid.Rasterize(adjacency => ToAdjacencyIndexColor(adjacency.Main));
     }
 
     private static RGBA16BitColor ToIndexColor(VectorXYInt index)
@@ -67,11 +67,12 @@ public class HexRasterizationBenchmarks
             ushort.MaxValue);
     }
 
-    private static RGBA16BitColor ToFlatIndexColor(int flatIndex)
+    private RGBA16BitColor ToAdjacencyIndexColor(VectorXYInt index)
     {
-        if (flatIndex < 0)
+        if ((uint)index.X >= (uint)Size || (uint)index.Y >= (uint)Size)
             return new RGBA16BitColor(0, 0, 0, ushort.MaxValue);
 
+        int flatIndex = index.Y * Size + index.X;
         return new RGBA16BitColor(
             (ushort)(flatIndex * 97),
             (ushort)(flatIndex * 193),

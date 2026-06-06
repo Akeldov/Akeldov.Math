@@ -31,7 +31,7 @@ namespace Akeldov.Math.Hexes.Topology
         private VectorXY CellSize { get; set; }
 
         public HexVertexChromaticIndexPartialTripletGrid(
-            HexAdjacencyMap hexAdjacencyMap,
+            IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
         {
             if (hexAdjacencyMap == null)

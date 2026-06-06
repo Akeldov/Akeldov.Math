@@ -12,7 +12,7 @@ public class HexFieldTopologyRasterizationTests
     [Test]
     public void Rasterize_UsesPixelsPerApothemForRasterResolution()
     {
-        var topology = new HexAdjacencyMap(1, 1, Layout.OddR);
+        var topology = new IndexSeptupletMap(1, 1, Layout.OddR);
         var rasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
             2f,
@@ -28,7 +28,7 @@ public class HexFieldTopologyRasterizationTests
     [Test]
     public void Rasterize_MapsHexIndexToColor()
     {
-        var topology = new HexAdjacencyMap(2, 1, Layout.OddR);
+        var topology = new IndexSeptupletMap(2, 1, Layout.OddR);
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var mappedIndices = new List<VectorXYInt>();
@@ -56,7 +56,7 @@ public class HexFieldTopologyRasterizationTests
     [Test]
     public void Rasterize_UsesProvidedGrid()
     {
-        var topology = new HexAdjacencyMap(1, 1, Layout.OddR);
+        var topology = new IndexSeptupletMap(1, 1, Layout.OddR);
         var grid = new RasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
         var rasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
@@ -88,7 +88,7 @@ public class HexFieldTopologyRasterizationTests
     [Test]
     public void CreateGrid_WhenPixelsPerApothemIsInvalid_Throws()
     {
-        var topology = new HexAdjacencyMap(1, 1, Layout.OddR);
+        var topology = new IndexSeptupletMap(1, 1, Layout.OddR);
         var rasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
             2f,

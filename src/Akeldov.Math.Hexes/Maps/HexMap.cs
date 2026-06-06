@@ -10,13 +10,13 @@ namespace Akeldov.Math.Hexes
     {
         private readonly TValue[] _values;
 
-        public HexMap(HexAdjacencyMap topology)
+        public HexMap(IndexSeptupletMap topology)
         {
             Topology = topology ?? throw new ArgumentNullException(nameof(topology));
             _values = new TValue[checked(topology.Width * topology.Height)];
         }
 
-        internal HexMap(HexAdjacencyMap topology, TValue[] values)
+        internal HexMap(IndexSeptupletMap topology, TValue[] values)
         {
             Topology = topology ?? throw new ArgumentNullException(nameof(topology));
             _values = values ?? throw new ArgumentNullException(nameof(values));
@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes
                 throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
         }
 
-        public HexAdjacencyMap Topology { get; }
+        public IndexSeptupletMap Topology { get; }
 
         public int Width => Topology.Width;
 

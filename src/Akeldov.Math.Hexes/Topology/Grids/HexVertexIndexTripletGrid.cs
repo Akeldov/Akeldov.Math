@@ -26,7 +26,7 @@ namespace Akeldov.Math.Hexes.Topology
         private VectorXY CellSize { get; set; }
 
         public HexVertexIndexTripletGrid(
-            HexAdjacencyMap hexAdjacencyMap,
+            IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
         {
             if (hexAdjacencyMap == null)

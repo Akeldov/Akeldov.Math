@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Benchmarks.Topology;
 [ShortRunJob]
 public class HexAdjacencyMapBenchmarks
 {
-    private HexAdjacencyMap _adjacencyMap = null!;
+    private IndexSeptupletMap _adjacencyMap = null!;
     private VectorXYInt[] _indices = null!;
 
     [Params(32, 128)]
@@ -21,14 +21,14 @@ public class HexAdjacencyMapBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _adjacencyMap = new HexAdjacencyMap(Size, Size, Layout);
+        _adjacencyMap = new IndexSeptupletMap(Size, Size, Layout);
         _indices = CreateIndices(Size, Size);
     }
 
     [Benchmark]
-    public HexAdjacencyMap ConstructAdjacencyMap()
+    public IndexSeptupletMap ConstructAdjacencyMap()
     {
-        return new HexAdjacencyMap(Size, Size, Layout);
+        return new IndexSeptupletMap(Size, Size, Layout);
     }
 
     [Benchmark]
@@ -38,13 +38,13 @@ public class HexAdjacencyMapBenchmarks
 
         for (int i = 0; i < _indices.Length; i++)
         {
-            Septuplet<int> adjacency = _adjacencyMap[_indices[i]];
-            sum += adjacency.Adjacent0;
-            sum += adjacency.Adjacent1;
-            sum += adjacency.Adjacent2;
-            sum += adjacency.Adjacent3;
-            sum += adjacency.Adjacent4;
-            sum += adjacency.Adjacent5;
+            Septuplet<VectorXYInt> adjacency = _adjacencyMap[_indices[i]];
+            sum += adjacency.Adjacent0.X + adjacency.Adjacent0.Y;
+            sum += adjacency.Adjacent1.X + adjacency.Adjacent1.Y;
+            sum += adjacency.Adjacent2.X + adjacency.Adjacent2.Y;
+            sum += adjacency.Adjacent3.X + adjacency.Adjacent3.Y;
+            sum += adjacency.Adjacent4.X + adjacency.Adjacent4.Y;
+            sum += adjacency.Adjacent5.X + adjacency.Adjacent5.Y;
         }
 
         return sum;

@@ -7,12 +7,12 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class IndexedHexAdjacencyGrid : IGrid<Septuplet<int>>
+    public sealed class IndexedHexAdjacencyGrid : IGrid<Septuplet<VectorXYInt>>
     {
-        private Septuplet<int>[] _adjacent;
+        private Septuplet<VectorXYInt>[] _adjacent;
 
         public IndexedHexAdjacencyGrid(
-            HexAdjacencyMap hexAdjacencyMap,
+            IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
         {
             if (hexAdjacencyMap == null)
@@ -31,7 +31,7 @@ namespace Akeldov.Math.Hexes.Topology
             var stepX = boundingBoxSize.X / Width;
             var stepY = boundingBoxSize.Y / Height;
 
-            _adjacent = new Septuplet<int>[checked(Width * Height)];
+            _adjacent = new Septuplet<VectorXYInt>[checked(Width * Height)];
             switch (hexAdjacencyMap.Layout)
             {
                 case Layout.OddR:
@@ -59,7 +59,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _adjacent.Length;
 
-        public Septuplet<int> this[VectorXYInt index]
+        public Septuplet<VectorXYInt> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -72,7 +72,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        public Septuplet<int> this[int index]
+        public Septuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _adjacent[index];
@@ -81,7 +81,7 @@ namespace Akeldov.Math.Hexes.Topology
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
 
         private void Fill(
-            HexAdjacencyMap hexAdjacencyMap,
+            IndexSeptupletMap hexAdjacencyMap,
             float radius,
             float stepX,
             float stepY,
@@ -98,76 +98,31 @@ namespace Akeldov.Math.Hexes.Topology
                 {
                     var x = (j + 0.5f) * stepX;
                     var cellIndex = new VectorXY(x, y).ToXYIndex(radius, origin, layout);
-                    _adjacent[index] = CreateValue(hexAdjacencyMap, cellIndex, index);
+                    _adjacent[index] = CreateValue(hexAdjacencyMap, cellIndex);
                     index = index + 1;
                 }
             }
         }
 
-        private Septuplet<int> CreateValue(
-            HexAdjacencyMap hexAdjacencyMap,
-            VectorXYInt cellIndex,
-            int index)
+        private static Septuplet<VectorXYInt> CreateValue(
+            IndexSeptupletMap hexAdjacencyMap,
+            VectorXYInt cellIndex)
         {
-            var flatIndex = -1;
-            var adjacent0Index = -1;
-            var adjacent1Index = -1;
-            var adjacent2Index = -1;
-            var adjacent3Index = -1;
-            var adjacent4Index = -1;
-            var adjacent5Index = -1;
-
             if (ContainsCell(hexAdjacencyMap, cellIndex))
-            {
-                var adjacency = hexAdjacencyMap[cellIndex];
-                flatIndex = adjacency.Main;
-                adjacent0Index = adjacency.Adjacent0;
-                adjacent1Index = adjacency.Adjacent1;
-                adjacent2Index = adjacency.Adjacent2;
-                adjacent3Index = adjacency.Adjacent3;
-                adjacent4Index = adjacency.Adjacent4;
-                adjacent5Index = adjacency.Adjacent5;
-            }
-            else
-            {
-                var offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Layout, cellIndex.X, cellIndex.Y);
-                TryAssignAdjacent(hexAdjacencyMap, cellIndex, offsets, 0, ref adjacent0Index);
-                TryAssignAdjacent(hexAdjacencyMap, cellIndex, offsets, 1, ref adjacent1Index);
-                TryAssignAdjacent(hexAdjacencyMap, cellIndex, offsets, 2, ref adjacent2Index);
-                TryAssignAdjacent(hexAdjacencyMap, cellIndex, offsets, 3, ref adjacent3Index);
-                TryAssignAdjacent(hexAdjacencyMap, cellIndex, offsets, 4, ref adjacent4Index);
-                TryAssignAdjacent(hexAdjacencyMap, cellIndex, offsets, 5, ref adjacent5Index);
-            }
+                return hexAdjacencyMap[cellIndex];
 
-            return new Septuplet<int>(
-                flatIndex,
-                adjacent0Index,
-                adjacent1Index,
-                adjacent2Index,
-                adjacent3Index,
-                adjacent4Index,
-                adjacent5Index);
+            sbyte[] offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Layout, cellIndex.X, cellIndex.Y);
+            return new Septuplet<VectorXYInt>(
+                cellIndex,
+                new VectorXYInt(cellIndex.X + offsets[0], cellIndex.Y + offsets[1]),
+                new VectorXYInt(cellIndex.X + offsets[2], cellIndex.Y + offsets[3]),
+                new VectorXYInt(cellIndex.X + offsets[4], cellIndex.Y + offsets[5]),
+                new VectorXYInt(cellIndex.X + offsets[6], cellIndex.Y + offsets[7]),
+                new VectorXYInt(cellIndex.X + offsets[8], cellIndex.Y + offsets[9]),
+                new VectorXYInt(cellIndex.X + offsets[10], cellIndex.Y + offsets[11]));
         }
 
-        private void TryAssignAdjacent(
-            HexAdjacencyMap hexAdjacencyMap,
-            VectorXYInt cellIndex,
-            sbyte[] offsets,
-            int adjacentOffset,
-            ref int adjacentIndex)
-        {
-            var offsetIndex = adjacentOffset * 2;
-            var adjacentCellIndex = new VectorXYInt(
-                cellIndex.X + offsets[offsetIndex],
-                cellIndex.Y + offsets[offsetIndex + 1]);
-
-            if (!ContainsCell(hexAdjacencyMap, adjacentCellIndex))
-                return;
-
-            adjacentIndex = hexAdjacencyMap[adjacentCellIndex].Main;
-        }
-
-        private bool ContainsCell(HexAdjacencyMap hexAdjacencyMap, VectorXYInt cellIndex)
+        private static bool ContainsCell(IndexSeptupletMap hexAdjacencyMap, VectorXYInt cellIndex)
         {
             return (uint)cellIndex.X < (uint)hexAdjacencyMap.Width &&
                 (uint)cellIndex.Y < (uint)hexAdjacencyMap.Height;

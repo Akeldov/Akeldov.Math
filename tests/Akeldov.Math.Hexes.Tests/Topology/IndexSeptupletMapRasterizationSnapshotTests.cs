@@ -6,81 +6,88 @@ using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class HexAdjacencyMapRasterizationSnapshotTests
+public class IndexSeptupletMapRasterizationSnapshotTests
 {
-    [TestCase(Layout.OddR, "hex-adjacency-map-main-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-adjacency-map-main-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-adjacency-map-main-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-adjacency-map-main-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-septuplet-map-main-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-septuplet-map-main-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-septuplet-map-main-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-septuplet-map-main-index-even-q-rgba16.png")]
     public void Rasterize_WithMainIndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var adjacencyMap = new HexAdjacencyMap(
+        var indexSeptupletMap = new IndexSeptupletMap(
             width: 12,
             height: 8,
             layout: layout);
         var adjacencyGrid = new IndexedHexAdjacencyGrid(
-            adjacencyMap,
+            indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        RGBA16BitRaster raster = adjacencyGrid.Rasterize(adjacency => ToMainIndexColor(adjacency, adjacencyMap.Width));
+        RGBA16BitRaster raster = adjacencyGrid.Rasterize(
+            adjacency => ToMainIndexColor(adjacency, indexSeptupletMap.Width, indexSeptupletMap.Height));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "hex-adjacency-map-adjacent-1-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-adjacency-map-adjacent-1-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-adjacency-map-adjacent-1-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-adjacency-map-adjacent-1-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-septuplet-map-adjacent-1-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-septuplet-map-adjacent-1-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-septuplet-map-adjacent-1-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-septuplet-map-adjacent-1-index-even-q-rgba16.png")]
     public void Rasterize_WithAdjacent1IndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var adjacencyMap = new HexAdjacencyMap(
+        var indexSeptupletMap = new IndexSeptupletMap(
             width: 12,
             height: 8,
             layout: layout);
         var adjacencyGrid = new IndexedHexAdjacencyGrid(
-            adjacencyMap,
+            indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        RGBA16BitRaster raster = adjacencyGrid.Rasterize(adjacency => ToAdjacent1IndexColor(adjacency, adjacencyMap.Width));
+        RGBA16BitRaster raster = adjacencyGrid.Rasterize(
+            adjacency => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Width, indexSeptupletMap.Height));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    private static RGBA16BitColor ToMainIndexColor(Septuplet<int> adjacency, int mapWidth)
+    private static RGBA16BitColor ToMainIndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth, int mapHeight)
     {
-        if (adjacency.Main < 0)
+        if (!ContainsIndex(adjacency.Main, mapWidth, mapHeight))
             return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
 
         return ToIndexColor(adjacency.Main, mapWidth);
     }
 
-    private static RGBA16BitColor ToAdjacent1IndexColor(Septuplet<int> adjacency, int mapWidth)
+    private static RGBA16BitColor ToAdjacent1IndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth, int mapHeight)
     {
-        if (adjacency.Adjacent1 < 0)
+        if (!ContainsIndex(adjacency.Adjacent1, mapWidth, mapHeight))
             return new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
 
         return ToIndexColor(adjacency.Adjacent1, mapWidth);
     }
 
-    private static RGBA16BitColor ToIndexColor(int index, int mapWidth)
+    private static RGBA16BitColor ToIndexColor(VectorXYInt index, int mapWidth)
     {
-        int x = index % mapWidth;
-        int y = index / mapWidth;
-        float red = 0.12f + 0.07f * x;
-        float green = 0.18f + 0.14f * y;
-        float blue = 0.82f - 0.012f * index;
+        int flatIndex = index.Y * mapWidth + index.X;
+        float red = 0.12f + 0.07f * index.X;
+        float green = 0.18f + 0.14f * index.Y;
+        float blue = 0.82f - 0.012f * flatIndex;
 
         return new RGBA16BitColor(
             ToChannel(red),
             ToChannel(green),
             ToChannel(blue),
             ushort.MaxValue);
+    }
+
+    private static bool ContainsIndex(VectorXYInt index, int mapWidth, int mapHeight)
+    {
+        return (uint)index.X < (uint)mapWidth &&
+            (uint)index.Y < (uint)mapHeight;
     }
 
     private static ushort ToChannel(float value)
@@ -107,8 +114,8 @@ public class HexAdjacencyMapRasterizationSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex adjacency map raster snapshot");
-            Assert.Fail($"Hex adjacency map approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual index septuplet map raster snapshot");
+            Assert.Fail($"Index septuplet map approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -116,8 +123,8 @@ public class HexAdjacencyMapRasterizationSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex adjacency map raster snapshot");
-            Assert.Fail($"Hex adjacency map raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual index septuplet map raster snapshot");
+            Assert.Fail($"Index septuplet map raster snapshot changed. Actual image: {actualPath}");
         }
     }
 

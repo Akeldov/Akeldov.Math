@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Topology.Maps.BoundingBox
 {
     public static class HexAdjacencyMapExtensions
     {
-        public static VectorXY GetBoundingBoxSize(this HexAdjacencyMap hexAdjacencyMap, float hexRadius)
+        public static VectorXY GetBoundingBoxSize(this IndexSeptupletMap hexAdjacencyMap, float hexRadius)
         {
             if (hexAdjacencyMap == null)
                 throw new ArgumentNullException(nameof(hexAdjacencyMap));
