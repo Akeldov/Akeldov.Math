@@ -4,10 +4,10 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
-    public static partial class VectorXYExtensions
+    public static partial class PointXYExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorQRS ToQRS(this VectorXY point, VectorXY newOrigin, Layout layout)
+        public static VectorQRS ToQRS(this PointXY point, VectorXY newOrigin, Layout layout)
         {
             var shiftedPoint = point - newOrigin;
 

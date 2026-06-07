@@ -97,7 +97,7 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int j = 0; j < Width; j++)
                 {
                     var x = (j + 0.5f) * stepX;
-                    var cellIndex = new VectorXY(x, y).ToXYIndex(radius, origin, layout);
+                    var cellIndex = new PointXY(x, y).ToXYIndex(radius, origin, layout);
                     _adjacent[index] = CreateValue(hexAdjacencyMap, cellIndex);
                     index = index + 1;
                 }

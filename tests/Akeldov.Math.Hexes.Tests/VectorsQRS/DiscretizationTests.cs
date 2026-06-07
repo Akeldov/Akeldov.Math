@@ -38,7 +38,7 @@ public class DiscretizationTests
         const float radius = 3f;
         var expectedIndex = new VectorXYInt(x, y);
         var qrsIndex = expectedIndex.ToQRSIndex(layout);
-        var point = GetHexCenter(qrsIndex, layout, origin, radius);
+        PointXY point = GetHexCenter(qrsIndex, layout, origin, radius);
 
         var actualIndex = point.ToXYIndex(radius, origin, layout);
 
@@ -49,20 +49,22 @@ public class DiscretizationTests
     public void XYPoint_ToXYIndex_ThrowsWhenHexRadiusIsZero()
     {
         Assert.Throws<ArgumentOutOfRangeException>(
-            () => _ = VectorXY.Zero.ToXYIndex(0f, VectorXY.Zero, Layout.OddR));
+            () => _ = new PointXY(0f, 0f).ToXYIndex(0f, VectorXY.Zero, Layout.OddR));
     }
 
     [Test]
     public void XYPoint_ToXYIndex_ThrowsForInvalidLayout()
     {
         Assert.Throws<ArgumentOutOfRangeException>(
-            () => _ = VectorXY.Zero.ToXYIndex(1f, VectorXY.Zero, (Layout)42));
+            () => _ = new PointXY(0f, 0f).ToXYIndex(1f, VectorXY.Zero, (Layout)42));
     }
 
-    private static VectorXY GetHexCenter(VectorQRSInt qrs, Layout layout, VectorXY origin, float radius)
+    private static PointXY GetHexCenter(VectorQRSInt qrs, Layout layout, VectorXY origin, float radius)
     {
-        return layout.IsPointyTop()
+        VectorXY center = layout.IsPointyTop()
             ? origin + new VectorXY(Sqrt3 * radius * (qrs.Q + qrs.R / 2f), 1.5f * radius * qrs.R)
             : origin + new VectorXY(1.5f * radius * qrs.Q, Sqrt3 * radius * (qrs.R + qrs.Q / 2f));
+
+        return new PointXY(center.X, center.Y);
     }
 }

@@ -1,13 +1,14 @@
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using System;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYExtensions
     {
         public static (VectorXYInt hexIndex, HexVertex hexVertex) GetClosestVertexIndex(
-            this VectorXY point,
+            this PointXY point,
             float apothem,
             float radius,
             VectorXY hexFieldOrigin,
@@ -21,7 +22,7 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         public static int GetClosestVertexIndex(
-            this VectorXY point,
+            this PointXY point,
             float radius,
             VectorXY hexCenter,
             Layout layout)
@@ -34,7 +35,7 @@ namespace Akeldov.Math.Hexes.Geometry
             for (int i = 0; i < 6; i++)
             {
                 VectorXY vertex = hexCenter + normalizedHexVertexes[i] * radius;
-                float dist = point.Distance(vertex);
+                float dist = Distance(point, vertex);
 
                 if (dist < minDist)
                 {
@@ -44,6 +45,13 @@ namespace Akeldov.Math.Hexes.Geometry
             }
 
             return closestVertexIndex;
+        }
+
+        private static float Distance(PointXY point, VectorXY vertex)
+        {
+            float x = point.X - vertex.X;
+            float y = point.Y - vertex.Y;
+            return MathF.Sqrt(x * x + y * y);
         }
     }
 }

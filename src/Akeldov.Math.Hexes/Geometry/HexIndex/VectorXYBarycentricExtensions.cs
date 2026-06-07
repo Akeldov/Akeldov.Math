@@ -5,11 +5,11 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYExtensions
     {
-        public static Triplet<float> BarycentricCoordinates(this VectorXY p, VectorXY a, VectorXY b, VectorXY c)
+        public static Triplet<float> BarycentricCoordinates(this PointXY p, VectorXY a, VectorXY b, VectorXY c)
         {
             VectorXY v0 = new VectorXY(b.X - a.X, b.Y - a.Y);
             VectorXY v1 = new VectorXY((c - a).X, (c - a).Y);
-            VectorXY v2 = new VectorXY((p - a).X, (p - a).Y);
+            VectorXY v2 = new VectorXY(p.X - a.X, p.Y - a.Y);
 
             float d00 = VectorXY.Dot(v0, v0);
             float d01 = VectorXY.Dot(v0, v1);
@@ -32,10 +32,10 @@ namespace Akeldov.Math.Hexes.Geometry
             return new Triplet<float>(wA, wB, wC);
         }
 
-        public static Pair<float> BarycentricCoordinates(this VectorXY p, VectorXY a, VectorXY b)
+        public static Pair<float> BarycentricCoordinates(this PointXY p, VectorXY a, VectorXY b)
         {
             VectorXY ab = b - a;
-            VectorXY ap = p - a;
+            VectorXY ap = new VectorXY(p.X - a.X, p.Y - a.Y);
 
             float denominator = VectorXY.Dot(ab, ab);
 

@@ -11,7 +11,7 @@ public class CoordinatesConversionTests
     [TestCase(Layout.EvenQ, 4f, 3.1961522f)]
     public void ToQRS_UsesOriginAndLayoutOrientation(Layout layout, float expectedQ, float expectedR)
     {
-        var point = new VectorXY(7f, 11f);
+        var point = new PointXY(7f, 11f);
         var origin = new VectorXY(1f, 2f);
 
         var qrs = point.ToQRS(origin, layout);
@@ -23,7 +23,7 @@ public class CoordinatesConversionTests
     public void ToQRS_ThrowsForInvalidLayout()
     {
         Assert.Throws<ArgumentOutOfRangeException>(
-            () => _ = new VectorXY(1f, 2f).ToQRS(VectorXY.Zero, (Layout)42));
+            () => _ = new PointXY(1f, 2f).ToQRS(VectorXY.Zero, (Layout)42));
     }
 
     [Test]

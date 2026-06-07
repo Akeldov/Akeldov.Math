@@ -88,7 +88,7 @@ namespace Akeldov.Math.Hexes.Topology
             get => _barycentricCoordinates[index];
         }
 
-        public VectorXY GetCellCenter(VectorXYInt index)
+        public PointXY GetCellCenter(VectorXYInt index)
         {
             ThrowIfGridIndexOutOfBounds(index);
             return GetCellCenterUnchecked(index.X, index.Y);
@@ -150,7 +150,7 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < ResolutionX; x++)
                 {
                     int flatIndex = rowStart + x;
-                    VectorXY point = GetCellCenterUnchecked(x, y);
+                    PointXY point = GetCellCenterUnchecked(x, y);
                     VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
                     _barycentricCoordinates[flatIndex] = CreateBarycentricCoordinates(point, mainIndex, normalizedHexVertexes);
                 }
@@ -158,7 +158,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         private PartialTriplet<float> CreateBarycentricCoordinates(
-            VectorXY point,
+            PointXY point,
             VectorXYInt mainIndex,
             VectorXY[] normalizedHexVertexes)
         {
@@ -216,9 +216,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
 
-        private VectorXY GetCellCenterUnchecked(int x, int y)
+        private PointXY GetCellCenterUnchecked(int x, int y)
         {
-            return new VectorXY(
+            return new PointXY(
                 Origin.X + (x + 0.5f) * CellSize.X,
                 Origin.Y + (y + 0.5f) * CellSize.Y);
         }
@@ -249,7 +249,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         private static int GetClosestVertexIndex(
-            VectorXY point,
+            PointXY point,
             VectorXY hexCenter,
             float hexRadius,
             VectorXY[] normalizedHexVertexes,
@@ -290,7 +290,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        private static float SquaredDistance(VectorXY left, VectorXY right)
+        private static float SquaredDistance(PointXY left, VectorXY right)
         {
             float x = left.X - right.X;
             float y = left.Y - right.Y;
