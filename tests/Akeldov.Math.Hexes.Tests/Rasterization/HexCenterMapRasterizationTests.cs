@@ -7,7 +7,7 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Rasterization;
 
-public class HexFieldGeometryRasterizationTests
+public class HexCenterMapRasterizationTests
 {
     [Test]
     public void Rasterize_UsesPixelsPerApothemForRasterResolution()

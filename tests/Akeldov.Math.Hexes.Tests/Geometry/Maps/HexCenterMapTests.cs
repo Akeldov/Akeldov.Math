@@ -3,9 +3,9 @@ using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Hexes.Tests.VectorsQRS;
 
-namespace Akeldov.Math.Hexes.Tests.Geometry.Fields;
+namespace Akeldov.Math.Hexes.Tests.Geometry.Maps;
 
-public class HexFieldGeometryTests
+public class HexCenterMapTests
 {
     [Test]
     public void Constructor_UsesOriginAsZeroHexCenter_ForEveryLayout()
@@ -51,7 +51,7 @@ public class HexFieldGeometryTests
     }
 
     [Test]
-    public void Indexer_WhenIndexIsOutsideGeometry_Throws()
+    public void Indexer_WhenIndexIsOutsideMap_Throws()
     {
         var geometry = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
 

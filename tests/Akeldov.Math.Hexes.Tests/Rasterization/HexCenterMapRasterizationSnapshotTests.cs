@@ -7,12 +7,12 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Rasterization;
 
-public class HexFieldGeometryRasterizationSnapshotTests
+public class HexCenterMapRasterizationSnapshotTests
 {
-    [TestCase(Layout.OddR, "hex-field-geometry-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-field-geometry-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-field-geometry-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-field-geometry-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "hex-center-map-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-center-map-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-center-map-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-center-map-even-q-rgba16.png")]
     public void Rasterize_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
     {
         var geometry = new HexCenterMap(
@@ -66,8 +66,8 @@ public class HexFieldGeometryRasterizationSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex field geometry raster snapshot");
-            Assert.Fail($"Hex field geometry approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual hex center map raster snapshot");
+            Assert.Fail($"Hex center map approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -75,8 +75,8 @@ public class HexFieldGeometryRasterizationSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex field geometry raster snapshot");
-            Assert.Fail($"Hex field geometry raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual hex center map raster snapshot");
+            Assert.Fail($"Hex center map raster snapshot changed. Actual image: {actualPath}");
         }
     }
 
