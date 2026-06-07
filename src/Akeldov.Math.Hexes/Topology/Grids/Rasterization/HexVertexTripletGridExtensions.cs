@@ -30,5 +30,29 @@ namespace Akeldov.Math.Hexes.Topology
 
             return new RGBA16BitRaster(rasterGrid, values);
         }
+
+        public static RGBA16BitRaster ToRGBA16BitRaster(
+            this IndexPartialTripletGrid grid,
+            Func<PartialTriplet<VectorXYInt>, RGBA16BitColor> tripletToColor)
+        {
+            if (grid == null)
+                throw new ArgumentNullException(nameof(grid));
+
+            if (tripletToColor == null)
+                throw new ArgumentNullException(nameof(tripletToColor));
+
+            var values = new RGBA16BitColor[grid.Count];
+            PartialTriplet<VectorXYInt>[] indexTriplets = grid.IndexTriplets;
+
+            for (int i = 0; i < values.Length; i++)
+                values[i] = tripletToColor(indexTriplets[i]);
+
+            var rasterGrid = new RasterGrid(
+                (PointXY)grid.Origin,
+                grid.Size,
+                grid.Resolution);
+
+            return new RGBA16BitRaster(rasterGrid, values);
+        }
     }
 }

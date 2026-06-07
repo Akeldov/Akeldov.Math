@@ -28,6 +28,24 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "index-partial-triplet-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-partial-triplet-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-partial-triplet-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-partial-triplet-grid-even-q-rgba16.png")]
+    public void IndexPartialTripletGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        var map = new IndexSeptupletMap(width: 5, height: 4, layout: layout);
+        var grid = new IndexPartialTripletGrid(
+            map,
+            resolution: new VectorXYInt(64, 64));
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexPartialTripletSnapshotColor);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     [TestCase(Layout.OddR, "hex-vertex-barycentric-triplet-grid-main-odd-r-rgba16.png")]
     [TestCase(Layout.EvenR, "hex-vertex-barycentric-triplet-grid-main-even-r-rgba16.png")]
     [TestCase(Layout.OddQ, "hex-vertex-barycentric-triplet-grid-main-odd-q-rgba16.png")]
@@ -137,6 +155,15 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ToChannel(main),
             ToChannel(left),
             ToChannel(right),
+            ushort.MaxValue);
+    }
+
+    private static RGBA16BitColor ToIndexPartialTripletSnapshotColor(PartialTriplet<VectorXYInt> triplet)
+    {
+        return new RGBA16BitColor(
+            ToPresenceIndexChannel(triplet.Main, triplet.HasMain),
+            ToPresenceIndexChannel(triplet.Left, triplet.HasLeft),
+            ToPresenceIndexChannel(triplet.Right, triplet.HasRight),
             ushort.MaxValue);
     }
 
@@ -252,6 +279,13 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
     {
         return hasValue
             ? ToChannel(0.10f + 0.90f * weight)
+            : (ushort)0;
+    }
+
+    private static ushort ToPresenceIndexChannel(VectorXYInt index, bool hasValue)
+    {
+        return hasValue
+            ? ToChannel(EncodeIndex(index))
             : (ushort)0;
     }
 
