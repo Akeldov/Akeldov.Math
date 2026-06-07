@@ -1,11 +1,13 @@
-﻿using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Hexes.Vectors.QRS;
+using System;
 using System.Text;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public class Mask
+    public class Mask : IEquatable<Mask>
     {
-        private int _hash;
+        private readonly bool[] _cells;
+        private readonly int _hash;
 
         public Mask(int[,] intMask) : this(intMask.ToBoolMask())
         {
@@ -13,25 +15,72 @@ namespace Akeldov.Math.Hexes.Topology
 
         public Mask(bool[,] boolMask)
         {
-            BoolMask = boolMask;
+            if (boolMask == null)
+                throw new ArgumentNullException(nameof(boolMask));
 
-            QSize = BoolMask.GetLength(0);
-            RSize = BoolMask.GetLength(1);
-            PositiveSize = BoolMask.PositiveSize();
-            int hash = QSize ^ RSize;
-            int r = 0;
-            for (int i = 0; i < QSize; i++)
+            QSize = boolMask.GetLength(0);
+            RSize = boolMask.GetLength(1);
+            _cells = new bool[checked(QSize * RSize)];
+
+            var hash = new HashCode();
+            hash.Add(QSize);
+            hash.Add(RSize);
+
+            var positiveSize = 0;
+            for (int q = 0; q < QSize; q++)
             {
-                for (int j = 0; j < RSize; j++)
+                for (int r = 0; r < RSize; r++)
                 {
-                    hash = hash ^ ((BoolMask[i, j] ? 1 : 0) << r);
-                    r = r + 1;
+                    bool value = boolMask[q, r];
+                    _cells[GetFlatIndex(q, r)] = value;
+                    hash.Add(value);
+
+                    if (value)
+                        positiveSize++;
                 }
             }
-            _hash = hash;
+
+            PositiveSize = positiveSize;
+            _hash = hash.ToHashCode();
         }
 
-        public bool[,] BoolMask { get; }
+        internal Mask(int qSize, int rSize, bool[] cells)
+        {
+            if (qSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(qSize));
+
+            if (rSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(rSize));
+
+            if (cells == null)
+                throw new ArgumentNullException(nameof(cells));
+
+            int length = checked(qSize * rSize);
+            if (cells.Length != length)
+                throw new ArgumentException("Cell count must match mask dimensions.", nameof(cells));
+
+            QSize = qSize;
+            RSize = rSize;
+            _cells = new bool[length];
+
+            var hash = new HashCode();
+            hash.Add(QSize);
+            hash.Add(RSize);
+
+            var positiveSize = 0;
+            for (int i = 0; i < cells.Length; i++)
+            {
+                bool value = cells[i];
+                _cells[i] = value;
+                hash.Add(value);
+
+                if (value)
+                    positiveSize++;
+            }
+
+            PositiveSize = positiveSize;
+            _hash = hash.ToHashCode();
+        }
 
         public int QSize { get; }
 
@@ -41,22 +90,37 @@ namespace Akeldov.Math.Hexes.Topology
 
         public bool this[VectorQRSInt index]
         {
-            get => BoolMask[index.Q, index.R];
+            get => this[index.Q, index.R];
         }
 
         public bool this[int QIndex, int RIndex]
         {
-            get => BoolMask[QIndex, RIndex];
+            get => _cells[GetFlatIndex(QIndex, RIndex)];
         }
 
         public Mask GetExtended()
         {
-            return new Mask(BoolMask.GetExtended());
+            return new Mask(ToBoolArray().GetExtended());
         }
 
         public Mask GetContour()
         {
-            return new Mask(BoolMask.GetContour());
+            return new Mask(ToBoolArray().GetContour());
+        }
+
+        public bool[,] ToBoolArray()
+        {
+            var result = new bool[QSize, RSize];
+
+            for (int q = 0; q < QSize; q++)
+            {
+                for (int r = 0; r < RSize; r++)
+                {
+                    result[q, r] = this[q, r];
+                }
+            }
+
+            return result;
         }
 
         public override int GetHashCode() => _hash;
@@ -71,13 +135,10 @@ namespace Akeldov.Math.Hexes.Topology
             if (QSize != other.QSize || RSize != other.RSize)
                 return false;
 
-            for (int i = 0; i < QSize; i++)
+            for (int i = 0; i < _cells.Length; i++)
             {
-                for (int j = 0; j < RSize; j++)
-                {
-                    if (BoolMask[i, j] != other.BoolMask[i, j])
-                        return false;
-                }
+                if (_cells[i] != other._cells[i])
+                    return false;
             }
 
             return true;
@@ -86,20 +147,18 @@ namespace Akeldov.Math.Hexes.Topology
         public override string ToString()
         {
             var sb = new StringBuilder();
-            for (int i = 0; i < QSize; i++)
+            for (int q = 0; q < QSize; q++)
             {
-                for (int j = 0; j < RSize; j++)
+                for (int r = 0; r < RSize; r++)
                 {
-                    sb.Append(BoolMask[i, j] ? 1 : 0);
+                    sb.Append(this[q, r] ? 1 : 0);
                 }
+
                 sb.AppendLine();
             }
+
             return sb.ToString();
         }
-
-
-        public static implicit operator bool[,](Mask mask) => mask.BoolMask;
-
 
         public static implicit operator Mask(bool[,] boolMask) => new Mask(boolMask);
 
@@ -115,5 +174,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         public static bool operator !=(Mask left, Mask right) => !(left == right);
+
+        private int GetFlatIndex(int q, int r) => q * RSize + r;
     }
 }

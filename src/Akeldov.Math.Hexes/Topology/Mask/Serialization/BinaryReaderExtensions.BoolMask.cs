@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Topology
                 var mask = new bool[dim.X, dim.Y];
                 for (int i = 0; i < dim.X; i++)
                 {
-                    for (int j = 0; j < dim.X; j++)
+                    for (int j = 0; j < dim.Y; j++)
                     {
                         mask[i, j] = reader.ReadBoolean();
                     }
