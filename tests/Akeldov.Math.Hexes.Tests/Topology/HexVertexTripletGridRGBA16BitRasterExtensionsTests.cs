@@ -65,7 +65,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     public void ToRGBA16BitRaster_WhenGridIsNull_Throws()
     {
         IndexTripletGrid indexTripletGrid = null!;
-        HexVertexBarycentricTripletGrid barycentricGrid = null!;
+        BarycentricTripletGrid barycentricGrid = null!;
         HexVertexChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
 
         Assert.Throws<ArgumentNullException>(() => indexTripletGrid.ToRGBA16BitRaster(_ => default));

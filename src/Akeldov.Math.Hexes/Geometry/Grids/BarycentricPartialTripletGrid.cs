@@ -7,11 +7,15 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class HexVertexBarycentricTripletGrid : IGrid<Triplet<float>>
+    public sealed class BarycentricPartialTripletGrid : IGrid<PartialTriplet<float>>
     {
         private const float DefaultHexRadius = 1f;
 
-        private Triplet<float>[] _barycentricCoordinates;
+        private PartialTriplet<float>[] _barycentricCoordinates;
+
+        private int HexWidth { get; set; }
+
+        private int HexHeight { get; set; }
 
         private VectorXY HexOrigin { get; set; }
 
@@ -25,77 +29,27 @@ namespace Akeldov.Math.Hexes.Topology
 
         private VectorXY CellSize { get; set; }
 
-        public HexVertexBarycentricTripletGrid(
-            IndexSeptupletMap hexAdjacencyMap,
+        public BarycentricPartialTripletGrid(
+            IndexSeptupletMap indexSeptupletMap,
             VectorXYInt resolution)
         {
-            if (hexAdjacencyMap == null)
-                throw new ArgumentNullException(nameof(hexAdjacencyMap));
+            if (indexSeptupletMap == null)
+                throw new ArgumentNullException(nameof(indexSeptupletMap));
+
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            VectorXY gridSize = hexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
+            VectorXY gridSize = indexSeptupletMap.GetBoundingBoxSize(DefaultHexRadius);
 
             Initialize(
-                hexAdjacencyMap.Width,
-                hexAdjacencyMap.Height,
-                hexAdjacencyMap.Layout,
-                GetDefaultHexOrigin(hexAdjacencyMap.Layout, apothem, DefaultHexRadius),
+                indexSeptupletMap.Width,
+                indexSeptupletMap.Height,
+                indexSeptupletMap.Layout,
+                GetDefaultHexOrigin(indexSeptupletMap.Layout, apothem, DefaultHexRadius),
                 apothem,
                 DefaultHexRadius,
                 VectorXY.Zero,
-                gridSize,
-                resolution);
-        }
-
-        public HexVertexBarycentricTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            VectorXYInt resolution)
-        {
-            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
-
-            float hexApothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            Bounds bounds = GetBounds(hexWidth, hexHeight, layout, hexOrigin, hexApothem, DefaultHexRadius);
-
-            Initialize(
-                hexWidth,
-                hexHeight,
-                layout,
-                hexOrigin,
-                hexApothem,
-                DefaultHexRadius,
-                new VectorXY(bounds.MinX, bounds.MinY),
-                new VectorXY(bounds.Width, bounds.Height),
-                resolution);
-        }
-
-        public HexVertexBarycentricTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            VectorXY gridOrigin,
-            VectorXY gridSize,
-            VectorXYInt resolution)
-        {
-            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
-
-            if (!gridOrigin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
-
-            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
-
-            Initialize(
-                hexWidth,
-                hexHeight,
-                layout,
-                hexOrigin,
-                DefaultHexRadius.ConvertHexRadiusToApothem(),
-                DefaultHexRadius,
-                gridOrigin,
                 gridSize,
                 resolution);
         }
@@ -112,13 +66,13 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _barycentricCoordinates.Length;
 
-        public Triplet<float>[] BarycentricCoordinates => _barycentricCoordinates;
+        public PartialTriplet<float>[] BarycentricCoordinates => _barycentricCoordinates;
 
         public int Width => ResolutionX;
 
         public int Height => ResolutionY;
 
-        public Triplet<float> this[VectorXYInt index]
+        public PartialTriplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -128,7 +82,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        public Triplet<float> this[int index]
+        public PartialTriplet<float> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _barycentricCoordinates[index];
@@ -140,16 +94,16 @@ namespace Akeldov.Math.Hexes.Topology
             return GetCellCenterUnchecked(index.X, index.Y);
         }
 
-        public bool TryGetBarycentricCoordinates(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
+        public bool TryGetBarycentricCoordinates(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
         {
             ThrowIfGridIndexOutOfBounds(gridIndex);
 
             int flatIndex = GetFlatIndex(gridIndex);
             barycentricCoordinates = _barycentricCoordinates[flatIndex];
-            return true;
+            return barycentricCoordinates.Presence != TripletPresenceFlags.None;
         }
 
-        public Triplet<float> GetBarycentricCoordinates(VectorXYInt gridIndex)
+        public PartialTriplet<float> GetBarycentricCoordinates(VectorXYInt gridIndex)
         {
             ThrowIfGridIndexOutOfBounds(gridIndex);
             return _barycentricCoordinates[GetFlatIndex(gridIndex)];
@@ -167,6 +121,8 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXYInt resolution)
         {
             HexResolution = new VectorXYInt(hexWidth, hexHeight);
+            HexWidth = hexWidth;
+            HexHeight = hexHeight;
             Layout = layout;
             HexOrigin = hexOrigin;
             HexApothem = hexApothem;
@@ -178,7 +134,7 @@ namespace Akeldov.Math.Hexes.Topology
             ResolutionX = resolution.X;
             ResolutionY = resolution.Y;
 
-            _barycentricCoordinates = new Triplet<float>[checked(resolution.X * resolution.Y)];
+            _barycentricCoordinates = new PartialTriplet<float>[checked(resolution.X * resolution.Y)];
 
             Fill();
         }
@@ -201,7 +157,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        private Triplet<float> CreateBarycentricCoordinates(
+        private PartialTriplet<float> CreateBarycentricCoordinates(
             VectorXY point,
             VectorXYInt mainIndex,
             VectorXY[] normalizedHexVertexes)
@@ -214,11 +170,41 @@ namespace Akeldov.Math.Hexes.Topology
                 normalizedHexVertexes,
                 out _);
             Triplet<VectorXYInt> indexTriplet = mainIndex.GetAdjacentTriplet(nearestVertex, Layout);
-
-            return point.BarycentricCoordinates(
+            Triplet<float> barycentricCoordinates = point.BarycentricCoordinates(
                 mainCenter,
                 GetHexCenter(indexTriplet.Left),
                 GetHexCenter(indexTriplet.Right));
+
+            float main = default;
+            float left = default;
+            float right = default;
+            TripletPresenceFlags presence = TripletPresenceFlags.None;
+
+            if (ContainsHex(indexTriplet.Main))
+            {
+                main = barycentricCoordinates.Main;
+                presence |= TripletPresenceFlags.Main;
+            }
+
+            if (ContainsHex(indexTriplet.Left))
+            {
+                left = barycentricCoordinates.Left;
+                presence |= TripletPresenceFlags.Left;
+            }
+
+            if (ContainsHex(indexTriplet.Right))
+            {
+                right = barycentricCoordinates.Right;
+                presence |= TripletPresenceFlags.Right;
+            }
+
+            return new PartialTriplet<float>(main, left, right, presence);
+        }
+
+        private bool ContainsHex(VectorXYInt index)
+        {
+            return (uint)index.X < (uint)HexWidth &&
+                (uint)index.Y < (uint)HexHeight;
         }
 
         private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
@@ -304,92 +290,11 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
-        private static Bounds GetBounds(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY origin,
-            float apothem,
-            float radius)
-        {
-            switch (layout)
-            {
-                case Layout.OddR:
-                    return new Bounds(
-                        origin.X - Geometry.Constants.Cos30Deg * radius,
-                        origin.Y - radius,
-                        origin.X + 2f * apothem * (hexWidth - 1) + (hexHeight > 1 ? apothem : 0f) + Geometry.Constants.Cos30Deg * radius,
-                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
-                case Layout.EvenR:
-                    return new Bounds(
-                        origin.X - (hexHeight > 1 ? apothem : 0f) - Geometry.Constants.Cos30Deg * radius,
-                        origin.Y - radius,
-                        origin.X + 2f * apothem * (hexWidth - 1) + Geometry.Constants.Cos30Deg * radius,
-                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
-                case Layout.OddQ:
-                    return new Bounds(
-                        origin.X - radius,
-                        origin.Y - Geometry.Constants.Sin60Deg * radius,
-                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
-                        origin.Y + 2f * apothem * (hexHeight - 1) + (hexWidth > 1 ? apothem : 0f) + Geometry.Constants.Sin60Deg * radius);
-                case Layout.EvenQ:
-                    return new Bounds(
-                        origin.X - radius,
-                        origin.Y - (hexWidth > 1 ? apothem : 0f) - Geometry.Constants.Sin60Deg * radius,
-                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
-                        origin.Y + 2f * apothem * (hexHeight - 1) + Geometry.Constants.Sin60Deg * radius);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
-            }
-        }
-
-        private static void ValidateHexGrid(
-            int hexWidth,
-            int hexHeight,
-            VectorXY hexOrigin,
-            VectorXYInt resolution)
-        {
-            if (hexWidth <= 0)
-                throw new ArgumentOutOfRangeException(nameof(hexWidth), hexWidth, "Hex grid dimensions must be positive.");
-
-            if (hexHeight <= 0)
-                throw new ArgumentOutOfRangeException(nameof(hexHeight), hexHeight, "Hex grid dimensions must be positive.");
-
-            if (!hexOrigin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(hexOrigin), hexOrigin, "Hex origin components must be finite.");
-
-            if (resolution.X <= 0 || resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
-        }
-
         private static float SquaredDistance(VectorXY left, VectorXY right)
         {
             float x = left.X - right.X;
             float y = left.Y - right.Y;
             return x * x + y * y;
-        }
-
-        private readonly struct Bounds
-        {
-            public Bounds(float minX, float minY, float maxX, float maxY)
-            {
-                MinX = minX;
-                MinY = minY;
-                MaxX = maxX;
-                MaxY = maxY;
-            }
-
-            public float MinX { get; }
-
-            public float MinY { get; }
-
-            public float MaxX { get; }
-
-            public float MaxY { get; }
-
-            public float Width => MaxX - MinX;
-
-            public float Height => MaxY - MinY;
         }
     }
 }

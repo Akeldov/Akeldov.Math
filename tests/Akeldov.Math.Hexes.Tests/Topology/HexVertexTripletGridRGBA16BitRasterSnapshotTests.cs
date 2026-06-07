@@ -46,15 +46,15 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "hex-vertex-barycentric-triplet-grid-main-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-barycentric-triplet-grid-main-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-barycentric-triplet-grid-main-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-barycentric-triplet-grid-main-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "barycentric-triplet-grid-main-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "barycentric-triplet-grid-main-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "barycentric-triplet-grid-main-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "barycentric-triplet-grid-main-even-q-rgba16.png")]
     public void BarycentricTripletGrid_ToRGBA16BitRaster_WithMainWeight_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var grid = new HexVertexBarycentricTripletGrid(
+        var grid = new BarycentricTripletGrid(
             hexWidth: 5,
             hexHeight: 4,
             layout: layout,
@@ -66,16 +66,16 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "hex-vertex-barycentric-partial-triplet-grid-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-barycentric-partial-triplet-grid-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-barycentric-partial-triplet-grid-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-barycentric-partial-triplet-grid-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "barycentric-partial-triplet-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "barycentric-partial-triplet-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "barycentric-partial-triplet-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "barycentric-partial-triplet-grid-even-q-rgba16.png")]
     public void BarycentricPartialTripletGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
         var map = new IndexSeptupletMap(width: 5, height: 4, layout: layout);
-        var grid = new HexVertexBarycentricPartialTripletGrid(
+        var grid = new BarycentricPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
         RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToBarycentricPartialTripletSnapshotColor);
@@ -131,7 +131,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         string approvedFileName)
     {
         var map = new IndexSeptupletMap(width: 5, height: 4, layout: layout);
-        var barycentricGrid = new HexVertexBarycentricPartialTripletGrid(
+        var barycentricGrid = new BarycentricPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
         var chromaticGrid = new HexVertexChromaticIndexPartialTripletGrid(

@@ -35,7 +35,7 @@ public class HexGeometryMapBenchmarks
     [Benchmark]
     public HexCenterMap ConstructCenterMapWithDefaultOrigin()
     {
-        return new VectorXYInt(Size, Size).ToHexCenterMap(Layout, apothem: 8f);
+        return new HexCenterMap(Size, Size, 8f.ConvertHexApothemToRadius(), Layout);
     }
 
     [Benchmark]

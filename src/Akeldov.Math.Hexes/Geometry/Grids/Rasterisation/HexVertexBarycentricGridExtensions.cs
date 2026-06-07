@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Topology
     public static partial class HexVertexBarycentricGridExtensions
     {
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexBarycentricTripletGrid grid,
+            this BarycentricTripletGrid grid,
             Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
             if (grid == null)
@@ -32,7 +32,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexBarycentricPartialTripletGrid grid,
+            this BarycentricPartialTripletGrid grid,
             Func<PartialTriplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
             if (grid == null)
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexBarycentricPartialTripletGrid grid,
+            this BarycentricPartialTripletGrid grid,
             HexVertexChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
             Func<PartialTriplet<float>, PartialTriplet<byte>, RGBA16BitColor> barycentricCoordinatesToColor)
         {

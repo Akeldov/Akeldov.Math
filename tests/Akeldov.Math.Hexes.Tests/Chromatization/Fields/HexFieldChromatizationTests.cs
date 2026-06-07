@@ -37,11 +37,11 @@ public class HexFieldChromatizationTests
     }
 
     [Test]
-    public void ToHexFieldChromatization_UsesConstructor()
+    public void Constructor_ExposesDimensionsLayoutAndChromaticIndices()
     {
         var resolution = new VectorXYInt(2, 1);
 
-        HexFieldChromatization chromatization = resolution.ToHexFieldChromatization(Layout.OddR);
+        HexFieldChromatization chromatization = new HexFieldChromatization(resolution.X, resolution.Y, Layout.OddR);
 
         Assert.That(chromatization.Width, Is.EqualTo(2));
         Assert.That(chromatization.Height, Is.EqualTo(1));
@@ -80,16 +80,14 @@ public class HexFieldChromatizationTests
     }
 
     [Test]
-    public void ToHexFieldChromatization_WhenResolutionHasNegativeComponent_Throws()
+    public void Constructor_WhenWidthIsNegativeThroughResolution_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new VectorXYInt(-1, 1).ToHexFieldChromatization(Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexFieldChromatization(-1, 1, Layout.OddR));
     }
 
     [Test]
-    public void ToHexFieldChromatization_WhenLayoutIsUnsupported_Throws()
+    public void Constructor_WhenLayoutIsUnsupported_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new VectorXYInt(0, 0).ToHexFieldChromatization((Layout)42));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexFieldChromatization(0, 0, (Layout)42));
     }
 }

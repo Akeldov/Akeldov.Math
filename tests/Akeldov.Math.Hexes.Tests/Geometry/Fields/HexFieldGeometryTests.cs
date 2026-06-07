@@ -30,15 +30,14 @@ public class HexFieldGeometryTests
     [TestCase(Layout.EvenR, 6f, 2.3094f)]
     [TestCase(Layout.OddQ, 2.3094f, 2f)]
     [TestCase(Layout.EvenQ, 2.3094f, 6f)]
-    public void ToHexCenterMap_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
+    public void Constructor_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
     {
-        var geometry = new VectorXYInt(1, 1).ToHexCenterMap(layout, 2f);
-
+        var geometry = new HexCenterMap(1, 1, 2f.ConvertHexApothemToRadius(), layout);
         VectorAssert.AreEqual(geometry.Centers[0], expectedX, expectedY);
     }
 
     [Test]
-    public void HexFieldGeometry_ImplementsIHexMap()
+    public void HexCenterMap_ImplementsIHexMap()
     {
         var source = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
         IHexMap<VectorXY> map = source;

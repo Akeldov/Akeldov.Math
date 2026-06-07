@@ -49,6 +49,15 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
+        public HexCenterMap(
+            int width,
+            int height,
+            float radius,
+            Layout layout)
+            : this(width, height, GetDefaultOrigin(radius.ConvertHexRadiusToApothem(), radius, layout), radius.ConvertHexRadiusToApothem(), layout)
+        {
+        }
+
         public int Width { get; }
 
         public int Height { get; }
@@ -126,5 +135,22 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
+
+        private static VectorXY GetDefaultOrigin(float apothem, float radius, Layout layout)
+        {
+            switch (layout)
+            {
+                case Layout.OddR:
+                    return new VectorXY(apothem, radius);
+                case Layout.EvenR:
+                    return new VectorXY(3f * apothem, radius);
+                case Layout.OddQ:
+                    return new VectorXY(radius, apothem);
+                case Layout.EvenQ:
+                    return new VectorXY(radius, 3f * apothem);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+        }
     }
 }
