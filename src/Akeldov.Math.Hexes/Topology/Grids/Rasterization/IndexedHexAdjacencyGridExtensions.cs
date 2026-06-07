@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
     public static class IndexedHexAdjacencyGridExtensions
     {
         public static RGBA16BitRaster Rasterize(
-            this IndexedHexAdjacencyGrid indexedHexAdjacencyGrid,
+            this IndexSeptupletGrid indexedHexAdjacencyGrid,
             Func<Septuplet<VectorXYInt>, RGBA16BitColor> colorSelector)
         {
             if (indexedHexAdjacencyGrid == null)

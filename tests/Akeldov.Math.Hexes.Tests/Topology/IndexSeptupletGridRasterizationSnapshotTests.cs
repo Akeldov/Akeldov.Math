@@ -6,12 +6,12 @@ using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class IndexSeptupletMapRasterizationSnapshotTests
+public class IndexSeptupletGridRasterizationSnapshotTests
 {
-    [TestCase(Layout.OddR, "index-septuplet-map-main-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "index-septuplet-map-main-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "index-septuplet-map-main-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "index-septuplet-map-main-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-septuplet-grid-main-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-septuplet-grid-main-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-septuplet-grid-main-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-septuplet-grid-main-index-even-q-rgba16.png")]
     public void Rasterize_WithMainIndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
@@ -20,21 +20,21 @@ public class IndexSeptupletMapRasterizationSnapshotTests
             width: 12,
             height: 8,
             layout: layout);
-        var adjacencyGrid = new IndexedHexAdjacencyGrid(
+        var indexSeptupletGrid = new IndexSeptupletGrid(
             indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        RGBA16BitRaster raster = adjacencyGrid.Rasterize(
+        RGBA16BitRaster raster = indexSeptupletGrid.Rasterize(
             adjacency => ToMainIndexColor(adjacency, indexSeptupletMap.Width));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "index-septuplet-map-adjacent-1-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "index-septuplet-map-adjacent-1-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "index-septuplet-map-adjacent-1-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "index-septuplet-map-adjacent-1-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-septuplet-grid-adjacent-1-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-septuplet-grid-adjacent-1-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-septuplet-grid-adjacent-1-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-septuplet-grid-adjacent-1-index-even-q-rgba16.png")]
     public void Rasterize_WithAdjacent1IndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
@@ -43,11 +43,11 @@ public class IndexSeptupletMapRasterizationSnapshotTests
             width: 12,
             height: 8,
             layout: layout);
-        var adjacencyGrid = new IndexedHexAdjacencyGrid(
+        var indexSeptupletGrid = new IndexSeptupletGrid(
             indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        RGBA16BitRaster raster = adjacencyGrid.Rasterize(
+        RGBA16BitRaster raster = indexSeptupletGrid.Rasterize(
             adjacency => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Width));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -102,8 +102,8 @@ public class IndexSeptupletMapRasterizationSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual index septuplet map raster snapshot");
-            Assert.Fail($"Index septuplet map approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual index septuplet grid raster snapshot");
+            Assert.Fail($"Index septuplet grid approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -111,8 +111,8 @@ public class IndexSeptupletMapRasterizationSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual index septuplet map raster snapshot");
-            Assert.Fail($"Index septuplet map raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual index septuplet grid raster snapshot");
+            Assert.Fail($"Index septuplet grid raster snapshot changed. Actual image: {actualPath}");
         }
     }
 

@@ -24,11 +24,11 @@ public class IndexPartialSeptupletMapRasterizationSnapshotTests
             width: indexSeptupletMap.Width,
             height: indexSeptupletMap.Height,
             layout: indexSeptupletMap.Layout);
-        var adjacencyGrid = new IndexedHexAdjacencyGrid(
+        var indexSeptupletGrid = new IndexSeptupletGrid(
             indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        RGBA16BitRaster raster = adjacencyGrid.Rasterize(
+        RGBA16BitRaster raster = indexSeptupletGrid.Rasterize(
             adjacency => ToMainIndexColor(adjacency.Main, indexPartialSeptupletMap));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -51,11 +51,11 @@ public class IndexPartialSeptupletMapRasterizationSnapshotTests
             width: indexSeptupletMap.Width,
             height: indexSeptupletMap.Height,
             layout: indexSeptupletMap.Layout);
-        var adjacencyGrid = new IndexedHexAdjacencyGrid(
+        var indexSeptupletGrid = new IndexSeptupletGrid(
             indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        RGBA16BitRaster raster = adjacencyGrid.Rasterize(
+        RGBA16BitRaster raster = indexSeptupletGrid.Rasterize(
             adjacency => ToAdjacent1IndexColor(adjacency.Main, indexPartialSeptupletMap));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

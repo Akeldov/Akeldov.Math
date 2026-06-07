@@ -7,11 +7,11 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class IndexedHexAdjacencyGrid : IGrid<Septuplet<VectorXYInt>>
+    public sealed class IndexSeptupletGrid : IGrid<Septuplet<VectorXYInt>>
     {
         private Septuplet<VectorXYInt>[] _adjacent;
 
-        public IndexedHexAdjacencyGrid(
+        public IndexSeptupletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
         {

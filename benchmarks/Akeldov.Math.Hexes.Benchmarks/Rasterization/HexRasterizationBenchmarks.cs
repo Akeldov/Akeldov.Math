@@ -15,7 +15,7 @@ public class HexRasterizationBenchmarks
 {
     private IndexSeptupletMap _adjacencyMap = null!;
     private HexFieldTopologyRGBA16BitRasterizer _topologyRasterizer = null!;
-    private IndexedHexAdjacencyGrid _adjacencyGrid = null!;
+    private IndexSeptupletGrid _adjacencyGrid = null!;
     private RasterGrid _topologyGrid;
 
     [Params(32, 128)]
@@ -33,15 +33,15 @@ public class HexRasterizationBenchmarks
             apothem: 8f,
             indexToColor: ToIndexColor);
         _topologyGrid = _topologyRasterizer.CreateGrid(_adjacencyMap, pixelsPerApothem: 2f);
-        _adjacencyGrid = new IndexedHexAdjacencyGrid(
+        _adjacencyGrid = new IndexSeptupletGrid(
             _adjacencyMap,
             resolution: new VectorXYInt(Size * 8, Size * 8));
     }
 
     [Benchmark]
-    public IndexedHexAdjacencyGrid ConstructAdjacencyGrid()
+    public IndexSeptupletGrid ConstructAdjacencyGrid()
     {
-        return new IndexedHexAdjacencyGrid(
+        return new IndexSeptupletGrid(
             _adjacencyMap,
             resolution: new VectorXYInt(Size * 8, Size * 8));
     }
