@@ -20,5 +20,20 @@ namespace Akeldov.Math.Hexes.Topology.Maps.BoundingBox
                 hexRadius,
                 hexAdjacencyMap.Layout);
         }
+
+        public static VectorXY GetBoundingBoxSize(this IndexPartialSeptupletMap hexAdjacencyMap, float hexRadius)
+        {
+            if (hexAdjacencyMap == null)
+                throw new ArgumentNullException(nameof(hexAdjacencyMap));
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
+            var resolution = new VectorXYInt(hexAdjacencyMap.Width, hexAdjacencyMap.Height);
+            return resolution.BoundingBox(
+                hexRadius.ConvertHexRadiusToApothem(),
+                hexRadius,
+                hexAdjacencyMap.Layout);
+        }
     }
 }
