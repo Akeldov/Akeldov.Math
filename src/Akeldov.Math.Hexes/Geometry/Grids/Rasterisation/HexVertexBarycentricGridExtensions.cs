@@ -57,7 +57,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
-            HexVertexChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
+            ChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
             Func<PartialTriplet<float>, PartialTriplet<byte>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
             if (grid == null)

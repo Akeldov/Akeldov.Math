@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Topology
     public static partial class HexVertexTripletGridExtensions
     {
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexChromaticIndexTripletGrid grid,
+            this ChromaticIndexTripletGrid grid,
             Func<Triplet<byte>, RGBA16BitColor> chromaticIndicesToColor)
         {
             if (grid == null)
@@ -27,7 +27,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexChromaticIndexPartialTripletGrid grid,
+            this ChromaticIndexPartialTripletGrid grid,
             Func<PartialTriplet<byte>, RGBA16BitColor> chromaticIndicesToColor)
         {
             if (grid == null)
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Hexes.Topology
             return new RGBA16BitRaster(CreateRasterGrid(grid), values);
         }
 
-        private static RasterGrid CreateRasterGrid(HexVertexChromaticIndexTripletGrid grid)
+        private static RasterGrid CreateRasterGrid(ChromaticIndexTripletGrid grid)
         {
             return new RasterGrid(
                 (PointXY)grid.Origin,
@@ -53,7 +53,7 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Resolution);
         }
 
-        private static RasterGrid CreateRasterGrid(HexVertexChromaticIndexPartialTripletGrid grid)
+        private static RasterGrid CreateRasterGrid(ChromaticIndexPartialTripletGrid grid)
         {
             return new RasterGrid(
                 (PointXY)grid.Origin,

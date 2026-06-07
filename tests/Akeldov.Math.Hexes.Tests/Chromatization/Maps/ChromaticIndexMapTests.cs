@@ -5,7 +5,7 @@ using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Hexes.Tests.Chromatization;
 
-public class HexFieldChromatizationTests
+public class ChromaticIndexMapTests
 {
     [Test]
     public void Constructor_MatchesSingleHexChromaticClass_ForEveryLayout()
@@ -15,7 +15,7 @@ public class HexFieldChromatizationTests
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            HexFieldChromatization chromatization = new HexFieldChromatization(width, height, layout);
+            ChromaticIndexMap chromatization = new ChromaticIndexMap(width, height, layout);
 
             Assert.That(chromatization.Width, Is.EqualTo(width));
             Assert.That(chromatization.Height, Is.EqualTo(height));
@@ -41,7 +41,7 @@ public class HexFieldChromatizationTests
     {
         var resolution = new VectorXYInt(2, 1);
 
-        HexFieldChromatization chromatization = new HexFieldChromatization(resolution.X, resolution.Y, Layout.OddR);
+        ChromaticIndexMap chromatization = new ChromaticIndexMap(resolution.X, resolution.Y, Layout.OddR);
 
         Assert.That(chromatization.Width, Is.EqualTo(2));
         Assert.That(chromatization.Height, Is.EqualTo(1));
@@ -50,9 +50,9 @@ public class HexFieldChromatizationTests
     }
 
     [Test]
-    public void HexFieldChromatization_ImplementsIHexMap()
+    public void ChromaticIndexMap_ImplementsIHexMap()
     {
-        var source = new HexFieldChromatization(3, 2, Layout.OddR);
+        var source = new ChromaticIndexMap(3, 2, Layout.OddR);
         IHexMap<byte> map = source;
 
         byte chromaticIndex = source.ChromaticIndices[5];
@@ -66,7 +66,7 @@ public class HexFieldChromatizationTests
     [Test]
     public void Indexer_WhenIndexIsOutsideChromatization_Throws()
     {
-        var chromatization = new HexFieldChromatization(3, 2, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(3, 2, Layout.OddR);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(0, 2)]);
@@ -76,18 +76,18 @@ public class HexFieldChromatizationTests
     public void Constructor_WhenWidthIsNegative_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new HexFieldChromatization(-1, 1, Layout.OddR));
+            new ChromaticIndexMap(-1, 1, Layout.OddR));
     }
 
     [Test]
     public void Constructor_WhenWidthIsNegativeThroughResolution_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexFieldChromatization(-1, 1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexMap(-1, 1, Layout.OddR));
     }
 
     [Test]
     public void Constructor_WhenLayoutIsUnsupported_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexFieldChromatization(0, 0, (Layout)42));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexMap(0, 0, (Layout)42));
     }
 }

@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class HexVertexChromaticIndexPartialTripletGrid : IGrid<PartialTriplet<byte>>
+    public sealed class ChromaticIndexPartialTripletGrid : IGrid<PartialTriplet<byte>>
     {
         private const float DefaultHexRadius = 1f;
 
@@ -30,7 +30,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         private VectorXY CellSize { get; set; }
 
-        public HexVertexChromaticIndexPartialTripletGrid(
+        public ChromaticIndexPartialTripletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
         {

@@ -71,7 +71,7 @@ public class HexVertexTripletGridTests
             new VectorXYInt(0, 1),
             new VectorXYInt(1, 0));
         Triplet<byte> expected = indexTriplet.GetChromaticTriplet(Layout.OddR);
-        var grid = CreateSingleSampleChromaticGrid(point);
+        var grid = CreateSingleSampleChromaticIndexGrid(point);
 
         Triplet<byte> actual = grid[VectorXYInt.Zero];
 
@@ -84,8 +84,8 @@ public class HexVertexTripletGridTests
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(0, 1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(0, 1)));
     }
 
     private static VectorXY GetPointNearOddRVertex0()
@@ -116,17 +116,17 @@ public class HexVertexTripletGridTests
             VectorXYInt.One);
     }
 
-    private static HexVertexChromaticIndexTripletGrid CreateSingleSampleChromaticGrid(VectorXY point)
+    private static ChromaticIndexTripletGrid CreateSingleSampleChromaticIndexGrid(VectorXY point)
     {
-        return CreateSingleSampleChromaticGrid(point, 2, 2);
+        return CreateSingleSampleChromaticIndexGrid(point, 2, 2);
     }
 
-    private static HexVertexChromaticIndexTripletGrid CreateSingleSampleChromaticGrid(
+    private static ChromaticIndexTripletGrid CreateSingleSampleChromaticIndexGrid(
         VectorXY point,
         int hexWidth,
         int hexHeight)
     {
-        return new HexVertexChromaticIndexTripletGrid(
+        return new ChromaticIndexTripletGrid(
             hexWidth,
             hexHeight,
             Layout.OddR,

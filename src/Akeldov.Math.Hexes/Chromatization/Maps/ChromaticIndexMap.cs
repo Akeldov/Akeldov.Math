@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Chromatization
 {
-    public sealed class HexFieldChromatization : IHexMap<byte>
+    public sealed class ChromaticIndexMap : IHexMap<byte>
     {
-        public HexFieldChromatization(int width, int height, Layout layout)
+        public ChromaticIndexMap(int width, int height, Layout layout)
         {
             if (width < 0)
                 throw new ArgumentOutOfRangeException(nameof(width));

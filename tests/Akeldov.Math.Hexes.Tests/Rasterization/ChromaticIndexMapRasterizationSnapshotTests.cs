@@ -7,15 +7,15 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Rasterization;
 
-public class HexFieldChromatizationRasterizationSnapshotTests
+public class ChromaticIndexMapRasterizationSnapshotTests
 {
-    [TestCase(Layout.OddR, "hex-field-chromatization-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-field-chromatization-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-field-chromatization-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-field-chromatization-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "chromatic-index-map-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "chromatic-index-map-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "chromatic-index-map-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "chromatic-index-map-even-q-rgba16.png")]
     public void Rasterize_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
     {
-        var chromatization = new HexFieldChromatization(
+        var chromatization = new ChromaticIndexMap(
             width: 5,
             height: 4,
             layout: layout);
@@ -63,8 +63,8 @@ public class HexFieldChromatizationRasterizationSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex field chromatization raster snapshot");
-            Assert.Fail($"Hex field chromatization approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual chromatic index map raster snapshot");
+            Assert.Fail($"Chromatic index map approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -72,8 +72,8 @@ public class HexFieldChromatizationRasterizationSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual hex field chromatization raster snapshot");
-            Assert.Fail($"Hex field chromatization raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual chromatic index map raster snapshot");
+            Assert.Fail($"Chromatic index map raster snapshot changed. Actual image: {actualPath}");
         }
     }
 
