@@ -13,7 +13,7 @@ public class HexVertexTripletGridTests
     {
         var origin = new VectorXY(10f, -20f);
 
-        var grid = new HexVertexIndexTripletGrid(2, 1, Layout.OddR, origin, new VectorXYInt(4, 2));
+        var grid = new IndexTripletGrid(2, 1, Layout.OddR, origin, new VectorXYInt(4, 2));
 
         Assert.That(grid.HexResolution, Is.EqualTo(new VectorXYInt(2, 1)));
         Assert.That(grid.Layout, Is.EqualTo(Layout.OddR));
@@ -83,7 +83,7 @@ public class HexVertexTripletGridTests
     [Test]
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexVertexChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(0, 1)));
     }
@@ -96,17 +96,17 @@ public class HexVertexTripletGridTests
             Akeldov.Math.Hexes.Geometry.Constants.Sin30Deg * hexRadius * 0.75f);
     }
 
-    private static HexVertexIndexTripletGrid CreateSingleSampleIndexTripletGrid(VectorXY point)
+    private static IndexTripletGrid CreateSingleSampleIndexTripletGrid(VectorXY point)
     {
         return CreateSingleSampleIndexTripletGrid(point, 2, 2);
     }
 
-    private static HexVertexIndexTripletGrid CreateSingleSampleIndexTripletGrid(
+    private static IndexTripletGrid CreateSingleSampleIndexTripletGrid(
         VectorXY point,
         int hexWidth,
         int hexHeight)
     {
-        return new HexVertexIndexTripletGrid(
+        return new IndexTripletGrid(
             hexWidth,
             hexHeight,
             Layout.OddR,

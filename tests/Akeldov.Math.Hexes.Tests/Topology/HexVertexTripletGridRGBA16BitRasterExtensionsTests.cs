@@ -11,7 +11,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void IndexTripletGrid_ToRGBA16BitRaster_UsesGridGeometry()
     {
-        var grid = new HexVertexIndexTripletGrid(
+        var grid = new IndexTripletGrid(
             1,
             1,
             Layout.OddR,
@@ -32,7 +32,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void IndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByIndexTriplet()
     {
-        var grid = new HexVertexIndexTripletGrid(2, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(4, 1));
+        var grid = new IndexTripletGrid(2, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(4, 1));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
@@ -64,7 +64,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void ToRGBA16BitRaster_WhenGridIsNull_Throws()
     {
-        HexVertexIndexTripletGrid indexTripletGrid = null!;
+        IndexTripletGrid indexTripletGrid = null!;
         HexVertexBarycentricTripletGrid barycentricGrid = null!;
         HexVertexChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
 

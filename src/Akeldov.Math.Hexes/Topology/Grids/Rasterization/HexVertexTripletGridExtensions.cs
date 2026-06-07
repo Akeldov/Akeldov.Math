@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Topology
     public static partial class HexVertexTripletGridExtensions
     {
         public static RGBA16BitRaster ToRGBA16BitRaster(
-            this HexVertexIndexTripletGrid grid,
+            this IndexTripletGrid grid,
             Func<Triplet<VectorXYInt>, RGBA16BitColor> tripletToColor)
         {
             if (grid == null)

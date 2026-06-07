@@ -8,15 +8,15 @@ namespace Akeldov.Math.Hexes.Tests.Topology;
 
 public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
 {
-    [TestCase(Layout.OddR, "hex-vertex-index-triplet-grid-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "hex-vertex-index-triplet-grid-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "hex-vertex-index-triplet-grid-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "hex-vertex-index-triplet-grid-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-triplet-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-triplet-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-triplet-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-triplet-grid-even-q-rgba16.png")]
     public void IndexTripletGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var grid = new HexVertexIndexTripletGrid(
+        var grid = new IndexTripletGrid(
             hexWidth: 5,
             hexHeight: 4,
             layout: layout,
