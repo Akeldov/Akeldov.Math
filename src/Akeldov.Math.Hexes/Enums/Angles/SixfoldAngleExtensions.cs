@@ -1,37 +1,37 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Akeldov.Math.Hexes.Vectors.QRS
+namespace Akeldov.Math.Hexes
 {
     public static partial class SixfoldAngleExtensions
     {
         private static float[] Sinuses = new float[]
         {
-            Constants.Sin0Deg,
-            Constants.Sin60Deg,
-            Constants.Sin120Deg,
-            Constants.Sin180Deg,
-            Constants.Sin240Deg,
-            Constants.Sin300Deg
+            HexAngleConstants.Sin0Deg,
+            HexAngleConstants.Sin60Deg,
+            HexAngleConstants.Sin120Deg,
+            HexAngleConstants.Sin180Deg,
+            HexAngleConstants.Sin240Deg,
+            HexAngleConstants.Sin300Deg
         };
 
         private static float[] Cosinuses = new float[]
         {
-            Constants.Cos0Deg,
-            Constants.Cos60Deg,
-            Constants.Cos120Deg,
-            Constants.Cos180Deg,
-            Constants.Cos240Deg,
-            Constants.Cos300Deg
+            HexAngleConstants.Cos0Deg,
+            HexAngleConstants.Cos60Deg,
+            HexAngleConstants.Cos120Deg,
+            HexAngleConstants.Cos180Deg,
+            HexAngleConstants.Cos240Deg,
+            HexAngleConstants.Cos300Deg
         };
 
         private static float[] Radians = new float[]
         {
-            Constants.Rad0Deg,
-            Constants.Rad60Deg,
-            Constants.Rad120Deg,
-            Constants.Rad180Deg,
-            Constants.Rad240Deg,
-            Constants.Rad300Deg
+            HexAngleConstants.Rad0Deg,
+            HexAngleConstants.Rad60Deg,
+            HexAngleConstants.Rad120Deg,
+            HexAngleConstants.Rad180Deg,
+            HexAngleConstants.Rad240Deg,
+            HexAngleConstants.Rad300Deg
         };
 
         private static float[] Degrees = new float[]

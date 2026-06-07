@@ -1,6 +1,6 @@
-﻿namespace Akeldov.Math.Hexes.Vectors.QRS
+﻿namespace Akeldov.Math.Hexes
 {
-    internal static class Constants
+    internal static class HexAngleConstants
     {
         public const float Cos0Deg = 1.0f;
         public const float Cos30Deg = 0.8660254f;

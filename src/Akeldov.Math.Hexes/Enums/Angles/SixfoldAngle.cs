@@ -1,4 +1,4 @@
-﻿namespace Akeldov.Math.Hexes.Vectors.QRS
+﻿namespace Akeldov.Math.Hexes
 {
     public enum SixfoldAngle
     {

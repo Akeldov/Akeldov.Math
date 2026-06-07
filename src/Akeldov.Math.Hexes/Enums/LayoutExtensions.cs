@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Akeldov.Math.Hexes.Vectors.QRS
+namespace Akeldov.Math.Hexes
 {
     public static class LayoutExtensions
     {
@@ -19,15 +19,18 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             switch (layout)
             {
                 case Layout.OddR:
-                    return HexOrientation.PointyTop;
                 case Layout.EvenR:
                     return HexOrientation.PointyTop;
+
                 case Layout.OddQ:
-                    return HexOrientation.FlatTop;
                 case Layout.EvenQ:
                     return HexOrientation.FlatTop;
+
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentOutOfRangeException(
+                        nameof(layout),
+                        layout,
+                        $"Layout {layout} is not supported.");
             }
         }
     }
