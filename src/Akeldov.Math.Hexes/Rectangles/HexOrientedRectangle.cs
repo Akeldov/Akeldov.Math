@@ -5,16 +5,16 @@ namespace Akeldov.Math.Hexes.Rectangles
 {
     public readonly struct HexOrientedRectangle
     {
-        private readonly VectorXY _center;
+        private readonly PointXY _center;
         private readonly VectorXY _size;
         private readonly SixfoldAngle _rotation;
 
-        private readonly VectorXY _bottomLeft;
-        private readonly VectorXY _bottomRight;
-        private readonly VectorXY _topLeft;
-        private readonly VectorXY _topRight;
+        private readonly PointXY _bottomLeft;
+        private readonly PointXY _bottomRight;
+        private readonly PointXY _topLeft;
+        private readonly PointXY _topRight;
 
-        public HexOrientedRectangle(VectorXY center, VectorXY size, SixfoldAngle rotation)
+        public HexOrientedRectangle(PointXY center, VectorXY size, SixfoldAngle rotation)
         {
             _center = center;
             _size = size;
@@ -22,39 +22,39 @@ namespace Akeldov.Math.Hexes.Rectangles
 
             var (halfSizeX, halfSizeY) = size / 2;
 
-            _bottomLeft = (_center + new VectorXY(-halfSizeX, -halfSizeY)).Rotate(_center, rotation);
-            _bottomRight = (_center + new VectorXY(halfSizeX, -halfSizeY)).Rotate(_center, rotation);
-            _topLeft = (_center + new VectorXY(-halfSizeX, halfSizeY)).Rotate(_center, rotation);
-            _topRight = (_center + new VectorXY(halfSizeX, halfSizeY)).Rotate(_center, rotation);
+            _bottomLeft = RotateAround(_center + new VectorXY(-halfSizeX, -halfSizeY), _center, rotation);
+            _bottomRight = RotateAround(_center + new VectorXY(halfSizeX, -halfSizeY), _center, rotation);
+            _topLeft = RotateAround(_center + new VectorXY(-halfSizeX, halfSizeY), _center, rotation);
+            _topRight = RotateAround(_center + new VectorXY(halfSizeX, halfSizeY), _center, rotation);
         }
 
-        public VectorXY Center => _center;
+        public PointXY Center => _center;
 
         public VectorXY Size => _size;
 
         public SixfoldAngle Rotation => _rotation;
 
-        public VectorXY BottomLeft => _bottomLeft;
+        public PointXY BottomLeft => _bottomLeft;
 
-        public VectorXY BottomRight => _bottomRight;
+        public PointXY BottomRight => _bottomRight;
 
-        public VectorXY TopLeft => _topLeft;
+        public PointXY TopLeft => _topLeft;
 
-        public VectorXY TopRight => _topRight;
+        public PointXY TopRight => _topRight;
 
-        public VectorXY GetLocalCoordinates(VectorXY point)
+        public VectorXY GetLocalCoordinates(PointXY point)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
             return localCoordinates;
         }
 
-        public VectorXY GetLocalNormalizedCoordinates(VectorXY point)
+        public VectorXY GetLocalNormalizedCoordinates(PointXY point)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
             return localCoordinates.HadamardDivide(Size);
         }
 
-        public VectorXY GetLocalCoordinates(VectorXY point, bool isClamped)
+        public VectorXY GetLocalCoordinates(PointXY point, bool isClamped)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
             if (isClamped)
@@ -62,7 +62,7 @@ namespace Akeldov.Math.Hexes.Rectangles
             return localCoordinates;
         }
 
-        public VectorXY GetLocalNormalizedCoordinates(VectorXY point, bool isClamped)
+        public VectorXY GetLocalNormalizedCoordinates(PointXY point, bool isClamped)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
             var normalizedLocalCoordinates = localCoordinates.HadamardDivide(Size);
@@ -71,10 +71,15 @@ namespace Akeldov.Math.Hexes.Rectangles
             return normalizedLocalCoordinates;
         }
 
-        public static HexOrientedRectangle CreateFromBottomLeftPoint(VectorXY bottomLeftPoint, VectorXY size, SixfoldAngle rotation)
+        public static HexOrientedRectangle CreateFromBottomLeftPoint(PointXY bottomLeftPoint, VectorXY size, SixfoldAngle rotation)
         {
-            var center = (bottomLeftPoint + size * 0.5f).Rotate(bottomLeftPoint, rotation);
+            var center = RotateAround(bottomLeftPoint + size * 0.5f, bottomLeftPoint, rotation);
             return new HexOrientedRectangle(center, size, rotation);
+        }
+
+        private static PointXY RotateAround(PointXY point, PointXY pivot, SixfoldAngle rotation)
+        {
+            return pivot + (point - pivot).Rotate(rotation);
         }
     }
 }
