@@ -40,9 +40,9 @@ public class HexCenterMapTests
     public void HexCenterMap_ImplementsIHexMap()
     {
         var source = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
-        IHexMap<VectorXY> map = source;
+        IHexMap<PointXY> map = source;
 
-        VectorXY center = source.Centers[5];
+        PointXY center = source.Centers[5];
 
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));

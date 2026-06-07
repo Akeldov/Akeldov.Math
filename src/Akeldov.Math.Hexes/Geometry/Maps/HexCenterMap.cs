@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
-    public sealed class HexCenterMap : IHexMap<VectorXY>
+    public sealed class HexCenterMap : IHexMap<PointXY>
     {
         public HexCenterMap(
             int width,
@@ -28,7 +28,7 @@ namespace Akeldov.Math.Hexes.Geometry
             Origin = origin;
             Apothem = apothem;
             Layout = layout;
-            Centers = new VectorXY[count];
+            Centers = new PointXY[count];
 
             switch (layout)
             {
@@ -68,9 +68,9 @@ namespace Akeldov.Math.Hexes.Geometry
 
         public Layout Layout { get; }
 
-        public VectorXY[] Centers { get; }
+        public PointXY[] Centers { get; }
 
-        public VectorXY this[VectorXYInt index]
+        public PointXY this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -83,7 +83,7 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
-        public VectorXY this[int index]
+        public PointXY this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => Centers[index];
@@ -100,7 +100,7 @@ namespace Akeldov.Math.Hexes.Geometry
 
                 for (int x = 0; x < Width; x++)
                 {
-                    Centers[rowStart + x] = new VectorXY(
+                    Centers[rowStart + x] = new PointXY(
                         Origin.X + x * 2f * Apothem + xShift,
                         centerY);
                 }
@@ -119,7 +119,7 @@ namespace Akeldov.Math.Hexes.Geometry
                     var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
                     var yShift = GetShiftRelativeToOrigin(columnIsShifted, evenColumnsAreShifted);
 
-                    Centers[rowStart + x] = new VectorXY(
+                    Centers[rowStart + x] = new PointXY(
                         Origin.X + 1.5f * radius * x,
                         baseY + yShift);
                 }

@@ -30,8 +30,8 @@ namespace Akeldov.Math.Hexes.Rasterization
 
             for (int i = 0; i < source.Centers.Length; i++)
             {
-                VectorXY center = source.Centers[i];
-                RGBA16BitColor color = _centerToColor((PointXY)center);
+                PointXY center = source.Centers[i];
+                RGBA16BitColor color = _centerToColor(center);
                 RasterizeHex(center, radius, normalizedVertexes, grid, values, color);
             }
 
@@ -62,7 +62,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         }
 
         private static void RasterizeHex(
-            VectorXY center,
+            PointXY center,
             float radius,
             VectorXY[] normalizedVertexes,
             RasterGrid grid,
@@ -90,17 +90,18 @@ namespace Akeldov.Math.Hexes.Rasterization
         }
 
         private static bool ContainsPoint(
-            VectorXY center,
+            PointXY center,
             float radius,
             VectorXY[] normalizedVertexes,
             PointXY point)
         {
+            VectorXY centerVector = (VectorXY)center;
             VectorXY pointVector = (VectorXY)point;
 
             for (int i = 0; i < normalizedVertexes.Length; i++)
             {
-                VectorXY vertexA = center + normalizedVertexes[i] * radius;
-                VectorXY vertexB = center + normalizedVertexes[(i + 1) % normalizedVertexes.Length] * radius;
+                VectorXY vertexA = centerVector + normalizedVertexes[i] * radius;
+                VectorXY vertexB = centerVector + normalizedVertexes[(i + 1) % normalizedVertexes.Length] * radius;
                 VectorXY edge = vertexB - vertexA;
                 VectorXY toPoint = pointVector - vertexA;
 
@@ -145,11 +146,12 @@ namespace Akeldov.Math.Hexes.Rasterization
         }
 
         private static RasterBounds GetHexBounds(
-            VectorXY center,
+            PointXY center,
             float radius,
             VectorXY[] normalizedVertexes)
         {
-            VectorXY first = center + normalizedVertexes[0] * radius;
+            VectorXY centerVector = (VectorXY)center;
+            VectorXY first = centerVector + normalizedVertexes[0] * radius;
             float minX = first.X;
             float minY = first.Y;
             float maxX = first.X;
@@ -157,7 +159,7 @@ namespace Akeldov.Math.Hexes.Rasterization
 
             for (int i = 1; i < normalizedVertexes.Length; i++)
             {
-                VectorXY vertex = center + normalizedVertexes[i] * radius;
+                VectorXY vertex = centerVector + normalizedVertexes[i] * radius;
                 minX = MathF.Min(minX, vertex.X);
                 minY = MathF.Min(minY, vertex.Y);
                 maxX = MathF.Max(maxX, vertex.X);

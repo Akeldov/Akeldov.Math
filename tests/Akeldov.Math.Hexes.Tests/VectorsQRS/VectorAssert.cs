@@ -19,4 +19,10 @@ internal static class VectorAssert
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(Epsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(Epsilon));
     }
+
+    public static void AreEqual(PointXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(Epsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(Epsilon));
+    }
 }
