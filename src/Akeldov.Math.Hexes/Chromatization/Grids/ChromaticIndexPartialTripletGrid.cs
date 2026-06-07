@@ -89,27 +89,6 @@ namespace Akeldov.Math.Hexes.Topology
             get => _chromaticIndices[index];
         }
 
-        public VectorXY GetCellCenter(VectorXYInt index)
-        {
-            ThrowIfGridIndexOutOfBounds(index);
-            return GetCellCenterUnchecked(index.X, index.Y);
-        }
-
-        public bool TryGetChromaticIndices(VectorXYInt gridIndex, out PartialTriplet<byte> chromaticIndices)
-        {
-            ThrowIfGridIndexOutOfBounds(gridIndex);
-
-            int flatIndex = GetFlatIndex(gridIndex);
-            chromaticIndices = _chromaticIndices[flatIndex];
-            return chromaticIndices.Presence != TripletPresenceFlags.None;
-        }
-
-        public PartialTriplet<byte> GetChromaticIndices(VectorXYInt gridIndex)
-        {
-            ThrowIfGridIndexOutOfBounds(gridIndex);
-            return _chromaticIndices[GetFlatIndex(gridIndex)];
-        }
-
         private void Initialize(
             int hexWidth,
             int hexHeight,
