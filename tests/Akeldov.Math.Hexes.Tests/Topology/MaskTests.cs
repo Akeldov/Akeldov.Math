@@ -47,6 +47,28 @@ public class MaskTests
     }
 
     [Test]
+    public void BinaryWriterAndReader_RoundTripRectangularMask()
+    {
+        var sourceMask = new bool[2, 3];
+        sourceMask[0, 0] = true;
+        sourceMask[1, 2] = true;
+        var source = new Mask(sourceMask);
+
+        using var stream = new MemoryStream();
+        using (var writer = new BinaryWriter(stream, System.Text.Encoding.UTF8, leaveOpen: true))
+        {
+            writer.Write(source);
+        }
+
+        stream.Position = 0;
+
+        using var reader = new BinaryReader(stream);
+        Mask result = reader.ReadMask();
+
+        Assert.That(result, Is.EqualTo(source));
+    }
+
+    [Test]
     public void BinaryWriterAndReader_RoundTripRectangularPolyhexMask()
     {
         var sourceMask = new bool[2, 3];

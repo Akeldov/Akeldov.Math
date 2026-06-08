@@ -12,8 +12,8 @@ namespace Akeldov.Math.Hexes.Topology
             if (isNotNull)
             {
                 var dimension = binaryReader.ReadVectorQRSInt();
-                var boolMask = binaryReader.ReadBoolMask();
-                return new Polyhex(boolMask);
+                var mask = binaryReader.ReadMask();
+                return new Polyhex(mask);
             }
             else
             {

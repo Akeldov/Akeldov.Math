@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public static partial class BoolMaskExtensions
+    internal static partial class BoolMaskExtensions
     {
         public static bool[,] Clone(bool[,] mask)
         {
