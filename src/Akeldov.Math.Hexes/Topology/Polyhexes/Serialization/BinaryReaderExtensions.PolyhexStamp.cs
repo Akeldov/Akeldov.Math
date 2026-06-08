@@ -9,16 +9,21 @@ namespace Akeldov.Math.Hexes.Topology
             this BinaryReader binaryReader)
         {
             var isNotNull = binaryReader.ReadBoolean();
-            if (isNotNull)
-            {
-                var dimension = binaryReader.ReadVectorQRSInt();
-                var mask = binaryReader.ReadMask();
-                return new Polyhex(mask);
-            }
-            else
-            {
+            if (!isNotNull)
                 return null;
+
+            var qrsResolution = binaryReader.ReadVectorQRSInt();
+            var builder = new PolyhexBuilder(qrsResolution.Q, qrsResolution.R);
+
+            for (int q = 0; q < qrsResolution.Q; q++)
+            {
+                for (int r = 0; r < qrsResolution.R; r++)
+                {
+                    builder[q, r] = binaryReader.ReadBoolean();
+                }
             }
+
+            return builder.ToPolyhex();
         }
     }
 }

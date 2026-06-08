@@ -4,8 +4,22 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public interface IPolyhex
     {
-        VectorQRSInt Dimension { get; }
+        VectorQRSInt QRSResolution { get; }
 
-        Mask Mask { get; }
+        public int HexCount { get; }
+
+        public bool this[VectorQRSInt index]
+        {
+            get;
+        }
+
+        public bool this[int QIndex, int RIndex]
+        {
+            get;
+        }
+
+        public Polyhex GetExtended();
+
+        public Polyhex GetContour();
     }
 }

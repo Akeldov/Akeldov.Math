@@ -1,62 +1,198 @@
-﻿using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Hexes.Vectors.QRS;
 using System;
+using System.Text;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public class Polyhex : IPolyhex
+    public class Polyhex : IPolyhex, IEquatable<Polyhex>
     {
-        private Mask _mask;
-        private VectorQRSInt _dimension;
+        private readonly bool[] _cells;
+        private readonly int _hash;
 
-        public Polyhex(Mask mask)
+        public Polyhex(int[,] intMask) : this(intMask.ToBoolMask())
         {
-            if (mask.QSize <= 0 || mask.RSize <= 0)
-                throw new ArgumentOutOfRangeException(nameof(mask), mask, $"The mask dimensions should be greater than zero");
-
-            _mask = mask;
-            _dimension = new VectorQRSInt(_mask.QSize, _mask.RSize);
         }
 
-        public Polyhex(VectorQRSInt dimension)
+        public Polyhex(bool[,] boolMask)
         {
-            if (dimension.Q <= 0 || dimension.R <= 0)
-                throw new ArgumentOutOfRangeException(nameof(dimension), dimension, $"The dimension ({dimension}) Q and R commponents should be greater than zero");
+            if (boolMask == null)
+                throw new ArgumentNullException(nameof(boolMask));
 
-            _dimension = dimension;
-            _mask = new bool[_dimension.Q, _dimension.R];
+            int qSize = boolMask.GetLength(0);
+            int rSize = boolMask.GetLength(1);
+            if (qSize <= 0 || rSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(boolMask), boolMask, "Polyhex dimensions must be greater than zero.");
+
+            QRSResolution = new VectorQRSInt(qSize, rSize);
+            _cells = new bool[checked(qSize * rSize)];
+
+            var hash = new HashCode();
+            hash.Add(QRSResolution);
+
+            var hexCount = 0;
+            for (int q = 0; q < qSize; q++)
+            {
+                for (int r = 0; r < rSize; r++)
+                {
+                    bool value = boolMask[q, r];
+                    _cells[GetFlatIndex(q, r)] = value;
+                    hash.Add(value);
+
+                    if (value)
+                        hexCount++;
+                }
+            }
+
+            HexCount = hexCount;
+            _hash = hash.ToHashCode();
         }
 
-        public VectorQRSInt Dimension => _dimension;
+        public Polyhex(VectorQRSInt qrsResolution)
+        {
+            if (qrsResolution.Q <= 0 || qrsResolution.R <= 0)
+                throw new ArgumentOutOfRangeException(nameof(qrsResolution), qrsResolution, "Polyhex resolution components must be greater than zero.");
+
+            QRSResolution = qrsResolution;
+            _cells = new bool[checked(qrsResolution.Q * qrsResolution.R)];
+
+            var hash = new HashCode();
+            hash.Add(QRSResolution);
+            for (int i = 0; i < _cells.Length; i++)
+                hash.Add(false);
+
+            HexCount = 0;
+            _hash = hash.ToHashCode();
+        }
+
+        internal Polyhex(int qSize, int rSize, bool[] cells)
+        {
+            if (qSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(qSize));
+
+            if (rSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(rSize));
+
+            if (cells == null)
+                throw new ArgumentNullException(nameof(cells));
+
+            int length = checked(qSize * rSize);
+            if (cells.Length != length)
+                throw new ArgumentException("Cell count must match polyhex dimensions.", nameof(cells));
+
+            QRSResolution = new VectorQRSInt(qSize, rSize);
+            _cells = new bool[length];
+
+            var hash = new HashCode();
+            hash.Add(QRSResolution);
+
+            var hexCount = 0;
+            for (int i = 0; i < cells.Length; i++)
+            {
+                bool value = cells[i];
+                _cells[i] = value;
+                hash.Add(value);
+
+                if (value)
+                    hexCount++;
+            }
+
+            HexCount = hexCount;
+            _hash = hash.ToHashCode();
+        }
+
+        public VectorQRSInt QRSResolution { get; }
+
+        public int HexCount { get; }
+
+        public int PositiveSize => HexCount;
 
         public bool this[VectorQRSInt index]
         {
-            get => _mask[index.Q, index.R];
+            get => this[index.Q, index.R];
         }
 
         public bool this[int QIndex, int RIndex]
         {
-            get => _mask[QIndex, RIndex];
+            get => _cells[GetFlatIndex(QIndex, RIndex)];
         }
 
-        public Mask Mask => _mask;
-
-        public int PositiveSize
+        public Polyhex GetExtended()
         {
-            get
-            {
-                var res = 0;
+            return new Polyhex(ToBoolArray().GetExtended());
+        }
 
-                for (int i = 0; i < _mask.QSize; i++)
+        public Polyhex GetContour()
+        {
+            return new Polyhex(ToBoolArray().GetContour());
+        }
+
+        public bool[,] ToBoolArray()
+        {
+            var result = new bool[QRSResolution.Q, QRSResolution.R];
+
+            for (int q = 0; q < QRSResolution.Q; q++)
+            {
+                for (int r = 0; r < QRSResolution.R; r++)
                 {
-                    for (int j = 0; j < _mask.RSize; j++)
-                    {
-                        if (_mask[i, j])
-                            res++;
-                    }
+                    result[q, r] = this[q, r];
+                }
+            }
+
+            return result;
+        }
+
+        public override int GetHashCode() => _hash;
+
+        public override bool Equals(object obj) => obj is Polyhex other && Equals(other);
+
+        public bool Equals(Polyhex other)
+        {
+            if (other is null)
+                return false;
+
+            if (QRSResolution != other.QRSResolution)
+                return false;
+
+            for (int i = 0; i < _cells.Length; i++)
+            {
+                if (_cells[i] != other._cells[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            for (int q = 0; q < QRSResolution.Q; q++)
+            {
+                for (int r = 0; r < QRSResolution.R; r++)
+                {
+                    sb.Append(this[q, r] ? 1 : 0);
                 }
 
-                return res;
+                sb.AppendLine();
             }
+
+            return sb.ToString();
         }
+
+        public static implicit operator Polyhex(bool[,] boolMask) => new Polyhex(boolMask);
+
+        public static bool operator ==(Polyhex left, Polyhex right)
+        {
+            if (ReferenceEquals(left, right))
+                return true;
+
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return false;
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Polyhex left, Polyhex right) => !(left == right);
+
+        private int GetFlatIndex(int q, int r) => q * QRSResolution.R + r;
     }
 }

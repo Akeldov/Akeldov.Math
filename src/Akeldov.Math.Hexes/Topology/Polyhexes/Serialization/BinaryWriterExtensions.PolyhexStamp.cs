@@ -1,5 +1,4 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
-using Akeldov.Math.Spatial2D;
 using System.IO;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -13,8 +12,14 @@ namespace Akeldov.Math.Hexes.Topology
             if (polyhexStamp != null)
             {
                 binaryWriter.Write(true);
-                binaryWriter.Write(polyhexStamp.Dimension);
-                binaryWriter.Write(polyhexStamp.Mask);
+                binaryWriter.Write(polyhexStamp.QRSResolution);
+                for (int q = 0; q < polyhexStamp.QRSResolution.Q; q++)
+                {
+                    for (int r = 0; r < polyhexStamp.QRSResolution.R; r++)
+                    {
+                        binaryWriter.Write(polyhexStamp[q, r]);
+                    }
+                }
             }
             else
             {
