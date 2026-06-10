@@ -3,6 +3,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D
 {
@@ -13,6 +14,7 @@ namespace Akeldov.Math.Spatial2D
     {
         private readonly VectorXY _axisX;
         private readonly VectorXY _axisY;
+        private readonly IReadOnlyList<IContour>? _contours;
 
         /// <summary>
         /// Initializes a new oriented rectangle.
@@ -36,14 +38,17 @@ namespace Akeldov.Math.Spatial2D
 
             GeometryConstants.ValidateFiniteAngle(rotation, nameof(rotation));
 
+            float cos = MathF.Cos(rotation);
+            float sin = MathF.Sin(rotation);
+            var axisX = new VectorXY(cos, sin);
+            var axisY = new VectorXY(-sin, cos);
+
             Center = center;
             Size = size;
             Rotation = rotation;
-
-            float cos = MathF.Cos(rotation);
-            float sin = MathF.Sin(rotation);
-            _axisX = new VectorXY(cos, sin);
-            _axisY = new VectorXY(-sin, cos);
+            _axisX = axisX;
+            _axisY = axisY;
+            _contours = CreateContours(center, size, axisX, axisY);
         }
 
         /// <summary>
@@ -105,7 +110,7 @@ namespace Akeldov.Math.Spatial2D
         public FillRule FillRule => FillRule.EvenOdd;
 
         /// <inheritdoc/>
-        public IReadOnlyList<IContour> Contours => Array.AsReadOnly(new IContour[] { ToContour() });
+        public IReadOnlyList<IContour> Contours => _contours ?? CreateContours();
 
         /// <inheritdoc/>
         public bool Contains(
@@ -153,13 +158,7 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The rectangle boundary contour.</returns>
         public Contour ToContour()
         {
-            return new Contour(new IFinitePath[]
-            {
-                new ParameterizedSegment(BottomLeft, BottomRight),
-                new ParameterizedSegment(BottomRight, TopRight),
-                new ParameterizedSegment(TopRight, TopLeft),
-                new ParameterizedSegment(TopLeft, BottomLeft)
-            });
+            return CreateContour(Center, Size, AxisX, AxisY);
         }
 
         /// <summary>
@@ -216,7 +215,41 @@ namespace Akeldov.Math.Spatial2D
         public override int GetHashCode() => HashCode.Combine(Center, Size, Rotation);
 
         /// <inheritdoc/>
-        public override string ToString() => $"OrientedRectangle(center: {Center}, size: {Size}, rotation: {Rotation} rad)";
+        public override string ToString() =>
+            string.Format(
+                CultureInfo.InvariantCulture,
+                "OrientedRectangle(center: {0}, size: {1}, rotation: {2} rad)",
+                Center,
+                Size,
+                Rotation);
+
+        private IReadOnlyList<IContour> CreateContours()
+        {
+            return CreateContours(Center, Size, AxisX, AxisY);
+        }
+
+        private static IReadOnlyList<IContour> CreateContours(PointXY center, VectorXY size, VectorXY axisX, VectorXY axisY)
+        {
+            return Array.AsReadOnly(new IContour[] { CreateContour(center, size, axisX, axisY) });
+        }
+
+        private static Contour CreateContour(PointXY center, VectorXY size, VectorXY axisX, VectorXY axisY)
+        {
+            float width = size.X;
+            float height = size.Y;
+            PointXY bottomLeft = center - axisX * (width * 0.5f) - axisY * (height * 0.5f);
+            PointXY bottomRight = center + axisX * (width * 0.5f) - axisY * (height * 0.5f);
+            PointXY topLeft = center - axisX * (width * 0.5f) + axisY * (height * 0.5f);
+            PointXY topRight = center + axisX * (width * 0.5f) + axisY * (height * 0.5f);
+
+            return new Contour(new IFinitePath[]
+            {
+                new ParameterizedSegment(bottomLeft, bottomRight),
+                new ParameterizedSegment(bottomRight, topRight),
+                new ParameterizedSegment(topRight, topLeft),
+                new ParameterizedSegment(topLeft, bottomLeft)
+            });
+        }
 
         /// <summary>
         /// Indicates whether two oriented rectangles are equal.

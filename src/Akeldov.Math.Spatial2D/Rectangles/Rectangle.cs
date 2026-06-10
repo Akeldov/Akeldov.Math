@@ -3,6 +3,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D
 {
@@ -11,6 +12,8 @@ namespace Akeldov.Math.Spatial2D
     /// </summary>
     public readonly struct Rectangle : IRegion, IEquatable<Rectangle>
     {
+        private readonly IReadOnlyList<IContour>? _contours;
+
         /// <summary>
         /// Initializes a new axis-aligned rectangle from two opposite corners.
         /// </summary>
@@ -31,11 +34,15 @@ namespace Akeldov.Math.Spatial2D
                 nameof(cornerB),
                 "Rectangle corner coordinates must be finite.");
 
-            Min = new PointXY(MathF.Min(cornerA.X, cornerB.X), MathF.Min(cornerA.Y, cornerB.Y));
-            Max = new PointXY(MathF.Max(cornerA.X, cornerB.X), MathF.Max(cornerA.Y, cornerB.Y));
+            PointXY min = new PointXY(MathF.Min(cornerA.X, cornerB.X), MathF.Min(cornerA.Y, cornerB.Y));
+            PointXY max = new PointXY(MathF.Max(cornerA.X, cornerB.X), MathF.Max(cornerA.Y, cornerB.Y));
 
-            if (Width <= 0f || Height <= 0f)
+            if (max.X - min.X <= 0f || max.Y - min.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle width and height must be positive.");
+
+            Min = min;
+            Max = max;
+            _contours = CreateContours(min, max);
         }
 
         /// <summary>
@@ -96,7 +103,7 @@ namespace Akeldov.Math.Spatial2D
         public FillRule FillRule => FillRule.EvenOdd;
 
         /// <inheritdoc/>
-        public IReadOnlyList<IContour> Contours => Array.AsReadOnly(new IContour[] { ToContour() });
+        public IReadOnlyList<IContour> Contours => _contours ?? CreateContours();
 
         /// <inheritdoc/>
         public bool Contains(
@@ -122,13 +129,7 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The rectangle boundary contour.</returns>
         public Contour ToContour()
         {
-            return new Contour(new IFinitePath[]
-            {
-                new ParameterizedSegment(BottomLeft, BottomRight),
-                new ParameterizedSegment(BottomRight, TopRight),
-                new ParameterizedSegment(TopRight, TopLeft),
-                new ParameterizedSegment(TopLeft, BottomLeft)
-            });
+            return CreateContour(Min, Max);
         }
 
         /// <summary>
@@ -154,7 +155,34 @@ namespace Akeldov.Math.Spatial2D
         public override int GetHashCode() => HashCode.Combine(Min, Max);
 
         /// <inheritdoc/>
-        public override string ToString() => $"Rectangle({Min}, {Max})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "Rectangle({0}, {1})", Min, Max);
+
+        private IReadOnlyList<IContour> CreateContours()
+        {
+            return CreateContours(Min, Max);
+        }
+
+        private static IReadOnlyList<IContour> CreateContours(PointXY min, PointXY max)
+        {
+            return Array.AsReadOnly(new IContour[] { CreateContour(min, max) });
+        }
+
+        private static Contour CreateContour(PointXY min, PointXY max)
+        {
+            var bottomLeft = min;
+            var bottomRight = new PointXY(max.X, min.Y);
+            var topLeft = new PointXY(min.X, max.Y);
+            var topRight = max;
+
+            return new Contour(new IFinitePath[]
+            {
+                new ParameterizedSegment(bottomLeft, bottomRight),
+                new ParameterizedSegment(bottomRight, topRight),
+                new ParameterizedSegment(topRight, topLeft),
+                new ParameterizedSegment(topLeft, bottomLeft)
+            });
+        }
 
         /// <summary>
         /// Indicates whether two rectangles are equal.

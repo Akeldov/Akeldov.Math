@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -243,7 +244,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"Arc(center: {Center}, radius: {Radius}, rad: {StartAngle} - {EndAngle}, fullCircle: {IsFullCircle})";
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Arc(center: {0}, radius: {1}, rad: {2} - {3}, fullCircle: {4})",
+                Center,
+                Radius,
+                StartAngle,
+                EndAngle,
+                IsFullCircle);
         }
 
         /// <summary>

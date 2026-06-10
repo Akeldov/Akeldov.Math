@@ -1,4 +1,5 @@
 using Akeldov.Math.Spatial2D.Curves;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
@@ -143,6 +144,26 @@ public class ArcTests
         Assert.That(defaultIntersections, Is.Empty);
         Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
         AssertVector(tolerantIntersections[0], 0f, 1.00005f);
+    }
+
+    [Test]
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenParameterizedArcIntersectionIsJustBehindRayOrigin_ReturnsIntersection()
+    {
+        const float geometryEpsilon = 0.001f;
+        var arc = new ParameterizedArc(
+            new PointXY(0f, 0f),
+            1f,
+            0f,
+            2f * MathF.PI,
+            AngularDirection.Counterclockwise);
+        var ray = new Ray(new PointXY(1.0005f, 0f));
+
+        var defaultIntersections = arc.GetRayIntersections(ray);
+        var tolerantIntersections = arc.GetRayIntersections(ray, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 1f, 0f);
     }
 
     [TestCase(-1f)]
@@ -325,6 +346,31 @@ public class ArcTests
 
         Assert.That(zeroArc, Is.Not.EqualTo(fullCircle));
         Assert.That(zeroArc.GetHashCode(), Is.Not.EqualTo(fullCircle.GetHashCode()));
+    }
+
+    [Test]
+    public void ToString_UsesInvariantCulture()
+    {
+        CultureInfo originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
+
+        try
+        {
+            var arc = new ParameterizedArc(
+                new PointXY(1.5f, 2.25f),
+                3.5f,
+                0.25f,
+                1.5f,
+                AngularDirection.Counterclockwise);
+
+            Assert.That(
+                arc.ToString(),
+                Is.EqualTo("ParameterizedArc(center: (1.5, 2.25), radius: 3.5, rad: 0.25 - 1.5, direction: Counterclockwise, fullCircle: False)"));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 
     private static void AssertVector(PointXY actual, float expectedX, float expectedY)

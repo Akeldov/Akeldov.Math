@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -144,7 +145,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         public override int GetHashCode() => HashCode.Combine(Center, Radius);
 
         /// <inheritdoc/>
-        public override string ToString() => $"Circle(center: {Center}, radius: {Radius})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "Circle(center: {0}, radius: {1})", Center, Radius);
 
         /// <summary>
         /// Indicates whether two circles are equal.

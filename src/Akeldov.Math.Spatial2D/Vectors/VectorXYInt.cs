@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D
 {
@@ -57,7 +58,8 @@ namespace Akeldov.Math.Spatial2D
         public override int GetHashCode() => HashCode.Combine(X, Y);
 
         /// <inheritdoc/>
-        public override string ToString() => $"({X}, {Y})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "({0}, {1})", X, Y);
 
         /// <summary>
         /// Deconstructs this vector into its X and Y components.

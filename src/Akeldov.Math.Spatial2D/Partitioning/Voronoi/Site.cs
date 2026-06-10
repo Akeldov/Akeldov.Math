@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
@@ -55,7 +56,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         public override int GetHashCode() => HashCode.Combine(Position, Weight);
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Position}, {Weight})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "({0}, {1})", Position, Weight);
 
         /// <summary>
         /// Indicates whether two sites are equal.

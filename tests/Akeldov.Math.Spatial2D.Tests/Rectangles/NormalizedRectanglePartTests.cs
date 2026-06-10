@@ -82,6 +82,20 @@ public class NormalizedRectanglePartTests
         Assert.That(exception!.ParamName, Is.EqualTo(parameterName));
     }
 
+    [TestCase(float.NaN, 0.5f, "x")]
+    [TestCase(0.5f, float.NaN, "y")]
+    public void Constructor_WhenCoordinateIsNaN_ThrowsBeforePartIsCreated(float x, float y, string parameterName)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () =>
+            {
+                var corner = new PointXY(x, y);
+                _ = new NormalizedRectanglePart(corner, new PointXY(1f, 1f));
+            });
+
+        Assert.That(exception!.ParamName, Is.EqualTo(parameterName));
+    }
+
     [TestCase(0.25f, 0.25f, true)]
     [TestCase(0.75f, 0.75f, true)]
     [TestCase(0.5f, 0.5f, true)]

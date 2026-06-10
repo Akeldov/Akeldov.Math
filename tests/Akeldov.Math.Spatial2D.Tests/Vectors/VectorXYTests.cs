@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Akeldov.Math.Spatial2D.Tests.Vectors;
 
 public class VectorXYTests
@@ -113,5 +115,21 @@ public class VectorXYTests
         var rounded = vector.RoundToInt();
 
         Assert.That(rounded, Is.EqualTo(new VectorXYInt(2, 4)));
+    }
+
+    [Test]
+    public void ToString_UsesInvariantCulture()
+    {
+        CultureInfo originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
+
+        try
+        {
+            Assert.That(new VectorXY(1.5f, 2.25f).ToString(), Is.EqualTo("(1.5, 2.25)"));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 }

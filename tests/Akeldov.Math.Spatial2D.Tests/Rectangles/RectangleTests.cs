@@ -83,6 +83,7 @@ public class RectangleTests
 
         Assert.That(rectangle.Contours, Has.Count.EqualTo(1));
         Assert.That(rectangle.Contours, Is.Not.InstanceOf<IContour[]>());
+        Assert.That(rectangle.Contours, Is.SameAs(rectangle.Contours));
     }
 
     [Test]

@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -164,13 +165,31 @@ namespace Akeldov.Math.Spatial2D.Curves
         public override int GetHashCode() => HashCode.Combine(Center, Radius, StartAngle, EndAngle, AngularDirection, IsFullCircle);
 
         /// <inheritdoc/>
-        public override string ToString() => $"ParameterizedArc(center: {Center}, radius: {Radius}, rad: {StartAngle} - {EndAngle}, direction: {AngularDirection}, fullCircle: {IsFullCircle})";
+        public override string ToString() =>
+            string.Format(
+                CultureInfo.InvariantCulture,
+                "ParameterizedArc(center: {0}, radius: {1}, rad: {2} - {3}, direction: {4}, fullCircle: {5})",
+                Center,
+                Radius,
+                StartAngle,
+                EndAngle,
+                AngularDirection,
+                IsFullCircle);
 
         /// <summary>
         /// Returns a string representation of this arc with angles in degrees.
         /// </summary>
         /// <returns>A string representation of this arc with degree angles.</returns>
-        public string ToDegreesString() => $"ParameterizedArc(center: {Center}, radius: {Radius}, deg: {StartAngleDeg} - {EndAngleDeg}, direction: {AngularDirection}, fullCircle: {IsFullCircle})";
+        public string ToDegreesString() =>
+            string.Format(
+                CultureInfo.InvariantCulture,
+                "ParameterizedArc(center: {0}, radius: {1}, deg: {2} - {3}, direction: {4}, fullCircle: {5})",
+                Center,
+                Radius,
+                StartAngleDeg,
+                EndAngleDeg,
+                AngularDirection,
+                IsFullCircle);
 
         /// <summary>
         /// Returns point intersections between this arc and the specified ray.
@@ -218,21 +237,10 @@ namespace Akeldov.Math.Spatial2D.Curves
             float t1 = (-b - sqrtD) / (2f * a);
             float t2 = (-b + sqrtD) / (2f * a);
 
-            if (t1 >= 0f)
-            {
-                PointXY point1 = ray.Origin + dir * t1;
+            AddRayCircleIntersectionIfOnArc(ray, t1, intersections, geometryEpsilon);
 
-                if (IsWithinAngularRegion(point1))
-                    intersections.AddDistinct(point1, geometryEpsilon);
-            }
-
-            if (t2 >= 0f)
-            {
-                PointXY point2 = ray.Origin + dir * t2;
-
-                if (IsWithinAngularRegion(point2))
-                    intersections.AddDistinct(point2, geometryEpsilon);
-            }
+            if (!t2.AlmostEquals(t1, geometryEpsilon))
+                AddRayCircleIntersectionIfOnArc(ray, t2, intersections, geometryEpsilon);
 
             return intersections;
         }
@@ -327,6 +335,20 @@ namespace Akeldov.Math.Spatial2D.Curves
             return arc.AngularDirection == AngularDirection.Counterclockwise
                 ? new Arc(arc.Center, arc.Radius, arc.StartAngle, arc.EndAngle)
                 : new Arc(arc.Center, arc.Radius, arc.EndAngle, arc.StartAngle);
+        }
+
+        private void AddRayCircleIntersectionIfOnArc(
+            Ray ray,
+            float rayCoordinate,
+            List<PointXY> intersections,
+            float geometryEpsilon)
+        {
+            if (rayCoordinate < -geometryEpsilon)
+                return;
+
+            PointXY point = ray.Origin + ray.Direction * rayCoordinate;
+            if (IsWithinAngularRegion(point))
+                intersections.AddDistinct(point, geometryEpsilon);
         }
 
         private float GetCurveCoordinate(float angle)
