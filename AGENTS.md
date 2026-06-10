@@ -30,6 +30,16 @@ python -m mkdocs build --strict --site-dir .mkdocs-site-temp
 Then check the generated HTML image `src` values resolve to files under
 `.mkdocs-site-temp\assets\...`, and remove `.mkdocs-site-temp` after verification.
 
+## Spatial2D Benchmarks
+
+`Akeldov.Math.Spatial2D` has a BenchmarkDotNet project at
+`benchmarks\Akeldov.Math.Spatial2D.Benchmarks\Akeldov.Math.Spatial2D.Benchmarks.csproj`.
+When assessing Spatial2D performance coverage, account for this project before suggesting
+that benchmarks are missing.
+
+The benchmark project includes coverage for Delaunay culling, barycentric sampling,
+Voronoi partitioning, Poisson disk sampling, contours, regions, and signed-distance rasterization.
+
 ## Tests
 
 When sandboxing is active, request elevated access immediately for .NET build and test commands.
