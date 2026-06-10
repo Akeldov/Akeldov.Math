@@ -14,7 +14,7 @@ namespace Akeldov.Math.Spatial2D
         /// <typeparam name="T">The scalable item type.</typeparam>
         /// <param name="items">The items to scale.</param>
         /// <param name="scale">The scale factor.</param>
-        /// <returns>The scaled items.</returns>
+        /// <returns>A new mutable list of scaled items owned by the caller.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty or contains null elements.</exception>
         public static List<T> Scale<T>(this IReadOnlyList<T> items, VectorXY scale)

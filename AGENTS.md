@@ -40,6 +40,26 @@ that benchmarks are missing.
 The benchmark project includes coverage for Delaunay culling, barycentric sampling,
 Voronoi partitioning, Poisson disk sampling, contours, regions, and signed-distance rasterization.
 
+## Spatial2D Collection Ownership
+
+In `Akeldov.Math.Spatial2D`, collection return types express ownership semantics.
+
+Use caller-owned mutable collections, such as `List<T>` or arrays, for newly computed transient
+results that the library does not retain and callers may reasonably filter, append to, or reuse.
+Examples include ray intersections, influence culling results, Poisson disk samples, scaled item
+copies, and derived Voronoi site arrays.
+
+Use `IReadOnlyList<T>` for structural views, retained data, copied immutable-facing state, or API
+surfaces where mutation should not be part of the contract. Examples include contour curves,
+region contours, partition items, influence sources, and distinct field values.
+
+When returning a mutable caller-owned collection from a public Spatial2D API, XML comments must
+state that the returned collection is new, mutable, and owned by the caller. For caller-owned
+arrays, state that the returned array is new and owned by the caller.
+
+Do not change a caller-owned mutable return to `IReadOnlyList<T>` solely for consistency. Treat
+the return type as part of the ownership contract.
+
 ## Tests
 
 When sandboxing is active, request elevated access immediately for .NET build and test commands.

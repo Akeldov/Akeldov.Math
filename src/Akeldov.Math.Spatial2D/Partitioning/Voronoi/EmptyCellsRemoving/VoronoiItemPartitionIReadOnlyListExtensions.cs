@@ -4,6 +4,12 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
     internal static partial class VoronoiItemPartitionIReadOnlyListExtensions
     {
+        /// <summary>
+        /// Returns only Voronoi partitions that contain at least one item.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned partition item type.</typeparam>
+        /// <param name="cells">The Voronoi partitions to filter.</param>
+        /// <returns>A new mutable list of non-empty partitions owned by the caller.</returns>
         public static List<VoronoiItemPartition<TItem>> ExcludeEmptyCells<TItem>(this IReadOnlyList<VoronoiItemPartition<TItem>> cells)
             where TItem : IHasPosition2D
         {
