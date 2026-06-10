@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -263,7 +264,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             HashCode.Combine(EndpointB, IncludesEndpointB);
 
         /// <inheritdoc/>
-        public override string ToString() => $"({EndpointA} - {EndpointB})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "({0} - {1})", EndpointA, EndpointB);
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this segment.

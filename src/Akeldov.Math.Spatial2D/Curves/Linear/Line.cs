@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -217,7 +218,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"({ClosestPointToOrigin} + t*{Direction})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "({0} + t*{1})", ClosestPointToOrigin, Direction);
 
         /// <summary>
         /// Indicates whether two lines are equal.

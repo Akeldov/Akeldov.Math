@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
@@ -60,7 +61,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public override int GetHashCode() => HashCode.Combine(Red, Green, Blue, Alpha);
 
         /// <inheritdoc/>
-        public override string ToString() => $"rgba16({Red}, {Green}, {Blue}, {Alpha})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "rgba16({0}, {1}, {2}, {3})", Red, Green, Blue, Alpha);
 
         /// <summary>
         /// Indicates whether two colors are equal.

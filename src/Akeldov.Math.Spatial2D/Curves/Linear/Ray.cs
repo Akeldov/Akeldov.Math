@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -209,7 +210,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         public override int GetHashCode() => HashCode.Combine(Origin, Direction);
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Origin} + t*{Direction}, t >= 0)";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "({0} + t*{1}, t >= 0)", Origin, Direction);
 
         /// <summary>
         /// Returns the point at the specified ray length coordinate.

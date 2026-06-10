@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
@@ -100,7 +101,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public override int GetHashCode() => HashCode.Combine(Origin, Size, Resolution);
 
         /// <inheritdoc/>
-        public override string ToString() => $"RasterGrid(origin: {Origin}, size: {Size}, resolution: {Resolution})";
+        public override string ToString() =>
+            string.Format(
+                CultureInfo.InvariantCulture,
+                "RasterGrid(origin: {0}, size: {1}, resolution: {2})",
+                Origin,
+                Size,
+                Resolution);
 
         /// <summary>
         /// Indicates whether two raster grids are equal.

@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -256,7 +257,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Origin} + t*{Direction})";
+        public override string ToString() =>
+            string.Format(CultureInfo.InvariantCulture, "({0} + t*{1})", Origin, Direction);
 
         /// <summary>
         /// Indicates whether two parametric lines are equal.
