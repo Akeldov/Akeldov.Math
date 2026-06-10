@@ -14,7 +14,6 @@ namespace Akeldov.Math.Spatial2D
     {
         private readonly VectorXY _axisX;
         private readonly VectorXY _axisY;
-        private readonly IReadOnlyList<IContour>? _contours;
 
         /// <summary>
         /// Initializes a new oriented rectangle.
@@ -48,7 +47,6 @@ namespace Akeldov.Math.Spatial2D
             Rotation = rotation;
             _axisX = axisX;
             _axisY = axisY;
-            _contours = CreateContours(center, size, axisX, axisY);
         }
 
         /// <summary>
@@ -110,7 +108,7 @@ namespace Akeldov.Math.Spatial2D
         public FillRule FillRule => FillRule.EvenOdd;
 
         /// <inheritdoc/>
-        public IReadOnlyList<IContour> Contours => _contours ?? CreateContours();
+        public IReadOnlyList<IContour> Contours => Array.AsReadOnly(new IContour[] { ToContour() });
 
         /// <inheritdoc/>
         public bool Contains(
@@ -158,7 +156,13 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The rectangle boundary contour.</returns>
         public Contour ToContour()
         {
-            return CreateContour(Center, Size, AxisX, AxisY);
+            return new Contour(new IFinitePath[]
+            {
+                new ParameterizedSegment(BottomLeft, BottomRight),
+                new ParameterizedSegment(BottomRight, TopRight),
+                new ParameterizedSegment(TopRight, TopLeft),
+                new ParameterizedSegment(TopLeft, BottomLeft)
+            });
         }
 
         /// <summary>
@@ -222,34 +226,6 @@ namespace Akeldov.Math.Spatial2D
                 Center,
                 Size,
                 Rotation);
-
-        private IReadOnlyList<IContour> CreateContours()
-        {
-            return CreateContours(Center, Size, AxisX, AxisY);
-        }
-
-        private static IReadOnlyList<IContour> CreateContours(PointXY center, VectorXY size, VectorXY axisX, VectorXY axisY)
-        {
-            return Array.AsReadOnly(new IContour[] { CreateContour(center, size, axisX, axisY) });
-        }
-
-        private static Contour CreateContour(PointXY center, VectorXY size, VectorXY axisX, VectorXY axisY)
-        {
-            float width = size.X;
-            float height = size.Y;
-            PointXY bottomLeft = center - axisX * (width * 0.5f) - axisY * (height * 0.5f);
-            PointXY bottomRight = center + axisX * (width * 0.5f) - axisY * (height * 0.5f);
-            PointXY topLeft = center - axisX * (width * 0.5f) + axisY * (height * 0.5f);
-            PointXY topRight = center + axisX * (width * 0.5f) + axisY * (height * 0.5f);
-
-            return new Contour(new IFinitePath[]
-            {
-                new ParameterizedSegment(bottomLeft, bottomRight),
-                new ParameterizedSegment(bottomRight, topRight),
-                new ParameterizedSegment(topRight, topLeft),
-                new ParameterizedSegment(topLeft, bottomLeft)
-            });
-        }
 
         /// <summary>
         /// Indicates whether two oriented rectangles are equal.
