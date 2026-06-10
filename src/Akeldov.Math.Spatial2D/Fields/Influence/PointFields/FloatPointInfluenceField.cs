@@ -52,7 +52,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         public float Max => _max;
 
         /// <summary>
-        /// Gets the distinct source values used to define this field range.
+        /// Gets the read-only distinct source values used to define this field range.
         /// </summary>
         public IReadOnlyList<float> DistinctValues => _distinctValues;
 

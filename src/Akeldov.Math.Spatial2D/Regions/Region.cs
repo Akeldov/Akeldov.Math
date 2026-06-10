@@ -40,7 +40,9 @@ namespace Akeldov.Math.Spatial2D.Regions
             _fillRule = fillRule;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the read-only structural view of the contours that define this region.
+        /// </summary>
         public IReadOnlyList<IContour> Contours => _readOnlyContours;
 
         /// <inheritdoc/>

@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     public interface IContour
     {
         /// <summary>
-        /// Gets the finite paths that form this contour.
+        /// Gets the read-only structural view of the finite paths that form this contour.
         /// </summary>
         IReadOnlyList<IFinitePath> Curves { get; }
 

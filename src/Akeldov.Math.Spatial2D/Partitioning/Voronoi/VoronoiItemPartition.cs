@@ -27,7 +27,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         public Site Site { get; }
 
         /// <summary>
-        /// Gets the items assigned to this partition.
+        /// Gets the read-only structural view of the items assigned to this partition.
         /// </summary>
         public IReadOnlyList<TItem> Items { get; }
 

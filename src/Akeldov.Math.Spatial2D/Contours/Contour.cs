@@ -36,7 +36,9 @@ namespace Akeldov.Math.Spatial2D.Contours
             _readOnlyCurves = Array.AsReadOnly(_curves);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the read-only structural view of the finite paths that form this contour.
+        /// </summary>
         public IReadOnlyList<IFinitePath> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>

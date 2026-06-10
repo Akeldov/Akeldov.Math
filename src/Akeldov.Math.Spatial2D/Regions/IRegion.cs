@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Regions
     public interface IRegion
     {
         /// <summary>
-        /// Gets the contours that define this region.
+        /// Gets the read-only structural view of the contours that define this region.
         /// </summary>
         IReadOnlyList<IContour> Contours { get; }
 

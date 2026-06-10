@@ -17,6 +17,9 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 
         public float Max => _value;
 
+        /// <summary>
+        /// Gets the read-only distinct source values used to define this field range.
+        /// </summary>
         public IReadOnlyList<float> DistinctValues { get; }
 
         public float Sample(PointXY point)

@@ -14,7 +14,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning
         /// Partitions the specified items.
         /// </summary>
         /// <param name="items">The items to partition.</param>
-        /// <returns>The generated partitions.</returns>
+        /// <returns>
+        /// A read-only list of generated partitions whose collection-level invariants are owned by the partitioner.
+        /// </returns>
         IReadOnlyList<TPartition> Partition(IReadOnlyList<TItem> items);
     }
 }

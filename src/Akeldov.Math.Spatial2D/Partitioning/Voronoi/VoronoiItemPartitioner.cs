@@ -78,7 +78,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// Assigns the specified items to Voronoi site partitions.
         /// </summary>
         /// <param name="items">The positioned items to partition.</param>
-        /// <returns>The generated Voronoi item partitions.</returns>
+        /// <returns>
+        /// A read-only list of generated Voronoi item partitions that preserves the partitioner result invariants.
+        /// </returns>
         public IReadOnlyList<VoronoiItemPartition<TItem>> Partition(IReadOnlyList<TItem> items)
         {
             IReadOnlyList<VoronoiItemPartition<TItem>> cells = PartitionInternal(_sites, items);

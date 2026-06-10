@@ -49,13 +49,19 @@ results that the library does not retain and callers may reasonably filter, appe
 Examples include ray intersections, influence culling results, Poisson disk samples, scaled item
 copies, and derived Voronoi site arrays.
 
-Use `IReadOnlyList<T>` for structural views, retained data, copied immutable-facing state, or API
-surfaces where mutation should not be part of the contract. Examples include contour curves,
-region contours, partition items, influence sources, and distinct field values.
+Use `IReadOnlyList<T>` for structural views, retained data, copied immutable-facing state,
+validated pass-through inputs, or semantic algorithm results whose order, cardinality, or
+other invariants should not be mutated through the public contract. Examples include contour
+curves, region contours, partition items, partitioner results, validation helpers that return
+the input list after validation, influence sources, and distinct field values.
 
 When returning a mutable caller-owned collection from a public Spatial2D API, XML comments must
 state that the returned collection is new, mutable, and owned by the caller. For caller-owned
 arrays, state that the returned array is new and owned by the caller.
+
+When documenting an `IReadOnlyList<T>` surface, XML comments should state the reason when
+ownership is not obvious: structural view/state, validated input returned as-is, or semantic
+result with invariants.
 
 Do not change a caller-owned mutable return to `IReadOnlyList<T>` solely for consistency. Treat
 the return type as part of the ownership contract.

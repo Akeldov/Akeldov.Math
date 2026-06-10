@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning
     public interface IPartition<TItem>
     {
         /// <summary>
-        /// Gets the items assigned to this partition.
+        /// Gets the read-only structural view of the items assigned to this partition.
         /// </summary>
         IReadOnlyList<TItem> Items { get; }
     }

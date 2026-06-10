@@ -107,7 +107,9 @@ namespace Akeldov.Math.Spatial2D
         /// <inheritdoc/>
         public FillRule FillRule => FillRule.EvenOdd;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the read-only structural view of the contours that define this rectangle region.
+        /// </summary>
         public IReadOnlyList<IContour> Contours => Array.AsReadOnly(new IContour[] { ToContour() });
 
         /// <inheritdoc/>

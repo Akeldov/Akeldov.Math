@@ -63,7 +63,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
-        /// Gets all influence sources configured for this field.
+        /// Gets the read-only influence sources configured for this field.
         /// </summary>
         public IReadOnlyList<TSource> InfluenceSources => _readOnlyInfluenceSources;
 
