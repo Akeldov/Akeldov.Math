@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akeldov.Math.Spatial2D" Version="0.3.0" />
+    <ProjectReference Include="..\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj" />
   </ItemGroup>
 
 </Project>

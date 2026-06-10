@@ -14,6 +14,14 @@ namespace Akeldov.Math.Hexes.Topology
         public IndexSeptupletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
+            : this(hexAdjacencyMap, resolution, NormalizedRectanglePart.Full)
+        {
+        }
+
+        public IndexSeptupletGrid(
+            IndexSeptupletMap hexAdjacencyMap,
+            VectorXYInt resolution,
+            NormalizedRectanglePart rectanglePart)
         {
             if (hexAdjacencyMap == null)
                 throw new ArgumentNullException(nameof(hexAdjacencyMap));
@@ -28,23 +36,29 @@ namespace Akeldov.Math.Hexes.Topology
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
             var boundingBoxSize = hexAdjacencyMap.GetBoundingBoxSize(radius);
-            var stepX = boundingBoxSize.X / Width;
-            var stepY = boundingBoxSize.Y / Height;
+            var gridOrigin = new VectorXY(
+                boundingBoxSize.X * rectanglePart.Min.X,
+                boundingBoxSize.Y * rectanglePart.Min.Y);
+            var gridSize = new VectorXY(
+                boundingBoxSize.X * rectanglePart.Size.X,
+                boundingBoxSize.Y * rectanglePart.Size.Y);
+            var stepX = gridSize.X / Width;
+            var stepY = gridSize.Y / Height;
 
             _adjacent = new Septuplet<VectorXYInt>[checked(Width * Height)];
             switch (hexAdjacencyMap.Layout)
             {
                 case Layout.OddR:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.OddR, new VectorXY(apothem, radius));
+                    Fill(hexAdjacencyMap, radius, gridOrigin, stepX, stepY, Layout.OddR, new VectorXY(apothem, radius));
                     break;
                 case Layout.EvenR:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.EvenR, new VectorXY(2f * apothem, radius));
+                    Fill(hexAdjacencyMap, radius, gridOrigin, stepX, stepY, Layout.EvenR, new VectorXY(2f * apothem, radius));
                     break;
                 case Layout.OddQ:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.OddQ, new VectorXY(radius, apothem));
+                    Fill(hexAdjacencyMap, radius, gridOrigin, stepX, stepY, Layout.OddQ, new VectorXY(radius, apothem));
                     break;
                 case Layout.EvenQ:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.EvenQ, new VectorXY(radius, 2f * apothem));
+                    Fill(hexAdjacencyMap, radius, gridOrigin, stepX, stepY, Layout.EvenQ, new VectorXY(radius, 2f * apothem));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap.Layout));
@@ -83,6 +97,7 @@ namespace Akeldov.Math.Hexes.Topology
         private void Fill(
             IndexSeptupletMap hexAdjacencyMap,
             float radius,
+            VectorXY gridOrigin,
             float stepX,
             float stepY,
             Layout layout,
@@ -92,11 +107,11 @@ namespace Akeldov.Math.Hexes.Topology
 
             for (int i = 0; i < Height; i++)
             {
-                var y = (i + 0.5f) * stepY;
+                var y = gridOrigin.Y + (i + 0.5f) * stepY;
 
                 for (int j = 0; j < Width; j++)
                 {
-                    var x = (j + 0.5f) * stepX;
+                    var x = gridOrigin.X + (j + 0.5f) * stepX;
                     var cellIndex = new PointXY(x, y).ToXYIndex(radius, origin, layout);
                     _adjacent[index] = CreateValue(hexAdjacencyMap, cellIndex);
                     index = index + 1;
