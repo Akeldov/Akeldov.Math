@@ -11,7 +11,7 @@ public class RegionRasterizationTests
     [Test]
     public void Rasterize_WhenRegionHasHole_UsesRegionFillRule()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
@@ -32,7 +32,7 @@ public class RegionRasterizationTests
     [Test]
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f)
         });
@@ -46,7 +46,7 @@ public class RegionRasterizationTests
     [Test]
     public void SaveAsPng_WhenSquareWithSquareHoleIsRasterizedToGray16Bit_WritesPng16()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)

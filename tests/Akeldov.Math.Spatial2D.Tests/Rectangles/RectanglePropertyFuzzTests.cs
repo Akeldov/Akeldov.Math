@@ -51,7 +51,7 @@ public class RectanglePropertyFuzzTests
             var rectangle = new Rectangle(
                 new PointXY(minX, minY),
                 new PointXY(minX + width, minY + height));
-            IRegion region = rectangle.ToRegion();
+            IContourBasedRegion region = rectangle.ToRegion();
             PointXY point = NextPointAroundRectangle(random, rectangle, geometryEpsilon: 0f);
 
             float distanceToBoundary = GetDistanceToBoundary(rectangle, point);

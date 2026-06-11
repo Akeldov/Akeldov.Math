@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes regions into 8-bit grayscale rasters using signed distance-to-boundary mapping.
     /// </summary>
-    public sealed class RegionSignedDistanceGray8BitRasterizer : IRasterizer<IRegion, Gray8BitRaster>
+    public sealed class RegionSignedDistanceGray8BitRasterizer : IRasterizer<IContourBasedRegion, Gray8BitRaster>
     {
         private readonly Func<float, byte> _signedDistanceToGrayLevel;
 
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IRegion source, RasterGrid grid)
+        public Gray8BitRaster Rasterize(IContourBasedRegion source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -51,7 +51,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new Gray8BitRaster(grid, values);
         }
 
-        private static IReadOnlyList<IPath> GetCurves(IRegion region)
+        private static IReadOnlyList<IPath> GetCurves(IContourBasedRegion region)
         {
             IReadOnlyList<IContour> contours = region.Contours;
             if (contours == null || contours.Count == 0)
@@ -91,7 +91,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
         }
 
-        private static float GetSignedDistanceToRegion(IRegion region, PointXY point, IReadOnlyList<IPath> curves)
+        private static float GetSignedDistanceToRegion(IContourBasedRegion region, PointXY point, IReadOnlyList<IPath> curves)
         {
             float distance = DistanceToRegionBoundary(point, curves);
             return region.Contains(point) ? -distance : distance;

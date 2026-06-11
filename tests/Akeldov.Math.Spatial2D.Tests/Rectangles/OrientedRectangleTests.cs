@@ -98,22 +98,23 @@ public class OrientedRectangleTests
             new VectorXY(4f, 2f),
             MathF.PI * 0.5f);
 
-        Region region = rectangle.ToRegion();
+        ContourBasedRegion region = rectangle.ToRegion();
 
         Assert.That(region.Contours, Has.Count.EqualTo(1));
         Assert.That(region.Contains(new PointXY(0f, 0f)), Is.True);
     }
 
     [Test]
-    public void Contours_ReturnsReadOnlySingleContourView()
+    public void ToRegion_ReturnsReadOnlySingleContourView()
     {
-        IRegion rectangle = new OrientedRectangle(
+        var rectangle = new OrientedRectangle(
             new PointXY(0f, 0f),
             new VectorXY(4f, 2f),
             MathF.PI * 0.5f);
+        ContourBasedRegion region = rectangle.ToRegion();
 
-        Assert.That(rectangle.Contours, Has.Count.EqualTo(1));
-        Assert.That(rectangle.Contours, Is.Not.InstanceOf<IContour[]>());
+        Assert.That(region.Contours, Has.Count.EqualTo(1));
+        Assert.That(region.Contours, Is.Not.InstanceOf<IContour[]>());
     }
 
     [Test]

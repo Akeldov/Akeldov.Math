@@ -1,5 +1,7 @@
 using System.Globalization;
 
+using Akeldov.Math.Spatial2D.Regions;
+
 namespace Akeldov.Math.Spatial2D.Tests.Rectangles;
 
 public class NormalizedRectanglePartTests

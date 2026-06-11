@@ -34,7 +34,7 @@ using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using Akeldov.Math.Spatial2D.Regions;
 
-var region = new Region(new IContour[]
+var region = new ContourBasedRegion(new IContour[]
 {
     CreateSquareContour(0f, 0f, 4f, 4f),
     CreateSquareContour(1f, 1f, 3f, 3f)

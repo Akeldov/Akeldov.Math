@@ -7,18 +7,18 @@ namespace Akeldov.Math.Spatial2D.Regions
     /// <summary>
     /// Represents a two-dimensional region bounded by one or more closed contours.
     /// </summary>
-    public sealed class Region : IRegion
+    public sealed class ContourBasedRegion : IContourBasedRegion
     {
         private readonly IContour[] _contours;
         private readonly IReadOnlyList<IContour> _readOnlyContours;
         private readonly FillRule _fillRule;
 
         /// <summary>
-        /// Initializes a new region from the specified contours.
+        /// Initializes a new contour-based region from the specified contours.
         /// </summary>
         /// <param name="contours">The contours that bound the region.</param>
         /// <param name="fillRule">The fill rule used to determine whether points belong to the region.</param>
-        public Region(IReadOnlyList<IContour> contours, FillRule fillRule = FillRule.EvenOdd)
+        public ContourBasedRegion(IReadOnlyList<IContour> contours, FillRule fillRule = FillRule.EvenOdd)
         {
             if (contours == null)
                 throw new ArgumentNullException(nameof(contours));

@@ -4,24 +4,24 @@ using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Spatial2D.Tests.Regions;
 
-public class RegionTests
+public class ContourBasedRegionTests
 {
     [Test]
     public void Constructor_WhenContoursIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new Region(null!));
+        Assert.Throws<ArgumentNullException>(() => new ContourBasedRegion(null!));
     }
 
     [Test]
     public void Constructor_WhenContoursIsEmpty_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Region(Array.Empty<IContour>()));
+        Assert.Throws<ArgumentException>(() => new ContourBasedRegion(Array.Empty<IContour>()));
     }
 
     [Test]
     public void Constructor_WhenContoursContainsNull_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Region(new IContour[] { null! }));
+        Assert.Throws<ArgumentException>(() => new ContourBasedRegion(new IContour[] { null! }));
     }
 
     [Test]
@@ -30,7 +30,7 @@ public class RegionTests
         var contour = CreateSquareContour(0f, 0f, 1f, 1f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new Region(new IContour[] { contour }, (FillRule)42));
+            new ContourBasedRegion(new IContour[] { contour }, (FillRule)42));
 
         Assert.That(exception!.ParamName, Is.EqualTo("fillRule"));
     }
@@ -39,7 +39,7 @@ public class RegionTests
     public void Constructor_WhenContoursIntersect_DoesNotThrow()
     {
         Assert.DoesNotThrow(() =>
-            new Region(new IContour[]
+            new ContourBasedRegion(new IContour[]
             {
                 CreateSquareContour(0f, 0f, 4f, 4f),
                 CreateSquareContour(2f, -1f, 5f, 2f)
@@ -50,7 +50,7 @@ public class RegionTests
     public void Constructor_WhenContoursTouch_DoesNotThrow()
     {
         Assert.DoesNotThrow(() =>
-            new Region(new IContour[]
+            new ContourBasedRegion(new IContour[]
             {
                 CreateSquareContour(0f, 0f, 4f, 4f),
                 CreateSquareContour(4f, 1f, 5f, 3f)
@@ -60,7 +60,7 @@ public class RegionTests
     [Test]
     public void Contours_WhenAccessed_ReturnsReadOnlyView()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 1f, 1f)
         });
@@ -73,7 +73,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenPointIsInsideOuterContourAndOutsideHole_ReturnsTrue()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
@@ -85,7 +85,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenPointIsInsideHole_ReturnsFalse()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
@@ -97,7 +97,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenPointIsOnHoleBoundary_ReturnsFalse()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
@@ -109,7 +109,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenPointIsWithinCustomGeometryEpsilonOfBoundary_ReturnsTrue()
     {
-        IRegion region = new Region(new IContour[]
+        IRegion region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 1f, 1f)
         });
@@ -124,7 +124,7 @@ public class RegionTests
     public void Contains_PassesGeometryEpsilonToContours()
     {
         var contour = new EpsilonAwareContour();
-        IRegion region = new Region(new IContour[] { contour });
+        IRegion region = new ContourBasedRegion(new IContour[] { contour });
 
         bool contains = region.Contains(new PointXY(0f, 0f), 0.25f);
 
@@ -135,7 +135,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenRegionIsSquareWithSquareHole_ClassifiesPoints()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
@@ -151,7 +151,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenContoursAreNested_AlternatesInsideAndOutside()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 8f, 8f),
             CreateSquareContour(1f, 1f, 7f, 7f),
@@ -169,7 +169,7 @@ public class RegionTests
     [Test]
     public void Contains_WhenPointCoordinateIsInvalid_Throws()
     {
-        var region = new Region(new IContour[]
+        var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 1f, 1f)
         });
@@ -186,7 +186,7 @@ public class RegionTests
     [TestCase(float.NegativeInfinity)]
     public void Contains_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
-        IRegion region = new Region(new IContour[]
+        IRegion region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 1f, 1f)
         });

@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Runtime.CompilerServices;
 

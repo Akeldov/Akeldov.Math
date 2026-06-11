@@ -1,10 +1,12 @@
 # Regions
 
-`Region` represents a filled area defined by one or more closed contours.
+`IRegion` represents filled area membership through `Contains`.
+`IContourBasedRegion` adds contours and a fill rule for regions defined by closed contours.
+`ContourBasedRegion` is the built-in contour-backed implementation.
 It lives in the `Akeldov.Math.Spatial2D.Regions` namespace.
 
 Contours describe boundaries. Regions describe area membership.
-Use `Contour.Encloses` for a single boundary and `Region.Contains` for the filled area.
+Use `Contour.Encloses` for a single boundary and `ContourBasedRegion.Contains` for the filled area.
 
 ## Square With Hole
 
@@ -14,7 +16,7 @@ using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 
-var region = new Region(new IContour[]
+var region = new ContourBasedRegion(new IContour[]
 {
     CreateSquareContour(0f, 0f, 4f, 4f),
     CreateSquareContour(1f, 1f, 3f, 3f)
@@ -39,8 +41,8 @@ static Contour CreateSquareContour(float left, float bottom, float right, float 
 
 ## Fill Rule
 
-Regions currently use `FillRule.EvenOdd`.
+Contour-based regions currently use `FillRule.EvenOdd`.
 A point is inside the region when it lies inside an odd number of contours.
 This supports holes and nested contours.
 
-Region contours must not intersect or touch each other.
+Contour-based region contours must not intersect or touch each other.

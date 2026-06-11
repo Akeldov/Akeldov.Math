@@ -1,11 +1,10 @@
+using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
-using Akeldov.Math.Spatial2D.Regions;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
-namespace Akeldov.Math.Spatial2D
+namespace Akeldov.Math.Spatial2D.Regions
 {
     /// <summary>
     /// Represents a rectangular region with arbitrary orientation in two-dimensional space.
@@ -105,14 +104,6 @@ namespace Akeldov.Math.Spatial2D
         public PointXY TopRight => Center + AxisX * (Width * 0.5f) + AxisY * (Height * 0.5f);
 
         /// <inheritdoc/>
-        public FillRule FillRule => FillRule.EvenOdd;
-
-        /// <summary>
-        /// Gets the read-only structural view of the contours that define this rectangle region.
-        /// </summary>
-        public IReadOnlyList<IContour> Contours => Array.AsReadOnly(new IContour[] { ToContour() });
-
-        /// <inheritdoc/>
         public bool Contains(
             PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
@@ -171,9 +162,9 @@ namespace Akeldov.Math.Spatial2D
         /// Creates a contour-based region representing this rectangle.
         /// </summary>
         /// <returns>The rectangle as a contour-based region.</returns>
-        public Region ToRegion()
+        public ContourBasedRegion ToRegion()
         {
-            return new Region(new IContour[] { ToContour() });
+            return new ContourBasedRegion(new IContour[] { ToContour() });
         }
 
         /// <summary>

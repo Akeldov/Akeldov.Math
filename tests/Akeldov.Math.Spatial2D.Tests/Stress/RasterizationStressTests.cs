@@ -12,7 +12,7 @@ public class RasterizationStressTests
     [Test]
     public void RasterizeRegionSignedDistance_WithLargeGrid_ProducesFiniteMappedValues()
     {
-        IRegion region = new Region(new IContour[]
+        IContourBasedRegion region = new ContourBasedRegion(new IContour[]
         {
             new Rectangle(new PointXY(0f, 0f), new PointXY(200f, 200f)).ToContour(),
             new Rectangle(new PointXY(75f, 75f), new PointXY(125f, 125f)).ToContour()
