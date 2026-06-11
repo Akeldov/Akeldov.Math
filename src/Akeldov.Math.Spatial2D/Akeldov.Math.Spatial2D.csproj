@@ -5,11 +5,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>0.3.0</Version>
+		<Version>0.4.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added PointXY for point semantics across geometry, sampling, partitioning, and influence APIs; RGBA8/RGBA16 colors and rasters; stream overloads for BMP/PNG export; curve, parameterized-curve, Poisson disk, culling-map, and influence-field heat-map rasterizers; and contour distance/signed-distance APIs. Added non-parameterized Segment and Arc primitives, length-based parameterized curve contracts, explicit casts from ParameterizedSegment/ParameterizedArc, and epsilon-aware intersection, enclosure, and containment APIs. Improved Delaunay culler performance, finite-value validation, linear-RGB culling-map blending, and grayscale raster buffer layout. Breaking changes: point-like public APIs now use PointXY instead of VectorXY, curve abstractions were split into finite/path/parameterized contracts, Segment and Arc are now non-parameterized geometry while ParameterizedSegment and ParameterizedArc provide path coordinates, and contour/region APIs now use IFinitePath, PointXY, and explicit geometry epsilon parameters.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added axis-aligned Rectangle, OrientedRectangle, NormalizedSubrectangle, rectangle contour/region conversion, and rectangle-to-oriented conversion APIs. Split region contracts into IRegion and IContourBasedRegion, renamed Region to ContourBasedRegion, and renamed ParametricLine to ParameterizedLine. Hardened arc intersection/tolerance behavior and invariant-culture formatting. Expanded edge-case regression, seeded property/fuzz, and explicit stress coverage for curves, rectangles, regions, Voronoi partitioning, Poisson disk sampling, Delaunay culling, and rasterization. Added linear/circular curve documentation and reproducible local MkDocs setup. Breaking changes: Region is now ContourBasedRegion, ParametricLine is now ParameterizedLine, NormalizedRectanglePart is now NormalizedSubrectangle, and region contracts are split into IRegion/IContourBasedRegion.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
