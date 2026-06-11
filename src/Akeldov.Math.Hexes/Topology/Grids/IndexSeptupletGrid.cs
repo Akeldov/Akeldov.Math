@@ -15,14 +15,14 @@ namespace Akeldov.Math.Hexes.Topology
         public IndexSeptupletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
-            : this(hexAdjacencyMap, resolution, NormalizedRectanglePart.Full)
+            : this(hexAdjacencyMap, resolution, NormalizedSubrectangle.Full)
         {
         }
 
         public IndexSeptupletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution,
-            NormalizedRectanglePart rectanglePart)
+            NormalizedSubrectangle subrectangle)
         {
             if (hexAdjacencyMap == null)
                 throw new ArgumentNullException(nameof(hexAdjacencyMap));
@@ -38,11 +38,11 @@ namespace Akeldov.Math.Hexes.Topology
             var apothem = radius.ConvertHexRadiusToApothem();
             var boundingBoxSize = hexAdjacencyMap.GetBoundingBoxSize(radius);
             var gridOrigin = new VectorXY(
-                boundingBoxSize.X * rectanglePart.Min.X,
-                boundingBoxSize.Y * rectanglePart.Min.Y);
+                boundingBoxSize.X * subrectangle.Min.X,
+                boundingBoxSize.Y * subrectangle.Min.Y);
             var gridSize = new VectorXY(
-                boundingBoxSize.X * rectanglePart.Size.X,
-                boundingBoxSize.Y * rectanglePart.Size.Y);
+                boundingBoxSize.X * subrectangle.Size.X,
+                boundingBoxSize.Y * subrectangle.Size.Y);
             var stepX = gridSize.X / Width;
             var stepY = gridSize.Y / Height;
 

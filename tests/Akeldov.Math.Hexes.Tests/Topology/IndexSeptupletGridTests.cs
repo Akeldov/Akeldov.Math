@@ -11,7 +11,7 @@ public class IndexSeptupletGridTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Constructor_WithRectanglePart_SamplesCorrespondingPartOfFullGrid(Layout layout)
+    public void Constructor_WithSubrectangle_SamplesCorrespondingPartOfFullGrid(Layout layout)
     {
         var map = new IndexSeptupletMap(
             width: 12,
@@ -20,24 +20,24 @@ public class IndexSeptupletGridTests
         var fullGrid = new IndexSeptupletGrid(
             map,
             new VectorXYInt(4, 4));
-        var partGrid = new IndexSeptupletGrid(
+        var subrectangleGrid = new IndexSeptupletGrid(
             map,
             new VectorXYInt(2, 2),
-            new NormalizedRectanglePart(
+            new NormalizedSubrectangle(
                 new PointXY(0.25f, 0.25f),
                 new PointXY(0.75f, 0.75f)));
 
-        AssertSeptuplet(partGrid[new VectorXYInt(0, 0)], fullGrid[new VectorXYInt(1, 1)]);
-        AssertSeptuplet(partGrid[new VectorXYInt(1, 0)], fullGrid[new VectorXYInt(2, 1)]);
-        AssertSeptuplet(partGrid[new VectorXYInt(0, 1)], fullGrid[new VectorXYInt(1, 2)]);
-        AssertSeptuplet(partGrid[new VectorXYInt(1, 1)], fullGrid[new VectorXYInt(2, 2)]);
+        AssertSeptuplet(subrectangleGrid[new VectorXYInt(0, 0)], fullGrid[new VectorXYInt(1, 1)]);
+        AssertSeptuplet(subrectangleGrid[new VectorXYInt(1, 0)], fullGrid[new VectorXYInt(2, 1)]);
+        AssertSeptuplet(subrectangleGrid[new VectorXYInt(0, 1)], fullGrid[new VectorXYInt(1, 2)]);
+        AssertSeptuplet(subrectangleGrid[new VectorXYInt(1, 1)], fullGrid[new VectorXYInt(2, 2)]);
     }
 
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Constructor_WithFullRectanglePart_MatchesDefaultConstructor(Layout layout)
+    public void Constructor_WithFullSubrectangle_MatchesDefaultConstructor(Layout layout)
     {
         var map = new IndexSeptupletMap(
             width: 12,
@@ -49,7 +49,7 @@ public class IndexSeptupletGridTests
         var fullPartGrid = new IndexSeptupletGrid(
             map,
             new VectorXYInt(4, 4),
-            NormalizedRectanglePart.Full);
+            NormalizedSubrectangle.Full);
 
         for (int y = 0; y < defaultGrid.Height; y++)
         {
