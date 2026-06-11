@@ -196,6 +196,16 @@ namespace Akeldov.Math.Spatial2D.Regions
         }
 
         /// <summary>
+        /// Converts an axis-aligned rectangle to an oriented rectangle with zero rotation in radians.
+        /// </summary>
+        /// <param name="rectangle">The axis-aligned rectangle to convert.</param>
+        /// <returns>The equivalent oriented rectangle.</returns>
+        public static implicit operator OrientedRectangle(Rectangle rectangle)
+        {
+            return new OrientedRectangle(rectangle.Center, rectangle.Size, 0f);
+        }
+
+        /// <summary>
         /// Indicates whether this rectangle has the same center, size, and rotation as another rectangle.
         /// </summary>
         /// <param name="other">The rectangle to compare with this rectangle.</param>

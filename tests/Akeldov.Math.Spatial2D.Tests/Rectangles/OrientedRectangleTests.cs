@@ -76,6 +76,24 @@ public class OrientedRectangleTests
     }
 
     [Test]
+    public void ImplicitConversion_FromRectangle_ReturnsEquivalentZeroRotationRectangle()
+    {
+        var source = new Rectangle(
+            new PointXY(-1f, 2f),
+            new PointXY(3f, 5f));
+
+        OrientedRectangle rectangle = source;
+
+        Assert.That(rectangle.Center, Is.EqualTo(source.Center));
+        Assert.That(rectangle.Size, Is.EqualTo(source.Size));
+        Assert.That(rectangle.Rotation, Is.EqualTo(0f));
+        AssertPoint(rectangle.BottomLeft, source.BottomLeft);
+        AssertPoint(rectangle.TopRight, source.TopRight);
+        Assert.That(rectangle.Contains(new PointXY(0f, 3f)), Is.EqualTo(source.Contains(new PointXY(0f, 3f))));
+        Assert.That(rectangle.Contains(new PointXY(4f, 3f)), Is.EqualTo(source.Contains(new PointXY(4f, 3f))));
+    }
+
+    [Test]
     public void ToContour_ReturnsClosedRectangleBoundary()
     {
         var rectangle = new OrientedRectangle(
