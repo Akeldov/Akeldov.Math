@@ -71,6 +71,28 @@ the return type as part of the ownership contract.
 When sandboxing is active, request elevated access immediately for .NET build and test commands.
 The repository's .NET build and test commands write under `bin` and `obj`, which may fail with sandbox `Access denied` errors.
 
+### Spatial2D Test Layout
+
+`Akeldov.Math.Spatial2D.Tests` has three layers of geometry robustness tests:
+
+- Edge-case regression tests live next to the API they cover, in the existing domain folders
+  such as `Curves`, `Rectangles`, `Regions`, and `Partitioning\Voronoi`. Add focused cases to
+  the existing `*Tests` class when the case belongs to one type, for example `SegmentTests`,
+  `ArcTests`, `ContourTests`, or `RectangleTests`.
+- Seeded property/fuzz tests live in the same domain folder as the behavior they exercise.
+  Name them with `*PropertyFuzzTests` when they check broader invariants, or `*FuzzTests` when
+  the domain name already makes the property obvious. Current examples include
+  `Curves\CurveIntersectionFuzzTests.cs`,
+  `Rectangles\RectanglePropertyFuzzTests.cs`, and
+  `Partitioning\Voronoi\VoronoiPartitionPropertyFuzzTests.cs`.
+- Heavy stress tests live under `tests\Akeldov.Math.Spatial2D.Tests\Stress`.
+  Stress fixtures must use both `Category("Stress")` and `Explicit` so normal test runs stay fast.
+  Name them by subsystem, for example `PoissonDiskStressTests`, `VoronoiStressTests`,
+  `DelaunayCullerStressTests`, `RasterizationStressTests`, or `RegionStressTests`.
+
+For seeded fuzz and stress tests, use fixed seeds in `[TestCase]` and include the seed and
+iteration/scenario in failure messages so failures are reproducible.
+
 For the Spatial2D NUnit tests, build the test project first, then run the test assembly directly:
 
 ```powershell
