@@ -14,4 +14,4 @@ Start with vectors and curves for core geometry operations, then move to regions
 - [Rasterization](rasterization.md) for sampling contours and regions into grayscale rasters.
 - [Poisson Disk Sampling](poisson-disk-sampling.md) for generating well-spaced point sets.
 - [Voronoi Partitioning](voronoi-partitioning.md) for assigning positioned items to weighted sites.
-- [Influence Fields](influence-fields/) for sampling values from point and curve sources.
+- [Influence Fields](influence-fields/index.md) for sampling values from point and curve sources.

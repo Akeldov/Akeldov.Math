@@ -416,3 +416,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Python/MkDocs local artifacts
+.venv/
+site/
+.mkdocs-site-temp/

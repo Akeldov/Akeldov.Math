@@ -21,10 +21,27 @@ For example, `docs/Spatial2D/learn/curves.md` is published at
 `../../../../assets/...`.
 
 Prefer Markdown image syntax when fixed sizing or HTML layout is not needed.
+Before running MkDocs locally, check whether it is available in the active Python environment:
+
+```powershell
+python -m mkdocs --version
+```
+
+If that fails with `No module named mkdocs`, create or refresh the local virtual environment
+from the repository requirements:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -r requirements.txt
+.\.venv\Scripts\python -m mkdocs --version
+```
+
+Use the `.venv` Python for local documentation checks when the global Python does not have
+MkDocs installed.
 After changing raw HTML image paths, verify with:
 
 ```powershell
-python -m mkdocs build --strict --site-dir .mkdocs-site-temp
+.\.venv\Scripts\python -m mkdocs build --strict --site-dir .mkdocs-site-temp
 ```
 
 Then check the generated HTML image `src` values resolve to files under
