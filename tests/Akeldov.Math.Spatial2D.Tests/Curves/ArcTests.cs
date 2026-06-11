@@ -227,6 +227,26 @@ public class ArcTests
     }
 
     [Test]
+    public void ProjectWithParameter_WhenParameterizedArcSweepIsAlmostZero_PrefersStableEndpointProjection()
+    {
+        float tinySweep = GeometryConstants.GeometryEpsilon * 0.5f;
+        var arc = new ParameterizedArc(
+            new PointXY(0f, 0f),
+            1f,
+            0f,
+            tinySweep,
+            AngularDirection.Counterclockwise);
+
+        var projection = arc.ProjectWithParameter(new PointXY(2f, 0f));
+
+        Assert.That(arc.IsFullCircle, Is.False);
+        Assert.That(arc.Length, Is.EqualTo(tinySweep).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 1f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void RayIntersections_WhenStartAndEndAnglesAreEqual_ReturnsOnlyZeroArcPoint()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 0f);

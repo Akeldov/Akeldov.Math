@@ -137,6 +137,18 @@ public class ContourTests
     }
 
     [Test]
+    public void SignedDistance_WhenPointIsExactlyOnBoundary_ReturnsZeroAndEnclosesPoint()
+    {
+        IContour contour = CreateSquareContour();
+        var boundaryPoint = new PointXY(0f, 0.5f);
+
+        float signedDistance = contour.SignedDistance(boundaryPoint);
+
+        Assert.That(contour.Encloses(boundaryPoint), Is.True);
+        Assert.That(signedDistance, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void SignedDistance_WhenPointIsOutsideContour_ReturnsPositiveDistance()
     {
         IContour contour = CreateSquareContour();

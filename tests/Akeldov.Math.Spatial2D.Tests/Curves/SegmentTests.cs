@@ -230,6 +230,21 @@ public class SegmentTests
     }
 
     [Test]
+    public void RayIntersections_WhenSegmentCrossesJustAheadOfRayOrigin_ReturnsIntersection()
+    {
+        float tiny = GeometryConstants.GeometryEpsilon * 0.5f;
+        var segment = new Segment(
+            new PointXY(tiny, -1f),
+            new PointXY(tiny, 1f));
+        var ray = new Ray(new PointXY(0f, 0f));
+
+        var intersections = segment.GetRayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], tiny, 0f);
+    }
+
+    [Test]
     public void RayIntersections_WhenDegenerateSegmentPointIsOnRay_ReturnsPoint()
     {
         var segment = new Segment(new PointXY(2f, 0f), new PointXY(2f, 0f));
@@ -274,6 +289,32 @@ public class SegmentTests
         AssertVector(projection.ProjectedPoint, 2f, 3f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ProjectWithParameter_WhenEndpointsAlmostCoincide_TreatsSegmentAsPoint()
+    {
+        float tiny = GeometryConstants.GeometryEpsilon * 0.5f;
+        var segment = new ParameterizedSegment(
+            new PointXY(0f, 0f),
+            new PointXY(tiny, tiny));
+
+        var projection = segment.ProjectWithParameter(new PointXY(1f, 1f));
+
+        AssertVector(projection.ProjectedPoint, 0f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(MathF.Sqrt(2f)).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Distance_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var segment = new Segment(new PointXY(0f, 0f), new PointXY(1f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            segment.Distance(new PointXY(float.PositiveInfinity, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     [Test]

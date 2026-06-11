@@ -48,6 +48,39 @@ public class RectangleTests
     }
 
     [Test]
+    public void Contains_WhenCoordinatesAreTinyOrLarge_ClassifiesWithoutOverflowOrDefaultToleranceLeak()
+    {
+        const float tiny = 1e-7f;
+        var tinyRectangle = new Rectangle(
+            new PointXY(-tiny, -tiny),
+            new PointXY(tiny, tiny));
+
+        Assert.That(tinyRectangle.Contains(new PointXY(0f, 0f), geometryEpsilon: 0f), Is.True);
+        Assert.That(tinyRectangle.Contains(new PointXY(2f * tiny, 0f), geometryEpsilon: 0f), Is.False);
+
+        const float large = 1_000_000f;
+        var largeRectangle = new Rectangle(
+            new PointXY(large, large),
+            new PointXY(large + 100f, large + 100f));
+
+        Assert.That(largeRectangle.Contains(new PointXY(large + 50f, large + 50f)), Is.True);
+        Assert.That(largeRectangle.Contains(new PointXY(large + 101f, large + 50f)), Is.False);
+    }
+
+    [Test]
+    public void Contains_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 1f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            rectangle.Contains(new PointXY(float.PositiveInfinity, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [Test]
     public void ToContour_ReturnsClosedRectangleBoundary()
     {
         var rectangle = new Rectangle(
