@@ -8,7 +8,7 @@ Curve coordinates and distances are measured in world coordinate units.
 
 <p>
   <img alt="Line distance raster" src="../../../../assets/spatial2d/curves/line-distance.png" width="160">
-  <img alt="Parametric line distance raster" src="../../../../assets/spatial2d/curves/parametric-line-distance.png" width="160">
+  <img alt="Parameterized line distance raster" src="../../../../assets/spatial2d/curves/parameterized-line-distance.png" width="160">
   <img alt="Ray distance raster" src="../../../../assets/spatial2d/curves/ray-distance.png" width="160">
   <img alt="Segment distance raster" src="../../../../assets/spatial2d/curves/segment-distance.png" width="160">
   <img alt="Parameterized segment distance raster" src="../../../../assets/spatial2d/curves/parameterized-segment-distance.png" width="160">
@@ -17,7 +17,7 @@ Curve coordinates and distances are measured in world coordinate units.
 | Type | Geometry | Coordinate Domain | Use When |
 |---|---|---|---|
 | `Line` | Infinite line | - | You only need geometric distance, projection, or side tests. |
-| `ParametricLine` | Infinite directed line | `(-inf, +inf)` | You need a signed coordinate along an infinite line. |
+| `ParameterizedLine` | Infinite directed line | `(-inf, +inf)` | You need a signed coordinate along an infinite line. |
 | `Ray` | Half-line from an origin | `[0, +inf)` | You need a directed path with a fixed start point. |
 | `Segment` | Bounded line segment | - | Endpoint order should not matter. |
 | `ParameterizedSegment` | Bounded directed segment | `[0, Length]` | You need traversal direction or distance along the segment. |
@@ -27,7 +27,7 @@ Curve coordinates and distances are measured in world coordinate units.
 Use `Line` and `Segment` for pure geometry.
 They answer distance, projection, and intersection questions without assigning an orientation to the curve.
 
-Use `ParametricLine`, `Ray`, and `ParameterizedSegment` when you need a curve coordinate.
+Use `ParameterizedLine`, `Ray`, and `ParameterizedSegment` when you need a curve coordinate.
 `ProjectWithParameter` returns the closest point, the distance to the curve, and the coordinate of that point along the curve.
 `GetPoint` does the inverse: it returns a point at a specific curve coordinate.
 
@@ -56,7 +56,7 @@ PointXY closestPoint = projection.ProjectedPoint; // (4, 2)
 float distance = projection.Distance;             // 3
 ```
 
-`ParametricLine` adds an `Origin` and `Direction` to the same infinite geometry.
+`ParameterizedLine` adds an `Origin` and `Direction` to the same infinite geometry.
 Coordinates are signed and are measured from `Origin` along `Direction`.
 
 ```csharp
@@ -67,7 +67,7 @@ var geometricLine = new Line(
     new PointXY(0f, 2f),
     new PointXY(6f, 2f));
 
-var path = new ParametricLine(
+var path = new ParameterizedLine(
     geometricLine,
     referencePoint: new PointXY(3f, 10f));
 
@@ -86,7 +86,7 @@ The reference point is projected onto the line, and that projected point becomes
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 
-var centered = new ParametricLine(
+var centered = new ParameterizedLine(
     new PointXY(0f, 2f),
     new PointXY(6f, 2f),
     LineReferencePointMode.Midpoint);

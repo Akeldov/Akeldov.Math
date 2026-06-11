@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Gets the curve coordinate of the projected point, measured in length units.
         /// </summary>
         /// <remarks>
-        /// <para>For parametric lines this is signed distance from <see cref="ParametricLine.Origin"/> along <see cref="ParametricLine.Direction"/>.</para>
+        /// <para>For parameterized lines this is signed distance from <see cref="ParameterizedLine.Origin"/> along <see cref="ParameterizedLine.Direction"/>.</para>
         /// <para>For rays this is distance from <see cref="Ray.Origin"/> along <see cref="Ray.Direction"/>.</para>
         /// <para>For segments this is distance from <see cref="ParameterizedSegment.StartPoint"/> along the segment.</para>
         /// <para>For arcs this is arc length from the start point along the arc.</para>

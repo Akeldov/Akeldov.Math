@@ -12,7 +12,7 @@ The images below are distance rasters produced by the curve rasterizers: bright 
 
 | Non-Parameterized | Parameterized | Coordinate Domain | Notes |
 |---|---|---|---|
-| `Line` | `ParametricLine` | `(-inf, +inf)` | Infinite line; parameterized version adds origin and direction. |
+| `Line` | `ParameterizedLine` | `(-inf, +inf)` | Infinite line; parameterized version adds origin and direction. |
 | - | `Ray` | `[0, +inf)` | Half-line, inherently directed from its origin. |
 | `Segment` | `ParameterizedSegment` | `[0, Length]` | `Segment` is endpoint-order agnostic; `ParameterizedSegment` has start/end direction. |
 | `Circle` | - | - | Full circumference; distance/projection is to the ring, not a filled disk. |
@@ -25,14 +25,14 @@ For constructor details, coordinate domains, endpoint inclusion, and ray-interse
 
 <p>
   <img alt="Line distance raster" src="../../../assets/spatial2d/curves/line-distance.png" width="160">
-  <img alt="Parametric line distance raster" src="../../../assets/spatial2d/curves/parametric-line-distance.png" width="160">
+  <img alt="Parameterized line distance raster" src="../../../assets/spatial2d/curves/parameterized-line-distance.png" width="160">
   <img alt="Ray distance raster" src="../../../assets/spatial2d/curves/ray-distance.png" width="160">
   <img alt="Segment distance raster" src="../../../assets/spatial2d/curves/segment-distance.png" width="160">
   <img alt="Parameterized segment distance raster" src="../../../assets/spatial2d/curves/parameterized-segment-distance.png" width="160">
 </p>
 
 - `Line` is an infinite geometric line. It has no start point and no curve coordinate.
-- `ParametricLine` is the same infinite geometry with an `Origin`, `Direction`, and signed curve coordinate.
+- `ParameterizedLine` is the same infinite geometry with an `Origin`, `Direction`, and signed curve coordinate.
 - `Ray` starts at an origin and extends in one direction. Its curve coordinate starts at `0`.
 - `Segment` is a finite two-endpoint curve without a traversal direction.
 - `ParameterizedSegment` is a directed finite path whose coordinate runs from `0` to `Length`.
@@ -46,7 +46,7 @@ var line = new Line(
     new PointXY(0f, 0f),
     new PointXY(10f, 0f));
 
-var parametricLine = new ParametricLine(
+var parameterizedLine = new ParameterizedLine(
     line,
     referencePoint: new PointXY(2f, 0f));
 
@@ -123,7 +123,7 @@ Parameterized curves are useful when sampling needs to vary along the curve.
 The rasterizers can use the curve coordinate to change thickness, falloff, or influence along a path.
 
 <p>
-  <img alt="Parametric line with growing thickness" src="../../../assets/spatial2d/curves/parametric-line-growing-thickness.png" width="160">
+  <img alt="Parameterized line with growing thickness" src="../../../assets/spatial2d/curves/parameterized-line-growing-thickness.png" width="160">
   <img alt="Ray with growing thickness" src="../../../assets/spatial2d/curves/ray-growing-thickness.png" width="160">
   <img alt="Parameterized segment with growing thickness" src="../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png" width="160">
   <img alt="Parameterized arc with growing thickness" src="../../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png" width="160">

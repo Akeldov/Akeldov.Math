@@ -12,50 +12,50 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// The default value represents the horizontal line <c>y = 0</c>, with origin at the coordinate origin
     /// and direction along the positive X axis.
     /// </remarks>
-    public readonly struct ParametricLine : IParameterizedCurve, IEquatable<ParametricLine>
+    public readonly struct ParameterizedLine : IParameterizedCurve, IEquatable<ParameterizedLine>
     {
         private readonly Line _line;
         private readonly PointXY _origin;
         private readonly bool _isDirectionReversed;
 
         /// <summary>
-        /// Initializes a new parametric line from a line using its canonical origin and direction.
+        /// Initializes a new parameterized line from a line using its canonical origin and direction.
         /// </summary>
         /// <param name="line">The geometric line.</param>
-        public ParametricLine(Line line)
+        public ParameterizedLine(Line line)
             : this(line, line.ClosestPointToOrigin, line.Direction)
         {
         }
 
         /// <summary>
-        /// Initializes a new parametric line from a line and a reference point.
+        /// Initializes a new parameterized line from a line and a reference point.
         /// </summary>
         /// <param name="line">The geometric line.</param>
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
-        public ParametricLine(Line line, PointXY referencePoint)
+        public ParameterizedLine(Line line, PointXY referencePoint)
             : this(line, referencePoint, line.Direction)
         {
         }
 
         /// <summary>
-        /// Initializes a new parametric line from a line, reference point, and direction.
+        /// Initializes a new parameterized line from a line, reference point, and direction.
         /// </summary>
         /// <param name="line">The geometric line.</param>
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
-        /// <param name="direction">The parametric direction along <paramref name="line"/>.</param>
+        /// <param name="direction">The parameterized direction along <paramref name="line"/>.</param>
         /// <exception cref="ArgumentException">
         /// Thrown when <paramref name="direction"/> has zero length or is not parallel to <paramref name="line"/>.
         /// </exception>
-        public ParametricLine(Line line, PointXY referencePoint, VectorXY direction)
+        public ParameterizedLine(Line line, PointXY referencePoint, VectorXY direction)
         {
             PointXYValidation.ThrowIfNotFinite(
                 referencePoint,
                 nameof(referencePoint),
-                "Parametric line reference point coordinates must be finite.");
+                "Parameterized line reference point coordinates must be finite.");
 
             VectorXY normalizedDirection = NormalizeDirection(direction);
             if (!VectorXY.Cross(normalizedDirection, line.Direction).IsAlmostZero())
-                throw new ArgumentException("Parametric line direction must be parallel to the line.", nameof(direction));
+                throw new ArgumentException("Parameterized line direction must be parallel to the line.", nameof(direction));
 
             _line = line;
             _origin = line.Project(referencePoint).ProjectedPoint;
@@ -63,17 +63,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Initializes a new parametric line from an origin point and a direction vector.
+        /// Initializes a new parameterized line from an origin point and a direction vector.
         /// </summary>
         /// <param name="origin">The curve-coordinate origin.</param>
-        /// <param name="direction">The parametric direction.</param>
+        /// <param name="direction">The parameterized direction.</param>
         /// <exception cref="ArgumentException">Thrown when <paramref name="direction"/> has zero length.</exception>
-        public ParametricLine(PointXY origin, VectorXY direction)
+        public ParameterizedLine(PointXY origin, VectorXY direction)
         {
             PointXYValidation.ThrowIfNotFinite(
                 origin,
                 nameof(origin),
-                "Parametric line origin coordinates must be finite.");
+                "Parameterized line origin coordinates must be finite.");
 
             VectorXY normalizedDirection = NormalizeDirection(direction);
             var line = new Line(origin, origin + normalizedDirection);
@@ -84,32 +84,32 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Initializes a new parametric line passing through the specified points and selects the curve-coordinate origin
+        /// Initializes a new parameterized line passing through the specified points and selects the curve-coordinate origin
         /// from the specified reference point mode.
         /// </summary>
         /// <param name="a">The first point defining the line.</param>
         /// <param name="b">The second point defining the line.</param>
         /// <param name="referencePointMode">The mode used to select the reference point.</param>
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
-        public ParametricLine(PointXY a, PointXY b, LineReferencePointMode referencePointMode)
+        public ParameterizedLine(PointXY a, PointXY b, LineReferencePointMode referencePointMode)
             : this(new Line(a, b), SelectReferencePoint(a, b, referencePointMode))
         {
         }
 
         /// <summary>
-        /// Initializes a new parametric line passing through the specified points.
+        /// Initializes a new parameterized line passing through the specified points.
         /// </summary>
         /// <param name="a">The first point defining the line.</param>
         /// <param name="b">The second point defining the line.</param>
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
-        public ParametricLine(PointXY a, PointXY b, PointXY referencePoint)
+        public ParameterizedLine(PointXY a, PointXY b, PointXY referencePoint)
             : this(new Line(a, b), referencePoint)
         {
         }
 
         /// <summary>
-        /// Initializes a new parametric line from the implicit equation <c>ax + by + c = 0</c>.
+        /// Initializes a new parameterized line from the implicit equation <c>ax + by + c = 0</c>.
         /// </summary>
         /// <param name="a">The X coefficient.</param>
         /// <param name="b">The Y coefficient.</param>
@@ -117,7 +117,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
         /// <exception cref="ArgumentException">Thrown when both linear coefficients are zero.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when an equation coefficient is NaN or infinite.</exception>
-        public ParametricLine(float a, float b, float c, PointXY referencePoint)
+        public ParameterizedLine(float a, float b, float c, PointXY referencePoint)
             : this(new Line(a, b, c), referencePoint)
         {
         }
@@ -148,7 +148,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         public VectorXY Normal => _line.Normal;
 
         /// <summary>
-        /// Gets the normalized parametric direction vector.
+        /// Gets the normalized parameterized direction vector.
         /// </summary>
         public VectorXY Direction => _isDirectionReversed
             ? _line.Direction * -1f
@@ -175,28 +175,28 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Indicates whether this parametric line has the same geometric line as another parametric line.
+        /// Indicates whether this parameterized line has the same geometric line as another parameterized line.
         /// </summary>
-        /// <param name="other">The parametric line to compare with this line.</param>
-        /// <returns><see langword="true"/> if both parametric lines share the same geometry; otherwise, <see langword="false"/>.</returns>
-        public bool HasSameGeometry(ParametricLine other) => _line.Equals(other._line);
+        /// <param name="other">The parameterized line to compare with this line.</param>
+        /// <returns><see langword="true"/> if both parameterized lines share the same geometry; otherwise, <see langword="false"/>.</returns>
+        public bool HasSameGeometry(ParameterizedLine other) => _line.Equals(other._line);
 
         /// <summary>
-        /// Indicates whether this parametric line has the same geometric line as the specified line.
+        /// Indicates whether this parameterized line has the same geometric line as the specified line.
         /// </summary>
-        /// <param name="line">The line to compare with this parametric line.</param>
+        /// <param name="line">The line to compare with this parameterized line.</param>
         /// <returns><see langword="true"/> if both lines share the same geometry; otherwise, <see langword="false"/>.</returns>
         public bool HasSameGeometry(Line line) => _line.Equals(line);
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is ParametricLine other && Equals(other);
+        public override bool Equals(object? obj) => obj is ParameterizedLine other && Equals(other);
 
         /// <summary>
-        /// Indicates whether this parametric line has the same geometry, origin, and direction as another parametric line.
+        /// Indicates whether this parameterized line has the same geometry, origin, and direction as another parameterized line.
         /// </summary>
-        /// <param name="other">The parametric line to compare with this line.</param>
-        /// <returns><see langword="true"/> if both parametric lines are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(ParametricLine other) =>
+        /// <param name="other">The parameterized line to compare with this line.</param>
+        /// <returns><see langword="true"/> if both parameterized lines are equal; otherwise, <see langword="false"/>.</returns>
+        public bool Equals(ParameterizedLine other) =>
             _line.Equals(other._line) &&
             _origin.Equals(other._origin) &&
             _isDirectionReversed == other._isDirectionReversed;
@@ -221,7 +221,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Projects the specified point onto this parametric line.
+        /// Projects the specified point onto this parameterized line.
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this line.</returns>
@@ -231,10 +231,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Projects the specified point onto this parametric line and reports its signed parametric coordinate.
+        /// Projects the specified point onto this parameterized line and reports its signed curve coordinate.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, signed parametric line coordinate, and distance to this line.</returns>
+        /// <returns>The projection point, signed curve coordinate, and distance to this line.</returns>
         public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
             CurveProjection projection = Project(point);
@@ -244,10 +244,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Returns the point at the specified signed parametric line coordinate.
+        /// Returns the point at the specified signed curve coordinate.
         /// </summary>
         /// <param name="curveCoordinate">The finite signed curve coordinate in world coordinate units.</param>
-        /// <returns>The point on this parametric line.</returns>
+        /// <returns>The point on this parameterized line.</returns>
         public PointXY GetPoint(float curveCoordinate)
         {
             if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
@@ -261,26 +261,26 @@ namespace Akeldov.Math.Spatial2D.Curves
             string.Format(CultureInfo.InvariantCulture, "({0} + t*{1})", Origin, Direction);
 
         /// <summary>
-        /// Indicates whether two parametric lines are equal.
+        /// Indicates whether two parameterized lines are equal.
         /// </summary>
-        /// <param name="left">The first parametric line.</param>
-        /// <param name="right">The second parametric line.</param>
-        /// <returns><see langword="true"/> if the parametric lines are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(ParametricLine left, ParametricLine right) => left.Equals(right);
+        /// <param name="left">The first parameterized line.</param>
+        /// <param name="right">The second parameterized line.</param>
+        /// <returns><see langword="true"/> if the parameterized lines are equal; otherwise, <see langword="false"/>.</returns>
+        public static bool operator ==(ParameterizedLine left, ParameterizedLine right) => left.Equals(right);
 
         /// <summary>
-        /// Indicates whether two parametric lines are different.
+        /// Indicates whether two parameterized lines are different.
         /// </summary>
-        /// <param name="left">The first parametric line.</param>
-        /// <param name="right">The second parametric line.</param>
-        /// <returns><see langword="true"/> if the parametric lines are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(ParametricLine left, ParametricLine right) => !(left == right);
+        /// <param name="left">The first parameterized line.</param>
+        /// <param name="right">The second parameterized line.</param>
+        /// <returns><see langword="true"/> if the parameterized lines are different; otherwise, <see langword="false"/>.</returns>
+        public static bool operator !=(ParameterizedLine left, ParameterizedLine right) => !(left == right);
 
         /// <summary>
-        /// Converts a parametric line to its geometric line.
+        /// Converts a parameterized line to its geometric line.
         /// </summary>
-        /// <param name="line">The parametric line to convert.</param>
-        public static explicit operator Line(ParametricLine line)
+        /// <param name="line">The parameterized line to convert.</param>
+        public static explicit operator Line(ParameterizedLine line)
         {
             return line._line;
         }
@@ -288,10 +288,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static VectorXY NormalizeDirection(VectorXY direction)
         {
             if (!direction.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(direction), "Parametric line direction coordinates must be finite.");
+                throw new ArgumentOutOfRangeException(nameof(direction), "Parameterized line direction coordinates must be finite.");
 
             if (direction.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
-                throw new ArgumentException("Parametric line direction must have non-zero length.", nameof(direction));
+                throw new ArgumentException("Parameterized line direction must have non-zero length.", nameof(direction));
 
             return direction.Normalize();
         }

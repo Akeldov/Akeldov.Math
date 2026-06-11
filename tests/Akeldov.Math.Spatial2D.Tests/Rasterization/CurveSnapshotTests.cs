@@ -47,9 +47,9 @@ public class CurveSnapshotTests
             .SetName("Line_MatchesApprovedImage");
 
         yield return new TestCaseData(
-            "parametric-line-distance.png",
-            Curve(() => new ParametricLine(new PointXY(0.9f, -2.5f), new VectorXY(-0.25f, 1f))))
-            .SetName("ParametricLine_MatchesApprovedImage");
+            "parameterized-line-distance.png",
+            Curve(() => new ParameterizedLine(new PointXY(0.9f, -2.5f), new VectorXY(-0.25f, 1f))))
+            .SetName("ParameterizedLine_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "ray-distance.png",
@@ -90,9 +90,9 @@ public class CurveSnapshotTests
     private static IEnumerable<TestCaseData> ParameterizedThicknessCurveCases()
     {
         yield return new TestCaseData(
-            "parametric-line-growing-thickness.png",
-            ParameterizedCurve(() => new ParametricLine(new PointXY(-0.4f, -2.65f), new VectorXY(0.45f, 1f))))
-            .SetName("ParametricLine_GrowingThickness_MatchesApprovedImage");
+            "parameterized-line-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedLine(new PointXY(-0.4f, -2.65f), new VectorXY(0.45f, 1f))))
+            .SetName("ParameterizedLine_GrowingThickness_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "parameterized-arc-growing-thickness.png",
