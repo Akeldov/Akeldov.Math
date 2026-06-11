@@ -83,6 +83,13 @@ The explicit framework and single MSBuild node avoid intermittent empty `Build F
 dotnet vstest tests\Akeldov.Math.Spatial2D.Tests\bin\Debug\net6.0\Akeldov.Math.Spatial2D.Tests.dll "--logger:console;verbosity=detailed"
 ```
 
+Spatial2D stress tests are marked with NUnit `Category("Stress")` and `Explicit`, so they are
+excluded from normal test runs. Run them separately before releases or deep algorithm changes:
+
+```powershell
+dotnet vstest tests\Akeldov.Math.Spatial2D.Tests\bin\Debug\net6.0\Akeldov.Math.Spatial2D.Tests.dll --TestCaseFilter:"TestCategory=Stress" "--logger:console;verbosity=detailed"
+```
+
 For the Hexes NUnit tests, build the test project first, then run the test assembly directly:
 
 ```powershell
