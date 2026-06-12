@@ -3,8 +3,8 @@
 Culling selects a local subset of sources before the sampler computes a value.
 This is useful when the field should be driven by nearby geometric neighborhoods instead of every source.
 
-The example below uses the same source layout, colors, and raster grid as the culling map snapshot test.
-It writes a raster where each cell is colored by the sources selected by `DelaunayCuller<TPointSource>` at that cell center.
+The example below uses the same source layout, colors, and raster grid as the culling map snapshot tests.
+It writes rasters where each cell is colored by the sources selected by a culler at that cell center.
 
 ```csharp
 using System.Collections.Generic;
@@ -36,11 +36,22 @@ var sourceColors = new Dictionary<PointXY, RGBA16BitColor>
     { sources[4].Position, new RGBA16BitColor(0xa8a8, 0x5555, 0xf7f7, 0xffff) }
 };
 
+var halfPlaneCuller = new HalfPlaneCuller<FloatPointInfluenceSource>(sources);
+sources
+    .RasterizeCullingMap(grid, halfPlaneCuller, point => sourceColors[point])
+    .SaveAsPng("half-plane-culling-map.png");
+
 var delaunayCuller = new DelaunayCuller<FloatPointInfluenceSource>(sources);
 sources
     .RasterizeCullingMap(grid, delaunayCuller, point => sourceColors[point])
     .SaveAsPng("delaunay-culling-map.png");
 ```
+
+## Half-Plane Culling
+
+`HalfPlaneCuller<TPointSource>` orders sources by distance from the sampled point and excludes sources hidden behind half-plane boundaries created by nearer sources.
+
+![Half-plane culling map](../../assets/spatial2d/influence/half-plane-culling-map.png)
 
 ## Delaunay Culling
 
