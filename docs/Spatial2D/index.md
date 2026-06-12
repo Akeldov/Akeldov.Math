@@ -66,3 +66,13 @@ float distance = projection.Distance;
 
 - .NET Standard 2.1
 - .NET 6.0
+
+## Documentation Map
+
+- [Concepts](concepts/index.md) covers shared conventions such as coordinate modeling, angle units, tolerance, collection ownership, and scaling.
+- [Geometry](geometry/index.md) covers points, vectors, and curves.
+- [Contours](contours/index.md) and [Regions](regions/index.md) cover boundaries and filled areas.
+- [Fields](fields/index.md), [Sampling](sampling/index.md), and [Partitioning](partitioning/index.md) cover higher-level spatial workflows.
+- [Rasterization and Imaging](rasterization/index.md) covers grids, rasters, signed distance, heatmaps, and image export.
+- [Recipes](recipes/index.md) shows common end-to-end tasks.
+- [Performance](performance/index.md) and [Testing and Robustness](testing/index.md) describe verification and benchmark coverage.

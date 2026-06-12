@@ -22,21 +22,85 @@ nav:
       - Akeldov.Math.Spatial2D:
           - Overview: Spatial2D/index.md
           - Getting Started: Spatial2D/getting-started.md
-          - Learn:
-              - Overview: Spatial2D/learn/index.md
-              - Vectors: Spatial2D/learn/vectors.md
+          - Concepts:
+              - Overview: Spatial2D/concepts/index.md
+              - Coordinate Model: Spatial2D/concepts/coordinate-model.md
+              - Points and Vectors: Spatial2D/concepts/points-and-vectors.md
+              - Angles and Units: Spatial2D/concepts/angles-and-units.md
+              - Floating-Point Tolerances: Spatial2D/concepts/floating-point-tolerances.md
+              - Collection Ownership: Spatial2D/concepts/collection-ownership.md
+              - Scaling: Spatial2D/concepts/scaling.md
+          - Geometry:
+              - Overview: Spatial2D/geometry/index.md
+              - Points: Spatial2D/geometry/points.md
+              - Vectors: Spatial2D/geometry/vectors.md
               - Curves:
-                  - Overview: Spatial2D/learn/curves.md
-                  - Linear Curves: Spatial2D/learn/curves/linear.md
-                  - Circular Curves: Spatial2D/learn/curves/circular.md
-              - Regions: Spatial2D/learn/regions.md
-              - Rasterization: Spatial2D/learn/rasterization.md
-              - Poisson Disk Sampling: Spatial2D/learn/poisson-disk-sampling.md
-              - Voronoi Partitioning: Spatial2D/learn/voronoi-partitioning.md
-              - Influence Fields:
-                  - Overview: Spatial2D/learn/influence-fields/index.md
-                  - Sampling: Spatial2D/learn/influence-fields/sampling.md
-                  - Culling: Spatial2D/learn/influence-fields/culling.md
+                  - Overview: Spatial2D/geometry/curves/index.md
+                  - Curve Interfaces: Spatial2D/geometry/curves/curve-interfaces.md
+                  - Projections and Distances: Spatial2D/geometry/curves/projections-and-distances.md
+                  - Intersections: Spatial2D/geometry/curves/intersections.md
+                  - Line: Spatial2D/geometry/curves/line.md
+                  - Ray: Spatial2D/geometry/curves/ray.md
+                  - Segment: Spatial2D/geometry/curves/segment.md
+                  - ParameterizedLine: Spatial2D/geometry/curves/parameterized-line.md
+                  - ParameterizedSegment: Spatial2D/geometry/curves/parameterized-segment.md
+                  - Circle: Spatial2D/geometry/curves/circle.md
+                  - Arc: Spatial2D/geometry/curves/arc.md
+                  - ParameterizedArc: Spatial2D/geometry/curves/parameterized-arc.md
+          - Contours:
+              - Overview: Spatial2D/contours/index.md
+          - Regions:
+              - Overview: Spatial2D/regions/index.md
+              - Rectangle: Spatial2D/regions/rectangle.md
+              - OrientedRectangle: Spatial2D/regions/oriented-rectangle.md
+              - Contour-Based Regions: Spatial2D/regions/contour-based-regions.md
+          - Fields:
+              - Overview: Spatial2D/fields/index.md
+              - Field Interfaces: Spatial2D/fields/field-interfaces.md
+              - Point Influence Fields: Spatial2D/fields/point-influence-fields.md
+              - Curve Influence Fields: Spatial2D/fields/curve-influence-fields.md
+              - Sampling Strategies: Spatial2D/fields/sampling-strategies.md
+              - Source Culling: Spatial2D/fields/source-culling.md
+          - Sampling:
+              - Overview: Spatial2D/sampling/index.md
+              - Poisson Disk Sampling: Spatial2D/sampling/poisson-disk-sampling.md
+          - Partitioning:
+              - Overview: Spatial2D/partitioning/index.md
+              - Weighted Voronoi Partitioning: Spatial2D/partitioning/weighted-voronoi-partitioning.md
+          - Rasterization and Imaging:
+              - Overview: Spatial2D/rasterization/index.md
+              - RasterGrid: Spatial2D/rasterization/raster-grid.md
+              - Gray Rasters: Spatial2D/rasterization/gray-rasters.md
+              - RGBA Rasters: Spatial2D/rasterization/rgba-rasters.md
+              - Curve Distance Rasterization: Spatial2D/rasterization/curve-distance-rasterization.md
+              - Contour Signed Distance: Spatial2D/rasterization/contour-signed-distance.md
+              - Region Signed Distance: Spatial2D/rasterization/region-signed-distance.md
+              - Influence Field Heatmaps: Spatial2D/rasterization/influence-field-heatmaps.md
+          - Recipes:
+              - Overview: Spatial2D/recipes/index.md
+              - Project a Point onto a Curve: Spatial2D/recipes/project-a-point-onto-a-curve.md
+              - Find Curve Intersections: Spatial2D/recipes/find-curve-intersections.md
+              - Build a Closed Contour: Spatial2D/recipes/build-a-closed-contour.md
+              - Create a Region with Holes: Spatial2D/recipes/create-a-region-with-holes.md
+              - Rasterize a Signed-Distance Field: Spatial2D/recipes/rasterize-a-signed-distance-field.md
+              - Generate Poisson Disk Points: Spatial2D/recipes/generate-poisson-disk-points.md
+              - Partition Items with Weighted Voronoi: Spatial2D/recipes/partition-items-with-weighted-voronoi.md
+              - Build an Influence Heatmap: Spatial2D/recipes/build-an-influence-heatmap.md
+          - Performance:
+              - Overview: Spatial2D/performance/index.md
+              - Benchmark Coverage: Spatial2D/performance/benchmark-coverage.md
+              - Curves and Contours: Spatial2D/performance/curves-and-contours.md
+              - Regions: Spatial2D/performance/regions.md
+              - Poisson Disk Sampling: Spatial2D/performance/poisson-disk-sampling.md
+              - Voronoi Partitioning: Spatial2D/performance/voronoi-partitioning.md
+              - Influence Field Culling: Spatial2D/performance/influence-field-culling.md
+              - Rasterization: Spatial2D/performance/rasterization.md
+          - Testing and Robustness:
+              - Overview: Spatial2D/testing/index.md
+              - Edge Cases: Spatial2D/testing/edge-cases.md
+              - Seeded Fuzz Tests: Spatial2D/testing/seeded-fuzz-tests.md
+              - Snapshot Tests: Spatial2D/testing/snapshot-tests.md
+              - Stress Tests: Spatial2D/testing/stress-tests.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
 
