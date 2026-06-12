@@ -28,6 +28,23 @@ public class CullingMapSnapshotTests
         AssertMatchesApprovedPng("delaunay-culling-map-rgba16.png", actual);
     }
 
+    [Test]
+    public void RasterizeCullingMap_WithHalfPlaneCuller_MatchesApprovedImage()
+    {
+        FloatPointInfluenceSource[] sources = CreateSources();
+        var culler = new HalfPlaneCuller<FloatPointInfluenceSource>(sources);
+        Dictionary<PointXY, RGBA16BitColor> sourceColors = CreateSourceColors(sources);
+
+        RGBA16BitRaster raster = sources.RasterizeCullingMap(
+            SnapshotGrid,
+            culler,
+            point => sourceColors[point]);
+
+        byte[] actual = SaveToPngBytes(raster, "half-plane-culling-map-rgba16.png");
+
+        AssertMatchesApprovedPng("half-plane-culling-map-rgba16.png", actual);
+    }
+
     private static FloatPointInfluenceSource[] CreateSources()
     {
         return new[]
