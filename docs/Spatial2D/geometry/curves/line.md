@@ -5,6 +5,8 @@ It has no start point and no curve coordinate.
 
 Use `Line` when you only need geometric distance, projection, ray intersections, or side tests.
 
+![Line distance raster from the curve snapshot tests](../../../assets/spatial2d/curves/line-distance.png)
+
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
