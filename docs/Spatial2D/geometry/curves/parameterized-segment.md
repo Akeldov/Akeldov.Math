@@ -5,10 +5,48 @@ Its coordinate starts at `0` at `StartPoint` and ends at `Length` at `EndPoint`.
 
 Use it when traversal direction or distance along the segment matters.
 
+This code uses the segment coordinate to generate the approved snapshot image below.
+
 ```csharp
+using System;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
 
+var path = new ParameterizedSegment(
+    startPoint: new PointXY(-2.35f, -2.1f),
+    endPoint: new PointXY(2.35f, 1.75f));
+
+var grid = new RasterGrid(
+    origin: new PointXY(-3f, -3f),
+    size: new VectorXY(6f, 6f),
+    resolution: new VectorXYInt(96, 96));
+
+var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
+    (distance, curveCoordinate) =>
+    {
+        const float baseThickness = 0.05f;
+        const float thicknessPerWorldUnit = 0.065f;
+        const float maxThicknessGrowth = 0.42f;
+        const float edgeFalloff = 0.08f;
+
+        float nonNegativeCoordinate = MathF.Max(0f, curveCoordinate);
+        float thickness = baseThickness + MathF.Min(nonNegativeCoordinate * thicknessPerWorldUnit, maxThicknessGrowth);
+        float normalized = 1f - Math.Clamp((distance - thickness) / edgeFalloff, 0f, 1f);
+
+        return (byte)MathF.Round(normalized * byte.MaxValue);
+    });
+
+Gray8BitRaster raster = path.Rasterize(grid, rasterizer);
+raster.SaveAsPng("parameterized-segment-growing-thickness.png");
+```
+
+![Parameterized segment growing-thickness raster from the curve snapshot tests](../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png)
+
+Reversing the endpoints reverses the coordinate domain.
+
+```csharp
 var path = new ParameterizedSegment(
     startPoint: new PointXY(0f, 0f),
     endPoint: new PointXY(10f, 0f));
@@ -20,7 +58,5 @@ float curveCoordinate = projection.CurveCoordinate; // 4
 PointXY halfway = path.GetPoint(path.Length * 0.5f);
 Segment geometricSegment = (Segment)path;
 ```
-
-Reversing the endpoints reverses the coordinate domain.
 
 For a zero-length `ParameterizedSegment`, coordinate `0` returns `StartPoint`.

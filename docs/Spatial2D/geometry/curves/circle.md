@@ -4,10 +4,38 @@
 
 Distance and projection are measured to the circumference, not to a filled disk.
 
+This code uses the same circle, raster grid, and distance mapping as the approved snapshot image below.
+
 ```csharp
+using System;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
 
+var circle = new Circle(
+    center: new PointXY(0.1f, -0.15f),
+    radius: 1.75f);
+
+var grid = new RasterGrid(
+    origin: new PointXY(-3f, -3f),
+    size: new VectorXY(6f, 6f),
+    resolution: new VectorXYInt(96, 96));
+
+var rasterizer = new CurveDistanceGray8BitRasterizer(distance =>
+{
+    const float falloffDistance = 0.25f;
+    float normalized = 1f - Math.Clamp(distance / falloffDistance, 0f, 1f);
+    return (byte)MathF.Round(normalized * byte.MaxValue);
+});
+
+Gray8BitRaster raster = circle.Rasterize(grid, rasterizer);
+raster.SaveAsPng("circle-distance.png");
+```
+
+![Circle distance raster from the curve snapshot tests](../../../assets/spatial2d/curves/circle-distance.png)
+
+```csharp
 var circle = new Circle(
     center: new PointXY(1f, 1f),
     radius: 2f);
