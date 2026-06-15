@@ -47,6 +47,14 @@ After changing raw HTML image paths, verify with:
 Then check the generated HTML image `src` values resolve to files under
 `.mkdocs-site-temp\assets\...`, and remove `.mkdocs-site-temp` after verification.
 
+## Spatial2D README
+
+Keep `src\Akeldov.Math.Spatial2D\README.md` short and close to its current shape:
+a brief package description, a compact feature overview, and a link to the full documentation.
+
+Do not expand it with release notes, long examples, documentation maps, benchmark details,
+or API guides. Put detailed material in `docs\Spatial2D\...`.
+
 ## Spatial2D Benchmarks
 
 `Akeldov.Math.Spatial2D` has a BenchmarkDotNet project at

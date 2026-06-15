@@ -5,11 +5,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>0.4.0</Version>
+		<Version>0.5.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added axis-aligned Rectangle, OrientedRectangle, NormalizedSubrectangle, rectangle contour/region conversion, and rectangle-to-oriented conversion APIs. Split region contracts into IRegion and IContourBasedRegion, renamed Region to ContourBasedRegion, and renamed ParametricLine to ParameterizedLine. Hardened arc intersection/tolerance behavior and invariant-culture formatting. Expanded edge-case regression, seeded property/fuzz, and explicit stress coverage for curves, rectangles, regions, Voronoi partitioning, Poisson disk sampling, Delaunay culling, and rasterization. Added linear/circular curve documentation and reproducible local MkDocs setup. Breaking changes: Region is now ContourBasedRegion, ParametricLine is now ParameterizedLine, NormalizedRectanglePart is now NormalizedSubrectangle, and region contracts are split into IRegion/IContourBasedRegion.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added signed point-distance contracts for contours and regions, region signed-distance rasterization updates, and degree-based Arc helpers. Added normalized RGBA8/RGBA16 color blending helpers and a shared temperature heat map palette used by influence-field heat map rasterization. Expanded color, contour, region, rectangle, culling-map, and heat map test coverage with refreshed approved snapshots. Reorganized Spatial2D documentation around concepts, geometry, regions, fields, rasterization, sampling, partitioning, recipes, performance, and testing with reproducible visual assets.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
