@@ -10,15 +10,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     public sealed class FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer :
         IRasterizer<FloatPointInfluenceField, RGBA16BitRaster>
     {
-        private static readonly RGBA16BitColor[] HeatMapStops =
-        {
-            new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue),
-            new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue),
-            new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue),
-            new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue),
-            new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)
-        };
-
         /// <inheritdoc/>
         public RGBA16BitRaster Rasterize(FloatPointInfluenceField source, RasterGrid grid)
         {
@@ -40,7 +31,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 {
                     PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     float value = source.Sample(point);
-                    values[y * grid.Resolution.X + x] = ToHeatMapColor(Normalize(value, source.Min, source.Max));
+                    values[y * grid.Resolution.X + x] = RGBA16BitColor.FromTemperature(value, source.Min, source.Max);
                 }
             }
 
@@ -54,44 +45,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA color on the blue-cyan-green-yellow-red heat map scale.</returns>
         public static RGBA16BitColor ToHeatMapColor(float normalizedValue)
         {
-            if (float.IsNaN(normalizedValue) || float.IsInfinity(normalizedValue))
-                throw new ArgumentOutOfRangeException(nameof(normalizedValue), "Normalized heat map value must be finite.");
-
-            normalizedValue = MathF.Min(MathF.Max(normalizedValue, 0f), 1f);
-            float scaled = normalizedValue * (HeatMapStops.Length - 1);
-            int index = (int)MathF.Floor(scaled);
-
-            if (index >= HeatMapStops.Length - 1)
-                return HeatMapStops[HeatMapStops.Length - 1];
-
-            float amount = scaled - index;
-            return Blend(HeatMapStops[index], HeatMapStops[index + 1], amount);
-        }
-
-        private static float Normalize(float value, float min, float max)
-        {
-            if (float.IsNaN(value) || float.IsInfinity(value))
-                throw new InvalidOperationException("Influence field returned an invalid value. Values must be finite.");
-
-            if (min == max)
-                return 0.5f;
-
-            return (value - min) / (max - min);
-        }
-
-        private static RGBA16BitColor Blend(RGBA16BitColor from, RGBA16BitColor to, float amount)
-        {
-            float inverseAmount = 1f - amount;
-            return new RGBA16BitColor(
-                BlendChannel(from.Red, to.Red, amount, inverseAmount),
-                BlendChannel(from.Green, to.Green, amount, inverseAmount),
-                BlendChannel(from.Blue, to.Blue, amount, inverseAmount),
-                BlendChannel(from.Alpha, to.Alpha, amount, inverseAmount));
-        }
-
-        private static ushort BlendChannel(ushort from, ushort to, float amount, float inverseAmount)
-        {
-            return (ushort)MathF.Round(from * inverseAmount + to * amount);
+            return RGBA16BitColor.FromTemperature(normalizedValue);
         }
 
         private static void ValidateRange(FloatPointInfluenceField source)

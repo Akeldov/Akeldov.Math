@@ -8,6 +8,15 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// </summary>
     public readonly struct RGBA16BitColor : IEquatable<RGBA16BitColor>
     {
+        private static readonly RGBA16BitColor[] TemperatureStops =
+        {
+            new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue),
+            new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue),
+            new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue),
+            new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue),
+            new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)
+        };
+
         /// <summary>
         /// Initializes a new 16-bit RGBA color.
         /// </summary>
@@ -62,6 +71,54 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 ToChannel(green, nameof(green)),
                 ToChannel(blue, nameof(blue)),
                 ToChannel(alpha, nameof(alpha)));
+        }
+
+        /// <summary>
+        /// Creates a 16-bit RGBA temperature-style color from a normalized value.
+        /// </summary>
+        /// <param name="normalizedValue">The normalized value. Values outside the 0 to 1 range are clamped.</param>
+        /// <returns>A 16-bit RGBA color on the blue-cyan-green-yellow-red temperature scale.</returns>
+        public static RGBA16BitColor FromTemperature(float normalizedValue)
+        {
+            if (float.IsNaN(normalizedValue) || float.IsInfinity(normalizedValue))
+                throw new ArgumentOutOfRangeException(nameof(normalizedValue), "Normalized temperature value must be finite.");
+
+            normalizedValue = MathF.Min(MathF.Max(normalizedValue, 0f), 1f);
+            float scaled = normalizedValue * (TemperatureStops.Length - 1);
+            int index = (int)MathF.Floor(scaled);
+
+            if (index >= TemperatureStops.Length - 1)
+                return TemperatureStops[TemperatureStops.Length - 1];
+
+            float amount = scaled - index;
+            return Blend(TemperatureStops[index], TemperatureStops[index + 1], amount);
+        }
+
+        /// <summary>
+        /// Creates a 16-bit RGBA temperature-style color from a value and its value range.
+        /// </summary>
+        /// <param name="value">The value to map to the temperature color scale.</param>
+        /// <param name="min">The range minimum value.</param>
+        /// <param name="max">The range maximum value.</param>
+        /// <returns>
+        /// A 16-bit RGBA color on the blue-cyan-green-yellow-red temperature scale, where lower values are blue
+        /// and higher values are red.
+        /// </returns>
+        public static RGBA16BitColor FromTemperature(float value, float min, float max)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "Temperature value must be finite.");
+
+            if (float.IsNaN(min) || float.IsInfinity(min))
+                throw new ArgumentOutOfRangeException(nameof(min), "Temperature range values must be finite.");
+
+            if (float.IsNaN(max) || float.IsInfinity(max) || max < min)
+                throw new ArgumentOutOfRangeException(nameof(max), "Temperature maximum value must be finite and greater than or equal to the minimum value.");
+
+            if (min == max)
+                return FromTemperature(0.5f);
+
+            return FromTemperature((value - min) / (max - min));
         }
 
         /// <summary>

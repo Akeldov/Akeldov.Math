@@ -50,6 +50,19 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
         AssertMatchesApprovedPng("float-point-influence-field-barycentric-heatmap-rgba16.png", actual);
     }
 
+    [Test]
+    public void RasterizeHeatMap_WithFourPointBinaryBarycentricField_MatchesApprovedImage()
+    {
+        var field = new FloatPointInfluenceField(
+            new BarycentricFloatSampler<FloatPointInfluenceSource>(),
+            CreateBinaryCornerSources());
+
+        RGBA16BitRaster raster = field.RasterizeHeatMap(SnapshotGrid);
+        byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-binary-corners-heatmap-rgba16.png");
+
+        AssertMatchesApprovedPng("float-point-influence-field-binary-corners-heatmap-rgba16.png", actual);
+    }
+
     private static FloatPointInfluenceSource[] CreateSources()
     {
         return new[]
@@ -59,6 +72,17 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
             new FloatPointInfluenceSource(1f, new PointXY(18f, 58f), 50f),
             new FloatPointInfluenceSource(1f, new PointXY(83f, 54f), 75f),
             new FloatPointInfluenceSource(1f, new PointXY(50f, 34f), 100f)
+        };
+    }
+
+    private static FloatPointInfluenceSource[] CreateBinaryCornerSources()
+    {
+        return new[]
+        {
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 70f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(100f, 0f), 1f),
+            new FloatPointInfluenceSource(1f, new PointXY(100f, 70f), 1f)
         };
     }
 

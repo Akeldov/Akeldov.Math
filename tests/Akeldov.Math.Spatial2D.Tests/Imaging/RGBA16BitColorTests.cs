@@ -39,6 +39,77 @@ public class RGBA16BitColorTests
     }
 
     [Test]
+    public void FromTemperature_WhenNormalizedValueIsOnStops_ReturnsTemperatureColors()
+    {
+        Assert.That(
+            RGBA16BitColor.FromTemperature(0f),
+            Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(
+            RGBA16BitColor.FromTemperature(0.5f),
+            Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(
+            RGBA16BitColor.FromTemperature(1f),
+            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+    }
+
+    [Test]
+    public void FromTemperature_WhenNormalizedValueIsBetweenStops_InterpolatesChannels()
+    {
+        RGBA16BitColor color = RGBA16BitColor.FromTemperature(0.125f);
+
+        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, 32768, ushort.MaxValue, ushort.MaxValue)));
+    }
+
+    [Test]
+    public void FromTemperature_WhenNormalizedValueIsOutsideRange_Clamps()
+    {
+        Assert.That(
+            RGBA16BitColor.FromTemperature(-1f),
+            Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(
+            RGBA16BitColor.FromTemperature(2f),
+            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+    }
+
+    [Test]
+    public void FromTemperature_WhenNormalizedValueIsInvalid_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => RGBA16BitColor.FromTemperature(float.NaN));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RGBA16BitColor.FromTemperature(float.PositiveInfinity));
+    }
+
+    [Test]
+    public void FromTemperature_WhenValueRangeIsProvided_NormalizesValue()
+    {
+        Assert.That(
+            RGBA16BitColor.FromTemperature(25f, 0f, 100f),
+            Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(
+            RGBA16BitColor.FromTemperature(50f, 0f, 100f),
+            Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(
+            RGBA16BitColor.FromTemperature(75f, 0f, 100f),
+            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue)));
+    }
+
+    [Test]
+    public void FromTemperature_WhenValueRangeIsSingleValue_MapsToMiddleTemperatureColor()
+    {
+        RGBA16BitColor color = RGBA16BitColor.FromTemperature(7f, 7f, 7f);
+
+        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+    }
+
+    [Test]
+    public void FromTemperature_WhenValueRangeInputsAreInvalid_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => RGBA16BitColor.FromTemperature(float.NaN, 0f, 1f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RGBA16BitColor.FromTemperature(0f, float.NaN, 1f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RGBA16BitColor.FromTemperature(0f, 1f, 0f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RGBA16BitColor.FromTemperature(0f, 0f, float.PositiveInfinity));
+    }
+
+    [Test]
     public void Blend_LinearlyBlendsChannels()
     {
         var from = new RGBA16BitColor(0, 10_000, 20_000, 40_000);
