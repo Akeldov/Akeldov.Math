@@ -65,11 +65,12 @@ public class ContourTests
     }
 
     [Test]
-    public void IContour_ImplementsPointDistanceProvider()
+    public void IContour_ImplementsPointDistanceProviderContracts()
     {
         IContour contour = CreateSquareContour();
 
         Assert.That(contour, Is.InstanceOf<IPointDistanceProvider>());
+        Assert.That(contour, Is.InstanceOf<ISignedPointDistanceProvider>());
     }
 
     [Test]
