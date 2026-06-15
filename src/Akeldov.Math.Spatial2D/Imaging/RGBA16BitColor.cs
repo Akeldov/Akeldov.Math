@@ -8,15 +8,6 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// </summary>
     public readonly struct RGBA16BitColor : IEquatable<RGBA16BitColor>
     {
-        private static readonly RGBA16BitColor[] TemperatureStops =
-        {
-            new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue),
-            new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue),
-            new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue),
-            new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue),
-            new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)
-        };
-
         /// <summary>
         /// Initializes a new 16-bit RGBA color.
         /// </summary>
@@ -77,21 +68,27 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// Creates a 16-bit RGBA temperature-style color from a normalized value.
         /// </summary>
         /// <param name="normalizedValue">The normalized value. Values outside the 0 to 1 range are clamped.</param>
-        /// <returns>A 16-bit RGBA color on the blue-cyan-green-yellow-red temperature scale.</returns>
+        /// <returns>
+        /// A 16-bit RGBA color interpolated from the same blue-cyan-green-yellow-red temperature palette as
+        /// <see cref="RGBA8BitColor.FromTemperature(float)"/>.
+        /// </returns>
         public static RGBA16BitColor FromTemperature(float normalizedValue)
         {
             if (float.IsNaN(normalizedValue) || float.IsInfinity(normalizedValue))
                 throw new ArgumentOutOfRangeException(nameof(normalizedValue), "Normalized temperature value must be finite.");
 
             normalizedValue = MathF.Min(MathF.Max(normalizedValue, 0f), 1f);
-            float scaled = normalizedValue * (TemperatureStops.Length - 1);
+            float scaled = normalizedValue * (RGBA8BitColor.TemperaturePalette.Length - 1);
             int index = (int)MathF.Floor(scaled);
 
-            if (index >= TemperatureStops.Length - 1)
-                return TemperatureStops[TemperatureStops.Length - 1];
+            if (index >= RGBA8BitColor.TemperaturePalette.Length - 1)
+                return FromRGBA8BitColor(RGBA8BitColor.TemperaturePalette[RGBA8BitColor.TemperaturePalette.Length - 1]);
 
             float amount = scaled - index;
-            return Blend(TemperatureStops[index], TemperatureStops[index + 1], amount);
+            return Blend(
+                FromRGBA8BitColor(RGBA8BitColor.TemperaturePalette[index]),
+                FromRGBA8BitColor(RGBA8BitColor.TemperaturePalette[index + 1]),
+                amount);
         }
 
         /// <summary>
@@ -102,7 +99,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="max">The range maximum value.</param>
         /// <returns>
         /// A 16-bit RGBA color on the blue-cyan-green-yellow-red temperature scale, where lower values are blue
-        /// and higher values are red.
+        /// and higher values are red, interpolated at 16-bit channel precision.
         /// </returns>
         public static RGBA16BitColor FromTemperature(float value, float min, float max)
         {
@@ -195,5 +192,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         {
             return (ushort)MathF.Round(from * inverseAmount + to * amount);
         }
+
+        private static RGBA16BitColor FromRGBA8BitColor(RGBA8BitColor color)
+        {
+            return new RGBA16BitColor(
+                To16BitChannel(color.Red),
+                To16BitChannel(color.Green),
+                To16BitChannel(color.Blue),
+                To16BitChannel(color.Alpha));
+        }
+
+        private static ushort To16BitChannel(byte channel) => (ushort)(channel * 257);
     }
 }

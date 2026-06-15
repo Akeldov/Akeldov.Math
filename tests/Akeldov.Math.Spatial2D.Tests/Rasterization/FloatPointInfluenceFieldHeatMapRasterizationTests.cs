@@ -21,7 +21,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
         RGBA16BitRaster raster = field.RasterizeHeatMap(grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
-        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
         Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
     }
 
@@ -38,7 +38,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
 
         RGBA16BitRaster raster = field.RasterizeHeatMap(grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
     }
 
     [Test]
