@@ -20,9 +20,9 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
 
         RGBA16BitRaster raster = field.RasterizeHeatMap(grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
-        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
-        Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, 0, 32896, ushort.MaxValue)));
+        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
+        Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(32896, 0, 0, ushort.MaxValue)));
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
 
         RGBA16BitRaster raster = field.RasterizeHeatMap(grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
+        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
     }
 
     [Test]
@@ -46,7 +46,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
     {
         RGBA16BitColor color = FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(0.125f);
 
-        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, 32768, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, 0, 65439, ushort.MaxValue)));
     }
 
     [Test]
@@ -54,10 +54,10 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
     {
         Assert.That(
             FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(-1f),
-            Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(0, 0, 32896, ushort.MaxValue)));
         Assert.That(
             FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(2f),
-            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(32896, 0, 0, ushort.MaxValue)));
     }
 
     [Test]

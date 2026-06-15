@@ -43,13 +43,13 @@ public class RGBA16BitColorTests
     {
         Assert.That(
             RGBA16BitColor.FromTemperature(0f),
-            Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(0, 0, 32896, ushort.MaxValue)));
         Assert.That(
             RGBA16BitColor.FromTemperature(0.5f),
-            Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
         Assert.That(
             RGBA16BitColor.FromTemperature(1f),
-            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(32896, 0, 0, ushort.MaxValue)));
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class RGBA16BitColorTests
     {
         RGBA16BitColor color = RGBA16BitColor.FromTemperature(0.125f);
 
-        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, 32768, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, 0, 65439, ushort.MaxValue)));
     }
 
     [Test]
@@ -65,10 +65,10 @@ public class RGBA16BitColorTests
     {
         Assert.That(
             RGBA16BitColor.FromTemperature(-1f),
-            Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(0, 0, 32896, ushort.MaxValue)));
         Assert.That(
             RGBA16BitColor.FromTemperature(2f),
-            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(32896, 0, 0, ushort.MaxValue)));
     }
 
     [Test]
@@ -83,13 +83,13 @@ public class RGBA16BitColorTests
     {
         Assert.That(
             RGBA16BitColor.FromTemperature(25f, 0f, 100f),
-            Is.EqualTo(new RGBA16BitColor(0, 65278, ushort.MaxValue, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(0, 32703, ushort.MaxValue, ushort.MaxValue)));
         Assert.That(
             RGBA16BitColor.FromTemperature(50f, 0f, 100f),
-            Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
         Assert.That(
             RGBA16BitColor.FromTemperature(75f, 0f, 100f),
-            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 65278, 0, ushort.MaxValue)));
+            Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 32703, 0, ushort.MaxValue)));
     }
 
     [Test]
@@ -97,7 +97,7 @@ public class RGBA16BitColorTests
     {
         RGBA16BitColor color = RGBA16BitColor.FromTemperature(7f, 7f, 7f);
 
-        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 514, ushort.MaxValue)));
+        Assert.That(color, Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
     }
 
     [Test]

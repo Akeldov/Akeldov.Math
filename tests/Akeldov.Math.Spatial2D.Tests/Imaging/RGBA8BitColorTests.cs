@@ -43,13 +43,13 @@ public class RGBA8BitColorTests
     {
         Assert.That(
             RGBA8BitColor.FromTemperature(0f),
-            Is.EqualTo(new RGBA8BitColor(0, 0, byte.MaxValue, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(0, 0, 128, byte.MaxValue)));
         Assert.That(
             RGBA8BitColor.FromTemperature(0.5f),
-            Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, 0, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(130, byte.MaxValue, 126, byte.MaxValue)));
         Assert.That(
             RGBA8BitColor.FromTemperature(1f),
-            Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, 0, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(128, 0, 0, byte.MaxValue)));
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class RGBA8BitColorTests
     {
         RGBA8BitColor color = RGBA8BitColor.FromTemperature(0.125f);
 
-        Assert.That(color, Is.EqualTo(new RGBA8BitColor(0, 128, byte.MaxValue, byte.MaxValue)));
+        Assert.That(color, Is.EqualTo(new RGBA8BitColor(0, 0, byte.MaxValue, byte.MaxValue)));
     }
 
     [Test]
@@ -65,10 +65,10 @@ public class RGBA8BitColorTests
     {
         Assert.That(
             RGBA8BitColor.FromTemperature(-1f),
-            Is.EqualTo(new RGBA8BitColor(0, 0, byte.MaxValue, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(0, 0, 128, byte.MaxValue)));
         Assert.That(
             RGBA8BitColor.FromTemperature(2f),
-            Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, 0, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(128, 0, 0, byte.MaxValue)));
     }
 
     [Test]
@@ -83,13 +83,13 @@ public class RGBA8BitColorTests
     {
         Assert.That(
             RGBA8BitColor.FromTemperature(25f, 0f, 100f),
-            Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(0, 128, byte.MaxValue, byte.MaxValue)));
         Assert.That(
             RGBA8BitColor.FromTemperature(50f, 0f, 100f),
-            Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, 0, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(130, byte.MaxValue, 126, byte.MaxValue)));
         Assert.That(
             RGBA8BitColor.FromTemperature(75f, 0f, 100f),
-            Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, 0, byte.MaxValue)));
+            Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 128, 0, byte.MaxValue)));
     }
 
     [Test]
@@ -97,7 +97,7 @@ public class RGBA8BitColorTests
     {
         RGBA8BitColor color = RGBA8BitColor.FromTemperature(7f, 7f, 7f);
 
-        Assert.That(color, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, 0, byte.MaxValue)));
+        Assert.That(color, Is.EqualTo(new RGBA8BitColor(130, byte.MaxValue, 126, byte.MaxValue)));
     }
 
     [Test]
