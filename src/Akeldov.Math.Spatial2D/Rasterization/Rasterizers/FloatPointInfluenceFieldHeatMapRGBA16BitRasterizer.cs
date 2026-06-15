@@ -38,16 +38,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new RGBA16BitRaster(grid, values);
         }
 
-        /// <summary>
-        /// Converts a normalized value to a 16-bit RGBA heat map color.
-        /// </summary>
-        /// <param name="normalizedValue">The normalized value. Values outside the 0..1 range are clamped.</param>
-        /// <returns>A 16-bit RGBA color on the blue-cyan-green-yellow-red heat map scale.</returns>
-        public static RGBA16BitColor ToHeatMapColor(float normalizedValue)
-        {
-            return RGBA16BitColor.FromTemperature(normalizedValue);
-        }
-
         private static void ValidateRange(FloatPointInfluenceField source)
         {
             if (float.IsNaN(source.Min) || float.IsInfinity(source.Min) ||

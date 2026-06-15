@@ -53,7 +53,7 @@ public class RGBA8BitColorTests
     }
 
     [Test]
-    public void FromTemperature_WhenNormalizedValueIsBetweenStops_InterpolatesChannels()
+    public void FromTemperature_WhenNormalizedValueIsBetweenPaletteEntries_UsesNearestPaletteEntry()
     {
         RGBA8BitColor color = RGBA8BitColor.FromTemperature(0.125f);
 

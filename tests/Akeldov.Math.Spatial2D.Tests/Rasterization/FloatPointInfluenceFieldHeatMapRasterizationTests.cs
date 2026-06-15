@@ -20,9 +20,9 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
 
         RGBA16BitRaster raster = field.RasterizeHeatMap(grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(0, 0, 32896, ushort.MaxValue)));
-        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
-        Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(32896, 0, 0, ushort.MaxValue)));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(0f, 0f, 100f)));
+        Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(50f, 0f, 100f)));
+        Assert.That(raster[2, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(100f, 0f, 100f)));
     }
 
     [Test]
@@ -38,35 +38,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
 
         RGBA16BitRaster raster = field.RasterizeHeatMap(grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(32896, ushort.MaxValue, 32896, ushort.MaxValue)));
-    }
-
-    [Test]
-    public void ToHeatMapColor_WhenValueIsBetweenStops_InterpolatesChannels()
-    {
-        RGBA16BitColor color = FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(0.125f);
-
-        Assert.That(color, Is.EqualTo(new RGBA16BitColor(0, 0, 65439, ushort.MaxValue)));
-    }
-
-    [Test]
-    public void ToHeatMapColor_WhenValueIsOutsideRange_Clamps()
-    {
-        Assert.That(
-            FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(-1f),
-            Is.EqualTo(new RGBA16BitColor(0, 0, 32896, ushort.MaxValue)));
-        Assert.That(
-            FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(2f),
-            Is.EqualTo(new RGBA16BitColor(32896, 0, 0, ushort.MaxValue)));
-    }
-
-    [Test]
-    public void ToHeatMapColor_WhenValueIsInvalid_Throws()
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(float.NaN));
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.ToHeatMapColor(float.PositiveInfinity));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(7f, 7f, 7f)));
     }
 
     [Test]
