@@ -50,6 +50,56 @@ public class OrientedRectangleTests
     }
 
     [Test]
+    public void IRegion_ExposesSignedPointDistanceProviderContract()
+    {
+        IRegion rectangle = new OrientedRectangle(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        Assert.That(rectangle, Is.InstanceOf<ISignedPointDistanceProvider>());
+        Assert.That(rectangle, Is.InstanceOf<IPointDistanceProvider>());
+    }
+
+    [Test]
+    public void Distance_WhenPointIsInside_ReturnsDistanceToNearestBoundary()
+    {
+        IRegion rectangle = new OrientedRectangle(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        float distance = rectangle.Distance(new PointXY(0f, 0f));
+
+        Assert.That(distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Distance_WhenPointIsOutside_ReturnsDistanceToNearestBoundary()
+    {
+        IRegion rectangle = new OrientedRectangle(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        float distance = rectangle.Distance(new PointXY(2f, 0f));
+
+        Assert.That(distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void SignedDistance_ReturnsNegativeInsideAndPositiveOutside()
+    {
+        IRegion rectangle = new OrientedRectangle(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        Assert.That(rectangle.SignedDistance(new PointXY(0f, 0f)), Is.EqualTo(-1f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(rectangle.SignedDistance(new PointXY(2f, 0f)), Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void GetCenteredLocalCoordinates_ReturnsPointRelativeToLocalAxes()
     {
         var rectangle = new OrientedRectangle(

@@ -68,5 +68,34 @@ namespace Akeldov.Math.Spatial2D.Regions
 
             return enclosingContourCount % 2 == 1;
         }
+
+        /// <inheritdoc/>
+        public float Distance(PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            float minDistance = float.MaxValue;
+
+            for (int i = 0; i < _contours.Length; i++)
+            {
+                float distance = _contours[i].Distance(point);
+                if (distance < minDistance)
+                    minDistance = distance;
+            }
+
+            return minDistance;
+        }
+
+        /// <inheritdoc/>
+        public float SignedDistance(PointXY point, float geometryEpsilon = 1E-06F)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            float distance = Distance(point);
+            return Contains(point, geometryEpsilon) ? -distance : distance;
+        }
     }
 }

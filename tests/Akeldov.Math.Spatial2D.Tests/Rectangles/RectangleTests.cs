@@ -48,6 +48,64 @@ public class RectangleTests
     }
 
     [Test]
+    public void IRegion_ExposesSignedPointDistanceProviderContract()
+    {
+        IRegion rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(4f, 2f));
+
+        Assert.That(rectangle, Is.InstanceOf<ISignedPointDistanceProvider>());
+        Assert.That(rectangle, Is.InstanceOf<IPointDistanceProvider>());
+    }
+
+    [Test]
+    public void Distance_WhenPointIsInside_ReturnsDistanceToNearestBoundary()
+    {
+        IRegion rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(4f, 2f));
+
+        float distance = rectangle.Distance(new PointXY(2f, 1f));
+
+        Assert.That(distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Distance_WhenPointIsOutsideCorner_ReturnsDistanceToNearestCorner()
+    {
+        IRegion rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(4f, 2f));
+
+        float distance = rectangle.Distance(new PointXY(5f, 4f));
+
+        Assert.That(distance, Is.EqualTo(MathF.Sqrt(5f)).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void SignedDistance_ReturnsNegativeInsideAndPositiveOutside()
+    {
+        IRegion rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(4f, 2f));
+
+        Assert.That(rectangle.SignedDistance(new PointXY(2f, 1f)), Is.EqualTo(-1f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(rectangle.SignedDistance(new PointXY(5f, 1f)), Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsWithinTolerance_ReturnsNegativeDistance()
+    {
+        IRegion rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(4f, 2f));
+
+        float signedDistance = rectangle.SignedDistance(new PointXY(-0.0005f, 1f), 0.001f);
+
+        Assert.That(signedDistance, Is.EqualTo(-0.0005f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void Contains_WhenCoordinatesAreTinyOrLarge_ClassifiesWithoutOverflowOrDefaultToleranceLeak()
     {
         const float tiny = 1e-7f;

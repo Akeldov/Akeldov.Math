@@ -125,6 +125,25 @@ namespace Akeldov.Math.Spatial2D.Regions
                 localY <= Height * 0.5f + geometryEpsilon;
         }
 
+        /// <inheritdoc/>
+        public float Distance(PointXY point)
+        {
+            VectorXY local = GetCenteredLocalCoordinates(point);
+
+            return GetLocalDistanceToBoundary(local);
+        }
+
+        /// <inheritdoc/>
+        public float SignedDistance(
+            PointXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            float distance = Distance(point);
+            return Contains(point, geometryEpsilon) ? -distance : distance;
+        }
+
         /// <summary>
         /// Returns the point coordinates in this rectangle's local coordinate system, relative to the center.
         /// </summary>
@@ -165,6 +184,21 @@ namespace Akeldov.Math.Spatial2D.Regions
         public ContourBasedRegion ToRegion()
         {
             return new ContourBasedRegion(new IContour[] { ToContour() });
+        }
+
+        private float GetLocalDistanceToBoundary(VectorXY local)
+        {
+            float halfWidth = Width * 0.5f;
+            float halfHeight = Height * 0.5f;
+            float absoluteX = MathF.Abs(local.X);
+            float absoluteY = MathF.Abs(local.Y);
+            float outsideX = MathF.Max(absoluteX - halfWidth, 0f);
+            float outsideY = MathF.Max(absoluteY - halfHeight, 0f);
+
+            if (outsideX > 0f || outsideY > 0f)
+                return MathF.Sqrt(outsideX * outsideX + outsideY * outsideY);
+
+            return MathF.Min(halfWidth - absoluteX, halfHeight - absoluteY);
         }
 
         /// <summary>

@@ -71,6 +71,18 @@ public class ContourBasedRegionTests
     }
 
     [Test]
+    public void IRegion_ExposesSignedPointDistanceProviderContract()
+    {
+        IRegion region = new ContourBasedRegion(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 4f, 4f)
+        });
+
+        Assert.That(region, Is.InstanceOf<ISignedPointDistanceProvider>());
+        Assert.That(region, Is.InstanceOf<IPointDistanceProvider>());
+    }
+
+    [Test]
     public void Contains_WhenPointIsInsideOuterContourAndOutsideHole_ReturnsTrue()
     {
         var region = new ContourBasedRegion(new IContour[]
@@ -146,6 +158,33 @@ public class ContourBasedRegionTests
         Assert.That(region.Contains(new PointXY(2f, 2f)), Is.False);
         Assert.That(region.Contains(new PointXY(0f, 2f)), Is.True);
         Assert.That(region.Contains(new PointXY(1f, 2f)), Is.False);
+    }
+
+    [Test]
+    public void Distance_ReturnsShortestDistanceToAnyContourBoundary()
+    {
+        IRegion region = new ContourBasedRegion(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 4f, 4f),
+            CreateSquareContour(1f, 1f, 3f, 3f)
+        });
+
+        Assert.That(region.Distance(new PointXY(0.5f, 2f)), Is.EqualTo(0.5f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(region.Distance(new PointXY(2f, 2f)), Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void SignedDistance_ReturnsNegativeInsideRegionAndPositiveOutsideOrInsideHole()
+    {
+        IRegion region = new ContourBasedRegion(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 4f, 4f),
+            CreateSquareContour(1f, 1f, 3f, 3f)
+        });
+
+        Assert.That(region.SignedDistance(new PointXY(0.5f, 2f)), Is.EqualTo(-0.5f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(region.SignedDistance(new PointXY(2f, 2f)), Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(region.SignedDistance(new PointXY(5f, 2f)), Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]

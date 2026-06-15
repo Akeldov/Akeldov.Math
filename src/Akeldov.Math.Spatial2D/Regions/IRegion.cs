@@ -3,7 +3,7 @@ namespace Akeldov.Math.Spatial2D.Regions
     /// <summary>
     /// Represents a filled two-dimensional region.
     /// </summary>
-    public interface IRegion
+    public interface IRegion : ISignedPointDistanceProvider
     {
         /// <summary>
         /// Determines whether the specified point lies inside or on this region.

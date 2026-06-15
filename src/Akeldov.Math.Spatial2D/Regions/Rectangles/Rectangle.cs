@@ -113,6 +113,28 @@ namespace Akeldov.Math.Spatial2D.Regions
                 point.Y <= Max.Y + geometryEpsilon;
         }
 
+        /// <inheritdoc/>
+        public float Distance(PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            return GetDistanceToBoundary(point);
+        }
+
+        /// <inheritdoc/>
+        public float SignedDistance(
+            PointXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            float distance = Distance(point);
+            return Contains(point, geometryEpsilon) ? -distance : distance;
+        }
+
         /// <summary>
         /// Creates a closed contour representing this rectangle boundary.
         /// </summary>
@@ -135,6 +157,22 @@ namespace Akeldov.Math.Spatial2D.Regions
         public ContourBasedRegion ToRegion()
         {
             return new ContourBasedRegion(new IContour[] { ToContour() });
+        }
+
+        private float GetDistanceToBoundary(PointXY point)
+        {
+            float outsideX = MathF.Max(MathF.Max(Min.X - point.X, point.X - Max.X), 0f);
+            float outsideY = MathF.Max(MathF.Max(Min.Y - point.Y, point.Y - Max.Y), 0f);
+
+            if (outsideX > 0f || outsideY > 0f)
+                return MathF.Sqrt(outsideX * outsideX + outsideY * outsideY);
+
+            float left = point.X - Min.X;
+            float right = Max.X - point.X;
+            float bottom = point.Y - Min.Y;
+            float top = Max.Y - point.Y;
+
+            return MathF.Min(MathF.Min(left, right), MathF.Min(bottom, top));
         }
 
         /// <summary>
