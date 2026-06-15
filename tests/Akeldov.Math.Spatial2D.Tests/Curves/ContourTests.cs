@@ -65,6 +65,14 @@ public class ContourTests
     }
 
     [Test]
+    public void IContour_ImplementsPointDistanceProvider()
+    {
+        IContour contour = CreateSquareContour();
+
+        Assert.That(contour, Is.InstanceOf<IPointDistanceProvider>());
+    }
+
+    [Test]
     public void Encloses_WhenPointIsInsideSegmentContour_ReturnsTrue()
     {
         var contour = new Contour(new IFinitePath[]

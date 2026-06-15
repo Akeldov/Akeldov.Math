@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// <summary>
     /// Represents a closed two-dimensional contour made from finite paths.
     /// </summary>
-    public interface IContour
+    public interface IContour : IPointDistanceProvider
     {
         /// <summary>
         /// Gets the read-only structural view of the finite paths that form this contour.
@@ -24,14 +24,6 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
         /// </exception>
         bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
-
-        /// <summary>
-        /// Returns the shortest unsigned distance from the specified point to a contour boundary.
-        /// </summary>
-        /// <param name="point">The finite point to measure from.</param>
-        /// <returns>The shortest non-negative distance to the contour boundary in world coordinate units.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
-        float Distance(PointXY point);
 
         /// <summary>
         /// Returns the signed distance from the specified point to this contour boundary.
