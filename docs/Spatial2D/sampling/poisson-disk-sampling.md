@@ -26,35 +26,25 @@ var distanceField = new FloatPointInfluenceField(
 
 var samples = sampler.Sample(fieldSize, distanceField);
 
+var background = RGBA16BitColor.FromNormalized(0.972f, 0.980f, 0.988f);
+var smallDistance = RGBA16BitColor.FromNormalized(0.125f, 0.510f, 0.965f);
+var largeDistance = RGBA16BitColor.FromNormalized(0.961f, 0.620f, 0.043f);
+var pointColor = RGBA16BitColor.FromNormalized(0.058f, 0.090f, 0.165f);
+
 var raster = samples.Rasterize(grid, (sample, distance) =>
 {
     float distanceT = MathF.Min(distance / sample.MinimalDistance, 1f);
     float distanceFill = (1f - distanceT) * 0.55f;
     float radiusT = MathF.Min(MathF.Max((sample.MinimalDistance - 5f) / 8f, 0f), 1f);
-
-    float red = Blend(0.972f, Blend(0.125f, 0.961f, radiusT), distanceFill);
-    float green = Blend(0.980f, Blend(0.510f, 0.620f, radiusT), distanceFill);
-    float blue = Blend(0.988f, Blend(0.965f, 0.043f, radiusT), distanceFill);
     float pointAmount = MathF.Max(0f, 1f - distance / 1.15f);
 
-    return new RGBA16BitColor(
-        red: ToChannel(Blend(red, 0.058f, pointAmount)),
-        green: ToChannel(Blend(green, 0.090f, pointAmount)),
-        blue: ToChannel(Blend(blue, 0.165f, pointAmount)),
-        alpha: ushort.MaxValue);
+    var diskColor = RGBA16BitColor.Blend(smallDistance, largeDistance, radiusT);
+    var color = RGBA16BitColor.Blend(background, diskColor, distanceFill);
+
+    return RGBA16BitColor.Blend(color, pointColor, pointAmount);
 });
 
 raster.SaveAsPng("poisson-disk-samples-rgba16.png");
-
-static float Blend(float from, float to, float amount)
-{
-    return from * (1f - amount) + to * amount;
-}
-
-static ushort ToChannel(float value)
-{
-    return (ushort)MathF.Round(Math.Clamp(value, 0f, 1f) * ushort.MaxValue);
-}
 ```
 
 ![Poisson disk samples rasterized with nearest-sample distance coloring](../../assets/spatial2d/poisson-disk/poisson-disk-samples-rgba16.png)

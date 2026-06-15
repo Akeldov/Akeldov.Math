@@ -44,6 +44,46 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public byte Alpha { get; }
 
         /// <summary>
+        /// Creates an 8-bit RGBA color from normalized channel values.
+        /// </summary>
+        /// <param name="red">The normalized red channel value. Values outside the 0 to 1 range are clamped.</param>
+        /// <param name="green">The normalized green channel value. Values outside the 0 to 1 range are clamped.</param>
+        /// <param name="blue">The normalized blue channel value. Values outside the 0 to 1 range are clamped.</param>
+        /// <param name="alpha">The normalized alpha channel value. Values outside the 0 to 1 range are clamped.</param>
+        /// <returns>An 8-bit RGBA color with channels converted from the normalized values.</returns>
+        public static RGBA8BitColor FromNormalized(
+            float red,
+            float green,
+            float blue,
+            float alpha = 1f)
+        {
+            return new RGBA8BitColor(
+                ToChannel(red, nameof(red)),
+                ToChannel(green, nameof(green)),
+                ToChannel(blue, nameof(blue)),
+                ToChannel(alpha, nameof(alpha)));
+        }
+
+        /// <summary>
+        /// Linearly blends two 8-bit RGBA colors.
+        /// </summary>
+        /// <param name="from">The color returned when <paramref name="amount"/> is 0.</param>
+        /// <param name="to">The color returned when <paramref name="amount"/> is 1.</param>
+        /// <param name="amount">The blend amount. Values outside the 0 to 1 range are clamped.</param>
+        /// <returns>The linearly blended color.</returns>
+        public static RGBA8BitColor Blend(RGBA8BitColor from, RGBA8BitColor to, float amount)
+        {
+            amount = ClampNormalized(amount, nameof(amount));
+            float inverseAmount = 1f - amount;
+
+            return new RGBA8BitColor(
+                BlendChannel(from.Red, to.Red, amount, inverseAmount),
+                BlendChannel(from.Green, to.Green, amount, inverseAmount),
+                BlendChannel(from.Blue, to.Blue, amount, inverseAmount),
+                BlendChannel(from.Alpha, to.Alpha, amount, inverseAmount));
+        }
+
+        /// <summary>
         /// Indicates whether this color has the same channel values as another color.
         /// </summary>
         /// <param name="other">The color to compare with this color.</param>
@@ -79,5 +119,24 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="right">The second color.</param>
         /// <returns><see langword="true"/> if the colors are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(RGBA8BitColor left, RGBA8BitColor right) => !(left == right);
+
+        private static byte ToChannel(float value, string paramName)
+        {
+            value = ClampNormalized(value, paramName);
+            return (byte)MathF.Round(value * byte.MaxValue);
+        }
+
+        private static float ClampNormalized(float value, string paramName)
+        {
+            if (float.IsNaN(value))
+                throw new ArgumentOutOfRangeException(paramName, "Normalized channel values and blend amounts must not be NaN.");
+
+            return MathF.Min(MathF.Max(value, 0f), 1f);
+        }
+
+        private static byte BlendChannel(byte from, byte to, float amount, float inverseAmount)
+        {
+            return (byte)MathF.Round(from * inverseAmount + to * amount);
+        }
     }
 }
