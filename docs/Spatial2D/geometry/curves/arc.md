@@ -4,6 +4,7 @@
 
 The `startAngle` and `endAngle` constructor arguments, plus the `StartAngle` and `EndAngle` properties, are in radians.
 Stored angles are normalized.
+For degree output, use `StartAngleDeg`, `EndAngleDeg`, or `ToDegreesString()`.
 
 This code uses the same arc, raster grid, and distance mapping as the approved snapshot image below.
 
@@ -51,6 +52,7 @@ var arc = new Arc(
 bool isInsideArcAngle = arc.IsWithinAngularRegion(new PointXY(1f, 1f));
 PointXY start = arc.StartPoint; // (5, 0)
 PointXY end = arc.EndPoint;     // (0, 5)
+float endAngleDeg = arc.EndAngleDeg; // 90
 
 CurveProjection projection = arc.Project(new PointXY(-3f, 4f));
 ```

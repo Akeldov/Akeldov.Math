@@ -70,6 +70,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         public float EndAngle => _endAngle;
 
         /// <summary>
+        /// Gets the normalized start angle in degrees.
+        /// </summary>
+        public float StartAngleDeg => _startAngle * Constants.Rad2Deg;
+
+        /// <summary>
+        /// Gets the normalized end angle in degrees.
+        /// </summary>
+        public float EndAngleDeg => _endAngle * Constants.Rad2Deg;
+
+        /// <summary>
         /// Gets a value indicating whether this arc represents a full circle.
         /// </summary>
         public bool IsFullCircle => _isFullCircle;
@@ -253,6 +263,20 @@ namespace Akeldov.Math.Spatial2D.Curves
                 EndAngle,
                 IsFullCircle);
         }
+
+        /// <summary>
+        /// Returns a string representation of this arc with angles in degrees.
+        /// </summary>
+        /// <returns>A string representation of this arc with degree angles.</returns>
+        public string ToDegreesString() =>
+            string.Format(
+                CultureInfo.InvariantCulture,
+                "Arc(center: {0}, radius: {1}, deg: {2} - {3}, fullCircle: {4})",
+                Center,
+                Radius,
+                StartAngleDeg,
+                EndAngleDeg,
+                IsFullCircle);
 
         /// <summary>
         /// Indicates whether two arcs are equal.

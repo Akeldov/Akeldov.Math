@@ -369,6 +369,39 @@ public class ArcTests
     }
 
     [Test]
+    public void DegreeMembers_WhenAnglesAreNormalized_ReturnDegrees()
+    {
+        var arc = new Arc(new PointXY(1.5f, 2.25f), 3.5f, -MathF.PI / 2f, MathF.PI);
+
+        Assert.That(arc.StartAngleDeg, Is.EqualTo(270f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(arc.EndAngleDeg, Is.EqualTo(180f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ToDegreesString_UsesInvariantCulture()
+    {
+        CultureInfo originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
+
+        try
+        {
+            var arc = new Arc(
+                new PointXY(1.5f, 2.25f),
+                3.5f,
+                0f,
+                MathF.PI);
+
+            Assert.That(
+                arc.ToDegreesString(),
+                Is.EqualTo("Arc(center: (1.5, 2.25), radius: 3.5, deg: 0 - 180, fullCircle: False)"));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Test]
     public void ToString_UsesInvariantCulture()
     {
         CultureInfo originalCulture = CultureInfo.CurrentCulture;
