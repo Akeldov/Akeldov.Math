@@ -14,9 +14,15 @@ var grid = new RasterGrid(
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));
 
-var color = new RGBA8BitColor(255, 128, 0, 255);
+var color = RGBA8BitColor.FromNormalized(1f, 0.5f, 0f);
+var darkerColor = RGBA8BitColor.Blend(
+    color,
+    RGBA8BitColor.FromNormalized(0f, 0f, 0f),
+    0.25f);
 var values = new RGBA8BitColor[grid.Resolution.X * grid.Resolution.Y];
-values[0] = color;
+values[0] = darkerColor;
 
 var raster = new RGBA8BitRaster(grid, values);
 ```
+
+`RGBA8BitColor` and `RGBA16BitColor` both provide `FromNormalized` for channel values in the 0 to 1 range and `Blend` for linear color interpolation.

@@ -14,6 +14,7 @@ var region = new ContourBasedRegion(new IContour[]
 });
 
 bool isInside = region.Contains(new PointXY(2f, 2f));
+float signedDistance = region.SignedDistance(new PointXY(2f, 2f));
 
 static Contour CreateSquareContour(float left, float bottom, float right, float top)
 {
@@ -28,6 +29,7 @@ static Contour CreateSquareContour(float left, float bottom, float right, float 
 ```
 
 Contour-based region contours must not intersect or touch each other.
+`ContourBasedRegion` implements `IRegion`, so it exposes `Contains`, `Distance`, and `SignedDistance`.
 
 ## Holes and Nested Contours
 
@@ -53,3 +55,4 @@ bool isInsideHole = regionWithHole.Contains(new PointXY(2f, 2f));
 ```
 
 `isInsideOuterArea` is `true`. `isInsideHole` is `false`.
+Signed distances are negative only inside the filled region. Points inside holes have positive signed distance.

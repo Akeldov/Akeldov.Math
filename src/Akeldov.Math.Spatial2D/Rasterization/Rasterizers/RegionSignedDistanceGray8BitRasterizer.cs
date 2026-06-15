@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes regions into 8-bit grayscale rasters using signed distance-to-boundary mapping.
     /// </summary>
-    public sealed class RegionSignedDistanceGray8BitRasterizer : IRasterizer<IContourBasedRegion, Gray8BitRaster>
+    public sealed class RegionSignedDistanceGray8BitRasterizer : IRasterizer<IRegion, Gray8BitRaster>
     {
         private readonly Func<float, byte> _signedDistanceToGrayLevel;
 
@@ -21,7 +21,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IContourBasedRegion source, RasterGrid grid)
+        public Gray8BitRaster Rasterize(IRegion source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));

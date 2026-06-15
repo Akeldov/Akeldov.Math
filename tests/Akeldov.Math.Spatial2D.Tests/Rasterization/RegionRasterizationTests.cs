@@ -30,6 +30,22 @@ public class RegionRasterizationTests
     }
 
     [Test]
+    public void Rasterize_WhenSourceIsRectangleRegion_UsesRegionSignedDistance()
+    {
+        IRegion region = new Rectangle(new PointXY(0f, 0f), new PointXY(2f, 2f));
+        var grid = new RasterGrid(
+            origin: new PointXY(0f, 0f),
+            size: new VectorXY(3f, 1f),
+            resolution: new VectorXYInt(3, 1));
+
+        Gray8BitRaster raster = region.Rasterize(grid, new RegionSignedDistanceGray8BitRasterizer(ToMaskValue));
+
+        Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[1, 0], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[2, 0], Is.EqualTo(byte.MinValue));
+    }
+
+    [Test]
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
         var region = new ContourBasedRegion(new IContour[]

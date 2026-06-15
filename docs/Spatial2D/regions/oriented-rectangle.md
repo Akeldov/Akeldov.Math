@@ -15,6 +15,10 @@ var region = new OrientedRectangle(
     rotation: MathF.PI / 6f);
 
 bool contains = region.Contains(new PointXY(2f, 0f));
+float distance = region.Distance(new PointXY(3f, 0f));
+float signedDistance = region.SignedDistance(new PointXY(0f, 0f));
 ```
 
 The rotation is expressed in radians.
+`distance` is the unsigned distance to the oriented rectangle boundary.
+`signedDistance` is negative for points inside the rectangle and positive for points outside it.
