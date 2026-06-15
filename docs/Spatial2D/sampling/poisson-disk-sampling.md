@@ -2,30 +2,7 @@
 
 `PoissonDiskPointSampler` generates points in a rectangular 2D field while keeping a minimum distance between accepted samples.
 
-## Constant Minimal Distance
-
-Use a single minimal distance when the whole field should have the same sample density.
-
-```csharp
-using System;
-using System.Collections.Generic;
-using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
-
-var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
-
-List<PoissonDiskPointSample> samples =
-    sampler.Sample(new VectorXY(120f, 80f), minimalDistance: 9f);
-```
-
-The returned list is new, mutable, and owned by the caller.
-
-![Poisson disk sampling with a constant minimal distance](../../assets/spatial2d/poisson-disk/constant-distance.svg)
-
-## Variable Minimal Distance
-
-Pass an `IFloatField` when the minimal distance should depend on the sampled position.
-The following example uses the same seed, field size, distance field, raster grid, and color mapping as the approved rasterization snapshot test.
+## Distance Color Raster
 
 ```csharp
 using System;
@@ -135,14 +112,65 @@ public sealed class HorizontalDistanceField : IFloatField
 
 ![Poisson disk samples rasterized with nearest-sample distance coloring](../../assets/spatial2d/poisson-disk/poisson-disk-samples-rgba16.png)
 
-The ring view below is the companion approved test image. Each ring marks the local minimal distance around a generated sample.
+## Minimal Distance Rings
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Fields;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
+
+var fieldSize = new VectorXY(120f, 80f);
+var grid = new RasterGrid(
+    origin: new PointXY(0f, 0f),
+    size: fieldSize,
+    resolution: new VectorXYInt(180, 120));
+
+var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
+var distanceField = new HorizontalDistanceField(min: 5f, max: 13f, width: fieldSize.X);
+
+List<PoissonDiskPointSample> samples =
+    sampler.Sample(fieldSize, distanceField);
+
+Gray16BitRaster raster = samples.Rasterize(
+    grid,
+    new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
+        pointRadius: 1.45f,
+        ringThickness: 0.18f,
+        backgroundGrayLevel: 0x1010,
+        ringGrayLevel: 0x8a8a,
+        pointGrayLevel: ushort.MaxValue));
+
+Directory.CreateDirectory("artifacts");
+raster.SaveAsPng(Path.Combine("artifacts", "poisson-disk-samples-rings-gray16.png"));
+
+public sealed class HorizontalDistanceField : IFloatField
+{
+    private readonly float _min;
+    private readonly float _max;
+    private readonly float _width;
+
+    public HorizontalDistanceField(float min, float max, float width)
+    {
+        _min = min;
+        _max = max;
+        _width = width;
+    }
+
+    public float Min => _min;
+    public float Max => _max;
+
+    public float Sample(PointXY point)
+    {
+        float t = point.X / _width;
+        t = MathF.Max(0f, MathF.Min(1f, t));
+        return _min + (_max - _min) * t;
+    }
+}
+```
 
 ![Poisson disk samples rendered with minimal-distance rings](../../assets/spatial2d/poisson-disk/poisson-disk-samples-rings-gray16.png)
-
-## Tuning
-
-`maxAttempts` controls how many candidates are tried around an active point before the sampler retires that point.
-Higher values can produce denser point sets, but take more work.
-
-The minimal distance must always be positive.
-If a field returns zero or a negative value for a sampled point, sampling fails with an exception.
