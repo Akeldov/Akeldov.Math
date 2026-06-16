@@ -4,7 +4,7 @@
 
 The coordinate starts at `0` at `StartPoint` and ends at `Length` at `EndPoint`.
 
-This code uses the arc coordinate to generate the approved snapshot image below.
+This code uses the arc coordinate to generate the documentation image below.
 
 ```csharp
 using System;
@@ -23,7 +23,7 @@ var path = new ParameterizedArc(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
     (distance, curveCoordinate) =>
@@ -44,7 +44,9 @@ Gray8BitRaster raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-arc-growing-thickness.png");
 ```
 
-![Parameterized arc growing-thickness raster from the curve snapshot tests](../../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png)
+<p>
+  <img class="curve-snapshot" alt="Parameterized arc growing-thickness raster" src="../../../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png">
+</p>
 
 `AngularDirection.Counterclockwise` increases the angle from `StartAngle` toward `EndAngle`.
 `AngularDirection.Clockwise` traverses from the same start point in the opposite direction.

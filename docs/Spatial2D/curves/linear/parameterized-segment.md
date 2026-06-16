@@ -5,7 +5,7 @@ Its coordinate starts at `0` at `StartPoint` and ends at `Length` at `EndPoint`.
 
 Use it when traversal direction or distance along the segment matters.
 
-This code uses the segment coordinate to generate the approved snapshot image below.
+This code uses the segment coordinate to generate the documentation image below.
 
 ```csharp
 using System;
@@ -21,7 +21,7 @@ var path = new ParameterizedSegment(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
     (distance, curveCoordinate) =>
@@ -42,7 +42,9 @@ Gray8BitRaster raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-segment-growing-thickness.png");
 ```
 
-![Parameterized segment growing-thickness raster from the curve snapshot tests](../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png)
+<p>
+  <img class="curve-snapshot" alt="Parameterized segment growing-thickness raster" src="../../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png">
+</p>
 
 Reversing the endpoints reverses the coordinate domain.
 

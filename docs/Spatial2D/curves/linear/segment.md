@@ -5,7 +5,7 @@ It is endpoint-order agnostic, but endpoint inclusion is still preserved.
 
 Use `Segment` when endpoint order should not matter and you only need geometric operations.
 
-This code uses the same segment, raster grid, and distance mapping as the approved snapshot image below.
+This code uses the same segment, raster grid, and distance mapping as the documentation image below.
 
 ```csharp
 using System;
@@ -21,7 +21,7 @@ var segment = new Segment(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new CurveDistanceGray8BitRasterizer(distance =>
 {
@@ -34,7 +34,9 @@ Gray8BitRaster raster = segment.Rasterize(grid, rasterizer);
 raster.SaveAsPng("segment-distance.png");
 ```
 
-![Segment distance raster from the curve snapshot tests](../../../assets/spatial2d/curves/segment-distance.png)
+<p>
+  <img class="curve-snapshot" alt="Segment distance raster" src="../../../../assets/spatial2d/curves/segment-distance.png">
+</p>
 
 Endpoint inclusion matters for ray intersections at exact endpoints.
 

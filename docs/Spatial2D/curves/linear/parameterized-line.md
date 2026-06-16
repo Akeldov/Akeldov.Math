@@ -4,7 +4,7 @@
 
 Coordinates are measured from `Origin` along `Direction` in world coordinate units.
 
-This code uses the signed curve coordinate to generate the approved snapshot image below.
+This code uses the signed curve coordinate to generate the documentation image below.
 
 ```csharp
 using System;
@@ -20,7 +20,7 @@ var path = new ParameterizedLine(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
     (distance, curveCoordinate) =>
@@ -41,7 +41,9 @@ Gray8BitRaster raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-line-growing-thickness.png");
 ```
 
-![Parameterized line growing-thickness raster from the curve snapshot tests](../../../assets/spatial2d/curves/parameterized-line-growing-thickness.png)
+<p>
+  <img class="curve-snapshot" alt="Parameterized line growing-thickness raster" src="../../../../assets/spatial2d/curves/parameterized-line-growing-thickness.png">
+</p>
 
 You can project points onto the line and get their signed coordinate.
 

@@ -5,7 +5,7 @@ It has no start point and no curve coordinate.
 
 Use `Line` when you only need geometric distance, projection, ray intersections, or side tests.
 
-This code uses the same line, raster grid, and distance mapping as the approved snapshot image below.
+This code uses the same line, raster grid, and distance mapping as the documentation image below.
 
 ```csharp
 using System;
@@ -21,7 +21,7 @@ var line = new Line(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new CurveDistanceGray8BitRasterizer(distance =>
 {
@@ -34,7 +34,9 @@ Gray8BitRaster raster = line.Rasterize(grid, rasterizer);
 raster.SaveAsPng("line-distance.png");
 ```
 
-![Line distance raster from the curve snapshot tests](../../../assets/spatial2d/curves/line-distance.png)
+<p>
+  <img class="curve-snapshot" alt="Line distance raster" src="../../../../assets/spatial2d/curves/line-distance.png">
+</p>
 
 You can also construct a line from implicit equation coefficients.
 

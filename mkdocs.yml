@@ -15,6 +15,9 @@ theme:
     - search.suggest
     - search.highlight
 
+extra_css:
+  - stylesheets/extra.css
+
 nav:
   - Home: index.md
   - Libraries:
@@ -30,23 +33,23 @@ nav:
               - Floating-Point Tolerances: Spatial2D/concepts/floating-point-tolerances.md
               - Collection Ownership: Spatial2D/concepts/collection-ownership.md
               - Scaling: Spatial2D/concepts/scaling.md
-          - Geometry:
-              - Overview: Spatial2D/geometry/index.md
-              - Points: Spatial2D/geometry/points.md
-              - Vectors: Spatial2D/geometry/vectors.md
-              - Curves:
-                  - Overview: Spatial2D/geometry/curves/index.md
-                  - Curve Interfaces: Spatial2D/geometry/curves/curve-interfaces.md
-                  - Projections and Distances: Spatial2D/geometry/curves/projections-and-distances.md
-                  - Intersections: Spatial2D/geometry/curves/intersections.md
-                  - Line: Spatial2D/geometry/curves/line.md
-                  - Ray: Spatial2D/geometry/curves/ray.md
-                  - Segment: Spatial2D/geometry/curves/segment.md
-                  - ParameterizedLine: Spatial2D/geometry/curves/parameterized-line.md
-                  - ParameterizedSegment: Spatial2D/geometry/curves/parameterized-segment.md
-                  - Circle: Spatial2D/geometry/curves/circle.md
-                  - Arc: Spatial2D/geometry/curves/arc.md
-                  - ParameterizedArc: Spatial2D/geometry/curves/parameterized-arc.md
+          - Points: Spatial2D/points.md
+          - Vectors: Spatial2D/vectors.md
+          - Curves:
+              - Overview: Spatial2D/curves/index.md
+              - Curve Interfaces: Spatial2D/curves/curve-interfaces.md
+              - Projections and Distances: Spatial2D/curves/projections-and-distances.md
+              - Intersections: Spatial2D/curves/intersections.md
+              - Linear:
+                  - Line: Spatial2D/curves/linear/line.md
+                  - Ray: Spatial2D/curves/linear/ray.md
+                  - Segment: Spatial2D/curves/linear/segment.md
+                  - ParameterizedLine: Spatial2D/curves/linear/parameterized-line.md
+                  - ParameterizedSegment: Spatial2D/curves/linear/parameterized-segment.md
+              - Circular:
+                  - Circle: Spatial2D/curves/circular/circle.md
+                  - Arc: Spatial2D/curves/circular/arc.md
+                  - ParameterizedArc: Spatial2D/curves/circular/parameterized-arc.md
           - Contours:
               - Overview: Spatial2D/contours/index.md
           - Regions:

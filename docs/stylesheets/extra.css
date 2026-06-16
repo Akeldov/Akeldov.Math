@@ -1,0 +1,17 @@
+.curve-snapshot {
+  width: min(12rem, 100%);
+  height: auto;
+}
+
+.curve-overview-thumbnail {
+  width: min(3.5rem, 100%);
+  height: auto;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.curve-overview-heading,
+.curve-overview-link,
+.curve-coordinate-domain {
+  white-space: nowrap;
+}

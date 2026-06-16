@@ -4,7 +4,7 @@
 
 Distance and projection are measured to the circumference, not to a filled disk.
 
-This code uses the same circle, raster grid, and distance mapping as the approved snapshot image below.
+This code uses the same circle, raster grid, and distance mapping as the documentation image below.
 
 ```csharp
 using System;
@@ -20,7 +20,7 @@ var circle = new Circle(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new CurveDistanceGray8BitRasterizer(distance =>
 {
@@ -33,7 +33,9 @@ Gray8BitRaster raster = circle.Rasterize(grid, rasterizer);
 raster.SaveAsPng("circle-distance.png");
 ```
 
-![Circle distance raster from the curve snapshot tests](../../../assets/spatial2d/curves/circle-distance.png)
+<p>
+  <img class="curve-snapshot" alt="Circle distance raster" src="../../../../assets/spatial2d/curves/circle-distance.png">
+</p>
 
 ```csharp
 var circle = new Circle(

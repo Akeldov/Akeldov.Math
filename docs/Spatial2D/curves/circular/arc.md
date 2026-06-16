@@ -6,7 +6,7 @@ The `startAngle` and `endAngle` constructor arguments, plus the `StartAngle` and
 Stored angles are normalized.
 For degree output, use `StartAngleDeg`, `EndAngleDeg`, or `ToDegreesString()`.
 
-This code uses the same arc, raster grid, and distance mapping as the approved snapshot image below.
+This code uses the same arc, raster grid, and distance mapping as the documentation image below.
 
 ```csharp
 using System;
@@ -24,7 +24,7 @@ var arc = new Arc(
 var grid = new RasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
-    resolution: new VectorXYInt(96, 96));
+    resolution: new VectorXYInt(192, 192));
 
 var rasterizer = new CurveDistanceGray8BitRasterizer(distance =>
 {
@@ -37,7 +37,9 @@ Gray8BitRaster raster = arc.Rasterize(grid, rasterizer);
 raster.SaveAsPng("arc-distance.png");
 ```
 
-![Arc distance raster from the curve snapshot tests](../../../assets/spatial2d/curves/arc-distance.png)
+<p>
+  <img class="curve-snapshot" alt="Arc distance raster" src="../../../../assets/spatial2d/curves/arc-distance.png">
+</p>
 
 When a point's direction from the center is inside the arc's angular region, projection lands on the source circle.
 When the direction is outside the angular region, projection clamps to the nearest endpoint.

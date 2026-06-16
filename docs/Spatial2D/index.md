@@ -70,7 +70,7 @@ float distance = projection.Distance;
 ## Documentation Map
 
 - [Concepts](concepts/index.md) covers shared conventions such as coordinate modeling, angle units, tolerance, collection ownership, and scaling.
-- [Geometry](geometry/index.md) covers points, vectors, and curves.
+- [Points](points.md), [Vectors](vectors.md), and [Curves](curves/index.md) cover the core spatial primitives.
 - [Contours](contours/index.md) and [Regions](regions/index.md) cover boundaries and filled areas.
 - [Fields](fields/index.md), [Sampling](sampling/index.md), and [Partitioning](partitioning/index.md) cover higher-level spatial workflows.
 - [Rasterization and Imaging](rasterization/index.md) covers grids, rasters, signed distance, heatmaps, and image export.
