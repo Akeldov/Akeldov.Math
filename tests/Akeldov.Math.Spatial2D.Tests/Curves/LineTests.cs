@@ -87,6 +87,14 @@ public class LineTests
     }
 
     [Test]
+    public void ICurve_ImplementsPointDistanceProviderContract()
+    {
+        ICurve curve = default(Line);
+
+        Assert.That(curve, Is.InstanceOf<IPointDistanceProvider>());
+    }
+
+    [Test]
     public void Equals_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsTrue()
     {
         var line = new Line(new PointXY(0f, 3f), new PointXY(2f, 3f));
