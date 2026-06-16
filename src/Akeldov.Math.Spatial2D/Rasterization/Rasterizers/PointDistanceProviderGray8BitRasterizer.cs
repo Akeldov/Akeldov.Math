@@ -1,27 +1,26 @@
 using System;
-using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Rasterizes curves into 8-bit grayscale rasters using distance-to-curve mapping.
+    /// Rasterizes point-distance providers into 8-bit grayscale rasters using unsigned distance mapping.
     /// </summary>
-    public sealed class CurveDistanceGray8BitRasterizer : IRasterizer<ICurve, Gray8BitRaster>
+    public sealed class PointDistanceProviderGray8BitRasterizer : IRasterizer<IPointDistanceProvider, Gray8BitRaster>
     {
         private readonly Func<float, byte> _distanceToGrayLevel;
 
         /// <summary>
-        /// Initializes a new curve rasterizer.
+        /// Initializes a new point-distance provider rasterizer.
         /// </summary>
-        /// <param name="distanceToGrayLevel">The function that maps distance to the curve to an 8-bit grayscale value.</param>
-        public CurveDistanceGray8BitRasterizer(Func<float, byte> distanceToGrayLevel)
+        /// <param name="distanceToGrayLevel">The function that maps unsigned distance to an 8-bit grayscale value.</param>
+        public PointDistanceProviderGray8BitRasterizer(Func<float, byte> distanceToGrayLevel)
         {
             _distanceToGrayLevel = distanceToGrayLevel ?? throw new ArgumentNullException(nameof(distanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(ICurve source, RasterGrid grid)
+        public Gray8BitRaster Rasterize(IPointDistanceProvider source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));

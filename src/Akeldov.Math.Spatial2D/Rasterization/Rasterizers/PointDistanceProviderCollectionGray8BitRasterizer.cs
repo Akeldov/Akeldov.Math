@@ -1,28 +1,28 @@
 using System;
 using System.Collections.Generic;
-using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Rasterizes curve collections into 8-bit grayscale rasters using distance-to-nearest-curve mapping.
+    /// Rasterizes point-distance provider collections into 8-bit grayscale rasters using nearest unsigned distance mapping.
     /// </summary>
-    public sealed class CurveCollectionDistanceGray8BitRasterizer : IRasterizer<IReadOnlyList<ICurve>, Gray8BitRaster>
+    public sealed class PointDistanceProviderCollectionGray8BitRasterizer :
+        IRasterizer<IReadOnlyList<IPointDistanceProvider>, Gray8BitRaster>
     {
         private readonly Func<float, byte> _distanceToGrayLevel;
 
         /// <summary>
-        /// Initializes a new curve collection rasterizer.
+        /// Initializes a new point-distance provider collection rasterizer.
         /// </summary>
-        /// <param name="distanceToGrayLevel">The function that maps distance to the nearest curve to an 8-bit grayscale value.</param>
-        public CurveCollectionDistanceGray8BitRasterizer(Func<float, byte> distanceToGrayLevel)
+        /// <param name="distanceToGrayLevel">The function that maps nearest unsigned distance to an 8-bit grayscale value.</param>
+        public PointDistanceProviderCollectionGray8BitRasterizer(Func<float, byte> distanceToGrayLevel)
         {
             _distanceToGrayLevel = distanceToGrayLevel ?? throw new ArgumentNullException(nameof(distanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IReadOnlyList<ICurve> source, RasterGrid grid)
+        public Gray8BitRaster Rasterize(IReadOnlyList<IPointDistanceProvider> source, RasterGrid grid)
         {
             ValidateSource(source);
             ValidateGrid(grid);
@@ -38,7 +38,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
                     PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    float distance = GetNearestCurveDistance(source, point);
+                    float distance = GetNearestDistance(source, point);
                     values[valueIndex++] = _distanceToGrayLevel(distance);
                 }
             }
@@ -46,13 +46,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new Gray8BitRaster(grid, values);
         }
 
-        private static float GetNearestCurveDistance(IReadOnlyList<ICurve> curves, PointXY point)
+        private static float GetNearestDistance(IReadOnlyList<IPointDistanceProvider> sources, PointXY point)
         {
             float minDistance = float.MaxValue;
 
-            for (int i = 0; i < curves.Count; i++)
+            for (int i = 0; i < sources.Count; i++)
             {
-                float distance = curves[i].Distance(point);
+                float distance = sources[i].Distance(point);
                 if (distance < minDistance)
                     minDistance = distance;
             }
@@ -60,18 +60,18 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return minDistance;
         }
 
-        private static void ValidateSource(IReadOnlyList<ICurve> source)
+        private static void ValidateSource(IReadOnlyList<IPointDistanceProvider> source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
             if (source.Count == 0)
-                throw new ArgumentException("Curve collection must contain at least one curve.", nameof(source));
+                throw new ArgumentException("Point-distance provider collection must contain at least one source.", nameof(source));
 
             for (int i = 0; i < source.Count; i++)
             {
                 if (source[i] == null)
-                    throw new ArgumentException("Curve collection must not contain null curves.", nameof(source));
+                    throw new ArgumentException("Point-distance provider collection must not contain null sources.", nameof(source));
             }
         }
 

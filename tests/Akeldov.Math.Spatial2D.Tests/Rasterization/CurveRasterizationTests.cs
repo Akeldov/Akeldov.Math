@@ -12,7 +12,7 @@ public class CurveRasterizationTests
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         RasterGrid grid = CreateThreeByThreeGrid();
 
-        Gray8BitRaster raster = curve.Rasterize(grid, new CurveDistanceGray8BitRasterizer(ToGray8));
+        Gray8BitRaster raster = curve.Rasterize(grid, new PointDistanceProviderGray8BitRasterizer(ToGray8));
 
         Assert.That(raster[1, 0], Is.EqualTo(10));
         Assert.That(raster[1, 1], Is.EqualTo(0));
@@ -29,7 +29,7 @@ public class CurveRasterizationTests
         };
         RasterGrid grid = CreateThreeByThreeGrid();
 
-        Gray8BitRaster raster = curves.Rasterize(grid, new CurveCollectionDistanceGray8BitRasterizer(ToGray8));
+        Gray8BitRaster raster = curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8));
 
         Assert.That(raster[1, 0], Is.EqualTo(0));
         Assert.That(raster[1, 1], Is.EqualTo(10));
@@ -80,9 +80,9 @@ public class CurveRasterizationTests
         IReadOnlyList<IParameterizedCurve> parameterizedCurves = new IParameterizedCurve[] { parameterizedCurve };
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            curve.Rasterize(default, new CurveDistanceGray8BitRasterizer(ToGray8)));
+            curve.Rasterize(default, new PointDistanceProviderGray8BitRasterizer(ToGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            curves.Rasterize(default, new CurveCollectionDistanceGray8BitRasterizer(ToGray8)));
+            curves.Rasterize(default, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             parameterizedCurve.Rasterize(default, new ParameterizedCurveDistanceGray8BitRasterizer(ToParameterizedGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -96,7 +96,7 @@ public class CurveRasterizationTests
         RasterGrid grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() =>
-            curves.Rasterize(grid, new CurveCollectionDistanceGray8BitRasterizer(ToGray8)));
+            curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
@@ -108,7 +108,7 @@ public class CurveRasterizationTests
         RasterGrid grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() =>
-            curves.Rasterize(grid, new CurveCollectionDistanceGray8BitRasterizer(ToGray8)));
+            curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }

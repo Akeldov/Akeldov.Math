@@ -18,7 +18,7 @@ public class CurveSnapshotTests
     {
         Gray8BitRaster raster = createCurve().Rasterize(
             SnapshotGrid,
-            new CurveDistanceGray8BitRasterizer(ToDistanceGray8));
+            new PointDistanceProviderGray8BitRasterizer(ToDistanceGray8));
 
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
