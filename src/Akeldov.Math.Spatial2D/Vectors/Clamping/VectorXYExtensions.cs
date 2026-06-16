@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Spatial2D
 {
+    /// <summary>
+    /// Provides extension methods for <see cref="VectorXY"/>.
+    /// </summary>
     public static partial class VectorXYExtensions
     {
         /// <summary>
