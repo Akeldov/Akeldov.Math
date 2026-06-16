@@ -45,7 +45,7 @@ public class HexGeometryMapBenchmarks
 
         for (int i = 0; i < _indices.Length; i++)
         {
-            VectorXY center = _centerMap[_indices[i]];
+            PointXY center = _centerMap[_indices[i]];
             sum += center.X;
             sum += center.Y;
         }

@@ -13,7 +13,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Rasterization;
 public class SignedDistanceRasterizationBenchmarks
 {
     private Contour _contour = null!;
-    private Region _region = null!;
+    private ContourBasedRegion _region = null!;
     private RasterGrid _grid;
     private ContourSignedDistanceGray8BitRasterizer _contourGray8Rasterizer = null!;
     private ContourSignedDistanceGray16BitRasterizer _contourGray16Rasterizer = null!;
@@ -27,7 +27,7 @@ public class SignedDistanceRasterizationBenchmarks
     public void Setup()
     {
         _contour = CreateSquareContour(0f, 0f, 100f, 100f).FilletCorners(6f);
-        _region = new Region(new IContour[]
+        _region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 100f, 100f),
             CreateSquareContour(35f, 35f, 65f, 65f)

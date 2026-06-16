@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Regions;
 public class RegionBenchmarks
 {
     private IContour[] _contours = null!;
-    private Region _region = null!;
+    private ContourBasedRegion _region = null!;
     private PointXY[] _queries = null!;
 
     [Params(1, 4)]
@@ -24,14 +24,14 @@ public class RegionBenchmarks
     public void Setup()
     {
         _contours = CreateNestedSquareContours(ContourCount);
-        _region = new Region(_contours);
+        _region = new ContourBasedRegion(_contours);
         _queries = CreateQueries(QueryCount, 120f, -10f);
     }
 
     [Benchmark]
-    public Region Construct()
+    public ContourBasedRegion Construct()
     {
-        return new Region(_contours);
+        return new ContourBasedRegion(_contours);
     }
 
     [Benchmark]
