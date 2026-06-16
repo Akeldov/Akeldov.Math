@@ -1,27 +1,26 @@
 using System;
-using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Rasterizes contours into 8-bit grayscale rasters using signed distance-to-contour mapping.
+    /// Rasterizes signed point-distance providers into 8-bit grayscale rasters using signed distance mapping.
     /// </summary>
-    public sealed class ContourSignedDistanceGray8BitRasterizer : IRasterizer<IContour, Gray8BitRaster>
+    public sealed class SignedPointDistanceProviderGray8BitRasterizer : IRasterizer<ISignedPointDistanceProvider, Gray8BitRaster>
     {
         private readonly Func<float, byte> _signedDistanceToGrayLevel;
 
         /// <summary>
-        /// Initializes a new contour rasterizer.
+        /// Initializes a new signed point-distance provider rasterizer.
         /// </summary>
-        /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to the contour to an 8-bit grayscale value. Negative distances are inside the contour; positive distances are outside.</param>
-        public ContourSignedDistanceGray8BitRasterizer(Func<float, byte> signedDistanceToGrayLevel)
+        /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to an 8-bit grayscale value. Negative distances are inside the source; positive distances are outside.</param>
+        public SignedPointDistanceProviderGray8BitRasterizer(Func<float, byte> signedDistanceToGrayLevel)
         {
             _signedDistanceToGrayLevel = signedDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(signedDistanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IContour source, RasterGrid grid)
+        public Gray8BitRaster Rasterize(ISignedPointDistanceProvider source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));

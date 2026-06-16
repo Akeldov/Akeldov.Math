@@ -13,9 +13,9 @@ public class ContourRasterizationImageTests
         var contour = CreateTriangleContour();
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Rasterize(default, new ContourSignedDistanceGray8BitRasterizer(ToGray8)));
+            contour.Rasterize(default, new SignedPointDistanceProviderGray8BitRasterizer(ToGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Rasterize(default, new ContourSignedDistanceGray16BitRasterizer(ToGray16)));
+            contour.Rasterize(default, new SignedPointDistanceProviderGray16BitRasterizer(ToGray16)));
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class ContourRasterizationImageTests
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "triangle-gray8.bmp");
 
         contour
-            .Rasterize(grid, new ContourSignedDistanceGray8BitRasterizer(ToGray8))
+            .Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToGray8))
             .SaveAsBmp(path);
 
         Assert.That(File.Exists(path), Is.True);
@@ -71,7 +71,7 @@ public class ContourRasterizationImageTests
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "triangle-gray16.png");
 
         contour
-            .Rasterize(grid, new ContourSignedDistanceGray16BitRasterizer(ToGray16))
+            .Rasterize(grid, new SignedPointDistanceProviderGray16BitRasterizer(ToGray16))
             .SaveAsPng(path);
 
         Assert.That(File.Exists(path), Is.True);
@@ -94,7 +94,7 @@ public class ContourRasterizationImageTests
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rounded-square-gray16.png");
 
         contour
-            .Rasterize(grid, new ContourSignedDistanceGray16BitRasterizer(ToGray16))
+            .Rasterize(grid, new SignedPointDistanceProviderGray16BitRasterizer(ToGray16))
             .SaveAsPng(path);
 
         Assert.That(File.Exists(path), Is.True);

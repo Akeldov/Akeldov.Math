@@ -21,7 +21,7 @@ public class RegionRasterizationTests
             size: new VectorXY(4f, 4f),
             resolution: new VectorXYInt(4, 4));
 
-        Gray8BitRaster raster = region.Rasterize(grid, new RegionSignedDistanceGray8BitRasterizer(ToMaskValue));
+        Gray8BitRaster raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 1], Is.EqualTo(byte.MinValue));
@@ -38,7 +38,7 @@ public class RegionRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        Gray8BitRaster raster = region.Rasterize(grid, new RegionSignedDistanceGray8BitRasterizer(ToMaskValue));
+        Gray8BitRaster raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 0], Is.EqualTo(byte.MaxValue));
@@ -54,9 +54,9 @@ public class RegionRasterizationTests
         });
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Rasterize(default, new RegionSignedDistanceGray8BitRasterizer(ToMaskValue)));
+            region.Rasterize(default, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Rasterize(default, new RegionSignedDistanceGray16BitRasterizer(ToGray16)));
+            region.Rasterize(default, new SignedPointDistanceProviderGray16BitRasterizer(ToGray16)));
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class RegionRasterizationTests
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "square-with-square-hole-gray16.png");
 
         region
-            .Rasterize(grid, new RegionSignedDistanceGray16BitRasterizer(ToDistanceGray16))
+            .Rasterize(grid, new SignedPointDistanceProviderGray16BitRasterizer(ToDistanceGray16))
             .SaveAsPng(path);
 
         Assert.That(File.Exists(path), Is.True);

@@ -15,10 +15,10 @@ public class SignedDistanceRasterizationBenchmarks
     private Contour _contour = null!;
     private ContourBasedRegion _region = null!;
     private RasterGrid _grid;
-    private ContourSignedDistanceGray8BitRasterizer _contourGray8Rasterizer = null!;
-    private ContourSignedDistanceGray16BitRasterizer _contourGray16Rasterizer = null!;
-    private RegionSignedDistanceGray8BitRasterizer _regionGray8Rasterizer = null!;
-    private RegionSignedDistanceGray16BitRasterizer _regionGray16Rasterizer = null!;
+    private SignedPointDistanceProviderGray8BitRasterizer _contourGray8Rasterizer = null!;
+    private SignedPointDistanceProviderGray16BitRasterizer _contourGray16Rasterizer = null!;
+    private SignedPointDistanceProviderGray8BitRasterizer _regionGray8Rasterizer = null!;
+    private SignedPointDistanceProviderGray16BitRasterizer _regionGray16Rasterizer = null!;
 
     [Params(128, 256)]
     public int Resolution { get; set; }
@@ -36,10 +36,10 @@ public class SignedDistanceRasterizationBenchmarks
             origin: new PointXY(-10f, -10f),
             size: new VectorXY(120f, 120f),
             resolution: new VectorXYInt(Resolution, Resolution));
-        _contourGray8Rasterizer = new ContourSignedDistanceGray8BitRasterizer(ToGray8);
-        _contourGray16Rasterizer = new ContourSignedDistanceGray16BitRasterizer(ToGray16);
-        _regionGray8Rasterizer = new RegionSignedDistanceGray8BitRasterizer(ToGray8);
-        _regionGray16Rasterizer = new RegionSignedDistanceGray16BitRasterizer(ToGray16);
+        _contourGray8Rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(ToGray8);
+        _contourGray16Rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(ToGray16);
+        _regionGray8Rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(ToGray8);
+        _regionGray16Rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(ToGray16);
     }
 
     [Benchmark]

@@ -24,7 +24,7 @@ public class RasterizationStressTests
         int mappedValueCount = 0;
         bool sawInsideDistance = false;
         bool sawOutsideDistance = false;
-        var rasterizer = new RegionSignedDistanceGray16BitRasterizer(distance =>
+        var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(distance =>
         {
             Assert.That(float.IsNaN(distance), Is.False);
             Assert.That(float.IsInfinity(distance), Is.False);
