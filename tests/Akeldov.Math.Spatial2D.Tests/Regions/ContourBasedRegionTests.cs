@@ -285,6 +285,18 @@ public class ContourBasedRegionTests
             float distance = Distance(point);
             return Encloses(point, geometryEpsilon) ? -distance : distance;
         }
+
+        public List<PointXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            return new List<PointXY>();
+        }
+
+        public CurveProjection Project(PointXY point)
+        {
+            return Curves[0].Project(point);
+        }
     }
 
     private sealed class DistantBoundaryCurve : IFinitePath

@@ -79,6 +79,49 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
+        public List<PointXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            var intersections = new List<PointXY>();
+
+            for (int i = 0; i < _curves.Length; i++)
+            {
+                List<PointXY> curveIntersections = _curves[i].GetRayIntersections(ray, geometryEpsilon);
+                if (curveIntersections == null)
+                    continue;
+
+                for (int j = 0; j < curveIntersections.Count; j++)
+                {
+                    AddDistinct(intersections, curveIntersections[j], geometryEpsilon);
+                }
+            }
+
+            return intersections;
+        }
+
+        /// <inheritdoc/>
+        public CurveProjection Project(PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            CurveProjection closestProjection = _curves[0].Project(point);
+
+            for (int i = 1; i < _curves.Length; i++)
+            {
+                CurveProjection projection = _curves[i].Project(point);
+                if (projection.Distance < closestProjection.Distance)
+                    closestProjection = projection;
+            }
+
+            return closestProjection;
+        }
+
         /// <inheritdoc/>
         public float Distance(PointXY point)
         {

@@ -69,8 +69,33 @@ public class ContourTests
     {
         IContour contour = CreateSquareContour();
 
+        Assert.That(contour, Is.InstanceOf<ICurve>());
         Assert.That(contour, Is.InstanceOf<IPointDistanceProvider>());
         Assert.That(contour, Is.InstanceOf<ISignedPointDistanceProvider>());
+    }
+
+    [Test]
+    public void GetRayIntersections_ReturnsBoundaryIntersections()
+    {
+        IContour contour = CreateSquareContour();
+        var ray = new Ray(new PointXY(-1f, 1f));
+
+        List<PointXY> intersections = contour.GetRayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(0f, 1f))), Is.True);
+        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(2f, 1f))), Is.True);
+    }
+
+    [Test]
+    public void Project_ReturnsClosestBoundaryProjection()
+    {
+        IContour contour = CreateSquareContour();
+
+        CurveProjection projection = contour.Project(new PointXY(3f, 0.5f));
+
+        Assert.That(projection.ProjectedPoint.AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
