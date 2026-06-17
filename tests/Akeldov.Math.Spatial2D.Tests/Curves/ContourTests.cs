@@ -70,8 +70,10 @@ public class ContourTests
         IContour contour = CreateSquareContour();
 
         Assert.That(contour, Is.InstanceOf<ICurve>());
+        Assert.That(contour, Is.InstanceOf<IFiniteCurve>());
         Assert.That(contour, Is.InstanceOf<IPointDistanceProvider>());
         Assert.That(contour, Is.InstanceOf<ISignedPointDistanceProvider>());
+        Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
@@ -95,6 +97,66 @@ public class ContourTests
         CurveProjection projection = contour.Project(new PointXY(3f, 0.5f));
 
         Assert.That(projection.ProjectedPoint.AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedContour_ImplementsContourAndParameterizedCurveContracts()
+    {
+        var contour = new ParameterizedContour(CreateSquareCurves());
+
+        Assert.That(contour, Is.InstanceOf<IParameterizedContour>());
+        Assert.That(contour, Is.InstanceOf<IContour>());
+        Assert.That(contour, Is.InstanceOf<IParameterizedCurve>());
+        Assert.That(contour, Is.InstanceOf<IFiniteCurve>());
+        Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedContour_GetPoint_UsesLengthCoordinateAroundBoundary()
+    {
+        var contour = new ParameterizedContour(CreateSquareCurves());
+
+        Assert.That(contour.GetPoint(0f).AlmostEquals(new PointXY(0f, 0f)), Is.True);
+        Assert.That(contour.GetPoint(1.5f).AlmostEquals(new PointXY(1.5f, 0f)), Is.True);
+        Assert.That(contour.GetPoint(2.5f).AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(contour.GetPoint(contour.Length).AlmostEquals(new PointXY(0f, 0f)), Is.True);
+    }
+
+    [TestCase(-1e-6f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void ParameterizedContour_GetPoint_WhenCurveCoordinateIsInvalid_Throws(float curveCoordinate)
+    {
+        var contour = new ParameterizedContour(CreateSquareCurves());
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            contour.GetPoint(curveCoordinate));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curveCoordinate"));
+    }
+
+    [Test]
+    public void ParameterizedContour_GetPoint_WhenCurveCoordinateExceedsLength_Throws()
+    {
+        var contour = new ParameterizedContour(CreateSquareCurves());
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            contour.GetPoint(contour.Length + 0.001f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curveCoordinate"));
+    }
+
+    [Test]
+    public void ParameterizedContour_ProjectWithParameter_ReturnsClosestBoundaryCoordinate()
+    {
+        var contour = new ParameterizedContour(CreateSquareCurves());
+
+        ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(3f, 0.5f));
+
+        Assert.That(projection.ProjectedPoint.AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(2.5f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -275,13 +337,18 @@ public class ContourTests
 
     private static Contour CreateSquareContour()
     {
-        return new Contour(new IFinitePath[]
+        return new Contour(CreateSquareCurves());
+    }
+
+    private static IFinitePath[] CreateSquareCurves()
+    {
+        return new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
             new ParameterizedSegment(new PointXY(2f, 2f), new PointXY(0f, 2f)),
             new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
-        });
+        };
     }
 
     private static ParameterizedArc CreateUnitCirclePath()

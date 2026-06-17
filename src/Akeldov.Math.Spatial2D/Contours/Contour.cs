@@ -11,6 +11,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     {
         private readonly IFinitePath[] _curves;
         private readonly IReadOnlyList<IFinitePath> _readOnlyCurves;
+        private readonly float _length;
 
         /// <summary>
         /// Initializes a new contour from the specified finite paths.
@@ -32,6 +33,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             }
 
             ValidateCurvesFormClosedChain(_curves, nameof(curves));
+            _length = GetLength(_curves, nameof(curves));
 
             _readOnlyCurves = Array.AsReadOnly(_curves);
         }
@@ -40,6 +42,11 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Gets the read-only structural view of the finite paths that form this contour.
         /// </summary>
         public IReadOnlyList<IFinitePath> Curves => _readOnlyCurves;
+
+        /// <summary>
+        /// Gets the finite non-negative contour boundary length in world coordinate units.
+        /// </summary>
+        public float Length => _length;
 
         /// <inheritdoc/>
         public bool Encloses(PointXY point, float geometryEpsilon = 1E-06F)
@@ -161,6 +168,24 @@ namespace Akeldov.Math.Spatial2D.Contours
                 if (!currentCurve.EndPoint.AlmostEquals(nextCurve.StartPoint))
                     throw new ArgumentException("Contour curves must form a closed continuous chain.", parameterName);
             }
+        }
+
+        private static float GetLength(IReadOnlyList<IFinitePath> curves, string parameterName)
+        {
+            float length = 0f;
+
+            for (int i = 0; i < curves.Count; i++)
+            {
+                float curveLength = curves[i].Length;
+                if (curveLength < 0f || float.IsNaN(curveLength) || float.IsInfinity(curveLength))
+                    throw new ArgumentException("Contour curves must expose finite non-negative lengths.", parameterName);
+
+                length += curveLength;
+                if (float.IsInfinity(length))
+                    throw new ArgumentException("Contour length must be finite.", parameterName);
+            }
+
+            return length;
         }
 
         private static void AddDistinct(List<PointXY> intersections, PointXY point, float geometryEpsilon)

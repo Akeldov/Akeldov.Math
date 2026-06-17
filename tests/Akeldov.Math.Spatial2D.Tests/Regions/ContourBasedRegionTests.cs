@@ -258,6 +258,8 @@ public class ContourBasedRegionTests
 
         public IReadOnlyList<IFinitePath> Curves => ContourCurves;
 
+        public float Length => Curves[0].Length;
+
         public bool Encloses(
             PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

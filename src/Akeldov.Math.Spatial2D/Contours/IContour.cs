@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// <summary>
     /// Represents a closed two-dimensional contour made from finite paths.
     /// </summary>
-    public interface IContour : ICurve, ISignedPointDistanceProvider
+    public interface IContour : IFiniteCurve, ISignedPointDistanceProvider
     {
         /// <summary>
         /// Gets the read-only structural view of the finite paths that form this contour.
