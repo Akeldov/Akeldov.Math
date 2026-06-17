@@ -42,6 +42,26 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// </summary>
         public float Length => _contour.Length;
 
+        /// <summary>
+        /// Gets the point at the start of the contour traversal.
+        /// </summary>
+        public PointXY StartPoint => _curves[0].StartPoint;
+
+        /// <summary>
+        /// Gets the point at the end of the contour traversal.
+        /// </summary>
+        public PointXY EndPoint => _curves[_curves.Count - 1].EndPoint;
+
+        /// <summary>
+        /// Gets one endpoint of this closed path.
+        /// </summary>
+        public PointXY EndpointA => StartPoint;
+
+        /// <summary>
+        /// Gets the other endpoint of this closed path.
+        /// </summary>
+        public PointXY EndpointB => EndPoint;
+
         /// <inheritdoc/>
         public bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {

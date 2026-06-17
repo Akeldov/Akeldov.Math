@@ -108,8 +108,11 @@ public class ContourTests
         Assert.That(contour, Is.InstanceOf<IParameterizedContour>());
         Assert.That(contour, Is.InstanceOf<IContour>());
         Assert.That(contour, Is.InstanceOf<IParameterizedCurve>());
+        Assert.That(contour, Is.InstanceOf<IFinitePath>());
         Assert.That(contour, Is.InstanceOf<IFiniteCurve>());
         Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(contour.StartPoint.AlmostEquals(new PointXY(0f, 0f)), Is.True);
+        Assert.That(contour.EndPoint.AlmostEquals(contour.StartPoint), Is.True);
     }
 
     [Test]
