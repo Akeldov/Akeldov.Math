@@ -5,19 +5,19 @@ using Akeldov.Math.Spatial2D.Curves;
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a closed two-dimensional contour with a length-based curve coordinate.
+    /// Represents a closed two-dimensional composite contour with a length-based curve coordinate.
     /// </summary>
-    public sealed class ParameterizedContour : IParameterizedContour
+    public sealed class ParameterizedCompositeContour : IParameterizedCompositeContour
     {
         private readonly CompositeContour _contour;
         private readonly IReadOnlyList<IFinitePath> _curves;
         private readonly float[] _curveStartCoordinates;
 
         /// <summary>
-        /// Initializes a new parameterized contour from the specified finite paths.
+        /// Initializes a new parameterized composite contour from the specified finite paths.
         /// </summary>
         /// <param name="curves">The finite paths that form the contour.</param>
-        public ParameterizedContour(IReadOnlyList<IFinitePath> curves)
+        public ParameterizedCompositeContour(IReadOnlyList<IFinitePath> curves)
         {
             _contour = new CompositeContour(curves);
             _curves = _contour.Curves;

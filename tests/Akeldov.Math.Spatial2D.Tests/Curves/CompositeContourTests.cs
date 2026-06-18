@@ -110,11 +110,12 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void ParameterizedContour_ImplementsContourAndParameterizedCurveContracts()
+    public void ParameterizedCompositeContour_ImplementsContourAndParameterizedCurveContracts()
     {
-        var contour = new ParameterizedContour(CreateSquareCurves());
+        var contour = new ParameterizedCompositeContour(CreateSquareCurves());
 
         Assert.That(contour, Is.InstanceOf<IParameterizedContour>());
+        Assert.That(contour, Is.InstanceOf<IParameterizedCompositeContour>());
         Assert.That(contour, Is.InstanceOf<IContour>());
         Assert.That(contour, Is.InstanceOf<ICompositeContour>());
         Assert.That(contour, Is.InstanceOf<IParameterizedCurve>());
@@ -126,9 +127,9 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void ParameterizedContour_GetPoint_UsesLengthCoordinateAroundBoundary()
+    public void ParameterizedCompositeContour_GetPoint_UsesLengthCoordinateAroundBoundary()
     {
-        var contour = new ParameterizedContour(CreateSquareCurves());
+        var contour = new ParameterizedCompositeContour(CreateSquareCurves());
 
         Assert.That(contour.GetPoint(0f).AlmostEquals(new PointXY(0f, 0f)), Is.True);
         Assert.That(contour.GetPoint(1.5f).AlmostEquals(new PointXY(1.5f, 0f)), Is.True);
@@ -140,9 +141,9 @@ public class CompositeContourTests
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
     [TestCase(float.NegativeInfinity)]
-    public void ParameterizedContour_GetPoint_WhenCurveCoordinateIsInvalid_Throws(float curveCoordinate)
+    public void ParameterizedCompositeContour_GetPoint_WhenCurveCoordinateIsInvalid_Throws(float curveCoordinate)
     {
-        var contour = new ParameterizedContour(CreateSquareCurves());
+        var contour = new ParameterizedCompositeContour(CreateSquareCurves());
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             contour.GetPoint(curveCoordinate));
@@ -151,9 +152,9 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void ParameterizedContour_GetPoint_WhenCurveCoordinateExceedsLength_Throws()
+    public void ParameterizedCompositeContour_GetPoint_WhenCurveCoordinateExceedsLength_Throws()
     {
-        var contour = new ParameterizedContour(CreateSquareCurves());
+        var contour = new ParameterizedCompositeContour(CreateSquareCurves());
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             contour.GetPoint(contour.Length + 0.001f));
@@ -162,9 +163,9 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void ParameterizedContour_ProjectWithParameter_ReturnsClosestBoundaryCoordinate()
+    public void ParameterizedCompositeContour_ProjectWithParameter_ReturnsClosestBoundaryCoordinate()
     {
-        var contour = new ParameterizedContour(CreateSquareCurves());
+        var contour = new ParameterizedCompositeContour(CreateSquareCurves());
 
         ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(3f, 0.5f));
 
