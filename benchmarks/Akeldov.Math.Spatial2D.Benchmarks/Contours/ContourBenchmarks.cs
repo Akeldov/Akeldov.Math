@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Contours;
 [ShortRunJob]
 public class ContourBenchmarks
 {
-    private Contour _contour = null!;
+    private CompositeContour _contour = null!;
     private PointXY[] _queries = null!;
 
     [Params(8, 64)]
@@ -40,12 +40,12 @@ public class ContourBenchmarks
     }
 
     [Benchmark]
-    public Contour FilletCorners()
+    public CompositeContour FilletCorners()
     {
         return _contour.FilletCorners(2f);
     }
 
-    private static Contour CreateRegularPolygonContour(int segmentCount, float radius)
+    private static CompositeContour CreateRegularPolygonContour(int segmentCount, float radius)
     {
         var curves = new IFinitePath[segmentCount];
 
@@ -56,7 +56,7 @@ public class ContourBenchmarks
             curves[i] = new ParameterizedSegment(start, end);
         }
 
-        return new Contour(curves);
+        return new CompositeContour(curves);
     }
 
     private static PointXY GetRegularPolygonVertex(int index, int segmentCount, float radius)

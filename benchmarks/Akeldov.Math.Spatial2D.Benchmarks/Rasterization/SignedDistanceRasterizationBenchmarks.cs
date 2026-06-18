@@ -12,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Rasterization;
 [ShortRunJob]
 public class SignedDistanceRasterizationBenchmarks
 {
-    private Contour _contour = null!;
+    private CompositeContour _contour = null!;
     private ContourBasedRegion _region = null!;
     private RasterGrid _grid;
     private SignedPointDistanceProviderGray8BitRasterizer _contourGray8Rasterizer = null!;
@@ -66,9 +66,9 @@ public class SignedDistanceRasterizationBenchmarks
         return _region.Rasterize(_grid, _regionGray16Rasterizer);
     }
 
-    private static Contour CreateSquareContour(float left, float bottom, float right, float top)
+    private static CompositeContour CreateSquareContour(float left, float bottom, float right, float top)
     {
-        return new Contour(new IFinitePath[]
+        return new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
             new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),

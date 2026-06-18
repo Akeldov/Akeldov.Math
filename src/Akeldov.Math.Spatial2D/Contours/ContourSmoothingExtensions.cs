@@ -15,7 +15,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="contour">The contour to fillet.</param>
         /// <param name="radius">The radius of inserted fillet arcs.</param>
         /// <returns>A new contour with segment-segment corners filleted by parameterized arcs.</returns>
-        public static Contour FilletCorners(this IContour contour, float radius)
+        public static CompositeContour FilletCorners(this ICompositeContour contour, float radius)
         {
             if (contour == null)
                 throw new ArgumentNullException(nameof(contour));
@@ -25,7 +25,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             IReadOnlyList<IFinitePath> curves = contour.Curves;
             if (curves == null || curves.Count == 0)
-                throw new InvalidOperationException("Contour must expose at least one finite path.");
+                throw new InvalidOperationException("CompositeContour must expose at least one finite path.");
 
             ParameterizedArc?[] cornerArcs = CreateCornerArcs(curves, radius);
             var smoothedCurves = new List<IFinitePath>(curves.Count + cornerArcs.Length);
@@ -49,7 +49,7 @@ namespace Akeldov.Math.Spatial2D.Contours
                     smoothedCurves.Add(endArc.Value);
             }
 
-            return new Contour(smoothedCurves);
+            return new CompositeContour(smoothedCurves);
         }
 
         private static ParameterizedArc?[] CreateCornerArcs(IReadOnlyList<IFinitePath> curves, float radius)

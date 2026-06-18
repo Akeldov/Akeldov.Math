@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Spatial2D.Tests.Curves;
@@ -33,6 +34,83 @@ public class CircleTests
         var distance = circle.Distance(new PointXY(3f, 0f));
 
         Assert.That(distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void IContour_ExposesClosedBoundaryContract()
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 5f);
+
+        Assert.That(circle, Is.InstanceOf<IContour>());
+        Assert.That(circle.Length, Is.EqualTo(2f * MathF.PI * 5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [TestCase(0f, 0f, true)]
+    [TestCase(3f, 4f, true)]
+    [TestCase(5f, 0f, true)]
+    [TestCase(5.001f, 0f, false)]
+    public void Encloses_ClassifiesPointsAgainstFilledCircle(float x, float y, bool expected)
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 5f);
+
+        bool encloses = circle.Encloses(new PointXY(x, y));
+
+        Assert.That(encloses, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Encloses_WithCustomGeometryEpsilon_IncludesNearbyOutsidePoint()
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 5f);
+        var point = new PointXY(5.0005f, 0f);
+
+        Assert.That(circle.Encloses(point), Is.False);
+        Assert.That(circle.Encloses(point, 0.001f), Is.True);
+    }
+
+    [Test]
+    public void Encloses_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 1f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            circle.Encloses(new PointXY(float.PositiveInfinity, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Encloses_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 1f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            circle.Encloses(new PointXY(0f, 0f), geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
+    [Test]
+    public void SignedDistance_ReturnsNegativeInsideAndPositiveOutside()
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 5f);
+
+        Assert.That(circle.SignedDistance(new PointXY(3f, 0f)), Is.EqualTo(-2f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(circle.SignedDistance(new PointXY(7f, 0f)), Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(circle.SignedDistance(new PointXY(5f, 0f)), Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsWithinTolerance_ReturnsNegativeDistance()
+    {
+        var circle = new Circle(new PointXY(0f, 0f), 5f);
+
+        float signedDistance = circle.SignedDistance(new PointXY(5.0005f, 0f), 0.001f);
+
+        Assert.That(signedDistance, Is.EqualTo(-0.0005f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]

@@ -8,7 +8,7 @@ public class ContourSmoothingExtensionsTests
     [Test]
     public void FilletCorners_WhenContourIsSegmentSquare_InsertsArcAtEachCorner()
     {
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
@@ -16,7 +16,7 @@ public class ContourSmoothingExtensionsTests
             new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
         });
 
-        Contour smoothed = contour.FilletCorners(0.25f);
+        CompositeContour smoothed = contour.FilletCorners(0.25f);
 
         Assert.That(smoothed.Curves, Has.Count.EqualTo(8));
         Assert.That(smoothed.Curves.OfType<ParameterizedSegment>().Count(), Is.EqualTo(4));
@@ -38,7 +38,7 @@ public class ContourSmoothingExtensionsTests
             0.5f * MathF.PI,
             AngularDirection.Counterclockwise);
 
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             originalArc,
@@ -46,7 +46,7 @@ public class ContourSmoothingExtensionsTests
             new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
         });
 
-        Contour smoothed = contour.FilletCorners(0.25f);
+        CompositeContour smoothed = contour.FilletCorners(0.25f);
 
         Assert.That(smoothed.Curves, Has.Count.EqualTo(6));
         Assert.That(smoothed.Curves.OfType<ParameterizedArc>().Count(), Is.EqualTo(3));
@@ -60,7 +60,7 @@ public class ContourSmoothingExtensionsTests
     [TestCase(float.PositiveInfinity)]
     public void FilletCorners_WhenRadiusIsInvalid_Throws(float radius)
     {
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(0f, 1f)),

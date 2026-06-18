@@ -86,7 +86,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsPng_WhenRoundedSquareIsRasterizedToGray16Bit_WritesPng16()
     {
-        Contour contour = CreateSquareContour().FilletCorners(0.35f);
+        CompositeContour contour = CreateSquareContour().FilletCorners(0.35f);
         var grid = new RasterGrid(
             origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 5f),
@@ -106,9 +106,9 @@ public class ContourRasterizationImageTests
         Assert.That(bytes[25], Is.EqualTo(0));
     }
 
-    private static Contour CreateTriangleContour()
+    private static CompositeContour CreateTriangleContour()
     {
-        return new Contour(new IFinitePath[]
+        return new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
             new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(2f, 3.5f)),
@@ -116,9 +116,9 @@ public class ContourRasterizationImageTests
         });
     }
 
-    private static Contour CreateSquareContour()
+    private static CompositeContour CreateSquareContour()
     {
-        return new Contour(new IFinitePath[]
+        return new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
             new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(4f, 4f)),

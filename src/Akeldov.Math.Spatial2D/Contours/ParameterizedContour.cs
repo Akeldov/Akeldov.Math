@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// </summary>
     public sealed class ParameterizedContour : IParameterizedContour
     {
-        private readonly Contour _contour;
+        private readonly CompositeContour _contour;
         private readonly IReadOnlyList<IFinitePath> _curves;
         private readonly float[] _curveStartCoordinates;
 
@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="curves">The finite paths that form the contour.</param>
         public ParameterizedContour(IReadOnlyList<IFinitePath> curves)
         {
-            _contour = new Contour(curves);
+            _contour = new CompositeContour(curves);
             _curves = _contour.Curves;
             _curveStartCoordinates = new float[_curves.Count];
 

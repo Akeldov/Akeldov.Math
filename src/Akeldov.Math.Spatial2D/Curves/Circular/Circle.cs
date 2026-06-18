@@ -1,4 +1,5 @@
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a circle in two-dimensional space.
     /// </summary>
-    public readonly struct Circle : IFiniteCurve, IEquatable<Circle>
+    public readonly struct Circle : IContour, IEquatable<Circle>
     {
         private readonly PointXY _center;
         private readonly float _radius;
@@ -147,6 +148,32 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <inheritdoc/>
         public override string ToString() =>
             string.Format(CultureInfo.InvariantCulture, "Circle(center: {0}, radius: {1})", Center, Radius);
+
+        /// <inheritdoc/>
+        public bool Encloses(
+            PointXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            return point.Distance(_center) <= _radius + geometryEpsilon;
+        }
+
+        /// <inheritdoc/>
+        public float SignedDistance(
+            PointXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            float distance = Distance(point);
+            return Encloses(point, geometryEpsilon) ? -distance : distance;
+        }
 
         /// <summary>
         /// Indicates whether two circles are equal.

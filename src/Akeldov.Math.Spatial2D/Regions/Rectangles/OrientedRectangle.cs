@@ -166,9 +166,9 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// Creates a closed contour representing this rectangle boundary.
         /// </summary>
         /// <returns>The rectangle boundary contour.</returns>
-        public Contour ToContour()
+        public CompositeContour ToContour()
         {
-            return new Contour(new IFinitePath[]
+            return new CompositeContour(new IFinitePath[]
             {
                 new ParameterizedSegment(BottomLeft, BottomRight),
                 new ParameterizedSegment(BottomRight, TopRight),

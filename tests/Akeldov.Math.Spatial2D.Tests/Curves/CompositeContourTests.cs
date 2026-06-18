@@ -3,30 +3,30 @@ using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
-public class ContourTests
+public class CompositeContourTests
 {
     [Test]
     public void Constructor_WhenCurvesIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new Contour(null!));
+        Assert.Throws<ArgumentNullException>(() => new CompositeContour(null!));
     }
 
     [Test]
     public void Constructor_WhenCurvesIsEmpty_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Contour(Array.Empty<IFinitePath>()));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(Array.Empty<IFinitePath>()));
     }
 
     [Test]
     public void Constructor_WhenCurvesContainsNull_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Contour(new IFinitePath[] { null! }));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(new IFinitePath[] { null! }));
     }
 
     [Test]
     public void Constructor_WhenCurvesAreDisconnected_Throws()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new Contour(new IFinitePath[]
+        var exception = Assert.Throws<ArgumentException>(() => new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 1f)),
@@ -39,7 +39,7 @@ public class ContourTests
     [Test]
     public void Constructor_WhenCurvesDoNotClose_Throws()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new Contour(new IFinitePath[]
+        var exception = Assert.Throws<ArgumentException>(() => new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(1f, 1f)),
@@ -52,7 +52,7 @@ public class ContourTests
     [Test]
     public void Curves_WhenAccessed_ReturnsReadOnlyView()
     {
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -74,6 +74,15 @@ public class ContourTests
         Assert.That(contour, Is.InstanceOf<IPointDistanceProvider>());
         Assert.That(contour, Is.InstanceOf<ISignedPointDistanceProvider>());
         Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void CompositeContour_ImplementsCompositeContourContract()
+    {
+        ICompositeContour contour = CreateSquareContour();
+
+        Assert.That(contour, Is.InstanceOf<IContour>());
+        Assert.That(contour.Curves, Has.Count.EqualTo(4));
     }
 
     [Test]
@@ -107,6 +116,7 @@ public class ContourTests
 
         Assert.That(contour, Is.InstanceOf<IParameterizedContour>());
         Assert.That(contour, Is.InstanceOf<IContour>());
+        Assert.That(contour, Is.InstanceOf<ICompositeContour>());
         Assert.That(contour, Is.InstanceOf<IParameterizedCurve>());
         Assert.That(contour, Is.InstanceOf<IFinitePath>());
         Assert.That(contour, Is.InstanceOf<IFiniteCurve>());
@@ -166,7 +176,7 @@ public class ContourTests
     [Test]
     public void Encloses_WhenPointIsInsideSegmentContour_ReturnsTrue()
     {
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
@@ -180,7 +190,7 @@ public class ContourTests
     [Test]
     public void Encloses_WhenPointIsOutsideContour_ReturnsFalse()
     {
-        IContour contour = new Contour(new IFinitePath[]
+        IContour contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -193,7 +203,7 @@ public class ContourTests
     [Test]
     public void Encloses_WhenPointIsOnContour_ReturnsTrue()
     {
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -204,7 +214,7 @@ public class ContourTests
     [Test]
     public void Encloses_WhenPointIsWithinCustomGeometryEpsilonOfContour_ReturnsTrue()
     {
-        IContour contour = new Contour(new IFinitePath[]
+        IContour contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -260,7 +270,7 @@ public class ContourTests
     [Test]
     public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsWithinTolerance_ReturnsNegativeDistance()
     {
-        IContour contour = new Contour(new IFinitePath[]
+        IContour contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -274,7 +284,7 @@ public class ContourTests
     public void Encloses_PassesGeometryEpsilonToCurveRayIntersections()
     {
         var curve = new EpsilonAwareCurve();
-        IContour contour = new Contour(new IFinitePath[] { curve });
+        IContour contour = new CompositeContour(new IFinitePath[] { curve });
 
         bool encloses = contour.Encloses(new PointXY(0f, 0f), 0.25f);
 
@@ -285,7 +295,7 @@ public class ContourTests
     [Test]
     public void Encloses_WhenPointCoordinateIsInvalid_Throws()
     {
-        var contour = new Contour(new IFinitePath[]
+        var contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -313,7 +323,7 @@ public class ContourTests
     [TestCase(float.NegativeInfinity)]
     public void Encloses_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
-        IContour contour = new Contour(new IFinitePath[]
+        IContour contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
@@ -338,9 +348,9 @@ public class ContourTests
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
-    private static Contour CreateSquareContour()
+    private static CompositeContour CreateSquareContour()
     {
-        return new Contour(CreateSquareCurves());
+        return new CompositeContour(CreateSquareCurves());
     }
 
     private static IFinitePath[] CreateSquareCurves()

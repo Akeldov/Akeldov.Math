@@ -7,17 +7,17 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// <summary>
     /// Represents a closed two-dimensional contour made from finite paths.
     /// </summary>
-    public sealed class Contour : IContour
+    public sealed class CompositeContour : ICompositeContour
     {
         private readonly IFinitePath[] _curves;
         private readonly IReadOnlyList<IFinitePath> _readOnlyCurves;
         private readonly float _length;
 
         /// <summary>
-        /// Initializes a new contour from the specified finite paths.
+        /// Initializes a new composite contour from the specified finite paths.
         /// </summary>
         /// <param name="curves">The finite paths that form the contour.</param>
-        public Contour(IReadOnlyList<IFinitePath> curves)
+        public CompositeContour(IReadOnlyList<IFinitePath> curves)
         {
             if (curves == null)
                 throw new ArgumentNullException(nameof(curves));
@@ -166,7 +166,7 @@ namespace Akeldov.Math.Spatial2D.Contours
                 IFinitePath nextCurve = curves[(i + 1) % curves.Count];
 
                 if (!currentCurve.EndPoint.AlmostEquals(nextCurve.StartPoint))
-                    throw new ArgumentException("Contour curves must form a closed continuous chain.", parameterName);
+                    throw new ArgumentException("CompositeContour curves must form a closed continuous chain.", parameterName);
             }
         }
 
@@ -178,11 +178,11 @@ namespace Akeldov.Math.Spatial2D.Contours
             {
                 float curveLength = curves[i].Length;
                 if (curveLength < 0f || float.IsNaN(curveLength) || float.IsInfinity(curveLength))
-                    throw new ArgumentException("Contour curves must expose finite non-negative lengths.", parameterName);
+                    throw new ArgumentException("CompositeContour curves must expose finite non-negative lengths.", parameterName);
 
                 length += curveLength;
                 if (float.IsInfinity(length))
-                    throw new ArgumentException("Contour length must be finite.", parameterName);
+                    throw new ArgumentException("CompositeContour length must be finite.", parameterName);
             }
 
             return length;

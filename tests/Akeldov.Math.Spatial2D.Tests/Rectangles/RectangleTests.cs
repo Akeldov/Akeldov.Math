@@ -145,7 +145,7 @@ public class RectangleTests
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
 
-        Contour contour = rectangle.ToContour();
+        CompositeContour contour = rectangle.ToContour();
 
         Assert.That(contour.Curves, Has.Count.EqualTo(4));
         Assert.That(contour.Encloses(new PointXY(1f, 0.5f)), Is.True);

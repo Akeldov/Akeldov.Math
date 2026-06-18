@@ -236,9 +236,9 @@ public class ContourBasedRegionTests
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
-    private static Contour CreateSquareContour(float left, float bottom, float right, float top)
+    private static CompositeContour CreateSquareContour(float left, float bottom, float right, float top)
     {
-        return new Contour(new IFinitePath[]
+        return new CompositeContour(new IFinitePath[]
         {
             new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
             new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
