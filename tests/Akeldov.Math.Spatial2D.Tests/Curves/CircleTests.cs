@@ -45,6 +45,162 @@ public class CircleTests
         Assert.That(circle.Length, Is.EqualTo(2f * MathF.PI * 5f).Within(GeometryConstants.GeometryEpsilon));
     }
 
+    [Test]
+    public void ParameterizedCircle_ExposesParameterizedContourContract()
+    {
+        var circle = new ParameterizedCircle(new PointXY(0f, 0f), 5f);
+
+        Assert.That(circle, Is.InstanceOf<IParameterizedContour>());
+        Assert.That(circle, Is.InstanceOf<IContour>());
+        Assert.That(circle, Is.InstanceOf<IParameterizedCurve>());
+        Assert.That(circle, Is.InstanceOf<IFiniteCurve>());
+        Assert.That(circle.Length, Is.EqualTo(2f * MathF.PI * 5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void ParameterizedCircleConstructor_WhenStartAngleIsInvalid_Throws(float startAngle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedCircle(new PointXY(0f, 0f), 1f, startAngle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("startAngle"));
+    }
+
+    [Test]
+    public void ParameterizedCircleConstructor_WhenAngularDirectionIsUnsupported_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedCircle(new PointXY(0f, 0f), 1f, 0f, (AngularDirection)42));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angularDirection"));
+    }
+
+    [Test]
+    public void ParameterizedCircle_GetPoint_UsesLengthCoordinateAroundCircumference()
+    {
+        var circle = new ParameterizedCircle(
+            new PointXY(1f, 1f),
+            2f,
+            MathF.PI / 2f,
+            AngularDirection.Counterclockwise);
+
+        AssertVector(circle.GetPoint(0f), 1f, 3f);
+        AssertVector(circle.GetPoint(MathF.PI), -1f, 1f);
+        AssertVector(circle.GetPoint(circle.Length), 1f, 3f);
+    }
+
+    [Test]
+    public void ParameterizedCircle_GetPoint_WhenDirectionIsClockwise_UsesReversedTraversal()
+    {
+        var circle = new ParameterizedCircle(
+            new PointXY(0f, 0f),
+            2f,
+            MathF.PI / 2f,
+            AngularDirection.Clockwise);
+
+        AssertVector(circle.GetPoint(MathF.PI), 2f, 0f);
+    }
+
+    [TestCase(-1e-6f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void ParameterizedCircle_GetPoint_WhenCurveCoordinateIsInvalid_Throws(float curveCoordinate)
+    {
+        var circle = new ParameterizedCircle(new PointXY(0f, 0f), 1f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            circle.GetPoint(curveCoordinate));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curveCoordinate"));
+    }
+
+    [Test]
+    public void ParameterizedCircle_GetPoint_WhenCurveCoordinateExceedsLength_Throws()
+    {
+        var circle = new ParameterizedCircle(new PointXY(0f, 0f), 1f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            circle.GetPoint(circle.Length + 0.001f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curveCoordinate"));
+    }
+
+    [Test]
+    public void ParameterizedCircle_ProjectWithParameter_ReturnsClosestCircumferenceCoordinate()
+    {
+        var circle = new ParameterizedCircle(
+            new PointXY(0f, 0f),
+            2f,
+            MathF.PI / 2f,
+            AngularDirection.Counterclockwise);
+
+        ParameterizedCurveProjection projection = circle.ProjectWithParameter(new PointXY(-4f, 0f));
+
+        AssertVector(projection.ProjectedPoint, -2f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(MathF.PI).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedCircle_ProjectWithParameter_WhenPointIsAtCenter_ReturnsStartPoint()
+    {
+        var circle = new ParameterizedCircle(
+            new PointXY(1f, 1f),
+            2f,
+            MathF.PI / 2f,
+            AngularDirection.Counterclockwise);
+
+        ParameterizedCurveProjection projection = circle.ProjectWithParameter(new PointXY(1f, 1f));
+
+        AssertVector(projection.ProjectedPoint, 1f, 3f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedCircle_ProjectWithParameter_WhenRadiusIsZero_ReturnsCenter()
+    {
+        var circle = new ParameterizedCircle(
+            new PointXY(1f, 1f),
+            0f,
+            MathF.PI / 2f,
+            AngularDirection.Counterclockwise);
+
+        ParameterizedCurveProjection projection = circle.ProjectWithParameter(new PointXY(4f, 5f));
+
+        AssertVector(projection.ProjectedPoint, 1f, 1f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedCircle_ExplicitConversionToCircle_ReturnsGeometricCircle()
+    {
+        var source = new Circle(new PointXY(1f, 2f), 3f);
+        var parameterizedCircle = new ParameterizedCircle(source, MathF.PI);
+
+        Circle converted = (Circle)parameterizedCircle;
+
+        Assert.That(converted, Is.EqualTo(source));
+    }
+
+    [Test]
+    public void ParameterizedCircle_ToDegreesString_UsesInvariantCulture()
+    {
+        var circle = new ParameterizedCircle(
+            new PointXY(1.5f, 2.25f),
+            3.5f,
+            MathF.PI / 2f,
+            AngularDirection.Clockwise);
+
+        Assert.That(
+            circle.ToDegreesString(),
+            Is.EqualTo("ParameterizedCircle(center: (1.5, 2.25), radius: 3.5, deg: 90, direction: Clockwise)"));
+    }
+
     [TestCase(0f, 0f, true)]
     [TestCase(3f, 4f, true)]
     [TestCase(5f, 0f, true)]

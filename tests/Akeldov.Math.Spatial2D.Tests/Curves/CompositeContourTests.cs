@@ -119,7 +119,6 @@ public class CompositeContourTests
         Assert.That(contour, Is.InstanceOf<IContour>());
         Assert.That(contour, Is.InstanceOf<ICompositeContour>());
         Assert.That(contour, Is.InstanceOf<IParameterizedCurve>());
-        Assert.That(contour, Is.InstanceOf<IFinitePath>());
         Assert.That(contour, Is.InstanceOf<IFiniteCurve>());
         Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(contour.StartPoint.AlmostEquals(new PointXY(0f, 0f)), Is.True);
