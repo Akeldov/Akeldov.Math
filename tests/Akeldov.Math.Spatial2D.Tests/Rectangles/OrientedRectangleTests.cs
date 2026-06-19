@@ -1,4 +1,5 @@
 using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Spatial2D.Tests.Rectangles;
@@ -151,11 +152,75 @@ public class OrientedRectangleTests
             new VectorXY(4f, 2f),
             MathF.PI * 0.5f);
 
-        CompositeContour contour = rectangle.ToContour();
+        OrientedRectangleContour contour = rectangle.ToContour();
 
-        Assert.That(contour.Curves, Has.Count.EqualTo(4));
+        Assert.That(contour, Is.InstanceOf<IContour>());
+        Assert.That(contour, Is.Not.InstanceOf<IParameterizedContour>());
+        Assert.That(contour.Length, Is.EqualTo(12f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(contour.Encloses(new PointXY(0f, 0f)), Is.True);
         Assert.That(contour.Encloses(new PointXY(2f, 0f)), Is.False);
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_GetPoint_UsesLengthCoordinateAroundBoundary()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        AssertPoint(contour.GetPoint(0f), new PointXY(1f, -2f));
+        AssertPoint(contour.GetPoint(2f), new PointXY(1f, 0f));
+        AssertPoint(contour.GetPoint(4f), new PointXY(1f, 2f));
+        AssertPoint(contour.GetPoint(contour.Length), new PointXY(1f, -2f));
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_ProjectWithParameter_ReturnsClosestBoundaryCoordinate()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(2f, 0f));
+
+        AssertPoint(projection.ProjectedPoint, new PointXY(1f, 0f));
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_ExplicitConversionToOrientedRectangleContour_ReturnsGeometricContour()
+    {
+        var source = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+
+        OrientedRectangleContour contour = (OrientedRectangleContour)source;
+
+        Assert.That(contour.Center, Is.EqualTo(source.Center));
+        Assert.That(contour.Size, Is.EqualTo(source.Size));
+        Assert.That(contour.Rotation, Is.EqualTo(source.Rotation));
+        Assert.That(contour, Is.InstanceOf<IContour>());
+        Assert.That(contour, Is.Not.InstanceOf<IParameterizedContour>());
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_RayIntersections_WhenRayOverlapsEdge_ReturnsBoundaryPointsOnRay()
+    {
+        IContour contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+        var ray = new Ray(new PointXY(1f, 0f), MathF.PI * 0.5f);
+
+        List<PointXY> intersections = contour.GetRayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 0f))), Is.True);
+        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 2f))), Is.True);
     }
 
     [Test]

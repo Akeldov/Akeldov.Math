@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
-using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Globalization;
 
@@ -139,15 +138,9 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// Creates a closed contour representing this rectangle boundary.
         /// </summary>
         /// <returns>The rectangle boundary contour.</returns>
-        public CompositeContour ToContour()
+        public RectangleContour ToContour()
         {
-            return new CompositeContour(new IFinitePath[]
-            {
-                new ParameterizedSegment(BottomLeft, BottomRight),
-                new ParameterizedSegment(BottomRight, TopRight),
-                new ParameterizedSegment(TopRight, TopLeft),
-                new ParameterizedSegment(TopLeft, BottomLeft)
-            });
+            return new RectangleContour(this);
         }
 
         /// <summary>
