@@ -140,7 +140,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <returns>The rectangle boundary contour.</returns>
         public RectangleContour ToContour()
         {
-            return new RectangleContour(this);
+            return new RectangleContour(Min, Max);
         }
 
         /// <summary>

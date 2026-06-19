@@ -156,12 +156,56 @@ public class RectangleTests
     }
 
     [Test]
-    public void ParameterizedRectangleContour_GetPoint_UsesLengthCoordinateAroundBoundary()
+    public void RectangleContour_Project_ReturnsClosestBoundaryPoint()
+    {
+        IContour contour = new RectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f));
+
+        CurveProjection projection = contour.Project(new PointXY(3f, 0.5f));
+
+        Assert.That(projection.ProjectedPoint.AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void RectangleContour_RayIntersections_WhenRayOverlapsEdge_ReturnsBoundaryPointsOnRay()
+    {
+        IContour contour = new RectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f));
+        var ray = new Ray(new PointXY(1f, 0f));
+
+        List<PointXY> intersections = contour.GetRayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 0f))), Is.True);
+        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(2f, 0f))), Is.True);
+    }
+
+    [Test]
+    public void ParameterizedRectangleContour_GetPoint_UsesDefaultRightEdgeParameterOrigin()
     {
         var contour = new ParameterizedRectangleContour(
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
 
+        Assert.That(contour.ParameterOrigin, Is.EqualTo(new PointXY(2f, 0.5f)));
+        Assert.That(contour.GetPoint(0f).AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(contour.GetPoint(0.5f).AlmostEquals(new PointXY(2f, 1f)), Is.True);
+        Assert.That(contour.GetPoint(2.5f).AlmostEquals(new PointXY(0f, 1f)), Is.True);
+        Assert.That(contour.GetPoint(contour.Length).AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+    }
+
+    [Test]
+    public void ParameterizedRectangleContour_GetPoint_WithCustomParameterOrigin_UsesLengthCoordinateAroundBoundary()
+    {
+        var contour = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            RectangleContourParameterOrigin.BottomLeft);
+
+        Assert.That(contour.ParameterOrigin, Is.EqualTo(new PointXY(0f, 0f)));
         Assert.That(contour.GetPoint(0f).AlmostEquals(new PointXY(0f, 0f)), Is.True);
         Assert.That(contour.GetPoint(1.5f).AlmostEquals(new PointXY(1.5f, 0f)), Is.True);
         Assert.That(contour.GetPoint(2.5f).AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
@@ -178,8 +222,119 @@ public class RectangleTests
         ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(3f, 0.5f));
 
         Assert.That(projection.ProjectedPoint.AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedRectangleContour_ProjectWithParameter_WithCustomParameterOrigin_ReturnsRelativeBoundaryCoordinate()
+    {
+        var contour = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            RectangleContourParameterOrigin.BottomLeft);
+
+        ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(3f, 0.5f));
+
+        Assert.That(projection.ProjectedPoint.AlmostEquals(new PointXY(2f, 0.5f)), Is.True);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(2.5f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedRectangleContour_Equals_WhenParameterOriginDiffers_ReturnsFalse()
+    {
+        var rightEdgeOrigin = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f));
+        var bottomLeftOrigin = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            RectangleContourParameterOrigin.BottomLeft);
+
+        Assert.That(rightEdgeOrigin, Is.Not.EqualTo(bottomLeftOrigin));
+    }
+
+    [Test]
+    public void ParameterizedRectangleContour_Equals_WhenExplicitParameterOriginIsDefault_ReturnsTrue()
+    {
+        var defaultOrigin = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f));
+        var explicitDefaultOrigin = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            RectangleContourParameterOrigin.RightEdgeMidpoint);
+        var explicitLengthOrigin = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            6f);
+
+        Assert.That(defaultOrigin, Is.EqualTo(explicitDefaultOrigin));
+        Assert.That(defaultOrigin, Is.EqualTo(explicitLengthOrigin));
+    }
+
+    [Test]
+    public void ParameterizedRectangleContourConstructor_WithParameterOriginCoordinate_UsesBoundaryCoordinate()
+    {
+        var contour = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            1.5f);
+
+        var expected = new PointXY(1f, 1f);
+        Assert.That(contour.ParameterOrigin.AlmostEquals(expected), Is.True);
+        Assert.That(contour.GetPoint(0f).AlmostEquals(expected), Is.True);
+    }
+
+    [TestCase(RectangleContourParameterOrigin.RightEdgeMidpoint, 2f, 0.5f)]
+    [TestCase(RectangleContourParameterOrigin.TopRight, 2f, 1f)]
+    [TestCase(RectangleContourParameterOrigin.TopEdgeMidpoint, 1f, 1f)]
+    [TestCase(RectangleContourParameterOrigin.TopLeft, 0f, 1f)]
+    [TestCase(RectangleContourParameterOrigin.LeftEdgeMidpoint, 0f, 0.5f)]
+    [TestCase(RectangleContourParameterOrigin.BottomLeft, 0f, 0f)]
+    [TestCase(RectangleContourParameterOrigin.BottomEdgeMidpoint, 1f, 0f)]
+    [TestCase(RectangleContourParameterOrigin.BottomRight, 2f, 0f)]
+    public void ParameterizedRectangleContourConstructor_WithNamedParameterOrigin_UsesNamedBoundaryPoint(
+        RectangleContourParameterOrigin parameterOrigin,
+        float expectedX,
+        float expectedY)
+    {
+        var contour = new ParameterizedRectangleContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f),
+            parameterOrigin);
+        var expected = new PointXY(expectedX, expectedY);
+
+        Assert.That(contour.ParameterOrigin.AlmostEquals(expected), Is.True);
+        Assert.That(contour.GetPoint(0f).AlmostEquals(expected), Is.True);
+    }
+
+    [Test]
+    public void ParameterizedRectangleContourConstructor_WhenNamedParameterOriginIsUnsupported_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedRectangleContour(
+                new PointXY(0f, 0f),
+                new PointXY(2f, 1f),
+                (RectangleContourParameterOrigin)42));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("parameterOrigin"));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(-0.001f)]
+    [TestCase(6.001f)]
+    public void ParameterizedRectangleContourConstructor_WhenParameterOriginCoordinateIsInvalid_Throws(float parameterOrigin)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedRectangleContour(
+                new PointXY(0f, 0f),
+                new PointXY(2f, 1f),
+                parameterOrigin));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("parameterOrigin"));
     }
 
     [Test]

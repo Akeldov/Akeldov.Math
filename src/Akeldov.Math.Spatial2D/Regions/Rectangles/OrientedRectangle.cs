@@ -167,7 +167,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <returns>The rectangle boundary contour.</returns>
         public OrientedRectangleContour ToContour()
         {
-            return new OrientedRectangleContour(this);
+            return new OrientedRectangleContour(Center, Size, Rotation);
         }
 
         /// <summary>

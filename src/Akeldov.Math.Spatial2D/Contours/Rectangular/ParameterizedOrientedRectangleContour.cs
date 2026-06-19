@@ -17,9 +17,11 @@ namespace Akeldov.Math.Spatial2D.Contours
         private readonly float _rotation;
         private readonly VectorXY _axisX;
         private readonly VectorXY _axisY;
+        private readonly float _parameterOriginCoordinate;
 
         /// <summary>
         /// Initializes a new oriented rectangular contour.
+        /// The curve coordinate zero point defaults to the middle of the right edge.
         /// </summary>
         /// <param name="center">The rectangle center.</param>
         /// <param name="size">The rectangle size along its local X and Y axes.</param>
@@ -30,50 +32,76 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// </exception>
         public ParameterizedOrientedRectangleContour(PointXY center, VectorXY size, float rotation)
         {
-            PointXYValidation.ThrowIfNotFinite(
-                center,
-                nameof(center),
-                "Rectangle contour center coordinates must be finite.");
-
-            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle contour size components must be finite and positive.");
-
-            GeometryConstants.ValidateFiniteAngle(rotation, nameof(rotation));
-
-            float cos = MathF.Cos(rotation);
-            float sin = MathF.Sin(rotation);
+            (VectorXY axisX, VectorXY axisY) = CreateAxes(center, size, rotation);
 
             _center = center;
             _size = size;
             _rotation = rotation;
-            _axisX = new VectorXY(cos, sin);
-            _axisY = new VectorXY(-sin, cos);
+            _axisX = axisX;
+            _axisY = axisY;
+            _parameterOriginCoordinate = GetBoundaryCoordinateUnchecked(
+                RectangleContourParameterOrigin.RightEdgeMidpoint,
+                size);
         }
 
         /// <summary>
-        /// Initializes a new oriented rectangular contour from the specified rectangular region.
+        /// Initializes a new oriented rectangular contour with a named parameter origin.
         /// </summary>
-        /// <param name="rectangle">The rectangular region whose boundary this contour represents.</param>
-        public ParameterizedOrientedRectangleContour(OrientedRectangle rectangle)
+        /// <param name="center">The rectangle center.</param>
+        /// <param name="size">The rectangle size along its local X and Y axes.</param>
+        /// <param name="rotation">The counterclockwise rotation of the local X axis, in radians.</param>
+        /// <param name="parameterOrigin">The named boundary point where curve coordinate zero lies.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="center"/>, <paramref name="size"/>, or <paramref name="rotation"/>
+        /// contains a non-finite value, when any size component is not positive,
+        /// or when <paramref name="parameterOrigin"/> is unsupported.
+        /// </exception>
+        public ParameterizedOrientedRectangleContour(
+            PointXY center,
+            VectorXY size,
+            float rotation,
+            RectangleContourParameterOrigin parameterOrigin)
         {
-            _center = rectangle.Center;
-            _size = rectangle.Size;
-            _rotation = rectangle.Rotation;
-            _axisX = rectangle.AxisX;
-            _axisY = rectangle.AxisY;
+            (VectorXY axisX, VectorXY axisY) = CreateAxes(center, size, rotation);
+
+            _center = center;
+            _size = size;
+            _rotation = rotation;
+            _axisX = axisX;
+            _axisY = axisY;
+            _parameterOriginCoordinate = GetBoundaryCoordinateUnchecked(parameterOrigin, size);
         }
 
         /// <summary>
-        /// Initializes a new parameterized oriented rectangular contour from the specified oriented rectangular contour.
+        /// Initializes a new oriented rectangular contour with a parameter origin coordinate.
         /// </summary>
-        /// <param name="contour">The oriented rectangular contour to parameterize.</param>
-        public ParameterizedOrientedRectangleContour(OrientedRectangleContour contour)
+        /// <param name="center">The rectangle center.</param>
+        /// <param name="size">The rectangle size along its local X and Y axes.</param>
+        /// <param name="rotation">The counterclockwise rotation of the local X axis, in radians.</param>
+        /// <param name="parameterOrigin">
+        /// The boundary coordinate where curve coordinate zero lies, measured from the default right-edge midpoint.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="center"/>, <paramref name="size"/>, or <paramref name="rotation"/>
+        /// contains a non-finite value, when any size component is not positive,
+        /// or when <paramref name="parameterOrigin"/> does not lie within the rectangle perimeter length.
+        /// </exception>
+        public ParameterizedOrientedRectangleContour(
+            PointXY center,
+            VectorXY size,
+            float rotation,
+            float parameterOrigin)
         {
-            _center = contour.Center;
-            _size = contour.Size;
-            _rotation = contour.Rotation;
-            _axisX = contour.AxisX;
-            _axisY = contour.AxisY;
+            (VectorXY axisX, VectorXY axisY) = CreateAxes(center, size, rotation);
+            float length = GetBoundaryLength(size);
+            ValidateParameterOriginCoordinate(parameterOrigin, length);
+
+            _center = center;
+            _size = size;
+            _rotation = rotation;
+            _axisX = axisX;
+            _axisY = axisY;
+            _parameterOriginCoordinate = WrapBoundaryCoordinate(parameterOrigin, length);
         }
 
         /// <summary>
@@ -115,6 +143,11 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Gets the unit vector of the rectangle local Y axis.
         /// </summary>
         public VectorXY AxisY => _axisY;
+
+        /// <summary>
+        /// Gets the boundary point where curve coordinate zero lies.
+        /// </summary>
+        public PointXY ParameterOrigin => ToWorldPoint(GetLocalBoundaryPointUnchecked(_parameterOriginCoordinate));
 
         /// <summary>
         /// Gets the bottom-left corner in the rectangle local coordinate system.
@@ -205,7 +238,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             AddProjectionCandidate(
                 new PointXY(x, minY),
-                x - minX,
+                GetLocalBoundaryCoordinateUnchecked(new PointXY(x, minY)),
                 localPoint,
                 ref closestLocalPoint,
                 ref closestCoordinate,
@@ -213,7 +246,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             AddProjectionCandidate(
                 new PointXY(maxX, y),
-                Width + y - minY,
+                GetLocalBoundaryCoordinateUnchecked(new PointXY(maxX, y)),
                 localPoint,
                 ref closestLocalPoint,
                 ref closestCoordinate,
@@ -221,7 +254,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             AddProjectionCandidate(
                 new PointXY(x, maxY),
-                Width + Height + maxX - x,
+                GetLocalBoundaryCoordinateUnchecked(new PointXY(x, maxY)),
                 localPoint,
                 ref closestLocalPoint,
                 ref closestCoordinate,
@@ -229,7 +262,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             AddProjectionCandidate(
                 new PointXY(minX, y),
-                2f * Width + Height + maxY - y,
+                GetLocalBoundaryCoordinateUnchecked(new PointXY(minX, y)),
                 localPoint,
                 ref closestLocalPoint,
                 ref closestCoordinate,
@@ -252,7 +285,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (curveCoordinate < 0f || curveCoordinate > Length)
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must lie within the rectangle perimeter length.");
 
-            return ToWorldPoint(GetLocalBoundaryPointUnchecked(curveCoordinate));
+            return ToWorldPoint(GetLocalBoundaryPointUnchecked(ToBoundaryCoordinate(curveCoordinate)));
         }
 
         /// <inheritdoc/>
@@ -285,26 +318,28 @@ namespace Akeldov.Math.Spatial2D.Contours
         public override bool Equals(object? obj) => obj is ParameterizedOrientedRectangleContour other && Equals(other);
 
         /// <summary>
-        /// Indicates whether this contour has the same rectangle as another contour.
+        /// Indicates whether this contour has the same rectangle and parameter origin as another contour.
         /// </summary>
         /// <param name="other">The contour to compare with this contour.</param>
         /// <returns><see langword="true"/> if both contours are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(ParameterizedOrientedRectangleContour other) =>
             Center.Equals(other.Center) &&
             Size.Equals(other.Size) &&
-            Rotation.Equals(other.Rotation);
+            Rotation.Equals(other.Rotation) &&
+            _parameterOriginCoordinate.Equals(other._parameterOriginCoordinate);
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Center, Size, Rotation);
+        public override int GetHashCode() => HashCode.Combine(Center, Size, Rotation, _parameterOriginCoordinate);
 
         /// <inheritdoc/>
         public override string ToString() =>
             string.Format(
                 CultureInfo.InvariantCulture,
-                "ParameterizedOrientedRectangleContour(center: {0}, size: {1}, rotation: {2} rad)",
+                "ParameterizedOrientedRectangleContour(center: {0}, size: {1}, rotation: {2} rad, parameterOrigin: {3})",
                 Center,
                 Size,
-                Rotation);
+                Rotation,
+                ParameterOrigin);
 
         /// <summary>
         /// Converts an oriented rectangular contour to its bounded rectangular region.
@@ -321,7 +356,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="contour">The parameterized oriented rectangular contour to convert.</param>
         public static explicit operator OrientedRectangleContour(ParameterizedOrientedRectangleContour contour)
         {
-            return new OrientedRectangleContour(contour.Rectangle);
+            return new OrientedRectangleContour(contour.Center, contour.Size, contour.Rotation);
         }
 
         /// <summary>
@@ -368,26 +403,45 @@ namespace Akeldov.Math.Spatial2D.Contours
             return MathF.Min(halfWidth - absoluteX, halfHeight - absoluteY);
         }
 
+        private float ToBoundaryCoordinate(float curveCoordinate)
+        {
+            float boundaryCoordinate = _parameterOriginCoordinate + curveCoordinate;
+            if (boundaryCoordinate >= Length)
+                boundaryCoordinate -= Length;
+
+            return boundaryCoordinate;
+        }
+
+        private float ToCurveCoordinate(float boundaryCoordinate)
+        {
+            float curveCoordinate = boundaryCoordinate - _parameterOriginCoordinate;
+            if (curveCoordinate < 0f)
+                curveCoordinate += Length;
+
+            return curveCoordinate;
+        }
+
         private PointXY GetLocalBoundaryPointUnchecked(float curveCoordinate)
         {
+            float canonicalCoordinate = ToCanonicalBoundaryCoordinate(curveCoordinate);
             float minX = -Width * 0.5f;
             float maxX = Width * 0.5f;
             float minY = -Height * 0.5f;
             float maxY = Height * 0.5f;
 
-            if (curveCoordinate <= Width)
-                return new PointXY(minX + curveCoordinate, minY);
+            if (canonicalCoordinate <= Width)
+                return new PointXY(minX + canonicalCoordinate, minY);
 
-            curveCoordinate -= Width;
-            if (curveCoordinate <= Height)
-                return new PointXY(maxX, minY + curveCoordinate);
+            canonicalCoordinate -= Width;
+            if (canonicalCoordinate <= Height)
+                return new PointXY(maxX, minY + canonicalCoordinate);
 
-            curveCoordinate -= Height;
-            if (curveCoordinate <= Width)
-                return new PointXY(maxX - curveCoordinate, maxY);
+            canonicalCoordinate -= Height;
+            if (canonicalCoordinate <= Width)
+                return new PointXY(maxX - canonicalCoordinate, maxY);
 
-            curveCoordinate -= Width;
-            return new PointXY(minX, maxY - curveCoordinate);
+            canonicalCoordinate -= Width;
+            return new PointXY(minX, maxY - canonicalCoordinate);
         }
 
         private PointXY ToLocalPoint(PointXY point)
@@ -520,9 +574,73 @@ namespace Akeldov.Math.Spatial2D.Contours
             intersections.AddDistinct(ToWorldPoint(localPoint), geometryEpsilon);
         }
 
-        private static void AddProjectionCandidate(
+        private float GetLocalBoundaryCoordinateUnchecked(PointXY localBoundaryPoint)
+        {
+            float canonicalCoordinate = GetCanonicalLocalBoundaryCoordinateUnchecked(localBoundaryPoint, Size);
+            float defaultOriginCoordinate = GetDefaultParameterOriginCanonicalCoordinate(Size);
+
+            return WrapBoundaryCoordinate(
+                canonicalCoordinate - defaultOriginCoordinate,
+                GetBoundaryLength(Size));
+        }
+
+        private static float GetBoundaryCoordinateUnchecked(
+            RectangleContourParameterOrigin parameterOrigin,
+            VectorXY size)
+        {
+            float width = size.X;
+            float height = size.Y;
+
+            switch (parameterOrigin)
+            {
+                case RectangleContourParameterOrigin.RightEdgeMidpoint:
+                    return 0f;
+                case RectangleContourParameterOrigin.TopRight:
+                    return height * 0.5f;
+                case RectangleContourParameterOrigin.TopEdgeMidpoint:
+                    return height * 0.5f + width * 0.5f;
+                case RectangleContourParameterOrigin.TopLeft:
+                    return height * 0.5f + width;
+                case RectangleContourParameterOrigin.LeftEdgeMidpoint:
+                    return width + height;
+                case RectangleContourParameterOrigin.BottomLeft:
+                    return width + height * 1.5f;
+                case RectangleContourParameterOrigin.BottomEdgeMidpoint:
+                    return width * 1.5f + height * 1.5f;
+                case RectangleContourParameterOrigin.BottomRight:
+                    return width * 2f + height * 1.5f;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        nameof(parameterOrigin),
+                        parameterOrigin,
+                        "Rectangle contour parameter origin is not supported.");
+            }
+        }
+
+        private static float GetCanonicalLocalBoundaryCoordinateUnchecked(PointXY localBoundaryPoint, VectorXY size)
+        {
+            float width = size.X;
+            float height = size.Y;
+            float minX = -width * 0.5f;
+            float maxX = width * 0.5f;
+            float minY = -height * 0.5f;
+            float maxY = height * 0.5f;
+
+            if (localBoundaryPoint.Y == minY)
+                return localBoundaryPoint.X - minX;
+
+            if (localBoundaryPoint.X == maxX)
+                return width + localBoundaryPoint.Y - minY;
+
+            if (localBoundaryPoint.Y == maxY)
+                return width + height + maxX - localBoundaryPoint.X;
+
+            return 2f * width + height + maxY - localBoundaryPoint.Y;
+        }
+
+        private void AddProjectionCandidate(
             PointXY projectedPoint,
-            float curveCoordinate,
+            float boundaryCoordinate,
             PointXY sourcePoint,
             ref PointXY closestPoint,
             ref float closestCoordinate,
@@ -533,7 +651,7 @@ namespace Akeldov.Math.Spatial2D.Contours
                 return;
 
             closestPoint = projectedPoint;
-            closestCoordinate = curveCoordinate;
+            closestCoordinate = ToCurveCoordinate(boundaryCoordinate);
             closestDistanceSquared = distanceSquared;
         }
 
@@ -558,6 +676,61 @@ namespace Akeldov.Math.Spatial2D.Contours
                 return max;
 
             return value;
+        }
+
+        private static (VectorXY AxisX, VectorXY AxisY) CreateAxes(PointXY center, VectorXY size, float rotation)
+        {
+            PointXYValidation.ThrowIfNotFinite(
+                center,
+                nameof(center),
+                "Rectangle contour center coordinates must be finite.");
+
+            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle contour size components must be finite and positive.");
+
+            GeometryConstants.ValidateFiniteAngle(rotation, nameof(rotation));
+
+            float cos = MathF.Cos(rotation);
+            float sin = MathF.Sin(rotation);
+
+            return (new VectorXY(cos, sin), new VectorXY(-sin, cos));
+        }
+
+        private static void ValidateParameterOriginCoordinate(float parameterOrigin, float length)
+        {
+            if (float.IsNaN(parameterOrigin) || float.IsInfinity(parameterOrigin))
+                throw new ArgumentOutOfRangeException(nameof(parameterOrigin), "Parameter origin coordinate must be finite.");
+
+            if (parameterOrigin < 0f || parameterOrigin > length)
+                throw new ArgumentOutOfRangeException(nameof(parameterOrigin), "Parameter origin coordinate must lie within the rectangle perimeter length.");
+        }
+
+        private float ToCanonicalBoundaryCoordinate(float curveCoordinate)
+        {
+            return WrapBoundaryCoordinate(
+                GetDefaultParameterOriginCanonicalCoordinate(Size) + curveCoordinate,
+                Length);
+        }
+
+        private static float GetDefaultParameterOriginCanonicalCoordinate(VectorXY size)
+        {
+            return size.X + size.Y * 0.5f;
+        }
+
+        private static float GetBoundaryLength(VectorXY size)
+        {
+            return 2f * (size.X + size.Y);
+        }
+
+        private static float WrapBoundaryCoordinate(float coordinate, float length)
+        {
+            if (coordinate < 0f)
+                return coordinate + length;
+
+            if (coordinate >= length)
+                return coordinate - length;
+
+            return coordinate;
         }
     }
 }

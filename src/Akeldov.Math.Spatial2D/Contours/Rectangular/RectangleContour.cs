@@ -12,7 +12,8 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// </summary>
     public readonly struct RectangleContour : IContour, IEquatable<RectangleContour>
     {
-        private readonly ParameterizedRectangleContour _contour;
+        private readonly PointXY _min;
+        private readonly PointXY _max;
 
         /// <summary>
         /// Initializes a new axis-aligned rectangular contour from two opposite corners.
@@ -24,16 +25,10 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// </exception>
         public RectangleContour(PointXY cornerA, PointXY cornerB)
         {
-            _contour = new ParameterizedRectangleContour(cornerA, cornerB);
-        }
+            (PointXY min, PointXY max) = CreateBounds(cornerA, cornerB);
 
-        /// <summary>
-        /// Initializes a new axis-aligned rectangular contour from the specified rectangular region.
-        /// </summary>
-        /// <param name="rectangle">The rectangular region whose boundary this contour represents.</param>
-        public RectangleContour(Rectangle rectangle)
-        {
-            _contour = new ParameterizedRectangleContour(rectangle);
+            _min = min;
+            _max = max;
         }
 
         /// <summary>
@@ -44,66 +39,76 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <summary>
         /// Gets the corner with the minimum X and Y coordinates.
         /// </summary>
-        public PointXY Min => _contour.Min;
+        public PointXY Min => _min;
 
         /// <summary>
         /// Gets the corner with the maximum X and Y coordinates.
         /// </summary>
-        public PointXY Max => _contour.Max;
+        public PointXY Max => _max;
 
         /// <summary>
         /// Gets the rectangle width.
         /// </summary>
-        public float Width => _contour.Width;
+        public float Width => Max.X - Min.X;
 
         /// <summary>
         /// Gets the rectangle height.
         /// </summary>
-        public float Height => _contour.Height;
+        public float Height => Max.Y - Min.Y;
 
         /// <summary>
         /// Gets the rectangle size.
         /// </summary>
-        public VectorXY Size => _contour.Size;
+        public VectorXY Size => Max - Min;
 
         /// <summary>
         /// Gets the rectangle center.
         /// </summary>
-        public PointXY Center => _contour.Center;
+        public PointXY Center => Min + Size * 0.5f;
 
         /// <summary>
         /// Gets the bottom-left corner.
         /// Bottom means the smaller Y coordinate in the rectangle coordinate system.
         /// </summary>
-        public PointXY BottomLeft => _contour.BottomLeft;
+        public PointXY BottomLeft => Min;
 
         /// <summary>
         /// Gets the bottom-right corner.
         /// Bottom means the smaller Y coordinate in the rectangle coordinate system.
         /// </summary>
-        public PointXY BottomRight => _contour.BottomRight;
+        public PointXY BottomRight => new PointXY(Max.X, Min.Y);
 
         /// <summary>
         /// Gets the top-left corner.
         /// Top means the greater Y coordinate in the rectangle coordinate system.
         /// </summary>
-        public PointXY TopLeft => _contour.TopLeft;
+        public PointXY TopLeft => new PointXY(Min.X, Max.Y);
 
         /// <summary>
         /// Gets the top-right corner.
         /// Top means the greater Y coordinate in the rectangle coordinate system.
         /// </summary>
-        public PointXY TopRight => _contour.TopRight;
+        public PointXY TopRight => Max;
 
         /// <summary>
         /// Gets the rectangle perimeter length.
         /// </summary>
-        public float Length => _contour.Length;
+        public float Length => 2f * (Width + Height);
 
         /// <inheritdoc/>
         public bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            return _contour.Encloses(point, geometryEpsilon);
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            return point.X >= Min.X - geometryEpsilon &&
+                point.X <= Max.X + geometryEpsilon &&
+                point.Y >= Min.Y - geometryEpsilon &&
+                point.Y <= Max.Y + geometryEpsilon;
         }
 
         /// <inheritdoc/>
@@ -111,25 +116,77 @@ namespace Akeldov.Math.Spatial2D.Contours
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            return _contour.GetRayIntersections(ray, geometryEpsilon);
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            var intersections = new List<PointXY>();
+            AddVerticalEdgeIntersections(intersections, ray, Min.X, geometryEpsilon);
+            AddVerticalEdgeIntersections(intersections, ray, Max.X, geometryEpsilon);
+            AddHorizontalEdgeIntersections(intersections, ray, Min.Y, geometryEpsilon);
+            AddHorizontalEdgeIntersections(intersections, ray, Max.Y, geometryEpsilon);
+
+            return intersections;
         }
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
         {
-            return _contour.Project(point);
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            float x = Clamp(point.X, Min.X, Max.X);
+            float y = Clamp(point.Y, Min.Y, Max.Y);
+            PointXY closestPoint = default;
+            float closestDistanceSquared = float.MaxValue;
+
+            AddProjectionCandidate(
+                new PointXY(x, Min.Y),
+                point,
+                ref closestPoint,
+                ref closestDistanceSquared);
+
+            AddProjectionCandidate(
+                new PointXY(Max.X, y),
+                point,
+                ref closestPoint,
+                ref closestDistanceSquared);
+
+            AddProjectionCandidate(
+                new PointXY(x, Max.Y),
+                point,
+                ref closestPoint,
+                ref closestDistanceSquared);
+
+            AddProjectionCandidate(
+                new PointXY(Min.X, y),
+                point,
+                ref closestPoint,
+                ref closestDistanceSquared);
+
+            return new CurveProjection(
+                closestPoint,
+                MathF.Sqrt(closestDistanceSquared));
         }
 
         /// <inheritdoc/>
         public float Distance(PointXY point)
         {
-            return _contour.Distance(point);
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
+
+            return GetDistanceToBoundary(point);
         }
 
         /// <inheritdoc/>
         public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            return _contour.SignedDistance(point, geometryEpsilon);
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            float distance = Distance(point);
+            return Encloses(point, geometryEpsilon) ? -distance : distance;
         }
 
         /// <summary>
@@ -138,7 +195,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <returns>The rectangular region bounded by this contour.</returns>
         public Rectangle ToRegion()
         {
-            return _contour.ToRegion();
+            return new Rectangle(Min, Max);
         }
 
         /// <inheritdoc/>
@@ -173,7 +230,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="contour">The rectangular contour to convert.</param>
         public static explicit operator ParameterizedRectangleContour(RectangleContour contour)
         {
-            return contour._contour;
+            return new ParameterizedRectangleContour(contour.Min, contour.Max);
         }
 
         /// <summary>
@@ -191,5 +248,165 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="right">The second contour.</param>
         /// <returns><see langword="true"/> if the contours are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(RectangleContour left, RectangleContour right) => !left.Equals(right);
+
+        private float GetDistanceToBoundary(PointXY point)
+        {
+            float outsideX = MathF.Max(MathF.Max(Min.X - point.X, point.X - Max.X), 0f);
+            float outsideY = MathF.Max(MathF.Max(Min.Y - point.Y, point.Y - Max.Y), 0f);
+
+            if (outsideX > 0f || outsideY > 0f)
+                return MathF.Sqrt(outsideX * outsideX + outsideY * outsideY);
+
+            float left = point.X - Min.X;
+            float right = Max.X - point.X;
+            float bottom = point.Y - Min.Y;
+            float top = Max.Y - point.Y;
+
+            return MathF.Min(MathF.Min(left, right), MathF.Min(bottom, top));
+        }
+
+        private void AddVerticalEdgeIntersections(
+            List<PointXY> intersections,
+            Ray ray,
+            float edgeX,
+            float geometryEpsilon)
+        {
+            VectorXY direction = ray.Direction;
+
+            if (direction.X.IsAlmostZero(geometryEpsilon))
+            {
+                if (ray.Origin.X.AlmostEquals(edgeX, geometryEpsilon))
+                    AddCollinearEdgeIntersections(intersections, ray, new PointXY(edgeX, Min.Y), new PointXY(edgeX, Max.Y), geometryEpsilon);
+
+                return;
+            }
+
+            float rayCoordinate = (edgeX - ray.Origin.X) / direction.X;
+            if (rayCoordinate < -geometryEpsilon)
+                return;
+
+            float y = ray.Origin.Y + rayCoordinate * direction.Y;
+            if (y < Min.Y - geometryEpsilon || y > Max.Y + geometryEpsilon)
+                return;
+
+            intersections.AddDistinct(new PointXY(edgeX, Clamp(y, Min.Y, Max.Y)), geometryEpsilon);
+        }
+
+        private void AddHorizontalEdgeIntersections(
+            List<PointXY> intersections,
+            Ray ray,
+            float edgeY,
+            float geometryEpsilon)
+        {
+            VectorXY direction = ray.Direction;
+
+            if (direction.Y.IsAlmostZero(geometryEpsilon))
+            {
+                if (ray.Origin.Y.AlmostEquals(edgeY, geometryEpsilon))
+                    AddCollinearEdgeIntersections(intersections, ray, new PointXY(Min.X, edgeY), new PointXY(Max.X, edgeY), geometryEpsilon);
+
+                return;
+            }
+
+            float rayCoordinate = (edgeY - ray.Origin.Y) / direction.Y;
+            if (rayCoordinate < -geometryEpsilon)
+                return;
+
+            float x = ray.Origin.X + rayCoordinate * direction.X;
+            if (x < Min.X - geometryEpsilon || x > Max.X + geometryEpsilon)
+                return;
+
+            intersections.AddDistinct(new PointXY(Clamp(x, Min.X, Max.X), edgeY), geometryEpsilon);
+        }
+
+        private static void AddCollinearEdgeIntersections(
+            List<PointXY> intersections,
+            Ray ray,
+            PointXY endpointA,
+            PointXY endpointB,
+            float geometryEpsilon)
+        {
+            if (PointIsOnSegment(ray.Origin, endpointA, endpointB, geometryEpsilon))
+                intersections.AddDistinct(ray.Origin, geometryEpsilon);
+
+            AddIfOnRay(intersections, ray, endpointA, geometryEpsilon);
+            AddIfOnRay(intersections, ray, endpointB, geometryEpsilon);
+        }
+
+        private static void AddIfOnRay(
+            List<PointXY> intersections,
+            Ray ray,
+            PointXY point,
+            float geometryEpsilon)
+        {
+            VectorXY toPoint = point - ray.Origin;
+            VectorXY direction = ray.Direction;
+
+            if (VectorXY.Dot(toPoint, direction) < -geometryEpsilon)
+                return;
+
+            if (!VectorXY.Cross(toPoint, direction).IsAlmostZero(geometryEpsilon))
+                return;
+
+            intersections.AddDistinct(point, geometryEpsilon);
+        }
+
+        private static void AddProjectionCandidate(
+            PointXY projectedPoint,
+            PointXY sourcePoint,
+            ref PointXY closestPoint,
+            ref float closestDistanceSquared)
+        {
+            float distanceSquared = sourcePoint.SquaredDistanceTo(projectedPoint);
+            if (distanceSquared >= closestDistanceSquared)
+                return;
+
+            closestPoint = projectedPoint;
+            closestDistanceSquared = distanceSquared;
+        }
+
+        private static bool PointIsOnSegment(PointXY point, PointXY endpointA, PointXY endpointB, float geometryEpsilon)
+        {
+            VectorXY segment = endpointB - endpointA;
+            VectorXY toPoint = point - endpointA;
+
+            if (!VectorXY.Cross(segment, toPoint).IsAlmostZero(geometryEpsilon))
+                return false;
+
+            float dot = VectorXY.Dot(toPoint, segment);
+            return dot >= -geometryEpsilon && dot <= segment.SquaredLength + geometryEpsilon;
+        }
+
+        private static float Clamp(float value, float min, float max)
+        {
+            if (value < min)
+                return min;
+
+            if (value > max)
+                return max;
+
+            return value;
+        }
+
+        private static (PointXY Min, PointXY Max) CreateBounds(PointXY cornerA, PointXY cornerB)
+        {
+            PointXYValidation.ThrowIfNotFinite(
+                cornerA,
+                nameof(cornerA),
+                "Rectangle contour corner coordinates must be finite.");
+
+            PointXYValidation.ThrowIfNotFinite(
+                cornerB,
+                nameof(cornerB),
+                "Rectangle contour corner coordinates must be finite.");
+
+            PointXY min = new PointXY(MathF.Min(cornerA.X, cornerB.X), MathF.Min(cornerA.Y, cornerB.Y));
+            PointXY max = new PointXY(MathF.Max(cornerA.X, cornerB.X), MathF.Max(cornerA.Y, cornerB.Y));
+
+            if (max.X - min.X <= 0f || max.Y - min.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle contour width and height must be positive.");
+
+            return (min, max);
+        }
     }
 }
