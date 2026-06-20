@@ -9,12 +9,12 @@ The library is organized around a few practical geometry workflows.
 ### Core Geometry
 
 - Point and vector types: `PointXY`, `VectorXY`, and `VectorXYInt`.
-- Curve primitives: `Line`, `Ray`, `Segment`, `Circle`, and `Arc`.
+- Curve primitives: `Line`, `Ray`, `Segment`, and `Arc`.
 - Projection, distance, intersection, angle, and centroid helpers.
 
 ### Boundaries and Areas
 
-- Closed contours made from bounded parameterized curves.
+- Closed contours made from bounded parameterized curves, including circular and rectangular contours.
 - Filled regions with holes and nested contours.
 - Contour smoothing and corner filleting helpers.
 

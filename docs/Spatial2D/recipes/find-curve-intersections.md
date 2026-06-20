@@ -3,6 +3,7 @@
 ```csharp
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 var circle = new Circle(new PointXY(0f, 0f), 5f);

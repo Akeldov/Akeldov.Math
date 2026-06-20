@@ -1,13 +1,13 @@
 using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Akeldov.Math.Spatial2D.Curves
+namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a circle in two-dimensional space.
+    /// Represents a circular contour in two-dimensional space.
     /// </summary>
     public readonly struct Circle : IContour, IEquatable<Circle>
     {
@@ -15,7 +15,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         private readonly float _radius;
 
         /// <summary>
-        /// Initializes a new circle with the specified center and radius.
+        /// Initializes a new circular contour with the specified center and radius.
         /// </summary>
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The circle radius.</param>

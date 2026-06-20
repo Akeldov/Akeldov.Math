@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Spatial2D.Tests.Curves;

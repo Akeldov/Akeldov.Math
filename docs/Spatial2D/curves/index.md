@@ -1,6 +1,6 @@
 # Curves
 
-Curves describe one-dimensional geometry in 2D space: infinite lines, half-lines, bounded segments, circles, and arcs.
+Curves describe one-dimensional geometry in 2D space: infinite lines, half-lines, bounded segments, and arcs.
 They live in the `Akeldov.Math.Spatial2D.Curves` namespace and are used by contours, regions, fields, and rasterizers.
 
 Every curve can measure point distance, project a point onto itself, and report intersections with a ray.
@@ -16,7 +16,6 @@ Non-parameterized thumbnails show distance rasters; parameterized thumbnails sho
 | <img class="curve-overview-thumbnail" alt="Line distance raster" src="../../assets/spatial2d/curves/line-distance.png"><br><span class="curve-overview-link">[`Line`](linear/line.md)</span> | <img class="curve-overview-thumbnail" alt="Parameterized line growing-thickness raster" src="../../assets/spatial2d/curves/parameterized-line-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedLine`](linear/parameterized-line.md)</span> | <span class="curve-coordinate-domain">`(-inf, +inf)`</span> | Infinite line; parameterized version adds origin and direction. |
 | - | <img class="curve-overview-thumbnail" alt="Ray growing-thickness raster" src="../../assets/spatial2d/curves/ray-growing-thickness.png"><br><span class="curve-overview-link">[`Ray`](linear/ray.md)</span> | <span class="curve-coordinate-domain">`[0, +inf)`</span> | Half-line, inherently directed from its origin. |
 | <img class="curve-overview-thumbnail" alt="Segment distance raster" src="../../assets/spatial2d/curves/segment-distance.png"><br><span class="curve-overview-link">[`Segment`](linear/segment.md)</span> | <img class="curve-overview-thumbnail" alt="Parameterized segment growing-thickness raster" src="../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedSegment`](linear/parameterized-segment.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | `Segment` is endpoint-order agnostic; `ParameterizedSegment` has start/end direction. |
-| <img class="curve-overview-thumbnail" alt="Circle distance raster" src="../../assets/spatial2d/curves/circle-distance.png"><br><span class="curve-overview-link">[`Circle`](circular/circle.md)</span> | - | <span class="curve-coordinate-domain">-</span> | Full circumference; distance/projection is to the ring, not a filled disk. |
 | <img class="curve-overview-thumbnail" alt="Arc distance raster" src="../../assets/spatial2d/curves/arc-distance.png"><br><span class="curve-overview-link">[`Arc`](circular/arc.md)</span> | <img class="curve-overview-thumbnail" alt="Parameterized arc growing-thickness raster" src="../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedArc`](circular/parameterized-arc.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Bounded angular span; parameterized version adds traversal direction. |
 
 ## Topics

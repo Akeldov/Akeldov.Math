@@ -1,4 +1,5 @@
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using System;
 
 namespace Akeldov.Math.Spatial2D.Curves

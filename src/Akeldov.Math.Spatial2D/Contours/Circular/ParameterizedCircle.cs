@@ -1,13 +1,13 @@
 using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Akeldov.Math.Spatial2D.Curves
+namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a circle with a length-based curve coordinate around its circumference.
+    /// Represents a circular contour with a length-based curve coordinate around its circumference.
     /// </summary>
     [Serializable]
     public readonly struct ParameterizedCircle : IParameterizedContour, IEquatable<ParameterizedCircle>
@@ -17,7 +17,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         private readonly ContourDirection _contourDirection;
 
         /// <summary>
-        /// Initializes a new parameterized circle with the specified center, radius, start angle, and contour direction.
+        /// Initializes a new parameterized circular contour with the specified center, radius, start angle, and contour direction.
         /// </summary>
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The circle radius.</param>

@@ -7,6 +7,7 @@ The returned collection is a new mutable list owned by the caller.
 ```csharp
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 var circle = new Circle(

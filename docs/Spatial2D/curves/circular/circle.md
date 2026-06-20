@@ -1,6 +1,6 @@
 # Circle
 
-`Circle` represents a full circumference with a `Center`, `Radius`, and `Length`.
+`Circle` represents a full circumference contour with a `Center`, `Radius`, and `Length`.
 
 Distance and projection are measured to the circumference, not to a filled disk.
 
@@ -9,6 +9,7 @@ This code uses the same circle, raster grid, and distance mapping as the documen
 ```csharp
 using System;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;

@@ -10,12 +10,12 @@ The library is organized around practical 2D geometry workflows.
 
 - Point and vector types: `PointXY`, `VectorXY`, and `VectorXYInt`.
 - Vector math helpers for distance, transformations, rounding, scaling, and serialization.
-- Curve primitives: `Line`, `Ray`, `Segment`, `Circle`, and `Arc`.
+- Curve primitives: `Line`, `Ray`, `Segment`, and `Arc`.
 - Projection, distance, intersection, angle, contour, and centroid helpers.
 
 ### Boundaries and Areas
 
-- Closed contours made from bounded parameterized curves.
+- Closed contours made from bounded parameterized curves, including circular and rectangular contours.
 - Filled regions with holes and nested contours.
 - Axis-aligned, oriented, and normalized rectangle primitives.
 - Contour smoothing and corner filleting helpers.

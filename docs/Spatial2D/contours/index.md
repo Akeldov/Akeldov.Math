@@ -35,6 +35,7 @@ Fillets replace a sharp corner with a tangent arc.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 PointXY firstSidePoint = new PointXY(1f, 0f);
