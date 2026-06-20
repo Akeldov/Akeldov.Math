@@ -12,6 +12,7 @@ Use `Contour.Encloses` for a single boundary and `ContourBasedRegion.Contains` f
 
 ## Topics
 
+- [Disk](disk.md)
 - [Rectangle](rectangle.md)
 - [OrientedRectangle](oriented-rectangle.md)
 - [Contour-Based Regions](contour-based-regions.md)

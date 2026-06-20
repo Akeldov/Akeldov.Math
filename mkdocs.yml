@@ -54,6 +54,7 @@ nav:
               - Overview: Spatial2D/contours/index.md
           - Regions:
               - Overview: Spatial2D/regions/index.md
+              - Disk: Spatial2D/regions/disk.md
               - Rectangle: Spatial2D/regions/rectangle.md
               - OrientedRectangle: Spatial2D/regions/oriented-rectangle.md
               - Contour-Based Regions: Spatial2D/regions/contour-based-regions.md

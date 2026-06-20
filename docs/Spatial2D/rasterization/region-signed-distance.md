@@ -1,7 +1,7 @@
 # Region Signed Distance
 
 Region signed-distance rasterizers convert `IRegion.SignedDistance` values to raster values.
-They work with any `IRegion`, including rectangles, oriented rectangles, and contour-based regions.
+They work with any `IRegion`, including disks, rectangles, oriented rectangles, and contour-based regions.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
