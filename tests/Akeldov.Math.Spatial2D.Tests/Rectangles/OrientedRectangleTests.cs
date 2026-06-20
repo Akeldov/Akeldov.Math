@@ -207,6 +207,23 @@ public class OrientedRectangleTests
     }
 
     [Test]
+    public void ParameterizedOrientedRectangleContour_GetPoint_WhenDirectionIsClockwise_UsesReversedTraversal()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f,
+            ContourDirection.Clockwise);
+
+        Assert.That(contour.ContourDirection, Is.EqualTo(ContourDirection.Clockwise));
+        AssertPoint(contour.ParameterOrigin, new PointXY(0f, 2f));
+        AssertPoint(contour.GetPoint(0f), new PointXY(0f, 2f));
+        AssertPoint(contour.GetPoint(1f), new PointXY(1f, 2f));
+        AssertPoint(contour.GetPoint(3f), new PointXY(1f, 0f));
+        AssertPoint(contour.GetPoint(contour.Length), new PointXY(0f, 2f));
+    }
+
+    [Test]
     public void ParameterizedOrientedRectangleContour_GetPoint_WithCustomParameterOrigin_UsesLengthCoordinateAroundBoundary()
     {
         var contour = new ParameterizedOrientedRectangleContour(
@@ -223,6 +240,21 @@ public class OrientedRectangleTests
     }
 
     [Test]
+    public void ParameterizedOrientedRectangleContour_GetPoint_WithParameterOriginCoordinateAndClockwiseDirection_UsesReversedTraversal()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f,
+            3f,
+            ContourDirection.Clockwise);
+
+        AssertPoint(contour.ParameterOrigin, new PointXY(-1f, 0f));
+        AssertPoint(contour.GetPoint(0f), new PointXY(-1f, 0f));
+        AssertPoint(contour.GetPoint(2f), new PointXY(-1f, 2f));
+    }
+
+    [Test]
     public void ParameterizedOrientedRectangleContour_ProjectWithParameter_ReturnsClosestBoundaryCoordinate()
     {
         var contour = new ParameterizedOrientedRectangleContour(
@@ -234,6 +266,22 @@ public class OrientedRectangleTests
 
         AssertPoint(projection.ProjectedPoint, new PointXY(1f, 0f));
         Assert.That(projection.CurveCoordinate, Is.EqualTo(9f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_ProjectWithParameter_WhenDirectionIsClockwise_ReturnsRelativeBoundaryCoordinate()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f,
+            ContourDirection.Clockwise);
+
+        ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(2f, 0f));
+
+        AssertPoint(projection.ProjectedPoint, new PointXY(1f, 0f));
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(3f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -267,6 +315,22 @@ public class OrientedRectangleTests
             RectangleContourParameterOrigin.BottomLeft);
 
         Assert.That(rightEdgeOrigin, Is.Not.EqualTo(bottomLeftOrigin));
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_Equals_WhenContourDirectionDiffers_ReturnsFalse()
+    {
+        var counterclockwise = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f);
+        var clockwise = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            MathF.PI * 0.5f,
+            ContourDirection.Clockwise);
+
+        Assert.That(counterclockwise, Is.Not.EqualTo(clockwise));
     }
 
     [Test]
@@ -339,6 +403,19 @@ public class OrientedRectangleTests
                 (RectangleContourParameterOrigin)42));
 
         Assert.That(exception!.ParamName, Is.EqualTo("parameterOrigin"));
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContourConstructor_WhenContourDirectionIsUnsupported_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedOrientedRectangleContour(
+                new PointXY(0f, 0f),
+                new VectorXY(4f, 2f),
+                MathF.PI * 0.5f,
+                (ContourDirection)42));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("contourDirection"));
     }
 
     [TestCase(float.NaN)]

@@ -15,25 +15,32 @@ namespace Akeldov.Math.Spatial2D.Contours
         private readonly PointXY _min;
         private readonly PointXY _max;
         private readonly float _parameterOriginCoordinate;
+        private readonly ContourDirection _contourDirection;
 
         /// <summary>
         /// Initializes a new axis-aligned rectangular contour from two opposite corners.
-        /// The curve coordinate zero point defaults to the middle of the right edge.
+        /// The curve coordinate zero point defaults to the middle of the right edge,
+        /// and curve coordinates increase counterclockwise by default.
         /// </summary>
         /// <param name="cornerA">The first rectangle corner.</param>
         /// <param name="cornerB">The opposite rectangle corner.</param>
+        /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when any corner coordinate is not finite, or when the rectangle width or height is zero.
+        /// Thrown when any corner coordinate is not finite, when the rectangle width or height is zero,
+        /// or when <paramref name="contourDirection"/> is unsupported.
         /// </exception>
-        public ParameterizedRectangleContour(PointXY cornerA, PointXY cornerB)
+        public ParameterizedRectangleContour(
+            PointXY cornerA,
+            PointXY cornerB,
+            ContourDirection contourDirection = ContourDirection.Counterclockwise)
         {
             (PointXY min, PointXY max) = CreateBounds(cornerA, cornerB);
+            ValidateContourDirection(contourDirection);
+
             _min = min;
             _max = max;
-            _parameterOriginCoordinate = GetBoundaryCoordinateUnchecked(
-                RectangleContourParameterOrigin.RightEdgeMidpoint,
-                min,
-                max);
+            _parameterOriginCoordinate = 0f;
+            _contourDirection = contourDirection;
         }
 
         /// <summary>
@@ -42,19 +49,25 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="cornerA">The first rectangle corner.</param>
         /// <param name="cornerB">The opposite rectangle corner.</param>
         /// <param name="parameterOrigin">The named boundary point where curve coordinate zero lies.</param>
+        /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when any coordinate is not finite, when the rectangle width or height is zero,
-        /// or when <paramref name="parameterOrigin"/> is unsupported.
+        /// when <paramref name="parameterOrigin"/> is unsupported, or when
+        /// <paramref name="contourDirection"/> is unsupported.
         /// </exception>
         public ParameterizedRectangleContour(
             PointXY cornerA,
             PointXY cornerB,
-            RectangleContourParameterOrigin parameterOrigin)
+            RectangleContourParameterOrigin parameterOrigin,
+            ContourDirection contourDirection = ContourDirection.Counterclockwise)
         {
             (PointXY min, PointXY max) = CreateBounds(cornerA, cornerB);
+            ValidateContourDirection(contourDirection);
+
             _min = min;
             _max = max;
             _parameterOriginCoordinate = GetBoundaryCoordinateUnchecked(parameterOrigin, min, max);
+            _contourDirection = contourDirection;
         }
 
         /// <summary>
@@ -63,24 +76,30 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="cornerA">The first rectangle corner.</param>
         /// <param name="cornerB">The opposite rectangle corner.</param>
         /// <param name="parameterOrigin">
-        /// The boundary coordinate where curve coordinate zero lies, measured from the default right-edge midpoint.
+        /// The counterclockwise boundary coordinate where curve coordinate zero lies,
+        /// measured from the default right-edge midpoint.
         /// </param>
+        /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when any coordinate is not finite, when the rectangle width or height is zero,
-        /// or when <paramref name="parameterOrigin"/> does not lie within the rectangle perimeter length.
+        /// when <paramref name="parameterOrigin"/> does not lie within the rectangle perimeter length,
+        /// or when <paramref name="contourDirection"/> is unsupported.
         /// </exception>
         public ParameterizedRectangleContour(
             PointXY cornerA,
             PointXY cornerB,
-            float parameterOrigin)
+            float parameterOrigin,
+            ContourDirection contourDirection = ContourDirection.Counterclockwise)
         {
             (PointXY min, PointXY max) = CreateBounds(cornerA, cornerB);
+            ValidateContourDirection(contourDirection);
             float length = GetBoundaryLength(min, max);
             ValidateParameterOriginCoordinate(parameterOrigin, length);
 
             _min = min;
             _max = max;
             _parameterOriginCoordinate = WrapBoundaryCoordinate(parameterOrigin, length);
+            _contourDirection = contourDirection;
         }
 
         /// <summary>
@@ -122,6 +141,11 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Gets the boundary point where curve coordinate zero lies.
         /// </summary>
         public PointXY ParameterOrigin => GetBoundaryPointUnchecked(_parameterOriginCoordinate);
+
+        /// <summary>
+        /// Gets the direction in which curve coordinates increase along the contour.
+        /// </summary>
+        public ContourDirection ContourDirection => _contourDirection;
 
         /// <summary>
         /// Gets the bottom-left corner.
@@ -288,26 +312,28 @@ namespace Akeldov.Math.Spatial2D.Contours
         public override bool Equals(object? obj) => obj is ParameterizedRectangleContour other && Equals(other);
 
         /// <summary>
-        /// Indicates whether this contour has the same rectangle and parameter origin as another contour.
+        /// Indicates whether this contour has the same rectangle, parameter origin, and traversal direction as another contour.
         /// </summary>
         /// <param name="other">The contour to compare with this contour.</param>
         /// <returns><see langword="true"/> if both contours are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(ParameterizedRectangleContour other) =>
             Min.Equals(other.Min) &&
             Max.Equals(other.Max) &&
-            _parameterOriginCoordinate.Equals(other._parameterOriginCoordinate);
+            _parameterOriginCoordinate.Equals(other._parameterOriginCoordinate) &&
+            ContourDirection == other.ContourDirection;
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Min, Max, _parameterOriginCoordinate);
+        public override int GetHashCode() => HashCode.Combine(Min, Max, _parameterOriginCoordinate, ContourDirection);
 
         /// <inheritdoc/>
         public override string ToString() =>
             string.Format(
                 CultureInfo.InvariantCulture,
-                "ParameterizedRectangleContour({0}, {1}, parameterOrigin: {2})",
+                "ParameterizedRectangleContour({0}, {1}, parameterOrigin: {2}, contourDirection: {3})",
                 Min,
                 Max,
-                ParameterOrigin);
+                ParameterOrigin,
+                ContourDirection);
 
         /// <summary>
         /// Converts a rectangular contour to its bounded rectangular region.
@@ -361,20 +387,20 @@ namespace Akeldov.Math.Spatial2D.Contours
 
         private float ToBoundaryCoordinate(float curveCoordinate)
         {
-            float boundaryCoordinate = _parameterOriginCoordinate + curveCoordinate;
-            if (boundaryCoordinate >= Length)
-                boundaryCoordinate -= Length;
+            float boundaryCoordinate = ContourDirection == ContourDirection.Counterclockwise
+                ? _parameterOriginCoordinate + curveCoordinate
+                : _parameterOriginCoordinate - curveCoordinate;
 
-            return boundaryCoordinate;
+            return WrapBoundaryCoordinate(boundaryCoordinate, Length);
         }
 
         private float ToCurveCoordinate(float boundaryCoordinate)
         {
-            float curveCoordinate = boundaryCoordinate - _parameterOriginCoordinate;
-            if (curveCoordinate < 0f)
-                curveCoordinate += Length;
+            float curveCoordinate = ContourDirection == ContourDirection.Counterclockwise
+                ? boundaryCoordinate - _parameterOriginCoordinate
+                : _parameterOriginCoordinate - boundaryCoordinate;
 
-            return curveCoordinate;
+            return WrapBoundaryCoordinate(curveCoordinate, Length);
         }
 
         private PointXY GetBoundaryPointUnchecked(float curveCoordinate)
@@ -616,6 +642,18 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             if (parameterOrigin < 0f || parameterOrigin > length)
                 throw new ArgumentOutOfRangeException(nameof(parameterOrigin), "Parameter origin coordinate must lie within the rectangle perimeter length.");
+        }
+
+        private static void ValidateContourDirection(ContourDirection contourDirection)
+        {
+            if (contourDirection != ContourDirection.Counterclockwise &&
+                contourDirection != ContourDirection.Clockwise)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(contourDirection),
+                    contourDirection,
+                    "Contour direction is not supported.");
+            }
         }
 
         private float ToCanonicalBoundaryCoordinate(float curveCoordinate)

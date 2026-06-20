@@ -69,12 +69,12 @@ public class CircleTests
     }
 
     [Test]
-    public void ParameterizedCircleConstructor_WhenAngularDirectionIsUnsupported_Throws()
+    public void ParameterizedCircleConstructor_WhenContourDirectionIsUnsupported_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new ParameterizedCircle(new PointXY(0f, 0f), 1f, 0f, (AngularDirection)42));
+            new ParameterizedCircle(new PointXY(0f, 0f), 1f, 0f, (ContourDirection)42));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("angularDirection"));
+        Assert.That(exception!.ParamName, Is.EqualTo("contourDirection"));
     }
 
     [Test]
@@ -84,7 +84,7 @@ public class CircleTests
             new PointXY(1f, 1f),
             2f,
             MathF.PI / 2f,
-            AngularDirection.Counterclockwise);
+            ContourDirection.Counterclockwise);
 
         AssertVector(circle.GetPoint(0f), 1f, 3f);
         AssertVector(circle.GetPoint(MathF.PI), -1f, 1f);
@@ -98,7 +98,7 @@ public class CircleTests
             new PointXY(0f, 0f),
             2f,
             MathF.PI / 2f,
-            AngularDirection.Clockwise);
+            ContourDirection.Clockwise);
 
         AssertVector(circle.GetPoint(MathF.PI), 2f, 0f);
     }
@@ -135,7 +135,7 @@ public class CircleTests
             new PointXY(0f, 0f),
             2f,
             MathF.PI / 2f,
-            AngularDirection.Counterclockwise);
+            ContourDirection.Counterclockwise);
 
         ParameterizedCurveProjection projection = circle.ProjectWithParameter(new PointXY(-4f, 0f));
 
@@ -151,7 +151,7 @@ public class CircleTests
             new PointXY(1f, 1f),
             2f,
             MathF.PI / 2f,
-            AngularDirection.Counterclockwise);
+            ContourDirection.Counterclockwise);
 
         ParameterizedCurveProjection projection = circle.ProjectWithParameter(new PointXY(1f, 1f));
 
@@ -167,7 +167,7 @@ public class CircleTests
             new PointXY(1f, 1f),
             0f,
             MathF.PI / 2f,
-            AngularDirection.Counterclockwise);
+            ContourDirection.Counterclockwise);
 
         ParameterizedCurveProjection projection = circle.ProjectWithParameter(new PointXY(4f, 5f));
 
@@ -180,7 +180,7 @@ public class CircleTests
     public void ParameterizedCircle_ExplicitConversionToCircle_ReturnsGeometricCircle()
     {
         var source = new Circle(new PointXY(1f, 2f), 3f);
-        var parameterizedCircle = new ParameterizedCircle(source, MathF.PI);
+        var parameterizedCircle = new ParameterizedCircle(source.Center, source.Radius, MathF.PI);
 
         Circle converted = (Circle)parameterizedCircle;
 
@@ -194,7 +194,7 @@ public class CircleTests
             new PointXY(1.5f, 2.25f),
             3.5f,
             MathF.PI / 2f,
-            AngularDirection.Clockwise);
+            ContourDirection.Clockwise);
 
         Assert.That(
             circle.ToDegreesString(),

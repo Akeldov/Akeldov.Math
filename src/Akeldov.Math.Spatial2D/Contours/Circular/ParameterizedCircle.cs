@@ -14,55 +14,39 @@ namespace Akeldov.Math.Spatial2D.Curves
     {
         private readonly Circle _circle;
         private readonly float _startAngle;
-        private readonly AngularDirection _angularDirection;
+        private readonly ContourDirection _contourDirection;
 
         /// <summary>
-        /// Initializes a new parameterized circle with the specified center, radius, start angle, and angular direction.
+        /// Initializes a new parameterized circle with the specified center, radius, start angle, and contour direction.
         /// </summary>
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The circle radius.</param>
         /// <param name="startAngle">The angle in radians where curve coordinate zero lies.</param>
-        /// <param name="angularDirection">The direction in which curve coordinates increase.</param>
+        /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="radius"/> is negative, NaN, or infinite, when <paramref name="startAngle"/>
-        /// is NaN or infinite, or when <paramref name="angularDirection"/> is unsupported.
+        /// is NaN or infinite, or when <paramref name="contourDirection"/> is unsupported.
         /// </exception>
         public ParameterizedCircle(
             PointXY center,
             float radius,
             float startAngle = 0f,
-            AngularDirection angularDirection = AngularDirection.Counterclockwise)
-            : this(new Circle(center, radius), startAngle, angularDirection)
+            ContourDirection contourDirection = ContourDirection.Counterclockwise)
         {
-        }
+            var circle = new Circle(center, radius);
 
-        /// <summary>
-        /// Initializes a new parameterized circle from the specified circle, start angle, and angular direction.
-        /// </summary>
-        /// <param name="circle">The source circle.</param>
-        /// <param name="startAngle">The angle in radians where curve coordinate zero lies.</param>
-        /// <param name="angularDirection">The direction in which curve coordinates increase.</param>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when <paramref name="startAngle"/> is NaN or infinite, or when
-        /// <paramref name="angularDirection"/> is unsupported.
-        /// </exception>
-        public ParameterizedCircle(
-            Circle circle,
-            float startAngle = 0f,
-            AngularDirection angularDirection = AngularDirection.Counterclockwise)
-        {
             if (float.IsNaN(startAngle) || float.IsInfinity(startAngle))
                 throw new ArgumentOutOfRangeException(nameof(startAngle), "Circle start angle must be finite.");
 
-            if (angularDirection != AngularDirection.Counterclockwise &&
-                angularDirection != AngularDirection.Clockwise)
+            if (contourDirection != ContourDirection.Counterclockwise &&
+                contourDirection != ContourDirection.Clockwise)
             {
-                throw new ArgumentOutOfRangeException(nameof(angularDirection), "Angular direction is not supported.");
+                throw new ArgumentOutOfRangeException(nameof(contourDirection), "Contour direction is not supported.");
             }
 
             _circle = circle;
             _startAngle = startAngle.NormalizeAngleRad();
-            _angularDirection = angularDirection;
+            _contourDirection = contourDirection;
         }
 
         /// <summary>
@@ -86,9 +70,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         public float StartAngle => _startAngle;
 
         /// <summary>
-        /// Gets the direction in which curve coordinates increase.
+        /// Gets the direction in which curve coordinates increase along the contour.
         /// </summary>
-        public AngularDirection AngularDirection => _angularDirection;
+        public ContourDirection ContourDirection => _contourDirection;
 
         /// <summary>
         /// Gets the normalized start angle in degrees.
@@ -167,7 +151,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return Center;
 
             float angleDelta = curveCoordinate / Radius;
-            float angle = AngularDirection == AngularDirection.Counterclockwise
+            float angle = ContourDirection == ContourDirection.Counterclockwise
                 ? (_startAngle + angleDelta).NormalizeAngleRad()
                 : (_startAngle - angleDelta).NormalizeAngleRad();
 
@@ -199,10 +183,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         public bool Equals(ParameterizedCircle other) =>
             Circle.Equals(other.Circle) &&
             StartAngle.Equals(other.StartAngle) &&
-            AngularDirection == other.AngularDirection;
+            ContourDirection == other.ContourDirection;
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Circle, StartAngle, AngularDirection);
+        public override int GetHashCode() => HashCode.Combine(Circle, StartAngle, ContourDirection);
 
         /// <inheritdoc/>
         public override string ToString() =>
@@ -212,7 +196,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 Center,
                 Radius,
                 StartAngle,
-                AngularDirection);
+                ContourDirection);
 
         /// <summary>
         /// Returns a string representation of this circle with the start angle in degrees.
@@ -225,7 +209,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 Center,
                 Radius,
                 StartAngleDeg,
-                AngularDirection);
+                ContourDirection);
 
         /// <summary>
         /// Converts a parameterized circle to its geometric circle.
@@ -254,7 +238,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private float GetCurveCoordinate(float angle)
         {
-            float angleDelta = AngularDirection == AngularDirection.Counterclockwise
+            float angleDelta = ContourDirection == ContourDirection.Counterclockwise
                 ? PositiveAngleDelta(_startAngle, angle)
                 : PositiveAngleDelta(angle, _startAngle);
 
