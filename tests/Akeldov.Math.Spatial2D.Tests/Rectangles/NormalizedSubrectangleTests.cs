@@ -1,6 +1,6 @@
 using System.Globalization;
 
-using Akeldov.Math.Spatial2D.Regions;
+using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Spatial2D.Tests.Rectangles;
 

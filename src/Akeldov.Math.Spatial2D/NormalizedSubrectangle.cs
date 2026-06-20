@@ -1,8 +1,7 @@
-using Akeldov.Math.Spatial2D;
 using System;
 using System.Globalization;
 
-namespace Akeldov.Math.Spatial2D.Regions
+namespace Akeldov.Math.Spatial2D
 {
     /// <summary>
     /// Represents an axis-aligned subrectangle of a source rectangle using normalized coordinates.
