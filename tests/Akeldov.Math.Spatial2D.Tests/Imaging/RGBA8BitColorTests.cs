@@ -24,6 +24,20 @@ public class RGBA8BitColorTests
     }
 
     [Test]
+    public void PredefinedColors_ReturnExpectedChannelValues()
+    {
+        Assert.That(RGBA8BitColors.Transparent, Is.EqualTo(default(RGBA8BitColor)));
+        Assert.That(RGBA8BitColors.Black, Is.EqualTo(new RGBA8BitColor(0, 0, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.White, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.Red, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.Green, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.Blue, Is.EqualTo(new RGBA8BitColor(0, 0, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.Yellow, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.Cyan, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColors.Magenta, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, byte.MaxValue, byte.MaxValue)));
+    }
+
+    [Test]
     public void FromNormalized_WhenValuesAreOutsideNormalizedRange_ClampsChannels()
     {
         RGBA8BitColor color = RGBA8BitColor.FromNormalized(-1f, 2f, float.PositiveInfinity, 0f);

@@ -24,6 +24,20 @@ public class RGBA16BitColorTests
     }
 
     [Test]
+    public void PredefinedColors_ReturnExpectedChannelValues()
+    {
+        Assert.That(RGBA16BitColors.Transparent, Is.EqualTo(default(RGBA16BitColor)));
+        Assert.That(RGBA16BitColors.Black, Is.EqualTo(new RGBA16BitColor(0, 0, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.White, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.Red, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.Green, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.Blue, Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.Yellow, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.Cyan, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColors.Magenta, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, ushort.MaxValue, ushort.MaxValue)));
+    }
+
+    [Test]
     public void FromNormalized_WhenValuesAreOutsideNormalizedRange_ClampsChannels()
     {
         RGBA16BitColor color = RGBA16BitColor.FromNormalized(-1f, 2f, float.PositiveInfinity, 0f);

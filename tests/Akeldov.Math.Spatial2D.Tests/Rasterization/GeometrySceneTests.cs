@@ -22,61 +22,56 @@ public class GeometrySceneTests
     [Test]
     public void Rasterize_CompositesLayersInInsertionOrder()
     {
-        var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
-        var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .AddLayer(new ConstantLayer(red))
-            .AddLayer(new ConstantLayer(blue));
+            .AddLayer(new ConstantLayer(RGBA16BitColors.Red))
+            .AddLayer(new ConstantLayer(RGBA16BitColors.Blue));
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 1, height: 1));
 
         Assert.That(scene.Layers, Has.Count.EqualTo(2));
-        Assert.That(raster[0, 0], Is.EqualTo(blue));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Blue));
     }
 
     [Test]
     public void Stroke_WithSegment_UsesUnsignedDistance()
     {
-        var color = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var segment = new Segment(
             new PointXY(0.5f, 0.5f),
             new PointXY(1.5f, 0.5f));
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .Stroke(segment, color, width: 0.25f);
+            .Stroke(segment, RGBA16BitColors.Red, width: 0.25f);
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
-        Assert.That(raster[0, 0], Is.EqualTo(color));
-        Assert.That(raster[1, 0], Is.EqualTo(color));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Red));
+        Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColors.Red));
         Assert.That(raster[2, 0], Is.EqualTo(default(RGBA16BitColor)));
     }
 
     [Test]
     public void Fill_WithDisk_UsesSignedDistance()
     {
-        var color = new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue);
         var disk = new Disk(new PointXY(1.5f, 0.5f), radius: 0.6f);
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .Fill(disk, color);
+            .Fill(disk, RGBA16BitColors.Green);
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(default(RGBA16BitColor)));
-        Assert.That(raster[1, 0], Is.EqualTo(color));
+        Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColors.Green));
         Assert.That(raster[2, 0], Is.EqualTo(default(RGBA16BitColor)));
     }
 
     [Test]
     public void DrawPoint_UsesPointDistance()
     {
-        var color = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .DrawPoint(new PointXY(1.5f, 0.5f), color, radius: 0.25f);
+            .DrawPoint(new PointXY(1.5f, 0.5f), RGBA16BitColors.Blue, radius: 0.25f);
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(default(RGBA16BitColor)));
-        Assert.That(raster[1, 0], Is.EqualTo(color));
+        Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColors.Blue));
         Assert.That(raster[2, 0], Is.EqualTo(default(RGBA16BitColor)));
     }
 
