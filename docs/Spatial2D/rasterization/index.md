@@ -10,6 +10,7 @@ Rasters and image export helpers live in `Akeldov.Math.Spatial2D.Imaging`.
 - [RasterGrid](raster-grid.md)
 - [Gray Rasters](gray-rasters.md)
 - [RGBA Rasters](rgba-rasters.md)
+- [GeometryScene](geometry-scenes.md)
 - [Curve Distance Rasterization](curve-distance-rasterization.md)
 - [Contour Signed Distance](contour-signed-distance.md)
 - [Region Signed Distance](region-signed-distance.md)
