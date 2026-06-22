@@ -34,12 +34,21 @@ public class GeometrySceneSnapshotTests
         RGBA16BitRaster raster = GeometryScenes.CreateRGBA16Bit(background)
             .DrawSignedDistance(face, ToFaceSignedDistanceColor)
             .Stroke(face, faceBoundary, width: 1.45f, edgeFalloff: 0.45f)
-            .DrawPoint(new PointXY(40f, 43f), eyeColor, radius: 2.4f, edgeFalloff: 0.45f)
-            .DrawPoint(new PointXY(60f, 43f), eyeColor, radius: 2.4f, edgeFalloff: 0.45f)
-            .DrawPoint(new PointXY(39f, 43.9f), highlightColor, radius: 0.65f, edgeFalloff: 0.22f)
-            .DrawPoint(new PointXY(59f, 43.9f), highlightColor, radius: 0.65f, edgeFalloff: 0.22f)
-            .DrawPoint(new PointXY(34f, 33f), cheekColor, radius: 3.2f, edgeFalloff: 1.1f)
-            .DrawPoint(new PointXY(66f, 33f), cheekColor, radius: 3.2f, edgeFalloff: 1.1f)
+            .Point(new[]
+            {
+                new PointXY(40f, 43f),
+                new PointXY(60f, 43f)
+            }, eyeColor, radius: 2.4f, edgeFalloff: 0.45f)
+            .Point(new[]
+            {
+                new PointXY(39f, 43.9f),
+                new PointXY(59f, 43.9f)
+            }, highlightColor, radius: 0.65f, edgeFalloff: 0.22f)
+            .Point(new[]
+            {
+                new PointXY(34f, 33f),
+                new PointXY(66f, 33f)
+            }, cheekColor, radius: 3.2f, edgeFalloff: 1.1f)
             .Stroke(smile, smileColor, width: 2.2f, edgeFalloff: 0.55f)
             .Rasterize(SnapshotGrid);
 

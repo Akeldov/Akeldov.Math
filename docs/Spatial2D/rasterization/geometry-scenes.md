@@ -21,7 +21,11 @@ var grid = new RasterGrid(
 
 var region = new Disk(new PointXY(32f, 32f), 18f);
 var segment = new Segment(new PointXY(8f, 12f), new PointXY(56f, 52f));
-var point = new PointXY(32f, 32f);
+var points = new[]
+{
+    new PointXY(28f, 30f),
+    new PointXY(36f, 34f)
+};
 
 RGBA16BitColor fill = RGBA16BitColor.FromNormalized(0.1f, 0.35f, 0.95f, 0.25f);
 RGBA16BitColor stroke = RGBA16BitColor.FromNormalized(0.95f, 0.1f, 0.15f, 1f);
@@ -30,7 +34,7 @@ RGBA16BitColor marker = RGBA16BitColor.FromNormalized(0.02f, 0.02f, 0.02f, 1f);
 RGBA16BitRaster raster = GeometryScenes.CreateRGBA16Bit()
     .Fill(region, fill, edgeFalloff: 0.5f)
     .Stroke(segment, stroke, width: 1.5f, edgeFalloff: 0.5f)
-    .DrawPoint(point, marker, radius: 2f, edgeFalloff: 0.5f)
+    .Point(points, marker, radius: 2f, edgeFalloff: 0.5f)
     .Rasterize(grid);
 
 raster.SaveAsPng("scene.png");

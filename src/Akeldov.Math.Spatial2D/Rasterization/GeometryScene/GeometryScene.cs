@@ -187,9 +187,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="color">The marker color.</param>
         /// <param name="radius">The positive marker radius in world coordinate units.</param>
         /// <returns>This scene.</returns>
-        public GeometryScene<TColor> DrawPoint(PointXY point, TColor color, float radius)
+        public GeometryScene<TColor> Point(PointXY point, TColor color, float radius)
         {
-            return DrawPoint(point, color, radius, 0f);
+            return Point(point, color, radius, 0f);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="radius">The positive marker radius in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative alpha falloff outside the marker, in world coordinate units.</param>
         /// <returns>This scene.</returns>
-        public GeometryScene<TColor> DrawPoint(PointXY point, TColor color, float radius, float edgeFalloff)
+        public GeometryScene<TColor> Point(PointXY point, TColor color, float radius, float edgeFalloff)
         {
             PointXYValidation.ThrowIfNotFinite(
                 point,
@@ -211,6 +211,40 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
 
             return AddLayer(new PointMarkerGeometrySceneLayer<TColor>(point, color, radius, edgeFalloff, _applyCoverage));
+        }
+
+        /// <summary>
+        /// Adds a hard-edged point marker layer for a copied set of finite points.
+        /// </summary>
+        /// <param name="points">The finite point marker centers. The list is validated and copied when the layer is added.</param>
+        /// <param name="color">The marker color.</param>
+        /// <param name="radius">The positive marker radius in world coordinate units.</param>
+        /// <returns>This scene.</returns>
+        public GeometryScene<TColor> Point(IReadOnlyList<PointXY> points, TColor color, float radius)
+        {
+            return Point(points, color, radius, 0f);
+        }
+
+        /// <summary>
+        /// Adds a point marker layer for a copied set of finite points.
+        /// </summary>
+        /// <param name="points">The finite point marker centers. The list is validated and copied when the layer is added.</param>
+        /// <param name="color">The marker color.</param>
+        /// <param name="radius">The positive marker radius in world coordinate units.</param>
+        /// <param name="edgeFalloff">The non-negative alpha falloff outside each marker, in world coordinate units.</param>
+        /// <returns>This scene.</returns>
+        public GeometryScene<TColor> Point(
+            IReadOnlyList<PointXY> points,
+            TColor color,
+            float radius,
+            float edgeFalloff)
+        {
+            PointXY[] pointCopy = CopyPointMarkers(points, nameof(points));
+
+            GeometrySceneValidation.ValidatePositiveFinite(radius, nameof(radius), "Point marker radius must be finite and positive.");
+            GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
+
+            return AddLayer(new PointMarkerCollectionGeometrySceneLayer<TColor>(pointCopy, color, radius, edgeFalloff, _applyCoverage));
         }
 
         /// <summary>
@@ -266,5 +300,26 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return createRaster(grid, RasterizeValues(grid));
         }
 
+        private static PointXY[] CopyPointMarkers(IReadOnlyList<PointXY> points, string parameterName)
+        {
+            if (points == null)
+                throw new ArgumentNullException(parameterName);
+
+            if (points.Count == 0)
+                throw new ArgumentException("Point marker collection must not be empty.", parameterName);
+
+            var copy = new PointXY[points.Count];
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                PointXY point = points[i];
+                if (!PointXYValidation.IsFinite(point))
+                    throw new ArgumentException("Point marker coordinates must be finite.", parameterName);
+
+                copy[i] = point;
+            }
+
+            return copy;
+        }
     }
 }

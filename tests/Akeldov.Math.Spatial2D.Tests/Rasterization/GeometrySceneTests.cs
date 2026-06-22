@@ -63,16 +63,51 @@ public class GeometrySceneTests
     }
 
     [Test]
-    public void DrawPoint_UsesPointDistance()
+    public void Point_UsesPointDistance()
     {
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .DrawPoint(new PointXY(1.5f, 0.5f), RGBA16BitColors.Blue, radius: 0.25f);
+            .Point(new PointXY(1.5f, 0.5f), RGBA16BitColors.Blue, radius: 0.25f);
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(default(RGBA16BitColor)));
         Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColors.Blue));
         Assert.That(raster[2, 0], Is.EqualTo(default(RGBA16BitColor)));
+    }
+
+    [Test]
+    public void Point_WithPoints_UsesNearestPointDistance()
+    {
+        var points = new[]
+        {
+            new PointXY(0.5f, 0.5f),
+            new PointXY(2.5f, 0.5f)
+        };
+        var scene = GeometryScenes.CreateRGBA16Bit()
+            .Point(points, RGBA16BitColors.Blue, radius: 0.25f);
+
+        RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 4, height: 1));
+
+        Assert.That(scene.Layers, Has.Count.EqualTo(1));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Blue));
+        Assert.That(raster[1, 0], Is.EqualTo(default(RGBA16BitColor)));
+        Assert.That(raster[2, 0], Is.EqualTo(RGBA16BitColors.Blue));
+        Assert.That(raster[3, 0], Is.EqualTo(default(RGBA16BitColor)));
+    }
+
+    [Test]
+    public void Point_WithPoints_CopiesPointCollection()
+    {
+        var points = new[] { new PointXY(0.5f, 0.5f) };
+        var scene = GeometryScenes.CreateRGBA16Bit()
+            .Point(points, RGBA16BitColors.Blue, radius: 0.25f);
+
+        points[0] = new PointXY(1.5f, 0.5f);
+
+        RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
+
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Blue));
+        Assert.That(raster[1, 0], Is.EqualTo(default(RGBA16BitColor)));
     }
 
     [Test]
@@ -137,14 +172,19 @@ public class GeometrySceneTests
     }
 
     [Test]
-    public void DrawPoint_WhenParametersAreInvalid_Throws()
+    public void Point_WhenParametersAreInvalid_Throws()
     {
         var scene = GeometryScenes.CreateRGBA16Bit();
         var color = new RGBA16BitColor(1, 2, 3, 4);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => scene.DrawPoint(new PointXY(float.PositiveInfinity, 0f), color, radius: 1f));
-        Assert.Throws<ArgumentOutOfRangeException>(() => scene.DrawPoint(new PointXY(0f, 0f), color, radius: 0f));
-        Assert.Throws<ArgumentOutOfRangeException>(() => scene.DrawPoint(new PointXY(0f, 0f), color, radius: 1f, edgeFalloff: -1f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.Point(new PointXY(float.PositiveInfinity, 0f), color, radius: 1f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.Point(new PointXY(0f, 0f), color, radius: 0f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.Point(new PointXY(0f, 0f), color, radius: 1f, edgeFalloff: -1f));
+        Assert.Throws<ArgumentNullException>(() => scene.Point((IReadOnlyList<PointXY>)null!, color, radius: 1f));
+        Assert.Throws<ArgumentException>(() => scene.Point(Array.Empty<PointXY>(), color, radius: 1f));
+        Assert.Throws<ArgumentException>(() => scene.Point(new[] { new PointXY(float.PositiveInfinity, 0f) }, color, radius: 1f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.Point(new[] { new PointXY(0f, 0f) }, color, radius: 0f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.Point(new[] { new PointXY(0f, 0f) }, color, radius: 1f, edgeFalloff: -1f));
     }
 
     [Test]
