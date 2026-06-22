@@ -15,7 +15,7 @@ public class GeometrySceneSnapshotTests
         resolution: new VectorXYInt(180, 126));
 
     [Test]
-    public void Rasterize_WithPointEyesArcSmileAndSignedDistanceCircle_MatchesApprovedImage()
+    public void Rasterize_WithPointEyesArcSmileAndFilledCircle_MatchesApprovedImage()
     {
         var face = new Circle(new PointXY(50f, 35f), 24f);
         var smile = new Arc(
@@ -25,6 +25,7 @@ public class GeometrySceneSnapshotTests
             endAngle: 11f * MathF.PI / 6f);
 
         RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.965f, 0.972f, 0.982f, 1f);
+        RGBA16BitColor faceFill = RGBA16BitColor.FromNormalized(1.000f, 0.810f, 0.145f, 0.66f);
         RGBA16BitColor faceBoundary = RGBA16BitColor.FromNormalized(0.055f, 0.085f, 0.165f, 0.95f);
         RGBA16BitColor smileColor = RGBA16BitColor.FromNormalized(0.055f, 0.085f, 0.165f, 0.95f);
         RGBA16BitColor eyeColor = RGBA16BitColor.FromNormalized(0.050f, 0.060f, 0.080f, 1f);
@@ -32,7 +33,7 @@ public class GeometrySceneSnapshotTests
         RGBA16BitColor highlightColor = RGBA16BitColor.FromNormalized(1f, 1f, 1f, 0.75f);
 
         RGBA16BitRaster raster = GeometryScenes.CreateRGBA16Bit(background)
-            .DrawSignedDistance(face, ToFaceSignedDistanceColor)
+            .Fill(face, faceFill, edgeFalloff: 0.55f)
             .Stroke(face, faceBoundary, width: 1.45f, edgeFalloff: 0.45f)
             .Point(new[]
             {
@@ -55,30 +56,6 @@ public class GeometrySceneSnapshotTests
         byte[] actual = SaveToPngBytes(raster, SmileyApprovedFileName);
 
         AssertMatchesApprovedPng(SmileyApprovedFileName, actual);
-    }
-
-    private static RGBA16BitColor ToFaceSignedDistanceColor(float signedDistance)
-    {
-        float absoluteDistance = MathF.Abs(signedDistance);
-
-        if (absoluteDistance <= 0.55f)
-        {
-            return RGBA16BitColor.FromNormalized(0.055f, 0.085f, 0.165f, 0.38f);
-        }
-
-        if (signedDistance < 0f)
-        {
-            float alpha = 0.58f + MathF.Min(-signedDistance / 24f, 1f) * 0.14f;
-            return RGBA16BitColor.FromNormalized(1.000f, 0.810f, 0.145f, alpha);
-        }
-
-        if (signedDistance <= 5f)
-        {
-            float alpha = (1f - signedDistance / 5f) * 0.10f;
-            return RGBA16BitColor.FromNormalized(0.960f, 0.620f, 0.090f, alpha);
-        }
-
-        return default;
     }
 
     private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
