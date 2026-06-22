@@ -17,13 +17,30 @@ public class GeometrySceneSnapshotTests
     [Test]
     public void Rasterize_WithPointEyesArcSmileAndFilledCircle_MatchesApprovedImage()
     {
+        // Geometry
         var face = new Circle(new PointXY(50f, 35f), 24f);
         var smile = new Arc(
             new PointXY(50f, 36f),
             radius: 15f,
             startAngle: 7f * MathF.PI / 6f,
             endAngle: 11f * MathF.PI / 6f);
+        var eyes = new[]
+        {
+            new PointXY(40f, 43f),
+            new PointXY(60f, 43f)
+        };
+        var highlights = new[]
+        {
+            new PointXY(39f, 43.9f),
+            new PointXY(59f, 43.9f)
+        };
+        var cheeks = new[]
+        {
+            new PointXY(34f, 33f),
+            new PointXY(66f, 33f)
+        };
 
+        // Colors
         RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.965f, 0.972f, 0.982f, 1f);
         RGBA16BitColor faceFill = RGBA16BitColor.FromNormalized(1.000f, 0.810f, 0.145f, 0.66f);
         RGBA16BitColor faceBoundary = RGBA16BitColor.FromNormalized(0.055f, 0.085f, 0.165f, 0.95f);
@@ -32,37 +49,21 @@ public class GeometrySceneSnapshotTests
         RGBA16BitColor cheekColor = RGBA16BitColor.FromNormalized(0.940f, 0.260f, 0.310f, 0.55f);
         RGBA16BitColor highlightColor = RGBA16BitColor.FromNormalized(1f, 1f, 1f, 0.75f);
 
+        // Scene
+        string actualPath = GetActualPath(SmileyApprovedFileName);
         RGBA16BitRaster raster = GeometryScenes.CreateRGBA16Bit(background)
             .Fill(face, faceFill, edgeFalloff: 0.55f)
             .Stroke(face, faceBoundary, width: 1.45f, edgeFalloff: 0.45f)
-            .Point(new[]
-            {
-                new PointXY(40f, 43f),
-                new PointXY(60f, 43f)
-            }, eyeColor, radius: 2.4f, edgeFalloff: 0.45f)
-            .Point(new[]
-            {
-                new PointXY(39f, 43.9f),
-                new PointXY(59f, 43.9f)
-            }, highlightColor, radius: 0.65f, edgeFalloff: 0.22f)
-            .Point(new[]
-            {
-                new PointXY(34f, 33f),
-                new PointXY(66f, 33f)
-            }, cheekColor, radius: 3.2f, edgeFalloff: 1.1f)
+            .Point(eyes, eyeColor, radius: 2.4f, edgeFalloff: 0.45f)
+            .Point(highlights, highlightColor, radius: 0.65f, edgeFalloff: 0.22f)
+            .Point(cheeks, cheekColor, radius: 3.2f, edgeFalloff: 1.1f)
             .Stroke(smile, smileColor, width: 2.2f, edgeFalloff: 0.55f)
             .Rasterize(SnapshotGrid);
 
-        byte[] actual = SaveToPngBytes(raster, SmileyApprovedFileName);
+        raster.SaveAsPng(actualPath);
+        byte[] actual = File.ReadAllBytes(actualPath);
 
         AssertMatchesApprovedPng(SmileyApprovedFileName, actual);
-    }
-
-    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
-    {
-        string actualPath = GetActualPath(approvedFileName);
-        raster.SaveAsPng(actualPath);
-        return File.ReadAllBytes(actualPath);
     }
 
     private static void AssertMatchesApprovedPng(string approvedFileName, byte[] actual)
