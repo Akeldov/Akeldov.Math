@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// </summary>
     /// <typeparam name="TColor">The color value type produced by scene layers.</typeparam>
     /// <remarks>
-    /// Layers are sampled in insertion order and composited with the supplied blend function.
+    /// Layers are sampled in insertion order and composited with each layer's blend function.
     /// Unsigned distance layers are suitable for points and open curves. Signed distance layers
     /// are suitable for contours and regions with inside/outside semantics.
     /// </remarks>
@@ -16,13 +16,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     {
         private readonly List<IGeometrySceneLayer<TColor>> _layers;
         private readonly IReadOnlyList<IGeometrySceneLayer<TColor>> _readOnlyLayers;
-        private readonly Func<TColor, TColor, TColor> _blend;
+        private readonly Func<TColor, TColor, TColor> _defaultLayerBlend;
         private readonly Func<TColor, float, TColor> _applyCoverage;
 
         /// <summary>
         /// Initializes a new geometry scene with the default color as its background.
         /// </summary>
-        /// <param name="blend">The function that blends the current composed color and the next layer color.</param>
+        /// <param name="blend">The default function assigned to layers created by this scene.</param>
         /// <param name="applyCoverage">The function that applies normalized coverage to a layer color.</param>
         public GeometryScene(
             Func<TColor, TColor, TColor> blend,
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// Initializes a new geometry scene with the specified background color.
         /// </summary>
         /// <param name="backgroundColor">The color used before any layer is composited.</param>
-        /// <param name="blend">The function that blends the current composed color and the next layer color.</param>
+        /// <param name="blend">The default function assigned to layers created by this scene.</param>
         /// <param name="applyCoverage">The function that applies normalized coverage to a layer color.</param>
         public GeometryScene(
             TColor backgroundColor,
@@ -49,7 +49,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentNullException(nameof(applyCoverage));
 
             BackgroundColor = backgroundColor;
-            _blend = blend;
+            _defaultLayerBlend = blend;
             _applyCoverage = applyCoverage;
             _layers = new List<IGeometrySceneLayer<TColor>>();
             _readOnlyLayers = _layers.AsReadOnly();
@@ -95,7 +95,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (distanceToColor == null)
                 throw new ArgumentNullException(nameof(distanceToColor));
 
-            return AddLayer(new DistanceGeometrySceneLayer<TColor>(source, distanceToColor));
+            return AddLayer(new DistanceGeometrySceneLayer<TColor>(source, distanceToColor, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (signedDistanceToColor == null)
                 throw new ArgumentNullException(nameof(signedDistanceToColor));
 
-            return AddLayer(new SignedDistanceGeometrySceneLayer<TColor>(source, signedDistanceToColor));
+            return AddLayer(new SignedDistanceGeometrySceneLayer<TColor>(source, signedDistanceToColor, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             GeometrySceneValidation.ValidatePositiveFinite(width, nameof(width), "Stroke width must be finite and positive.");
             GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Stroke edge falloff must be finite and non-negative.");
 
-            return AddLayer(new StrokeGeometrySceneLayer<TColor>(source, color, width, edgeFalloff, _applyCoverage));
+            return AddLayer(new StrokeGeometrySceneLayer<TColor>(source, color, width, edgeFalloff, _applyCoverage, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Fill edge falloff must be finite and non-negative.");
 
-            return AddLayer(new FillGeometrySceneLayer<TColor>(source, color, edgeFalloff, _applyCoverage));
+            return AddLayer(new FillGeometrySceneLayer<TColor>(source, color, edgeFalloff, _applyCoverage, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             GeometrySceneValidation.ValidatePositiveFinite(radius, nameof(radius), "Point marker radius must be finite and positive.");
             GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
 
-            return AddLayer(new PointMarkerGeometrySceneLayer<TColor>(point, color, radius, edgeFalloff, _applyCoverage));
+            return AddLayer(new PointMarkerGeometrySceneLayer<TColor>(point, color, radius, edgeFalloff, _applyCoverage, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             GeometrySceneValidation.ValidatePositiveFinite(radius, nameof(radius), "Point marker radius must be finite and positive.");
             GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
 
-            return AddLayer(new PointMarkerCollectionGeometrySceneLayer<TColor>(pointCopy, color, radius, edgeFalloff, _applyCoverage));
+            return AddLayer(new PointMarkerCollectionGeometrySceneLayer<TColor>(pointCopy, color, radius, edgeFalloff, _applyCoverage, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -273,7 +273,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
                     for (int layerIndex = 0; layerIndex < _layers.Count; layerIndex++)
                     {
-                        color = _blend(color, _layers[layerIndex].Sample(point));
+                        IGeometrySceneLayer<TColor> layer = _layers[layerIndex];
+                        color = layer.Blend(color, layer.Sample(point));
                     }
 
                     values[valueIndex++] = color;

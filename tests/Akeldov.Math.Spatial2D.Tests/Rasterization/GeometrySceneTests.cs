@@ -215,15 +215,29 @@ public class GeometrySceneTests
     {
         var scene = new GeometryScene<int>(
                 backgroundColor: 1,
-                blend: (background, foreground) => background + foreground,
+                blend: (background, foreground) => background + foreground * 100,
                 applyCoverage: (color, coverage) => color)
-            .AddLayer(new ConstantIntLayer(2));
+            .AddLayer(new ConstantIntLayer(2, (background, foreground) => background + foreground));
 
         string raster = scene.Rasterize(
             CreateGrid(width: 2, height: 1),
             (grid, values) => $"{grid.Resolution.X}x{grid.Resolution.Y}:{string.Join(",", values)}");
 
         Assert.That(raster, Is.EqualTo("2x1:3,3"));
+    }
+
+    [Test]
+    public void Rasterize_UsesBlendFromCustomLayer()
+    {
+        var scene = new GeometryScene<int>(
+                backgroundColor: 2,
+                blend: (background, foreground) => background + foreground * 100,
+                applyCoverage: (color, coverage) => color)
+            .AddLayer(new ConstantIntLayer(3, (background, foreground) => background * foreground));
+
+        int[] values = scene.RasterizeValues(CreateGrid(width: 1, height: 1));
+
+        Assert.That(values, Is.EqualTo(new[] { 6 }));
     }
 
     [Test]
@@ -255,6 +269,11 @@ public class GeometrySceneTests
             _color = color;
         }
 
+        public RGBA16BitColor Blend(RGBA16BitColor background, RGBA16BitColor foreground)
+        {
+            return foreground;
+        }
+
         public RGBA16BitColor Sample(PointXY point)
         {
             return _color;
@@ -264,10 +283,17 @@ public class GeometrySceneTests
     private sealed class ConstantIntLayer : IGeometrySceneLayer<int>
     {
         private readonly int _color;
+        private readonly Func<int, int, int> _blend;
 
-        public ConstantIntLayer(int color)
+        public ConstantIntLayer(int color, Func<int, int, int>? blend = null)
         {
             _color = color;
+            _blend = blend ?? ((background, foreground) => foreground);
+        }
+
+        public int Blend(int background, int foreground)
+        {
+            return _blend(background, foreground);
         }
 
         public int Sample(PointXY point)

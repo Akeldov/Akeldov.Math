@@ -2,7 +2,7 @@ using System;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
-    internal sealed class StrokeGeometrySceneLayer<TColor> : IGeometrySceneLayer<TColor>
+    internal sealed class StrokeGeometrySceneLayer<TColor> : GeometrySceneLayer<TColor>
     {
         private readonly IPointDistanceProvider _source;
         private readonly TColor _color;
@@ -15,7 +15,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             TColor color,
             float width,
             float edgeFalloff,
-            Func<TColor, float, TColor> applyCoverage)
+            Func<TColor, float, TColor> applyCoverage,
+            Func<TColor, TColor, TColor> blend)
+            : base(blend)
         {
             _source = source;
             _color = color;
@@ -24,7 +26,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             _applyCoverage = applyCoverage;
         }
 
-        public TColor Sample(PointXY point)
+        public override TColor Sample(PointXY point)
         {
             float coverage = GeometrySceneCoverage.GetOutsideCoverage(
                 _source.Distance(point),

@@ -3,7 +3,8 @@
 `GeometryScene<TColor>` composes points, curves, contours, and regions into one
 color buffer. For 16-bit RGBA output, use `GeometryScene<RGBA16BitColor>`.
 
-Layers are sampled in insertion order and composited with the scene blend function.
+Layers are sampled in insertion order and composited with each layer's blend function.
+Layers created through scene helper methods use the scene's default blend function.
 Use unsigned distance layers for points and open curves, and signed distance layers for
 contours and regions.
 
@@ -54,7 +55,7 @@ GeometryScene<RGBA16BitColor> scene = GeometryScenes.CreateRGBA16Bit()
             : default);
 ```
 
-For non-RGBA output, pass the color operations explicitly:
+For non-RGBA output, pass the default color operations explicitly:
 
 ```csharp
 var labels = new GeometryScene<int>(

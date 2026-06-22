@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Creates a geometry scene that samples <see cref="RGBA16BitColor"/> values with a transparent background.
         /// </summary>
-        /// <returns>A geometry scene configured for 16-bit RGBA source-over alpha blending.</returns>
+        /// <returns>A geometry scene configured with 16-bit RGBA source-over alpha blending as the default layer blend.</returns>
         public static GeometryScene<RGBA16BitColor> CreateRGBA16Bit()
         {
             return CreateRGBA16Bit(default(RGBA16BitColor));
@@ -21,7 +21,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// Creates a geometry scene that samples <see cref="RGBA16BitColor"/> values with the specified background color.
         /// </summary>
         /// <param name="backgroundColor">The color used before any layer is composited.</param>
-        /// <returns>A geometry scene configured for 16-bit RGBA source-over alpha blending.</returns>
+        /// <returns>A geometry scene configured with 16-bit RGBA source-over alpha blending as the default layer blend.</returns>
         public static GeometryScene<RGBA16BitColor> CreateRGBA16Bit(RGBA16BitColor backgroundColor)
         {
             return new GeometryScene<RGBA16BitColor>(

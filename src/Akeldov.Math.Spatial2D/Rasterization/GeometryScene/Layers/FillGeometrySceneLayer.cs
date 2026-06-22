@@ -2,7 +2,7 @@ using System;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
-    internal sealed class FillGeometrySceneLayer<TColor> : IGeometrySceneLayer<TColor>
+    internal sealed class FillGeometrySceneLayer<TColor> : GeometrySceneLayer<TColor>
     {
         private readonly ISignedPointDistanceProvider _source;
         private readonly TColor _color;
@@ -13,7 +13,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             ISignedPointDistanceProvider source,
             TColor color,
             float edgeFalloff,
-            Func<TColor, float, TColor> applyCoverage)
+            Func<TColor, float, TColor> applyCoverage,
+            Func<TColor, TColor, TColor> blend)
+            : base(blend)
         {
             _source = source;
             _color = color;
@@ -21,7 +23,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             _applyCoverage = applyCoverage;
         }
 
-        public TColor Sample(PointXY point)
+        public override TColor Sample(PointXY point)
         {
             float coverage = GeometrySceneCoverage.GetFillCoverage(
                 _source.SignedDistance(point),
