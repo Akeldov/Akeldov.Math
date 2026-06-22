@@ -111,13 +111,13 @@ public class GeometrySceneTests
     }
 
     [Test]
-    public void DrawDistance_MapsUnsignedDistanceWithDelegate()
+    public void Distance_MapsUnsignedDistanceWithDelegate()
     {
         var point = new PointXY(0.5f, 0.5f);
         var near = new RGBA16BitColor(10, 20, 30, ushort.MaxValue);
         var far = new RGBA16BitColor(40, 50, 60, ushort.MaxValue);
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .DrawDistance(point, distance => distance < 1f ? near : far);
+            .Distance(point, distance => distance < 1f ? near : far);
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
 
@@ -126,13 +126,13 @@ public class GeometrySceneTests
     }
 
     [Test]
-    public void DrawSignedDistance_MapsSignedDistanceWithDelegate()
+    public void SignedDistance_MapsSignedDistanceWithDelegate()
     {
         var disk = new Disk(new PointXY(0.5f, 0.5f), radius: 0.6f);
         var inside = new RGBA16BitColor(100, 0, 0, ushort.MaxValue);
         var outside = new RGBA16BitColor(0, 100, 0, ushort.MaxValue);
         var scene = GeometryScenes.CreateRGBA16Bit()
-            .DrawSignedDistance(disk, signedDistance => signedDistance <= 0f ? inside : outside);
+            .SignedDistance(disk, signedDistance => signedDistance <= 0f ? inside : outside);
 
         RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
 
@@ -203,7 +203,7 @@ public class GeometrySceneTests
                 backgroundColor: 10,
                 blend: (background, foreground) => background + foreground,
                 applyCoverage: (color, coverage) => (int)MathF.Round(color * coverage))
-            .DrawDistance(point, distance => distance < 1f ? 7 : 3);
+            .Distance(point, distance => distance < 1f ? 7 : 3);
 
         int[] values = scene.RasterizeValues(CreateGrid(width: 2, height: 1));
 

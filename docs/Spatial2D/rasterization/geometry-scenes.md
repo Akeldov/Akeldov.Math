@@ -44,11 +44,11 @@ For custom styling, use distance-mapping layers directly:
 
 ```csharp
 GeometryScene<RGBA16BitColor> scene = GeometryScenes.CreateRGBA16Bit()
-    .DrawDistance(segment, distance =>
+    .Distance(segment, distance =>
         distance <= 1f
             ? RGBA16BitColor.FromNormalized(1f, 0f, 0f, 1f)
             : default)
-    .DrawSignedDistance(region, signedDistance =>
+    .SignedDistance(region, signedDistance =>
         signedDistance <= 0f
             ? RGBA16BitColor.FromNormalized(0f, 0f, 1f, 0.2f)
             : default);

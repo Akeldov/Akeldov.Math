@@ -85,7 +85,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The distance provider to sample.</param>
         /// <param name="distanceToColor">The function that maps unsigned distance in world coordinate units to a color.</param>
         /// <returns>This scene.</returns>
-        public GeometryScene<TColor> DrawDistance(
+        public GeometryScene<TColor> Distance(
             IPointDistanceProvider source,
             Func<float, TColor> distanceToColor)
         {
@@ -104,7 +104,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The signed distance provider to sample.</param>
         /// <param name="signedDistanceToColor">The function that maps signed distance in world coordinate units to a color.</param>
         /// <returns>This scene.</returns>
-        public GeometryScene<TColor> DrawSignedDistance(
+        public GeometryScene<TColor> SignedDistance(
             ISignedPointDistanceProvider source,
             Func<float, TColor> signedDistanceToColor)
         {
