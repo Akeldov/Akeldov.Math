@@ -210,7 +210,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             GeometrySceneValidation.ValidatePositiveFinite(radius, nameof(radius), "Point marker radius must be finite and positive.");
             GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
 
-            return AddLayer(new PointMarkerGeometrySceneLayer<TColor>(point, color, radius, edgeFalloff, _applyCoverage, _defaultLayerBlend));
+            return AddLayer(new PointMarkerCollectionGeometrySceneLayer<TColor>(
+                new[] { point },
+                color,
+                radius,
+                edgeFalloff,
+                _applyCoverage,
+                _defaultLayerBlend));
         }
 
         /// <summary>
