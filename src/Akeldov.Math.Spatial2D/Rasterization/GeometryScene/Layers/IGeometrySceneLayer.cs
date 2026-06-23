@@ -7,14 +7,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     public interface IGeometrySceneLayer<TColor>
     {
         /// <summary>
-        /// Blends the current composed color with the sampled layer color.
-        /// </summary>
-        /// <param name="background">The current composed color.</param>
-        /// <param name="foreground">The sampled layer color.</param>
-        /// <returns>The composited color.</returns>
-        TColor Blend(TColor background, TColor foreground);
-
-        /// <summary>
         /// Samples this layer at the specified finite point.
         /// </summary>
         /// <param name="point">The finite point to sample.</param>

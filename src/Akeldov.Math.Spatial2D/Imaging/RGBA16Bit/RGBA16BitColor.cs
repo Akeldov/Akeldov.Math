@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
@@ -119,6 +120,52 @@ namespace Akeldov.Math.Spatial2D.Imaging
         }
 
         /// <summary>
+        /// Returns a color with the same RGB channels and alpha multiplied by <paramref name="factor"/>.
+        /// </summary>
+        public RGBA16BitColor ScaleAlpha(float coverage)
+        {
+            if (coverage <= 0f || Alpha == 0)
+                return default(RGBA16BitColor);
+
+            if (coverage >= 1f)
+                return this;
+
+            var newNormalizedAlpha = Alpha * coverage;
+            ushort newAlpha = 0;
+            if (newNormalizedAlpha <= 0f)
+                newAlpha = 0;
+
+            if (newNormalizedAlpha >= ushort.MaxValue)
+                newAlpha = ushort.MaxValue;
+
+            newAlpha = (ushort)MathF.Round(newNormalizedAlpha);
+
+            return new RGBA16BitColor(
+                Red,
+                Green,
+                Blue,
+                newAlpha);
+        }
+
+        public static RGBA16BitColor AlphaOver(RGBA16BitColor background, RGBA16BitColor foreground)
+        {
+            float foregroundAlpha = foreground.Alpha / (float)ushort.MaxValue;
+            float backgroundAlpha = background.Alpha / (float)ushort.MaxValue;
+            float outputAlpha = foregroundAlpha + backgroundAlpha * (1f - foregroundAlpha);
+
+            if (outputAlpha <= 0f)
+                return default(RGBA16BitColor);
+
+            float backgroundAmount = backgroundAlpha * (1f - foregroundAlpha);
+
+            return new RGBA16BitColor(
+                ToChannel((foreground.Red * foregroundAlpha + background.Red * backgroundAmount) / outputAlpha),
+                ToChannel((foreground.Green * foregroundAlpha + background.Green * backgroundAmount) / outputAlpha),
+                ToChannel((foreground.Blue * foregroundAlpha + background.Blue * backgroundAmount) / outputAlpha),
+                ToChannel(outputAlpha * ushort.MaxValue));
+        }
+
+        /// <summary>
         /// Linearly blends two 16-bit RGBA colors.
         /// </summary>
         /// <param name="from">The color returned when <paramref name="amount"/> is 0.</param>
@@ -200,6 +247,17 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 To16BitChannel(color.Green),
                 To16BitChannel(color.Blue),
                 To16BitChannel(color.Alpha));
+        }
+
+        private static ushort ToChannel(float value)
+        {
+            if (value <= 0f)
+                return 0;
+
+            if (value >= ushort.MaxValue)
+                return ushort.MaxValue;
+
+            return (ushort)MathF.Round(value);
         }
 
         private static ushort To16BitChannel(byte channel) => (ushort)(channel * 257);
