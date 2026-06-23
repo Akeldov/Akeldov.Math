@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void Save(Gray8BitRaster raster, string path)
+        public static void Save(Raster<byte> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void Save(Gray8BitRaster raster, Stream stream)
+        public static void Save(Raster<byte> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Width, raster.Height);
-            WriteGray8(raster, stream);
+            WriteGray8(raster.Width, raster.Height, raster.Values, stream);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void Save(RGBA8BitRaster raster, string path)
+        public static void Save(Raster<RGBA8BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void Save(RGBA8BitRaster raster, Stream stream)
+        public static void Save(Raster<RGBA8BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -75,7 +75,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Width, raster.Height);
-            WriteRgba8(raster, stream);
+            WriteRgba8(raster.Width, raster.Height, raster.Values, stream);
         }
 
         private static void ValidateRasterSize(int width, int height)
@@ -84,10 +84,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentException("Raster width and height must be positive.");
         }
 
-        private static void WriteGray8(Gray8BitRaster raster, Stream stream)
+        private static void WriteGray8(int width, int height, byte[] values, Stream stream)
         {
-            int width = raster.Width;
-            int height = raster.Height;
             int rowStride = GetAlignedRowStride(width);
             int pixelDataOffset = FileHeaderSize + InfoHeaderSize + GrayscalePaletteSize;
             int imageSize = checked(rowStride * height);
@@ -98,14 +96,12 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 WriteFileHeader(writer, fileSize, pixelDataOffset);
                 WriteInfoHeader(writer, width, height, 8, imageSize, 256);
                 WriteGrayscalePalette(writer);
-                WriteGray8Pixels(writer, raster.Values, width, height, rowStride);
+                WriteGray8Pixels(writer, values, width, height, rowStride);
             }
         }
 
-        private static void WriteRgba8(RGBA8BitRaster raster, Stream stream)
+        private static void WriteRgba8(int width, int height, RGBA8BitColor[] values, Stream stream)
         {
-            int width = raster.Width;
-            int height = raster.Height;
             int rowStride = GetAlignedRowStride(checked(width * 4));
             int pixelDataOffset = FileHeaderSize + InfoHeaderSize;
             int imageSize = checked(rowStride * height);
@@ -115,7 +111,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             {
                 WriteFileHeader(writer, fileSize, pixelDataOffset);
                 WriteInfoHeader(writer, width, height, 32, imageSize, 0);
-                WriteRgba8Pixels(writer, raster, width, height, rowStride);
+                WriteRgba8Pixels(writer, values, width, height, rowStride);
             }
         }
 
@@ -176,11 +172,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
             }
         }
 
-        private static void WriteRgba8Pixels(BinaryWriter writer, RGBA8BitRaster raster, int width, int height, int rowStride)
+        private static void WriteRgba8Pixels(BinaryWriter writer, RGBA8BitColor[] values, int width, int height, int rowStride)
         {
             int rowBytes = checked(width * 4);
             int padding = rowStride - rowBytes;
-            RGBA8BitColor[] values = raster.Values;
 
             for (int y = 0; y < height; y++)
             {

@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="culler">The culler used to select sources for each raster cell center.</param>
         /// <param name="sourcePositionToColor">The function that maps a selected source position to a 16-bit RGBA color.</param>
         /// <returns>A 16-bit RGBA raster showing the culling selection map.</returns>
-        public static RGBA16BitRaster RasterizeCullingMap<TPointSource>(
+        public static Raster<RGBA16BitColor> RasterizeCullingMap<TPointSource>(
             this IReadOnlyList<TPointSource> source,
             RasterGrid grid,
             IInfluenceSourceCuller<TPointSource> culler,
@@ -59,7 +59,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The influence field to rasterize.</param>
         /// <param name="grid">The raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit RGBA heat map raster produced from the influence field values.</returns>
-        public static RGBA16BitRaster RasterizeHeatMap(
+        public static Raster<RGBA16BitColor> RasterizeHeatMap(
             this FloatPointInfluenceField source,
             RasterGrid grid)
         {
@@ -76,7 +76,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// to a 16-bit RGBA color.
         /// </param>
         /// <returns>A 16-bit RGBA raster produced from the nearest Poisson disk point sample at each cell center.</returns>
-        public static RGBA16BitRaster Rasterize(
+        public static Raster<RGBA16BitColor> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> source,
             RasterGrid grid,
             Func<PoissonDiskPointSample, float, RGBA16BitColor> sampleDistanceToColor)
@@ -96,7 +96,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// to a 16-bit grayscale value.
         /// </param>
         /// <returns>A 16-bit grayscale raster produced from the nearest Poisson disk point sample at each cell center.</returns>
-        public static Gray16BitRaster Rasterize(
+        public static Raster<ushort> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> source,
             RasterGrid grid,
             Func<PoissonDiskPointSample, float, ushort> sampleDistanceToGrayLevel)

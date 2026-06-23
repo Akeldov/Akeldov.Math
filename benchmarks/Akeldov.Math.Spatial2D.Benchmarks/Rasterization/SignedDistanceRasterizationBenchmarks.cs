@@ -43,25 +43,25 @@ public class SignedDistanceRasterizationBenchmarks
     }
 
     [Benchmark]
-    public Gray8BitRaster RasterizeContourGray8()
+    public Raster<byte> RasterizeContourGray8()
     {
         return _contour.Rasterize(_grid, _contourGray8Rasterizer);
     }
 
     [Benchmark]
-    public Gray16BitRaster RasterizeContourGray16()
+    public Raster<ushort> RasterizeContourGray16()
     {
         return _contour.Rasterize(_grid, _contourGray16Rasterizer);
     }
 
     [Benchmark]
-    public Gray8BitRaster RasterizeRegionGray8()
+    public Raster<byte> RasterizeRegionGray8()
     {
         return _region.Rasterize(_grid, _regionGray8Rasterizer);
     }
 
     [Benchmark]
-    public Gray16BitRaster RasterizeRegionGray16()
+    public Raster<ushort> RasterizeRegionGray16()
     {
         return _region.Rasterize(_grid, _regionGray16Rasterizer);
     }

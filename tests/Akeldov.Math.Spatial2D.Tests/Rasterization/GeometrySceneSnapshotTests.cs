@@ -51,7 +51,7 @@ public class GeometrySceneSnapshotTests
 
         // Scene
         string actualPath = GetActualPath(SmileyApprovedFileName);
-        RGBA16BitRaster raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
+        var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
             .AddSignedPointDistanceBasedLayer(face, faceFill, edgeFalloff: 0.55f)
             .AddPointDistanceBasedLayer(face, faceBoundary, width: 1.45f, edgeFalloff: 0.45f)
             .AddPointDistanceBasedLayer(eyes, eyeColor, width: 2.4f, edgeFalloff: 0.45f)

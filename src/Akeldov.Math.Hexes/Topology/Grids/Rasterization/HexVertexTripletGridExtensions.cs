@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class HexVertexTripletGridExtensions
     {
-        public static RGBA16BitRaster ToRGBA16BitRaster(
+        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this IndexTripletGrid grid,
             Func<Triplet<VectorXYInt>, RGBA16BitColor> tripletToColor)
         {
@@ -28,10 +28,10 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new RGBA16BitRaster(rasterGrid, values);
+            return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
 
-        public static RGBA16BitRaster ToRGBA16BitRaster(
+        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this IndexPartialTripletGrid grid,
             Func<PartialTriplet<VectorXYInt>, RGBA16BitColor> tripletToColor)
         {
@@ -52,7 +52,7 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new RGBA16BitRaster(rasterGrid, values);
+            return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
     }
 }

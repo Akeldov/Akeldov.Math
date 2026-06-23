@@ -19,7 +19,7 @@ public class HexFieldTopologyRasterizationTests
             _ => new RGBA16BitColor(1, 2, 3, 4));
 
         RasterGrid grid = rasterizer.CreateGrid(topology, 3f);
-        RGBA16BitRaster raster = rasterizer.Rasterize(topology, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(topology, grid);
 
         Assert.That(raster.Width, Is.EqualTo(6));
         Assert.That(raster.Height, Is.EqualTo(7));
@@ -42,7 +42,7 @@ public class HexFieldTopologyRasterizationTests
             });
         RasterGrid grid = rasterizer.CreateGrid(topology, 4f);
 
-        RGBA16BitRaster raster = rasterizer.Rasterize(topology, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(topology, grid);
 
         Assert.That(mappedIndices, Is.EqualTo(new[]
         {
@@ -63,7 +63,7 @@ public class HexFieldTopologyRasterizationTests
             2f,
             _ => new RGBA16BitColor(1, 2, 3, 4));
 
-        RGBA16BitRaster raster = rasterizer.Rasterize(topology, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(topology, grid);
 
         Assert.That(raster.Grid, Is.EqualTo(grid));
         Assert.That(raster.Width, Is.EqualTo(4));

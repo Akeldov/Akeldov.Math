@@ -9,7 +9,7 @@ public class RGBA8BitRasterTests
     public void RGBA8BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
         var values = new RGBA8BitColor[6];
-        var raster = new RGBA8BitRaster(CreateGrid(), values);
+        var raster = new Raster<RGBA8BitColor>(CreateGrid(), values);
         var color = new RGBA8BitColor(1, 2, 3, 4);
 
         values[5] = color;
@@ -21,9 +21,9 @@ public class RGBA8BitRasterTests
     [Test]
     public void RGBA8BitRasterClone_WhenCloneBuffersChange_DoesNotChangeSource()
     {
-        var raster = new RGBA8BitRaster(CreateGrid(), new RGBA8BitColor[6]);
+        var raster = new Raster<RGBA8BitColor>(CreateGrid(), new RGBA8BitColor[6]);
 
-        RGBA8BitRaster clone = raster.Clone();
+        var clone = raster.Clone();
         var color = new RGBA8BitColor(1, 2, 3, 4);
 
         clone[1, 2] = color;
@@ -36,13 +36,13 @@ public class RGBA8BitRasterTests
     public void RGBA8BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
-            new RGBA8BitRaster(CreateGrid(), new RGBA8BitColor[5]));
+            new Raster<RGBA8BitColor>(CreateGrid(), new RGBA8BitColor[5]));
     }
 
     [Test]
     public void RGBA8BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
     {
-        var raster = new RGBA8BitRaster(CreateGrid(), new RGBA8BitColor[6]);
+        var raster = new Raster<RGBA8BitColor>(CreateGrid(), new RGBA8BitColor[6]);
         var color = new RGBA8BitColor(1, 2, 3, 4);
 
         raster[1, 2] = color;
@@ -53,7 +53,7 @@ public class RGBA8BitRasterTests
     [Test]
     public void SaveAsPng_WhenRasterIsRGBA8Bit_WritesPng8WithAlpha()
     {
-        RGBA8BitRaster raster = CreateRasterWithFirstPixel();
+        Raster<RGBA8BitColor> raster = CreateRasterWithFirstPixel();
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rgba8.png");
 
         raster.SaveAsPng(path);
@@ -70,7 +70,7 @@ public class RGBA8BitRasterTests
     [Test]
     public void SaveAsPng_WhenRGBA8BitStreamIsProvided_WritesPng8WithAlpha()
     {
-        RGBA8BitRaster raster = CreateRasterWithFirstPixel();
+        Raster<RGBA8BitColor> raster = CreateRasterWithFirstPixel();
         using var stream = new MemoryStream();
 
         raster.SaveAsPng(stream);
@@ -84,7 +84,7 @@ public class RGBA8BitRasterTests
     [Test]
     public void SaveAsBmp_WhenRasterIsRGBA8Bit_WritesBmp32WithBgraPixels()
     {
-        RGBA8BitRaster raster = CreateRasterWithFirstPixel();
+        Raster<RGBA8BitColor> raster = CreateRasterWithFirstPixel();
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rgba8.bmp");
 
         raster.SaveAsBmp(path);
@@ -108,7 +108,7 @@ public class RGBA8BitRasterTests
     [Test]
     public void SaveAsBmp_WhenRGBA8BitStreamIsProvided_WritesBmp32WithBgraPixels()
     {
-        RGBA8BitRaster raster = CreateRasterWithFirstPixel();
+        Raster<RGBA8BitColor> raster = CreateRasterWithFirstPixel();
         using var stream = new MemoryStream();
 
         raster.SaveAsBmp(stream);
@@ -125,12 +125,12 @@ public class RGBA8BitRasterTests
         Assert.That(bytes[pixelOffset + 3], Is.EqualTo(0x78));
     }
 
-    private static RGBA8BitRaster CreateRasterWithFirstPixel()
+    private static Raster<RGBA8BitColor> CreateRasterWithFirstPixel()
     {
         var values = new RGBA8BitColor[6];
         values[0] = new RGBA8BitColor(0x12, 0x34, 0x56, 0x78);
 
-        return new RGBA8BitRaster(CreateGrid(), values);
+        return new Raster<RGBA8BitColor>(CreateGrid(), values);
     }
 
     private static RasterGrid CreateGrid()

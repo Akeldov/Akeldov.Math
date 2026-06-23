@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(Gray8BitRaster raster, string path)
+        public static void Save(Raster<byte> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(Gray8BitRaster raster, Stream stream)
+        public static void Save(Raster<byte> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Width, raster.Height);
-            WriteGray8(raster, stream);
+            WriteGray8(raster.Width, raster.Height, raster.Values, stream);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(Gray16BitRaster raster, string path)
+        public static void Save(Raster<ushort> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(Gray16BitRaster raster, Stream stream)
+        public static void Save(Raster<ushort> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -75,7 +75,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Width, raster.Height);
-            WriteGray16(raster, stream);
+            WriteGray16(raster.Width, raster.Height, raster.Values, stream);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(RGBA8BitRaster raster, string path)
+        public static void Save(Raster<RGBA8BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -98,7 +98,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(RGBA8BitRaster raster, Stream stream)
+        public static void Save(Raster<RGBA8BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -107,7 +107,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Width, raster.Height);
-            WriteRgba8(raster, stream);
+            WriteRgba8(raster.Width, raster.Height, raster.Values, stream);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(RGBA16BitRaster raster, string path)
+        public static void Save(Raster<RGBA16BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -130,7 +130,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(RGBA16BitRaster raster, Stream stream)
+        public static void Save(Raster<RGBA16BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -139,7 +139,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Width, raster.Height);
-            WriteRgba16(raster, stream);
+            WriteRgba16(raster.Width, raster.Height, raster.Values, stream);
         }
 
         private static void ValidateRasterSize(int width, int height)
@@ -148,23 +148,20 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentException("Raster width and height must be positive.");
         }
 
-        private static void WriteGray8(Gray8BitRaster raster, Stream stream)
+        private static void WriteGray8(int width, int height, byte[] values, Stream stream)
         {
-            byte[] scanlines = CreateGray8Scanlines(raster);
+            byte[] scanlines = CreateGray8Scanlines(width, height, values);
 
             WriteBytes(stream, PngSignature);
-            WriteChunk(stream, "IHDR", CreateHeader(raster.Width, raster.Height, 8, 0));
+            WriteChunk(stream, "IHDR", CreateHeader(width, height, 8, 0));
             WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
-        private static byte[] CreateGray8Scanlines(Gray8BitRaster raster)
+        private static byte[] CreateGray8Scanlines(int width, int height, byte[] values)
         {
-            int width = raster.Width;
-            int height = raster.Height;
             int stride = checked(width + 1);
             var scanlines = new byte[checked(height * stride)];
-            byte[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
@@ -180,24 +177,21 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return scanlines;
         }
 
-        private static void WriteGray16(Gray16BitRaster raster, Stream stream)
+        private static void WriteGray16(int width, int height, ushort[] values, Stream stream)
         {
-            byte[] scanlines = CreateGray16Scanlines(raster);
+            byte[] scanlines = CreateGray16Scanlines(width, height, values);
 
             WriteBytes(stream, PngSignature);
-            WriteChunk(stream, "IHDR", CreateHeader(raster.Width, raster.Height, 16, 0));
+            WriteChunk(stream, "IHDR", CreateHeader(width, height, 16, 0));
             WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
-        private static byte[] CreateGray16Scanlines(Gray16BitRaster raster)
+        private static byte[] CreateGray16Scanlines(int width, int height, ushort[] values)
         {
-            int width = raster.Width;
-            int height = raster.Height;
             int rowLength = checked(width * 2);
             int stride = checked(rowLength + 1);
             var scanlines = new byte[checked(height * stride)];
-            ushort[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
@@ -217,24 +211,21 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return scanlines;
         }
 
-        private static void WriteRgba8(RGBA8BitRaster raster, Stream stream)
+        private static void WriteRgba8(int width, int height, RGBA8BitColor[] values, Stream stream)
         {
-            byte[] scanlines = CreateRgba8Scanlines(raster);
+            byte[] scanlines = CreateRgba8Scanlines(width, height, values);
 
             WriteBytes(stream, PngSignature);
-            WriteChunk(stream, "IHDR", CreateHeader(raster.Width, raster.Height, 8, 6));
+            WriteChunk(stream, "IHDR", CreateHeader(width, height, 8, 6));
             WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
-        private static byte[] CreateRgba8Scanlines(RGBA8BitRaster raster)
+        private static byte[] CreateRgba8Scanlines(int width, int height, RGBA8BitColor[] values)
         {
-            int width = raster.Width;
-            int height = raster.Height;
             int rowLength = checked(width * 4);
             int stride = checked(rowLength + 1);
             var scanlines = new byte[checked(height * stride)];
-            RGBA8BitColor[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
@@ -257,24 +248,21 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return scanlines;
         }
 
-        private static void WriteRgba16(RGBA16BitRaster raster, Stream stream)
+        private static void WriteRgba16(int width, int height, RGBA16BitColor[] values, Stream stream)
         {
-            byte[] scanlines = CreateRgba16Scanlines(raster);
+            byte[] scanlines = CreateRgba16Scanlines(width, height, values);
 
             WriteBytes(stream, PngSignature);
-            WriteChunk(stream, "IHDR", CreateHeader(raster.Width, raster.Height, 16, 6));
+            WriteChunk(stream, "IHDR", CreateHeader(width, height, 16, 6));
             WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
-        private static byte[] CreateRgba16Scanlines(RGBA16BitRaster raster)
+        private static byte[] CreateRgba16Scanlines(int width, int height, RGBA16BitColor[] values)
         {
-            int width = raster.Width;
-            int height = raster.Height;
             int rowLength = checked(width * 8);
             int stride = checked(rowLength + 1);
             var scanlines = new byte[checked(height * stride)];
-            RGBA16BitColor[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {

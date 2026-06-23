@@ -19,7 +19,7 @@ public class ChromaticIndexMapRasterizationTests
             _ => new RGBA16BitColor(1, 2, 3, 4));
 
         RasterGrid grid = rasterizer.CreateGrid(chromatization, 3f);
-        RGBA16BitRaster raster = rasterizer.Rasterize(chromatization, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);
 
         Assert.That(raster.Width, Is.EqualTo(6));
         Assert.That(raster.Height, Is.EqualTo(7));
@@ -42,7 +42,7 @@ public class ChromaticIndexMapRasterizationTests
             });
         RasterGrid grid = rasterizer.CreateGrid(chromatization, 4f);
 
-        RGBA16BitRaster raster = rasterizer.Rasterize(chromatization, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);
 
         Assert.That(mappedIndices, Is.EqualTo(new byte[] { 0, 1 }));
         Assert.That(raster.Values.Count(x => x == red), Is.GreaterThan(0));
@@ -59,7 +59,7 @@ public class ChromaticIndexMapRasterizationTests
             2f,
             _ => new RGBA16BitColor(1, 2, 3, 4));
 
-        RGBA16BitRaster raster = rasterizer.Rasterize(chromatization, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);
 
         Assert.That(raster.Grid, Is.EqualTo(grid));
         Assert.That(raster.Width, Is.EqualTo(4));

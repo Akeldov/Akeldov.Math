@@ -7,7 +7,7 @@ using System;
 namespace Akeldov.Math.Hexes.Rasterization
 {
     public sealed class HexFieldGeometryRGBA16BitRasterizer :
-        IRasterizer<HexCenterMap, RGBA16BitRaster>
+        IRasterizer<HexCenterMap, Raster<RGBA16BitColor>>
     {
         private readonly Func<PointXY, RGBA16BitColor> _centerToColor;
 
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             _centerToColor = centerToColor ?? throw new ArgumentNullException(nameof(centerToColor));
         }
 
-        public RGBA16BitRaster Rasterize(HexCenterMap source, RasterGrid grid)
+        public Raster<RGBA16BitColor> Rasterize(HexCenterMap source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 RasterizeHex(center, radius, normalizedVertexes, grid, values, color);
             }
 
-            return new RGBA16BitRaster(grid, values);
+            return new Raster<RGBA16BitColor>(grid, values);
         }
 
         public static RasterGrid CreateGrid(HexCenterMap source, float pixelsPerApothem)

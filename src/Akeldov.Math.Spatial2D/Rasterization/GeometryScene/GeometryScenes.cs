@@ -14,16 +14,16 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="scene">The geometry scene to rasterize.</param>
         /// <param name="grid">The raster grid that describes the sampled region.</param>
         /// <returns>A new 16-bit RGBA raster with a new mutable value buffer owned by the caller.</returns>
-        public static RGBA16BitRaster Rasterize(
+        public static Raster<RGBA16BitColor> Rasterize3(
             this GeometryScene<RGBA16BitColor> scene,
             RasterGrid grid)
         {
             if (scene == null)
                 throw new ArgumentNullException(nameof(scene));
 
-            var asd = scene.Rasterize2(grid);
+            var asd = scene.Rasterize(grid);
 
-            return new RGBA16BitRaster(grid, asd.Values);
+            return new Raster<RGBA16BitColor>(grid, asd.Values);
         }
     }
 }

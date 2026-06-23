@@ -65,7 +65,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return this;
         }
 
-        public Raster<TColor> Rasterize2(RasterGrid grid)
+        public Raster<TColor> Rasterize(RasterGrid grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");

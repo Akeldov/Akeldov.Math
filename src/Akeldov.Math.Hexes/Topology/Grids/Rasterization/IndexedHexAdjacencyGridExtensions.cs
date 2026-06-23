@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
 {
     public static class IndexedHexAdjacencyGridExtensions
     {
-        public static RGBA16BitRaster Rasterize(
+        public static Raster<RGBA16BitColor> Rasterize(
             this IndexSeptupletGrid indexedHexAdjacencyGrid,
             Func<Septuplet<VectorXYInt>, RGBA16BitColor> colorSelector)
         {
@@ -22,7 +22,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
             for (int i = 0; i < values.Length; i++)
                 values[i] = colorSelector(indexedHexAdjacencyGrid[i]);
 
-            return new RGBA16BitRaster(
+            return new Raster<RGBA16BitColor>(
                 new RasterGrid(
                     new PointXY(0f, 0f),
                     new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
@@ -30,7 +30,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
                 values);
         }
 
-        public static RGBA16BitRaster Rasterize(
+        public static Raster<RGBA16BitColor> Rasterize(
             this IndexPartialSeptupletGrid indexedHexAdjacencyGrid,
             Func<PartialSeptuplet<VectorXYInt>, RGBA16BitColor> colorSelector)
         {
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
             for (int i = 0; i < values.Length; i++)
                 values[i] = colorSelector(indexedHexAdjacencyGrid[i]);
 
-            return new RGBA16BitRaster(
+            return new Raster<RGBA16BitColor>(
                 new RasterGrid(
                     new PointXY(0f, 0f),
                     new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),

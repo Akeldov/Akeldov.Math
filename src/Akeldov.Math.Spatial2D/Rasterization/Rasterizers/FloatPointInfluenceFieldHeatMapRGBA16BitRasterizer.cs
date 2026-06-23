@@ -8,10 +8,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes floating-point influence fields into 16-bit RGBA rasters using a heat map color scale.
     /// </summary>
     public sealed class FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer :
-        IRasterizer<FloatPointInfluenceField, RGBA16BitRaster>
+        IRasterizer<FloatPointInfluenceField, Raster<RGBA16BitColor>>
     {
         /// <inheritdoc/>
-        public RGBA16BitRaster Rasterize(FloatPointInfluenceField source, RasterGrid grid)
+        public Raster<RGBA16BitColor> Rasterize(FloatPointInfluenceField source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new RGBA16BitRaster(grid, values);
+            return new Raster<RGBA16BitColor>(grid, values);
         }
 
         private static void ValidateRange(FloatPointInfluenceField source)

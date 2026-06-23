@@ -24,7 +24,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
             apothem: 8f,
             chromaticIndexToColor: ToSnapshotColor);
         RasterGrid grid = rasterizer.CreateGrid(chromatization, pixelsPerApothem: 8f);
-        RGBA16BitRaster raster = rasterizer.Rasterize(chromatization, grid);
+        Raster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -45,7 +45,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
         }
     }
 
-    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

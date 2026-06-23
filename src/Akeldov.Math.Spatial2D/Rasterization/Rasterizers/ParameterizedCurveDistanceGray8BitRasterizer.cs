@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes parameterized curves into 8-bit grayscale rasters using projection-to-curve mapping.
     /// </summary>
-    public sealed class ParameterizedCurveDistanceGray8BitRasterizer : IRasterizer<IParameterizedCurve, Gray8BitRaster>
+    public sealed class ParameterizedCurveDistanceGray8BitRasterizer : IRasterizer<IParameterizedCurve, Raster<byte>>
     {
         private readonly Func<float, float, byte> _projectionToGrayLevel;
 
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IParameterizedCurve source, RasterGrid grid)
+        public Raster<byte> Rasterize(IParameterizedCurve source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -47,7 +47,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new Gray8BitRaster(grid, values);
+            return new Raster<byte>(grid, values);
         }
 
         private static void ValidateGrid(RasterGrid grid)

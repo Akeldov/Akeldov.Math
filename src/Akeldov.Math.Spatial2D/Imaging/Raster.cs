@@ -3,7 +3,7 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
-    public sealed class Raster<TColor>
+    public class Raster<TColor>
     {
         public Raster(RasterGrid grid, TColor[] values)
         {

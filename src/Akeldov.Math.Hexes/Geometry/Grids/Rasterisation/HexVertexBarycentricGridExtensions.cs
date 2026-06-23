@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class HexVertexBarycentricGridExtensions
     {
-        public static RGBA16BitRaster ToRGBA16BitRaster(
+        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricTripletGrid grid,
             Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
@@ -28,10 +28,10 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new RGBA16BitRaster(rasterGrid, values);
+            return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
 
-        public static RGBA16BitRaster ToRGBA16BitRaster(
+        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
             Func<PartialTriplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
@@ -52,10 +52,10 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new RGBA16BitRaster(rasterGrid, values);
+            return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
 
-        public static RGBA16BitRaster ToRGBA16BitRaster(
+        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
             ChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
             Func<PartialTriplet<float>, PartialTriplet<byte>, RGBA16BitColor> barycentricCoordinatesToColor)
@@ -78,7 +78,7 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new RGBA16BitRaster(rasterGrid, values);
+            return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
     }
 }

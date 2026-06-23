@@ -20,7 +20,7 @@ public class PoissonDiskPointSampleSnapshotTests
         var field = new HorizontalGradientFloatField(min: 5f, max: 13f, width: FieldSize.X);
         List<PoissonDiskPointSample> samples = sampler.Sample(FieldSize, field);
 
-        RGBA16BitRaster raster = samples.Rasterize(SnapshotGrid, ToSnapshotColor);
+        Raster<RGBA16BitColor> raster = samples.Rasterize(SnapshotGrid, ToSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, "poisson-disk-samples-rgba16.png");
 
         Assert.That(samples, Has.Count.EqualTo(104));
@@ -34,7 +34,7 @@ public class PoissonDiskPointSampleSnapshotTests
         var field = new HorizontalGradientFloatField(min: 5f, max: 13f, width: FieldSize.X);
         List<PoissonDiskPointSample> samples = sampler.Sample(FieldSize, field);
 
-        Gray16BitRaster raster = samples.Rasterize(
+        Raster<ushort> raster = samples.Rasterize(
             SnapshotGrid,
             new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
                 pointRadius: 1.45f,
@@ -77,14 +77,14 @@ public class PoissonDiskPointSampleSnapshotTests
             from.Blue * inverseAmount + to.Blue * amount);
     }
 
-    private static byte[] SaveToPngBytes(Gray16BitRaster raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<ushort> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);
         return File.ReadAllBytes(actualPath);
     }
 
-    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

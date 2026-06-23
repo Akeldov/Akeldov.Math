@@ -8,7 +8,7 @@ using System;
 namespace Akeldov.Math.Hexes.Rasterization
 {
     public sealed class HexFieldTopologyRGBA16BitRasterizer :
-        IRasterizer<IndexSeptupletMap, RGBA16BitRaster>
+        IRasterizer<IndexSeptupletMap, Raster<RGBA16BitColor>>
     {
         private const float ApothemToRadius = 1.1547005f;
 
@@ -49,7 +49,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             _indexToColor = indexToColor ?? throw new ArgumentNullException(nameof(indexToColor));
         }
 
-        public RGBA16BitRaster Rasterize(IndexSeptupletMap source, RasterGrid grid)
+        public Raster<RGBA16BitColor> Rasterize(IndexSeptupletMap source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -71,7 +71,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 }
             }
 
-            return new RGBA16BitRaster(grid, values);
+            return new Raster<RGBA16BitColor>(grid, values);
         }
 
         public RasterGrid CreateGrid(IndexSeptupletMap source, float pixelsPerApothem)

@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes signed point-distance providers into 16-bit grayscale rasters using signed distance mapping.
     /// </summary>
-    public sealed class SignedPointDistanceProviderGray16BitRasterizer : IRasterizer<ISignedPointDistanceProvider, Gray16BitRaster>
+    public sealed class SignedPointDistanceProviderGray16BitRasterizer : IRasterizer<ISignedPointDistanceProvider, Raster<ushort>>
     {
         private readonly Func<float, ushort> _signedDistanceToGrayLevel;
 
@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Gray16BitRaster Rasterize(ISignedPointDistanceProvider source, RasterGrid grid)
+        public Raster<ushort> Rasterize(ISignedPointDistanceProvider source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new Gray16BitRaster(grid, values);
+            return new Raster<ushort>(grid, values);
         }
 
         private static void ValidateGrid(RasterGrid grid)

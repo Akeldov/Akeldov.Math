@@ -22,7 +22,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             layout: layout,
             hexOrigin: VectorXY.Zero,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexTripletSnapshotColor);
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -40,7 +40,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new IndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToIndexPartialTripletSnapshotColor);
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToIndexPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -60,7 +60,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             layout: layout,
             hexOrigin: VectorXY.Zero,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToBarycentricMainSnapshotColor);
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToBarycentricMainSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -78,7 +78,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new BarycentricPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToBarycentricPartialTripletSnapshotColor);
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToBarycentricPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -98,7 +98,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             layout: layout,
             hexOrigin: VectorXY.Zero,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToChromaticIndexTripletSnapshotColor);
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToChromaticIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -116,7 +116,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new ChromaticIndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(ToChromaticIndexPartialTripletSnapshotColor);
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToChromaticIndexPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -137,7 +137,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var chromaticGrid = new ChromaticIndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        RGBA16BitRaster raster = barycentricGrid.ToRGBA16BitRaster(
+        Raster<RGBA16BitColor> raster = barycentricGrid.ToRGBA16BitRaster(
             chromaticGrid,
             ToChromaticBarycentricPartialBlendSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
@@ -300,7 +300,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             : 0f;
     }
 
-    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

@@ -12,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void SaveAsBmp(this Gray8BitRaster raster, string path)
+        public static void SaveAsBmp(this Raster<byte> raster, string path)
         {
             BmpEncoder.Save(raster, path);
         }
@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void SaveAsBmp(this Gray8BitRaster raster, Stream stream)
+        public static void SaveAsBmp(this Raster<byte> raster, Stream stream)
         {
             BmpEncoder.Save(raster, stream);
         }
@@ -32,7 +32,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void SaveAsBmp(this RGBA8BitRaster raster, string path)
+        public static void SaveAsBmp(this Raster<RGBA8BitColor> raster, string path)
         {
             BmpEncoder.Save(raster, path);
         }
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void SaveAsBmp(this RGBA8BitRaster raster, Stream stream)
+        public static void SaveAsBmp(this Raster<RGBA8BitColor> raster, Stream stream)
         {
             BmpEncoder.Save(raster, stream);
         }

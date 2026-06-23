@@ -21,7 +21,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsBmp_WhenRasterHasZeroSize_Throws()
     {
-        var raster = new Gray8BitRaster(default, Array.Empty<byte>());
+        var raster = new Raster<byte>(default, Array.Empty<byte>());
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray8.bmp");
 
         if (File.Exists(path))
@@ -34,7 +34,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsPng_WhenRasterHasZeroSize_Throws()
     {
-        var raster = new Gray16BitRaster(default, Array.Empty<ushort>());
+        var raster = new Raster<ushort>(default, Array.Empty<ushort>());
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray16.png");
 
         if (File.Exists(path))

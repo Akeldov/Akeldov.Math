@@ -47,13 +47,13 @@ public class HexRasterizationBenchmarks
     }
 
     [Benchmark]
-    public RGBA16BitRaster RasterizeTopology()
+    public Raster<RGBA16BitColor> RasterizeTopology()
     {
         return _topologyRasterizer.Rasterize(_adjacencyMap, _topologyGrid);
     }
 
     [Benchmark]
-    public RGBA16BitRaster RasterizeAdjacencyGrid()
+    public Raster<RGBA16BitColor> RasterizeAdjacencyGrid()
     {
         return _adjacencyGrid.Rasterize(adjacency => ToAdjacencyIndexColor(adjacency.Main));
     }

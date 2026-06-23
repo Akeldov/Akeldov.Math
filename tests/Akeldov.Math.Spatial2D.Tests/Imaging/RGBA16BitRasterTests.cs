@@ -9,7 +9,7 @@ public class RGBA16BitRasterTests
     public void RGBA16BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
         var values = new RGBA16BitColor[6];
-        var raster = new RGBA16BitRaster(CreateGrid(), values);
+        var raster = new Raster<RGBA16BitColor>(CreateGrid(), values);
         var color = new RGBA16BitColor(1, 2, 3, 4);
 
         values[5] = color;
@@ -21,9 +21,9 @@ public class RGBA16BitRasterTests
     [Test]
     public void RGBA16BitRasterClone_WhenCloneBuffersChange_DoesNotChangeSource()
     {
-        var raster = new RGBA16BitRaster(CreateGrid(), new RGBA16BitColor[6]);
+        var raster = new Raster<RGBA16BitColor>(CreateGrid(), new RGBA16BitColor[6]);
 
-        RGBA16BitRaster clone = raster.Clone();
+        var clone = raster.Clone();
         var color = new RGBA16BitColor(1, 2, 3, 4);
 
         clone[1, 2] = color;
@@ -36,13 +36,13 @@ public class RGBA16BitRasterTests
     public void RGBA16BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
-            new RGBA16BitRaster(CreateGrid(), new RGBA16BitColor[5]));
+            new Raster<RGBA16BitColor>(CreateGrid(), new RGBA16BitColor[5]));
     }
 
     [Test]
     public void RGBA16BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
     {
-        var raster = new RGBA16BitRaster(CreateGrid(), new RGBA16BitColor[6]);
+        var raster = new Raster<RGBA16BitColor>(CreateGrid(), new RGBA16BitColor[6]);
         var color = new RGBA16BitColor(1, 2, 3, 4);
 
         raster[1, 2] = color;
@@ -55,7 +55,7 @@ public class RGBA16BitRasterTests
     {
         var values = new RGBA16BitColor[6];
         values[0] = new RGBA16BitColor(0x1234, 0x5678, 0x9abc, 0xdef0);
-        var raster = new RGBA16BitRaster(CreateGrid(), values);
+        var raster = new Raster<RGBA16BitColor>(CreateGrid(), values);
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rgba16.png");
 
         raster.SaveAsPng(path);
@@ -74,7 +74,7 @@ public class RGBA16BitRasterTests
     {
         var values = new RGBA16BitColor[6];
         values[0] = new RGBA16BitColor(0x1234, 0x5678, 0x9abc, 0xdef0);
-        var raster = new RGBA16BitRaster(CreateGrid(), values);
+        var raster = new Raster<RGBA16BitColor>(CreateGrid(), values);
         using var stream = new MemoryStream();
 
         raster.SaveAsPng(stream);

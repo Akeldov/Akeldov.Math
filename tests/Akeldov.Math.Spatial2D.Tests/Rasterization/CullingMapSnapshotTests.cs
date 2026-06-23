@@ -18,7 +18,7 @@ public class CullingMapSnapshotTests
         var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
         Dictionary<PointXY, RGBA16BitColor> sourceColors = CreateSourceColors(sources);
 
-        RGBA16BitRaster raster = sources.RasterizeCullingMap(
+        Raster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
             SnapshotGrid,
             culler,
             point => sourceColors[point]);
@@ -35,7 +35,7 @@ public class CullingMapSnapshotTests
         var culler = new HalfPlaneCuller<FloatPointInfluenceSource>(sources);
         Dictionary<PointXY, RGBA16BitColor> sourceColors = CreateSourceColors(sources);
 
-        RGBA16BitRaster raster = sources.RasterizeCullingMap(
+        Raster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
             SnapshotGrid,
             culler,
             point => sourceColors[point]);
@@ -72,7 +72,7 @@ public class CullingMapSnapshotTests
         return colors;
     }
 
-    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

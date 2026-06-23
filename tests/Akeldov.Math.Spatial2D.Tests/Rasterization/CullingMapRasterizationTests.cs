@@ -15,7 +15,7 @@ public class CullingMapRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        RGBA16BitRaster raster = sources.RasterizeCullingMap(
+        Raster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
             grid,
             new XBandCuller(sources),
             SourceColor);
@@ -34,7 +34,7 @@ public class CullingMapRasterizationTests
             size: new VectorXY(1f, 1f),
             resolution: new VectorXYInt(1, 1));
 
-        RGBA16BitRaster raster = sources.RasterizeCullingMap(
+        Raster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
             grid,
             new ThirdSourceCuller(sources),
             SourceColor);

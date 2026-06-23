@@ -13,7 +13,7 @@ public class GeometrySceneTests
         var background = new RGBA16BitColor(100, 200, 300, 400);
         GeometryScene<RGBA16BitColor> scene = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver);
 
-        RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
+        var raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(background));
         Assert.That(raster[1, 0], Is.EqualTo(background));
@@ -28,7 +28,7 @@ public class GeometrySceneTests
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
             .AddPointDistanceBasedLayer(segment, RGBA16BitColors.Red, width: 0.25f);
 
-        RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
+        var raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Red));
         Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColors.Red));
@@ -44,7 +44,7 @@ public class GeometrySceneTests
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
             .AddPointDistanceBasedLayer(point, distance => distance < 1f ? near : far);
 
-        RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
+        var raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(near));
         Assert.That(raster[1, 0], Is.EqualTo(far));
@@ -59,7 +59,7 @@ public class GeometrySceneTests
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
             .AddSignedPointDistanceBasedLayer(disk, signedDistance => signedDistance <= 0f ? inside : outside);
 
-        RGBA16BitRaster raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
+        var raster = scene.Rasterize(CreateGrid(width: 2, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(inside));
         Assert.That(raster[1, 0], Is.EqualTo(outside));

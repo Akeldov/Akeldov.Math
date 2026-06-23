@@ -20,7 +20,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
             new VectorXY(4f, 5f),
             new VectorXYInt(3, 2));
 
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(_ => new RGBA16BitColor(1, 2, 3, 4));
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(_ => new RGBA16BitColor(1, 2, 3, 4));
 
         Assert.That(raster.Grid, Is.EqualTo(new RasterGrid(
             new PointXY(-1f, -2f),
@@ -36,7 +36,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(
             triplet => triplet.Main.X == 0 ? red : blue);
 
         Assert.That(raster.Values, Is.EqualTo(new[]
@@ -55,7 +55,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
+        Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(
             triplet => triplet.Main == 0 ? red : blue);
 
         Assert.That(raster.Values, Is.EqualTo(new[] { red }));

@@ -22,7 +22,7 @@ public class HexCenterMapRasterizationSnapshotTests
             apothem: 8f,
             layout: layout);
         RasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, pixelsPerApothem: 8f);
-        RGBA16BitRaster raster = new HexFieldGeometryRGBA16BitRasterizer(ToSnapshotColor)
+        Raster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(ToSnapshotColor)
             .Rasterize(geometry, grid);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -48,7 +48,7 @@ public class HexCenterMapRasterizationSnapshotTests
         return (ushort)MathF.Round(value * ushort.MaxValue);
     }
 
-    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

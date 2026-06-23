@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes point-distance provider collections into 8-bit grayscale rasters using nearest unsigned distance mapping.
     /// </summary>
     public sealed class PointDistanceProviderCollectionGray8BitRasterizer :
-        IRasterizer<IReadOnlyList<IPointDistanceProvider>, Gray8BitRaster>
+        IRasterizer<IReadOnlyList<IPointDistanceProvider>, Raster<byte>>
     {
         private readonly Func<float, byte> _distanceToGrayLevel;
 
@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IReadOnlyList<IPointDistanceProvider> source, RasterGrid grid)
+        public Raster<byte> Rasterize(IReadOnlyList<IPointDistanceProvider> source, RasterGrid grid)
         {
             ValidateSource(source);
             ValidateGrid(grid);
@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new Gray8BitRaster(grid, values);
+            return new Raster<byte>(grid, values);
         }
 
         private static float GetNearestDistance(IReadOnlyList<IPointDistanceProvider> sources, PointXY point)

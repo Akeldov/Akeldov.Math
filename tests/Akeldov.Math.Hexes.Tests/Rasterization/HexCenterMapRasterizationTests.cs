@@ -15,7 +15,7 @@ public class HexCenterMapRasterizationTests
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
 
         RasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 3f);
-        RGBA16BitRaster raster = new HexFieldGeometryRGBA16BitRasterizer(
+        Raster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(
                 _ => new RGBA16BitColor(1, 2, 3, 4))
             .Rasterize(geometry, grid);
 
@@ -32,7 +32,7 @@ public class HexCenterMapRasterizationTests
         var mappedCenters = new List<PointXY>();
 
         RasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 4f);
-        RGBA16BitRaster raster = new HexFieldGeometryRGBA16BitRasterizer(
+        Raster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(
                 center =>
             {
                 mappedCenters.Add(center);
@@ -71,7 +71,7 @@ public class HexCenterMapRasterizationTests
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
         var grid = new RasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
 
-        RGBA16BitRaster raster = new HexFieldGeometryRGBA16BitRasterizer(
+        Raster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(
                 _ => new RGBA16BitColor(1, 2, 3, 4))
             .Rasterize(geometry, grid);
 
