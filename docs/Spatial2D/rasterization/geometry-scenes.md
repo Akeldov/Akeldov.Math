@@ -4,7 +4,7 @@
 color buffer. For 16-bit RGBA output, use `GeometryScene<RGBA16BitColor>`.
 
 Layers are sampled in insertion order and composited with each layer's blend function.
-Layers created through scene helper methods use the scene's default blend function.
+Layers created through scene extension methods use the scene's default blend function.
 Use unsigned distance layers for points and open curves, and signed distance layers for
 contours and regions.
 

@@ -65,6 +65,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         public IReadOnlyList<IGeometrySceneLayer<TColor>> Layers => _readOnlyLayers;
 
+        internal Func<TColor, TColor, TColor> DefaultLayerBlend => _defaultLayerBlend;
+
+        internal Func<TColor, float, TColor> ApplyCoverage => _applyCoverage;
+
         /// <summary>
         /// Adds a custom geometry scene layer.
         /// </summary>
@@ -77,180 +81,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             _layers.Add(layer);
             return this;
-        }
-
-        /// <summary>
-        /// Adds an unsigned point-distance layer.
-        /// </summary>
-        /// <param name="source">The distance provider to sample.</param>
-        /// <param name="distanceToColor">The function that maps unsigned distance in world coordinate units to a color.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Distance(
-            IPointDistanceProvider source,
-            Func<float, TColor> distanceToColor)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (distanceToColor == null)
-                throw new ArgumentNullException(nameof(distanceToColor));
-
-            return AddLayer(new DistanceGeometrySceneLayer<TColor>(source, distanceToColor, _defaultLayerBlend));
-        }
-
-        /// <summary>
-        /// Adds a signed point-distance layer.
-        /// </summary>
-        /// <param name="source">The signed distance provider to sample.</param>
-        /// <param name="signedDistanceToColor">The function that maps signed distance in world coordinate units to a color.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> SignedDistance(
-            ISignedPointDistanceProvider source,
-            Func<float, TColor> signedDistanceToColor)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (signedDistanceToColor == null)
-                throw new ArgumentNullException(nameof(signedDistanceToColor));
-
-            return AddLayer(new SignedDistanceGeometrySceneLayer<TColor>(source, signedDistanceToColor, _defaultLayerBlend));
-        }
-
-        /// <summary>
-        /// Adds a hard-edged stroke around an unsigned point-distance provider.
-        /// </summary>
-        /// <param name="source">The distance provider to stroke.</param>
-        /// <param name="color">The stroke color.</param>
-        /// <param name="width">The positive stroke width in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Stroke(IPointDistanceProvider source, TColor color, float width)
-        {
-            return Stroke(source, color, width, 0f);
-        }
-
-        /// <summary>
-        /// Adds a stroke around an unsigned point-distance provider.
-        /// </summary>
-        /// <param name="source">The distance provider to stroke.</param>
-        /// <param name="color">The stroke color.</param>
-        /// <param name="width">The positive stroke width in world coordinate units.</param>
-        /// <param name="edgeFalloff">The non-negative alpha falloff outside the stroke, in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Stroke(
-            IPointDistanceProvider source,
-            TColor color,
-            float width,
-            float edgeFalloff)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            GeometrySceneValidation.ValidatePositiveFinite(width, nameof(width), "Stroke width must be finite and positive.");
-            GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Stroke edge falloff must be finite and non-negative.");
-
-            return AddLayer(new StrokeGeometrySceneLayer<TColor>(source, color, width, edgeFalloff, _applyCoverage, _defaultLayerBlend));
-        }
-
-        /// <summary>
-        /// Adds a hard-edged filled signed-distance provider layer.
-        /// </summary>
-        /// <param name="source">The signed distance provider to fill.</param>
-        /// <param name="color">The fill color.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Fill(ISignedPointDistanceProvider source, TColor color)
-        {
-            return Fill(source, color, 0f);
-        }
-
-        /// <summary>
-        /// Adds a filled signed-distance provider layer.
-        /// </summary>
-        /// <param name="source">The signed distance provider to fill.</param>
-        /// <param name="color">The fill color.</param>
-        /// <param name="edgeFalloff">The non-negative alpha falloff outside the filled boundary, in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Fill(ISignedPointDistanceProvider source, TColor color, float edgeFalloff)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Fill edge falloff must be finite and non-negative.");
-
-            return AddLayer(new FillGeometrySceneLayer<TColor>(source, color, edgeFalloff, _applyCoverage, _defaultLayerBlend));
-        }
-
-        /// <summary>
-        /// Adds a hard-edged point marker layer.
-        /// </summary>
-        /// <param name="point">The finite point marker center.</param>
-        /// <param name="color">The marker color.</param>
-        /// <param name="radius">The positive marker radius in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Point(PointXY point, TColor color, float radius)
-        {
-            return Point(point, color, radius, 0f);
-        }
-
-        /// <summary>
-        /// Adds a point marker layer.
-        /// </summary>
-        /// <param name="point">The finite point marker center.</param>
-        /// <param name="color">The marker color.</param>
-        /// <param name="radius">The positive marker radius in world coordinate units.</param>
-        /// <param name="edgeFalloff">The non-negative alpha falloff outside the marker, in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Point(PointXY point, TColor color, float radius, float edgeFalloff)
-        {
-            PointXYValidation.ThrowIfNotFinite(
-                point,
-                nameof(point),
-                "Point marker coordinates must be finite.");
-
-            GeometrySceneValidation.ValidatePositiveFinite(radius, nameof(radius), "Point marker radius must be finite and positive.");
-            GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
-
-            return AddLayer(new PointMarkerCollectionGeometrySceneLayer<TColor>(
-                new[] { point },
-                color,
-                radius,
-                edgeFalloff,
-                _applyCoverage,
-                _defaultLayerBlend));
-        }
-
-        /// <summary>
-        /// Adds a hard-edged point marker layer for a copied set of finite points.
-        /// </summary>
-        /// <param name="points">The finite point marker centers. The list is validated and copied when the layer is added.</param>
-        /// <param name="color">The marker color.</param>
-        /// <param name="radius">The positive marker radius in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Point(IReadOnlyList<PointXY> points, TColor color, float radius)
-        {
-            return Point(points, color, radius, 0f);
-        }
-
-        /// <summary>
-        /// Adds a point marker layer for a copied set of finite points.
-        /// </summary>
-        /// <param name="points">The finite point marker centers. The list is validated and copied when the layer is added.</param>
-        /// <param name="color">The marker color.</param>
-        /// <param name="radius">The positive marker radius in world coordinate units.</param>
-        /// <param name="edgeFalloff">The non-negative alpha falloff outside each marker, in world coordinate units.</param>
-        /// <returns>This scene.</returns>
-        public GeometryScene<TColor> Point(
-            IReadOnlyList<PointXY> points,
-            TColor color,
-            float radius,
-            float edgeFalloff)
-        {
-            PointXY[] pointCopy = CopyPointMarkers(points, nameof(points));
-
-            GeometrySceneValidation.ValidatePositiveFinite(radius, nameof(radius), "Point marker radius must be finite and positive.");
-            GeometrySceneValidation.ValidateNonNegativeFinite(edgeFalloff, nameof(edgeFalloff), "Point marker edge falloff must be finite and non-negative.");
-
-            return AddLayer(new PointMarkerCollectionGeometrySceneLayer<TColor>(pointCopy, color, radius, edgeFalloff, _applyCoverage, _defaultLayerBlend));
         }
 
         /// <summary>
@@ -305,28 +135,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentNullException(nameof(createRaster));
 
             return createRaster(grid, RasterizeValues(grid));
-        }
-
-        private static PointXY[] CopyPointMarkers(IReadOnlyList<PointXY> points, string parameterName)
-        {
-            if (points == null)
-                throw new ArgumentNullException(parameterName);
-
-            if (points.Count == 0)
-                throw new ArgumentException("Point marker collection must not be empty.", parameterName);
-
-            var copy = new PointXY[points.Count];
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                PointXY point = points[i];
-                if (!PointXYValidation.IsFinite(point))
-                    throw new ArgumentException("Point marker coordinates must be finite.", parameterName);
-
-                copy[i] = point;
-            }
-
-            return copy;
         }
     }
 }
