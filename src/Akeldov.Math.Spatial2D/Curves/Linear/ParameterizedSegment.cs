@@ -307,7 +307,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must lie within the segment length.");
 
             VectorXY segmentVector = EndPoint - StartPoint;
-            if (length <= GeometryConstants.GeometryEpsilon)
+            if (length == 0f)
                 return StartPoint;
 
             return StartPoint + (curveCoordinate / length) * segmentVector;
@@ -329,7 +329,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             VectorXY startToPoint = point - StartPoint;
 
             float segmentLengthSquared = segmentVector.SquaredLength;
-            if (segmentLengthSquared <= GeometryConstants.GeometryEpsilonSquared)
+            if (segmentLengthSquared == 0f)
                 return new ParameterizedCurveProjection(StartPoint, 0f, point.Distance(StartPoint));
 
             float normalizedParameter = VectorXY.Dot(startToPoint, segmentVector) / segmentLengthSquared;

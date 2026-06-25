@@ -292,7 +292,21 @@ public class SegmentTests
     }
 
     [Test]
-    public void ProjectWithParameter_WhenEndpointsAlmostCoincide_TreatsSegmentAsPoint()
+    public void GetPoint_WhenSegmentIsShorterThanGeometryEpsilon_InterpolatesAlongSegment()
+    {
+        float tiny = GeometryConstants.GeometryEpsilon * 0.5f;
+        var segment = new ParameterizedSegment(
+            new PointXY(0f, 0f),
+            new PointXY(tiny, tiny));
+
+        PointXY point = segment.GetPoint(segment.Length);
+
+        Assert.That(point.X, Is.EqualTo(tiny).Within(tiny * 0.01f));
+        Assert.That(point.Y, Is.EqualTo(tiny).Within(tiny * 0.01f));
+    }
+
+    [Test]
+    public void ProjectWithParameter_WhenEndpointsAlmostCoincide_ProjectsOntoShortSegment()
     {
         float tiny = GeometryConstants.GeometryEpsilon * 0.5f;
         var segment = new ParameterizedSegment(
@@ -301,9 +315,12 @@ public class SegmentTests
 
         var projection = segment.ProjectWithParameter(new PointXY(1f, 1f));
 
-        AssertVector(projection.ProjectedPoint, 0f, 0f);
-        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
-        Assert.That(projection.Distance, Is.EqualTo(MathF.Sqrt(2f)).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.ProjectedPoint.X, Is.EqualTo(tiny).Within(tiny * 0.01f));
+        Assert.That(projection.ProjectedPoint.Y, Is.EqualTo(tiny).Within(tiny * 0.01f));
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(segment.Length).Within(tiny * 0.01f));
+        Assert.That(
+            projection.Distance,
+            Is.EqualTo(new PointXY(1f, 1f).Distance(segment.EndPoint)).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
