@@ -3,8 +3,19 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
+    /// <summary>
+    /// Stores a rectangular raster of color values sampled on a <see cref="RasterGrid"/>.
+    /// </summary>
+    /// <typeparam name="TColor">The color value type stored in each raster cell.</typeparam>
     public class Raster<TColor>
     {
+        /// <summary>
+        /// Initializes a new raster with the specified grid and color values.
+        /// </summary>
+        /// <param name="grid">The raster sampling grid.</param>
+        /// <param name="values">
+        /// The cell values in row-major order. The array is retained as raster state and must contain one value per grid cell.
+        /// </param>
         public Raster(RasterGrid grid, TColor[] values)
         {
             if (values == null)
@@ -19,20 +30,42 @@ namespace Akeldov.Math.Spatial2D.Imaging
             Values = values;
         }
 
+        /// <summary>
+        /// Gets the raster sampling grid.
+        /// </summary>
         public RasterGrid Grid { get; }
 
+        /// <summary>
+        /// Gets the retained row-major raster value array.
+        /// </summary>
         public TColor[] Values { get; }
 
+        /// <summary>
+        /// Gets the raster width in cells.
+        /// </summary>
         public int Width => Grid.Resolution.X;
 
+        /// <summary>
+        /// Gets the raster height in cells.
+        /// </summary>
         public int Height => Grid.Resolution.Y;
 
+        /// <summary>
+        /// Gets or sets the value at the specified raster cell.
+        /// </summary>
+        /// <param name="x">The zero-based X cell index.</param>
+        /// <param name="y">The zero-based Y cell index.</param>
+        /// <returns>The value stored at the specified cell.</returns>
         public TColor this[int x, int y]
         {
             get => Values[GetLinearIndex(x, y)];
             set => Values[GetLinearIndex(x, y)] = value;
         }
 
+        /// <summary>
+        /// Creates a raster with the same grid and a copied value array.
+        /// </summary>
+        /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
         public Raster<TColor> Clone()
         {
             return new Raster<TColor>(Grid, (TColor[])Values.Clone());

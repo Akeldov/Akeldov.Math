@@ -120,8 +120,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
         }
 
         /// <summary>
-        /// Returns a color with the same RGB channels and alpha multiplied by <paramref name="factor"/>.
+        /// Returns a color with the same RGB channels and alpha multiplied by <paramref name="coverage"/>.
         /// </summary>
+        /// <param name="coverage">The alpha coverage multiplier.</param>
+        /// <returns>A color with scaled alpha.</returns>
         public RGBA16BitColor ScaleAlpha(float coverage)
         {
             if (coverage <= 0f || Alpha == 0)
@@ -147,6 +149,12 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 newAlpha);
         }
 
+        /// <summary>
+        /// Composites a foreground 16-bit RGBA color over a background color.
+        /// </summary>
+        /// <param name="background">The background color.</param>
+        /// <param name="foreground">The foreground color.</param>
+        /// <returns>The alpha-composited color.</returns>
         public static RGBA16BitColor AlphaOver(RGBA16BitColor background, RGBA16BitColor foreground)
         {
             float foregroundAlpha = foreground.Alpha / (float)ushort.MaxValue;

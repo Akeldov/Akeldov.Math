@@ -11,6 +11,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// Adds a signed point-distance layer.
         /// </summary>
         /// <typeparam name="TColor">The scene color value type.</typeparam>
+        /// <typeparam name="TSource">The signed distance provider type.</typeparam>
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="source">The signed distance provider to sample.</param>
         /// <param name="signedDistanceToColor">The function that maps signed distance in world coordinate units to a color.</param>
@@ -38,7 +39,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Adds a hard-edged filled signed-distance provider layer.
         /// </summary>
-        /// <typeparam name="TColor">The scene color value type.</typeparam>
+        /// <typeparam name="TSource">The signed distance provider type.</typeparam>
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="source">The signed distance provider to fill.</param>
         /// <param name="color">The fill color.</param>
@@ -65,6 +66,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Adds a filled signed-distance provider layer.
         /// </summary>
+        /// <typeparam name="TSource">The signed distance provider type.</typeparam>
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="source">The signed distance provider to fill.</param>
         /// <param name="color">The fill color.</param>

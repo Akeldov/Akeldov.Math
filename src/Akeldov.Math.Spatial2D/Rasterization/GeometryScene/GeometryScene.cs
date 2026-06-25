@@ -47,6 +47,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             _layerPasses = new List<LayerPass<TColor>>();
         }
 
+        /// <summary>
+        /// Adds a layer using the scene's default blend function.
+        /// </summary>
+        /// <param name="layer">The layer to add.</param>
+        /// <returns>This scene.</returns>
         public GeometryScene<TColor> AddLayer(IGeometrySceneLayer<TColor> layer)
         {
             if (layer == null)
@@ -56,6 +61,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return this;
         }
 
+        /// <summary>
+        /// Adds a layer using the specified blend function.
+        /// </summary>
+        /// <param name="layer">The layer to add.</param>
+        /// <param name="blend">The function that composites the current scene color with the layer color.</param>
+        /// <returns>This scene.</returns>
         public GeometryScene<TColor> AddLayer(IGeometrySceneLayer<TColor> layer, Func<TColor, TColor, TColor> blend)
         {
             if (layer == null)
@@ -65,6 +76,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return this;
         }
 
+        /// <summary>
+        /// Samples all scene layers into a raster on the specified grid.
+        /// </summary>
+        /// <param name="grid">The grid that defines raster bounds, resolution, and cell centers.</param>
+        /// <returns>A raster whose value array is new, mutable, and owned by the caller.</returns>
         public Raster<TColor> Rasterize(RasterGrid grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)

@@ -4,12 +4,16 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
+    /// <summary>
+    /// Provides helpers for adding distance-based layers to geometry scenes.
+    /// </summary>
     public static partial class GeometrySceneLayerExtensions
     {
         /// <summary>
         /// Adds an unsigned point-distance layer.
         /// </summary>
         /// <typeparam name="TColor">The scene color value type.</typeparam>
+        /// <typeparam name="TSource">The distance provider type.</typeparam>
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="source">The distance provider to sample.</param>
         /// <param name="distanceToColor">The function that maps unsigned distance in world coordinate units to a color.</param>
@@ -34,6 +38,15 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 distanceToColor));
         }
 
+        /// <summary>
+        /// Adds a hard-edged unsigned point-distance layer.
+        /// </summary>
+        /// <typeparam name="TSource">The distance provider type.</typeparam>
+        /// <param name="scene">The scene to add the layer to.</param>
+        /// <param name="source">The distance provider to sample.</param>
+        /// <param name="color">The color used within <paramref name="width"/> world coordinate units of the source.</param>
+        /// <param name="width">The distance threshold in world coordinate units.</param>
+        /// <returns><paramref name="scene"/>.</returns>
         public static GeometryScene<RGBA16BitColor> AddPointDistanceBasedLayer<TSource>(
             this GeometryScene<RGBA16BitColor> scene,
             TSource source,
@@ -52,6 +65,16 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 d => d <= width ? color : color.ScaleAlpha(0f)));
         }
 
+        /// <summary>
+        /// Adds an unsigned point-distance layer with an alpha falloff outside the distance threshold.
+        /// </summary>
+        /// <typeparam name="TSource">The distance provider type.</typeparam>
+        /// <param name="scene">The scene to add the layer to.</param>
+        /// <param name="source">The distance provider to sample.</param>
+        /// <param name="color">The color used within <paramref name="width"/> world coordinate units of the source.</param>
+        /// <param name="width">The distance threshold in world coordinate units.</param>
+        /// <param name="edgeFalloff">The alpha falloff distance in world coordinate units.</param>
+        /// <returns><paramref name="scene"/>.</returns>
         public static GeometryScene<RGBA16BitColor> AddPointDistanceBasedLayer<TSource>(
             this GeometryScene<RGBA16BitColor> scene,
             TSource source,
@@ -71,6 +94,16 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 d => d <= width ? color : color.ScaleAlpha(1f - MathF.Min(d, edgeFalloff) / edgeFalloff)));
         }
 
+        /// <summary>
+        /// Adds an unsigned point-distance layer for a structural source list with an alpha falloff outside the distance threshold.
+        /// </summary>
+        /// <typeparam name="TSource">The distance provider type.</typeparam>
+        /// <param name="scene">The scene to add the layer to.</param>
+        /// <param name="sources">The distance providers to sample. The list is retained as layer state.</param>
+        /// <param name="color">The color used within <paramref name="width"/> world coordinate units of the nearest source.</param>
+        /// <param name="width">The distance threshold in world coordinate units.</param>
+        /// <param name="edgeFalloff">The alpha falloff distance in world coordinate units.</param>
+        /// <returns><paramref name="scene"/>.</returns>
         public static GeometryScene<RGBA16BitColor> AddPointDistanceBasedLayer<TSource>(
             this GeometryScene<RGBA16BitColor> scene,
             IReadOnlyList<TSource> sources,
