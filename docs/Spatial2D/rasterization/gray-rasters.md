@@ -1,6 +1,6 @@
 # Gray Rasters
 
-`Gray8BitRaster` and `Gray16BitRaster` store grayscale samples.
+`Raster<byte>` and `Raster<ushort>` store grayscale samples.
 
 Use 8-bit rasters for masks and lightweight previews.
 Use 16-bit rasters when signed-distance or smooth field output needs more precision.
@@ -16,6 +16,6 @@ var grid = new RasterGrid(
     resolution: new VectorXYInt(64, 64));
 
 var values = new byte[grid.Resolution.X * grid.Resolution.Y];
-var raster = new Gray8BitRaster(grid, values);
+var raster = new Raster<byte>(grid, values);
 raster.SaveAsBmp("preview.bmp");
 ```

@@ -37,7 +37,7 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
         return (byte)MathF.Round(normalized * byte.MaxValue);
     });
 
-Gray8BitRaster raster = path.Rasterize(grid, rasterizer);
+Raster<byte> raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-line-growing-thickness.png");
 ```
 

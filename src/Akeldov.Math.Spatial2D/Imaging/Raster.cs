@@ -24,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int expectedCount = checked(grid.Resolution.X * grid.Resolution.Y);
 
             if (values.Length != expectedCount)
-                throw new ArgumentException("Grayscale raster value count must match the raster grid resolution.", nameof(values));
+                throw new ArgumentException("Raster value count must match the raster grid resolution.", nameof(values));
 
             Grid = grid;
             Values = values;

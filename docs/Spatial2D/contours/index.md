@@ -11,7 +11,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var contour = new Contour(new IFinitePath[]
+var contour = new CompositeContour(new IFinitePath[]
 {
     new ParameterizedArc(
         center: new PointXY(0f, 0f),

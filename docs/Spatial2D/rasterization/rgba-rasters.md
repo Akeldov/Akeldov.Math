@@ -1,6 +1,6 @@
 # RGBA Rasters
 
-`RGBA8BitRaster` and `RGBA16BitRaster` store color samples with alpha.
+`Raster<RGBA8BitColor>` and `Raster<RGBA16BitColor>` store color samples with alpha.
 
 Use RGBA rasters for heatmaps, culling maps, and visual diagnostics where a single grayscale channel is not enough.
 
@@ -22,7 +22,7 @@ var darkerColor = RGBA8BitColor.Blend(
 var values = new RGBA8BitColor[grid.Resolution.X * grid.Resolution.Y];
 values[0] = darkerColor;
 
-var raster = new RGBA8BitRaster(grid, values);
+var raster = new Raster<RGBA8BitColor>(grid, values);
 ```
 
 `RGBA8BitColor` and `RGBA16BitColor` both provide `FromNormalized` for channel values in the 0 to 1 range and `Blend` for linear color interpolation.

@@ -25,5 +25,5 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
         return (byte)MathF.Round(normalized * byte.MaxValue);
     });
 
-Gray8BitRaster raster = curve.Rasterize(grid, rasterizer);
+Raster<byte> raster = curve.Rasterize(grid, rasterizer);
 ```

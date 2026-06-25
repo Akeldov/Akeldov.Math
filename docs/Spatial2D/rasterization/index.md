@@ -32,12 +32,12 @@ var grid = new RasterGrid(
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));
 
-var mask = new Gray8BitRaster(
+var mask = new Raster<byte>(
     grid,
     new byte[grid.Resolution.X * grid.Resolution.Y]);
 mask.SaveAsBmp("mask.bmp");
 
-var distance = new Gray16BitRaster(
+var distance = new Raster<ushort>(
     grid,
     new ushort[grid.Resolution.X * grid.Resolution.Y]);
 distance.SaveAsPng("distance.png");

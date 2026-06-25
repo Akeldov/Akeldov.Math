@@ -17,9 +17,9 @@ var region = new ContourBasedRegion(new IContour[]
 bool insideOuterArea = region.Contains(new PointXY(0.5f, 0.5f));
 bool insideHole = region.Contains(new PointXY(2f, 2f));
 
-static Contour CreateSquareContour(float left, float bottom, float right, float top)
+static IContour CreateSquareContour(float left, float bottom, float right, float top)
 {
-    return new Contour(new IFinitePath[]
+    return new CompositeContour(new IFinitePath[]
     {
         new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
         new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),

@@ -26,14 +26,14 @@ var grid = new RasterGrid(
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
 
-var rasterizer = new CurveDistanceGray8BitRasterizer(distance =>
+var rasterizer = new PointDistanceProviderGray8BitRasterizer(distance =>
 {
     const float falloffDistance = 0.25f;
     float normalized = 1f - Math.Clamp(distance / falloffDistance, 0f, 1f);
     return (byte)MathF.Round(normalized * byte.MaxValue);
 });
 
-Gray8BitRaster raster = arc.Rasterize(grid, rasterizer);
+Raster<byte> raster = arc.Rasterize(grid, rasterizer);
 raster.SaveAsPng("arc-distance.png");
 ```
 

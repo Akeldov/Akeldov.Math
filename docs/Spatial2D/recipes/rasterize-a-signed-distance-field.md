@@ -19,18 +19,18 @@ var grid = new RasterGrid(
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(160, 160));
 
-var rasterizer = new RegionSignedDistanceGray16BitRasterizer(distance =>
+var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(distance =>
 {
     float normalized = System.Math.Clamp((distance + 1f) / 2f, 0f, 1f);
     return (ushort)(normalized * ushort.MaxValue);
 });
 
-Gray16BitRaster raster = region.Rasterize(grid, rasterizer);
+Raster<ushort> raster = region.Rasterize(grid, rasterizer);
 raster.SaveAsPng("signed-distance.png");
 
-static Contour CreateSquareContour(float left, float bottom, float right, float top)
+static IContour CreateSquareContour(float left, float bottom, float right, float top)
 {
-    return new Contour(new IFinitePath[]
+    return new CompositeContour(new IFinitePath[]
     {
         new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
         new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),

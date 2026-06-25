@@ -23,6 +23,6 @@ var grid = new RasterGrid(
     new VectorXYInt(160, 96));
 
 var rasterizer = new FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer();
-RGBA16BitRaster raster = field.Rasterize(grid, rasterizer);
+Raster<RGBA16BitColor> raster = field.Rasterize(grid, rasterizer);
 raster.SaveAsPng("influence-heatmap.png");
 ```

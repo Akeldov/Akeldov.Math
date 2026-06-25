@@ -32,10 +32,11 @@ RGBA16BitColor fill = RGBA16BitColor.FromNormalized(0.1f, 0.35f, 0.95f, 0.25f);
 RGBA16BitColor stroke = RGBA16BitColor.FromNormalized(0.95f, 0.1f, 0.15f, 1f);
 RGBA16BitColor marker = RGBA16BitColor.FromNormalized(0.02f, 0.02f, 0.02f, 1f);
 
-RGBA16BitRaster raster = GeometryScenes.CreateRGBA16Bit()
-    .Fill(region, fill, edgeFalloff: 0.5f)
-    .Stroke(segment, stroke, width: 1.5f, edgeFalloff: 0.5f)
-    .Point(points, marker, radius: 2f, edgeFalloff: 0.5f)
+var background = RGBA16BitColor.FromNormalized(1f, 1f, 1f, 1f);
+Raster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
+    .AddSignedPointDistanceBasedLayer(region, fill, edgeFalloff: 0.5f)
+    .AddPointDistanceBasedLayer(segment, stroke, fillDistance: 1.5f, edgeFalloff: 0.5f)
+    .AddPointDistanceBasedLayer(points, marker, fillDistance: 2f, edgeFalloff: 0.5f)
     .Rasterize(grid);
 
 raster.SaveAsPng("scene.png");
@@ -44,12 +45,12 @@ raster.SaveAsPng("scene.png");
 For custom styling, use distance-mapping layers directly:
 
 ```csharp
-GeometryScene<RGBA16BitColor> scene = GeometryScenes.CreateRGBA16Bit()
-    .Distance(segment, distance =>
+GeometryScene<RGBA16BitColor> scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
+    .AddPointDistanceBasedLayer(segment, distance =>
         distance <= 1f
             ? RGBA16BitColor.FromNormalized(1f, 0f, 0f, 1f)
             : default)
-    .SignedDistance(region, signedDistance =>
+    .AddSignedPointDistanceBasedLayer(region, signedDistance =>
         signedDistance <= 0f
             ? RGBA16BitColor.FromNormalized(0f, 0f, 1f, 0.2f)
             : default);
@@ -58,11 +59,10 @@ GeometryScene<RGBA16BitColor> scene = GeometryScenes.CreateRGBA16Bit()
 For non-RGBA output, pass the default color operations explicitly:
 
 ```csharp
-var labels = new GeometryScene<int>(
+Raster<int> labels = new GeometryScene<int>(
         backgroundColor: 0,
-        blend: (current, next) => next == 0 ? current : next,
-        applyCoverage: (color, coverage) => coverage > 0f ? color : 0)
-    .Fill(region, color: 1)
-    .Stroke(segment, color: 2, width: 1.5f)
-    .RasterizeValues(grid);
+        defaultLayerBlend: (current, next) => next == 0 ? current : next)
+    .AddSignedPointDistanceBasedLayer(region, signedDistance => signedDistance <= 0f ? 1 : 0)
+    .AddPointDistanceBasedLayer(segment, distance => distance <= 1.5f ? 2 : 0)
+    .Rasterize(grid);
 ```
