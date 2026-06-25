@@ -1,7 +1,6 @@
 using Akeldov.Math.Spatial2D.Imaging;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
@@ -70,7 +69,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="source">The signed distance provider to fill.</param>
         /// <param name="color">The fill color.</param>
-        /// <param name="edgeFalloff">The non-negative alpha falloff outside the filled boundary, in world coordinate units.</param>
+        /// <param name="edgeFalloff">The finite positive alpha falloff outside the filled boundary, in world coordinate units.</param>
         /// <returns><paramref name="scene"/>.</returns>
         public static GeometryScene<RGBA16BitColor> AddSignedPointDistanceBasedLayer<TSource>(
             this GeometryScene<RGBA16BitColor> scene,
@@ -85,14 +84,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (edgeFalloff < 0f || float.IsNaN(edgeFalloff) || float.IsInfinity(edgeFalloff))
-                throw new ArgumentOutOfRangeException(nameof(edgeFalloff), "Fill edge falloff must be finite and non-negative.");
+            ThrowIfNotFinitePositive(edgeFalloff, nameof(edgeFalloff), "Fill edge falloff");
 
             return scene.AddLayer(new SignedPointDistanceBasedLayer<RGBA16BitColor, TSource>(
                 new List<TSource> { source },
-                d => d <= 0 
-                    ? color 
-                    : color.ScaleAlpha(1f - MathF.Min(d, edgeFalloff) / edgeFalloff)));
+                d => ApplyOutsideFalloff(color, d, 0f, edgeFalloff)));
         }
     }
 }

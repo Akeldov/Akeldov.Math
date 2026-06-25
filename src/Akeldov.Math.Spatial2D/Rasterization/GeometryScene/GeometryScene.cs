@@ -72,6 +72,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (layer == null)
                 throw new ArgumentNullException(nameof(layer));
 
+            if (blend == null)
+                throw new ArgumentNullException(nameof(blend));
+
             _layerPasses.Add(new LayerPass<TColor>(layer, blend));
             return this;
         }

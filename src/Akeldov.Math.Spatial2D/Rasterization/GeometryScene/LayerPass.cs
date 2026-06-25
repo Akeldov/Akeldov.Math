@@ -5,7 +5,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Pairs a geometry scene layer with the function used to blend that layer into a scene.
     /// </summary>
     /// <typeparam name="TColor">The color value type produced by the layer.</typeparam>
-    public sealed class LayerPass<TColor>
+    internal sealed class LayerPass<TColor>
     {
         /// <summary>
         /// Gets the geometry scene layer.

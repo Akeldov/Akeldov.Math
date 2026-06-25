@@ -53,11 +53,11 @@ public class GeometrySceneSnapshotTests
         string actualPath = GetActualPath(SmileyApprovedFileName);
         var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
             .AddSignedPointDistanceBasedLayer(face, faceFill, edgeFalloff: 0.55f)
-            .AddPointDistanceBasedLayer(face, faceBoundary, width: 1.45f, edgeFalloff: 0.45f)
-            .AddPointDistanceBasedLayer(eyes, eyeColor, width: 2.4f, edgeFalloff: 0.45f)
-            .AddPointDistanceBasedLayer(highlights, highlightColor, width: 0.65f, edgeFalloff: 0.22f)
-            .AddPointDistanceBasedLayer(cheeks, cheekColor, width: 3.2f, edgeFalloff: 1.1f)
-            .AddPointDistanceBasedLayer(smile, smileColor, width: 2.2f, edgeFalloff: 0.55f)
+            .AddPointDistanceBasedLayer(face, faceBoundary, fillDistance: 1.45f, edgeFalloff: 0.45f)
+            .AddPointDistanceBasedLayer(eyes, eyeColor, fillDistance: 2.4f, edgeFalloff: 0.45f)
+            .AddPointDistanceBasedLayer(highlights, highlightColor, fillDistance: 0.65f, edgeFalloff: 0.22f)
+            .AddPointDistanceBasedLayer(cheeks, cheekColor, fillDistance: 3.2f, edgeFalloff: 1.1f)
+            .AddPointDistanceBasedLayer(smile, smileColor, fillDistance: 2.2f, edgeFalloff: 0.55f)
             .Rasterize(SnapshotGrid);
 
         raster.SaveAsPng(actualPath);
