@@ -8,11 +8,17 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class GeometrySceneSnapshotTests
 {
     private const string SmileyApprovedFileName = "geometry-scene-smiley-circle-arc-rgba16.png";
+    private const string PrismApprovedFileName = "geometry-scene-triangular-prism-rgba16.png";
 
     private static readonly RasterGrid SnapshotGrid = new RasterGrid(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(180, 126));
+
+    private static readonly RasterGrid PrismSnapshotGrid = new RasterGrid(
+        origin: new PointXY(0f, 0f),
+        size: new VectorXY(100f, 70f),
+        resolution: new VectorXYInt(540, 378));
 
     [Test]
     public void Rasterize_WithPointEyesArcSmileAndFilledCircle_MatchesApprovedImage()
@@ -64,6 +70,61 @@ public class GeometrySceneSnapshotTests
         byte[] actual = File.ReadAllBytes(actualPath);
 
         AssertMatchesApprovedPng(SmileyApprovedFileName, actual);
+    }
+
+    [Test]
+    public void Rasterize_WithTriangularPrism_MatchesApprovedImage()
+    {
+        // Geometry
+        float prismSide = 36f;
+        float prismHeight = prismSide * MathF.Sqrt(3f) / 2f;
+        float prismBaseY = 18f;
+        float prismCenterX = 52f;
+        var prismLeft = new PointXY(prismCenterX - prismSide / 2f, prismBaseY);
+        var prismTop = new PointXY(prismCenterX, prismBaseY + prismHeight);
+        var prismRight = new PointXY(prismCenterX + prismSide / 2f, prismBaseY);
+        var prism = new CompositeContour(new IFinitePath[]
+        {
+            new ParameterizedSegment(prismLeft, prismTop),
+            new ParameterizedSegment(prismTop, prismRight),
+            new ParameterizedSegment(prismRight, prismLeft)
+        });
+
+        // Colors
+        RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.018f, 0.020f, 0.030f, 1f);
+        RGBA16BitColor prismFill = RGBA16BitColor.FromNormalized(0.410f, 0.520f, 0.650f, 0.32f);
+
+        Func<float, RGBA16BitColor> prismInteriorFalloff = d =>
+        {
+            switch (d)
+            {
+                case < 0f:
+                    {
+                        float depth = -d;
+                        return prismFill.ScaleAlpha(1f / (1f + depth * 2));
+                    }
+
+                case > 0f:
+                    {
+                        float depth = d;
+                        return prismFill.ScaleAlpha(1f / (1f + depth * 5));
+                    }
+
+                default:
+                    return prismFill;
+            }
+        };
+
+        // Scene
+        string actualPath = GetActualPath(PrismApprovedFileName);
+        var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
+            .AddSignedPointDistanceBasedLayer(prism, prismInteriorFalloff)
+            .Rasterize(PrismSnapshotGrid);
+
+        raster.SaveAsPng(actualPath);
+        byte[] actual = File.ReadAllBytes(actualPath);
+
+        AssertMatchesApprovedPng(PrismApprovedFileName, actual);
     }
 
     private static void AssertMatchesApprovedPng(string approvedFileName, byte[] actual)
