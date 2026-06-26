@@ -89,10 +89,20 @@ public class GeometrySceneSnapshotTests
             new ParameterizedSegment(prismTop, prismRight),
             new ParameterizedSegment(prismRight, prismLeft)
         });
+        float beamY = prismBaseY + 13f;
+        float beamEdgeOffsetX = (beamY - prismBaseY) / MathF.Sqrt(3f);
+        var beamStart = new PointXY(PrismSnapshotGrid.Origin.X, prismBaseY - 8f);
+        var beamEntry = new PointXY(prismLeft.X + beamEdgeOffsetX, beamY);
+        var beamExit = new PointXY(prismRight.X - beamEdgeOffsetX, beamY);
+        var beamEnd = new PointXY(PrismSnapshotGrid.Origin.X + PrismSnapshotGrid.Size.X, prismBaseY - 8f);
+        var incomingBeam = new ParameterizedSegment(beamStart, beamEntry);
+        var prismBeam = new ParameterizedSegment(beamEntry, beamExit);
+        var outgoingBeam = new ParameterizedSegment(beamExit, beamEnd);
 
         // Colors
         RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.018f, 0.020f, 0.030f, 1f);
         RGBA16BitColor prismFill = RGBA16BitColor.FromNormalized(0.410f, 0.520f, 0.650f, 0.32f);
+        RGBA16BitColor beamColor = RGBA16BitColor.FromNormalized(0.900f, 0.960f, 1.000f, 0.74f);
 
         Func<float, RGBA16BitColor> prismInteriorFalloff = d =>
         {
@@ -119,6 +129,11 @@ public class GeometrySceneSnapshotTests
         string actualPath = GetActualPath(PrismApprovedFileName);
         var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
             .AddSignedPointDistanceBasedLayer(prism, prismInteriorFalloff)
+            .AddPointDistanceBasedLayer(
+                new[] { incomingBeam, prismBeam, outgoingBeam },
+                beamColor,
+                fillDistance: 0.22f,
+                edgeFalloff: 0.48f)
             .Rasterize(PrismSnapshotGrid);
 
         raster.SaveAsPng(actualPath);
