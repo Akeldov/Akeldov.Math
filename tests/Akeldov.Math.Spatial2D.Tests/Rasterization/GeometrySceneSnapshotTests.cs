@@ -94,7 +94,8 @@ public class GeometrySceneSnapshotTests
         var beamStart = new PointXY(PrismSnapshotGrid.Origin.X, prismBaseY - 8f);
         var beamEntry = new PointXY(prismLeft.X + beamEdgeOffsetX, beamY);
         var beamExit = new PointXY(prismRight.X - beamEdgeOffsetX, beamY);
-        var beamEnd = new PointXY(PrismSnapshotGrid.Origin.X + PrismSnapshotGrid.Size.X, prismBaseY - 8f);
+        var beamEdgeEnd = new PointXY(PrismSnapshotGrid.Origin.X + PrismSnapshotGrid.Size.X, prismBaseY - 8f);
+        var beamEnd = beamExit + (beamEdgeEnd - beamExit) * 1.55f;
         var incomingBeam = new ParameterizedSegment(beamStart, beamEntry);
         var prismBeam = new ParameterizedSegment(beamEntry, beamExit);
         var outgoingBeam = new ParameterizedSegment(beamExit, beamEnd);
@@ -103,6 +104,15 @@ public class GeometrySceneSnapshotTests
         RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.018f, 0.020f, 0.030f, 1f);
         RGBA16BitColor prismFill = RGBA16BitColor.FromNormalized(0.410f, 0.520f, 0.650f, 0.32f);
         RGBA16BitColor beamColor = RGBA16BitColor.FromNormalized(0.900f, 0.960f, 1.000f, 0.74f);
+        RGBA16BitColor[] rainbowStops =
+        {
+            RGBA16BitColor.FromNormalized(1.000f, 0.090f, 0.080f, 0.78f),
+            RGBA16BitColor.FromNormalized(1.000f, 0.520f, 0.050f, 0.78f),
+            RGBA16BitColor.FromNormalized(1.000f, 0.930f, 0.120f, 0.78f),
+            RGBA16BitColor.FromNormalized(0.160f, 0.860f, 0.280f, 0.78f),
+            RGBA16BitColor.FromNormalized(0.100f, 0.560f, 1.000f, 0.78f),
+            RGBA16BitColor.FromNormalized(0.520f, 0.220f, 1.000f, 0.78f)
+        };
 
         Func<float, RGBA16BitColor> prismInteriorFalloff = d =>
         {
@@ -130,10 +140,30 @@ public class GeometrySceneSnapshotTests
         var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
             .AddSignedPointDistanceBasedLayer(prism, prismInteriorFalloff)
             .AddPointDistanceBasedLayer(
-                new[] { incomingBeam, prismBeam, outgoingBeam },
+                new[] { incomingBeam, prismBeam },
                 beamColor,
                 fillDistance: 0.22f,
                 edgeFalloff: 0.48f)
+            .AddParameterizedProjectionBasedLayer(outgoingBeam, p =>
+            {
+                float beamHalfWidth = MathF.Max(0.22f, p.CurveCoordinate / 7f);
+                float spectralPosition = MathF.Min(p.Distance / beamHalfWidth, 1f);
+                float scaledPosition = spectralPosition * (rainbowStops.Length - 1);
+                int stopIndex = (int)MathF.Floor(scaledPosition);
+                RGBA16BitColor rainbowColor = stopIndex >= rainbowStops.Length - 1
+                    ? rainbowStops[rainbowStops.Length - 1]
+                    : RGBA16BitColor.Blend(
+                        rainbowStops[stopIndex],
+                        rainbowStops[stopIndex + 1],
+                        scaledPosition - stopIndex);
+
+                if (p.Distance <= beamHalfWidth)
+                    return rainbowColor;
+
+                float edgeFalloff = 0.48f;
+                float edgeDistance = p.Distance - beamHalfWidth;
+                return rainbowColor.ScaleAlpha(1f - MathF.Min(edgeDistance, edgeFalloff) / edgeFalloff);
+            })
             .Rasterize(PrismSnapshotGrid);
 
         raster.SaveAsPng(actualPath);
