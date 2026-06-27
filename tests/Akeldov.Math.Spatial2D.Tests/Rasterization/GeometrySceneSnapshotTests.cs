@@ -134,7 +134,8 @@ public class GeometrySceneSnapshotTests
             if (prism.Encloses(point))
                 return RGBA16BitColors.Transparent;
 
-            float beamHalfWidth = MathF.Max(0.22f, p.CurveCoordinate / 7f);
+            float rainbowInitialHalfWidth = 1.6f;
+            float beamHalfWidth = rainbowInitialHalfWidth + p.CurveCoordinate / 7f;
             float signedDistance = outgoingBeam.GetHalfPlaneSide(point) switch
             {
                 HalfPlaneSide.Left => p.Distance,
