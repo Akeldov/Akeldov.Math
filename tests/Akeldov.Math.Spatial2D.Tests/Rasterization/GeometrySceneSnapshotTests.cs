@@ -89,17 +89,17 @@ public class GeometrySceneSnapshotTests
             new ParameterizedSegment(prismTop, prismRight),
             new ParameterizedSegment(prismRight, prismLeft)
         });
-        float beamY = prismBaseY + 13f;
+        float beamY = prismBaseY + 16f;
         float beamEdgeOffsetX = (beamY - prismBaseY) / MathF.Sqrt(3f);
-        var beamStart = new PointXY(PrismSnapshotGrid.Origin.X, prismBaseY - 8f);
-        var beamEntry = new PointXY(prismLeft.X + beamEdgeOffsetX, beamY);
-        var beamExit = new PointXY(prismRight.X - beamEdgeOffsetX, beamY);
-        var rainbowStart = beamEntry + (beamExit - beamEntry) * 0.62f;
-        var beamEdgeEnd = new PointXY(PrismSnapshotGrid.Origin.X + PrismSnapshotGrid.Size.X, prismBaseY - 8f);
-        var beamEnd = beamExit + (beamEdgeEnd - beamExit) * 1.55f;
-        var incomingBeam = new ParameterizedSegment(beamStart, beamEntry);
-        var prismBeam = new ParameterizedSegment(beamEntry, beamExit);
-        var outgoingBeam = new ParameterizedSegment(rainbowStart, beamEnd);
+        float beamOuterY = beamY - 8f;
+        var beamStart = new PointXY(PrismSnapshotGrid.Origin.X, beamOuterY);
+        var beamLeftFaceBend = new PointXY(prismLeft.X + beamEdgeOffsetX, beamY);
+        var beamRightFaceBend = new PointXY(prismRight.X - beamEdgeOffsetX, beamY);
+        var beamEdgeEnd = new PointXY(PrismSnapshotGrid.Origin.X + PrismSnapshotGrid.Size.X, beamOuterY);
+        var beamEnd = beamRightFaceBend + (beamEdgeEnd - beamRightFaceBend) * 1.55f;
+        var incomingBeam = new ParameterizedSegment(beamStart, beamLeftFaceBend);
+        var prismBeam = new ParameterizedSegment(beamLeftFaceBend, beamRightFaceBend);
+        var outgoingBeam = new ParameterizedSegment(beamRightFaceBend, beamEnd);
 
         // Colors
         RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.018f, 0.020f, 0.030f, 1f);
