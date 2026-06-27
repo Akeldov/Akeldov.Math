@@ -95,10 +95,11 @@ public class GeometrySceneSnapshotTests
         var beamStart = new PointXY(PrismSnapshotGrid.Origin.X, beamOuterY);
         var beamLeftFaceBend = new PointXY(prismLeft.X + beamEdgeOffsetX, beamY);
         var beamRightFaceBend = new PointXY(prismRight.X - beamEdgeOffsetX, beamY);
+        var beamRightFaceBendDelta = new VectorXY(1f, -0.35f);
         var beamEdgeEnd = new PointXY(PrismSnapshotGrid.Origin.X + PrismSnapshotGrid.Size.X, beamOuterY);
         var beamEnd = beamRightFaceBend + (beamEdgeEnd - beamRightFaceBend) * 1.55f;
         var incomingBeam = new ParameterizedSegment(beamStart, beamLeftFaceBend);
-        var prismBeam = new ParameterizedSegment(beamLeftFaceBend, beamRightFaceBend);
+        var prismBeam = new ParameterizedSegment(beamLeftFaceBend, beamRightFaceBend + beamRightFaceBendDelta);
         var outgoingBeam = new ParameterizedSegment(beamRightFaceBend, beamEnd);
 
         // Colors
@@ -114,6 +115,11 @@ public class GeometrySceneSnapshotTests
             RGBA16BitColor.FromNormalized(0.100f, 0.560f, 1.000f, 0.78f),
             RGBA16BitColor.FromNormalized(0.520f, 0.220f, 1.000f, 0.78f)
         };
+        float beamEdgeFalloff = 0.48f;
+        float prismBeamInitialHalfWidth = 0.22f;
+        float rainbowInitialHalfWidth = 1.6f;
+        float beamJointCoverage = 0.66f;
+        float beamBlendDistance = prismBeam.Length * 0.14f;
 
         Func<float, RGBA16BitColor> prismInteriorFalloff = d =>
         {
@@ -122,11 +128,36 @@ public class GeometrySceneSnapshotTests
                 : prismFill.ScaleAlpha(1f / (1f + d * 5));
         };
 
+        Func<PointXY, ParameterizedCurveProjection, RGBA16BitColor> incomingBeamColor = (point, p) =>
+        {
+            float distanceToEntry = incomingBeam.Length - p.CurveCoordinate;
+            float exitProgress = MathF.Min(MathF.Max(distanceToEntry / beamBlendDistance, 0f), 1f);
+            float exitCoverage = beamJointCoverage +
+                (1f - beamJointCoverage) * exitProgress * exitProgress * (3f - 2f * exitProgress);
+
+            float distanceCoverage = p.Distance <= prismBeamInitialHalfWidth
+                ? 1f
+                : 1f - MathF.Min(p.Distance - prismBeamInitialHalfWidth, beamEdgeFalloff) / beamEdgeFalloff;
+
+            return beamColor.ScaleAlpha(exitCoverage * distanceCoverage);
+        };
+
         Func<PointXY, ParameterizedCurveProjection, RGBA16BitColor> prismBeamColor = (point, p) =>
         {
             var normalizedCurveCoordinate = p.CurveCoordinate / prismBeam.Length;
+            float entryProgress = MathF.Min(p.CurveCoordinate / beamBlendDistance, 1f);
+            float entryCoverage = beamJointCoverage +
+                (1f - beamJointCoverage) * entryProgress * entryProgress * (3f - 2f * entryProgress);
+            float fadeProgress = MathF.Min(MathF.Max((normalizedCurveCoordinate - 0.3f) / 0.4f, 0f), 1f);
+            float lengthCoverage = 1f - fadeProgress * fadeProgress * (3f - 2f * fadeProgress);
 
-            return beamColor.ScaleAlpha((1f - normalizedCurveCoordinate * 1.5f) / (1f + p.Distance));
+            float beamHalfWidth = prismBeamInitialHalfWidth +
+                normalizedCurveCoordinate * (rainbowInitialHalfWidth + 0.35f - prismBeamInitialHalfWidth);
+            float distanceCoverage = p.Distance <= beamHalfWidth
+                ? 1f
+                : 1f - MathF.Min(p.Distance - beamHalfWidth, beamEdgeFalloff) / beamEdgeFalloff;
+
+            return beamColor.ScaleAlpha(entryCoverage * lengthCoverage * distanceCoverage);
         };
 
         Func <PointXY, ParameterizedCurveProjection, RGBA16BitColor> projectionToRainbowColor = (point, p) =>
@@ -134,7 +165,6 @@ public class GeometrySceneSnapshotTests
             if (prism.Encloses(point))
                 return RGBA16BitColors.Transparent;
 
-            float rainbowInitialHalfWidth = 1.6f;
             float beamHalfWidth = rainbowInitialHalfWidth + p.CurveCoordinate / 7f;
             float signedDistance = outgoingBeam.GetHalfPlaneSide(point) switch
             {
@@ -155,16 +185,15 @@ public class GeometrySceneSnapshotTests
             if (p.Distance <= beamHalfWidth)
                 return rainbowColor;
 
-            float edgeFalloff = 0.48f;
             float edgeDistance = p.Distance - beamHalfWidth;
-            return rainbowColor.ScaleAlpha(1f - MathF.Min(edgeDistance, edgeFalloff) / edgeFalloff);
+            return rainbowColor.ScaleAlpha(1f - MathF.Min(edgeDistance, beamEdgeFalloff) / beamEdgeFalloff);
         };
 
         // Scene
         string actualPath = GetActualPath(PrismApprovedFileName);
         var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
             .AddSignedPointDistanceBasedLayer(prism, prismInteriorFalloff)
-            .AddPointDistanceBasedLayer(incomingBeam, beamColor, fillDistance: 0.22f, edgeFalloff: 0.48f)
+            .AddParameterizedProjectionBasedLayer(incomingBeam, incomingBeamColor)
             .AddParameterizedProjectionBasedLayer(prismBeam, prismBeamColor)
             .AddParameterizedProjectionBasedLayer(outgoingBeam, projectionToRainbowColor)
             .Rasterize(PrismSnapshotGrid);
