@@ -197,6 +197,72 @@ public class ParameterizedLineTests
         Assert.That(line.HasSameGeometry(converted), Is.True);
     }
 
+    [Test]
+    public void GetHalfPlaneSide_WhenPointIsLeftOfIncreasingDirection_ReturnsLeft()
+    {
+        var line = new ParameterizedLine(new PointXY(0f, 0f), new VectorXY(1f, 0f));
+
+        HalfPlaneSide side = line.GetHalfPlaneSide(new PointXY(2f, 3f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.Left));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenPointIsRightOfIncreasingDirection_ReturnsRight()
+    {
+        var line = new ParameterizedLine(new PointXY(0f, 0f), new VectorXY(1f, 0f));
+
+        HalfPlaneSide side = line.GetHalfPlaneSide(new PointXY(2f, -3f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.Right));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenDirectionIsReversed_UsesParameterizedDirection()
+    {
+        var line = new ParameterizedLine(new PointXY(0f, 0f), new VectorXY(-1f, 0f));
+
+        HalfPlaneSide side = line.GetHalfPlaneSide(new PointXY(2f, 3f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.Right));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenPointIsOnLineWithinTolerance_ReturnsOnTheLine()
+    {
+        var line = new ParameterizedLine(new PointXY(0f, 0f), new VectorXY(1f, 0f));
+
+        HalfPlaneSide side = line.GetHalfPlaneSide(new PointXY(2f, 0.005f), geometryEpsilon: 0.01f);
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.OnTheLine));
+    }
+
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void GetHalfPlaneSide_WhenPointCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var line = default(ParameterizedLine);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            line.GetHalfPlaneSide(new PointXY(x, y)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void GetHalfPlaneSide_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var line = default(ParameterizedLine);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            line.GetHalfPlaneSide(new PointXY(0f, 0f), geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));

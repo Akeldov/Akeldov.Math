@@ -346,6 +346,91 @@ public class SegmentTests
     }
 
     [Test]
+    public void GetHalfPlaneSide_WhenPointIsLeftOfStartToEndDirection_ReturnsLeft()
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+
+        HalfPlaneSide side = segment.GetHalfPlaneSide(new PointXY(1f, 3f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.Left));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenPointIsRightOfStartToEndDirection_ReturnsRight()
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+
+        HalfPlaneSide side = segment.GetHalfPlaneSide(new PointXY(1f, -3f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.Right));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenSegmentDirectionIsReversed_UsesStartToEndDirection()
+    {
+        var segment = new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(0f, 0f));
+
+        HalfPlaneSide side = segment.GetHalfPlaneSide(new PointXY(1f, 3f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.Right));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenPointIsOnSupportingLineOutsideSegment_ReturnsOnTheLine()
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+
+        HalfPlaneSide side = segment.GetHalfPlaneSide(new PointXY(3f, 0f));
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.OnTheLine));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenPointIsOnSupportingLineWithinTolerance_ReturnsOnTheLine()
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+
+        HalfPlaneSide side = segment.GetHalfPlaneSide(new PointXY(3f, 0.005f), geometryEpsilon: 0.01f);
+
+        Assert.That(side, Is.EqualTo(HalfPlaneSide.OnTheLine));
+    }
+
+    [Test]
+    public void GetHalfPlaneSide_WhenSegmentHasEqualEndpoints_Throws()
+    {
+        var segment = new ParameterizedSegment(new PointXY(1f, 2f), new PointXY(1f, 2f));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            segment.GetHalfPlaneSide(new PointXY(1f, 3f)));
+    }
+
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void GetHalfPlaneSide_WhenPointCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            segment.GetHalfPlaneSide(new PointXY(x, y)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void GetHalfPlaneSide_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            segment.GetHalfPlaneSide(new PointXY(0f, 0f), geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
+    [Test]
     public void Equals_WhenEndpointInclusionDiffers_ReturnsFalse()
     {
         var closed = new Segment(new PointXY(1f, 0f), new PointXY(1f, 1f), includesEndpointA: true, includesEndpointB: true);
