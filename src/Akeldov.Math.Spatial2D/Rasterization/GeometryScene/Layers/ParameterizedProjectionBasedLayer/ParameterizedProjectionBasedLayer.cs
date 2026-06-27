@@ -8,11 +8,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         where TSource : IParameterizedCurve
     {
         private readonly TSource[] _sources;
-        private readonly Func<ParameterizedCurveProjection, TColor> _projectionToColor;
+        private readonly Func<PointXY, ParameterizedCurveProjection, TColor> _projectionToColor;
 
         public ParameterizedProjectionBasedLayer(
             IReadOnlyList<TSource> sources,
-            Func<ParameterizedCurveProjection, TColor> projectionToColor)
+            Func<PointXY, ParameterizedCurveProjection, TColor> projectionToColor)
         {
             _sources = CopySources(sources);
             _projectionToColor = projectionToColor ?? throw new ArgumentNullException(nameof(projectionToColor));
@@ -29,7 +29,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                     nearestProjection = projection;
             }
 
-            return _projectionToColor(nearestProjection);
+            return _projectionToColor(point, nearestProjection);
         }
 
         private static TSource[] CopySources(IReadOnlyList<TSource> sources)

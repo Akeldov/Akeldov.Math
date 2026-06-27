@@ -135,6 +135,33 @@ public class GeometrySceneSnapshotTests
             }
         };
 
+        Func<PointXY, ParameterizedCurveProjection, RGBA16BitColor> projectionToRainbowColor = (point, p) =>
+        {
+            float beamHalfWidth = MathF.Max(0.22f, p.CurveCoordinate / 7f);
+            float signedDistance = outgoingBeam.GetHalfPlaneSide(point) switch
+            {
+                HalfPlaneSide.Left => p.Distance,
+                HalfPlaneSide.Right => -p.Distance,
+                _ => 0f
+            };
+            float spectralPosition = MathF.Min(MathF.Max((signedDistance + beamHalfWidth) / (2f * beamHalfWidth), 0f), 1f);
+            float scaledPosition = spectralPosition * (rainbowStops.Length - 1);
+            int stopIndex = (int)MathF.Floor(scaledPosition);
+            RGBA16BitColor rainbowColor = stopIndex >= rainbowStops.Length - 1
+                ? rainbowStops[rainbowStops.Length - 1]
+                : RGBA16BitColor.Blend(
+                    rainbowStops[stopIndex],
+                    rainbowStops[stopIndex + 1],
+                    scaledPosition - stopIndex);
+
+            if (p.Distance <= beamHalfWidth)
+                return rainbowColor;
+
+            float edgeFalloff = 0.48f;
+            float edgeDistance = p.Distance - beamHalfWidth;
+            return rainbowColor.ScaleAlpha(1f - MathF.Min(edgeDistance, edgeFalloff) / edgeFalloff);
+        };
+
         // Scene
         string actualPath = GetActualPath(PrismApprovedFileName);
         var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
@@ -144,26 +171,7 @@ public class GeometrySceneSnapshotTests
                 beamColor,
                 fillDistance: 0.22f,
                 edgeFalloff: 0.48f)
-            .AddParameterizedProjectionBasedLayer(outgoingBeam, p =>
-            {
-                float beamHalfWidth = MathF.Max(0.22f, p.CurveCoordinate / 7f);
-                float spectralPosition = MathF.Min(p.Distance / beamHalfWidth, 1f);
-                float scaledPosition = spectralPosition * (rainbowStops.Length - 1);
-                int stopIndex = (int)MathF.Floor(scaledPosition);
-                RGBA16BitColor rainbowColor = stopIndex >= rainbowStops.Length - 1
-                    ? rainbowStops[rainbowStops.Length - 1]
-                    : RGBA16BitColor.Blend(
-                        rainbowStops[stopIndex],
-                        rainbowStops[stopIndex + 1],
-                        scaledPosition - stopIndex);
-
-                if (p.Distance <= beamHalfWidth)
-                    return rainbowColor;
-
-                float edgeFalloff = 0.48f;
-                float edgeDistance = p.Distance - beamHalfWidth;
-                return rainbowColor.ScaleAlpha(1f - MathF.Min(edgeDistance, edgeFalloff) / edgeFalloff);
-            })
+            .AddParameterizedProjectionBasedLayer(outgoingBeam, projectionToRainbowColor)
             .Rasterize(PrismSnapshotGrid);
 
         raster.SaveAsPng(actualPath);

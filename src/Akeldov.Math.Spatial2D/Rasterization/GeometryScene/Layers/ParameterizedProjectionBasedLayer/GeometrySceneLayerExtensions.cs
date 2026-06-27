@@ -14,14 +14,14 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="source">The parameterized curve to sample.</param>
         /// <param name="projectionToColor">
-        /// The function that maps the nearest projection result to a color. Projection distance and curve coordinate
-        /// are expressed in world coordinate units.
+        /// The function that maps the sampled source point and nearest projection result to a color.
+        /// Projection distance and curve coordinate are expressed in world coordinate units.
         /// </param>
         /// <returns><paramref name="scene"/>.</returns>
         public static GeometryScene<TColor> AddParameterizedProjectionBasedLayer<TColor, TSource>(
             this GeometryScene<TColor> scene,
             TSource source,
-            Func<ParameterizedCurveProjection, TColor> projectionToColor)
+            Func<PointXY, ParameterizedCurveProjection, TColor> projectionToColor)
             where TSource : IParameterizedCurve
         {
             if (scene == null)
@@ -46,14 +46,14 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="scene">The scene to add the layer to.</param>
         /// <param name="sources">The parameterized curves to sample. The list is copied into retained layer state.</param>
         /// <param name="projectionToColor">
-        /// The function that maps the nearest projection result to a color. Projection distance and curve coordinate
-        /// are expressed in world coordinate units.
+        /// The function that maps the sampled source point and nearest projection result to a color.
+        /// Projection distance and curve coordinate are expressed in world coordinate units.
         /// </param>
         /// <returns><paramref name="scene"/>.</returns>
         public static GeometryScene<TColor> AddParameterizedProjectionBasedLayer<TColor, TSource>(
             this GeometryScene<TColor> scene,
             IReadOnlyList<TSource> sources,
-            Func<ParameterizedCurveProjection, TColor> projectionToColor)
+            Func<PointXY, ParameterizedCurveProjection, TColor> projectionToColor)
             where TSource : IParameterizedCurve
         {
             if (scene == null)

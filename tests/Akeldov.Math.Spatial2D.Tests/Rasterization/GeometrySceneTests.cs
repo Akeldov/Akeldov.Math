@@ -59,13 +59,30 @@ public class GeometrySceneTests
         var scene = new GeometryScene<int>((background, foreground) => foreground)
             .AddParameterizedProjectionBasedLayer(
                 segment,
-                projection => 100 + (int)MathF.Round(projection.CurveCoordinate * 10f));
+                (_, projection) => 100 + (int)MathF.Round(projection.CurveCoordinate * 10f));
 
         var raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
         Assert.That(raster[0, 0], Is.EqualTo(100));
         Assert.That(raster[1, 0], Is.EqualTo(110));
         Assert.That(raster[2, 0], Is.EqualTo(120));
+    }
+
+    [Test]
+    public void ParameterizedProjection_MapsSourcePointAndProjectionWithDelegate()
+    {
+        var segment = new ParameterizedSegment(
+            new PointXY(0.5f, 0.5f),
+            new PointXY(1.5f, 0.5f));
+        var scene = new GeometryScene<int>((background, foreground) => foreground)
+            .AddParameterizedProjectionBasedLayer(
+                segment,
+                (point, projection) => point.Y > projection.ProjectedPoint.Y ? 2 : 1);
+
+        var raster = scene.Rasterize(CreateGrid(width: 1, height: 2));
+
+        Assert.That(raster[0, 0], Is.EqualTo(1));
+        Assert.That(raster[0, 1], Is.EqualTo(2));
     }
 
     [Test]
@@ -80,7 +97,7 @@ public class GeometrySceneTests
         var scene = new GeometryScene<int>((background, foreground) => foreground)
             .AddParameterizedProjectionBasedLayer(
                 new[] { lowerSegment, upperSegment },
-                projection => projection.ProjectedPoint.Y < 1f ? 1 : 2);
+                (_, projection) => projection.ProjectedPoint.Y < 1f ? 1 : 2);
 
         var raster = scene.Rasterize(new RasterGrid(
             origin: new PointXY(0f, 0f),
@@ -229,7 +246,7 @@ public class GeometrySceneTests
 
         Assert.Throws<ArgumentException>(() => scene.AddParameterizedProjectionBasedLayer(
             Array.Empty<IParameterizedCurve>(),
-            projection => 1));
+            (_, _) => 1));
     }
 
     [Test]
@@ -239,7 +256,7 @@ public class GeometrySceneTests
 
         Assert.Throws<ArgumentException>(() => scene.AddParameterizedProjectionBasedLayer(
             new IParameterizedCurve[] { null! },
-            projection => 1));
+            (_, _) => 1));
     }
 
     [Test]
@@ -266,7 +283,7 @@ public class GeometrySceneTests
         var scene = new GeometryScene<int>((background, foreground) => foreground)
             .AddParameterizedProjectionBasedLayer(
                 sources,
-                projection => projection.Distance < 0.01f ? 7 : 9);
+                (_, projection) => projection.Distance < 0.01f ? 7 : 9);
         sources[0] = new ParameterizedSegment(new PointXY(100f, 100f), new PointXY(101f, 100f));
 
         var raster = scene.Rasterize(CreateCenteredGrid(width: 1, height: 1));
