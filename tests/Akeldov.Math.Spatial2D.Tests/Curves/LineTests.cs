@@ -31,6 +31,42 @@ public class LineTests
     }
 
     [Test]
+    public void Constructor_WithPointAndAngle_CreatesLineThroughPointWithDirection()
+    {
+        var point = new PointXY(2f, 3f);
+        var direction = new VectorXY(MathF.Sqrt(0.5f), MathF.Sqrt(0.5f));
+
+        var line = new Line(point, MathF.PI / 4f);
+
+        Assert.That(line.Distance(point), Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(line.Distance(point + 5f * direction), Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(
+            MathF.Abs(VectorXY.Cross(line.Direction, direction)),
+            Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void Constructor_WhenPointCoordinateForAngleConstructorIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Line(new PointXY(x, y), 0f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Constructor_WhenAngleIsInvalid_Throws(float angle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Line(new PointXY(0f, 0f), angle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+    }
+
+    [Test]
     public void Constructor_WhenLinearEquationCoefficientsAreZero_Throws()
     {
         Assert.Throws<ArgumentException>(() => new Line(0f, 0f, 1f));

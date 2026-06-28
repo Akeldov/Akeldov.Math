@@ -84,6 +84,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Initializes a new parameterized line from an origin point and direction angle.
+        /// </summary>
+        /// <param name="origin">The curve-coordinate origin.</param>
+        /// <param name="angle">The parameterized direction angle in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
+        public ParameterizedLine(PointXY origin, float angle)
+            : this(origin, CreateDirectionFromAngle(angle))
+        {
+        }
+
+        /// <summary>
         /// Initializes a new parameterized line passing through the specified points and selects the curve-coordinate origin
         /// from the specified reference point mode.
         /// </summary>
@@ -294,6 +305,14 @@ namespace Akeldov.Math.Spatial2D.Curves
                 throw new ArgumentException("Parameterized line direction must have non-zero length.", nameof(direction));
 
             return direction.Normalize();
+        }
+
+        private static VectorXY CreateDirectionFromAngle(float angle)
+        {
+            if (float.IsNaN(angle) || float.IsInfinity(angle))
+                throw new ArgumentOutOfRangeException(nameof(angle), "Parameterized line angle must be finite.");
+
+            return new VectorXY(MathF.Cos(angle), MathF.Sin(angle));
         }
 
         private static PointXY SelectReferencePoint(PointXY a, PointXY b, LineReferencePointMode referencePointMode)

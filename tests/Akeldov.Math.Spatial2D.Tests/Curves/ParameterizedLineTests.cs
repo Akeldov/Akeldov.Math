@@ -28,6 +28,41 @@ public class ParameterizedLineTests
     }
 
     [Test]
+    public void Constructor_WithOriginAndAngle_UsesOriginAndAngleDirection()
+    {
+        const float angle = 3f * MathF.PI / 4f;
+        float expectedComponent = MathF.Sqrt(0.5f);
+
+        var line = new ParameterizedLine(new PointXY(2f, 3f), angle);
+
+        AssertVector(line.Origin, 2f, 3f);
+        AssertVector(line.Direction, -expectedComponent, expectedComponent);
+        AssertVector(line.GetPoint(2f), 2f - 2f * expectedComponent, 3f + 2f * expectedComponent);
+        Assert.That(line.Line.Distance(line.Origin), Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void Constructor_WhenOriginCoordinateForAngleConstructorIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedLine(new PointXY(x, y), 0f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("origin"));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Constructor_WhenAngleIsInvalid_Throws(float angle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedLine(new PointXY(0f, 0f), angle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+    }
+
+    [Test]
     public void Constructor_WhenReferencePointCoordinateIsInvalid_Throws()
     {
         var line = default(Line);

@@ -50,6 +50,32 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Initializes a new line passing through the specified point and direction angle.
+        /// </summary>
+        /// <param name="point">The point defining the line.</param>
+        /// <param name="angle">The line direction angle in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
+        public Line(PointXY point, float angle)
+        {
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Line point coordinates must be finite.");
+
+            if (float.IsNaN(angle) || float.IsInfinity(angle))
+                throw new ArgumentOutOfRangeException(nameof(angle), "Line angle must be finite.");
+
+            float equationA = MathF.Sin(angle);
+            float equationB = -MathF.Cos(angle);
+            float equationC = -(equationA * point.X + equationB * point.Y);
+
+            Initialize(equationA, equationB, equationC,
+                out _equationA,
+                out _equationBMinusOne,
+                out _equationC);
+        }
+
+        /// <summary>
         /// Initializes a new line from the implicit equation <c>ax + by + c = 0</c>.
         /// </summary>
         /// <param name="a">The X coefficient.</param>
