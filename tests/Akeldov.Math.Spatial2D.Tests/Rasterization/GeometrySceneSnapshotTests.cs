@@ -130,7 +130,7 @@ public class GeometrySceneSnapshotTests
         Func<PointXY, ParameterizedCurveProjection, RGBA16BitColor> incomingBeamColor = (point, p) =>
         {
             if (prism.Encloses(point))
-                return RGBA16BitColors.Transparent;
+                return RGBA16BitColor.Transparent;
 
             if (p.Distance <= prismBeamInitialHalfWidth)
                 return beamColor;
@@ -142,7 +142,7 @@ public class GeometrySceneSnapshotTests
         Func<PointXY, ParameterizedCurveProjection, RGBA16BitColor> prismBeamColor = (point, p) =>
         {
             if (!prism.Encloses(point))
-                return RGBA16BitColors.Transparent;
+                return RGBA16BitColor.Transparent;
 
             var normalizedCurveCoordinate = p.CurveCoordinate / prismBeam.Length - 0.09f;
 
@@ -160,7 +160,7 @@ public class GeometrySceneSnapshotTests
         Func <PointXY, ParameterizedCurveProjection, RGBA16BitColor> projectionToRainbowColor = (point, p) =>
         {
             if (prism.Encloses(point))
-                return RGBA16BitColors.Transparent;
+                return RGBA16BitColor.Transparent;
 
             float beamHalfWidth = rainbowInitialHalfWidth + (p.CurveCoordinate + 3f) / 9f;
             float signedDistance = outgoingBeam.GetHalfPlaneSide(point) switch

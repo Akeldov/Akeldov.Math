@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>
     /// Represents a 16-bit RGBA color.
     /// </summary>
-    public readonly struct RGBA16BitColor : IEquatable<RGBA16BitColor>
+    public readonly partial struct RGBA16BitColor : IEquatable<RGBA16BitColor>
     {
         /// <summary>
         /// Initializes a new 16-bit RGBA color.

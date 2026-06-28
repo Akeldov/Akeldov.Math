@@ -26,15 +26,15 @@ public class RGBA16BitColorTests
     [Test]
     public void PredefinedColors_ReturnExpectedChannelValues()
     {
-        Assert.That(RGBA16BitColors.Transparent, Is.EqualTo(default(RGBA16BitColor)));
-        Assert.That(RGBA16BitColors.Black, Is.EqualTo(new RGBA16BitColor(0, 0, 0, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.White, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.Red, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.Green, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.Blue, Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.Yellow, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.Cyan, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
-        Assert.That(RGBA16BitColors.Magenta, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Transparent, Is.EqualTo(default(RGBA16BitColor)));
+        Assert.That(RGBA16BitColor.Black, Is.EqualTo(new RGBA16BitColor(0, 0, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.White, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Red, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Green, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Blue, Is.EqualTo(new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Yellow, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, ushort.MaxValue, 0, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Cyan, Is.EqualTo(new RGBA16BitColor(0, ushort.MaxValue, ushort.MaxValue, ushort.MaxValue)));
+        Assert.That(RGBA16BitColor.Magenta, Is.EqualTo(new RGBA16BitColor(ushort.MaxValue, 0, ushort.MaxValue, ushort.MaxValue)));
     }
 
     [Test]

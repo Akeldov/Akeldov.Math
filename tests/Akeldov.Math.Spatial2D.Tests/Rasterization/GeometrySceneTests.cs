@@ -26,12 +26,12 @@ public class GeometrySceneTests
             new PointXY(0.5f, 0.5f),
             new PointXY(1.5f, 0.5f));
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
-            .AddPointDistanceBasedLayer(segment, RGBA16BitColors.Red, fillDistance: 0.25f);
+            .AddPointDistanceBasedLayer(segment, RGBA16BitColor.Red, fillDistance: 0.25f);
 
         var raster = scene.Rasterize(CreateGrid(width: 3, height: 1));
 
-        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Red));
-        Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColors.Red));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColor.Red));
+        Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColor.Red));
         Assert.That(raster[2, 0], Is.EqualTo(default(RGBA16BitColor)));
     }
 
@@ -158,7 +158,7 @@ public class GeometrySceneTests
     public void AddPointDistanceBasedLayer_WithEdgeFalloff_StartsFalloffOutsideFillDistance()
     {
         var point = new PointXY(0f, 0f);
-        RGBA16BitColor color = RGBA16BitColors.Red;
+        RGBA16BitColor color = RGBA16BitColor.Red;
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
             .AddPointDistanceBasedLayer(point, color, fillDistance: 0.5f, edgeFalloff: 1f);
 
@@ -178,8 +178,8 @@ public class GeometrySceneTests
         var source = new PointXY(0f, 0f);
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => scene.AddPointDistanceBasedLayer(source, RGBA16BitColors.Red, fillDistance));
-        Assert.Throws<ArgumentOutOfRangeException>(() => scene.AddPointDistanceBasedLayer(source, RGBA16BitColors.Red, fillDistance, edgeFalloff: 1f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.AddPointDistanceBasedLayer(source, RGBA16BitColor.Red, fillDistance));
+        Assert.Throws<ArgumentOutOfRangeException>(() => scene.AddPointDistanceBasedLayer(source, RGBA16BitColor.Red, fillDistance, edgeFalloff: 1f));
     }
 
     [TestCase(0f)]
@@ -194,7 +194,7 @@ public class GeometrySceneTests
 
         Assert.Throws<ArgumentOutOfRangeException>(() => scene.AddPointDistanceBasedLayer(
             source,
-            RGBA16BitColors.Red,
+            RGBA16BitColor.Red,
             fillDistance: 0.5f,
             edgeFalloff: edgeFalloff));
     }
@@ -211,7 +211,7 @@ public class GeometrySceneTests
 
         Assert.Throws<ArgumentOutOfRangeException>(() => scene.AddSignedPointDistanceBasedLayer(
             source,
-            RGBA16BitColors.Red,
+            RGBA16BitColor.Red,
             edgeFalloff: edgeFalloff));
     }
 
@@ -222,7 +222,7 @@ public class GeometrySceneTests
 
         Assert.Throws<ArgumentException>(() => scene.AddPointDistanceBasedLayer(
             Array.Empty<IPointDistanceProvider>(),
-            RGBA16BitColors.Red,
+            RGBA16BitColor.Red,
             fillDistance: 0.5f,
             edgeFalloff: 1f));
     }
@@ -234,7 +234,7 @@ public class GeometrySceneTests
 
         Assert.Throws<ArgumentException>(() => scene.AddPointDistanceBasedLayer(
             new IPointDistanceProvider[] { null! },
-            RGBA16BitColors.Red,
+            RGBA16BitColor.Red,
             fillDistance: 0.5f,
             edgeFalloff: 1f));
     }
@@ -264,13 +264,13 @@ public class GeometrySceneTests
     {
         var sources = new List<IPointDistanceProvider> { new PointXY(0f, 0f) };
         var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver)
-            .AddPointDistanceBasedLayer(sources, RGBA16BitColors.Red, fillDistance: 0f, edgeFalloff: 1f);
+            .AddPointDistanceBasedLayer(sources, RGBA16BitColor.Red, fillDistance: 0f, edgeFalloff: 1f);
 
         sources[0] = new PointXY(100f, 100f);
 
         var raster = scene.Rasterize(CreateCenteredGrid(width: 1, height: 1));
 
-        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColors.Red));
+        Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColor.Red));
     }
 
     [Test]
