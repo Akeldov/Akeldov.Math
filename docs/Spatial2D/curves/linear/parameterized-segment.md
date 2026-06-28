@@ -58,6 +58,8 @@ ParameterizedCurveProjection projection =
 
 float curveCoordinate = projection.CurveCoordinate; // 4
 PointXY halfway = path.GetPoint(path.Length * 0.5f);
+ParameterizedSegment shorter = path.Shorten(1f);
+ParameterizedSegment longer = path.Extend(2f);
 Segment geometricSegment = (Segment)path;
 ```
 

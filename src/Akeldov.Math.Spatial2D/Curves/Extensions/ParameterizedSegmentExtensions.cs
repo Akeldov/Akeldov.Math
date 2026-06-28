@@ -9,6 +9,69 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class ParameterizedSegmentExtensions
     {
         /// <summary>
+        /// Shortens a parameterized segment by moving the start point and end point toward each other along the segment direction.
+        /// </summary>
+        /// <param name="segment">The segment to shorten.</param>
+        /// <param name="amount">The amount removed from each end, in world coordinate units.</param>
+        /// <returns>The shortened parameterized segment.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints or the shorten amount is too large.</exception>
+        public static ParameterizedSegment Shorten(this ParameterizedSegment segment, float amount)
+        {
+            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
+
+            VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
+            float length = segmentVector.Length;
+
+            if (length <= GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot shorten a segment with equal endpoints.");
+
+            if (2f * amount > length + GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot shorten a segment by more than half its length.");
+
+            VectorXY direction = segmentVector / length;
+            PointXY startPoint = segment.StartPoint + amount * direction;
+            PointXY endPoint = segment.EndPoint - amount * direction;
+
+            return new ParameterizedSegment(
+                startPoint,
+                endPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
+        /// Extends a parameterized segment by moving the start point and end point away from each other along the segment direction.
+        /// </summary>
+        /// <param name="segment">The segment to extend.</param>
+        /// <param name="amount">The amount added to each end, in world coordinate units.</param>
+        /// <returns>The extended parameterized segment.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints.</exception>
+        public static ParameterizedSegment Extend(this ParameterizedSegment segment, float amount)
+        {
+            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
+
+            VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
+            float length = segmentVector.Length;
+
+            if (length <= GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot extend a segment with equal endpoints.");
+
+            VectorXY direction = segmentVector / length;
+            PointXY startPoint = segment.StartPoint - amount * direction;
+            PointXY endPoint = segment.EndPoint + amount * direction;
+
+            return new ParameterizedSegment(
+                startPoint,
+                endPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
         /// Gets the half-plane side of the supporting directed line on which the specified point lies.
         /// </summary>
         /// <param name="segment">The segment whose start-to-end direction defines the supporting directed line.</param>
