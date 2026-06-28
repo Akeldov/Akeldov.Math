@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>
     /// Represents an 8-bit RGBA color.
     /// </summary>
-    public readonly struct RGBA8BitColor : IEquatable<RGBA8BitColor>
+    public readonly partial struct RGBA8BitColor : IEquatable<RGBA8BitColor>
     {
         internal static readonly RGBA8BitColor[] TemperaturePalette =
         {

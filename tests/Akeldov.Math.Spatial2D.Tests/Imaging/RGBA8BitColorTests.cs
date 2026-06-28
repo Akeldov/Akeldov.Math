@@ -26,15 +26,15 @@ public class RGBA8BitColorTests
     [Test]
     public void PredefinedColors_ReturnExpectedChannelValues()
     {
-        Assert.That(RGBA8BitColors.Transparent, Is.EqualTo(default(RGBA8BitColor)));
-        Assert.That(RGBA8BitColors.Black, Is.EqualTo(new RGBA8BitColor(0, 0, 0, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.White, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.Red, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, 0, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.Green, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, 0, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.Blue, Is.EqualTo(new RGBA8BitColor(0, 0, byte.MaxValue, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.Yellow, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, 0, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.Cyan, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
-        Assert.That(RGBA8BitColors.Magenta, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Transparent, Is.EqualTo(default(RGBA8BitColor)));
+        Assert.That(RGBA8BitColor.Black, Is.EqualTo(new RGBA8BitColor(0, 0, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.White, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Red, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Green, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Blue, Is.EqualTo(new RGBA8BitColor(0, 0, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Yellow, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, byte.MaxValue, 0, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Cyan, Is.EqualTo(new RGBA8BitColor(0, byte.MaxValue, byte.MaxValue, byte.MaxValue)));
+        Assert.That(RGBA8BitColor.Magenta, Is.EqualTo(new RGBA8BitColor(byte.MaxValue, 0, byte.MaxValue, byte.MaxValue)));
     }
 
     [Test]
