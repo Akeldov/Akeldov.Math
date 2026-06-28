@@ -128,10 +128,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         public PointXY EndpointB => EndPoint;
 
         /// <summary>
-        /// Determines whether the direction from this arc's center to the specified point lies within this arc's angular region.
+        /// Determines whether the specified point lies within this arc's angular region.
         /// </summary>
         /// <param name="point">The point to test.</param>
-        /// <returns><see langword="true"/> if the point lies within this arc's angular region; otherwise, <see langword="false"/>.</returns>
+        /// <returns>
+        /// <see langword="true"/> if the point lies within this arc's angular region or at the center of the source circle;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
         public bool IsWithinAngularRegion(PointXY point)
         {
             PointXYValidation.ThrowIfNotFinite(
@@ -139,7 +142,10 @@ namespace Akeldov.Math.Spatial2D.Curves
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            VectorXY toPoint = (point - Center).Normalize();
+            VectorXY toPoint = point - Center;
+            if (toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
+                return true;
+
             float angle = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
 
             return ContainsAngle(angle);

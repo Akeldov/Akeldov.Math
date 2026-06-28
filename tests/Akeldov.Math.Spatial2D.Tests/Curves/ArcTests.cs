@@ -213,6 +213,31 @@ public class ArcTests
     }
 
     [Test]
+    public void IsWithinAngularRegion_WhenPointIsAtArcCenter_ReturnsTrue()
+    {
+        var arc = new Arc(new PointXY(1f, 2f), 3f, MathF.PI / 2f, MathF.PI);
+
+        bool contains = arc.IsWithinAngularRegion(new PointXY(1f, 2f));
+
+        Assert.That(contains, Is.True);
+    }
+
+    [Test]
+    public void IsWithinAngularRegion_WhenParameterizedArcPointIsAtArcCenter_ReturnsTrue()
+    {
+        var arc = new ParameterizedArc(
+            new PointXY(1f, 2f),
+            3f,
+            MathF.PI / 2f,
+            MathF.PI,
+            AngularDirection.Counterclockwise);
+
+        bool contains = arc.IsWithinAngularRegion(new PointXY(1f, 2f));
+
+        Assert.That(contains, Is.True);
+    }
+
+    [Test]
     public void ProjectWithParameter_WhenParameterizedArcStartAndEndAnglesAreEqual_TreatsArcAsZeroLength()
     {
         var arc = new ParameterizedArc(new PointXY(0f, 0f), 1f, 0f, 0f, AngularDirection.Counterclockwise);
