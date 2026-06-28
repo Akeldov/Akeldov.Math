@@ -18,25 +18,64 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints or the shorten amount is too large.</exception>
         public static ParameterizedSegment Shorten(this ParameterizedSegment segment, float amount)
         {
-            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
-                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
-
-            VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
-            float length = segmentVector.Length;
-
-            if (length <= GeometryConstants.GeometryEpsilon)
-                throw new InvalidOperationException("Cannot shorten a segment with equal endpoints.");
+            ValidateResizeAmount(amount);
+            VectorXY direction = GetDirection(segment, "shorten", out float length);
 
             if (2f * amount > length + GeometryConstants.GeometryEpsilon)
                 throw new InvalidOperationException("Cannot shorten a segment by more than half its length.");
 
-            VectorXY direction = segmentVector / length;
             PointXY startPoint = segment.StartPoint + amount * direction;
             PointXY endPoint = segment.EndPoint - amount * direction;
 
             return new ParameterizedSegment(
                 startPoint,
                 endPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
+        /// Shortens a parameterized segment by moving the start point toward the end point along the segment direction.
+        /// </summary>
+        /// <param name="segment">The segment to shorten.</param>
+        /// <param name="amount">The amount removed from the start, in world coordinate units.</param>
+        /// <returns>The shortened parameterized segment.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints or the shorten amount is too large.</exception>
+        public static ParameterizedSegment ShortenStart(this ParameterizedSegment segment, float amount)
+        {
+            ValidateResizeAmount(amount);
+            VectorXY direction = GetDirection(segment, "shorten", out float length);
+
+            if (amount > length + GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot shorten a segment by more than its length.");
+
+            return new ParameterizedSegment(
+                segment.StartPoint + amount * direction,
+                segment.EndPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
+        /// Shortens a parameterized segment by moving the end point toward the start point along the segment direction.
+        /// </summary>
+        /// <param name="segment">The segment to shorten.</param>
+        /// <param name="amount">The amount removed from the end, in world coordinate units.</param>
+        /// <returns>The shortened parameterized segment.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints or the shorten amount is too large.</exception>
+        public static ParameterizedSegment ShortenEnd(this ParameterizedSegment segment, float amount)
+        {
+            ValidateResizeAmount(amount);
+            VectorXY direction = GetDirection(segment, "shorten", out float length);
+
+            if (amount > length + GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot shorten a segment by more than its length.");
+
+            return new ParameterizedSegment(
+                segment.StartPoint,
+                segment.EndPoint - amount * direction,
                 segment.IncludesStartPoint,
                 segment.IncludesEndPoint);
         }
@@ -51,22 +90,54 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints.</exception>
         public static ParameterizedSegment Extend(this ParameterizedSegment segment, float amount)
         {
-            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
-                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
-
-            VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
-            float length = segmentVector.Length;
-
-            if (length <= GeometryConstants.GeometryEpsilon)
-                throw new InvalidOperationException("Cannot extend a segment with equal endpoints.");
-
-            VectorXY direction = segmentVector / length;
+            ValidateResizeAmount(amount);
+            VectorXY direction = GetDirection(segment, "extend", out _);
             PointXY startPoint = segment.StartPoint - amount * direction;
             PointXY endPoint = segment.EndPoint + amount * direction;
 
             return new ParameterizedSegment(
                 startPoint,
                 endPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
+        /// Extends a parameterized segment by moving the start point away from the end point along the segment direction.
+        /// </summary>
+        /// <param name="segment">The segment to extend.</param>
+        /// <param name="amount">The amount added to the start, in world coordinate units.</param>
+        /// <returns>The extended parameterized segment.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints.</exception>
+        public static ParameterizedSegment ExtendStart(this ParameterizedSegment segment, float amount)
+        {
+            ValidateResizeAmount(amount);
+            VectorXY direction = GetDirection(segment, "extend", out _);
+
+            return new ParameterizedSegment(
+                segment.StartPoint - amount * direction,
+                segment.EndPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
+        /// Extends a parameterized segment by moving the end point away from the start point along the segment direction.
+        /// </summary>
+        /// <param name="segment">The segment to extend.</param>
+        /// <param name="amount">The amount added to the end, in world coordinate units.</param>
+        /// <returns>The extended parameterized segment.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints.</exception>
+        public static ParameterizedSegment ExtendEnd(this ParameterizedSegment segment, float amount)
+        {
+            ValidateResizeAmount(amount);
+            VectorXY direction = GetDirection(segment, "extend", out _);
+
+            return new ParameterizedSegment(
+                segment.StartPoint,
+                segment.EndPoint + amount * direction,
                 segment.IncludesStartPoint,
                 segment.IncludesEndPoint);
         }
@@ -111,6 +182,23 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return HalfPlaneSide.OnTheLine;
 
             return side > 0f ? HalfPlaneSide.Left : HalfPlaneSide.Right;
+        }
+
+        private static void ValidateResizeAmount(float amount)
+        {
+            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
+        }
+
+        private static VectorXY GetDirection(ParameterizedSegment segment, string operationName, out float length)
+        {
+            VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
+            length = segmentVector.Length;
+
+            if (length <= GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException($"Cannot {operationName} a segment with equal endpoints.");
+
+            return segmentVector / length;
         }
     }
 }

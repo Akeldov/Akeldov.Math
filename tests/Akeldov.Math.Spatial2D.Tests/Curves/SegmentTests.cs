@@ -71,6 +71,20 @@ public class SegmentTests
         Assert.That(exception!.ParamName, Is.EqualTo("amount"));
     }
 
+    [TestCase("ShortenStart")]
+    [TestCase("ShortenEnd")]
+    [TestCase("ExtendStart")]
+    [TestCase("ExtendEnd")]
+    public void ParameterizedSegmentOneSidedResize_WhenAmountIsInvalid_Throws(string methodName)
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(10f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ResizeParameterizedSegment(segment, methodName, float.NaN));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("amount"));
+    }
+
     [Test]
     public void Shorten_WhenSegmentHasEndpointInclusion_PreservesEndpointInclusion()
     {
@@ -140,6 +154,52 @@ public class SegmentTests
     }
 
     [Test]
+    public void ParameterizedSegmentOneSidedShorten_WhenSegmentDirectionIsReversed_PreservesDirectionAndEndpointInclusion()
+    {
+        var segment = new ParameterizedSegment(
+            new PointXY(10f, 0f),
+            new PointXY(0f, 0f),
+            includesStartPoint: false,
+            includesEndPoint: true);
+
+        var shortenedStart = segment.ShortenStart(2f);
+        var shortenedEnd = segment.ShortenEnd(2f);
+
+        AssertVector(shortenedStart.StartPoint, 8f, 0f);
+        AssertVector(shortenedStart.EndPoint, 0f, 0f);
+        Assert.That(shortenedStart.IncludesStartPoint, Is.False);
+        Assert.That(shortenedStart.IncludesEndPoint, Is.True);
+
+        AssertVector(shortenedEnd.StartPoint, 10f, 0f);
+        AssertVector(shortenedEnd.EndPoint, 2f, 0f);
+        Assert.That(shortenedEnd.IncludesStartPoint, Is.False);
+        Assert.That(shortenedEnd.IncludesEndPoint, Is.True);
+    }
+
+    [Test]
+    public void ParameterizedSegmentOneSidedExtend_WhenSegmentDirectionIsReversed_PreservesDirectionAndEndpointInclusion()
+    {
+        var segment = new ParameterizedSegment(
+            new PointXY(10f, 0f),
+            new PointXY(0f, 0f),
+            includesStartPoint: true,
+            includesEndPoint: false);
+
+        var extendedStart = segment.ExtendStart(2f);
+        var extendedEnd = segment.ExtendEnd(2f);
+
+        AssertVector(extendedStart.StartPoint, 12f, 0f);
+        AssertVector(extendedStart.EndPoint, 0f, 0f);
+        Assert.That(extendedStart.IncludesStartPoint, Is.True);
+        Assert.That(extendedStart.IncludesEndPoint, Is.False);
+
+        AssertVector(extendedEnd.StartPoint, 10f, 0f);
+        AssertVector(extendedEnd.EndPoint, -2f, 0f);
+        Assert.That(extendedEnd.IncludesStartPoint, Is.True);
+        Assert.That(extendedEnd.IncludesEndPoint, Is.False);
+    }
+
+    [Test]
     public void ParameterizedSegmentShorten_WhenAmountIsHalfLength_ReturnsZeroLengthPathAtMidpoint()
     {
         var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(10f, 0f));
@@ -151,11 +211,35 @@ public class SegmentTests
     }
 
     [Test]
+    public void ParameterizedSegmentOneSidedShorten_WhenAmountIsLength_ReturnsZeroLengthPathAtOppositeEndpoint()
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(10f, 0f));
+
+        var shortenedStart = segment.ShortenStart(10f);
+        var shortenedEnd = segment.ShortenEnd(10f);
+
+        AssertVector(shortenedStart.StartPoint, 10f, 0f);
+        AssertVector(shortenedStart.EndPoint, 10f, 0f);
+
+        AssertVector(shortenedEnd.StartPoint, 0f, 0f);
+        AssertVector(shortenedEnd.EndPoint, 0f, 0f);
+    }
+
+    [Test]
     public void ParameterizedSegmentShorten_WhenAmountIsTooLarge_Throws()
     {
         var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(10f, 0f));
 
         Assert.Throws<InvalidOperationException>(() => segment.Shorten(6f));
+    }
+
+    [Test]
+    public void ParameterizedSegmentOneSidedShorten_WhenAmountIsTooLarge_Throws()
+    {
+        var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(10f, 0f));
+
+        Assert.Throws<InvalidOperationException>(() => segment.ShortenStart(11f));
+        Assert.Throws<InvalidOperationException>(() => segment.ShortenEnd(11f));
     }
 
     [Test]
@@ -172,6 +256,18 @@ public class SegmentTests
         var segment = new ParameterizedSegment(new PointXY(1f, 2f), new PointXY(1f, 2f));
 
         Assert.Throws<InvalidOperationException>(() => segment.Extend(0f));
+    }
+
+    [TestCase("ShortenStart")]
+    [TestCase("ShortenEnd")]
+    [TestCase("ExtendStart")]
+    [TestCase("ExtendEnd")]
+    public void ParameterizedSegmentOneSidedResize_WhenSegmentHasEqualEndpoints_Throws(string methodName)
+    {
+        var segment = new ParameterizedSegment(new PointXY(1f, 2f), new PointXY(1f, 2f));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            ResizeParameterizedSegment(segment, methodName, 0f));
     }
 
     [Test]
@@ -539,5 +635,25 @@ public class SegmentTests
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    private static ParameterizedSegment ResizeParameterizedSegment(
+        ParameterizedSegment segment,
+        string methodName,
+        float amount)
+    {
+        switch (methodName)
+        {
+            case "ShortenStart":
+                return segment.ShortenStart(amount);
+            case "ShortenEnd":
+                return segment.ShortenEnd(amount);
+            case "ExtendStart":
+                return segment.ExtendStart(amount);
+            case "ExtendEnd":
+                return segment.ExtendEnd(amount);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(methodName), methodName, "Unknown resize method.");
+        }
     }
 }
