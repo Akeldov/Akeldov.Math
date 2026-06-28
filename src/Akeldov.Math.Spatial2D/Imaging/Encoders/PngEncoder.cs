@@ -238,10 +238,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 {
                     RGBA8BitColor color = values[valueIndex++];
                     int valueOffset = offset + 1 + x * 4;
-                    scanlines[valueOffset] = color.Red;
-                    scanlines[valueOffset + 1] = color.Green;
-                    scanlines[valueOffset + 2] = color.Blue;
-                    scanlines[valueOffset + 3] = color.Alpha;
+                    scanlines[valueOffset] = color.R;
+                    scanlines[valueOffset + 1] = color.G;
+                    scanlines[valueOffset + 2] = color.B;
+                    scanlines[valueOffset + 3] = color.A;
                 }
             }
 
@@ -275,10 +275,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 {
                     RGBA16BitColor color = values[valueIndex++];
                     int valueOffset = offset + 1 + x * 8;
-                    WriteUInt16BigEndian(scanlines, valueOffset, color.Red);
-                    WriteUInt16BigEndian(scanlines, valueOffset + 2, color.Green);
-                    WriteUInt16BigEndian(scanlines, valueOffset + 4, color.Blue);
-                    WriteUInt16BigEndian(scanlines, valueOffset + 6, color.Alpha);
+                    WriteUInt16BigEndian(scanlines, valueOffset, color.R);
+                    WriteUInt16BigEndian(scanlines, valueOffset + 2, color.G);
+                    WriteUInt16BigEndian(scanlines, valueOffset + 4, color.B);
+                    WriteUInt16BigEndian(scanlines, valueOffset + 6, color.A);
                 }
             }
 

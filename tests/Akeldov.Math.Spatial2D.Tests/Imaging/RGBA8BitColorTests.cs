@@ -9,10 +9,10 @@ public class RGBA8BitColorTests
     {
         var color = new RGBA8BitColor(1, 2, 3, 4);
 
-        Assert.That(color.Red, Is.EqualTo(1));
-        Assert.That(color.Green, Is.EqualTo(2));
-        Assert.That(color.Blue, Is.EqualTo(3));
-        Assert.That(color.Alpha, Is.EqualTo(4));
+        Assert.That(color.R, Is.EqualTo(1));
+        Assert.That(color.G, Is.EqualTo(2));
+        Assert.That(color.B, Is.EqualTo(3));
+        Assert.That(color.A, Is.EqualTo(4));
     }
 
     [Test]

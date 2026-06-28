@@ -184,10 +184,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 for (int x = 0; x < width; x++)
                 {
                     RGBA8BitColor color = values[valueIndex++];
-                    writer.Write(color.Blue);
-                    writer.Write(color.Green);
-                    writer.Write(color.Red);
-                    writer.Write(color.Alpha);
+                    writer.Write(color.B);
+                    writer.Write(color.G);
+                    writer.Write(color.R);
+                    writer.Write(color.A);
                 }
 
                 WritePadding(writer, padding);

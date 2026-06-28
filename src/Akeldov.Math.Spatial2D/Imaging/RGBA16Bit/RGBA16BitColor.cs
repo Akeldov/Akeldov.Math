@@ -18,31 +18,31 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="alpha">The alpha channel value.</param>
         public RGBA16BitColor(ushort red, ushort green, ushort blue, ushort alpha)
         {
-            Red = red;
-            Green = green;
-            Blue = blue;
-            Alpha = alpha;
+            R = red;
+            G = green;
+            B = blue;
+            A = alpha;
         }
 
         /// <summary>
         /// Gets the red channel value.
         /// </summary>
-        public ushort Red { get; }
+        public ushort R { get; }
 
         /// <summary>
         /// Gets the green channel value.
         /// </summary>
-        public ushort Green { get; }
+        public ushort G { get; }
 
         /// <summary>
         /// Gets the blue channel value.
         /// </summary>
-        public ushort Blue { get; }
+        public ushort B { get; }
 
         /// <summary>
         /// Gets the alpha channel value.
         /// </summary>
-        public ushort Alpha { get; }
+        public ushort A { get; }
 
         /// <summary>
         /// Creates a 16-bit RGBA color from normalized channel values.
@@ -126,13 +126,13 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <returns>A color with scaled alpha.</returns>
         public RGBA16BitColor ScaleAlpha(float coverage)
         {
-            if (coverage <= 0f || Alpha == 0)
+            if (coverage <= 0f || A == 0)
                 return default(RGBA16BitColor);
 
             if (coverage >= 1f)
                 return this;
 
-            var newNormalizedAlpha = Alpha * coverage;
+            var newNormalizedAlpha = A * coverage;
             ushort newAlpha = 0;
             if (newNormalizedAlpha <= 0f)
                 newAlpha = 0;
@@ -143,9 +143,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
             newAlpha = (ushort)MathF.Round(newNormalizedAlpha);
 
             return new RGBA16BitColor(
-                Red,
-                Green,
-                Blue,
+                R,
+                G,
+                B,
                 newAlpha);
         }
 
@@ -157,8 +157,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <returns>The alpha-composited color.</returns>
         public static RGBA16BitColor AlphaOver(RGBA16BitColor background, RGBA16BitColor foreground)
         {
-            float foregroundAlpha = foreground.Alpha / (float)ushort.MaxValue;
-            float backgroundAlpha = background.Alpha / (float)ushort.MaxValue;
+            float foregroundAlpha = foreground.A / (float)ushort.MaxValue;
+            float backgroundAlpha = background.A / (float)ushort.MaxValue;
             float outputAlpha = foregroundAlpha + backgroundAlpha * (1f - foregroundAlpha);
 
             if (outputAlpha <= 0f)
@@ -167,9 +167,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
             float backgroundAmount = backgroundAlpha * (1f - foregroundAlpha);
 
             return new RGBA16BitColor(
-                ToChannel((foreground.Red * foregroundAlpha + background.Red * backgroundAmount) / outputAlpha),
-                ToChannel((foreground.Green * foregroundAlpha + background.Green * backgroundAmount) / outputAlpha),
-                ToChannel((foreground.Blue * foregroundAlpha + background.Blue * backgroundAmount) / outputAlpha),
+                ToChannel((foreground.R * foregroundAlpha + background.R * backgroundAmount) / outputAlpha),
+                ToChannel((foreground.G * foregroundAlpha + background.G * backgroundAmount) / outputAlpha),
+                ToChannel((foreground.B * foregroundAlpha + background.B * backgroundAmount) / outputAlpha),
                 ToChannel(outputAlpha * ushort.MaxValue));
         }
 
@@ -186,10 +186,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
             float inverseAmount = 1f - amount;
 
             return new RGBA16BitColor(
-                BlendChannel(from.Red, to.Red, amount, inverseAmount),
-                BlendChannel(from.Green, to.Green, amount, inverseAmount),
-                BlendChannel(from.Blue, to.Blue, amount, inverseAmount),
-                BlendChannel(from.Alpha, to.Alpha, amount, inverseAmount));
+                BlendChannel(from.R, to.R, amount, inverseAmount),
+                BlendChannel(from.G, to.G, amount, inverseAmount),
+                BlendChannel(from.B, to.B, amount, inverseAmount),
+                BlendChannel(from.A, to.A, amount, inverseAmount));
         }
 
         /// <summary>
@@ -198,20 +198,20 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="other">The color to compare with this color.</param>
         /// <returns><see langword="true"/> if all channel values are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(RGBA16BitColor other) =>
-            Red == other.Red &&
-            Green == other.Green &&
-            Blue == other.Blue &&
-            Alpha == other.Alpha;
+            R == other.R &&
+            G == other.G &&
+            B == other.B &&
+            A == other.A;
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is RGBA16BitColor other && Equals(other);
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Red, Green, Blue, Alpha);
+        public override int GetHashCode() => HashCode.Combine(R, G, B, A);
 
         /// <inheritdoc/>
         public override string ToString() =>
-            string.Format(CultureInfo.InvariantCulture, "rgba16({0}, {1}, {2}, {3})", Red, Green, Blue, Alpha);
+            string.Format(CultureInfo.InvariantCulture, "rgba16({0}, {1}, {2}, {3})", R, G, B, A);
 
         /// <summary>
         /// Indicates whether two colors are equal.
@@ -251,10 +251,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
         private static RGBA16BitColor FromRGBA8BitColor(RGBA8BitColor color)
         {
             return new RGBA16BitColor(
-                To16BitChannel(color.Red),
-                To16BitChannel(color.Green),
-                To16BitChannel(color.Blue),
-                To16BitChannel(color.Alpha));
+                To16BitChannel(color.R),
+                To16BitChannel(color.G),
+                To16BitChannel(color.B),
+                To16BitChannel(color.A));
         }
 
         private static ushort ToChannel(float value)

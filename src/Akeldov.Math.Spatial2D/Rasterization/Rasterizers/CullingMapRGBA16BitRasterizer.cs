@@ -99,10 +99,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                         "Influence source culler returned a source that is not present in the rasterized source list.");
 
                 RGBA16BitColor color = _sourcePositionToColor(selectedSource.Position);
-                red += Srgb16ToLinear(color.Red);
-                green += Srgb16ToLinear(color.Green);
-                blue += Srgb16ToLinear(color.Blue);
-                alpha += color.Alpha;
+                red += Srgb16ToLinear(color.R);
+                green += Srgb16ToLinear(color.G);
+                blue += Srgb16ToLinear(color.B);
+                alpha += color.A;
             }
 
             float inverseCount = 1f / selectedSources.Count;
