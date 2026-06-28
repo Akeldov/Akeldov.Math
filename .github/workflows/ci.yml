@@ -45,6 +45,14 @@ jobs:
           dotnet restore $env:PROJECT_PATH
           dotnet restore $env:TEST_PROJECT_PATH
 
+      - name: Build Spatial2D
+        shell: pwsh
+        run: >
+          dotnet build $env:PROJECT_PATH
+          --no-restore
+          --disable-build-servers
+          /maxcpucount:1
+
       - name: Build tests
         shell: pwsh
         run: >
