@@ -5,6 +5,21 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 public class CornerExtensionsTests
 {
     [Test]
+    public void CreateAngleBisector_WhenAngleIsRight_CreatesRayFromVertexAlongInternalBisector()
+    {
+        var a = new PointXY(4f, 0f);
+        var b = new PointXY(0f, 0f);
+        var c = new PointXY(0f, 7f);
+
+        var ray = CornerExtensions.CreateAngleBisector(a, b, c);
+
+        float expectedDirectionComponent = MathF.Sqrt(0.5f);
+        AssertVector(ray.Origin, 0f, 0f);
+        AssertVector(ray.Direction, expectedDirectionComponent, expectedDirectionComponent);
+        Assert.That(ray.Angle, Is.EqualTo(MathF.PI / 4f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void CreateCornerTangentCircle_WhenAngleIsRight_CreatesCircleTangentToSides()
     {
         var a = new PointXY(1f, 0f);
@@ -43,6 +58,7 @@ public class CornerExtensionsTests
 
         Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f));
         Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateAngleBisector(a, b, c));
     }
 
     [Test]
@@ -54,6 +70,7 @@ public class CornerExtensionsTests
 
         Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f));
         Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateAngleBisector(a, b, c));
     }
 
     [Test]
@@ -65,6 +82,8 @@ public class CornerExtensionsTests
 
         Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(b, b, c, 1f));
         Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, b, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateAngleBisector(b, b, c));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateAngleBisector(a, b, b));
     }
 
     [Test]
@@ -129,6 +148,12 @@ public class CornerExtensionsTests
     }
 
     private static void AssertVector(PointXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));

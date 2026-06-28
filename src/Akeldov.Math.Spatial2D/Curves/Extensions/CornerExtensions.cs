@@ -10,6 +10,28 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class CornerExtensions
     {
         /// <summary>
+        /// Creates a ray from the corner vertex along the internal angle bisector.
+        /// </summary>
+        /// <param name="firstSidePoint">A point on the first side of the corner.</param>
+        /// <param name="vertex">The corner vertex.</param>
+        /// <param name="secondSidePoint">A point on the second side of the corner.</param>
+        /// <returns>A ray that starts at <paramref name="vertex"/> and points along the internal angle bisector.</returns>
+        /// <exception cref="ArgumentException">Thrown when the angle is degenerate.</exception>
+        public static Ray CreateAngleBisector(PointXY firstSidePoint, PointXY vertex, PointXY secondSidePoint)
+        {
+            var lineBA = new Line(vertex, firstSidePoint);
+            var lineBC = new Line(vertex, secondSidePoint);
+
+            if (lineBA.Equals(lineBC))
+                throw new ArgumentException("The angle must not be degenerate.");
+
+            VectorXY bisector = GetAngleBisectorDirection(firstSidePoint, vertex, secondSidePoint, out _);
+            float angle = MathF.Atan2(bisector.Y, bisector.X);
+
+            return new Ray(vertex, angle);
+        }
+
+        /// <summary>
         /// Creates an arc tangent to both rays of a corner.
         /// </summary>
         /// <param name="firstSidePoint">A point on the first side of the corner.</param>
@@ -93,16 +115,27 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private static PointXY GetIncircleCenter(PointXY firstSidePoint, PointXY vertex, PointXY secondSidePoint, float radius)
         {
+            VectorXY bisector = GetAngleBisectorDirection(firstSidePoint, vertex, secondSidePoint, out float angle);
+
+            float distanceToCenter = radius / MathF.Sin(angle / 2f);
+            return vertex + bisector * distanceToCenter;
+        }
+
+        private static VectorXY GetAngleBisectorDirection(
+            PointXY firstSidePoint,
+            PointXY vertex,
+            PointXY secondSidePoint,
+            out float angle)
+        {
             VectorXY dirBA = (firstSidePoint - vertex).Normalize();
             VectorXY dirBC = (secondSidePoint - vertex).Normalize();
             VectorXY bisector = (dirBA + dirBC).Normalize();
 
-            float angle = VectorXY.Angle(dirBA, dirBC).NormalizeAngleRad();
+            angle = VectorXY.Angle(dirBA, dirBC).NormalizeAngleRad();
             if (angle <= 0f)
                 throw new ArgumentException("The angle must be greater than zero.");
 
-            float distanceToCenter = radius / MathF.Sin(angle / 2f);
-            return vertex + bisector * distanceToCenter;
+            return bisector;
         }
 
         /// <summary>

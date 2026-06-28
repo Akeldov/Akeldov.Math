@@ -40,6 +40,31 @@ public class RayTests
     }
 
     [Test]
+    public void PerpendicularAt_WhenPointIsArbitrary_CreatesLineThroughPointPerpendicularToRay()
+    {
+        var ray = new Ray(new PointXY(10f, -2f), MathF.Atan2(4f, 3f));
+        var point = new PointXY(-1f, 5f);
+
+        Line perpendicular = ray.PerpendicularAt(point);
+
+        Assert.That(perpendicular.Distance(point), Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(
+            MathF.Abs(VectorXY.Dot(perpendicular.Direction, ray.Direction)),
+            Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void PerpendicularAt_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var ray = default(Ray);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ray.PerpendicularAt(new PointXY(float.PositiveInfinity, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [Test]
     public void RayIntersections_WhenThisRayOriginBelongsToOtherCollinearRay_ReturnsThisOrigin()
     {
         var ray = new Ray(new PointXY(2f, 0f));
