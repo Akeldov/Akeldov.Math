@@ -39,6 +39,30 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <summary>
+        /// Initializes a new composite contour from the specified points by connecting consecutive points with segments.
+        /// </summary>
+        /// <param name="points">The contour vertices in boundary order. The last point may repeat the first point to close the contour explicitly.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when fewer than three contour vertices are provided or adjacent vertices are equal.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when a point has a NaN or infinite coordinate.</exception>
+        public CompositeContour(IReadOnlyList<PointXY> points)
+            : this(CreateCurvesFromPoints(points, nameof(points)))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new composite contour from the specified points by connecting consecutive points with segments.
+        /// </summary>
+        /// <param name="points">The contour vertices in boundary order. The last point may repeat the first point to close the contour explicitly.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when fewer than three contour vertices are provided or adjacent vertices are equal.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when a point has a NaN or infinite coordinate.</exception>
+        public CompositeContour(params PointXY[] points)
+            : this((IReadOnlyList<PointXY>)(points ?? throw new ArgumentNullException(nameof(points))))
+        {
+        }
+
+        /// <summary>
         /// Gets the read-only structural view of the finite paths that form this contour.
         /// </summary>
         public IReadOnlyList<IFinitePath> Curves => _readOnlyCurves;
@@ -156,6 +180,44 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             float distance = Distance(point);
             return Encloses(point, geometryEpsilon) ? -distance : distance;
+        }
+
+        private static IFinitePath[] CreateCurvesFromPoints(IReadOnlyList<PointXY> points, string parameterName)
+        {
+            if (points == null)
+                throw new ArgumentNullException(parameterName);
+
+            if (points.Count < 3)
+                throw new ArgumentException("CompositeContour point contour must contain at least three vertices.", parameterName);
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                PointXYValidation.ThrowIfNotFinite(
+                    points[i],
+                    parameterName,
+                    "CompositeContour point coordinates must be finite.");
+            }
+
+            bool isExplicitlyClosed = points[0].Equals(points[points.Count - 1]);
+            int vertexCount = isExplicitlyClosed ? points.Count - 1 : points.Count;
+
+            if (vertexCount < 3)
+                throw new ArgumentException("CompositeContour point contour must contain at least three distinct vertices.", parameterName);
+
+            var curves = new IFinitePath[vertexCount];
+
+            for (int i = 0; i < vertexCount; i++)
+            {
+                PointXY startPoint = points[i];
+                PointXY endPoint = points[(i + 1) % vertexCount];
+
+                if (startPoint.Equals(endPoint))
+                    throw new ArgumentException("CompositeContour adjacent points must be distinct.", parameterName);
+
+                curves[i] = new ParameterizedSegment(startPoint, endPoint);
+            }
+
+            return curves;
         }
 
         private static void ValidateCurvesFormClosedChain(IReadOnlyList<IFinitePath> curves, string parameterName)

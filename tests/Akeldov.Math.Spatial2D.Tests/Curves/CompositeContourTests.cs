@@ -8,7 +8,7 @@ public class CompositeContourTests
     [Test]
     public void Constructor_WhenCurvesIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new CompositeContour(null!));
+        Assert.Throws<ArgumentNullException>(() => new CompositeContour((IReadOnlyList<IFinitePath>)null!));
     }
 
     [Test]
@@ -47,6 +47,78 @@ public class CompositeContourTests
         }));
 
         Assert.That(exception!.ParamName, Is.EqualTo("curves"));
+    }
+
+    [Test]
+    public void Constructor_WhenPointsAreOpen_CreatesClosedSegmentContour()
+    {
+        var contour = new CompositeContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f));
+
+        Assert.That(contour.Curves, Has.Count.EqualTo(4));
+        Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(contour.Encloses(new PointXY(1f, 1f)), Is.True);
+        Assert.That(contour.Curves[3].EndPoint.AlmostEquals(contour.Curves[0].StartPoint), Is.True);
+    }
+
+    [Test]
+    public void Constructor_WhenPointListIsProvided_CreatesClosedSegmentContourAndDoesNotRetainList()
+    {
+        var points = new List<PointXY>
+        {
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f)
+        };
+
+        var contour = new CompositeContour((IReadOnlyList<PointXY>)points);
+        points[1] = new PointXY(20f, 0f);
+
+        Assert.That(contour.Curves, Has.Count.EqualTo(4));
+        Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(contour.Curves[0].EndPoint.AlmostEquals(new PointXY(2f, 0f)), Is.True);
+        Assert.That(contour.Encloses(new PointXY(1f, 1f)), Is.True);
+    }
+
+    [Test]
+    public void Constructor_WhenPointsAreExplicitlyClosed_DoesNotCreateZeroClosingSegment()
+    {
+        var contour = new CompositeContour(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f),
+            new PointXY(0f, 0f));
+
+        Assert.That(contour.Curves, Has.Count.EqualTo(4));
+        Assert.That(contour.Length, Is.EqualTo(8f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Constructor_WhenPointsAreInvalid_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => new CompositeContour((PointXY[])null!));
+        Assert.Throws<ArgumentNullException>(() => new CompositeContour((IReadOnlyList<PointXY>)null!));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 0f)));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 0f),
+            new PointXY(0f, 0f)));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 0f),
+            new PointXY(1f, 0f),
+            new PointXY(0f, 1f)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CompositeContour(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 0f),
+            new PointXY(float.PositiveInfinity, 1f)));
     }
 
     [Test]
