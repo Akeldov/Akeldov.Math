@@ -24,6 +24,16 @@ var contour = new CompositeContour(new IFinitePath[]
 bool isInside = contour.Encloses(new PointXY(3f, 0f));
 ```
 
+For polygonal boundaries, pass vertices directly. `CompositeContour` connects consecutive points with `ParameterizedSegment` edges and closes the final edge automatically.
+
+```csharp
+var polygon = new CompositeContour(
+    new PointXY(0f, 0f),
+    new PointXY(4f, 0f),
+    new PointXY(3f, 2f),
+    new PointXY(0f, 3f));
+```
+
 Use contours for boundaries. Use [regions](../regions/index.md) when you need filled area membership.
 
 ## Smoothing and Fillets

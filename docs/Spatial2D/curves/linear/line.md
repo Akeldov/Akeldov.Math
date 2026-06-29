@@ -47,4 +47,12 @@ CurveProjection projection = horizontal.Project(new PointXY(4f, 5f));
 
 The implicit equation coefficients are normalized, so equivalent equations compare as the same line.
 
+You can construct a line from a point and direction angle in radians.
+
+```csharp
+var diagonal = new Line(
+    new PointXY(0f, 0f),
+    angle: MathF.PI / 4f);
+```
+
 Use [`ParameterizedLine`](parameterized-line.md) when you need an origin, direction, and signed coordinate along the same infinite geometry.

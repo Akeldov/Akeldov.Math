@@ -60,6 +60,14 @@ float curveCoordinate = projection.CurveCoordinate;  // 5
 PointXY beforeOrigin = path.GetPoint(-1f);           // (-1, 2)
 ```
 
+The direction can also be provided as an angle in radians.
+
+```csharp
+var angledPath = new ParameterizedLine(
+    origin: new PointXY(0f, 0f),
+    angle: MathF.PI / 6f);
+```
+
 You can choose the coordinate origin with an explicit reference point or with `LineReferencePointMode`.
 
 ```csharp

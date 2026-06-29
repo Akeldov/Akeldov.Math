@@ -2,7 +2,7 @@ using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
-public class SegmentChainTests
+public class ParameterizedSegmentChainTests
 {
     [Test]
     public void Constructor_WhenPointsAreProvided_CopiesPointsAndCreatesSegments()
@@ -14,7 +14,7 @@ public class SegmentChainTests
             new PointXY(3f, 4f)
         };
 
-        var chain = new SegmentChain(points);
+        var chain = new ParameterizedSegmentChain(points);
         points[1] = new PointXY(10f, 10f);
 
         Assert.That(chain.Points, Has.Count.EqualTo(3));
@@ -32,7 +32,7 @@ public class SegmentChainTests
     [Test]
     public void Properties_WhenChainIsCreated_ReportPathEndpointsAndLength()
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(3f, 0f),
             new PointXY(3f, 4f));
@@ -47,12 +47,12 @@ public class SegmentChainTests
     [Test]
     public void Constructor_WhenPointListIsInvalid_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new SegmentChain(null!));
-        Assert.Throws<ArgumentException>(() => new SegmentChain(new PointXY(0f, 0f)));
-        Assert.Throws<ArgumentException>(() => new SegmentChain(
+        Assert.Throws<ArgumentNullException>(() => new ParameterizedSegmentChain(null!));
+        Assert.Throws<ArgumentException>(() => new ParameterizedSegmentChain(new PointXY(0f, 0f)));
+        Assert.Throws<ArgumentException>(() => new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(0f, 0f)));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SegmentChain(
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(float.PositiveInfinity, 0f)));
     }
@@ -60,7 +60,7 @@ public class SegmentChainTests
     [Test]
     public void GetPoint_WhenCoordinateCrossesSegmentBoundary_ReturnsPointOnCorrectSegment()
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(3f, 0f),
             new PointXY(3f, 4f));
@@ -76,7 +76,7 @@ public class SegmentChainTests
     [TestCase(float.PositiveInfinity)]
     public void GetPoint_WhenCoordinateIsInvalid_Throws(float curveCoordinate)
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(3f, 0f));
 
@@ -86,7 +86,7 @@ public class SegmentChainTests
     [Test]
     public void ProjectWithParameter_WhenClosestPointIsOnLaterSegment_ReturnsChainCoordinate()
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(3f, 0f),
             new PointXY(3f, 4f));
@@ -102,7 +102,7 @@ public class SegmentChainTests
     [Test]
     public void GetRayIntersections_WhenRayCrossesChain_ReturnsDistinctPointsInRayOrder()
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 1f),
             new PointXY(2f, 1f),
             new PointXY(2f, 3f),
@@ -119,7 +119,7 @@ public class SegmentChainTests
     [Test]
     public void GetRayIntersections_WhenRayHitsSharedVertex_ReturnsDistinctPoint()
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(1f, 1f),
             new PointXY(2f, 0f));
@@ -134,7 +134,7 @@ public class SegmentChainTests
     [Test]
     public void GetRayIntersections_WhenGeometryEpsilonIsInvalid_Throws()
     {
-        var chain = new SegmentChain(
+        var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
             new PointXY(1f, 0f));
 

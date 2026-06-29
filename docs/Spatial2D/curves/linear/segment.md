@@ -58,4 +58,16 @@ Segment longer = closed.Extend(2f);
 
 Degenerate segments are allowed. For a zero-length `Segment`, projection returns the endpoint.
 
+Use `ParameterizedSegmentChain` when an open polyline should behave as one finite path with a single length coordinate.
+
+```csharp
+var chain = new ParameterizedSegmentChain(
+    new PointXY(0f, 0f),
+    new PointXY(2f, 0f),
+    new PointXY(2f, 3f));
+
+PointXY halfway = chain.GetPoint(chain.Length * 0.5f);
+CurveProjection projection = chain.Project(new PointXY(1f, 1f));
+```
+
 Use [`ParameterizedSegment`](parameterized-segment.md) when you need traversal direction or a coordinate from start to end.

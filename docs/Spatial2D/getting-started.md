@@ -54,6 +54,6 @@ bool closeEnough = a.AlmostEquals(b);
 
 ## Boundaries and Areas
 
-Use `Contour` for a single closed boundary and `ContourBasedRegion` for a contour-backed filled area.
+Use an `IContour` implementation, such as `CompositeContour`, for a single closed boundary and `ContourBasedRegion` for a contour-backed filled area.
 
-`Contour.Encloses` tests whether a point is inside the contour boundary. `ContourBasedRegion.Contains` tests whether a point lies inside or on the filled region.
+`IContour.Encloses` tests whether a point is inside the contour boundary. `ContourBasedRegion.Contains` tests whether a point lies inside or on the filled region.

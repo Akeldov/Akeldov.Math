@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents an open finite path made from consecutive directed line segments.
     /// </summary>
-    public sealed class SegmentChain : IFinitePath
+    public sealed class ParameterizedSegmentChain : IFinitePath
     {
         private readonly PointXY[] _points;
         private readonly ParameterizedSegment[] _segments;
@@ -17,30 +17,30 @@ namespace Akeldov.Math.Spatial2D.Curves
         private readonly float _length;
 
         /// <summary>
-        /// Initializes a new segment chain from the specified points.
+        /// Initializes a new parameterized segment chain from the specified points.
         /// </summary>
         /// <param name="points">The points that define consecutive segments in traversal order.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is null.</exception>
         /// <exception cref="ArgumentException">Thrown when fewer than two points are provided, adjacent points are equal, or the resulting length is not finite and positive.</exception>
-        public SegmentChain(params PointXY[] points)
+        public ParameterizedSegmentChain(params PointXY[] points)
             : this((IReadOnlyList<PointXY>)(points ?? throw new ArgumentNullException(nameof(points))))
         {
         }
 
         /// <summary>
-        /// Initializes a new segment chain from the specified points.
+        /// Initializes a new parameterized segment chain from the specified points.
         /// </summary>
         /// <param name="points">The points that define consecutive segments in traversal order.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is null.</exception>
         /// <exception cref="ArgumentException">Thrown when fewer than two points are provided, adjacent points are equal, or the resulting length is not finite and positive.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when a point has a NaN or infinite coordinate.</exception>
-        public SegmentChain(IReadOnlyList<PointXY> points)
+        public ParameterizedSegmentChain(IReadOnlyList<PointXY> points)
         {
             if (points == null)
                 throw new ArgumentNullException(nameof(points));
 
             if (points.Count < 2)
-                throw new ArgumentException("SegmentChain must contain at least two points.", nameof(points));
+                throw new ArgumentException("ParameterizedSegmentChain must contain at least two points.", nameof(points));
 
             _points = new PointXY[points.Count];
 
@@ -50,10 +50,10 @@ namespace Akeldov.Math.Spatial2D.Curves
                 PointXYValidation.ThrowIfNotFinite(
                     point,
                     nameof(points),
-                    "SegmentChain point coordinates must be finite.");
+                    "ParameterizedSegmentChain point coordinates must be finite.");
 
                 if (i > 0 && point.Equals(_points[i - 1]))
-                    throw new ArgumentException("SegmentChain adjacent points must be distinct.", nameof(points));
+                    throw new ArgumentException("ParameterizedSegmentChain adjacent points must be distinct.", nameof(points));
 
                 _points[i] = point;
             }
@@ -69,13 +69,13 @@ namespace Akeldov.Math.Spatial2D.Curves
                 var segment = new ParameterizedSegment(_points[i], _points[i + 1]);
                 float segmentLength = segment.Length;
                 if (segmentLength <= 0f || float.IsNaN(segmentLength) || float.IsInfinity(segmentLength))
-                    throw new ArgumentException("SegmentChain segments must have finite positive lengths.", nameof(points));
+                    throw new ArgumentException("ParameterizedSegmentChain segments must have finite positive lengths.", nameof(points));
 
                 _segments[i] = segment;
                 length += segmentLength;
 
                 if (float.IsInfinity(length))
-                    throw new ArgumentException("SegmentChain length must be finite.", nameof(points));
+                    throw new ArgumentException("ParameterizedSegmentChain length must be finite.", nameof(points));
             }
 
             _length = length;
