@@ -108,6 +108,7 @@ nav:
               - Stress Tests: Spatial2D/testing/stress-tests.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
+  - About: about.md
 
 markdown_extensions:
   - admonition
