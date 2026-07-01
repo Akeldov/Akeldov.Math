@@ -8,17 +8,24 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 {
     public static partial class HexMatrixExtensions
     {
-        public static Segment[] ToContour(this bool[,] mask, float hexApothem)
+        public static Segment[] ToContour<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
+            where TPolyhexGeometry : IPolyhexGeometry
         {
-            return mask.ToContour(hexApothem, Layout.OddR);
+            return polyhexGeometry.ToContour(Layout.OddR);
         }
 
-        public static Segment[] ToContour(this bool[,] mask, float hexApothem, Layout layout)
+        public static Segment[] ToContour<TPolyhexGeometry>(
+            this TPolyhexGeometry polyhexGeometry,
+            Layout layout)
+            where TPolyhexGeometry : IPolyhexGeometry
         {
-            var hexRadius = 1.1547f * hexApothem;
+            if (polyhexGeometry is null)
+                throw new ArgumentNullException(nameof(polyhexGeometry));
 
-            int qsize = mask.GetLength(0);
-            int rsize = mask.GetLength(1);
+            var hexApothem = polyhexGeometry.HexApothem;
+            var hexRadius = polyhexGeometry.HexRadius;
+            int qsize = polyhexGeometry.QRSResolution.Q;
+            int rsize = polyhexGeometry.QRSResolution.R;
 
             var borderLines = new List<Segment>();
 
@@ -26,7 +33,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             {
                 for (int r = 0; r < rsize; r++)
                 {
-                    if (!mask[q, r])
+                    if (!polyhexGeometry[q, r])
                         continue;
 
                     VectorXY[] points = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertexes(q, r, hexApothem, hexRadius, layout);
@@ -36,12 +43,12 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     var qmaxClause = q >= qsize - 1;
                     var rmaxClause = r >= rsize - 1;
 
-                    var leftIsBorder = qminClause || !mask[q - 1, r];
-                    var rightIsBorder = qmaxClause || !mask[q + 1, r];
-                    var topLeftIsBorder = qminClause || rmaxClause || !mask[q - 1, r + 1];
-                    var topRightIsBorder = rmaxClause || !mask[q, r + 1];
-                    var bottomLeftIsBorder = rminClause || !mask[q, r - 1];
-                    var bottomRightIsBorder = qmaxClause || rminClause || !mask[q + 1, r - 1];
+                    var leftIsBorder = qminClause || !polyhexGeometry[q - 1, r];
+                    var rightIsBorder = qmaxClause || !polyhexGeometry[q + 1, r];
+                    var topLeftIsBorder = qminClause || rmaxClause || !polyhexGeometry[q - 1, r + 1];
+                    var topRightIsBorder = rmaxClause || !polyhexGeometry[q, r + 1];
+                    var bottomLeftIsBorder = rminClause || !polyhexGeometry[q, r - 1];
+                    var bottomRightIsBorder = qmaxClause || rminClause || !polyhexGeometry[q + 1, r - 1];
 
                     if (layout == Layout.OddR || layout == Layout.EvenR)
                     {
@@ -64,8 +71,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 }
             }
 
-            throw new NotImplementedException();
-            //return borderLines.ToArray().OrderContour();
+            return borderLines.ToArray();
         }
 
         private static Segment CreateSegment(
