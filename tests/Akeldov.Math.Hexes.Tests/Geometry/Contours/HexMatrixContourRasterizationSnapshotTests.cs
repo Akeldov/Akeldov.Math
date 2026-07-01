@@ -35,7 +35,11 @@ public class HexMatrixContourRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        Segment[] contour = CreateSnapshotGeometry().ToApothemOffsetContour(layout);
+        PolyhexGeometry geometry = CreateSnapshotGeometry();
+        Segment[] contour = geometry
+            .ToContour(layout)
+            .Concat(geometry.ToApothemOffsetContour(layout))
+            .ToArray();
         Raster<byte> raster = Rasterize(contour);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
