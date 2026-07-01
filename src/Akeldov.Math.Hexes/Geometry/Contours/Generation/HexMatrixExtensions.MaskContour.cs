@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -8,13 +9,13 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 {
     public static partial class HexMatrixExtensions
     {
-        public static Segment[] ToContour<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
+        public static CompositeContour ToContour<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
             where TPolyhexGeometry : IPolyhexGeometry
         {
             return polyhexGeometry.ToContour(Layout.OddR);
         }
 
-        public static Segment[] ToContour<TPolyhexGeometry>(
+        public static CompositeContour ToContour<TPolyhexGeometry>(
             this TPolyhexGeometry polyhexGeometry,
             Layout layout)
             where TPolyhexGeometry : IPolyhexGeometry
@@ -27,7 +28,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             int qsize = polyhexGeometry.QRSResolution.Q;
             int rsize = polyhexGeometry.QRSResolution.R;
 
-            var borderLines = new List<Segment>();
+            var borderLines = new List<ParameterizedSegment>();
 
             for (int q = 0; q < qsize; q++)
             {
@@ -71,25 +72,70 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 }
             }
 
-            return borderLines.ToArray();
+            return CreateCompositeContour(borderLines);
         }
 
-        private static Segment CreateSegment(
+        private static ParameterizedSegment CreateSegment(
             VectorXY endpointA,
             VectorXY endpointB,
             bool includesEndpointA,
             bool includesEndpointB)
         {
-            return new Segment(
+            return new ParameterizedSegment(
                 (PointXY)endpointA,
                 (PointXY)endpointB,
                 includesEndpointA,
                 includesEndpointB);
         }
 
-        private static Segment CreateSegment(VectorXY endpointA, VectorXY endpointB)
+        private static ParameterizedSegment CreateSegment(VectorXY endpointA, VectorXY endpointB)
         {
-            return new Segment((PointXY)endpointA, (PointXY)endpointB);
+            return new ParameterizedSegment((PointXY)endpointA, (PointXY)endpointB);
+        }
+
+        private static CompositeContour CreateCompositeContour(IReadOnlyList<ParameterizedSegment> segments)
+        {
+            if (segments.Count == 0)
+                throw new InvalidOperationException("Polyhex contour must contain at least one boundary segment.");
+
+            var orderedCurves = new List<IFinitePath>(segments.Count);
+            var used = new bool[segments.Count];
+
+            used[0] = true;
+            orderedCurves.Add(segments[0]);
+
+            PointXY startPoint = segments[0].StartPoint;
+            PointXY currentPoint = segments[0].EndPoint;
+
+            for (int i = 1; i < segments.Count; i++)
+            {
+                int nextIndex = FindSegmentStartingAt(segments, used, currentPoint);
+                if (nextIndex < 0)
+                    throw new InvalidOperationException("Polyhex contour must form a single closed continuous chain.");
+
+                used[nextIndex] = true;
+                orderedCurves.Add(segments[nextIndex]);
+                currentPoint = segments[nextIndex].EndPoint;
+            }
+
+            if (!currentPoint.AlmostEquals(startPoint))
+                throw new InvalidOperationException("Polyhex contour must form a closed continuous chain.");
+
+            return new CompositeContour(orderedCurves);
+        }
+
+        private static int FindSegmentStartingAt(
+            IReadOnlyList<ParameterizedSegment> segments,
+            bool[] used,
+            PointXY point)
+        {
+            for (int i = 0; i < segments.Count; i++)
+            {
+                if (!used[i] && segments[i].StartPoint.AlmostEquals(point))
+                    return i;
+            }
+
+            return -1;
         }
     }
 }

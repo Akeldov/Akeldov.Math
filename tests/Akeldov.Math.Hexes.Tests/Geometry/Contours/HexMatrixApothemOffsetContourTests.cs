@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Geometry.Contours;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Hexes.Tests.Geometry.Contours;
@@ -15,29 +16,31 @@ public class HexMatrixApothemOffsetContourTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void ToApothemOffsetContour_PlacesEndpointsAtApothemDistanceFromSourceContour(Layout layout)
+    public void ToApothemOffsetContour_StaysAtApothemDistanceFromSourceContour(Layout layout)
     {
         PolyhexGeometry geometry = CreateGeometry();
 
-        Segment[] contour = geometry.ToContour(layout);
-        Segment[] extendedContour = geometry.ToApothemOffsetContour(layout);
+        CompositeContour sourceContour = geometry.ToContour(layout);
+        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
 
-        Assert.That(extendedContour, Is.Not.Empty);
+        Assert.That(offsetContour.Curves, Is.Not.Empty);
+        AssertEveryCurvePointStaysAtApothemDistance(sourceContour, offsetContour);
+    }
 
-        for (int i = 0; i < extendedContour.Length; i++)
-        {
-            Segment extended = extendedContour[i];
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void ToApothemOffsetContour_UsesApothemRadiusForConvexJoins(Layout layout)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
 
-            Assert.That(
-                HasSourceContourAtApothemDistance(extended.EndpointA, contour),
-                Is.True,
-                $"Extended segment {i} endpoint A must be at apothem distance from the source contour.");
+        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
+        ParameterizedArc[] offsetArcs = GetArcs(offsetContour);
 
-            Assert.That(
-                HasSourceContourAtApothemDistance(extended.EndpointB, contour),
-                Is.True,
-                $"Extended segment {i} endpoint B must be at apothem distance from the source contour.");
-        }
+        Assert.That(offsetArcs, Is.Not.Empty);
+        for (int i = 0; i < offsetArcs.Length; i++)
+            Assert.That(offsetArcs[i].Radius, Is.EqualTo(Apothem).Within(Epsilon));
     }
 
     [TestCase(Layout.OddR)]
@@ -46,12 +49,25 @@ public class HexMatrixApothemOffsetContourTests
     [TestCase(Layout.EvenQ)]
     public void ToApothemOffsetContour_ReturnsClosedContour(Layout layout)
     {
-        var geometry = new PolyhexGeometry(new[,] { { true } }, Apothem);
+        PolyhexGeometry geometry = CreateGeometry();
 
-        Segment[] extendedContour = geometry.ToApothemOffsetContour(layout);
+        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
 
-        Assert.That(extendedContour, Is.Not.Empty);
-        AssertContourIsClosed(extendedContour);
+        Assert.That(offsetContour.Curves, Is.Not.Empty);
+        AssertContourIsClosed(offsetContour);
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void ToApothemOffsetContour_ReturnsSelfIntersectionFreeContour(Layout layout)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+
+        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
+
+        AssertContourHasNoNonAdjacentIntersections(offsetContour);
     }
 
     [Test]
@@ -59,17 +75,17 @@ public class HexMatrixApothemOffsetContourTests
     {
         PolyhexGeometry geometry = CreateGeometry();
 
-        Assert.That(
-            geometry.ToApothemOffsetContour(),
-            Is.EqualTo(geometry.ToApothemOffsetContour(Layout.OddR)));
+        AssertContoursAreEqual(
+            geometry.ToApothemOffsetContour(Layout.OddR),
+            geometry.ToApothemOffsetContour());
     }
 
     [Test]
-    public void ToApothemOffsetContour_WhenPolyhexIsEmpty_ReturnsEmptyArray()
+    public void ToApothemOffsetContour_WhenPolyhexIsEmpty_Throws()
     {
         var geometry = new PolyhexGeometry(new[,] { { false } }, Apothem);
 
-        Assert.That(geometry.ToApothemOffsetContour(), Is.Empty);
+        Assert.Throws<InvalidOperationException>(() => geometry.ToApothemOffsetContour());
     }
 
     private static PolyhexGeometry CreateGeometry()
@@ -86,50 +102,260 @@ public class HexMatrixApothemOffsetContourTests
             Apothem);
     }
 
-    private static bool HasSourceContourAtApothemDistance(
-        PointXY point,
-        Segment[] sourceContour)
+    private static void AssertEveryCurvePointStaysAtApothemDistance(
+        CompositeContour sourceContour,
+        CompositeContour offsetContour)
     {
-        for (int i = 0; i < sourceContour.Length; i++)
+        for (int i = 0; i < offsetContour.Curves.Count; i++)
         {
-            Line sourceLine = new Line(sourceContour[i].EndpointA, sourceContour[i].EndpointB);
-            if (sourceLine.Distance(point).AlmostEquals(Apothem, Epsilon))
-                return true;
-        }
+            IFinitePath curve = offsetContour.Curves[i];
+            int sampleCount = System.Math.Max(2, (int)MathF.Ceiling(curve.Length / (Apothem * 0.25f)));
 
-        return false;
-    }
-
-    private static void AssertContourIsClosed(Segment[] contour)
-    {
-        var endpointGroups = new List<List<PointXY>>();
-
-        for (int i = 0; i < contour.Length; i++)
-        {
-            AddEndpoint(endpointGroups, contour[i].EndpointA);
-            AddEndpoint(endpointGroups, contour[i].EndpointB);
-        }
-
-        for (int i = 0; i < endpointGroups.Count; i++)
-        {
-            Assert.That(
-                endpointGroups[i],
-                Has.Count.EqualTo(2),
-                $"Contour endpoint group {i} must have degree 2.");
-        }
-    }
-
-    private static void AddEndpoint(List<List<PointXY>> endpointGroups, PointXY endpoint)
-    {
-        for (int i = 0; i < endpointGroups.Count; i++)
-        {
-            if (endpointGroups[i][0].AlmostEquals(endpoint, Epsilon))
+            for (int j = 0; j <= sampleCount; j++)
             {
-                endpointGroups[i].Add(endpoint);
-                return;
+                float coordinate = curve.Length * j / sampleCount;
+                PointXY point = curve.GetPoint(coordinate);
+
+                Assert.That(
+                    sourceContour.Distance(point),
+                    Is.EqualTo(Apothem).Within(Epsilon),
+                    $"Offset curve {i} sample {j} must be at apothem distance from the source contour.");
             }
         }
+    }
 
-        endpointGroups.Add(new List<PointXY> { endpoint });
+    private static void AssertContourIsClosed(CompositeContour contour)
+    {
+        for (int i = 0; i < contour.Curves.Count; i++)
+        {
+            IFinitePath current = contour.Curves[i];
+            IFinitePath next = contour.Curves[(i + 1) % contour.Curves.Count];
+
+            Assert.That(
+                current.EndPoint.AlmostEquals(next.StartPoint, Epsilon),
+                Is.True,
+                $"Contour curve {i} end point must match the next curve start point.");
+        }
+    }
+
+    private static void AssertContourHasNoNonAdjacentIntersections(CompositeContour contour)
+    {
+        for (int i = 0; i < contour.Curves.Count; i++)
+        {
+            for (int j = i + 1; j < contour.Curves.Count; j++)
+            {
+                if (AreAdjacent(i, j, contour.Curves.Count))
+                    continue;
+
+                List<PointXY> intersections = GetIntersections(contour.Curves[i], contour.Curves[j]);
+
+                Assert.That(
+                    intersections,
+                    Is.Empty,
+                    $"Offset contour curves {i} and {j} must not intersect.");
+            }
+        }
+    }
+
+    private static bool AreAdjacent(int firstIndex, int secondIndex, int count)
+    {
+        return secondIndex == firstIndex + 1 || (firstIndex == 0 && secondIndex == count - 1);
+    }
+
+    private static List<PointXY> GetIntersections(IFinitePath first, IFinitePath second)
+    {
+        var intersections = new List<PointXY>();
+
+        if (first is ParameterizedSegment firstSegment &&
+            second is ParameterizedSegment secondSegment)
+        {
+            AddSegmentSegmentIntersections(intersections, firstSegment, secondSegment);
+        }
+        else if (first is ParameterizedSegment segment &&
+            second is ParameterizedArc arc)
+        {
+            AddSegmentArcIntersections(intersections, segment, arc);
+        }
+        else if (first is ParameterizedArc firstArc &&
+            second is ParameterizedSegment segmentB)
+        {
+            AddSegmentArcIntersections(intersections, segmentB, firstArc);
+        }
+        else if (first is ParameterizedArc arcA &&
+            second is ParameterizedArc arcB)
+        {
+            AddArcArcIntersections(intersections, arcA, arcB);
+        }
+
+        return intersections;
+    }
+
+    private static void AddSegmentSegmentIntersections(
+        List<PointXY> intersections,
+        ParameterizedSegment first,
+        ParameterizedSegment second)
+    {
+        VectorXY firstDirection = first.EndPoint - first.StartPoint;
+        VectorXY secondDirection = second.EndPoint - second.StartPoint;
+        float cross = VectorXY.Cross(firstDirection, secondDirection);
+
+        if (cross.IsAlmostZero(Epsilon))
+        {
+            AddIfPointIsOnSegment(intersections, first.StartPoint, second);
+            AddIfPointIsOnSegment(intersections, first.EndPoint, second);
+            AddIfPointIsOnSegment(intersections, second.StartPoint, first);
+            AddIfPointIsOnSegment(intersections, second.EndPoint, first);
+            return;
+        }
+
+        VectorXY originDelta = second.StartPoint - first.StartPoint;
+        float firstCoordinate = VectorXY.Cross(originDelta, secondDirection) / cross;
+        float secondCoordinate = VectorXY.Cross(originDelta, firstDirection) / cross;
+
+        if (IsNormalizedCoordinateInside(firstCoordinate) &&
+            IsNormalizedCoordinateInside(secondCoordinate))
+        {
+            AddDistinct(intersections, first.StartPoint + firstDirection * firstCoordinate);
+        }
+    }
+
+    private static void AddIfPointIsOnSegment(
+        List<PointXY> intersections,
+        PointXY point,
+        ParameterizedSegment segment)
+    {
+        VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
+        VectorXY startToPoint = point - segment.StartPoint;
+
+        if (!VectorXY.Cross(segmentVector, startToPoint).IsAlmostZero(Epsilon))
+            return;
+
+        float dot = VectorXY.Dot(startToPoint, segmentVector);
+        if (dot < -Epsilon || dot > segmentVector.SquaredLength + Epsilon)
+            return;
+
+        AddDistinct(intersections, point);
+    }
+
+    private static void AddSegmentArcIntersections(
+        List<PointXY> intersections,
+        ParameterizedSegment segment,
+        ParameterizedArc arc)
+    {
+        VectorXY direction = segment.EndPoint - segment.StartPoint;
+        VectorXY startToCenter = segment.StartPoint - arc.Center;
+
+        float a = VectorXY.Dot(direction, direction);
+        if (a <= Epsilon * Epsilon)
+            return;
+
+        float b = 2f * VectorXY.Dot(startToCenter, direction);
+        float c = startToCenter.SquaredLength - arc.Radius * arc.Radius;
+        float discriminant = b * b - 4f * a * c;
+
+        if (discriminant < -Epsilon)
+            return;
+
+        if (discriminant < 0f)
+            discriminant = 0f;
+
+        float sqrtDiscriminant = MathF.Sqrt(discriminant);
+        AddSegmentArcIntersection(intersections, segment, arc, (-b - sqrtDiscriminant) / (2f * a));
+        AddSegmentArcIntersection(intersections, segment, arc, (-b + sqrtDiscriminant) / (2f * a));
+    }
+
+    private static void AddSegmentArcIntersection(
+        List<PointXY> intersections,
+        ParameterizedSegment segment,
+        ParameterizedArc arc,
+        float normalizedCoordinate)
+    {
+        if (!IsNormalizedCoordinateInside(normalizedCoordinate))
+            return;
+
+        PointXY point = segment.StartPoint + (segment.EndPoint - segment.StartPoint) * normalizedCoordinate;
+        if (arc.IsWithinAngularRegion(point))
+            AddDistinct(intersections, point);
+    }
+
+    private static void AddArcArcIntersections(
+        List<PointXY> intersections,
+        ParameterizedArc first,
+        ParameterizedArc second)
+    {
+        VectorXY centerDelta = second.Center - first.Center;
+        float centerDistance = centerDelta.Length;
+
+        if (centerDistance <= Epsilon)
+            return;
+
+        if (centerDistance > first.Radius + second.Radius + Epsilon)
+            return;
+
+        if (centerDistance < MathF.Abs(first.Radius - second.Radius) - Epsilon)
+            return;
+
+        float a = (first.Radius * first.Radius -
+            second.Radius * second.Radius +
+            centerDistance * centerDistance) / (2f * centerDistance);
+        float hSquared = first.Radius * first.Radius - a * a;
+
+        if (hSquared < -Epsilon)
+            return;
+
+        if (hSquared < 0f)
+            hSquared = 0f;
+
+        VectorXY direction = centerDelta / centerDistance;
+        PointXY basePoint = first.Center + direction * a;
+        VectorXY perpendicular = new VectorXY(-direction.Y, direction.X) * MathF.Sqrt(hSquared);
+
+        AddArcArcIntersection(intersections, first, second, basePoint + perpendicular);
+        AddArcArcIntersection(intersections, first, second, basePoint - perpendicular);
+    }
+
+    private static void AddArcArcIntersection(
+        List<PointXY> intersections,
+        ParameterizedArc first,
+        ParameterizedArc second,
+        PointXY point)
+    {
+        if (first.IsWithinAngularRegion(point) && second.IsWithinAngularRegion(point))
+            AddDistinct(intersections, point);
+    }
+
+    private static void AddDistinct(List<PointXY> points, PointXY point)
+    {
+        for (int i = 0; i < points.Count; i++)
+        {
+            if (points[i].AlmostEquals(point, Epsilon))
+                return;
+        }
+
+        points.Add(point);
+    }
+
+    private static bool IsNormalizedCoordinateInside(float coordinate)
+    {
+        return coordinate >= -Epsilon && coordinate <= 1f + Epsilon;
+    }
+
+    private static ParameterizedArc[] GetArcs(CompositeContour contour)
+    {
+        return contour.Curves
+            .OfType<ParameterizedArc>()
+            .ToArray();
+    }
+
+    private static void AssertContoursAreEqual(CompositeContour expected, CompositeContour actual)
+    {
+        Assert.That(actual.Curves, Has.Count.EqualTo(expected.Curves.Count));
+
+        for (int i = 0; i < expected.Curves.Count; i++)
+        {
+            Assert.That(actual.Curves[i], Is.EqualTo(expected.Curves[i]));
+        }
+
+        Assert.That(actual.Length, Is.EqualTo(expected.Length).Within(Epsilon));
     }
 }

@@ -1,30 +1,20 @@
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Akeldov.Math.Hexes.Geometry.Contours
 {
     public static partial class HexMatrixExtensions
     {
-        private static readonly (int Q, int R)[] NeighborDirections =
-        {
-            (1, 0),
-            (0, 1),
-            (-1, 1),
-            (-1, 0),
-            (0, -1),
-            (1, -1)
-        };
-
-        public static Segment[] ToApothemOffsetContour<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
+        public static CompositeContour ToApothemOffsetContour<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
             where TPolyhexGeometry : IPolyhexGeometry
         {
             return polyhexGeometry.ToApothemOffsetContour(Layout.OddR);
         }
 
-        public static Segment[] ToApothemOffsetContour<TPolyhexGeometry>(
+        public static CompositeContour ToApothemOffsetContour<TPolyhexGeometry>(
             this TPolyhexGeometry polyhexGeometry,
             Layout layout)
             where TPolyhexGeometry : IPolyhexGeometry
@@ -32,279 +22,553 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             if (polyhexGeometry is null)
                 throw new ArgumentNullException(nameof(polyhexGeometry));
 
-            var segments = new List<Segment>();
-            float hexApothem = polyhexGeometry.HexApothem;
-            float hexRadius = polyhexGeometry.HexRadius;
-            int qsize = polyhexGeometry.QRSResolution.Q;
-            int rsize = polyhexGeometry.QRSResolution.R;
+            CompositeContour contour = polyhexGeometry.ToContour(layout);
+            ParameterizedSegment[] sourceSegments = GetSourceSegments(contour);
+            ParameterizedSegment[] offsetSegments = OffsetOutward(sourceSegments, polyhexGeometry.HexApothem);
+            OffsetJoin[] joins = CreateOffsetJoins(sourceSegments, offsetSegments, polyhexGeometry.HexApothem);
 
-            for (int q = 0; q < qsize; q++)
+            var offsetCurves = new List<IFinitePath>(offsetSegments.Length * 2);
+
+            for (int i = 0; i < offsetSegments.Length; i++)
             {
-                for (int r = 0; r < rsize; r++)
+                int previousJoinIndex = GetPreviousIndex(i, offsetSegments.Length);
+
+                offsetCurves.Add(new ParameterizedSegment(
+                    joins[previousJoinIndex].NextStartPoint,
+                    joins[i].PreviousEndPoint,
+                    offsetSegments[i].IncludesStartPoint,
+                    offsetSegments[i].IncludesEndPoint));
+
+                if (joins[i].Arc.HasValue)
+                    offsetCurves.Add(joins[i].Arc.Value);
+            }
+
+            return CreateOuterOffsetContour(contour, offsetCurves, polyhexGeometry.HexApothem);
+        }
+
+        private static ParameterizedSegment[] GetSourceSegments(CompositeContour contour)
+        {
+            var segments = new ParameterizedSegment[contour.Curves.Count];
+
+            for (int i = 0; i < contour.Curves.Count; i++)
+            {
+                if (contour.Curves[i] is not ParameterizedSegment segment)
                 {
-                    if (!polyhexGeometry[q, r])
-                        continue;
-
-                    AddExtendedSegmentsForHex(
-                        segments,
-                        polyhexGeometry,
-                        q,
-                        r,
-                        hexApothem,
-                        hexRadius,
-                        layout);
+                    throw new InvalidOperationException(
+                        "Polyhex source contour must consist only of parameterized segments.");
                 }
+
+                segments[i] = segment;
             }
 
-            return segments
-                .Distinct()
-                .ToList()
-                .KeepBoundaryEdges()
-                .ToArray();
+            return segments;
         }
 
-        private static void AddExtendedSegmentsForHex<TPolyhexGeometry>(
-            List<Segment> segments,
-            TPolyhexGeometry polyhexGeometry,
-            int q,
-            int r,
-            float hexApothem,
-            float hexRadius,
-            Layout layout)
-            where TPolyhexGeometry : IPolyhexGeometry
+        private static ParameterizedSegment[] OffsetOutward(
+            ParameterizedSegment[] sourceSegments,
+            float offsetDistance)
         {
-            var outsideCenters = new VectorXY?[NeighborDirections.Length];
+            var offsetSegments = new ParameterizedSegment[sourceSegments.Length];
 
-            for (int i = 0; i < NeighborDirections.Length; i++)
+            for (int i = 0; i < sourceSegments.Length; i++)
+                offsetSegments[i] = OffsetOutward(sourceSegments[i], offsetDistance);
+
+            return offsetSegments;
+        }
+
+        private static ParameterizedSegment OffsetOutward(ParameterizedSegment segment, float offsetDistance)
+        {
+            VectorXY direction = (segment.EndPoint - segment.StartPoint).Normalize();
+            var outwardNormal = new VectorXY(direction.Y, -direction.X);
+
+            return segment + outwardNormal * offsetDistance;
+        }
+
+        private static OffsetJoin[] CreateOffsetJoins(
+            ParameterizedSegment[] sourceSegments,
+            ParameterizedSegment[] offsetSegments,
+            float radius)
+        {
+            var joins = new OffsetJoin[offsetSegments.Length];
+
+            for (int i = 0; i < offsetSegments.Length; i++)
             {
-                var direction = NeighborDirections[i];
-                int neighborQ = q + direction.Q;
-                int neighborR = r + direction.R;
-
-                if (polyhexGeometry.IsOutside(neighborQ, neighborR))
-                {
-                    outsideCenters[i] = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(
-                        neighborQ,
-                        neighborR,
-                        hexApothem,
-                        hexRadius,
-                        layout);
-                }
+                int nextIndex = (i + 1) % offsetSegments.Length;
+                joins[i] = CreateOffsetJoin(
+                    sourceSegments[i],
+                    sourceSegments[nextIndex],
+                    offsetSegments[i],
+                    offsetSegments[nextIndex],
+                    radius);
             }
 
-            for (int i = 0; i < outsideCenters.Length; i++)
-            {
-                VectorXY? current = outsideCenters[i];
-                VectorXY? next = outsideCenters[(i + 1) % outsideCenters.Length];
+            return joins;
+        }
 
-                if (current.HasValue && next.HasValue)
-                    segments.Add(CreateSegment(current.Value, next.Value, true, false));
+        private static OffsetJoin CreateOffsetJoin(
+            ParameterizedSegment sourceSegment,
+            ParameterizedSegment nextSourceSegment,
+            ParameterizedSegment offsetSegment,
+            ParameterizedSegment nextOffsetSegment,
+            float radius)
+        {
+            if (offsetSegment.EndPoint.AlmostEquals(nextOffsetSegment.StartPoint))
+                return new OffsetJoin(offsetSegment.EndPoint, nextOffsetSegment.StartPoint, null);
+
+            VectorXY sourceDirection = (sourceSegment.EndPoint - sourceSegment.StartPoint).Normalize();
+            VectorXY nextSourceDirection = (nextSourceSegment.EndPoint - nextSourceSegment.StartPoint).Normalize();
+            float turn = VectorXY.Cross(sourceDirection, nextSourceDirection);
+
+            if (turn.IsAlmostZero())
+                return new OffsetJoin(offsetSegment.EndPoint, nextOffsetSegment.StartPoint, null);
+
+            if (turn < 0f && TryGetLineIntersection(offsetSegment, nextOffsetSegment, out PointXY intersection))
+                return new OffsetJoin(intersection, intersection, null);
+
+            PointXY center = sourceSegment.EndPoint;
+            float startAngle = GetAngle(center, offsetSegment.EndPoint);
+            float endAngle = GetAngle(center, nextOffsetSegment.StartPoint);
+            const AngularDirection direction = AngularDirection.Counterclockwise;
+
+            return new OffsetJoin(
+                offsetSegment.EndPoint,
+                nextOffsetSegment.StartPoint,
+                new ParameterizedArc(center, radius, startAngle, endAngle, direction));
+        }
+
+        private static bool TryGetLineIntersection(
+            ParameterizedSegment first,
+            ParameterizedSegment second,
+            out PointXY intersection)
+        {
+            VectorXY firstDirection = first.EndPoint - first.StartPoint;
+            VectorXY secondDirection = second.EndPoint - second.StartPoint;
+            float cross = VectorXY.Cross(firstDirection, secondDirection);
+
+            if (cross.IsAlmostZero())
+            {
+                intersection = default;
+                return false;
             }
+
+            VectorXY originDelta = second.StartPoint - first.StartPoint;
+            float coordinate = VectorXY.Cross(originDelta, secondDirection) / cross;
+            intersection = first.StartPoint + firstDirection * coordinate;
+            return true;
         }
 
-        private static bool IsOutside<TPolyhexGeometry>(
-            this TPolyhexGeometry polyhexGeometry,
-            int q,
-            int r)
-            where TPolyhexGeometry : IPolyhexGeometry
+        private static float GetAngle(PointXY center, PointXY point)
         {
-            if (q < 0 || q >= polyhexGeometry.QRSResolution.Q)
-                return true;
-
-            if (r < 0 || r >= polyhexGeometry.QRSResolution.R)
-                return true;
-
-            return !polyhexGeometry[q, r];
+            return MathF.Atan2(point.Y - center.Y, point.X - center.X);
         }
 
-        private static List<Segment> KeepBoundaryEdges(this List<Segment> segments)
+        private static CompositeContour CreateOuterOffsetContour(
+            CompositeContour sourceContour,
+            IReadOnlyList<IFinitePath> candidateCurves,
+            float offsetDistance)
         {
-            if (segments.Count == 0)
-                return segments;
+            List<IFinitePath> sections = SplitCurvesAtIntersections(candidateCurves);
+            var boundarySections = new List<IFinitePath>(sections.Count);
+            float offsetEpsilon = GetOffsetEpsilon(offsetDistance);
 
-            var vertices = new List<GraphVertex>();
-            var edgeSegments = new Dictionary<EdgeKey, Segment>();
-
-            for (int i = 0; i < segments.Count; i++)
+            for (int i = 0; i < sections.Count; i++)
             {
-                int endpointA = GetVertexIndex(vertices, segments[i].EndpointA);
-                int endpointB = GetVertexIndex(vertices, segments[i].EndpointB);
-
-                if (endpointA == endpointB)
+                IFinitePath section = sections[i];
+                if (section.Length <= offsetEpsilon)
                     continue;
 
-                vertices[endpointA].Neighbors.Add(endpointB);
-                vertices[endpointB].Neighbors.Add(endpointA);
-                edgeSegments[new EdgeKey(endpointA, endpointB)] = segments[i];
+                PointXY midpoint = section.GetPoint(section.Length * 0.5f);
+                if (sourceContour.Distance(midpoint) >= offsetDistance - offsetEpsilon)
+                    boundarySections.Add(section);
             }
 
-            for (int i = 0; i < vertices.Count; i++)
+            if (boundarySections.Count == 0)
+                throw new InvalidOperationException("Polyhex offset contour does not contain outer boundary sections.");
+
+            return new CompositeContour(OrderLongestClosedChain(boundarySections));
+        }
+
+        private static List<IFinitePath> SplitCurvesAtIntersections(IReadOnlyList<IFinitePath> curves)
+        {
+            var splitCoordinates = new List<float>[curves.Count];
+
+            for (int i = 0; i < curves.Count; i++)
             {
-                GraphVertex vertex = vertices[i];
-                vertex.Neighbors = vertex.Neighbors.Distinct().ToList();
-                vertex.Neighbors.Sort((left, right) =>
-                    GetAngle(vertex.Position, vertices[left].Position)
-                        .CompareTo(GetAngle(vertex.Position, vertices[right].Position)));
+                splitCoordinates[i] = new List<float> { 0f, curves[i].Length };
             }
 
-            var visited = new HashSet<DirectedEdge>();
-            var positiveFaceEdgeCounts = new Dictionary<EdgeKey, int>();
-
-            for (int from = 0; from < vertices.Count; from++)
+            for (int i = 0; i < curves.Count; i++)
             {
-                List<int> neighbors = vertices[from].Neighbors;
-                for (int i = 0; i < neighbors.Count; i++)
+                for (int j = i + 1; j < curves.Count; j++)
                 {
-                    var start = new DirectedEdge(from, neighbors[i]);
-                    if (visited.Contains(start))
-                        continue;
-
-                    List<EdgeKey> faceEdges = TraceFace(start, vertices, visited, out float signedArea);
-                    if (signedArea > GeometryConstants.GeometryEpsilon)
+                    foreach (PointXY intersection in GetIntersections(curves[i], curves[j]))
                     {
-                        for (int j = 0; j < faceEdges.Count; j++)
-                        {
-                            positiveFaceEdgeCounts.TryGetValue(faceEdges[j], out int count);
-                            positiveFaceEdgeCounts[faceEdges[j]] = count + 1;
-                        }
+                        AddSplitCoordinate(splitCoordinates[i], curves[i], intersection);
+                        AddSplitCoordinate(splitCoordinates[j], curves[j], intersection);
                     }
                 }
             }
 
-            var result = new List<Segment>();
-            foreach (KeyValuePair<EdgeKey, int> faceEdgeCount in positiveFaceEdgeCounts)
+            var sections = new List<IFinitePath>();
+
+            for (int i = 0; i < curves.Count; i++)
             {
-                if (faceEdgeCount.Value == 1 && edgeSegments.TryGetValue(faceEdgeCount.Key, out Segment segment))
+                splitCoordinates[i].Sort();
+
+                for (int j = 0; j + 1 < splitCoordinates[i].Count; j++)
                 {
-                    result.Add(segment);
+                    float startCoordinate = splitCoordinates[i][j];
+                    float endCoordinate = splitCoordinates[i][j + 1];
+
+                    if (endCoordinate - startCoordinate <= GeometryConstants.GeometryEpsilon)
+                        continue;
+
+                    sections.Add(CreateCurveSection(curves[i], startCoordinate, endCoordinate));
                 }
             }
 
-            return result.Count == 0 ? segments : result;
+            return sections;
         }
 
-        private static int GetVertexIndex(List<GraphVertex> vertices, PointXY position)
+        private static void AddSplitCoordinate(
+            List<float> splitCoordinates,
+            IFinitePath curve,
+            PointXY intersection)
         {
-            const float endpointEpsilon = GeometryConstants.GeometryEpsilon * 16f;
+            ParameterizedCurveProjection projection = curve.ProjectWithParameter(intersection);
+            float coordinate = MathF.Max(0f, MathF.Min(curve.Length, projection.CurveCoordinate));
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (int i = 0; i < splitCoordinates.Count; i++)
             {
-                if (vertices[i].Position.AlmostEquals(position, endpointEpsilon))
+                if (splitCoordinates[i].AlmostEquals(coordinate))
+                    return;
+            }
+
+            splitCoordinates.Add(coordinate);
+        }
+
+        private static IFinitePath CreateCurveSection(
+            IFinitePath curve,
+            float startCoordinate,
+            float endCoordinate)
+        {
+            PointXY startPoint = curve.GetPoint(startCoordinate);
+            PointXY endPoint = curve.GetPoint(endCoordinate);
+
+            if (curve is ParameterizedArc arc)
+            {
+                return new ParameterizedArc(
+                    arc.Center,
+                    arc.Radius,
+                    GetAngle(arc.Center, startPoint),
+                    GetAngle(arc.Center, endPoint),
+                    arc.AngularDirection);
+            }
+
+            return new ParameterizedSegment(startPoint, endPoint, true, false);
+        }
+
+        private static List<PointXY> GetIntersections(IFinitePath first, IFinitePath second)
+        {
+            var intersections = new List<PointXY>();
+
+            if (first is ParameterizedSegment firstSegment &&
+                second is ParameterizedSegment secondSegment)
+            {
+                AddSegmentSegmentIntersections(intersections, firstSegment, secondSegment);
+            }
+            else if (first is ParameterizedSegment segment &&
+                second is ParameterizedArc arc)
+            {
+                AddSegmentArcIntersections(intersections, segment, arc);
+            }
+            else if (first is ParameterizedArc firstArc &&
+                second is ParameterizedSegment segmentB)
+            {
+                AddSegmentArcIntersections(intersections, segmentB, firstArc);
+            }
+            else if (first is ParameterizedArc arcA &&
+                second is ParameterizedArc arcB)
+            {
+                AddArcArcIntersections(intersections, arcA, arcB);
+            }
+
+            return intersections;
+        }
+
+        private static void AddSegmentSegmentIntersections(
+            List<PointXY> intersections,
+            ParameterizedSegment first,
+            ParameterizedSegment second)
+        {
+            VectorXY firstDirection = first.EndPoint - first.StartPoint;
+            VectorXY secondDirection = second.EndPoint - second.StartPoint;
+            float cross = VectorXY.Cross(firstDirection, secondDirection);
+
+            if (cross.IsAlmostZero())
+                return;
+
+            VectorXY originDelta = second.StartPoint - first.StartPoint;
+            float firstCoordinate = VectorXY.Cross(originDelta, secondDirection) / cross;
+            float secondCoordinate = VectorXY.Cross(originDelta, firstDirection) / cross;
+
+            if (IsNormalizedCoordinateInside(firstCoordinate) &&
+                IsNormalizedCoordinateInside(secondCoordinate))
+            {
+                AddDistinct(intersections, first.StartPoint + firstDirection * firstCoordinate);
+            }
+        }
+
+        private static void AddSegmentArcIntersections(
+            List<PointXY> intersections,
+            ParameterizedSegment segment,
+            ParameterizedArc arc)
+        {
+            VectorXY direction = segment.EndPoint - segment.StartPoint;
+            VectorXY startToCenter = segment.StartPoint - arc.Center;
+
+            float a = VectorXY.Dot(direction, direction);
+            if (a <= GeometryConstants.GeometryEpsilonSquared)
+                return;
+
+            float b = 2f * VectorXY.Dot(startToCenter, direction);
+            float c = startToCenter.SquaredLength - arc.Radius * arc.Radius;
+            float discriminant = b * b - 4f * a * c;
+
+            if (discriminant < -GeometryConstants.GeometryEpsilon)
+                return;
+
+            if (discriminant < 0f)
+                discriminant = 0f;
+
+            float sqrtDiscriminant = MathF.Sqrt(discriminant);
+            AddSegmentArcIntersection(intersections, segment, arc, (-b - sqrtDiscriminant) / (2f * a));
+            AddSegmentArcIntersection(intersections, segment, arc, (-b + sqrtDiscriminant) / (2f * a));
+        }
+
+        private static void AddSegmentArcIntersection(
+            List<PointXY> intersections,
+            ParameterizedSegment segment,
+            ParameterizedArc arc,
+            float normalizedCoordinate)
+        {
+            if (!IsNormalizedCoordinateInside(normalizedCoordinate))
+                return;
+
+            PointXY point = segment.StartPoint + (segment.EndPoint - segment.StartPoint) * normalizedCoordinate;
+            if (arc.IsWithinAngularRegion(point))
+                AddDistinct(intersections, point);
+        }
+
+        private static void AddArcArcIntersections(
+            List<PointXY> intersections,
+            ParameterizedArc first,
+            ParameterizedArc second)
+        {
+            VectorXY centerDelta = second.Center - first.Center;
+            float centerDistance = centerDelta.Length;
+
+            if (centerDistance <= GeometryConstants.GeometryEpsilon)
+                return;
+
+            if (centerDistance > first.Radius + second.Radius + GeometryConstants.GeometryEpsilon)
+                return;
+
+            if (centerDistance < MathF.Abs(first.Radius - second.Radius) - GeometryConstants.GeometryEpsilon)
+                return;
+
+            float a = (first.Radius * first.Radius -
+                second.Radius * second.Radius +
+                centerDistance * centerDistance) / (2f * centerDistance);
+            float hSquared = first.Radius * first.Radius - a * a;
+
+            if (hSquared < -GeometryConstants.GeometryEpsilon)
+                return;
+
+            if (hSquared < 0f)
+                hSquared = 0f;
+
+            VectorXY direction = centerDelta / centerDistance;
+            PointXY basePoint = first.Center + direction * a;
+            VectorXY perpendicular = new VectorXY(-direction.Y, direction.X) * MathF.Sqrt(hSquared);
+
+            AddArcArcIntersection(intersections, first, second, basePoint + perpendicular);
+            AddArcArcIntersection(intersections, first, second, basePoint - perpendicular);
+        }
+
+        private static void AddArcArcIntersection(
+            List<PointXY> intersections,
+            ParameterizedArc first,
+            ParameterizedArc second,
+            PointXY point)
+        {
+            if (first.IsWithinAngularRegion(point) && second.IsWithinAngularRegion(point))
+                AddDistinct(intersections, point);
+        }
+
+        private static void AddDistinct(List<PointXY> points, PointXY point)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].AlmostEquals(point))
+                    return;
+            }
+
+            points.Add(point);
+        }
+
+        private static bool IsNormalizedCoordinateInside(float coordinate)
+        {
+            return coordinate >= -GeometryConstants.GeometryEpsilon &&
+                coordinate <= 1f + GeometryConstants.GeometryEpsilon;
+        }
+
+        private static List<IFinitePath> OrderLongestClosedChain(IReadOnlyList<IFinitePath> curves)
+        {
+            var used = new bool[curves.Count];
+            List<IFinitePath> longestChain = null;
+            float longestLength = -1f;
+
+            for (int i = 0; i < curves.Count; i++)
+            {
+                if (used[i])
+                    continue;
+
+                List<IFinitePath> chain = BuildClosedChain(curves, used, i);
+                float length = GetLength(chain);
+
+                if (length > longestLength)
+                {
+                    longestLength = length;
+                    longestChain = chain;
+                }
+            }
+
+            if (longestChain == null || longestChain.Count == 0)
+                throw new InvalidOperationException("Polyhex offset contour must contain a closed chain.");
+
+            return longestChain;
+        }
+
+        private static List<IFinitePath> BuildClosedChain(
+            IReadOnlyList<IFinitePath> curves,
+            bool[] used,
+            int startIndex)
+        {
+            var chain = new List<IFinitePath>();
+
+            used[startIndex] = true;
+            chain.Add(curves[startIndex]);
+
+            PointXY startPoint = curves[startIndex].StartPoint;
+            PointXY currentPoint = curves[startIndex].EndPoint;
+
+            while (!currentPoint.AlmostEquals(startPoint))
+            {
+                int nextIndex = FindNextCurve(curves, used, currentPoint, out bool reverse);
+                if (nextIndex < 0)
+                    throw new InvalidOperationException("Polyhex offset contour sections must form closed chains.");
+
+                used[nextIndex] = true;
+
+                IFinitePath nextCurve = reverse ? ReverseCurve(curves[nextIndex]) : curves[nextIndex];
+                chain.Add(nextCurve);
+                currentPoint = nextCurve.EndPoint;
+            }
+
+            return chain;
+        }
+
+        private static int FindNextCurve(
+            IReadOnlyList<IFinitePath> curves,
+            bool[] used,
+            PointXY point,
+            out bool reverse)
+        {
+            for (int i = 0; i < curves.Count; i++)
+            {
+                if (used[i])
+                    continue;
+
+                if (curves[i].StartPoint.AlmostEquals(point))
+                {
+                    reverse = false;
                     return i;
-            }
-
-            vertices.Add(new GraphVertex(position));
-            return vertices.Count - 1;
-        }
-
-        private static float GetAngle(PointXY origin, PointXY point)
-        {
-            return MathF.Atan2(point.Y - origin.Y, point.X - origin.X);
-        }
-
-        private static List<EdgeKey> TraceFace(
-            DirectedEdge start,
-            List<GraphVertex> vertices,
-            HashSet<DirectedEdge> visited,
-            out float signedArea)
-        {
-            var faceVertices = new List<int>();
-            var faceEdges = new List<EdgeKey>();
-            DirectedEdge current = start;
-            int guard = 0;
-            int guardLimit = System.Math.Max(1, vertices.Sum(vertex => vertex.Neighbors.Count) + 1);
-
-            while (!visited.Contains(current) && guard < guardLimit)
-            {
-                visited.Add(current);
-                faceVertices.Add(current.From);
-                faceEdges.Add(new EdgeKey(current.From, current.To));
-
-                GraphVertex toVertex = vertices[current.To];
-                int reverseIndex = toVertex.Neighbors.IndexOf(current.From);
-                if (reverseIndex < 0)
-                    break;
-
-                int nextIndex = (reverseIndex - 1 + toVertex.Neighbors.Count) % toVertex.Neighbors.Count;
-                current = new DirectedEdge(current.To, toVertex.Neighbors[nextIndex]);
-                guard++;
-            }
-
-            signedArea = GetSignedArea(faceVertices, vertices);
-            return faceEdges;
-        }
-
-        private static float GetSignedArea(List<int> faceVertices, List<GraphVertex> vertices)
-        {
-            float area = 0f;
-
-            for (int i = 0; i < faceVertices.Count; i++)
-            {
-                PointXY current = vertices[faceVertices[i]].Position;
-                PointXY next = vertices[faceVertices[(i + 1) % faceVertices.Count]].Position;
-                area += current.X * next.Y - next.X * current.Y;
-            }
-
-            return 0.5f * area;
-        }
-
-        private sealed class GraphVertex
-        {
-            public GraphVertex(PointXY position)
-            {
-                Position = position;
-                Neighbors = new List<int>();
-            }
-
-            public PointXY Position { get; }
-
-            public List<int> Neighbors { get; set; }
-        }
-
-        private readonly struct DirectedEdge : IEquatable<DirectedEdge>
-        {
-            public DirectedEdge(int from, int to)
-            {
-                From = from;
-                To = to;
-            }
-
-            public int From { get; }
-
-            public int To { get; }
-
-            public bool Equals(DirectedEdge other) => From == other.From && To == other.To;
-
-            public override bool Equals(object obj) => obj is DirectedEdge other && Equals(other);
-
-            public override int GetHashCode() => HashCode.Combine(From, To);
-        }
-
-        private readonly struct EdgeKey : IEquatable<EdgeKey>
-        {
-            public EdgeKey(int endpointA, int endpointB)
-            {
-                if (endpointA <= endpointB)
-                {
-                    EndpointA = endpointA;
-                    EndpointB = endpointB;
-                }
-                else
-                {
-                    EndpointA = endpointB;
-                    EndpointB = endpointA;
                 }
             }
 
-            public int EndpointA { get; }
+            for (int i = 0; i < curves.Count; i++)
+            {
+                if (used[i])
+                    continue;
 
-            public int EndpointB { get; }
+                if (curves[i].EndPoint.AlmostEquals(point))
+                {
+                    reverse = true;
+                    return i;
+                }
+            }
 
-            public bool Equals(EdgeKey other) => EndpointA == other.EndpointA && EndpointB == other.EndpointB;
+            reverse = false;
+            return -1;
+        }
 
-            public override bool Equals(object obj) => obj is EdgeKey other && Equals(other);
+        private static IFinitePath ReverseCurve(IFinitePath curve)
+        {
+            if (curve is ParameterizedArc arc)
+            {
+                AngularDirection direction = arc.AngularDirection == AngularDirection.Counterclockwise
+                    ? AngularDirection.Clockwise
+                    : AngularDirection.Counterclockwise;
 
-            public override int GetHashCode() => HashCode.Combine(EndpointA, EndpointB);
+                return new ParameterizedArc(
+                    arc.Center,
+                    arc.Radius,
+                    arc.EndAngle,
+                    arc.StartAngle,
+                    direction);
+            }
+
+            return new ParameterizedSegment(curve.EndPoint, curve.StartPoint, true, false);
+        }
+
+        private static float GetLength(IReadOnlyList<IFinitePath> curves)
+        {
+            float length = 0f;
+
+            for (int i = 0; i < curves.Count; i++)
+                length += curves[i].Length;
+
+            return length;
+        }
+
+        private static float GetOffsetEpsilon(float offsetDistance)
+        {
+            return MathF.Max(GeometryConstants.GeometryEpsilon * 64f, offsetDistance * 1e-5f);
+        }
+
+        private static int GetPreviousIndex(int index, int count)
+        {
+            return index == 0 ? count - 1 : index - 1;
+        }
+
+        private readonly struct OffsetJoin
+        {
+            public OffsetJoin(
+                PointXY previousEndPoint,
+                PointXY nextStartPoint,
+                ParameterizedArc? arc)
+            {
+                PreviousEndPoint = previousEndPoint;
+                NextStartPoint = nextStartPoint;
+                Arc = arc;
+            }
+
+            public PointXY PreviousEndPoint { get; }
+
+            public PointXY NextStartPoint { get; }
+
+            public ParameterizedArc? Arc { get; }
         }
     }
 }

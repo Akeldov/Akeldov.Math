@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Geometry.Contours;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -20,7 +21,7 @@ public class HexMatrixContourRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        Segment[] contour = CreateSnapshotGeometry().ToContour(layout);
+        CompositeContour contour = CreateSnapshotGeometry().ToContour(layout);
         Raster<byte> raster = Rasterize(contour);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -36,9 +37,10 @@ public class HexMatrixContourRasterizationSnapshotTests
         string approvedFileName)
     {
         PolyhexGeometry geometry = CreateSnapshotGeometry();
-        Segment[] contour = geometry
+        IFinitePath[] contour = geometry
             .ToContour(layout)
-            .Concat(geometry.ToApothemOffsetContour(layout))
+            .Curves
+            .Concat(geometry.ToApothemOffsetContour(layout).Curves)
             .ToArray();
         Raster<byte> raster = Rasterize(contour);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
@@ -60,10 +62,15 @@ public class HexMatrixContourRasterizationSnapshotTests
             apothem: 1f);
     }
 
-    private static Raster<byte> Rasterize(Segment[] contour)
+    private static Raster<byte> Rasterize(CompositeContour contour)
+    {
+        return Rasterize(contour.Curves);
+    }
+
+    private static Raster<byte> Rasterize(IReadOnlyList<IFinitePath> contour)
     {
         IPointDistanceProvider[] distanceProviders = contour
-            .Select(segment => (IPointDistanceProvider)segment)
+            .Select(curve => (IPointDistanceProvider)curve)
             .ToArray();
 
         return distanceProviders.Rasterize(
@@ -71,29 +78,47 @@ public class HexMatrixContourRasterizationSnapshotTests
             new PointDistanceProviderCollectionGray8BitRasterizer(ToDistanceGray8));
     }
 
-    private static RasterGrid CreateGrid(Segment[] contour)
+    private static RasterGrid CreateGrid(IReadOnlyList<IFinitePath> contour)
     {
         const float padding = 0.75f;
 
-        Segment first = contour[0];
-        float minX = MathF.Min(first.EndpointA.X, first.EndpointB.X);
-        float minY = MathF.Min(first.EndpointA.Y, first.EndpointB.Y);
-        float maxX = MathF.Max(first.EndpointA.X, first.EndpointB.X);
-        float maxY = MathF.Max(first.EndpointA.Y, first.EndpointB.Y);
+        IFinitePath first = contour[0];
+        float minX = MathF.Min(first.StartPoint.X, first.EndPoint.X);
+        float minY = MathF.Min(first.StartPoint.Y, first.EndPoint.Y);
+        float maxX = MathF.Max(first.StartPoint.X, first.EndPoint.X);
+        float maxY = MathF.Max(first.StartPoint.Y, first.EndPoint.Y);
+        IncludeCurveBounds(first, ref minX, ref minY, ref maxX, ref maxY);
 
-        for (int i = 1; i < contour.Length; i++)
+        for (int i = 1; i < contour.Count; i++)
         {
-            Segment segment = contour[i];
-            minX = MathF.Min(minX, MathF.Min(segment.EndpointA.X, segment.EndpointB.X));
-            minY = MathF.Min(minY, MathF.Min(segment.EndpointA.Y, segment.EndpointB.Y));
-            maxX = MathF.Max(maxX, MathF.Max(segment.EndpointA.X, segment.EndpointB.X));
-            maxY = MathF.Max(maxY, MathF.Max(segment.EndpointA.Y, segment.EndpointB.Y));
+            IFinitePath curve = contour[i];
+            minX = MathF.Min(minX, MathF.Min(curve.StartPoint.X, curve.EndPoint.X));
+            minY = MathF.Min(minY, MathF.Min(curve.StartPoint.Y, curve.EndPoint.Y));
+            maxX = MathF.Max(maxX, MathF.Max(curve.StartPoint.X, curve.EndPoint.X));
+            maxY = MathF.Max(maxY, MathF.Max(curve.StartPoint.Y, curve.EndPoint.Y));
+            IncludeCurveBounds(curve, ref minX, ref minY, ref maxX, ref maxY);
         }
 
         return new RasterGrid(
             origin: new PointXY(minX - padding, minY - padding),
             size: new VectorXY(maxX - minX + 2f * padding, maxY - minY + 2f * padding),
             resolution: SnapshotResolution);
+    }
+
+    private static void IncludeCurveBounds(
+        IFinitePath curve,
+        ref float minX,
+        ref float minY,
+        ref float maxX,
+        ref float maxY)
+    {
+        if (curve is not ParameterizedArc arc)
+            return;
+
+        minX = MathF.Min(minX, arc.Center.X - arc.Radius);
+        minY = MathF.Min(minY, arc.Center.Y - arc.Radius);
+        maxX = MathF.Max(maxX, arc.Center.X + arc.Radius);
+        maxY = MathF.Max(maxY, arc.Center.Y + arc.Radius);
     }
 
     private static byte ToDistanceGray8(float distance)
