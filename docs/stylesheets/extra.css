@@ -3,6 +3,12 @@
   height: auto;
 }
 
+.md-typeset img[src$="geometry-scene-smiley-circle-arc-rgba16.png"],
+.md-typeset img[src$="geometry-scene-triangular-prism-rgba16.png"] {
+  width: min(45rem, 100%);
+  height: auto;
+}
+
 .curve-overview-thumbnail {
   width: min(3.5rem, 100%);
   height: auto;

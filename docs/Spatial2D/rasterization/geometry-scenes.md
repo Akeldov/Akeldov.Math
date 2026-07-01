@@ -47,10 +47,6 @@ raster.SaveAsPng("scene.png");
 The examples below use the same scene ideas and approved outputs as the
 `GeometrySceneSnapshotTests` snapshot tests.
 
-| Distance-based layers | Projection-based layers |
-| --- | --- |
-| ![Smiley made from a filled circle, point eyes, and an arc smile](../../assets/spatial2d/geometry-scenes/geometry-scene-smiley-circle-arc-rgba16.png) | ![Triangular prism scene with an incoming beam and rainbow output](../../assets/spatial2d/geometry-scenes/geometry-scene-triangular-prism-rgba16.png) |
-
 ### Smiley Scene
 
 Use signed distance layers for filled closed shapes, and unsigned distance
@@ -111,6 +107,8 @@ Raster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(
 
 raster.SaveAsPng("smiley.png");
 ```
+
+![Smiley made from a filled circle, point eyes, and an arc smile](../../assets/spatial2d/geometry-scenes/geometry-scene-smiley-circle-arc-rgba16.png)
 
 `startAngle` and `endAngle` are in radians. The arc and point layers use
 `fillDistance` as their solid stroke radius, then fade across `edgeFalloff`.
@@ -206,6 +204,8 @@ Raster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(
 
 raster.SaveAsPng("prism.png");
 ```
+
+![Triangular prism scene with an incoming beam and rainbow output](../../assets/spatial2d/geometry-scenes/geometry-scene-triangular-prism-rgba16.png)
 
 The snapshot test adds incoming and in-prism beam layers with the same API. Use
 `AddParameterizedProjectionBasedLayer` when the color or width should depend on
