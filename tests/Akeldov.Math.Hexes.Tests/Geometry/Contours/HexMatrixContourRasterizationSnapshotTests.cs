@@ -27,6 +27,21 @@ public class HexMatrixContourRasterizationSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "polyhex-apothem-offset-contour-odd-r.png")]
+    [TestCase(Layout.EvenR, "polyhex-apothem-offset-contour-even-r.png")]
+    [TestCase(Layout.OddQ, "polyhex-apothem-offset-contour-odd-q.png")]
+    [TestCase(Layout.EvenQ, "polyhex-apothem-offset-contour-even-q.png")]
+    public void ToApothemOffsetContour_RasterizedSegments_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        Segment[] contour = CreateSnapshotGeometry().ToApothemOffsetContour(layout);
+        Raster<byte> raster = Rasterize(contour);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     private static PolyhexGeometry CreateSnapshotGeometry()
     {
         return new PolyhexGeometry(
