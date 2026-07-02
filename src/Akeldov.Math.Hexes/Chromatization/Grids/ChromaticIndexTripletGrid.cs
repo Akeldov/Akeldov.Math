@@ -141,7 +141,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         public bool TryGetChromaticIndices(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
         {
-            ThrowIfGridIndexOutOfBounds(gridIndex);
+            if (!ContainsGridIndex(gridIndex))
+            {
+                chromaticIndices = default;
+                return false;
+            }
 
             int flatIndex = GetFlatIndex(gridIndex);
             chromaticIndices = _values[flatIndex];
@@ -217,9 +221,14 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
         {
-            if (index.X < 0 || index.X >= ResolutionX ||
-                index.Y < 0 || index.Y >= ResolutionY)
+            if (!ContainsGridIndex(index))
                 throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+        }
+
+        private bool ContainsGridIndex(VectorXYInt index)
+        {
+            return (uint)index.X < (uint)ResolutionX &&
+                (uint)index.Y < (uint)ResolutionY;
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;

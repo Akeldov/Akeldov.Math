@@ -92,6 +92,30 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
+    public void TryGetMethods_WhenGridIndexIsOutside_ReturnFalse()
+    {
+        var adjacency = new IndexSeptupletMap(2, 2, Layout.OddR);
+        var resolution = VectorXYInt.One;
+        var indexGrid = new IndexTripletGrid(adjacency, resolution);
+        var partialIndexGrid = new IndexPartialTripletGrid(adjacency, resolution);
+        var barycentricGrid = new BarycentricTripletGrid(adjacency, resolution);
+        var partialBarycentricGrid = new BarycentricPartialTripletGrid(adjacency, resolution);
+        var chromaticGrid = new ChromaticIndexTripletGrid(adjacency, resolution);
+        var outsideIndex = new VectorXYInt(1, 0);
+
+        Assert.That(indexGrid.TryGetIndexTriplet(outsideIndex, out Triplet<VectorXYInt> indexTriplet), Is.False);
+        Assert.That(indexTriplet, Is.EqualTo(default(Triplet<VectorXYInt>)));
+        Assert.That(partialIndexGrid.TryGetIndexTriplet(outsideIndex, out PartialTriplet<VectorXYInt> partialIndexTriplet), Is.False);
+        Assert.That(partialIndexTriplet, Is.EqualTo(default(PartialTriplet<VectorXYInt>)));
+        Assert.That(barycentricGrid.TryGetBarycentricCoordinates(outsideIndex, out Triplet<float> barycentricCoordinates), Is.False);
+        Assert.That(barycentricCoordinates, Is.EqualTo(default(Triplet<float>)));
+        Assert.That(partialBarycentricGrid.TryGetBarycentricCoordinates(outsideIndex, out PartialTriplet<float> partialBarycentricCoordinates), Is.False);
+        Assert.That(partialBarycentricCoordinates, Is.EqualTo(default(PartialTriplet<float>)));
+        Assert.That(chromaticGrid.TryGetChromaticIndices(outsideIndex, out Triplet<byte> chromaticIndices), Is.False);
+        Assert.That(chromaticIndices, Is.EqualTo(default(Triplet<byte>)));
+    }
+
+    [Test]
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));

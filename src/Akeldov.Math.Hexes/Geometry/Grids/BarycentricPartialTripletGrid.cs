@@ -94,7 +94,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         public bool TryGetBarycentricCoordinates(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
         {
-            ThrowIfGridIndexOutOfBounds(gridIndex);
+            if (!ContainsGridIndex(gridIndex))
+            {
+                barycentricCoordinates = default;
+                return false;
+            }
 
             int flatIndex = GetFlatIndex(gridIndex);
             barycentricCoordinates = _values[flatIndex];
@@ -207,9 +211,14 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
         {
-            if (index.X < 0 || index.X >= ResolutionX ||
-                index.Y < 0 || index.Y >= ResolutionY)
+            if (!ContainsGridIndex(index))
                 throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+        }
+
+        private bool ContainsGridIndex(VectorXYInt index)
+        {
+            return (uint)index.X < (uint)ResolutionX &&
+                (uint)index.Y < (uint)ResolutionY;
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
