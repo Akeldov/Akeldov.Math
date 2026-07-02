@@ -13,6 +13,10 @@ namespace Akeldov.Math.Hexes.Geometry
         public PolyhexGeometry(Polyhex polyhex, float apothem)
         {
             _polyhex = polyhex ?? throw new ArgumentNullException(nameof(polyhex));
+
+            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+
             _hexApothem = apothem;
             _hexRadius = _hexApothem.ConvertHexApothemToRadius();
         }

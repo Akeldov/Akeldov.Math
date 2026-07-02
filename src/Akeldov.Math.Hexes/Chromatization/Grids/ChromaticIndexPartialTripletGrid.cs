@@ -98,6 +98,8 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY gridSize,
             VectorXYInt resolution)
         {
+            ValidateGridParameters(hexWidth, hexHeight, hexOrigin, gridOrigin, gridSize, resolution);
+
             HexResolution = new VectorXYInt(hexWidth, hexHeight);
             HexWidth = hexWidth;
             HexHeight = hexHeight;
@@ -262,6 +264,33 @@ namespace Akeldov.Math.Hexes.Topology
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
+        }
+
+        private static void ValidateGridParameters(
+            int hexWidth,
+            int hexHeight,
+            VectorXY hexOrigin,
+            VectorXY gridOrigin,
+            VectorXY gridSize,
+            VectorXYInt resolution)
+        {
+            if (hexWidth <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexWidth), hexWidth, "Hex grid dimensions must be positive.");
+
+            if (hexHeight <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexHeight), hexHeight, "Hex grid dimensions must be positive.");
+
+            if (!hexOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexOrigin), hexOrigin, "Hex origin components must be finite.");
+
+            if (!gridOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
+
+            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
+
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
         }
 
         private static float SquaredDistance(PointXY left, VectorXY right)

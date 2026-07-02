@@ -118,9 +118,23 @@ public class HexVertexTripletGridTests
     [Test]
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
+        var emptyAdjacency = new IndexSeptupletMap(0, 1, Layout.OddR);
+        var emptyPartialAdjacency = new IndexPartialSeptupletMap(0, 1, Layout.OddR);
+
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(0, 1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXY(float.PositiveInfinity, 0f), VectorXY.One, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXY.Zero, new VectorXY(0f, 1f), VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXY.Zero, new VectorXY(float.PositiveInfinity, 1f), VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(new IndexSeptupletMap(1, 1, Layout.OddR), VectorXYInt.One, default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletGrid(emptyPartialAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
     }
 
     private static VectorXY GetPointNearOddRVertex0()

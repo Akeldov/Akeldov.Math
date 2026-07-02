@@ -49,6 +49,37 @@ public class HexCenterMapTests
     }
 
     [Test]
+    public void Constructor_WhenOriginIsNotFinite_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new HexCenterMap(1, 1, new VectorXY(float.PositiveInfinity, 0f), 2f, Layout.OddR));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("origin"));
+    }
+
+    [TestCase(0f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    public void Constructor_WhenApothemIsInvalid_Throws(float apothem)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new HexCenterMap(1, 1, VectorXY.Zero, apothem, Layout.OddR));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("apothem"));
+    }
+
+    [TestCase(0f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    public void Constructor_WithoutOrigin_WhenRadiusIsInvalid_Throws(float radius)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new HexCenterMap(1, 1, radius, Layout.OddR));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("radius"));
+    }
+
+    [Test]
     public void HexCenterMap_ImplementsIHexMap()
     {
         var source = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);

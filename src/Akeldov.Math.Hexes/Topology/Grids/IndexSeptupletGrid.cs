@@ -29,6 +29,9 @@ namespace Akeldov.Math.Hexes.Topology
             if (resolution.X <= 0 || resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
+            if (hexAdjacencyMap.Width <= 0 || hexAdjacencyMap.Height <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid dimensions must be positive.");
+
             Resolution = resolution;
             Width = resolution.X;
             Height = resolution.Y;
@@ -36,12 +39,21 @@ namespace Akeldov.Math.Hexes.Topology
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
             var boundingBoxSize = hexAdjacencyMap.GetBoundingBoxSize(radius);
+            if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid size components must be finite and positive.");
+
             var gridOrigin = new VectorXY(
                 boundingBoxSize.X * subrectangle.Min.X,
                 boundingBoxSize.Y * subrectangle.Min.Y);
             var gridSize = new VectorXY(
                 boundingBoxSize.X * subrectangle.Size.X,
                 boundingBoxSize.Y * subrectangle.Size.Y);
+            if (!gridOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(subrectangle), subrectangle, "Grid origin components must be finite.");
+
+            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(subrectangle), subrectangle, "Grid size components must be finite and positive.");
+
             var stepX = gridSize.X / Width;
             var stepY = gridSize.Y / Height;
 

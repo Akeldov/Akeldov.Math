@@ -75,6 +75,15 @@ public class ChromaticIndexMapRasterizationTests
     }
 
     [Test]
+    public void Constructor_WhenOriginIsNotFinite_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new HexFieldChromatizationRGBA16BitRasterizer(new VectorXY(float.PositiveInfinity, 0f), 1f, _ => default));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("origin"));
+    }
+
+    [Test]
     public void Constructor_WhenColorMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>

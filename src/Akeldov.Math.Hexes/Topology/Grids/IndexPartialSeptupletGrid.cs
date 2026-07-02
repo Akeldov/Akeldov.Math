@@ -21,6 +21,9 @@ namespace Akeldov.Math.Hexes.Topology
             if (resolution.X <= 0 || resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
+            if (hexAdjacencyMap.Width <= 0 || hexAdjacencyMap.Height <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid dimensions must be positive.");
+
             Resolution = resolution;
             Width = resolution.X;
             Height = resolution.Y;
@@ -28,6 +31,9 @@ namespace Akeldov.Math.Hexes.Topology
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
             var boundingBoxSize = hexAdjacencyMap.GetBoundingBoxSize(radius);
+            if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid size components must be finite and positive.");
+
             var stepX = boundingBoxSize.X / Width;
             var stepY = boundingBoxSize.Y / Height;
 

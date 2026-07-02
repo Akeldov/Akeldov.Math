@@ -169,6 +169,8 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY gridSize,
             VectorXYInt resolution)
         {
+            ValidateGridParameters(hexWidth, hexHeight, hexOrigin, gridOrigin, gridSize, resolution);
+
             HexResolution = new VectorXYInt(hexWidth, hexHeight);
             Layout = layout;
             HexOrigin = hexOrigin;
@@ -363,6 +365,23 @@ namespace Akeldov.Math.Hexes.Topology
 
             if (resolution.X <= 0 || resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
+        }
+
+        private static void ValidateGridParameters(
+            int hexWidth,
+            int hexHeight,
+            VectorXY hexOrigin,
+            VectorXY gridOrigin,
+            VectorXY gridSize,
+            VectorXYInt resolution)
+        {
+            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
+
+            if (!gridOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
+
+            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
         }
 
         private static float SquaredDistance(PointXY left, VectorXY right)

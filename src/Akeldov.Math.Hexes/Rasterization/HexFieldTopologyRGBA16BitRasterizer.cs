@@ -41,6 +41,9 @@ namespace Akeldov.Math.Hexes.Rasterization
             float apothem,
             Func<VectorXYInt, RGBA16BitColor> indexToColor)
         {
+            if (!origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex field origin components must be finite.");
+
             if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(apothem));
 

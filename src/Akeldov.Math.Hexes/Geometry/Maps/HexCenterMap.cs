@@ -22,6 +22,12 @@ namespace Akeldov.Math.Hexes.Geometry
             if (height < 0)
                 throw new ArgumentOutOfRangeException(nameof(height));
 
+            if (!origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex field origin components must be finite.");
+
+            if (!IsFiniteAndPositive(apothem))
+                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+
             var radius = apothem.ConvertHexApothemToRadius();
             var count = checked(width * height);
 
@@ -56,7 +62,7 @@ namespace Akeldov.Math.Hexes.Geometry
             int height,
             float radius,
             Layout layout)
-            : this(width, height, GetDefaultOrigin(radius.ConvertHexRadiusToApothem(), radius, layout), radius.ConvertHexRadiusToApothem(), layout)
+            : this(width, height, GetDefaultOriginFromRadius(radius, layout), ConvertValidRadiusToApothem(radius), layout)
         {
         }
 
@@ -136,6 +142,24 @@ namespace Akeldov.Math.Hexes.Geometry
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
 
+        private static float ConvertValidRadiusToApothem(float radius)
+        {
+            ValidateRadius(radius);
+            return radius.ConvertHexRadiusToApothem();
+        }
+
+        private static VectorXY GetDefaultOriginFromRadius(float radius, Layout layout)
+        {
+            ValidateRadius(radius);
+            return GetDefaultOrigin(radius.ConvertHexRadiusToApothem(), radius, layout);
+        }
+
+        private static void ValidateRadius(float radius)
+        {
+            if (!IsFiniteAndPositive(radius))
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+        }
+
         private static VectorXY GetDefaultOrigin(float apothem, float radius, Layout layout)
         {
             switch (layout)
@@ -152,5 +176,8 @@ namespace Akeldov.Math.Hexes.Geometry
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
         }
+
+        private static bool IsFiniteAndPositive(float value) =>
+            !float.IsNaN(value) && !float.IsInfinity(value) && value > 0f;
     }
 }
