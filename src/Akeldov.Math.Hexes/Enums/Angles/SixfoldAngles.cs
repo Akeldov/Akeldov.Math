@@ -12,6 +12,10 @@
             SixfoldAngle.Deg300
         };
 
+        /// <summary>
+        /// Gets all sixfold angles in clockwise order.
+        /// </summary>
+        /// <returns>A new, mutable array owned by the caller.</returns>
         public static SixfoldAngle[] All => (SixfoldAngle[])AllValues.Clone();
     }
 }

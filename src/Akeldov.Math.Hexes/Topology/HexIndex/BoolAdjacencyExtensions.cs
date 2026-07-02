@@ -27,8 +27,22 @@ namespace Akeldov.Math.Hexes.Topology
             new VectorXYInt(1, 0)
         };
 
+        /// <summary>
+        /// Gets relative offsets for the six adjacent hexes.
+        /// </summary>
+        /// <returns>A new, mutable array owned by the caller.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt[] GetRelativeOffsets(this bool axisIsEven, Layout layout)
+        {
+            return (VectorXYInt[])axisIsEven.GetSharedRelativeOffsets(layout).Clone();
+        }
+
+        /// <summary>
+        /// Gets library-owned mutable relative offsets for the six adjacent hexes.
+        /// </summary>
+        /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static VectorXYInt[] GetSharedRelativeOffsets(this bool axisIsEven, Layout layout)
         {
             switch (layout)
             {
@@ -48,13 +62,13 @@ namespace Akeldov.Math.Hexes.Topology
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetRelativeOffset(this bool axisIsEven, HexEdge hexEdge, Layout layout)
         {
-            return axisIsEven.GetRelativeOffsets(layout)[(int)hexEdge];
+            return axisIsEven.GetSharedRelativeOffsets(layout)[(int)hexEdge];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetRelativeOffset(this bool axisIsEven, int hexEdge, Layout layout)
         {
-            return axisIsEven.GetRelativeOffsets(layout)[hexEdge];
+            return axisIsEven.GetSharedRelativeOffsets(layout)[hexEdge];
         }
     }
 }

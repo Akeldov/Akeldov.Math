@@ -26,6 +26,10 @@ namespace Akeldov.Math.Hexes.Geometry
             new VectorXY(Constants.Cos300Deg, Constants.Sin300Deg),
         };
 
+        /// <summary>
+        /// Gets normalized vertex offsets for a unit-radius hex in the specified layout.
+        /// </summary>
+        /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetNormalizedHexVertexes(Layout layout)
         {
             switch (layout)

@@ -6,6 +6,10 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class VectorXYIntExtensions
     {
+        /// <summary>
+        /// Gets the six adjacent hex indexes.
+        /// </summary>
+        /// <returns>A new, mutable array owned by the caller.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt[] GetAdjacents(this VectorXYInt index, Layout layout)
         {
@@ -13,7 +17,7 @@ namespace Akeldov.Math.Hexes.Topology
                 ? (index.Y & 1) == 0
                 : (index.X & 1) == 0;
 
-            var relativeOffsets = axisIsEven.GetRelativeOffsets(layout);
+            var relativeOffsets = axisIsEven.GetSharedRelativeOffsets(layout);
             var adjacents = new VectorXYInt[6];
             for (int i = 0; i < 6; i++)
             {

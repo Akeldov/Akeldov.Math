@@ -53,24 +53,40 @@ namespace Akeldov.Math.Hexes.Topology
             1, 1
         };
 
+        /// <summary>
+        /// Gets library-owned mutable offsets for the row layout.
+        /// </summary>
+        /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static sbyte[] GetRowOffsets(int y, bool evenRowsAreShifted)
         {
             bool rowIsShifted = ((y & 1) == 0) == evenRowsAreShifted;
             return rowIsShifted ? RowShifted : RowUnshifted;
         }
 
+        /// <summary>
+        /// Gets library-owned mutable vector offsets for the row layout.
+        /// </summary>
+        /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static VectorXYInt[] GetRowVectorOffsets(bool axisIsEven, bool evenRowsAreShifted)
         {
             bool rowIsShifted = axisIsEven == evenRowsAreShifted;
             return rowIsShifted ? RowShiftedVectors : RowUnshiftedVectors;
         }
 
+        /// <summary>
+        /// Gets library-owned mutable offsets for the column layout.
+        /// </summary>
+        /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static sbyte[] GetColumnOffsets(int x, bool evenColumnsAreShifted)
         {
             bool columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
             return columnIsShifted ? ColumnShifted : ColumnUnshifted;
         }
 
+        /// <summary>
+        /// Gets library-owned mutable offsets for the specified layout and index.
+        /// </summary>
+        /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static sbyte[] GetOffsets(Layout layout, int x, int y)
         {
             switch (layout)

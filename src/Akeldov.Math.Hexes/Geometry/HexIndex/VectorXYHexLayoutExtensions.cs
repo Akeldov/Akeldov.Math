@@ -12,11 +12,19 @@ namespace Akeldov.Math.Hexes.Geometry
             return new VectorQRSInt(q, r).GetHexOffset(hexApothem, hexRadius, layout) + origin;
         }
 
+        /// <summary>
+        /// Gets the six vertex positions for the specified hex index.
+        /// </summary>
+        /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetHexVertexes(int q, int r, float hexApothem, float hexRadius, Layout layout)
         {
             return GetHexCenter(q, r, hexApothem, hexRadius, layout).GetHexVertexes(hexRadius, layout);
         }
 
+        /// <summary>
+        /// Gets the six vertex positions for the specified hex center.
+        /// </summary>
+        /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetHexVertexes(this VectorXY hexCenter, float hexRadius, Layout layout)
         {
             var normalizedHexVertexes = GetNormalizedHexVertexes(layout);
