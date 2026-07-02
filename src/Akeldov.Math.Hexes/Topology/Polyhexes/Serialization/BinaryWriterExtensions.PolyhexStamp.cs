@@ -1,4 +1,5 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
+using System;
 using System.IO;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -9,6 +10,9 @@ namespace Akeldov.Math.Hexes.Topology
             this BinaryWriter binaryWriter,
             Polyhex? polyhexStamp)
         {
+            if (binaryWriter == null)
+                throw new ArgumentNullException(nameof(binaryWriter));
+
             if (polyhexStamp != null)
             {
                 binaryWriter.Write(true);

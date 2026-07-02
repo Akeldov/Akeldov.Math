@@ -1,4 +1,5 @@
 using System.IO;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Spatial2D
@@ -13,9 +14,13 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="writer">The binary writer.</param>
         /// <param name="vector">The vector to write.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer"/> is null.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, VectorXYInt vector)
         {
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+
             writer.Write(vector.X);
             writer.Write(vector.Y);
         }
@@ -25,9 +30,13 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="writer">The binary writer.</param>
         /// <param name="vector">The vector to write.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer"/> is null.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, VectorXY vector)
         {
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+
             writer.Write(vector.X);
             writer.Write(vector.Y);
         }

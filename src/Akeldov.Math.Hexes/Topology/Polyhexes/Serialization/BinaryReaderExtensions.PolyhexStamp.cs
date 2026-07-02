@@ -1,4 +1,5 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
+using System;
 using System.IO;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -8,6 +9,9 @@ namespace Akeldov.Math.Hexes.Topology
         public static Polyhex? ReadPolyhexStamp(
             this BinaryReader binaryReader)
         {
+            if (binaryReader == null)
+                throw new ArgumentNullException(nameof(binaryReader));
+
             var isNotNull = binaryReader.ReadBoolean();
             if (!isNotNull)
                 return null;

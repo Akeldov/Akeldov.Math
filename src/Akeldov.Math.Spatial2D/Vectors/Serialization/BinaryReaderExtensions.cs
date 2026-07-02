@@ -1,4 +1,5 @@
 using System.IO;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Spatial2D
@@ -13,9 +14,13 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="reader">The binary reader.</param>
         /// <returns>The vector read from the stream.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="reader"/> is null.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt ReadVectorXYInt(this BinaryReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
             var x = reader.ReadInt32();
             var y = reader.ReadInt32();
             return new VectorXYInt(x, y);
@@ -26,9 +31,13 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="reader">The binary reader.</param>
         /// <returns>The vector read from the stream.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="reader"/> is null.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY ReadVectorXY(this BinaryReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
             var x = reader.ReadSingle();
             var y = reader.ReadSingle();
             return new VectorXY(x, y);

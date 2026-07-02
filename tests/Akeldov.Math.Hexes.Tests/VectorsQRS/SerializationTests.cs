@@ -30,4 +30,42 @@ public class SerializationTests
             Assert.That(angle, Is.EqualTo(SixfoldAngle.Deg240));
         });
     }
+
+    [Test]
+    public void BinaryWriter_WhenNull_ThrowsArgumentNullException()
+    {
+        BinaryWriter? writer = null;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => writer!.Write(new VectorQRSInt(2, -7)))!.ParamName,
+                Is.EqualTo("writer"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => writer!.Write(new VectorQRS(1.5f, -2.25f)))!.ParamName,
+                Is.EqualTo("writer"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => writer!.Write(SixfoldAngle.Deg240))!.ParamName,
+                Is.EqualTo("writer"));
+        });
+    }
+
+    [Test]
+    public void BinaryReader_WhenNull_ThrowsArgumentNullException()
+    {
+        BinaryReader? reader = null;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => reader!.ReadVectorQRSInt())!.ParamName,
+                Is.EqualTo("reader"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => reader!.ReadVectorQRS())!.ParamName,
+                Is.EqualTo("reader"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => reader!.ReadSixfoldAngle())!.ParamName,
+                Is.EqualTo("reader"));
+        });
+    }
 }

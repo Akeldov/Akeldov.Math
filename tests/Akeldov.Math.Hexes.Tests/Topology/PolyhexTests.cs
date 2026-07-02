@@ -91,4 +91,24 @@ public class PolyhexTests
             Assert.That(polyhex[1, 2], Is.True);
         });
     }
+
+    [Test]
+    public void BinaryWriter_WhenNull_ThrowsArgumentNullException()
+    {
+        BinaryWriter? writer = null;
+
+        var exception = Assert.Throws<ArgumentNullException>(() => writer!.Write((Polyhex?)null));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("binaryWriter"));
+    }
+
+    [Test]
+    public void BinaryReader_WhenNull_ThrowsArgumentNullException()
+    {
+        BinaryReader? reader = null;
+
+        var exception = Assert.Throws<ArgumentNullException>(() => reader!.ReadPolyhexStamp());
+
+        Assert.That(exception!.ParamName, Is.EqualTo("binaryReader"));
+    }
 }
