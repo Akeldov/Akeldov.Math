@@ -55,19 +55,32 @@ namespace Akeldov.Math.Hexes
         };
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Sin(this SixfoldAngle angle) => Sinuses[(int)angle];
+        public static float Sin(this SixfoldAngle angle) => Sinuses[GetValidatedIndex(angle)];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Cos(this SixfoldAngle angle) => Cosinuses[(int)angle];
+        public static float Cos(this SixfoldAngle angle) => Cosinuses[GetValidatedIndex(angle)];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float AsFloatRadians(this SixfoldAngle angle) => Radians[(int)angle];
+        public static float AsFloatRadians(this SixfoldAngle angle) => Radians[GetValidatedIndex(angle)];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float AsFloatDegrees(this SixfoldAngle angle) => Degrees[(int)angle];
+        public static float AsFloatDegrees(this SixfoldAngle angle) => Degrees[GetValidatedIndex(angle)];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static SixfoldAngle Negate(this SixfoldAngle angle) => Negates[(int)angle];
+        public static SixfoldAngle Negate(this SixfoldAngle angle) => Negates[GetValidatedIndex(angle)];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetValidatedIndex(SixfoldAngle angle)
+        {
+            var index = (int)angle;
+            if ((uint)index >= 6u)
+                throw new System.ArgumentOutOfRangeException(
+                    nameof(angle),
+                    angle,
+                    "The angle must be a defined sixfold angle.");
+
+            return index;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add180(this SixfoldAngle angle)

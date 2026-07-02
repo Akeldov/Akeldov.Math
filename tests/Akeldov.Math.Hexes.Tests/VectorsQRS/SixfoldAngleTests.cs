@@ -60,6 +60,21 @@ public class SixfoldAngleTests
         Assert.That(angle.Negate(), Is.EqualTo(expected));
     }
 
+    [TestCase((SixfoldAngle)(-1))]
+    [TestCase((SixfoldAngle)6)]
+    [TestCase((SixfoldAngle)42)]
+    public void LookupMethods_ThrowForInvalidAngle(SixfoldAngle invalid)
+    {
+        Assert.Multiple(() =>
+        {
+            AssertInvalidAngleException(() => invalid.Sin(), invalid);
+            AssertInvalidAngleException(() => invalid.Cos(), invalid);
+            AssertInvalidAngleException(() => invalid.AsFloatRadians(), invalid);
+            AssertInvalidAngleException(() => invalid.AsFloatDegrees(), invalid);
+            AssertInvalidAngleException(() => invalid.Negate(), invalid);
+        });
+    }
+
     [TestCase(SixfoldAngle.Deg0, 1, SixfoldAngle.Deg60)]
     [TestCase(SixfoldAngle.Deg300, 1, SixfoldAngle.Deg0)]
     [TestCase(SixfoldAngle.Deg0, 2, SixfoldAngle.Deg120)]
@@ -97,6 +112,17 @@ public class SixfoldAngleTests
             Assert.Throws<ArgumentOutOfRangeException>(() => invalid.Add180());
             Assert.Throws<ArgumentOutOfRangeException>(() => invalid.Add240());
             Assert.Throws<ArgumentOutOfRangeException>(() => invalid.Add300());
+        });
+    }
+
+    private static void AssertInvalidAngleException(TestDelegate action, SixfoldAngle expectedActualValue)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(action);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+            Assert.That(exception.ActualValue, Is.EqualTo(expectedActualValue));
         });
     }
 }
