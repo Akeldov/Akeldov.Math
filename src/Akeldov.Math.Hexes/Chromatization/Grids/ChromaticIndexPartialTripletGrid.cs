@@ -121,7 +121,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void Fill()
         {
-            VectorXY[] normalizedHexVertexes = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertexes(Layout);
+            VectorXY[] normalizedHexVertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout);
 
             for (int y = 0; y < ResolutionY; y++)
             {
@@ -132,7 +132,7 @@ namespace Akeldov.Math.Hexes.Topology
                     int flatIndex = rowStart + x;
                     PointXY point = GetCellCenterUnchecked(x, y);
                     VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _values[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertexes);
+                    _values[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertices);
                 }
             }
         }
@@ -140,14 +140,14 @@ namespace Akeldov.Math.Hexes.Topology
         private PartialTriplet<byte> CreateChromaticIndices(
             PointXY point,
             VectorXYInt mainIndex,
-            VectorXY[] normalizedHexVertexes)
+            VectorXY[] normalizedHexVertices)
         {
             VectorXY mainCenter = GetHexCenter(mainIndex);
             HexVertex nearestVertex = (HexVertex)GetClosestVertexIndex(
                 point,
                 mainCenter,
                 HexRadius,
-                normalizedHexVertexes,
+                normalizedHexVertices,
                 out _);
             Triplet<VectorXYInt> indexTriplet = mainIndex.GetAdjacentTriplet(nearestVertex, Layout);
 
@@ -228,15 +228,15 @@ namespace Akeldov.Math.Hexes.Topology
             PointXY point,
             VectorXY hexCenter,
             float hexRadius,
-            VectorXY[] normalizedHexVertexes,
+            VectorXY[] normalizedHexVertices,
             out float minSquaredDistance)
         {
             minSquaredDistance = float.MaxValue;
             int closestVertexIndex = 0;
 
-            for (int i = 0; i < normalizedHexVertexes.Length; i++)
+            for (int i = 0; i < normalizedHexVertices.Length; i++)
             {
-                VectorXY vertex = hexCenter + normalizedHexVertexes[i] * hexRadius;
+                VectorXY vertex = hexCenter + normalizedHexVertices[i] * hexRadius;
                 float squaredDistance = SquaredDistance(point, vertex);
 
                 if (squaredDistance < minSquaredDistance)

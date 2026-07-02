@@ -27,14 +27,14 @@ namespace Akeldov.Math.Hexes.Geometry
             VectorXY hexCenter,
             Layout layout)
         {
-            var normalizedHexVertexes = GetNormalizedHexVertexes(layout);
+            var normalizedHexVertices = GetNormalizedHexVertices(layout);
 
             float minDist = float.MaxValue;
             int closestVertexIndex = 0;
 
             for (int i = 0; i < 6; i++)
             {
-                VectorXY vertex = hexCenter + normalizedHexVertexes[i] * radius;
+                VectorXY vertex = hexCenter + normalizedHexVertices[i] * radius;
                 float dist = Distance(point, vertex);
 
                 if (dist < minDist)

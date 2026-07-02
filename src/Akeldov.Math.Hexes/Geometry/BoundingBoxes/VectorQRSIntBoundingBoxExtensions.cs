@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Geometry
         public static VectorXY BoundingBoxSize(this VectorQRSInt size, float apothem, float radius, Layout layout)
         {
             if (size.Q < 0 || size.R < 0)
-                throw new ArgumentOutOfRangeException(nameof(size), size, "Couldn't calculate bounding box for size with negative numbers.");
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Cannot calculate bounding box for size with negative components.");
 
             if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");

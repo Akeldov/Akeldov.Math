@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateGrid(grid);
 
             float radius = source.Apothem.ConvertHexApothemToRadius();
-            VectorXY[] normalizedVertexes = Geometry.VectorXYExtensions.GetNormalizedHexVertexes(source.Layout);
+            VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             int count = checked(source.Width * source.Height);
 
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             {
                 PointXY center = source[i];
                 RGBA16BitColor color = _centerToColor(center);
-                RasterizeHex(center, radius, normalizedVertexes, grid, values, color);
+                RasterizeHex(center, radius, normalizedVertices, grid, values, color);
             }
 
             return new Raster<RGBA16BitColor>(grid, values);
@@ -50,8 +50,8 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateSource(source);
 
             float radius = source.Apothem.ConvertHexApothemToRadius();
-            VectorXY[] normalizedVertexes = Geometry.VectorXYExtensions.GetNormalizedHexVertexes(source.Layout);
-            RasterBounds bounds = GetBounds(source, radius, normalizedVertexes);
+            VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Layout);
+            RasterBounds bounds = GetBounds(source, radius, normalizedVertices);
             float pixelsPerWorldUnit = pixelsPerApothem / source.Apothem;
             int rasterWidth = System.Math.Max(1, (int)MathF.Ceiling(bounds.Width * pixelsPerWorldUnit));
             int rasterHeight = System.Math.Max(1, (int)MathF.Ceiling(bounds.Height * pixelsPerWorldUnit));
@@ -65,12 +65,12 @@ namespace Akeldov.Math.Hexes.Rasterization
         private static void RasterizeHex(
             PointXY center,
             float radius,
-            VectorXY[] normalizedVertexes,
+            VectorXY[] normalizedVertices,
             RasterGrid grid,
             RGBA16BitColor[] values,
             RGBA16BitColor color)
         {
-            RasterBounds bounds = GetHexBounds(center, radius, normalizedVertexes);
+            RasterBounds bounds = GetHexBounds(center, radius, normalizedVertices);
             int minX = System.Math.Max(0, (int)MathF.Floor((bounds.MinX - grid.Origin.X) / grid.CellSize.X));
             int maxX = System.Math.Min(grid.Resolution.X - 1, (int)MathF.Ceiling((bounds.MaxX - grid.Origin.X) / grid.CellSize.X) - 1);
             int minY = System.Math.Max(0, (int)MathF.Floor((bounds.MinY - grid.Origin.Y) / grid.CellSize.Y));
@@ -84,7 +84,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 {
                     PointXY point = new PointXY(grid.Origin.X + (x + 0.5f) * grid.CellSize.X, pointY);
 
-                    if (ContainsPoint(center, radius, normalizedVertexes, point))
+                    if (ContainsPoint(center, radius, normalizedVertices, point))
                         values[y * grid.Resolution.X + x] = color;
                 }
             }
@@ -93,16 +93,16 @@ namespace Akeldov.Math.Hexes.Rasterization
         private static bool ContainsPoint(
             PointXY center,
             float radius,
-            VectorXY[] normalizedVertexes,
+            VectorXY[] normalizedVertices,
             PointXY point)
         {
             VectorXY centerVector = (VectorXY)center;
             VectorXY pointVector = (VectorXY)point;
 
-            for (int i = 0; i < normalizedVertexes.Length; i++)
+            for (int i = 0; i < normalizedVertices.Length; i++)
             {
-                VectorXY vertexA = centerVector + normalizedVertexes[i] * radius;
-                VectorXY vertexB = centerVector + normalizedVertexes[(i + 1) % normalizedVertexes.Length] * radius;
+                VectorXY vertexA = centerVector + normalizedVertices[i] * radius;
+                VectorXY vertexB = centerVector + normalizedVertices[(i + 1) % normalizedVertices.Length] * radius;
                 VectorXY edge = vertexB - vertexA;
                 VectorXY toPoint = pointVector - vertexA;
 
@@ -116,14 +116,14 @@ namespace Akeldov.Math.Hexes.Rasterization
         private static RasterBounds GetBounds(
             HexCenterMap source,
             float radius,
-            VectorXY[] normalizedVertexes)
+            VectorXY[] normalizedVertices)
         {
             int count = checked(source.Width * source.Height);
-            RasterBounds bounds = GetHexBounds(source[0], radius, normalizedVertexes);
+            RasterBounds bounds = GetHexBounds(source[0], radius, normalizedVertices);
 
             for (int i = 1; i < count; i++)
             {
-                bounds = bounds.Include(GetHexBounds(source[i], radius, normalizedVertexes));
+                bounds = bounds.Include(GetHexBounds(source[i], radius, normalizedVertices));
             }
 
             return bounds;
@@ -150,18 +150,18 @@ namespace Akeldov.Math.Hexes.Rasterization
         private static RasterBounds GetHexBounds(
             PointXY center,
             float radius,
-            VectorXY[] normalizedVertexes)
+            VectorXY[] normalizedVertices)
         {
             VectorXY centerVector = (VectorXY)center;
-            VectorXY first = centerVector + normalizedVertexes[0] * radius;
+            VectorXY first = centerVector + normalizedVertices[0] * radius;
             float minX = first.X;
             float minY = first.Y;
             float maxX = first.X;
             float maxY = first.Y;
 
-            for (int i = 1; i < normalizedVertexes.Length; i++)
+            for (int i = 1; i < normalizedVertices.Length; i++)
             {
-                VectorXY vertex = centerVector + normalizedVertexes[i] * radius;
+                VectorXY vertex = centerVector + normalizedVertices[i] * radius;
                 minX = MathF.Min(minX, vertex.X);
                 minY = MathF.Min(minY, vertex.Y);
                 maxX = MathF.Max(maxX, vertex.X);

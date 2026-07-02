@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes.Geometry
         public static VectorXY BoundingBox(this VectorXYInt dim, float hexApothem, float hexRadius, Layout layout)
         {
             if (dim.X < 0 || dim.Y < 0)
-                throw new ArgumentOutOfRangeException(nameof(dim), dim, "Couldn't calculate bounding box for dimensions with negative components.");
+                throw new ArgumentOutOfRangeException(nameof(dim), dim, "Cannot calculate bounding box for dimensions with negative components.");
 
             if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");

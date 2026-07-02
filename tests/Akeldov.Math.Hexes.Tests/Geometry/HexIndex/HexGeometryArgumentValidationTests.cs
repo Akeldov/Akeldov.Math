@@ -74,10 +74,10 @@ public class HexGeometryArgumentValidationTests
                 () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(0, 0, 1f, float.PositiveInfinity, Layout.OddR),
                 "hexRadius");
             AssertArgumentOutOfRange(
-                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertexes(0, 0, float.PositiveInfinity, 1f, Layout.OddR),
+                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(0, 0, float.PositiveInfinity, 1f, Layout.OddR),
                 "hexApothem");
             AssertArgumentOutOfRange(
-                () => _ = VectorXY.Zero.GetHexVertexes(float.PositiveInfinity, Layout.OddR),
+                () => _ = VectorXY.Zero.GetHexVertices(float.PositiveInfinity, Layout.OddR),
                 "hexRadius");
             AssertArgumentOutOfRange(
                 () => _ = VectorXYInt.Zero.GetHexCenter(float.PositiveInfinity, 1f, Layout.OddR),

@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYExtensions
     {
-        private static readonly VectorXY[] RowLayoutNormalizedHexVertexes =
+        private static readonly VectorXY[] RowLayoutNormalizedHexVertices =
         {
             new VectorXY(Constants.Cos30Deg, Constants.Sin30Deg),
             new VectorXY(Constants.Cos90Deg, Constants.Sin90Deg),
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Geometry
             new VectorXY(Constants.Cos330Deg, Constants.Sin330Deg),
         };
 
-        private static readonly VectorXY[] ColumnLayoutNormalizedHexVertexes =
+        private static readonly VectorXY[] ColumnLayoutNormalizedHexVertices =
         {
             new VectorXY(Constants.Cos0Deg, Constants.Sin0Deg),
             new VectorXY(Constants.Cos60Deg, Constants.Sin60Deg),
@@ -30,19 +30,25 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Gets normalized vertex offsets for a unit-radius hex in the specified layout.
         /// </summary>
         /// <returns>A new, mutable array owned by the caller.</returns>
-        public static VectorXY[] GetNormalizedHexVertexes(Layout layout)
+        public static VectorXY[] GetNormalizedHexVertices(Layout layout)
         {
             switch (layout)
             {
                 case Layout.OddR:
                 case Layout.EvenR:
-                    return (VectorXY[])RowLayoutNormalizedHexVertexes.Clone();
+                    return (VectorXY[])RowLayoutNormalizedHexVertices.Clone();
                 case Layout.OddQ:
                 case Layout.EvenQ:
-                    return (VectorXY[])ColumnLayoutNormalizedHexVertexes.Clone();
+                    return (VectorXY[])ColumnLayoutNormalizedHexVertices.Clone();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
+        }
+
+        [Obsolete("Use GetNormalizedHexVertices instead.")]
+        public static VectorXY[] GetNormalizedHexVertexes(Layout layout)
+        {
+            return GetNormalizedHexVertices(layout);
         }
     }
 }

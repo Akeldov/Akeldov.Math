@@ -14,7 +14,7 @@ namespace Akeldov.Math.Hexes
             HexAngleConstants.Sin300Deg
         };
 
-        private static float[] Cosinuses = new float[]
+        private static float[] Cosines = new float[]
         {
             HexAngleConstants.Cos0Deg,
             HexAngleConstants.Cos60Deg,
@@ -77,7 +77,7 @@ namespace Akeldov.Math.Hexes
                     angle,
                     "The angle must be a defined sixfold angle.");
 
-            return Cosinuses[index];
+            return Cosines[index];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -28,14 +28,14 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void GetNormalizedHexVertexes_ReturnsCopy()
+    public void GetNormalizedHexVertices_ReturnsCopy()
     {
-        VectorXY[] vertexes = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertexes(Layout.OddR);
-        vertexes[0] = VectorXY.Zero;
+        VectorXY[] vertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout.OddR);
+        vertices[0] = VectorXY.Zero;
 
-        VectorXY[] freshVertexes = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertexes(Layout.OddR);
+        VectorXY[] freshVertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout.OddR);
 
-        Assert.That(freshVertexes[0], Is.Not.EqualTo(VectorXY.Zero));
+        Assert.That(freshVertices[0], Is.Not.EqualTo(VectorXY.Zero));
     }
 
     [TestCase(Layout.OddR, 2f, 2.3094f)]

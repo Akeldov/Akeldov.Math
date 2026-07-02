@@ -40,8 +40,6 @@ namespace Akeldov.Math.Hexes.Geometry
 
         public int HexCount => _polyhex.HexCount;
 
-        public int PositiveSize => HexCount;
-
         public bool this[VectorQRSInt index]
         {
             get => _polyhex[index];

@@ -104,8 +104,6 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int HexCount { get; }
 
-        public int PositiveSize => HexCount;
-
         public bool this[VectorQRSInt index]
         {
             get => this[index.Q, index.R];
