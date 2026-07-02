@@ -18,7 +18,7 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(chromaticIndicesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            Triplet<byte>[] chromaticIndices = grid.ChromaticIndices;
+            Triplet<byte>[] chromaticIndices = grid.ChromaticIndexStorage;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = chromaticIndicesToColor(chromaticIndices[i]);
@@ -37,7 +37,7 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(chromaticIndicesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<byte>[] chromaticIndices = grid.ChromaticIndices;
+            PartialTriplet<byte>[] chromaticIndices = grid.ChromaticIndexStorage;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = chromaticIndicesToColor(chromaticIndices[i]);

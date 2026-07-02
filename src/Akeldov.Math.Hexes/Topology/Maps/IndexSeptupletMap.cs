@@ -1,6 +1,7 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -24,6 +25,7 @@ namespace Akeldov.Math.Hexes.Topology
             Height = height;
             Layout = layout;
             _adjacent = new Septuplet<VectorXYInt>[checked(width * height)];
+            Adjacent = Array.AsReadOnly(_adjacent);
 
             switch (layout)
             {
@@ -52,7 +54,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         public Layout Layout { get; }
 
-        public Septuplet<VectorXYInt>[] Adjacent => _adjacent;
+        public IReadOnlyList<Septuplet<VectorXYInt>> Adjacent { get; }
+
+        internal Septuplet<VectorXYInt>[] AdjacentStorage => _adjacent;
 
         public Septuplet<VectorXYInt> this[VectorXYInt index]
         {

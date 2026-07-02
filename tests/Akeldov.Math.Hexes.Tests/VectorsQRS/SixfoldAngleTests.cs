@@ -18,6 +18,15 @@ public class SixfoldAngleTests
         }));
     }
 
+    [Test]
+    public void All_ReturnsCopy()
+    {
+        SixfoldAngle[] angles = SixfoldAngles.All;
+        angles[0] = SixfoldAngle.Deg300;
+
+        Assert.That(SixfoldAngles.All[0], Is.EqualTo(SixfoldAngle.Deg0));
+    }
+
     [TestCase(SixfoldAngle.Deg0, 0f, 1f, 0f, 0f)]
     [TestCase(SixfoldAngle.Deg60, 0.8660254f, 0.5f, 1.0471976f, 60f)]
     [TestCase(SixfoldAngle.Deg120, 0.8660254f, -0.5f, 2.0943952f, 120f)]

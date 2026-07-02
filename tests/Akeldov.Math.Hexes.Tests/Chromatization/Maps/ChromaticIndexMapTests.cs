@@ -20,7 +20,7 @@ public class ChromaticIndexMapTests
             Assert.That(chromatization.Width, Is.EqualTo(width));
             Assert.That(chromatization.Height, Is.EqualTo(height));
             Assert.That(chromatization.Layout, Is.EqualTo(layout));
-            Assert.That(chromatization.ChromaticIndices, Has.Length.EqualTo(width * height));
+            Assert.That(chromatization.ChromaticIndices, Has.Count.EqualTo(width * height));
 
             for (int y = 0; y < height; y++)
             {
@@ -46,7 +46,8 @@ public class ChromaticIndexMapTests
         Assert.That(chromatization.Width, Is.EqualTo(2));
         Assert.That(chromatization.Height, Is.EqualTo(1));
         Assert.That(chromatization.Layout, Is.EqualTo(Layout.OddR));
-        Assert.That(chromatization.ChromaticIndices, Has.Length.EqualTo(2));
+        Assert.That(chromatization.ChromaticIndices, Has.Count.EqualTo(2));
+        Assert.That(chromatization.ChromaticIndices, Is.Not.InstanceOf<byte[]>());
     }
 
     [Test]

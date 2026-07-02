@@ -32,10 +32,10 @@ namespace Akeldov.Math.Hexes.Geometry
             {
                 case Layout.OddR:
                 case Layout.EvenR:
-                    return RowLayoutNormalizedHexVertexes;
+                    return (VectorXY[])RowLayoutNormalizedHexVertexes.Clone();
                 case Layout.OddQ:
                 case Layout.EvenQ:
-                    return ColumnLayoutNormalizedHexVertexes;
+                    return (VectorXY[])ColumnLayoutNormalizedHexVertexes.Clone();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }

@@ -1,12 +1,15 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Chromatization
 {
     public sealed class ChromaticIndexMap : IHexMap<byte>
     {
+        private readonly byte[] _chromaticIndices;
+
         public ChromaticIndexMap(int width, int height, Layout layout)
         {
             if (width < 0)
@@ -20,7 +23,8 @@ namespace Akeldov.Math.Hexes.Chromatization
             Width = width;
             Height = height;
             Layout = layout;
-            ChromaticIndices = new byte[count];
+            _chromaticIndices = new byte[count];
+            ChromaticIndices = Array.AsReadOnly(_chromaticIndices);
 
             switch (layout)
             {
@@ -47,7 +51,9 @@ namespace Akeldov.Math.Hexes.Chromatization
 
         public Layout Layout { get; }
 
-        public byte[] ChromaticIndices { get; }
+        public IReadOnlyList<byte> ChromaticIndices { get; }
+
+        internal byte[] ChromaticIndexStorage => _chromaticIndices;
 
         public byte this[VectorXYInt index]
         {
@@ -58,14 +64,14 @@ namespace Akeldov.Math.Hexes.Chromatization
                     index.Y < 0 || index.Y >= Height)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
-                return ChromaticIndices[GetFlatIndex(index)];
+                return _chromaticIndices[GetFlatIndex(index)];
             }
         }
 
         public byte this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ChromaticIndices[index];
+            get => _chromaticIndices[index];
         }
 
         private void FillRowLayoutChromaticIndices(bool shiftedRowsUseUpperOffset)
@@ -79,7 +85,7 @@ namespace Akeldov.Math.Hexes.Chromatization
 
                 for (int x = 0; x < Width; x++)
                 {
-                    ChromaticIndices[rowStart + x] = (byte)PositiveModulo(x - qOffset - y, 3);
+                    _chromaticIndices[rowStart + x] = (byte)PositiveModulo(x - qOffset - y, 3);
                 }
             }
         }
@@ -96,7 +102,7 @@ namespace Akeldov.Math.Hexes.Chromatization
                         ? (x + (x & 1)) / 2
                         : (x - (x & 1)) / 2;
 
-                    ChromaticIndices[rowStart + x] = (byte)PositiveModulo(y - rOffset - x, 3);
+                    _chromaticIndices[rowStart + x] = (byte)PositiveModulo(y - rOffset - x, 3);
                 }
             }
         }

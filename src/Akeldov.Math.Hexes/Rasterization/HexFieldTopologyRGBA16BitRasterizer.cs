@@ -237,7 +237,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 throw new ArgumentException("Hex field topology must contain at least one hex.", nameof(source));
 
             int expectedCount = checked(source.Width * source.Height);
-            if (source.Adjacent.Length != expectedCount)
+            if (source.Count != expectedCount)
             {
                 throw new ArgumentException("Hex adjacency map array length must match its dimensions.", nameof(source));
             }

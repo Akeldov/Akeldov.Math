@@ -22,8 +22,20 @@ public class HexCenterMapTests
             Assert.That(geometry.Origin, Is.EqualTo(origin));
             Assert.That(geometry.Apothem, Is.EqualTo(apothem));
             Assert.That(geometry.Layout, Is.EqualTo(layout));
+            Assert.That(geometry.Centers, Is.Not.InstanceOf<PointXY[]>());
             VectorAssert.AreEqual(geometry.Centers[0], origin.X, origin.Y);
         }
+    }
+
+    [Test]
+    public void GetNormalizedHexVertexes_ReturnsCopy()
+    {
+        VectorXY[] vertexes = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertexes(Layout.OddR);
+        vertexes[0] = VectorXY.Zero;
+
+        VectorXY[] freshVertexes = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertexes(Layout.OddR);
+
+        Assert.That(freshVertexes[0], Is.Not.EqualTo(VectorXY.Zero));
     }
 
     [TestCase(Layout.OddR, 2f, 2.3094f)]

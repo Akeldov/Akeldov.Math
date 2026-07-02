@@ -2,7 +2,7 @@
 {
     public static class SixfoldAngles
     {
-        public static readonly SixfoldAngle[] All = new SixfoldAngle[6]
+        private static readonly SixfoldAngle[] AllValues = new SixfoldAngle[6]
         {
             SixfoldAngle.Deg0,
             SixfoldAngle.Deg60,
@@ -11,5 +11,7 @@
             SixfoldAngle.Deg240,
             SixfoldAngle.Deg300
         };
+
+        public static SixfoldAngle[] All => (SixfoldAngle[])AllValues.Clone();
     }
 }

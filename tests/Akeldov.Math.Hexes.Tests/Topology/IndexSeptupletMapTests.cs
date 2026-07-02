@@ -15,7 +15,8 @@ public class IndexSeptupletMapTests
         Assert.That(topology.Height, Is.EqualTo(2));
         Assert.That(topology.Count, Is.EqualTo(6));
         Assert.That(topology.Layout, Is.EqualTo(Layout.EvenQ));
-        Assert.That(topology.Adjacent, Has.Length.EqualTo(6));
+        Assert.That(topology.Adjacent, Has.Count.EqualTo(6));
+        Assert.That(topology.Adjacent, Is.Not.InstanceOf<Septuplet<VectorXYInt>[]>());
     }
 
     [Test]

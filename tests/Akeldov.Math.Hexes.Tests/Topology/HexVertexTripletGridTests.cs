@@ -21,7 +21,34 @@ public class HexVertexTripletGridTests
         Assert.That(grid.ResolutionX, Is.EqualTo(4));
         Assert.That(grid.ResolutionY, Is.EqualTo(2));
         Assert.That(grid.Count, Is.EqualTo(8));
-        Assert.That(grid.IndexTriplets, Has.Length.EqualTo(8));
+        Assert.That(grid.IndexTriplets, Has.Count.EqualTo(8));
+        Assert.That(grid.IndexTriplets, Is.Not.InstanceOf<Triplet<VectorXYInt>[]>());
+    }
+
+    [Test]
+    public void RetainedGridCollections_DoNotExposeBackingArrays()
+    {
+        var adjacency = new IndexSeptupletMap(2, 2, Layout.OddR);
+        var resolution = new VectorXYInt(2, 1);
+        var indexGrid = new IndexTripletGrid(adjacency, resolution);
+        var partialIndexGrid = new IndexPartialTripletGrid(adjacency, resolution);
+        var barycentricGrid = new BarycentricTripletGrid(adjacency, resolution);
+        var partialBarycentricGrid = new BarycentricPartialTripletGrid(adjacency, resolution);
+        var chromaticGrid = new ChromaticIndexTripletGrid(adjacency, resolution);
+        var partialChromaticGrid = new ChromaticIndexPartialTripletGrid(adjacency, resolution);
+
+        Assert.That(indexGrid.IndexTriplets, Has.Count.EqualTo(indexGrid.Count));
+        Assert.That(indexGrid.IndexTriplets, Is.Not.InstanceOf<Triplet<VectorXYInt>[]>());
+        Assert.That(partialIndexGrid.IndexTriplets, Has.Count.EqualTo(partialIndexGrid.Count));
+        Assert.That(partialIndexGrid.IndexTriplets, Is.Not.InstanceOf<PartialTriplet<VectorXYInt>[]>());
+        Assert.That(barycentricGrid.BarycentricCoordinates, Has.Count.EqualTo(barycentricGrid.Count));
+        Assert.That(barycentricGrid.BarycentricCoordinates, Is.Not.InstanceOf<Triplet<float>[]>());
+        Assert.That(partialBarycentricGrid.BarycentricCoordinates, Has.Count.EqualTo(partialBarycentricGrid.Count));
+        Assert.That(partialBarycentricGrid.BarycentricCoordinates, Is.Not.InstanceOf<PartialTriplet<float>[]>());
+        Assert.That(chromaticGrid.ChromaticIndices, Has.Count.EqualTo(chromaticGrid.Count));
+        Assert.That(chromaticGrid.ChromaticIndices, Is.Not.InstanceOf<Triplet<byte>[]>());
+        Assert.That(partialChromaticGrid.ChromaticIndices, Has.Count.EqualTo(partialChromaticGrid.Count));
+        Assert.That(partialChromaticGrid.ChromaticIndices, Is.Not.InstanceOf<PartialTriplet<byte>[]>());
     }
 
     [Test]

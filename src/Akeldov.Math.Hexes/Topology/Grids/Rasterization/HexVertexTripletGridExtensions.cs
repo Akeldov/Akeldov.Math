@@ -18,7 +18,7 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(tripletToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            Triplet<VectorXYInt>[] indexTriplets = grid.IndexTriplets;
+            Triplet<VectorXYInt>[] indexTriplets = grid.IndexTripletStorage;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = tripletToColor(indexTriplets[i]);
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(tripletToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<VectorXYInt>[] indexTriplets = grid.IndexTriplets;
+            PartialTriplet<VectorXYInt>[] indexTriplets = grid.IndexTripletStorage;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = tripletToColor(indexTriplets[i]);

@@ -4,6 +4,7 @@ using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -67,7 +68,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _chromaticIndices.Length;
 
-        public PartialTriplet<byte>[] ChromaticIndices => _chromaticIndices;
+        public IReadOnlyList<PartialTriplet<byte>> ChromaticIndices { get; private set; }
+
+        internal PartialTriplet<byte>[] ChromaticIndexStorage => _chromaticIndices;
 
         public int Width => ResolutionX;
 
@@ -115,6 +118,7 @@ namespace Akeldov.Math.Hexes.Topology
             ResolutionY = resolution.Y;
 
             _chromaticIndices = new PartialTriplet<byte>[checked(resolution.X * resolution.Y)];
+            ChromaticIndices = Array.AsReadOnly(_chromaticIndices);
 
             Fill();
         }
