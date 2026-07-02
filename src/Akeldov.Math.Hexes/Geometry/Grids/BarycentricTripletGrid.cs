@@ -112,7 +112,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _barycentricCoordinates.Length;
 
-        internal Triplet<float>[] BarycentricCoordinateStorage => _barycentricCoordinates;
+        internal Triplet<float>[] BarycentricCoordinates => _barycentricCoordinates;
 
         public int Width => ResolutionX;
 

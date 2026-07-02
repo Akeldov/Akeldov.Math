@@ -1,14 +1,13 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
     public sealed class IndexSeptupletMap : IHexMap<Septuplet<VectorXYInt>>
     {
-        private readonly Septuplet<VectorXYInt>[] _adjacent;
+        private readonly Septuplet<VectorXYInt>[] _indexSeptuplets;
 
         public IndexSeptupletMap(
             int width,
@@ -24,8 +23,7 @@ namespace Akeldov.Math.Hexes.Topology
             Width = width;
             Height = height;
             Layout = layout;
-            _adjacent = new Septuplet<VectorXYInt>[checked(width * height)];
-            Adjacent = Array.AsReadOnly(_adjacent);
+            _indexSeptuplets = new Septuplet<VectorXYInt>[checked(width * height)];
 
             switch (layout)
             {
@@ -50,13 +48,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Height { get; }
 
-        public int Count => _adjacent.Length;
+        public int Count => _indexSeptuplets.Length;
 
         public Layout Layout { get; }
 
-        public IReadOnlyList<Septuplet<VectorXYInt>> Adjacent { get; }
-
-        internal Septuplet<VectorXYInt>[] AdjacentStorage => _adjacent;
+        internal Septuplet<VectorXYInt>[] IndexSeptuplets => _indexSeptuplets;
 
         public Septuplet<VectorXYInt> this[VectorXYInt index]
         {
@@ -67,14 +63,14 @@ namespace Akeldov.Math.Hexes.Topology
                     index.Y < 0 || index.Y >= Height)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
-                return _adjacent[GetFlatIndex(index)];
+                return _indexSeptuplets[GetFlatIndex(index)];
             }
         }
 
         public Septuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _adjacent[index];
+            get => _indexSeptuplets[index];
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
@@ -88,7 +84,7 @@ namespace Akeldov.Math.Hexes.Topology
 
                 for (int x = 0; x < Width; x++)
                 {
-                    _adjacent[rowStart + x] = CreateAdjacency(x, y, offsets);
+                    _indexSeptuplets[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
         }
@@ -102,7 +98,7 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < Width; x++)
                 {
                     var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
-                    _adjacent[rowStart + x] = CreateAdjacency(x, y, offsets);
+                    _indexSeptuplets[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
         }

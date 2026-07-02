@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public sealed class IndexPartialSeptupletGrid : IGrid<PartialSeptuplet<VectorXYInt>>
     {
-        private PartialSeptuplet<VectorXYInt>[] _adjacent;
+        private PartialSeptuplet<VectorXYInt>[] _indexPartialSeptuplet;
 
         public IndexPartialSeptupletGrid(
             IndexPartialSeptupletMap hexAdjacencyMap,
@@ -31,7 +31,7 @@ namespace Akeldov.Math.Hexes.Topology
             var stepX = boundingBoxSize.X / Width;
             var stepY = boundingBoxSize.Y / Height;
 
-            _adjacent = new PartialSeptuplet<VectorXYInt>[checked(Width * Height)];
+            _indexPartialSeptuplet = new PartialSeptuplet<VectorXYInt>[checked(Width * Height)];
             switch (hexAdjacencyMap.Layout)
             {
                 case Layout.OddR:
@@ -57,7 +57,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Height { get; private set; }
 
-        public int Count => _adjacent.Length;
+        public int Count => _indexPartialSeptuplet.Length;
 
         public PartialSeptuplet<VectorXYInt> this[VectorXYInt index]
         {
@@ -68,14 +68,14 @@ namespace Akeldov.Math.Hexes.Topology
                     index.Y < 0 || index.Y >= Height)
                     throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
 
-                return _adjacent[GetFlatIndex(index)];
+                return _indexPartialSeptuplet[GetFlatIndex(index)];
             }
         }
 
         public PartialSeptuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _adjacent[index];
+            get => _indexPartialSeptuplet[index];
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
@@ -98,7 +98,7 @@ namespace Akeldov.Math.Hexes.Topology
                 {
                     var x = (j + 0.5f) * stepX;
                     var cellIndex = new PointXY(x, y).ToXYIndex(radius, origin, layout);
-                    _adjacent[index] = CreateValue(hexAdjacencyMap, cellIndex);
+                    _indexPartialSeptuplet[index] = CreateValue(hexAdjacencyMap, cellIndex);
                     index = index + 1;
                 }
             }

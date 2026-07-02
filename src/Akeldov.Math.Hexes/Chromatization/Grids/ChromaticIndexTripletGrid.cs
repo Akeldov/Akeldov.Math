@@ -113,7 +113,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _chromaticIndices.Length;
 
-        internal Triplet<byte>[] ChromaticIndexStorage => _chromaticIndices;
+        internal Triplet<byte>[] ChromaticIndices => _chromaticIndices;
 
         public int Width => ResolutionX;
 

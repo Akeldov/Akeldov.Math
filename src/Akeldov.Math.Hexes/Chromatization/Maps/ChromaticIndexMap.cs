@@ -1,7 +1,6 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Chromatization
@@ -24,7 +23,6 @@ namespace Akeldov.Math.Hexes.Chromatization
             Height = height;
             Layout = layout;
             _chromaticIndices = new byte[count];
-            ChromaticIndices = Array.AsReadOnly(_chromaticIndices);
 
             switch (layout)
             {
@@ -51,9 +49,7 @@ namespace Akeldov.Math.Hexes.Chromatization
 
         public Layout Layout { get; }
 
-        public IReadOnlyList<byte> ChromaticIndices { get; }
-
-        internal byte[] ChromaticIndexStorage => _chromaticIndices;
+        internal byte[] ChromaticIndices => _chromaticIndices;
 
         public byte this[VectorXYInt index]
         {

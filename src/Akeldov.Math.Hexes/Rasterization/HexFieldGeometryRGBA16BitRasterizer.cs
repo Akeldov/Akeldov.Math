@@ -27,7 +27,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             float radius = source.Apothem.ConvertHexApothemToRadius();
             VectorXY[] normalizedVertexes = Geometry.VectorXYExtensions.GetNormalizedHexVertexes(source.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            PointXY[] centers = source.CenterStorage;
+            PointXY[] centers = source.Centers;
 
             for (int i = 0; i < centers.Length; i++)
             {
@@ -118,7 +118,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             float radius,
             VectorXY[] normalizedVertexes)
         {
-            PointXY[] centers = source.CenterStorage;
+            PointXY[] centers = source.Centers;
             RasterBounds bounds = GetHexBounds(centers[0], radius, normalizedVertexes);
 
             for (int i = 1; i < centers.Length; i++)

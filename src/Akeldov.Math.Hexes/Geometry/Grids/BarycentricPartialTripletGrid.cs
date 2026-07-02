@@ -66,7 +66,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _barycentricCoordinates.Length;
 
-        internal PartialTriplet<float>[] BarycentricCoordinateStorage => _barycentricCoordinates;
+        internal PartialTriplet<float>[] BarycentricCoordinates => _barycentricCoordinates;
 
         public int Width => ResolutionX;
 

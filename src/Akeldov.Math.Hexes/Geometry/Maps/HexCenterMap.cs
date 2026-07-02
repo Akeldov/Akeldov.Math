@@ -1,7 +1,6 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
@@ -32,7 +31,6 @@ namespace Akeldov.Math.Hexes.Geometry
             Apothem = apothem;
             Layout = layout;
             _centers = new PointXY[count];
-            Centers = Array.AsReadOnly(_centers);
 
             switch (layout)
             {
@@ -72,9 +70,7 @@ namespace Akeldov.Math.Hexes.Geometry
 
         public Layout Layout { get; }
 
-        public IReadOnlyList<PointXY> Centers { get; }
-
-        internal PointXY[] CenterStorage => _centers;
+        internal PointXY[] Centers => _centers;
 
         public PointXY this[VectorXYInt index]
         {

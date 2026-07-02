@@ -20,24 +20,21 @@ public class ChromaticIndexMapTests
             Assert.That(chromatization.Width, Is.EqualTo(width));
             Assert.That(chromatization.Height, Is.EqualTo(height));
             Assert.That(chromatization.Layout, Is.EqualTo(layout));
-            Assert.That(chromatization.ChromaticIndices, Has.Count.EqualTo(width * height));
 
             for (int y = 0; y < height; y++)
             {
-                int rowStart = y * width;
-
                 for (int x = 0; x < width; x++)
                 {
                     byte expected = (byte)new VectorXYInt(x, y).GetChromaticClass(layout);
 
-                    Assert.That(chromatization.ChromaticIndices[rowStart + x], Is.EqualTo(expected));
+                    Assert.That(chromatization[new VectorXYInt(x, y)], Is.EqualTo(expected));
                 }
             }
         }
     }
 
     [Test]
-    public void Constructor_ExposesDimensionsLayoutAndChromaticIndices()
+    public void Constructor_ExposesDimensionsAndLayout()
     {
         var resolution = new VectorXYInt(2, 1);
 
@@ -46,8 +43,7 @@ public class ChromaticIndexMapTests
         Assert.That(chromatization.Width, Is.EqualTo(2));
         Assert.That(chromatization.Height, Is.EqualTo(1));
         Assert.That(chromatization.Layout, Is.EqualTo(Layout.OddR));
-        Assert.That(chromatization.ChromaticIndices, Has.Count.EqualTo(2));
-        Assert.That(chromatization.ChromaticIndices, Is.Not.InstanceOf<byte[]>());
+        Assert.That(typeof(ChromaticIndexMap).GetProperty("ChromaticIndices"), Is.Null);
     }
 
     [Test]
@@ -56,7 +52,7 @@ public class ChromaticIndexMapTests
         var source = new ChromaticIndexMap(3, 2, Layout.OddR);
         IHexMap<byte> map = source;
 
-        byte chromaticIndex = source.ChromaticIndices[5];
+        byte chromaticIndex = source[5];
 
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));

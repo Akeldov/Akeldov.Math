@@ -112,7 +112,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _indexTriplets.Length;
 
-        internal Triplet<VectorXYInt>[] IndexTripletStorage => _indexTriplets;
+        internal Triplet<VectorXYInt>[] IndexTriplets => _indexTriplets;
 
         public int Width => ResolutionX;
 

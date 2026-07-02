@@ -22,8 +22,8 @@ public class HexCenterMapTests
             Assert.That(geometry.Origin, Is.EqualTo(origin));
             Assert.That(geometry.Apothem, Is.EqualTo(apothem));
             Assert.That(geometry.Layout, Is.EqualTo(layout));
-            Assert.That(geometry.Centers, Is.Not.InstanceOf<PointXY[]>());
-            VectorAssert.AreEqual(geometry.Centers[0], origin.X, origin.Y);
+            Assert.That(typeof(HexCenterMap).GetProperty("Centers"), Is.Null);
+            VectorAssert.AreEqual(geometry[0], origin.X, origin.Y);
         }
     }
 
@@ -45,7 +45,7 @@ public class HexCenterMapTests
     public void Constructor_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
     {
         var geometry = new HexCenterMap(1, 1, 2f.ConvertHexApothemToRadius(), layout);
-        VectorAssert.AreEqual(geometry.Centers[0], expectedX, expectedY);
+        VectorAssert.AreEqual(geometry[0], expectedX, expectedY);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class HexCenterMapTests
         var source = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
         IHexMap<PointXY> map = source;
 
-        PointXY center = source.Centers[5];
+        PointXY center = source[5];
 
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));

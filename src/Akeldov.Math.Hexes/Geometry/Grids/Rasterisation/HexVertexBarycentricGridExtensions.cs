@@ -18,7 +18,7 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            Triplet<float>[] barycentricCoordinates = grid.BarycentricCoordinateStorage;
+            Triplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i]);
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinateStorage;
+            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i]);
@@ -67,8 +67,8 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinateStorage;
-            PartialTriplet<byte>[] chromaticIndices = chromaticIndexPartialTripletGrid.ChromaticIndexStorage;
+            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
+            PartialTriplet<byte>[] chromaticIndices = chromaticIndexPartialTripletGrid.ChromaticIndices;
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i], chromaticIndices[i]);
