@@ -58,13 +58,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </summary>
         /// <param name="other">The cell to compare with this cell.</param>
         /// <returns><see langword="true"/> if both cells are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(VoronoiCell other) =>
+        public bool Equals(VoronoiCell? other) =>
             other != null &&
             SiteIndex == other.SiteIndex &&
             Site.Equals(other.Site);
 
         /// <inheritdoc/>
-        public override bool Equals(object obj) => obj is VoronoiCell other && Equals(other);
+        public override bool Equals(object? obj) => obj is VoronoiCell other && Equals(other);
 
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(SiteIndex, Site);

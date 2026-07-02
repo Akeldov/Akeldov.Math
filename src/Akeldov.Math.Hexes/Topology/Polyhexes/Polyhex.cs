@@ -143,9 +143,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         public override int GetHashCode() => _hash;
 
-        public override bool Equals(object obj) => obj is Polyhex other && Equals(other);
+        public override bool Equals(object? obj) => obj is Polyhex other && Equals(other);
 
-        public bool Equals(Polyhex other)
+        public bool Equals(Polyhex? other)
         {
             if (other is null)
                 return false;
@@ -180,7 +180,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public static implicit operator Polyhex(bool[,] boolMask) => new Polyhex(boolMask);
 
-        public static bool operator ==(Polyhex left, Polyhex right)
+        public static bool operator ==(Polyhex? left, Polyhex? right)
         {
             if (ReferenceEquals(left, right))
                 return true;
@@ -191,7 +191,7 @@ namespace Akeldov.Math.Hexes.Topology
             return left.Equals(right);
         }
 
-        public static bool operator !=(Polyhex left, Polyhex right) => !(left == right);
+        public static bool operator !=(Polyhex? left, Polyhex? right) => !(left == right);
 
         private int GetFlatIndex(int q, int r) => q * QRSResolution.R + r;
     }

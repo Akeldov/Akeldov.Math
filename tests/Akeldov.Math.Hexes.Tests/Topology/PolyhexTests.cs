@@ -77,15 +77,18 @@ public class PolyhexTests
         stream.Position = 0;
 
         using var reader = new BinaryReader(stream);
-        Polyhex result = reader.ReadPolyhexStamp();
+        Polyhex? result = reader.ReadPolyhexStamp();
+
+        Assert.That(result, Is.Not.Null);
+        Polyhex polyhex = result!;
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.QRSResolution.Q, Is.EqualTo(2));
-            Assert.That(result.QRSResolution.R, Is.EqualTo(3));
-            Assert.That(result, Is.EqualTo(source));
-            Assert.That(result[0, 0], Is.True);
-            Assert.That(result[1, 2], Is.True);
+            Assert.That(polyhex.QRSResolution.Q, Is.EqualTo(2));
+            Assert.That(polyhex.QRSResolution.R, Is.EqualTo(3));
+            Assert.That(polyhex, Is.EqualTo(source));
+            Assert.That(polyhex[0, 0], Is.True);
+            Assert.That(polyhex[1, 2], Is.True);
         });
     }
 }

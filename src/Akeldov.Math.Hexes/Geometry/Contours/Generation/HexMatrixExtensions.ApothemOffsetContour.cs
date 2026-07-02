@@ -39,8 +39,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     offsetSegments[i].IncludesStartPoint,
                     offsetSegments[i].IncludesEndPoint));
 
-                if (joins[i].Arc.HasValue)
-                    offsetCurves.Add(joins[i].Arc.Value);
+                if (joins[i].Arc is ParameterizedArc arc)
+                    offsetCurves.Add(arc);
             }
 
             return CreateOuterOffsetContour(contour, offsetCurves, polyhexGeometry.HexApothem);
@@ -426,7 +426,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         private static List<IFinitePath> OrderLongestClosedChain(IReadOnlyList<IFinitePath> curves)
         {
             var used = new bool[curves.Count];
-            List<IFinitePath> longestChain = null;
+            List<IFinitePath>? longestChain = null;
             float longestLength = -1f;
 
             for (int i = 0; i < curves.Count; i++)

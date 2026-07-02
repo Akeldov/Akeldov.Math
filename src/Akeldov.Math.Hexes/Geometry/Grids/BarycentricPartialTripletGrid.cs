@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const float DefaultHexRadius = 1f;
 
-        private PartialTriplet<float>[] _values;
+        private PartialTriplet<float>[] _values = Array.Empty<PartialTriplet<float>>();
 
         private int HexWidth { get; set; }
 

@@ -12,7 +12,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const float DefaultHexRadius = 1f;
 
-        private Triplet<byte>[] _values;
+        private Triplet<byte>[] _values = Array.Empty<Triplet<byte>>();
 
         private VectorXY HexOrigin { get; set; }
 

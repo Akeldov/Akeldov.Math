@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         public static void Write(
             this BinaryWriter binaryWriter,
-            Polyhex polyhexStamp)
+            Polyhex? polyhexStamp)
         {
             if (polyhexStamp != null)
             {

@@ -5,7 +5,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class BinaryReaderExtensions
     {
-        public static Polyhex ReadPolyhexStamp(
+        public static Polyhex? ReadPolyhexStamp(
             this BinaryReader binaryReader)
         {
             var isNotNull = binaryReader.ReadBoolean();

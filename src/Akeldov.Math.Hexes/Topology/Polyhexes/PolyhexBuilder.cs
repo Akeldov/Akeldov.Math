@@ -19,9 +19,9 @@ namespace Akeldov.Math.Hexes.Topology
             _cells = new bool[checked(qSize * rSize)];
         }
 
-        public PolyhexBuilder(Polyhex polyhex)
+        public PolyhexBuilder(Polyhex? polyhex)
         {
-            if (polyhex == null)
+            if (polyhex is null)
                 throw new ArgumentNullException(nameof(polyhex));
 
             QRSResolution = polyhex.QRSResolution;

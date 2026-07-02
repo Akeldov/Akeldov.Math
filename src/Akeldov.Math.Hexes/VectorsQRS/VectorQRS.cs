@@ -24,7 +24,7 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
 
         public bool Equals(VectorQRS other) => Q.Equals(other.Q) && R.Equals(other.R);
 
-        public override bool Equals(object obj) => obj is VectorQRS other && Equals(other);
+        public override bool Equals(object? obj) => obj is VectorQRS other && Equals(other);
 
         public override int GetHashCode() => HashCode.Combine(Q, R);
 

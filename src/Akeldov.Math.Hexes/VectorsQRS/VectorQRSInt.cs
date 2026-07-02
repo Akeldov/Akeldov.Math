@@ -31,7 +31,7 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
 
         public static VectorQRSInt One => new VectorQRSInt(1, 1);
 
-        public override bool Equals(object obj) => obj is VectorQRSInt other && Equals(other);
+        public override bool Equals(object? obj) => obj is VectorQRSInt other && Equals(other);
 
         public bool Equals(VectorQRSInt other) => Q == other.Q && R == other.R;
 
