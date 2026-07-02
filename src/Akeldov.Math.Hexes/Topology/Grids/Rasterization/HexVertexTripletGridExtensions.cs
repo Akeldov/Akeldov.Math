@@ -18,10 +18,9 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(tripletToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            Triplet<VectorXYInt>[] indexTriplets = grid.IndexTriplets;
 
             for (int i = 0; i < values.Length; i++)
-                values[i] = tripletToColor(indexTriplets[i]);
+                values[i] = tripletToColor(grid[i]);
 
             var rasterGrid = new RasterGrid(
                 (PointXY)grid.Origin,
@@ -42,10 +41,9 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(tripletToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<VectorXYInt>[] indexTriplets = grid.IndexPartialTriplets;
 
             for (int i = 0; i < values.Length; i++)
-                values[i] = tripletToColor(indexTriplets[i]);
+                values[i] = tripletToColor(grid[i]);
 
             var rasterGrid = new RasterGrid(
                 (PointXY)grid.Origin,

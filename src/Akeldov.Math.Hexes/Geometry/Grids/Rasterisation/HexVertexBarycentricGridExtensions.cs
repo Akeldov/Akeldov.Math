@@ -18,10 +18,9 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            Triplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
 
             for (int i = 0; i < values.Length; i++)
-                values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i]);
+                values[i] = barycentricCoordinatesToColor(grid[i]);
 
             var rasterGrid = new RasterGrid(
                 (PointXY)grid.Origin,
@@ -42,10 +41,9 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
 
             for (int i = 0; i < values.Length; i++)
-                values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i]);
+                values[i] = barycentricCoordinatesToColor(grid[i]);
 
             var rasterGrid = new RasterGrid(
                 (PointXY)grid.Origin,
@@ -67,11 +65,9 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
             var values = new RGBA16BitColor[grid.Count];
-            PartialTriplet<float>[] barycentricCoordinates = grid.BarycentricCoordinates;
-            PartialTriplet<byte>[] chromaticIndices = chromaticIndexPartialTripletGrid.ChromaticIndices;
 
             for (int i = 0; i < values.Length; i++)
-                values[i] = barycentricCoordinatesToColor(barycentricCoordinates[i], chromaticIndices[i]);
+                values[i] = barycentricCoordinatesToColor(grid[i], chromaticIndexPartialTripletGrid[i]);
 
             var rasterGrid = new RasterGrid(
                 (PointXY)grid.Origin,

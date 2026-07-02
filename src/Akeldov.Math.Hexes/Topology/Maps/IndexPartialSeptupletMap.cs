@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public sealed class IndexPartialSeptupletMap : IHexMap<PartialSeptuplet<VectorXYInt>>
     {
-        private readonly PartialSeptuplet<VectorXYInt>[] _indexPartialSeptuplet;
+        private readonly PartialSeptuplet<VectorXYInt>[] _values;
 
         public IndexPartialSeptupletMap(
             int width,
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Hexes.Topology
             Width = width;
             Height = height;
             Layout = layout;
-            _indexPartialSeptuplet = new PartialSeptuplet<VectorXYInt>[checked(width * height)];
+            _values = new PartialSeptuplet<VectorXYInt>[checked(width * height)];
 
             switch (layout)
             {
@@ -48,11 +48,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Height { get; }
 
-        public int Count => _indexPartialSeptuplet.Length;
+        public int Count => _values.Length;
 
         public Layout Layout { get; }
-
-        internal PartialSeptuplet<VectorXYInt>[] IndexPartialSeptuplet => _indexPartialSeptuplet;
 
         public PartialSeptuplet<VectorXYInt> this[VectorXYInt index]
         {
@@ -63,14 +61,14 @@ namespace Akeldov.Math.Hexes.Topology
                     index.Y < 0 || index.Y >= Height)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
-                return _indexPartialSeptuplet[GetFlatIndex(index)];
+                return _values[GetFlatIndex(index)];
             }
         }
 
         public PartialSeptuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _indexPartialSeptuplet[index];
+            get => _values[index];
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
@@ -84,7 +82,7 @@ namespace Akeldov.Math.Hexes.Topology
 
                 for (int x = 0; x < Width; x++)
                 {
-                    _indexPartialSeptuplet[rowStart + x] = CreateAdjacency(x, y, Width, Height, offsets);
+                    _values[rowStart + x] = CreateAdjacency(x, y, Width, Height, offsets);
                 }
             }
         }
@@ -98,7 +96,7 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < Width; x++)
                 {
                     var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
-                    _indexPartialSeptuplet[rowStart + x] = CreateAdjacency(x, y, Width, Height, offsets);
+                    _values[rowStart + x] = CreateAdjacency(x, y, Width, Height, offsets);
                 }
             }
         }

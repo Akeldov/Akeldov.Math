@@ -12,7 +12,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const float DefaultHexRadius = 1f;
 
-        private Triplet<byte>[] _chromaticIndices;
+        private Triplet<byte>[] _values;
 
         private VectorXY HexOrigin { get; set; }
 
@@ -111,9 +111,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int ResolutionY { get; private set; }
 
-        public int Count => _chromaticIndices.Length;
-
-        internal Triplet<byte>[] ChromaticIndices => _chromaticIndices;
+        public int Count => _values.Length;
 
         public int Width => ResolutionX;
 
@@ -125,14 +123,14 @@ namespace Akeldov.Math.Hexes.Topology
             get
             {
                 ThrowIfGridIndexOutOfBounds(index);
-                return _chromaticIndices[GetFlatIndex(index)];
+                return _values[GetFlatIndex(index)];
             }
         }
 
         public Triplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _chromaticIndices[index];
+            get => _values[index];
         }
 
         public PointXY GetCellCenter(VectorXYInt index)
@@ -146,14 +144,14 @@ namespace Akeldov.Math.Hexes.Topology
             ThrowIfGridIndexOutOfBounds(gridIndex);
 
             int flatIndex = GetFlatIndex(gridIndex);
-            chromaticIndices = _chromaticIndices[flatIndex];
+            chromaticIndices = _values[flatIndex];
             return true;
         }
 
         public Triplet<byte> GetChromaticIndices(VectorXYInt gridIndex)
         {
             ThrowIfGridIndexOutOfBounds(gridIndex);
-            return _chromaticIndices[GetFlatIndex(gridIndex)];
+            return _values[GetFlatIndex(gridIndex)];
         }
 
         private void Initialize(
@@ -179,7 +177,7 @@ namespace Akeldov.Math.Hexes.Topology
             ResolutionX = resolution.X;
             ResolutionY = resolution.Y;
 
-            _chromaticIndices = new Triplet<byte>[checked(resolution.X * resolution.Y)];
+            _values = new Triplet<byte>[checked(resolution.X * resolution.Y)];
 
             Fill();
         }
@@ -197,7 +195,7 @@ namespace Akeldov.Math.Hexes.Topology
                     int flatIndex = rowStart + x;
                     PointXY point = GetCellCenterUnchecked(x, y);
                     VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _chromaticIndices[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertexes);
+                    _values[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertexes);
                 }
             }
         }

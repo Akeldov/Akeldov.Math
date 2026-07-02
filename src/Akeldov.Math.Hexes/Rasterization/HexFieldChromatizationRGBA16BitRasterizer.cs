@@ -60,7 +60,6 @@ namespace Akeldov.Math.Hexes.Rasterization
             float radius = _apothem * ApothemToRadius;
             VectorXY[] normalizedVertexes = GetNormalizedHexVertexes(source.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            byte[] chromaticIndices = source.ChromaticIndices;
 
             for (int y = 0; y < source.Height; y++)
             {
@@ -70,7 +69,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 {
                     int index = rowStart + x;
                     VectorXY center = GetHexCenter(x, y, source.Layout, radius);
-                    RGBA16BitColor color = _chromaticIndexToColor(chromaticIndices[index]);
+                    RGBA16BitColor color = _chromaticIndexToColor(source[index]);
                     RasterizeHex(center, radius, normalizedVertexes, grid, values, color);
                 }
             }
@@ -240,9 +239,6 @@ namespace Akeldov.Math.Hexes.Rasterization
             if (source.Width <= 0 || source.Height <= 0)
                 throw new ArgumentException("Hex field chromatization must contain at least one hex.", nameof(source));
 
-            int expectedCount = checked(source.Width * source.Height);
-            if (source.ChromaticIndices.Length != expectedCount)
-                throw new ArgumentException("Hex field chromatization index count must match its dimensions.", nameof(source));
         }
 
         private static void ValidateGrid(RasterGrid grid)

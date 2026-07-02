@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const float DefaultHexRadius = 1f;
 
-        private PartialTriplet<VectorXYInt>[] _indexPartialTriplets;
+        private PartialTriplet<VectorXYInt>[] _values;
 
         private int HexWidth { get; set; }
 
@@ -64,9 +64,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int ResolutionY { get; private set; }
 
-        public int Count => _indexPartialTriplets.Length;
-
-        internal PartialTriplet<VectorXYInt>[] IndexPartialTriplets => _indexPartialTriplets;
+        public int Count => _values.Length;
 
         public int Width => ResolutionX;
 
@@ -78,14 +76,14 @@ namespace Akeldov.Math.Hexes.Topology
             get
             {
                 ThrowIfGridIndexOutOfBounds(index);
-                return _indexPartialTriplets[GetFlatIndex(index)];
+                return _values[GetFlatIndex(index)];
             }
         }
 
         public PartialTriplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _indexPartialTriplets[index];
+            get => _values[index];
         }
 
         public PointXY GetCellCenter(VectorXYInt index)
@@ -99,14 +97,14 @@ namespace Akeldov.Math.Hexes.Topology
             ThrowIfGridIndexOutOfBounds(gridIndex);
 
             int flatIndex = GetFlatIndex(gridIndex);
-            indexTriplet = _indexPartialTriplets[flatIndex];
+            indexTriplet = _values[flatIndex];
             return indexTriplet.Presence != TripletPresenceFlags.None;
         }
 
         public PartialTriplet<VectorXYInt> GetIndexTriplet(VectorXYInt gridIndex)
         {
             ThrowIfGridIndexOutOfBounds(gridIndex);
-            return _indexPartialTriplets[GetFlatIndex(gridIndex)];
+            return _values[GetFlatIndex(gridIndex)];
         }
 
         private void Initialize(
@@ -134,7 +132,7 @@ namespace Akeldov.Math.Hexes.Topology
             ResolutionX = resolution.X;
             ResolutionY = resolution.Y;
 
-            _indexPartialTriplets = new PartialTriplet<VectorXYInt>[checked(resolution.X * resolution.Y)];
+            _values = new PartialTriplet<VectorXYInt>[checked(resolution.X * resolution.Y)];
 
             Fill();
         }
@@ -152,7 +150,7 @@ namespace Akeldov.Math.Hexes.Topology
                     int flatIndex = rowStart + x;
                     PointXY point = GetCellCenterUnchecked(x, y);
                     VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _indexPartialTriplets[flatIndex] = CreateIndexTriplet(point, mainIndex, normalizedHexVertexes);
+                    _values[flatIndex] = CreateIndexTriplet(point, mainIndex, normalizedHexVertexes);
                 }
             }
         }

@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public sealed class IndexSeptupletGrid : IGrid<Septuplet<VectorXYInt>>
     {
-        private Septuplet<VectorXYInt>[] _indexSeptuplets;
+        private Septuplet<VectorXYInt>[] _values;
 
         public IndexSeptupletGrid(
             IndexSeptupletMap hexAdjacencyMap,
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Hexes.Topology
             var stepX = gridSize.X / Width;
             var stepY = gridSize.Y / Height;
 
-            _indexSeptuplets = new Septuplet<VectorXYInt>[checked(Width * Height)];
+            _values = new Septuplet<VectorXYInt>[checked(Width * Height)];
             switch (hexAdjacencyMap.Layout)
             {
                 case Layout.OddR:
@@ -71,7 +71,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Height { get; private set; }
 
-        public int Count => _indexSeptuplets.Length;
+        public int Count => _values.Length;
 
         public Septuplet<VectorXYInt> this[VectorXYInt index]
         {
@@ -82,14 +82,14 @@ namespace Akeldov.Math.Hexes.Topology
                     index.Y < 0 || index.Y >= Height)
                     throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
 
-                return _indexSeptuplets[GetFlatIndex(index)];
+                return _values[GetFlatIndex(index)];
             }
         }
 
         public Septuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _indexSeptuplets[index];
+            get => _values[index];
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
@@ -113,7 +113,7 @@ namespace Akeldov.Math.Hexes.Topology
                 {
                     var x = gridOrigin.X + (j + 0.5f) * stepX;
                     var cellIndex = new PointXY(x, y).ToXYIndex(radius, origin, layout);
-                    _indexSeptuplets[index] = CreateValue(hexAdjacencyMap, cellIndex);
+                    _values[index] = CreateValue(hexAdjacencyMap, cellIndex);
                     index = index + 1;
                 }
             }

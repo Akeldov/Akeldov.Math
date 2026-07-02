@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public sealed class HexCenterMap : IHexMap<PointXY>
     {
-        private readonly PointXY[] _centers;
+        private readonly PointXY[] _values;
 
         public HexCenterMap(
             int width,
@@ -30,7 +30,7 @@ namespace Akeldov.Math.Hexes.Geometry
             Origin = origin;
             Apothem = apothem;
             Layout = layout;
-            _centers = new PointXY[count];
+            _values = new PointXY[count];
 
             switch (layout)
             {
@@ -70,8 +70,6 @@ namespace Akeldov.Math.Hexes.Geometry
 
         public Layout Layout { get; }
 
-        internal PointXY[] Centers => _centers;
-
         public PointXY this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -81,14 +79,14 @@ namespace Akeldov.Math.Hexes.Geometry
                     index.Y < 0 || index.Y >= Height)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
-                return _centers[GetFlatIndex(index)];
+                return _values[GetFlatIndex(index)];
             }
         }
 
         public PointXY this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _centers[index];
+            get => _values[index];
         }
 
         private void FillRowLayoutCenters(bool evenRowsAreShifted, float radius)
@@ -102,7 +100,7 @@ namespace Akeldov.Math.Hexes.Geometry
 
                 for (int x = 0; x < Width; x++)
                 {
-                    _centers[rowStart + x] = new PointXY(
+                    _values[rowStart + x] = new PointXY(
                         Origin.X + x * 2f * Apothem + xShift,
                         centerY);
                 }
@@ -121,7 +119,7 @@ namespace Akeldov.Math.Hexes.Geometry
                     var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
                     var yShift = GetShiftRelativeToOrigin(columnIsShifted, evenColumnsAreShifted);
 
-                    _centers[rowStart + x] = new PointXY(
+                    _values[rowStart + x] = new PointXY(
                         Origin.X + 1.5f * radius * x,
                         baseY + yShift);
                 }

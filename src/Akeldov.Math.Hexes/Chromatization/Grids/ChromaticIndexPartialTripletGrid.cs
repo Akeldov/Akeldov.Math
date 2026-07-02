@@ -12,7 +12,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const float DefaultHexRadius = 1f;
 
-        private PartialTriplet<byte>[] _chromaticIndices;
+        private PartialTriplet<byte>[] _values;
 
         private int HexWidth { get; set; }
 
@@ -65,9 +65,7 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int ResolutionY { get; private set; }
 
-        public int Count => _chromaticIndices.Length;
-
-        internal PartialTriplet<byte>[] ChromaticIndices => _chromaticIndices;
+        public int Count => _values.Length;
 
         public int Width => ResolutionX;
 
@@ -79,14 +77,14 @@ namespace Akeldov.Math.Hexes.Topology
             get
             {
                 ThrowIfGridIndexOutOfBounds(index);
-                return _chromaticIndices[GetFlatIndex(index)];
+                return _values[GetFlatIndex(index)];
             }
         }
 
         public PartialTriplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _chromaticIndices[index];
+            get => _values[index];
         }
 
         private void Initialize(
@@ -114,7 +112,7 @@ namespace Akeldov.Math.Hexes.Topology
             ResolutionX = resolution.X;
             ResolutionY = resolution.Y;
 
-            _chromaticIndices = new PartialTriplet<byte>[checked(resolution.X * resolution.Y)];
+            _values = new PartialTriplet<byte>[checked(resolution.X * resolution.Y)];
 
             Fill();
         }
@@ -132,7 +130,7 @@ namespace Akeldov.Math.Hexes.Topology
                     int flatIndex = rowStart + x;
                     PointXY point = GetCellCenterUnchecked(x, y);
                     VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _chromaticIndices[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertexes);
+                    _values[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertexes);
                 }
             }
         }
