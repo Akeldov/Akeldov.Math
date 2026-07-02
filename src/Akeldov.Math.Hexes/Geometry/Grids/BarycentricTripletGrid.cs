@@ -3,7 +3,6 @@ using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -113,8 +112,6 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _barycentricCoordinates.Length;
 
-        public IReadOnlyList<Triplet<float>> BarycentricCoordinates { get; private set; }
-
         internal Triplet<float>[] BarycentricCoordinateStorage => _barycentricCoordinates;
 
         public int Width => ResolutionX;
@@ -182,7 +179,6 @@ namespace Akeldov.Math.Hexes.Topology
             ResolutionY = resolution.Y;
 
             _barycentricCoordinates = new Triplet<float>[checked(resolution.X * resolution.Y)];
-            BarycentricCoordinates = Array.AsReadOnly(_barycentricCoordinates);
 
             Fill();
         }
