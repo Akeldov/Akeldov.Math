@@ -10,6 +10,12 @@ namespace Akeldov.Math.Hexes.Geometry
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexOffset(this VectorQRSInt hexIndex, float hexApothem, float hexRadius, Layout layout)
         {
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
             switch (layout)
             {
                 case Layout.OddR:

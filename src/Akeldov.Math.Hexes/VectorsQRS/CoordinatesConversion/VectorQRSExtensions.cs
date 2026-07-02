@@ -8,8 +8,8 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ToNormalizedAxial(this VectorQRS fractionalPoint, float hexRadius)
         {
-            if (hexRadius == 0)
-                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, $"Couldn't devide on zero {nameof(hexRadius)}");
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
 
             return fractionalPoint / hexRadius;
         }

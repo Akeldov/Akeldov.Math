@@ -11,6 +11,12 @@ namespace Akeldov.Math.Hexes.Geometry
             if (size.Q < 0 || size.R < 0)
                 throw new ArgumentOutOfRangeException(nameof(size), size, "Couldn't calculate bounding box for size with negative numbers.");
 
+            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+
             if (size.Q == 0 || size.R == 0)
                 return new VectorXY(0, 0);
 

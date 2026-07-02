@@ -10,6 +10,15 @@ namespace Akeldov.Math.Hexes.Geometry
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY BoundingBox(this VectorXYInt dim, float hexApothem, float hexRadius, Layout layout)
         {
+            if (dim.X < 0 || dim.Y < 0)
+                throw new ArgumentOutOfRangeException(nameof(dim), dim, "Couldn't calculate bounding box for dimensions with negative components.");
+
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
             switch (layout)
             {
                 case Layout.OddR:

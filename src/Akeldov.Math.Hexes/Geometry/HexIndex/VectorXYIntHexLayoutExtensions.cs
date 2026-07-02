@@ -10,12 +10,27 @@ namespace Akeldov.Math.Hexes.Geometry
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, Layout layout)
         {
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
             return index.GetHexCenter(hexApothem, hexRadius, GetOffsetOrigin(hexApothem, hexRadius, layout), layout);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, VectorXY origin, Layout layout)
         {
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
+            if (!origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex origin components must be finite.");
+
             switch (layout)
             {
                 case Layout.OddR:

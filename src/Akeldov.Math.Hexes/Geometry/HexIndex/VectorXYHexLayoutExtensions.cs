@@ -8,6 +8,12 @@ namespace Akeldov.Math.Hexes.Geometry
     {
         public static VectorXY GetHexCenter(int q, int r, float hexApothem, float hexRadius, Layout layout)
         {
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
             var origin = GetAxialOrigin(hexApothem, hexRadius, layout);
             return new VectorQRSInt(q, r).GetHexOffset(hexApothem, hexRadius, layout) + origin;
         }
@@ -18,6 +24,12 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetHexVertexes(int q, int r, float hexApothem, float hexRadius, Layout layout)
         {
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
             return GetHexCenter(q, r, hexApothem, hexRadius, layout).GetHexVertexes(hexRadius, layout);
         }
 
@@ -27,6 +39,12 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetHexVertexes(this VectorXY hexCenter, float hexRadius, Layout layout)
         {
+            if (!hexCenter.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexCenter), hexCenter, "Hex center components must be finite.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
             var normalizedHexVertexes = GetNormalizedHexVertexes(layout);
             var vertexes = new VectorXY[6];
             for (int i = 0; i < 6; i++)

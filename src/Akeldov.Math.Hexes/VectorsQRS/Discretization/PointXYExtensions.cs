@@ -9,6 +9,16 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt ToXYIndex(this PointXY point, float hexRadius, VectorXY hexFieldOrigin, Layout layout)
         {
+            if (float.IsNaN(point.X) || float.IsInfinity(point.X) ||
+                float.IsNaN(point.Y) || float.IsInfinity(point.Y))
+                throw new ArgumentOutOfRangeException(nameof(point), point, "Point coordinates must be finite.");
+
+            if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
+            if (!hexFieldOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexFieldOrigin), hexFieldOrigin, "Hex field origin components must be finite.");
+
             float shiftedX = point.X - hexFieldOrigin.X;
             float shiftedY = point.Y - hexFieldOrigin.Y;
             float q;
@@ -32,9 +42,6 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
-
-            if (hexRadius == 0)
-                throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, $"Couldn't devide on zero {nameof(hexRadius)}");
 
             float invertedHexRadius = 1f / hexRadius;
             q *= invertedHexRadius;

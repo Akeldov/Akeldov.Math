@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes.Geometry
             if (!origin.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex field origin components must be finite.");
 
-            if (!IsFiniteAndPositive(apothem))
+            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
 
             var radius = apothem.ConvertHexApothemToRadius();
@@ -144,20 +144,18 @@ namespace Akeldov.Math.Hexes.Geometry
 
         private static float ConvertValidRadiusToApothem(float radius)
         {
-            ValidateRadius(radius);
-            return radius.ConvertHexRadiusToApothem();
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+
+            return Constants.Radius2Apothem * radius;
         }
 
         private static VectorXY GetDefaultOriginFromRadius(float radius, Layout layout)
         {
-            ValidateRadius(radius);
-            return GetDefaultOrigin(radius.ConvertHexRadiusToApothem(), radius, layout);
-        }
-
-        private static void ValidateRadius(float radius)
-        {
-            if (!IsFiniteAndPositive(radius))
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+
+            return GetDefaultOrigin(Constants.Radius2Apothem * radius, radius, layout);
         }
 
         private static VectorXY GetDefaultOrigin(float apothem, float radius, Layout layout)
@@ -176,8 +174,5 @@ namespace Akeldov.Math.Hexes.Geometry
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
         }
-
-        private static bool IsFiniteAndPositive(float value) =>
-            !float.IsNaN(value) && !float.IsInfinity(value) && value > 0f;
     }
 }

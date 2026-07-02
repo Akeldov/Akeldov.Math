@@ -1,5 +1,12 @@
 # Agent Notes
 
+## Small Validation Guards
+
+Do not extract small argument or state checks into separate helper methods just for reuse.
+Keep simple guard checks inline at the public API or constructor boundary where the contract is
+readable in place. Extract validation only when the logic is complex enough that a named helper
+improves clarity, or when an existing local pattern already requires it.
+
 ## Spatial2D Angle Units
 
 In `Akeldov.Math.Spatial2D`, angles are expressed in radians by default.
