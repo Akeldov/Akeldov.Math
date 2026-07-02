@@ -73,7 +73,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             {
                 var site = sites[i];
 
-                if (!IsFinite(site.Position))
+                if (float.IsNaN(site.Position.X) || float.IsInfinity(site.Position.X) ||
+                    float.IsNaN(site.Position.Y) || float.IsInfinity(site.Position.Y))
                     throw new ArgumentOutOfRangeException(nameof(sites), "Site position coordinates must be finite.");
 
                 if (site.Weight < 0f || float.IsNaN(site.Weight))
@@ -184,12 +185,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             }
 
             return false;
-        }
-
-        private static bool IsFinite(PointXY point)
-        {
-            return !float.IsNaN(point.X) && !float.IsNaN(point.Y) &&
-                !float.IsInfinity(point.X) && !float.IsInfinity(point.Y);
         }
     }
 }

@@ -17,10 +17,12 @@ namespace Akeldov.Math.Hexes.Rectangles
 
         public HexOrientedRectangle(PointXY center, VectorXY size, SixfoldAngle rotation)
         {
-            if (!IsFinite(center))
+            if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
+                float.IsNaN(center.Y) || float.IsInfinity(center.Y))
                 throw new ArgumentOutOfRangeException(nameof(center), center, "Rectangle center coordinates must be finite.");
 
-            ThrowIfInvalidSize(size, nameof(size));
+            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and positive.");
 
             _center = center;
             _size = size;
@@ -79,10 +81,12 @@ namespace Akeldov.Math.Hexes.Rectangles
 
         public static HexOrientedRectangle CreateFromBottomLeftPoint(PointXY bottomLeftPoint, VectorXY size, SixfoldAngle rotation)
         {
-            if (!IsFinite(bottomLeftPoint))
+            if (float.IsNaN(bottomLeftPoint.X) || float.IsInfinity(bottomLeftPoint.X) ||
+                float.IsNaN(bottomLeftPoint.Y) || float.IsInfinity(bottomLeftPoint.Y))
                 throw new ArgumentOutOfRangeException(nameof(bottomLeftPoint), bottomLeftPoint, "Rectangle bottom-left point coordinates must be finite.");
 
-            ThrowIfInvalidSize(size, nameof(size));
+            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and positive.");
 
             var center = RotateAround(bottomLeftPoint + size * 0.5f, bottomLeftPoint, rotation);
             return new HexOrientedRectangle(center, size, rotation);
@@ -93,14 +97,5 @@ namespace Akeldov.Math.Hexes.Rectangles
             return pivot + (point - pivot).Rotate(rotation);
         }
 
-        private static bool IsFinite(PointXY point) =>
-            !float.IsNaN(point.X) && !float.IsInfinity(point.X) &&
-            !float.IsNaN(point.Y) && !float.IsInfinity(point.Y);
-
-        private static void ThrowIfInvalidSize(VectorXY size, string parameterName)
-        {
-            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(parameterName, size, "Rectangle size components must be finite and positive.");
-        }
     }
 }
