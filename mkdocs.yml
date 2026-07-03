@@ -106,6 +106,8 @@ nav:
               - Seeded Fuzz Tests: Spatial2D/testing/seeded-fuzz-tests.md
               - Snapshot Tests: Spatial2D/testing/snapshot-tests.md
               - Stress Tests: Spatial2D/testing/stress-tests.md
+      - Akeldov.Math.Hexes:
+          - Overview: Hexes/index.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
   - About: about.md
