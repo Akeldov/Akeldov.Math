@@ -74,6 +74,20 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
+    public void GetAdjacentEdges_WhenVertexIsInvalid_Throws()
+    {
+        var invalid = (HexVertex)6;
+
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => invalid.GetAdjacentEdges());
+            Assert.Throws<ArgumentOutOfRangeException>(() => invalid.GetAdjacentEdges(Layout.OddR));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = VectorXYInt.Zero.GetAdjacentPair(invalid, Layout.OddR));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = VectorXYInt.Zero.GetAdjacentTriplet(invalid, Layout.OddR));
+        });
+    }
+
+    [Test]
     public void ChromaticIndexTripletGrid_UsesSameVertexTripletOrder()
     {
         VectorXY point = GetPointNearOddRVertex0();

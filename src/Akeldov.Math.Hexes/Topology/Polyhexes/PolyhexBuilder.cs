@@ -46,8 +46,22 @@ namespace Akeldov.Math.Hexes.Topology
 
         public bool this[int qIndex, int rIndex]
         {
-            get => _cells[GetFlatIndex(qIndex, rIndex)];
-            set => _cells[GetFlatIndex(qIndex, rIndex)] = value;
+            get
+            {
+                if ((uint)qIndex >= (uint)QRSResolution.Q ||
+                    (uint)rIndex >= (uint)QRSResolution.R)
+                    throw new IndexOutOfRangeException($"Polyhex builder index out of bounds: ({qIndex}, {rIndex})");
+
+                return _cells[GetFlatIndex(qIndex, rIndex)];
+            }
+            set
+            {
+                if ((uint)qIndex >= (uint)QRSResolution.Q ||
+                    (uint)rIndex >= (uint)QRSResolution.R)
+                    throw new IndexOutOfRangeException($"Polyhex builder index out of bounds: ({qIndex}, {rIndex})");
+
+                _cells[GetFlatIndex(qIndex, rIndex)] = value;
+            }
         }
 
         public Polyhex ToPolyhex()

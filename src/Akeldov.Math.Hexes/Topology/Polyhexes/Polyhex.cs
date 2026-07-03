@@ -9,7 +9,8 @@ namespace Akeldov.Math.Hexes.Topology
         private readonly bool[] _cells;
         private readonly int _hash;
 
-        public Polyhex(int[,] intMask) : this(intMask.ToBoolMask())
+        public Polyhex(int[,] intMask)
+            : this((intMask ?? throw new ArgumentNullException(nameof(intMask))).ToBoolMask())
         {
         }
 
@@ -111,7 +112,14 @@ namespace Akeldov.Math.Hexes.Topology
 
         public bool this[int QIndex, int RIndex]
         {
-            get => _cells[GetFlatIndex(QIndex, RIndex)];
+            get
+            {
+                if ((uint)QIndex >= (uint)QRSResolution.Q ||
+                    (uint)RIndex >= (uint)QRSResolution.R)
+                    throw new IndexOutOfRangeException($"Polyhex index out of bounds: ({QIndex}, {RIndex})");
+
+                return _cells[GetFlatIndex(QIndex, RIndex)];
+            }
         }
 
         public Polyhex GetExtended()

@@ -32,6 +32,22 @@ public class VectorQRSIntTests
     }
 
     [Test]
+    public void Constructor_WithQR_ThrowsWhenDerivedSDoesNotFitInt32()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(int.MinValue, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(int.MaxValue, 2));
+        });
+    }
+
+    [Test]
+    public void Constructor_WithQRS_UsesWideSumForValidation()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(int.MaxValue, int.MaxValue, 2));
+    }
+
+    [Test]
     public void StaticVectors_ReturnExpectedValues()
     {
         Assert.Multiple(() =>
@@ -90,6 +106,18 @@ public class VectorQRSIntTests
             Assert.That(left * 2, Is.EqualTo(new VectorQRSInt(10, -14)));
             Assert.That(2 * left, Is.EqualTo(new VectorQRSInt(10, -14)));
             Assert.That(left / 2, Is.EqualTo(new VectorQRSInt(2, -3)));
+        });
+    }
+
+    [Test]
+    public void Operators_WhenComponentArithmeticOverflows_Throw()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<OverflowException>(() => _ = new VectorQRSInt(int.MaxValue, -1) + new VectorQRSInt(1, 0));
+            Assert.Throws<OverflowException>(() => _ = new VectorQRSInt(int.MinValue + 1, 0) - new VectorQRSInt(2, 0));
+            Assert.Throws<OverflowException>(() => _ = new VectorQRSInt((int.MaxValue / 2) + 1, 0) * 2);
+            Assert.Throws<OverflowException>(() => _ = 2 * new VectorQRSInt((int.MaxValue / 2) + 1, 0));
         });
     }
 

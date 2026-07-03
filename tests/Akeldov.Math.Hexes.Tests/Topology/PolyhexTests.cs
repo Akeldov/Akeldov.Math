@@ -19,6 +19,29 @@ public class PolyhexTests
     }
 
     [Test]
+    public void Constructor_WhenIntMaskIsNull_ThrowsArgumentNullException()
+    {
+        int[,]? source = null;
+
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = new Polyhex(source!));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("intMask"));
+    }
+
+    [Test]
+    public void Indexer_WhenIndexIsOutsidePolyhex_Throws()
+    {
+        var polyhex = new Polyhex(new bool[2, 3]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<IndexOutOfRangeException>(() => _ = polyhex[0, 3]);
+            Assert.Throws<IndexOutOfRangeException>(() => _ = polyhex[-1, 3]);
+            Assert.Throws<IndexOutOfRangeException>(() => _ = polyhex[new Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt(-1, 3)]);
+        });
+    }
+
+    [Test]
     public void ToBoolArray_ReturnsCopy()
     {
         var polyhex = new Polyhex(new[,]
@@ -44,6 +67,20 @@ public class PolyhexTests
 
         Assert.That(polyhex[1, 2], Is.True);
         Assert.That(polyhex.HexCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void PolyhexBuilder_Indexer_WhenIndexIsOutsidePolyhex_Throws()
+    {
+        var builder = new PolyhexBuilder(2, 3);
+
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<IndexOutOfRangeException>(() => _ = builder[0, 3]);
+            Assert.Throws<IndexOutOfRangeException>(() => _ = builder[-1, 3]);
+            Assert.Throws<IndexOutOfRangeException>(() => builder[0, 3] = true);
+            Assert.Throws<IndexOutOfRangeException>(() => builder[-1, 3] = true);
+        });
     }
 
     [Test]

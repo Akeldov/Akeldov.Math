@@ -6,14 +6,18 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
     {
         public VectorQRSInt(int q, int r)
         {
+            long s = -(long)q - r;
+            if (s < int.MinValue || s > int.MaxValue)
+                throw new ArgumentOutOfRangeException("(q, r)", (q, r), "The derived s component must fit in Int32.");
+
             Q = q;
             R = r;
-            S = -q - r;
+            S = (int)s;
         }
 
         public VectorQRSInt(int q, int r, int s)
         {
-            if (q + r + s != 0)
+            if ((long)q + r + s != 0L)
                 throw new ArgumentOutOfRangeException("(q, r, s)", (q, r, s), "The sum of (q, r, s) must be zero.");
 
             Q = q;
@@ -50,16 +54,16 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         public static bool operator !=(VectorQRSInt left, VectorQRSInt right) => !left.Equals(right);
 
         public static VectorQRSInt operator +(VectorQRSInt left, VectorQRSInt right) =>
-            new VectorQRSInt(left.Q + right.Q, left.R + right.R);
+            new VectorQRSInt(checked(left.Q + right.Q), checked(left.R + right.R));
 
         public static VectorQRSInt operator -(VectorQRSInt left, VectorQRSInt right) =>
-            new VectorQRSInt(left.Q - right.Q, left.R - right.R);
+            new VectorQRSInt(checked(left.Q - right.Q), checked(left.R - right.R));
 
         public static VectorQRSInt operator *(VectorQRSInt vector, int scalar) =>
-            new VectorQRSInt(vector.Q * scalar, vector.R * scalar);
+            new VectorQRSInt(checked(vector.Q * scalar), checked(vector.R * scalar));
 
         public static VectorQRSInt operator *(int scalar, VectorQRSInt vector) =>
-            new VectorQRSInt(vector.Q * scalar, vector.R * scalar);
+            new VectorQRSInt(checked(vector.Q * scalar), checked(vector.R * scalar));
 
         public static VectorQRSInt operator /(VectorQRSInt vector, int scalar)
         {

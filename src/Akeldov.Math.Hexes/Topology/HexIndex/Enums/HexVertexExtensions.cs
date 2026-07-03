@@ -9,38 +9,44 @@ namespace Akeldov.Math.Hexes.Topology
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<HexEdge> GetAdjacentEdges(this HexVertex hexVertex)
         {
-            return GetPointyTopAdjacentEdges(hexVertex);
+            int hexVertexIndex = (int)hexVertex;
+            if ((uint)hexVertexIndex >= 6u)
+                throw new ArgumentOutOfRangeException(nameof(hexVertex), hexVertex, "The vertex must be a defined hex vertex.");
+
+            return GetPointyTopAdjacentEdges(hexVertexIndex);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<HexEdge> GetAdjacentEdges(this HexVertex hexVertex, Layout layout)
         {
+            int hexVertexIndex = (int)hexVertex;
+            if ((uint)hexVertexIndex >= 6u)
+                throw new ArgumentOutOfRangeException(nameof(hexVertex), hexVertex, "The vertex must be a defined hex vertex.");
+
             switch (layout)
             {
                 case Layout.OddR:
                 case Layout.EvenR:
-                    return GetPointyTopAdjacentEdges(hexVertex);
+                    return GetPointyTopAdjacentEdges(hexVertexIndex);
                 case Layout.OddQ:
                 case Layout.EvenQ:
-                    return GetFlatTopAdjacentEdges(hexVertex);
+                    return GetFlatTopAdjacentEdges(hexVertexIndex);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Pair<HexEdge> GetPointyTopAdjacentEdges(HexVertex hexVertex)
+        private static Pair<HexEdge> GetPointyTopAdjacentEdges(int hexVertexIndex)
         {
-            var hexVertexIndex = (int)hexVertex;
             var hexEdgeLeftIndex = (hexVertexIndex + 1) % 6;
             var hexEdgeRightIndex = hexVertexIndex;
             return new Pair<HexEdge>((HexEdge)hexEdgeLeftIndex, (HexEdge)hexEdgeRightIndex);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Pair<HexEdge> GetFlatTopAdjacentEdges(HexVertex hexVertex)
+        private static Pair<HexEdge> GetFlatTopAdjacentEdges(int hexVertexIndex)
         {
-            var hexVertexIndex = (int)hexVertex;
             var hexEdgeLeftIndex = hexVertexIndex;
             var hexEdgeRightIndex = (hexVertexIndex + 5) % 6;
             return new Pair<HexEdge>((HexEdge)hexEdgeLeftIndex, (HexEdge)hexEdgeRightIndex);
