@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes
     /// and not on geometric coordinates.
     /// </summary>
     /// <typeparam name="TValue">The value type stored in grid nodes.</typeparam>
-    public interface IGrid<TValue>
+    public interface IGrid<out TValue>
     {
         /// <summary>
         /// Gets the grid width in nodes.
