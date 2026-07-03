@@ -86,13 +86,7 @@ namespace Akeldov.Math.Hexes.Topology
             get => _values[index];
         }
 
-        public PointXY GetCellCenter(VectorXYInt index)
-        {
-            ThrowIfGridIndexOutOfBounds(index);
-            return GetCellCenterUnchecked(index.X, index.Y);
-        }
-
-        public bool TryGetBarycentricCoordinates(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
+        public bool TryGetValue(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
         {
             if (!ContainsGridIndex(gridIndex))
             {
@@ -103,12 +97,6 @@ namespace Akeldov.Math.Hexes.Topology
             int flatIndex = GetFlatIndex(gridIndex);
             barycentricCoordinates = _values[flatIndex];
             return barycentricCoordinates.Presence != TripletPresenceFlags.None;
-        }
-
-        public PartialTriplet<float> GetBarycentricCoordinates(VectorXYInt gridIndex)
-        {
-            ThrowIfGridIndexOutOfBounds(gridIndex);
-            return _values[GetFlatIndex(gridIndex)];
         }
 
         private void Initialize(

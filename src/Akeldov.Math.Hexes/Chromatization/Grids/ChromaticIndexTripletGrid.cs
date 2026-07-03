@@ -133,13 +133,7 @@ namespace Akeldov.Math.Hexes.Topology
             get => _values[index];
         }
 
-        public PointXY GetCellCenter(VectorXYInt index)
-        {
-            ThrowIfGridIndexOutOfBounds(index);
-            return GetCellCenterUnchecked(index.X, index.Y);
-        }
-
-        public bool TryGetChromaticIndices(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
+        public bool TryGetValue(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
         {
             if (!ContainsGridIndex(gridIndex))
             {
@@ -150,12 +144,6 @@ namespace Akeldov.Math.Hexes.Topology
             int flatIndex = GetFlatIndex(gridIndex);
             chromaticIndices = _values[flatIndex];
             return true;
-        }
-
-        public Triplet<byte> GetChromaticIndices(VectorXYInt gridIndex)
-        {
-            ThrowIfGridIndexOutOfBounds(gridIndex);
-            return _values[GetFlatIndex(gridIndex)];
         }
 
         private void Initialize(

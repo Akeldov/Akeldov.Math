@@ -132,13 +132,7 @@ namespace Akeldov.Math.Hexes.Topology
             get => _values[index];
         }
 
-        public PointXY GetCellCenter(VectorXYInt index)
-        {
-            ThrowIfGridIndexOutOfBounds(index);
-            return GetCellCenterUnchecked(index.X, index.Y);
-        }
-
-        public bool TryGetBarycentricCoordinates(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
+        public bool TryGetValue(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
         {
             if (!ContainsGridIndex(gridIndex))
             {

@@ -48,7 +48,7 @@ public class HexVertexTripletGridTests
         Triplet<VectorXYInt> actual = grid[VectorXYInt.Zero];
 
         AssertTriplet(actual, expected);
-        Assert.That(grid.TryGetIndexTriplet(VectorXYInt.Zero, out Triplet<VectorXYInt> fromTry), Is.True);
+        Assert.That(grid.TryGetValue(VectorXYInt.Zero, out Triplet<VectorXYInt> fromTry), Is.True);
         AssertTriplet(fromTry, expected);
     }
 
@@ -101,7 +101,7 @@ public class HexVertexTripletGridTests
         Triplet<byte> actual = grid[VectorXYInt.Zero];
 
         AssertTriplet(actual, expected);
-        Assert.That(grid.TryGetChromaticIndices(VectorXYInt.Zero, out Triplet<byte> fromTry), Is.True);
+        Assert.That(grid.TryGetValue(VectorXYInt.Zero, out Triplet<byte> fromTry), Is.True);
         AssertTriplet(fromTry, expected);
     }
 
@@ -117,15 +117,15 @@ public class HexVertexTripletGridTests
         var chromaticGrid = new ChromaticIndexTripletGrid(adjacency, resolution);
         var outsideIndex = new VectorXYInt(1, 0);
 
-        Assert.That(indexGrid.TryGetIndexTriplet(outsideIndex, out Triplet<VectorXYInt> indexTriplet), Is.False);
+        Assert.That(indexGrid.TryGetValue(outsideIndex, out Triplet<VectorXYInt> indexTriplet), Is.False);
         Assert.That(indexTriplet, Is.EqualTo(default(Triplet<VectorXYInt>)));
-        Assert.That(partialIndexGrid.TryGetIndexTriplet(outsideIndex, out PartialTriplet<VectorXYInt> partialIndexTriplet), Is.False);
+        Assert.That(partialIndexGrid.TryGetValue(outsideIndex, out PartialTriplet<VectorXYInt> partialIndexTriplet), Is.False);
         Assert.That(partialIndexTriplet, Is.EqualTo(default(PartialTriplet<VectorXYInt>)));
-        Assert.That(barycentricGrid.TryGetBarycentricCoordinates(outsideIndex, out Triplet<float> barycentricCoordinates), Is.False);
+        Assert.That(barycentricGrid.TryGetValue(outsideIndex, out Triplet<float> barycentricCoordinates), Is.False);
         Assert.That(barycentricCoordinates, Is.EqualTo(default(Triplet<float>)));
-        Assert.That(partialBarycentricGrid.TryGetBarycentricCoordinates(outsideIndex, out PartialTriplet<float> partialBarycentricCoordinates), Is.False);
+        Assert.That(partialBarycentricGrid.TryGetValue(outsideIndex, out PartialTriplet<float> partialBarycentricCoordinates), Is.False);
         Assert.That(partialBarycentricCoordinates, Is.EqualTo(default(PartialTriplet<float>)));
-        Assert.That(chromaticGrid.TryGetChromaticIndices(outsideIndex, out Triplet<byte> chromaticIndices), Is.False);
+        Assert.That(chromaticGrid.TryGetValue(outsideIndex, out Triplet<byte> chromaticIndices), Is.False);
         Assert.That(chromaticIndices, Is.EqualTo(default(Triplet<byte>)));
     }
 
