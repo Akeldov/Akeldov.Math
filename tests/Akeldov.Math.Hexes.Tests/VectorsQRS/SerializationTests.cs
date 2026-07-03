@@ -51,6 +51,36 @@ public class SerializationTests
     }
 
     [Test]
+    public void BinaryWriter_WhenSixfoldAngleIsInvalid_ThrowsArgumentOutOfRangeException()
+    {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            writer.Write((SixfoldAngle)6));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+    }
+
+    [TestCase(-1)]
+    [TestCase(6)]
+    [TestCase(42)]
+    public void BinaryReader_WhenSixfoldAngleValueIsInvalid_ThrowsInvalidDataException(int value)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new BinaryWriter(stream, System.Text.Encoding.UTF8, leaveOpen: true))
+        {
+            writer.Write(value);
+        }
+
+        stream.Position = 0;
+
+        using var reader = new BinaryReader(stream);
+
+        Assert.Throws<InvalidDataException>(() => reader.ReadSixfoldAngle());
+    }
+
+    [Test]
     public void BinaryReader_WhenNull_ThrowsArgumentNullException()
     {
         BinaryReader? reader = null;

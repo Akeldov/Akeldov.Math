@@ -13,15 +13,19 @@ namespace Akeldov.Math.Hexes.Geometry
             if (dim.X <= 0 || dim.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(dim), dim, "Dimension components must be positive.");
 
-            float apothem = xOriented
+            double apothem = xOriented
                 ? dim.Y == 1
-                    ? size.X / dim.X / 2
-                    : size.X / (dim.X * 2 + 1)
+                    ? (double)size.X / dim.X / 2d
+                    : (double)size.X / ((double)dim.X * 2d + 1d)
                 : dim.X == 1
-                    ? size.Y / dim.Y / 2
-                    : size.Y / (dim.Y * 2 + 1);
+                    ? (double)size.Y / dim.Y / 2d
+                    : (double)size.Y / ((double)dim.Y * 2d + 1d);
 
-            return apothem;
+            if (double.IsNaN(apothem) || double.IsInfinity(apothem) ||
+                apothem < float.Epsilon || apothem > float.MaxValue)
+                throw new OverflowException("Reconstructed hex apothem must fit in a finite positive Single.");
+
+            return (float)apothem;
         }
 
         public static VectorXYInt GetDim(VectorXY landscapeMetricSize, float hexApothem, bool xOrientation)
@@ -32,53 +36,64 @@ namespace Akeldov.Math.Hexes.Geometry
             if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
 
-            var hexRadius = hexApothem.ConvertHexApothemToRadius();
+            double apothem = hexApothem;
+            double hexRadius = (double)Constants.Apothem2Radius * hexApothem;
 
-            float xHexCount = 0;
-            float yHexCount = 0;
+            double xHexCount = 0d;
+            double yHexCount = 0d;
+            double sizeX = landscapeMetricSize.X;
+            double sizeY = landscapeMetricSize.Y;
 
             if (xOrientation)
             {
-                if (landscapeMetricSize.X < hexApothem * 2f || landscapeMetricSize.Y < hexRadius * 2f)
+                if (sizeX < apothem * 2d || sizeY < hexRadius * 2d)
                 {
-                    xHexCount = 0;
-                    yHexCount = 0;
+                    xHexCount = 0d;
+                    yHexCount = 0d;
                 }
-                else if (landscapeMetricSize.Y < hexRadius * 3.5f)
+                else if (sizeY < hexRadius * 3.5d)
                 {
-                    xHexCount = landscapeMetricSize.X / (hexApothem * 2);
-                    yHexCount = 1;
+                    xHexCount = sizeX / (apothem * 2d);
+                    yHexCount = 1d;
                 }
                 else
                 {
-                    xHexCount = (landscapeMetricSize.X - hexApothem) / (hexApothem * 2);
-                    yHexCount = (landscapeMetricSize.Y - hexRadius * 2) / (hexRadius * 1.5f) + 1;
+                    xHexCount = (sizeX - apothem) / (apothem * 2d);
+                    yHexCount = (sizeY - hexRadius * 2d) / (hexRadius * 1.5d) + 1d;
                 }
             }
             else
             {
-                if (landscapeMetricSize.Y < hexApothem * 2f || landscapeMetricSize.X < hexRadius * 2f)
+                if (sizeY < apothem * 2d || sizeX < hexRadius * 2d)
                 {
-                    xHexCount = 0;
-                    yHexCount = 0;
+                    xHexCount = 0d;
+                    yHexCount = 0d;
                 }
-                else if (landscapeMetricSize.X < hexRadius * 3.5f)
+                else if (sizeX < hexRadius * 3.5d)
                 {
-                    xHexCount = 1;
-                    yHexCount = landscapeMetricSize.Y / (hexApothem * 2);
+                    xHexCount = 1d;
+                    yHexCount = sizeY / (apothem * 2d);
                 }
                 else
                 {
-                    xHexCount = (landscapeMetricSize.X - hexRadius * 2) / (hexRadius * 1.5f) + 1;
-                    yHexCount = (landscapeMetricSize.Y - hexApothem) / (hexApothem * 2);
+                    xHexCount = (sizeX - hexRadius * 2d) / (hexRadius * 1.5d) + 1d;
+                    yHexCount = (sizeY - apothem) / (apothem * 2d);
                 }
             }
 
-            int xHexSize = (int)xHexCount;
-            int yHexSize = (int)yHexCount;
+            int xHexSize = ConvertHexCountToInt32(xHexCount);
+            int yHexSize = ConvertHexCountToInt32(yHexCount);
 
             var landscapeHexSize = new VectorXYInt(xHexSize, yHexSize);
             return landscapeHexSize;
+        }
+
+        private static int ConvertHexCountToInt32(double hexCount)
+        {
+            if (double.IsNaN(hexCount) || double.IsInfinity(hexCount) || hexCount > int.MaxValue)
+                throw new OverflowException("Reconstructed hex dimension must fit in Int32.");
+
+            return hexCount <= 0d ? 0 : (int)hexCount;
         }
     }
 }

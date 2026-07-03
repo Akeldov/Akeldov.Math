@@ -107,6 +107,41 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
+    public void Partition_WithLargeFiniteCoordinates_UsesWideDistanceArithmetic()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(float.MaxValue, 0f), 1f),
+            new Site(new PointXY(float.MaxValue / 2f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(1, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var partitioner = new VoronoiHexPartitioner(sites);
+
+        var map = partitioner.Partition(hexCenters);
+
+        Assert.That(map[0].SiteIndex, Is.EqualTo(1));
+        Assert.That(map[0].Site, Is.EqualTo(sites[1]));
+    }
+
+    [Test]
+    public void Partition_WhenHexCenterCoordinateIsNotFinite_Throws()
+    {
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
+        var hexCenters = new HexCenterMap(
+            width: 2,
+            height: 1,
+            origin: new VectorXY(float.MaxValue, 0f),
+            apothem: float.MaxValue / 4f,
+            layout: Layout.OddR);
+        var partitioner = new VoronoiHexPartitioner(sites);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            partitioner.Partition(hexCenters));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("hexCenters"));
+    }
+
+    [Test]
     public void VoronoiCell_WhenSiteIndexIsNegative_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>

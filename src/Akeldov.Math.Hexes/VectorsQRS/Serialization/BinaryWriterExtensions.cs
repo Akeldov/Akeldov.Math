@@ -32,7 +32,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
 
-            writer.Write((int)angle);
+            int value = (int)angle;
+            if ((uint)value >= 6u)
+                throw new ArgumentOutOfRangeException(nameof(angle), angle, "The angle must be a defined sixfold angle.");
+
+            writer.Write(value);
         }
     }
 }

@@ -63,6 +63,31 @@ public class HexGeometryArgumentValidationTests
     }
 
     [Test]
+    public void GetApothem_WithLargeDimension_UsesWideDimensionArithmetic()
+    {
+        int width = int.MaxValue / 2 + 1;
+        float actual = ParametersReconstructor.GetApothem(
+            VectorXY.One,
+            new VectorXYInt(width, 2),
+            xOriented: true);
+
+        float expected = (float)(1d / ((double)width * 2d + 1d));
+
+        Assert.That(actual, Is.EqualTo(expected));
+        Assert.That(actual, Is.GreaterThan(0f));
+    }
+
+    [Test]
+    public void GetDim_WhenReconstructedDimensionDoesNotFitInt32_ThrowsOverflowException()
+    {
+        Assert.Throws<OverflowException>(() =>
+            ParametersReconstructor.GetDim(
+                new VectorXY(float.MaxValue, float.MaxValue),
+                hexApothem: 1f,
+                xOrientation: true));
+    }
+
+    [Test]
     public void HexLayoutHelpers_WhenApothemOrRadiusIsInvalid_Throw()
     {
         Assert.Multiple(() =>

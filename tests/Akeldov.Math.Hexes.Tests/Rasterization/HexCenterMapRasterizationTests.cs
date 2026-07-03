@@ -66,6 +66,15 @@ public class HexCenterMapRasterizationTests
     }
 
     [Test]
+    public void CreateGrid_WhenRasterResolutionDoesNotFitInt32_ThrowsOverflowException()
+    {
+        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 1f, Layout.OddR);
+
+        Assert.Throws<OverflowException>(() =>
+            HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, float.MaxValue));
+    }
+
+    [Test]
     public void Rasterize_UsesProvidedGrid()
     {
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);

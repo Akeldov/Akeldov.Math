@@ -93,14 +93,23 @@ namespace Akeldov.Math.Hexes.Rasterization
             float radius = _apothem * ApothemToRadius;
             VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Layout);
             RasterBounds bounds = GetBounds(source, radius, normalizedVertices);
-            float pixelsPerWorldUnit = pixelsPerApothem / _apothem;
-            int rasterWidth = System.Math.Max(1, (int)MathF.Ceiling(bounds.Width * pixelsPerWorldUnit));
-            int rasterHeight = System.Math.Max(1, (int)MathF.Ceiling(bounds.Height * pixelsPerWorldUnit));
+            double pixelsPerWorldUnit = (double)pixelsPerApothem / _apothem;
+            int rasterWidth = CalculateRasterResolution(bounds.Width, pixelsPerWorldUnit);
+            int rasterHeight = CalculateRasterResolution(bounds.Height, pixelsPerWorldUnit);
 
             return new RasterGrid(
                 new PointXY(bounds.MinX, bounds.MinY),
                 new VectorXY(bounds.Width, bounds.Height),
                 new VectorXYInt(rasterWidth, rasterHeight));
+        }
+
+        private static int CalculateRasterResolution(float worldSize, double pixelsPerWorldUnit)
+        {
+            double resolution = System.Math.Ceiling((double)worldSize * pixelsPerWorldUnit);
+            if (double.IsNaN(resolution) || double.IsInfinity(resolution) || resolution > int.MaxValue)
+                throw new OverflowException("Raster resolution must fit in Int32.");
+
+            return resolution < 1d ? 1 : (int)resolution;
         }
 
         private VectorXY GetHexCenter(int x, int y, Layout layout, float radius)

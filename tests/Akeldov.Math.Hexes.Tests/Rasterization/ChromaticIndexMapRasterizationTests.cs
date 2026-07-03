@@ -102,4 +102,17 @@ public class ChromaticIndexMapRasterizationTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             rasterizer.CreateGrid(chromatization, 0f));
     }
+
+    [Test]
+    public void CreateGrid_WhenRasterResolutionDoesNotFitInt32_ThrowsOverflowException()
+    {
+        var chromatization = new ChromaticIndexMap(1, 1, Layout.OddR);
+        var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
+            new VectorXY(0f, 0f),
+            1f,
+            _ => default);
+
+        Assert.Throws<OverflowException>(() =>
+            rasterizer.CreateGrid(chromatization, float.MaxValue));
+    }
 }

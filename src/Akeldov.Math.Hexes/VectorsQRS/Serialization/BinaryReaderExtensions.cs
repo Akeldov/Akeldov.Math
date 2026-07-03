@@ -35,6 +35,9 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
                 throw new ArgumentNullException(nameof(reader));
 
             var value = reader.ReadInt32();
+            if ((uint)value >= 6u)
+                throw new InvalidDataException($"Invalid sixfold angle value: {value}.");
+
             return (SixfoldAngle)value;
         }
     }

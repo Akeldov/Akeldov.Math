@@ -42,7 +42,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             {
                 for (int x = 0; x < hexCenters.Width; x++)
                 {
-                    int cellIndex = GetNearestWeightedCellIndex(hexCenters[flatIndex]);
+                    PointXY center = hexCenters[flatIndex];
+                    if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
+                        float.IsNaN(center.Y) || float.IsInfinity(center.Y))
+                        throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
+
+                    int cellIndex = GetNearestWeightedCellIndex(center);
                     cellIndexes[flatIndex] = cellIndex;
                     hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
                     flatIndex++;
@@ -116,11 +121,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
         private int GetNearestWeightedCellIndex(PointXY point)
         {
-            var px = point.X;
-            var py = point.Y;
-            float bestWeightedDistance = float.PositiveInfinity;
+            double px = point.X;
+            double py = point.Y;
+            double bestWeightedDistance = double.PositiveInfinity;
             int bestWeightedIndex = 0;
-            float bestInfiniteDistance = float.PositiveInfinity;
+            double bestInfiniteDistance = double.PositiveInfinity;
             int bestInfiniteIndex = -1;
 
             for (int i = 0; i < _sites.Length; i++)
@@ -145,25 +150,25 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryUpdate(
-            ref float bestWeightedDistance,
+            ref double bestWeightedDistance,
             ref int bestWeightedIndex,
-            ref float bestInfiniteDistance,
+            ref double bestInfiniteDistance,
             ref int bestInfiniteIndex,
             int index,
-            float px,
-            float py,
-            float x,
-            float y,
-            float weight)
+            double px,
+            double py,
+            double x,
+            double y,
+            double weight)
         {
-            float dx = x - px;
-            float dy = y - py;
-            float distanceSquared = dx * dx + dy * dy;
+            double dx = x - px;
+            double dy = y - py;
+            double distanceSquared = dx * dx + dy * dy;
 
             if (distanceSquared <= GeometryConstants.GeometryEpsilonSquared)
                 return true;
 
-            if (float.IsPositiveInfinity(weight))
+            if (double.IsPositiveInfinity(weight))
             {
                 if (distanceSquared < bestInfiniteDistance)
                 {
@@ -177,7 +182,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (weight == 0f)
                 return false;
 
-            float weightedDistanceSquared = distanceSquared / (weight * weight);
+            double weightedDistanceSquared = distanceSquared / (weight * weight);
             if (weightedDistanceSquared < bestWeightedDistance)
             {
                 bestWeightedDistance = weightedDistanceSquared;

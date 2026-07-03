@@ -106,4 +106,17 @@ public class HexFieldTopologyRasterizationTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             rasterizer.CreateGrid(topology, 0f));
     }
+
+    [Test]
+    public void CreateGrid_WhenRasterResolutionDoesNotFitInt32_ThrowsOverflowException()
+    {
+        var topology = new IndexSeptupletMap(1, 1, Layout.OddR);
+        var rasterizer = new HexFieldTopologyRGBA16BitRasterizer(
+            new VectorXY(0f, 0f),
+            1f,
+            _ => default);
+
+        Assert.Throws<OverflowException>(() =>
+            rasterizer.CreateGrid(topology, float.MaxValue));
+    }
 }
