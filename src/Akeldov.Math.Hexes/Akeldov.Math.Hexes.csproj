@@ -4,8 +4,22 @@
     <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Akeldov.Math.Hexes</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Stanislav Akeldov</Authors>
+    <Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
+    <Description>Hex-grid geometry, axial coordinates, topology, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>math;geometry;hex;hex-grid;vectors;topology;rasterization;voronoi;polyhex</PackageTags>
+    <RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
+    <PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Hexes/</PackageProjectUrl>
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj" />
