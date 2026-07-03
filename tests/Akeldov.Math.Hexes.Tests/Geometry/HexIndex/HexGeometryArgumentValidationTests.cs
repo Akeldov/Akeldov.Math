@@ -139,6 +139,26 @@ public class HexGeometryArgumentValidationTests
         });
     }
 
+    [Test]
+    public void VertexProximityHelpers_WhenGeometryIsInvalid_Throw()
+    {
+        Assert.Multiple(() =>
+        {
+            AssertArgumentOutOfRange(
+                () => _ = new PointXY(float.PositiveInfinity, 0f).GetClosestVertexIndex(1f, VectorXY.Zero, Layout.OddR),
+                "point");
+            AssertArgumentOutOfRange(
+                () => _ = new PointXY(0f, 0f).GetClosestVertexIndex(0f, VectorXY.Zero, Layout.OddR),
+                "radius");
+            AssertArgumentOutOfRange(
+                () => _ = new PointXY(0f, 0f).GetClosestVertexIndex(float.PositiveInfinity, VectorXY.Zero, Layout.OddR),
+                "radius");
+            AssertArgumentOutOfRange(
+                () => _ = new PointXY(0f, 0f).GetClosestVertexIndex(1f, new VectorXY(float.PositiveInfinity, 0f), Layout.OddR),
+                "hexCenter");
+        });
+    }
+
     private static void AssertArgumentOutOfRange(TestDelegate action, string parameterName)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(action);

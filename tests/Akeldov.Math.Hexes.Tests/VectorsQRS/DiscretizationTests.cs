@@ -24,6 +24,30 @@ public class DiscretizationTests
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRS(1f, 2f).ToQRSIndex((Layout)42));
     }
 
+    [TestCase(Layout.OddR, float.NaN, 0f)]
+    [TestCase(Layout.OddQ, float.NaN, 0f)]
+    [TestCase(Layout.OddR, float.PositiveInfinity, 0f)]
+    [TestCase(Layout.OddQ, 0f, float.PositiveInfinity)]
+    public void FractionalQRS_ToQRSIndex_WhenComponentIsNotFinite_Throws(Layout layout, float q, float r)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _ = new VectorQRS(q, r).ToQRSIndex(layout));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("axialPoint"));
+    }
+
+    [TestCase(Layout.OddR, 3_000_000_000f, 0f)]
+    [TestCase(Layout.OddQ, 3_000_000_000f, 0f)]
+    [TestCase(Layout.OddR, 2_000_000_000f, 2_000_000_000f)]
+    [TestCase(Layout.OddQ, 2_000_000_000f, 2_000_000_000f)]
+    public void FractionalQRS_ToQRSIndex_WhenRoundedComponentDoesNotFitInt32_Throws(Layout layout, float q, float r)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _ = new VectorQRS(q, r).ToQRSIndex(layout));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("axialPoint"));
+    }
+
     [TestCase(Layout.OddR, 2, 3)]
     [TestCase(Layout.EvenR, 2, 3)]
     [TestCase(Layout.OddQ, 2, 3)]

@@ -27,6 +27,16 @@ namespace Akeldov.Math.Hexes.Geometry
             VectorXY hexCenter,
             Layout layout)
         {
+            if (float.IsNaN(point.X) || float.IsInfinity(point.X) ||
+                float.IsNaN(point.Y) || float.IsInfinity(point.Y))
+                throw new ArgumentOutOfRangeException(nameof(point), point, "Point coordinates must be finite.");
+
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+
+            if (!hexCenter.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexCenter), hexCenter, "Hex center components must be finite.");
+
             var normalizedHexVertices = GetNormalizedHexVertices(layout);
 
             float minDist = float.MaxValue;
