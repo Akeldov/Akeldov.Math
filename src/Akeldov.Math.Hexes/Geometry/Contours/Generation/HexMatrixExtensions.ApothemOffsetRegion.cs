@@ -89,7 +89,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
         private static ParameterizedSegment[] GetSourceSegments(IContour contour)
         {
-            if (contour is not ICompositeContour compositeContour)
+            ICompositeContour? compositeContour = contour as ICompositeContour;
+            if (compositeContour == null)
             {
                 throw new InvalidOperationException(
                     "Polyhex source contour must be a composite contour.");
@@ -99,7 +100,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
             for (int i = 0; i < compositeContour.Curves.Count; i++)
             {
-                if (compositeContour.Curves[i] is not ParameterizedSegment segment)
+                if (!(compositeContour.Curves[i] is ParameterizedSegment segment))
                 {
                     throw new InvalidOperationException(
                         "Polyhex source contour must consist only of parameterized segments.");
