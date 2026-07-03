@@ -9,6 +9,12 @@
   height: auto;
 }
 
+.md-typeset img[src*="assets/hexes/maps/"],
+.md-typeset img[src*="assets/hexes/grids/"] {
+  width: min(18rem, 100%);
+  height: auto;
+}
+
 .curve-overview-thumbnail {
   width: min(3.5rem, 100%);
   height: auto;

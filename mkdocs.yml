@@ -131,7 +131,8 @@ nav:
           - Geometry:
               - Overview: Hexes/geometry.md
               - Hex Geometry: Hexes/geometry/hex-geometry.md
-              - Geometry Maps and Grids: Hexes/geometry/geometry-maps-and-grids.md
+              - Geometry Maps: Hexes/geometry/maps.md
+              - Geometry Grids: Hexes/geometry/grids.md
               - Polyhex Geometry: Hexes/geometry/polyhex-geometry.md
               - Field Parameters: Hexes/geometry/field-parameters.md
               - Partitioning: Hexes/geometry/partitioning.md

@@ -5,7 +5,8 @@ Geometry APIs map topology and indexes into Spatial2D coordinates, contours, reg
 ## Topics
 
 - [Hex Geometry](geometry/hex-geometry.md)
-- [Geometry Maps and Grids](geometry/geometry-maps-and-grids.md)
+- [Geometry Maps](geometry/maps.md)
+- [Geometry Grids](geometry/grids.md)
 - [Polyhex Geometry](geometry/polyhex-geometry.md)
 - [Field Parameters](geometry/field-parameters.md)
 - [Partitioning](geometry/partitioning.md)
