@@ -10,19 +10,30 @@ on:
 permissions:
   contents: read
 
-env:
-  PROJECT_PATH: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
-  TEST_PROJECT_PATH: tests/Akeldov.Math.Spatial2D.Tests/Akeldov.Math.Spatial2D.Tests.csproj
-  TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Spatial2D.Tests/bin/Debug/net6.0/Akeldov.Math.Spatial2D.Tests.dll
-
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  spatial2d-tests:
-    name: Spatial2D tests
+  library-tests:
+    name: ${{ matrix.library }} tests
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - library: Spatial2D
+            project_path: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
+            test_project_path: tests/Akeldov.Math.Spatial2D.Tests/Akeldov.Math.Spatial2D.Tests.csproj
+            test_assembly_path: tests/Akeldov.Math.Spatial2D.Tests/bin/Debug/net6.0/Akeldov.Math.Spatial2D.Tests.dll
+          - library: Hexes
+            project_path: src/Akeldov.Math.Hexes/Akeldov.Math.Hexes.csproj
+            test_project_path: tests/Akeldov.Math.Hexes.Tests/Akeldov.Math.Hexes.Tests.csproj
+            test_assembly_path: tests/Akeldov.Math.Hexes.Tests/bin/Debug/net6.0/Akeldov.Math.Hexes.Tests.dll
+    env:
+      PROJECT_PATH: ${{ matrix.project_path }}
+      TEST_PROJECT_PATH: ${{ matrix.test_project_path }}
+      TEST_ASSEMBLY_PATH: ${{ matrix.test_assembly_path }}
 
     steps:
       - name: Checkout
@@ -45,7 +56,7 @@ jobs:
           dotnet restore $env:PROJECT_PATH
           dotnet restore $env:TEST_PROJECT_PATH
 
-      - name: Build Spatial2D
+      - name: Build library
         shell: pwsh
         run: >
           dotnet build $env:PROJECT_PATH
