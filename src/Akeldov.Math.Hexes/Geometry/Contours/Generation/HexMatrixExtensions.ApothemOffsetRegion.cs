@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Collections.Generic;
 
@@ -8,13 +9,39 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 {
     public static partial class HexMatrixExtensions
     {
-        public static CompositeContour ToApothemOffsetContour<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
+        /// <summary>
+        /// Creates a filled region offset outward from the polyhex boundary by one hex apothem using the default <see cref="Layout.OddR"/> layout.
+        /// </summary>
+        /// <typeparam name="TPolyhexGeometry">The polyhex geometry type.</typeparam>
+        /// <param name="polyhexGeometry">The polyhex geometry whose occupied cells define the source region.</param>
+        /// <returns>
+        /// A contour-based region whose contours are offset from the source region boundary by
+        /// <see cref="IPolyhexGeometry.HexApothem"/>. Source regions with holes or multiple disconnected boundary
+        /// chains are represented by multiple offset contours and the even-odd fill rule.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="polyhexGeometry"/> is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the polyhex contains no occupied cells or offset boundary sections cannot be formed.</exception>
+        public static ContourBasedRegion ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
             where TPolyhexGeometry : IPolyhexGeometry
         {
-            return polyhexGeometry.ToApothemOffsetContour(Layout.OddR);
+            return polyhexGeometry.ToApothemOffsetRegion(Layout.OddR);
         }
 
-        public static CompositeContour ToApothemOffsetContour<TPolyhexGeometry>(
+        /// <summary>
+        /// Creates a filled region offset outward from the polyhex boundary by one hex apothem using the specified hex layout.
+        /// </summary>
+        /// <typeparam name="TPolyhexGeometry">The polyhex geometry type.</typeparam>
+        /// <param name="polyhexGeometry">The polyhex geometry whose occupied cells define the source region.</param>
+        /// <param name="layout">The layout used to map hex indices to world-space boundary segments.</param>
+        /// <returns>
+        /// A contour-based region whose contours are offset from the source region boundary by
+        /// <see cref="IPolyhexGeometry.HexApothem"/>. Source regions with holes or multiple disconnected boundary
+        /// chains are represented by multiple offset contours and the even-odd fill rule.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="polyhexGeometry"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="layout"/> is not a defined layout.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the polyhex contains no occupied cells or offset boundary sections cannot be formed.</exception>
+        public static ContourBasedRegion ToApothemOffsetRegion<TPolyhexGeometry>(
             this TPolyhexGeometry polyhexGeometry,
             Layout layout)
             where TPolyhexGeometry : IPolyhexGeometry
@@ -22,12 +49,28 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             if (polyhexGeometry is null)
                 throw new ArgumentNullException(nameof(polyhexGeometry));
 
-            CompositeContour contour = polyhexGeometry.ToContour(layout);
-            ParameterizedSegment[] sourceSegments = GetSourceSegments(contour);
-            ParameterizedSegment[] offsetSegments = OffsetOutward(sourceSegments, polyhexGeometry.HexApothem);
-            OffsetJoin[] joins = CreateOffsetJoins(sourceSegments, offsetSegments, polyhexGeometry.HexApothem);
+            ContourBasedRegion sourceRegion = polyhexGeometry.ToRegion(layout);
+            var offsetCurves = new List<IFinitePath>();
 
-            var offsetCurves = new List<IFinitePath>(offsetSegments.Length * 2);
+            for (int i = 0; i < sourceRegion.Contours.Count; i++)
+            {
+                AddOffsetCandidateCurves(
+                    sourceRegion.Contours[i],
+                    polyhexGeometry.HexApothem,
+                    offsetCurves);
+            }
+
+            return CreateOuterOffsetRegion(sourceRegion, offsetCurves, polyhexGeometry.HexApothem);
+        }
+
+        private static void AddOffsetCandidateCurves(
+            IContour sourceContour,
+            float offsetDistance,
+            List<IFinitePath> offsetCurves)
+        {
+            ParameterizedSegment[] sourceSegments = GetSourceSegments(sourceContour);
+            ParameterizedSegment[] offsetSegments = OffsetOutward(sourceSegments, offsetDistance);
+            OffsetJoin[] joins = CreateOffsetJoins(sourceSegments, offsetSegments, offsetDistance);
 
             for (int i = 0; i < offsetSegments.Length; i++)
             {
@@ -42,17 +85,21 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 if (joins[i].Arc is ParameterizedArc arc)
                     offsetCurves.Add(arc);
             }
-
-            return CreateOuterOffsetContour(contour, offsetCurves, polyhexGeometry.HexApothem);
         }
 
-        private static ParameterizedSegment[] GetSourceSegments(CompositeContour contour)
+        private static ParameterizedSegment[] GetSourceSegments(IContour contour)
         {
-            var segments = new ParameterizedSegment[contour.Curves.Count];
-
-            for (int i = 0; i < contour.Curves.Count; i++)
+            if (contour is not ICompositeContour compositeContour)
             {
-                if (contour.Curves[i] is not ParameterizedSegment segment)
+                throw new InvalidOperationException(
+                    "Polyhex source contour must be a composite contour.");
+            }
+
+            var segments = new ParameterizedSegment[compositeContour.Curves.Count];
+
+            for (int i = 0; i < compositeContour.Curves.Count; i++)
+            {
+                if (compositeContour.Curves[i] is not ParameterizedSegment segment)
                 {
                     throw new InvalidOperationException(
                         "Polyhex source contour must consist only of parameterized segments.");
@@ -162,8 +209,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             return MathF.Atan2(point.Y - center.Y, point.X - center.X);
         }
 
-        private static CompositeContour CreateOuterOffsetContour(
-            CompositeContour sourceContour,
+        private static ContourBasedRegion CreateOuterOffsetRegion(
+            ContourBasedRegion sourceRegion,
             IReadOnlyList<IFinitePath> candidateCurves,
             float offsetDistance)
         {
@@ -178,14 +225,14 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     continue;
 
                 PointXY midpoint = section.GetPoint(section.Length * 0.5f);
-                if (sourceContour.Distance(midpoint) >= offsetDistance - offsetEpsilon)
+                if (sourceRegion.Distance(midpoint) >= offsetDistance - offsetEpsilon)
                     boundarySections.Add(section);
             }
 
             if (boundarySections.Count == 0)
                 throw new InvalidOperationException("Polyhex offset contour does not contain outer boundary sections.");
 
-            return new CompositeContour(OrderLongestClosedChain(boundarySections));
+            return new ContourBasedRegion(OrderClosedContours(boundarySections));
         }
 
         private static List<IFinitePath> SplitCurvesAtIntersections(IReadOnlyList<IFinitePath> curves)
@@ -423,11 +470,10 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 coordinate <= 1f + GeometryConstants.GeometryEpsilon;
         }
 
-        private static List<IFinitePath> OrderLongestClosedChain(IReadOnlyList<IFinitePath> curves)
+        private static List<IContour> OrderClosedContours(IReadOnlyList<IFinitePath> curves)
         {
             var used = new bool[curves.Count];
-            List<IFinitePath>? longestChain = null;
-            float longestLength = -1f;
+            var contours = new List<IContour>();
 
             for (int i = 0; i < curves.Count; i++)
             {
@@ -435,19 +481,13 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     continue;
 
                 List<IFinitePath> chain = BuildClosedChain(curves, used, i);
-                float length = GetLength(chain);
-
-                if (length > longestLength)
-                {
-                    longestLength = length;
-                    longestChain = chain;
-                }
+                contours.Add(new CompositeContour(chain));
             }
 
-            if (longestChain == null || longestChain.Count == 0)
-                throw new InvalidOperationException("Polyhex offset contour must contain a closed chain.");
+            if (contours.Count == 0)
+                throw new InvalidOperationException("Polyhex offset contour must contain closed chains.");
 
-            return longestChain;
+            return contours;
         }
 
         private static List<IFinitePath> BuildClosedChain(
@@ -530,16 +570,6 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             }
 
             return new ParameterizedSegment(curve.EndPoint, curve.StartPoint, true, false);
-        }
-
-        private static float GetLength(IReadOnlyList<IFinitePath> curves)
-        {
-            float length = 0f;
-
-            for (int i = 0; i < curves.Count; i++)
-                length += curves[i].Length;
-
-            return length;
         }
 
         private static float GetOffsetEpsilon(float offsetDistance)

@@ -4,10 +4,11 @@ using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Hexes.Tests.Geometry.Contours;
 
-public class HexMatrixApothemOffsetContourTests
+public class HexMatrixApothemOffsetRegionTests
 {
     private const float Apothem = 1.25f;
     private const float Epsilon = 1e-4f;
@@ -16,27 +17,27 @@ public class HexMatrixApothemOffsetContourTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void ToApothemOffsetContour_StaysAtApothemDistanceFromSourceContour(Layout layout)
+    public void ToApothemOffsetRegion_StaysAtApothemDistanceFromSourceRegion(Layout layout)
     {
         PolyhexGeometry geometry = CreateGeometry();
 
-        CompositeContour sourceContour = geometry.ToContour(layout);
-        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
+        ContourBasedRegion sourceRegion = geometry.ToRegion(layout);
+        ContourBasedRegion offsetRegion = geometry.ToApothemOffsetRegion(layout);
 
-        Assert.That(offsetContour.Curves, Is.Not.Empty);
-        AssertEveryCurvePointStaysAtApothemDistance(sourceContour, offsetContour);
+        Assert.That(offsetRegion.Contours, Is.Not.Empty);
+        AssertEveryCurvePointStaysAtApothemDistance(sourceRegion, offsetRegion);
     }
 
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void ToApothemOffsetContour_UsesApothemRadiusForConvexJoins(Layout layout)
+    public void ToApothemOffsetRegion_UsesApothemRadiusForConvexJoins(Layout layout)
     {
         PolyhexGeometry geometry = CreateGeometry();
 
-        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
-        ParameterizedArc[] offsetArcs = GetArcs(offsetContour);
+        ContourBasedRegion offsetRegion = geometry.ToApothemOffsetRegion(layout);
+        ParameterizedArc[] offsetArcs = GetArcs(offsetRegion);
 
         Assert.That(offsetArcs, Is.Not.Empty);
         for (int i = 0; i < offsetArcs.Length; i++)
@@ -47,45 +48,45 @@ public class HexMatrixApothemOffsetContourTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void ToApothemOffsetContour_ReturnsClosedContour(Layout layout)
+    public void ToApothemOffsetRegion_ReturnsClosedContours(Layout layout)
     {
         PolyhexGeometry geometry = CreateGeometry();
 
-        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
+        ContourBasedRegion offsetRegion = geometry.ToApothemOffsetRegion(layout);
 
-        Assert.That(offsetContour.Curves, Is.Not.Empty);
-        AssertContourIsClosed(offsetContour);
+        Assert.That(offsetRegion.Contours, Is.Not.Empty);
+        AssertRegionContoursAreClosed(offsetRegion);
     }
 
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void ToApothemOffsetContour_ReturnsSelfIntersectionFreeContour(Layout layout)
+    public void ToApothemOffsetRegion_ReturnsSelfIntersectionFreeContours(Layout layout)
     {
         PolyhexGeometry geometry = CreateGeometry();
 
-        CompositeContour offsetContour = geometry.ToApothemOffsetContour(layout);
+        ContourBasedRegion offsetRegion = geometry.ToApothemOffsetRegion(layout);
 
-        AssertContourHasNoNonAdjacentIntersections(offsetContour);
+        AssertRegionContoursHaveNoNonAdjacentIntersections(offsetRegion);
     }
 
     [Test]
-    public void ToApothemOffsetContour_WithoutLayout_UsesOddR()
+    public void ToApothemOffsetRegion_WithoutLayout_UsesOddR()
     {
         PolyhexGeometry geometry = CreateGeometry();
 
         AssertContoursAreEqual(
-            geometry.ToApothemOffsetContour(Layout.OddR),
-            geometry.ToApothemOffsetContour());
+            geometry.ToApothemOffsetRegion(Layout.OddR),
+            geometry.ToApothemOffsetRegion());
     }
 
     [Test]
-    public void ToApothemOffsetContour_WhenPolyhexIsEmpty_Throws()
+    public void ToApothemOffsetRegion_WhenPolyhexIsEmpty_Throws()
     {
         var geometry = new PolyhexGeometry(new[,] { { false } }, Apothem);
 
-        Assert.Throws<InvalidOperationException>(() => geometry.ToApothemOffsetContour());
+        Assert.Throws<InvalidOperationException>(() => geometry.ToApothemOffsetRegion());
     }
 
     private static PolyhexGeometry CreateGeometry()
@@ -103,28 +104,43 @@ public class HexMatrixApothemOffsetContourTests
     }
 
     private static void AssertEveryCurvePointStaysAtApothemDistance(
-        CompositeContour sourceContour,
-        CompositeContour offsetContour)
+        ContourBasedRegion sourceRegion,
+        ContourBasedRegion offsetRegion)
     {
-        for (int i = 0; i < offsetContour.Curves.Count; i++)
+        int curveIndex = 0;
+
+        for (int contourIndex = 0; contourIndex < offsetRegion.Contours.Count; contourIndex++)
         {
-            IFinitePath curve = offsetContour.Curves[i];
-            int sampleCount = System.Math.Max(2, (int)MathF.Ceiling(curve.Length / (Apothem * 0.25f)));
+            ICompositeContour contour = GetCompositeContour(offsetRegion.Contours[contourIndex]);
 
-            for (int j = 0; j <= sampleCount; j++)
+            for (int i = 0; i < contour.Curves.Count; i++)
             {
-                float coordinate = curve.Length * j / sampleCount;
-                PointXY point = curve.GetPoint(coordinate);
+                IFinitePath curve = contour.Curves[i];
+                int sampleCount = System.Math.Max(2, (int)MathF.Ceiling(curve.Length / (Apothem * 0.25f)));
 
-                Assert.That(
-                    sourceContour.Distance(point),
-                    Is.EqualTo(Apothem).Within(Epsilon),
-                    $"Offset curve {i} sample {j} must be at apothem distance from the source contour.");
+                for (int j = 0; j <= sampleCount; j++)
+                {
+                    float coordinate = curve.Length * j / sampleCount;
+                    PointXY point = curve.GetPoint(coordinate);
+
+                    Assert.That(
+                        sourceRegion.Distance(point),
+                        Is.EqualTo(Apothem).Within(Epsilon),
+                        $"Offset curve {curveIndex} sample {j} must be at apothem distance from the source region.");
+                }
+
+                curveIndex++;
             }
         }
     }
 
-    private static void AssertContourIsClosed(CompositeContour contour)
+    private static void AssertRegionContoursAreClosed(ContourBasedRegion region)
+    {
+        for (int i = 0; i < region.Contours.Count; i++)
+            AssertContourIsClosed(GetCompositeContour(region.Contours[i]));
+    }
+
+    private static void AssertContourIsClosed(ICompositeContour contour)
     {
         for (int i = 0; i < contour.Curves.Count; i++)
         {
@@ -138,7 +154,13 @@ public class HexMatrixApothemOffsetContourTests
         }
     }
 
-    private static void AssertContourHasNoNonAdjacentIntersections(CompositeContour contour)
+    private static void AssertRegionContoursHaveNoNonAdjacentIntersections(ContourBasedRegion region)
+    {
+        for (int i = 0; i < region.Contours.Count; i++)
+            AssertContourHasNoNonAdjacentIntersections(GetCompositeContour(region.Contours[i]));
+    }
+
+    private static void AssertContourHasNoNonAdjacentIntersections(ICompositeContour contour)
     {
         for (int i = 0; i < contour.Curves.Count; i++)
         {
@@ -340,22 +362,35 @@ public class HexMatrixApothemOffsetContourTests
         return coordinate >= -Epsilon && coordinate <= 1f + Epsilon;
     }
 
-    private static ParameterizedArc[] GetArcs(CompositeContour contour)
+    private static ParameterizedArc[] GetArcs(ContourBasedRegion region)
     {
-        return contour.Curves
+        return region.Contours
+            .SelectMany(contour => GetCompositeContour(contour).Curves)
             .OfType<ParameterizedArc>()
             .ToArray();
     }
 
-    private static void AssertContoursAreEqual(CompositeContour expected, CompositeContour actual)
+    private static ICompositeContour GetCompositeContour(IContour contour)
     {
-        Assert.That(actual.Curves, Has.Count.EqualTo(expected.Curves.Count));
+        Assert.That(contour, Is.InstanceOf<ICompositeContour>());
+        return (ICompositeContour)contour;
+    }
 
-        for (int i = 0; i < expected.Curves.Count; i++)
+    private static void AssertContoursAreEqual(ContourBasedRegion expected, ContourBasedRegion actual)
+    {
+        Assert.That(actual.Contours, Has.Count.EqualTo(expected.Contours.Count));
+
+        for (int contourIndex = 0; contourIndex < expected.Contours.Count; contourIndex++)
         {
-            Assert.That(actual.Curves[i], Is.EqualTo(expected.Curves[i]));
-        }
+            ICompositeContour expectedContour = GetCompositeContour(expected.Contours[contourIndex]);
+            ICompositeContour actualContour = GetCompositeContour(actual.Contours[contourIndex]);
 
-        Assert.That(actual.Length, Is.EqualTo(expected.Length).Within(Epsilon));
+            Assert.That(actualContour.Curves, Has.Count.EqualTo(expectedContour.Curves.Count));
+
+            for (int i = 0; i < expectedContour.Curves.Count; i++)
+                Assert.That(actualContour.Curves[i], Is.EqualTo(expectedContour.Curves[i]));
+
+            Assert.That(actualContour.Length, Is.EqualTo(expectedContour.Length).Within(Epsilon));
+        }
     }
 }

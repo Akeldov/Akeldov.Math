@@ -6,10 +6,11 @@ using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Hexes.Tests.Geometry.Contours;
 
-public class HexMatrixContourRasterizationSnapshotTests
+public class HexMatrixRegionRasterizationSnapshotTests
 {
     private static readonly VectorXYInt SnapshotResolution = new VectorXYInt(160, 128);
 
@@ -17,12 +18,12 @@ public class HexMatrixContourRasterizationSnapshotTests
     [TestCase(Layout.EvenR, "polyhex-contour-even-r.png")]
     [TestCase(Layout.OddQ, "polyhex-contour-odd-q.png")]
     [TestCase(Layout.EvenQ, "polyhex-contour-even-q.png")]
-    public void ToContour_RasterizedSegments_MatchesApprovedImage(
+    public void ToRegion_RasterizedSegments_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        CompositeContour contour = CreateSnapshotGeometry().ToContour(layout);
-        Raster<byte> raster = Rasterize(contour);
+        ContourBasedRegion region = CreateSnapshotGeometry().ToRegion(layout);
+        Raster<byte> raster = Rasterize(region);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -32,15 +33,59 @@ public class HexMatrixContourRasterizationSnapshotTests
     [TestCase(Layout.EvenR, "polyhex-apothem-offset-contour-even-r.png")]
     [TestCase(Layout.OddQ, "polyhex-apothem-offset-contour-odd-q.png")]
     [TestCase(Layout.EvenQ, "polyhex-apothem-offset-contour-even-q.png")]
-    public void ToApothemOffsetContour_RasterizedSegments_MatchesApprovedImage(
+    public void ToApothemOffsetRegion_RasterizedSegments_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
         PolyhexGeometry geometry = CreateSnapshotGeometry();
         IFinitePath[] contour = geometry
-            .ToContour(layout)
-            .Curves
-            .Concat(geometry.ToApothemOffsetContour(layout).Curves)
+            .ToRegion(layout)
+            .Contours
+            .SelectMany(GetCurves)
+            .Concat(geometry.ToApothemOffsetRegion(layout).Contours.SelectMany(GetCurves))
+            .ToArray();
+        Raster<byte> raster = Rasterize(contour);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
+    [TestCase(Layout.OddR, "polyhex-contour-with-hole-odd-r.png")]
+    [TestCase(Layout.EvenR, "polyhex-contour-with-hole-even-r.png")]
+    [TestCase(Layout.OddQ, "polyhex-contour-with-hole-odd-q.png")]
+    [TestCase(Layout.EvenQ, "polyhex-contour-with-hole-even-q.png")]
+    public void ToRegion_WithHole_RasterizedSegments_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        ContourBasedRegion region = CreateHollowSnapshotGeometry().ToRegion(layout);
+
+        Assert.That(region.Contours, Has.Count.GreaterThan(1));
+
+        Raster<byte> raster = Rasterize(region);
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
+    [TestCase(Layout.OddR, "polyhex-apothem-offset-contour-with-hole-odd-r.png")]
+    [TestCase(Layout.EvenR, "polyhex-apothem-offset-contour-with-hole-even-r.png")]
+    [TestCase(Layout.OddQ, "polyhex-apothem-offset-contour-with-hole-odd-q.png")]
+    [TestCase(Layout.EvenQ, "polyhex-apothem-offset-contour-with-hole-even-q.png")]
+    public void ToApothemOffsetRegion_WithHole_RasterizedSegments_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        PolyhexGeometry geometry = CreateHollowSnapshotGeometry();
+        ContourBasedRegion offsetRegion = geometry.ToApothemOffsetRegion(layout);
+
+        Assert.That(offsetRegion.Contours, Has.Count.GreaterThan(1));
+
+        IFinitePath[] contour = geometry
+            .ToRegion(layout)
+            .Contours
+            .SelectMany(GetCurves)
+            .Concat(offsetRegion.Contours.SelectMany(GetCurves))
             .ToArray();
         Raster<byte> raster = Rasterize(contour);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
@@ -62,9 +107,23 @@ public class HexMatrixContourRasterizationSnapshotTests
             apothem: 1f);
     }
 
-    private static Raster<byte> Rasterize(CompositeContour contour)
+    private static PolyhexGeometry CreateHollowSnapshotGeometry()
     {
-        return Rasterize(contour.Curves);
+        return new PolyhexGeometry(
+            new bool[,]
+            {
+                { true, true,  true,  true,  true },
+                { true, true,  false, false, true },
+                { true, false, false, false, true },
+                { true, false, false, true,  true },
+                { true, true,  true,  true,  true }
+            },
+            apothem: 1f);
+    }
+
+    private static Raster<byte> Rasterize(ContourBasedRegion region)
+    {
+        return Rasterize(region.Contours.SelectMany(GetCurves).ToArray());
     }
 
     private static Raster<byte> Rasterize(IReadOnlyList<IFinitePath> contour)
@@ -103,6 +162,14 @@ public class HexMatrixContourRasterizationSnapshotTests
             origin: new PointXY(minX - padding, minY - padding),
             size: new VectorXY(maxX - minX + 2f * padding, maxY - minY + 2f * padding),
             resolution: SnapshotResolution);
+    }
+
+    private static IReadOnlyList<IFinitePath> GetCurves(IContour contour)
+    {
+        if (contour is ICompositeContour compositeContour)
+            return compositeContour.Curves;
+
+        throw new InvalidOperationException("Polyhex contour snapshot requires composite contours.");
     }
 
     private static void IncludeCurveBounds(
