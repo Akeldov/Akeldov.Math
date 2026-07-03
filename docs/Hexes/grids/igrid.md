@@ -1,0 +1,20 @@
+# `IGrid<TValue>`
+
+`IGrid<TValue>` is the common contract for sampled grid values.
+
+## Metadata
+
+- Width.
+- Height.
+- Count.
+
+## Access
+
+- Index-based sampled value access.
+- Flat sampled value indexing.
+- Implementations decide which domain their samples represent.
+
+## Role
+
+- Keeps sampled data independent from topology, geometry, or chromatization.
+- Allows rasterization helpers to consume grids through a common surface.

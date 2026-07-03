@@ -108,14 +108,55 @@ nav:
               - Stress Tests: Spatial2D/testing/stress-tests.md
       - Akeldov.Math.Hexes:
           - Overview: Hexes/index.md
-          - Vectors: Hexes/vectors.md
-          - Layouts: Hexes/layouts.md
-          - Topology: Hexes/topology.md
-          - Geometry: Hexes/geometry.md
-          - Maps: Hexes/maps.md
-          - Grids: Hexes/grids.md
-          - Chromatization: Hexes/chromatization.md
-          - Utility Structures: Hexes/utility-structures.md
+          - Vectors:
+              - Overview: Hexes/vectors.md
+              - Types: Hexes/vectors/types.md
+              - Coordinate Conversions: Hexes/vectors/coordinate-conversions.md
+              - Discretization: Hexes/vectors/discretization.md
+              - Transformations: Hexes/vectors/transformations.md
+              - Serialization: Hexes/vectors/serialization.md
+          - Layouts:
+              - Overview: Hexes/layouts.md
+              - Layout Values: Hexes/layouts/layout-values.md
+              - Orientation: Hexes/layouts/orientation.md
+              - Coordinate Rules: Hexes/layouts/coordinate-rules.md
+              - Geometry Rules: Hexes/layouts/geometry-rules.md
+          - Topology:
+              - Overview: Hexes/topology.md
+              - Edges and Vertices: Hexes/topology/edges-and-vertices.md
+              - Adjacency: Hexes/topology/adjacency.md
+              - Topology Maps: Hexes/topology/topology-maps.md
+              - Topology Grids: Hexes/topology/topology-grids.md
+              - Polyhex Topology: Hexes/topology/polyhex-topology.md
+          - Geometry:
+              - Overview: Hexes/geometry.md
+              - Hex Geometry: Hexes/geometry/hex-geometry.md
+              - Geometry Maps and Grids: Hexes/geometry/geometry-maps-and-grids.md
+              - Polyhex Geometry: Hexes/geometry/polyhex-geometry.md
+              - Field Parameters: Hexes/geometry/field-parameters.md
+              - Partitioning: Hexes/geometry/partitioning.md
+          - Maps:
+              - Overview: Hexes/maps.md
+              - IHexMap: Hexes/maps/ihexmap.md
+              - HexMap: Hexes/maps/hexmap.md
+              - Shared Map Behavior: Hexes/maps/shared-map-behavior.md
+          - Grids:
+              - Overview: Hexes/grids.md
+              - IGrid: Hexes/grids/igrid.md
+              - Shared Grid Behavior: Hexes/grids/shared-grid-behavior.md
+              - Rasterization Integration: Hexes/grids/rasterization-integration.md
+          - Chromatization:
+              - Overview: Hexes/chromatization.md
+              - Chromatic Indexes: Hexes/chromatization/chromatic-indexes.md
+              - Chromatic Maps: Hexes/chromatization/chromatic-maps.md
+              - Chromatic Grids: Hexes/chromatization/chromatic-grids.md
+              - Rasterization: Hexes/chromatization/rasterization.md
+          - Utility Structures:
+              - Overview: Hexes/utility-structures.md
+              - Generic Containers: Hexes/utility-structures/generic-containers.md
+              - Presence Flags: Hexes/utility-structures/presence-flags.md
+              - Sixfold Angles: Hexes/utility-structures/sixfold-angles.md
+              - Binary Helpers: Hexes/utility-structures/binary-helpers.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
   - About: about.md
