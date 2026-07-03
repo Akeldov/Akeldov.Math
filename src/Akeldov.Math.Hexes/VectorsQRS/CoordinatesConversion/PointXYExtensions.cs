@@ -4,8 +4,17 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class PointXYExtensions
     {
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="point">The point value.</param>
+        /// <param name="newOrigin">The newOrigin value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ToQRS(this PointXY point, VectorXY newOrigin, Layout layout)
         {

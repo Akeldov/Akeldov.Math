@@ -1,5 +1,8 @@
-﻿namespace Akeldov.Math.Hexes
+namespace Akeldov.Math.Hexes
 {
+    /// <summary>
+    /// Represents a SixfoldAngles instance.
+    /// </summary>
     public static class SixfoldAngles
     {
         private static readonly SixfoldAngle[] AllValues = new SixfoldAngle[6]

@@ -6,6 +6,12 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class VectorXYIntExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="hexIndex">The hexIndex value.</param>
+        /// <param name="hexVertex">The hexVertex value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Triplet<VectorXYInt> GetAdjacentTriplet(this VectorXYInt hexIndex, HexVertex hexVertex, Layout layout)
         {

@@ -4,8 +4,15 @@ using System.IO;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class BinaryReaderExtensions
     {
+        /// <summary>
+        /// Reads a value from the specified binary reader.
+        /// </summary>
+        /// <param name="binaryReader">The binaryReader value.</param>
         public static Polyhex? ReadPolyhexStamp(
             this BinaryReader binaryReader)
         {

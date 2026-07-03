@@ -1,10 +1,15 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     public static partial class VectorQRSExtensions
     {
+        /// <summary>
+        /// Rotates the value using the specified angle.
+        /// </summary>
+        /// <param name="point">The point value.</param>
+        /// <param name="angleRad">The angleRad value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS Rotate(this VectorQRS point, float angleRad)
         {
@@ -17,6 +22,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             return new VectorQRS(q, r);
         }
 
+        /// <summary>
+        /// Rotates the value using the specified angle.
+        /// </summary>
+        /// <param name="v">The v value.</param>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS Rotate(this VectorQRS v, SixfoldAngle angle)
         {

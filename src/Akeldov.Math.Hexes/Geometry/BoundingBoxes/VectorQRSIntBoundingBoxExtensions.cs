@@ -4,8 +4,18 @@ using System;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class VectorQRSIntExtensions
     {
+        /// <summary>
+        /// Performs the BoundingBoxSize operation.
+        /// </summary>
+        /// <param name="size">The size value.</param>
+        /// <param name="apothem">The apothem value.</param>
+        /// <param name="radius">The radius value.</param>
+        /// <param name="layout">The layout value.</param>
         public static VectorXY BoundingBoxSize(this VectorQRSInt size, float apothem, float radius, Layout layout)
         {
             if (size.Q < 0 || size.R < 0)

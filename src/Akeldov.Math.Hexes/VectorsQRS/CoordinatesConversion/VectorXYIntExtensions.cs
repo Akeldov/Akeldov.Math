@@ -6,6 +6,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     public static partial class VectorXYIntExtensions
     {
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRSInt ToQRSIndex(this VectorXYInt index, Layout layout)
         {

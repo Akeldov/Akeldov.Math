@@ -1,9 +1,14 @@
-﻿using System;
+using System;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     public static partial class VectorQRSExtensions
     {
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="axialPoint">The axialPoint value.</param>
+        /// <param name="layout">The layout value.</param>
         public static VectorQRSInt ToQRSIndex(this VectorQRS axialPoint, Layout layout)
         {
             if (float.IsNaN(axialPoint.Q) || float.IsInfinity(axialPoint.Q) ||

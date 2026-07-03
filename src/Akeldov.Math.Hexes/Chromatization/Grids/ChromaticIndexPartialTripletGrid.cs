@@ -8,6 +8,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the ChromaticIndexPartialTripletGrid type.
+    /// </summary>
     public sealed class ChromaticIndexPartialTripletGrid : IGrid<PartialTriplet<byte>>
     {
         private const float DefaultHexRadius = 1f;
@@ -30,6 +33,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         private VectorXY CellSize { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the ChromaticIndexPartialTripletGrid type.
+        /// </summary>
+        /// <param name="hexAdjacencyMap">The HexAdjacencyMap value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public ChromaticIndexPartialTripletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
@@ -55,22 +63,50 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Gets the HexResolution value.
+        /// </summary>
         public VectorXYInt HexResolution { get; private set; }
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; private set; }
 
+        /// <summary>
+        /// Gets the Resolution value.
+        /// </summary>
         public VectorXYInt Resolution { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionX value.
+        /// </summary>
         public int ResolutionX { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionY value.
+        /// </summary>
         public int ResolutionY { get; private set; }
 
+        /// <summary>
+        /// Gets the Count value.
+        /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width => ResolutionX;
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height => ResolutionY;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialTriplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -81,6 +117,10 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialTriplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

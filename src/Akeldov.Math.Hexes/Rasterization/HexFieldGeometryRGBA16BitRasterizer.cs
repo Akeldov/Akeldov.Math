@@ -6,16 +6,28 @@ using System;
 
 namespace Akeldov.Math.Hexes.Rasterization
 {
+    /// <summary>
+    /// Initializes a new instance of the HexFieldGeometryRGBA16BitRasterizer type.
+    /// </summary>
     public sealed class HexFieldGeometryRGBA16BitRasterizer :
         IRasterizer<HexCenterMap, Raster<RGBA16BitColor>>
     {
         private readonly Func<PointXY, RGBA16BitColor> _centerToColor;
 
+        /// <summary>
+        /// Initializes a new instance of the HexFieldGeometryRGBA16BitRasterizer type.
+        /// </summary>
+        /// <param name="centerToColor">The centerToColor value.</param>
         public HexFieldGeometryRGBA16BitRasterizer(Func<PointXY, RGBA16BitColor> centerToColor)
         {
             _centerToColor = centerToColor ?? throw new ArgumentNullException(nameof(centerToColor));
         }
 
+        /// <summary>
+        /// Rasterizes the specified hex-grid data.
+        /// </summary>
+        /// <param name="source">The source value.</param>
+        /// <param name="grid">The grid value.</param>
         public Raster<RGBA16BitColor> Rasterize(HexCenterMap source, RasterGrid grid)
         {
             if (source == null)
@@ -39,6 +51,11 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new Raster<RGBA16BitColor>(grid, values);
         }
 
+        /// <summary>
+        /// Creates a value from the specified inputs.
+        /// </summary>
+        /// <param name="source">The source value.</param>
+        /// <param name="pixelsPerApothem">The pixelsPerApothem value.</param>
         public static RasterGrid CreateGrid(HexCenterMap source, float pixelsPerApothem)
         {
             if (source == null)

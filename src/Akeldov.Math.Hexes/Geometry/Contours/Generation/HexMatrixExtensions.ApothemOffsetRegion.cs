@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Hexes.Geometry.Contours
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class HexMatrixExtensions
     {
         /// <summary>

@@ -8,6 +8,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the ChromaticIndexTripletGrid type.
+    /// </summary>
     public sealed class ChromaticIndexTripletGrid : IGrid<Triplet<byte>>
     {
         private const float DefaultHexRadius = 1f;
@@ -26,6 +29,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         private VectorXY CellSize { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the ChromaticIndexTripletGrid type.
+        /// </summary>
+        /// <param name="hexAdjacencyMap">The HexAdjacencyMap value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public ChromaticIndexTripletGrid(
             IndexSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
@@ -48,6 +56,14 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ChromaticIndexTripletGrid type.
+        /// </summary>
+        /// <param name="hexWidth">The HexWidth value.</param>
+        /// <param name="hexHeight">The HexHeight value.</param>
+        /// <param name="layout">The Layout value.</param>
+        /// <param name="hexOrigin">The HexOrigin value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public ChromaticIndexTripletGrid(
             int hexWidth,
             int hexHeight,
@@ -72,6 +88,16 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ChromaticIndexTripletGrid type.
+        /// </summary>
+        /// <param name="hexWidth">The HexWidth value.</param>
+        /// <param name="hexHeight">The HexHeight value.</param>
+        /// <param name="layout">The Layout value.</param>
+        /// <param name="hexOrigin">The HexOrigin value.</param>
+        /// <param name="gridOrigin">The GridOrigin value.</param>
+        /// <param name="gridSize">The GridSize value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public ChromaticIndexTripletGrid(
             int hexWidth,
             int hexHeight,
@@ -101,22 +127,50 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Gets the HexResolution value.
+        /// </summary>
         public VectorXYInt HexResolution { get; private set; }
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; private set; }
 
+        /// <summary>
+        /// Gets the Resolution value.
+        /// </summary>
         public VectorXYInt Resolution { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionX value.
+        /// </summary>
         public int ResolutionX { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionY value.
+        /// </summary>
         public int ResolutionY { get; private set; }
 
+        /// <summary>
+        /// Gets the Count value.
+        /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width => ResolutionX;
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height => ResolutionY;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public Triplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -127,12 +181,21 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public Triplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
         }
 
+        /// <summary>
+        /// Tries to get a value at the specified index.
+        /// </summary>
+        /// <param name="gridIndex">The gridIndex value.</param>
+        /// <param name="chromaticIndices">The chromaticIndices value.</param>
         public bool TryGetValue(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
         {
             if (!ContainsGridIndex(gridIndex))

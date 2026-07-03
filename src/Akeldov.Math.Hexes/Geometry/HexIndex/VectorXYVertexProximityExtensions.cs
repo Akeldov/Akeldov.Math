@@ -7,6 +7,14 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="point">The Point value.</param>
+        /// <param name="apothem">The Apothem value.</param>
+        /// <param name="radius">The Radius value.</param>
+        /// <param name="hexFieldOrigin">The HexFieldOrigin value.</param>
+        /// <param name="layout">The Layout value.</param>
         public static (VectorXYInt hexIndex, HexVertex hexVertex) GetClosestVertexIndex(
             this PointXY point,
             float apothem,
@@ -21,6 +29,13 @@ namespace Akeldov.Math.Hexes.Geometry
             return (hexIndex, (HexVertex)closestVertexIndex);
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="point">The Point value.</param>
+        /// <param name="radius">The Radius value.</param>
+        /// <param name="hexCenter">The HexCenter value.</param>
+        /// <param name="layout">The Layout value.</param>
         public static int GetClosestVertexIndex(
             this PointXY point,
             float radius,

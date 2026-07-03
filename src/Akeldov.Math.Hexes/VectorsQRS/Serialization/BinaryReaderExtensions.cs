@@ -1,11 +1,18 @@
-﻿using System.IO;
+using System.IO;
 using System;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static class BinaryReaderExtensions
     {
+        /// <summary>
+        /// Reads a value from the specified binary reader.
+        /// </summary>
+        /// <param name="reader">The reader value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRSInt ReadVectorQRSInt(this BinaryReader reader)
         {
@@ -17,6 +24,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             return new VectorQRSInt(q, r);
         }
 
+        /// <summary>
+        /// Reads a value from the specified binary reader.
+        /// </summary>
+        /// <param name="reader">The reader value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ReadVectorQRS(this BinaryReader reader)
         {
@@ -28,6 +39,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             return new VectorQRS(q, r);
         }
 
+        /// <summary>
+        /// Reads a value from the specified binary reader.
+        /// </summary>
+        /// <param name="reader">The reader value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle ReadSixfoldAngle(this BinaryReader reader)
         {

@@ -7,6 +7,9 @@ using System;
 
 namespace Akeldov.Math.Hexes.Rasterization
 {
+    /// <summary>
+    /// Initializes a new instance of the HexFieldTopologyRGBA16BitRasterizer type.
+    /// </summary>
     public sealed class HexFieldTopologyRGBA16BitRasterizer :
         IRasterizer<IndexSeptupletMap, Raster<RGBA16BitColor>>
     {
@@ -36,6 +39,12 @@ namespace Akeldov.Math.Hexes.Rasterization
         private readonly float _apothem;
         private readonly Func<VectorXYInt, RGBA16BitColor> _indexToColor;
 
+        /// <summary>
+        /// Initializes a new instance of the HexFieldTopologyRGBA16BitRasterizer type.
+        /// </summary>
+        /// <param name="origin">The Origin value.</param>
+        /// <param name="apothem">The Apothem value.</param>
+        /// <param name="indexToColor">The IndexToColor value.</param>
         public HexFieldTopologyRGBA16BitRasterizer(
             VectorXY origin,
             float apothem,
@@ -52,6 +61,11 @@ namespace Akeldov.Math.Hexes.Rasterization
             _indexToColor = indexToColor ?? throw new ArgumentNullException(nameof(indexToColor));
         }
 
+        /// <summary>
+        /// Rasterizes the specified hex-grid data.
+        /// </summary>
+        /// <param name="source">The source value.</param>
+        /// <param name="grid">The grid value.</param>
         public Raster<RGBA16BitColor> Rasterize(IndexSeptupletMap source, RasterGrid grid)
         {
             if (source == null)
@@ -77,6 +91,11 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new Raster<RGBA16BitColor>(grid, values);
         }
 
+        /// <summary>
+        /// Creates a value from the specified inputs.
+        /// </summary>
+        /// <param name="source">The source value.</param>
+        /// <param name="pixelsPerApothem">The pixelsPerApothem value.</param>
         public RasterGrid CreateGrid(IndexSeptupletMap source, float pixelsPerApothem)
         {
             if (source == null)

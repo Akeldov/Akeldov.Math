@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class BoolExtensions
     {
         private static readonly VectorXYInt[] ColumnUnshiftedEdgeOffsets = new VectorXYInt[]
@@ -30,6 +33,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets relative offsets for the six adjacent hexes.
         /// </summary>
+        /// <param name="axisIsEven">The AxisIsEven value.</param>
+        /// <param name="layout">The Layout value.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt[] GetRelativeOffsets(this bool axisIsEven, Layout layout)
@@ -40,6 +45,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets library-owned mutable relative offsets for the six adjacent hexes.
         /// </summary>
+        /// <param name="axisIsEven">The AxisIsEven value.</param>
+        /// <param name="layout">The Layout value.</param>
         /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static VectorXYInt[] GetSharedRelativeOffsets(this bool axisIsEven, Layout layout)
@@ -59,12 +66,24 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="axisIsEven">The axisIsEven value.</param>
+        /// <param name="hexEdge">The hexEdge value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetRelativeOffset(this bool axisIsEven, HexEdge hexEdge, Layout layout)
         {
             return axisIsEven.GetSharedRelativeOffsets(layout)[(int)hexEdge];
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="axisIsEven">The axisIsEven value.</param>
+        /// <param name="hexEdge">The hexEdge value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetRelativeOffset(this bool axisIsEven, int hexEdge, Layout layout)
         {

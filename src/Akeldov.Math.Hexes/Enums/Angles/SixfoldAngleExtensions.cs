@@ -1,7 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class SixfoldAngleExtensions
     {
         private static float[] Sinuses = new float[]
@@ -54,6 +57,10 @@ namespace Akeldov.Math.Hexes
             SixfoldAngle.Deg60
         };
 
+        /// <summary>
+        /// Performs the Sin operation.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sin(this SixfoldAngle angle)
         {
@@ -67,6 +74,10 @@ namespace Akeldov.Math.Hexes
             return Sinuses[index];
         }
 
+        /// <summary>
+        /// Performs the Cos operation.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Cos(this SixfoldAngle angle)
         {
@@ -80,6 +91,10 @@ namespace Akeldov.Math.Hexes
             return Cosines[index];
         }
 
+        /// <summary>
+        /// Performs the AsFloatRadians operation.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AsFloatRadians(this SixfoldAngle angle)
         {
@@ -93,6 +108,10 @@ namespace Akeldov.Math.Hexes
             return Radians[index];
         }
 
+        /// <summary>
+        /// Performs the AsFloatDegrees operation.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AsFloatDegrees(this SixfoldAngle angle)
         {
@@ -106,6 +125,10 @@ namespace Akeldov.Math.Hexes
             return Degrees[index];
         }
 
+        /// <summary>
+        /// Returns the opposite angle.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Negate(this SixfoldAngle angle)
         {
@@ -119,6 +142,10 @@ namespace Akeldov.Math.Hexes
             return Negates[index];
         }
 
+        /// <summary>
+        /// Adds the specified rotation to the angle.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add180(this SixfoldAngle angle)
         {
@@ -141,6 +168,10 @@ namespace Akeldov.Math.Hexes
             }
         }
 
+        /// <summary>
+        /// Adds the specified rotation to the angle.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add120(this SixfoldAngle angle)
         {
@@ -163,6 +194,10 @@ namespace Akeldov.Math.Hexes
             }
         }
 
+        /// <summary>
+        /// Adds the specified rotation to the angle.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add60(this SixfoldAngle angle)
         {
@@ -185,6 +220,10 @@ namespace Akeldov.Math.Hexes
             }
         }
 
+        /// <summary>
+        /// Adds the specified rotation to the angle.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add240(this SixfoldAngle angle)
         {
@@ -207,6 +246,10 @@ namespace Akeldov.Math.Hexes
             }
         }
 
+        /// <summary>
+        /// Adds the specified rotation to the angle.
+        /// </summary>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add300(this SixfoldAngle angle)
         {

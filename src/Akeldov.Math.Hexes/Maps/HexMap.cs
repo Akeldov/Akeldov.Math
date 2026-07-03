@@ -6,10 +6,18 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes
 {
+    /// <summary>
+    /// Represents a HexMap instance.
+    /// </summary>
+    /// <typeparam name="TValue">The type of value handled by this member.</typeparam>
     public class HexMap<TValue> : IHexMap<TValue>
     {
         private readonly TValue[] _values;
 
+        /// <summary>
+        /// Performs the HexMap operation.
+        /// </summary>
+        /// <param name="topology">The topology value.</param>
         public HexMap(IndexSeptupletMap topology)
         {
             Topology = topology ?? throw new ArgumentNullException(nameof(topology));
@@ -25,14 +33,30 @@ namespace Akeldov.Math.Hexes
                 throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
         }
 
+        /// <summary>
+        /// Gets the Topology value.
+        /// </summary>
         public IndexSeptupletMap Topology { get; }
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width => Topology.Width;
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height => Topology.Height;
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout => Topology.Layout;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public TValue this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -55,6 +79,10 @@ namespace Akeldov.Math.Hexes
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public TValue this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

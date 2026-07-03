@@ -3,10 +3,18 @@ using System;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the PolyhexBuilder type.
+    /// </summary>
     public sealed class PolyhexBuilder
     {
         private readonly bool[] _cells;
 
+        /// <summary>
+        /// Initializes a new instance of the PolyhexBuilder type.
+        /// </summary>
+        /// <param name="qSize">The qSize value.</param>
+        /// <param name="rSize">The rSize value.</param>
         public PolyhexBuilder(int qSize, int rSize)
         {
             if (qSize <= 0)
@@ -19,6 +27,10 @@ namespace Akeldov.Math.Hexes.Topology
             _cells = new bool[checked(qSize * rSize)];
         }
 
+        /// <summary>
+        /// Initializes a new instance of the PolyhexBuilder type.
+        /// </summary>
+        /// <param name="polyhex">The polyhex value.</param>
         public PolyhexBuilder(Polyhex? polyhex)
         {
             if (polyhex is null)
@@ -36,14 +48,26 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the QRSResolution value.
+        /// </summary>
         public VectorQRSInt QRSResolution { get; }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public bool this[VectorQRSInt index]
         {
             get => this[index.Q, index.R];
             set => this[index.Q, index.R] = value;
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="qIndex">The qIndex value.</param>
+        /// <param name="rIndex">The rIndex value.</param>
         public bool this[int qIndex, int rIndex]
         {
             get
@@ -64,6 +88,9 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
         public Polyhex ToPolyhex()
         {
             return new Polyhex(QRSResolution.Q, QRSResolution.R, _cells);

@@ -7,6 +7,13 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorQRSIntExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="hexIndex">The hexIndex value.</param>
+        /// <param name="hexApothem">The hexApothem value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexOffset(this VectorQRSInt hexIndex, float hexApothem, float hexRadius, Layout layout)
         {

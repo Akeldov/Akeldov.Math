@@ -5,10 +5,19 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the IndexPartialSeptupletMap type.
+    /// </summary>
     public sealed class IndexPartialSeptupletMap : IHexMap<PartialSeptuplet<VectorXYInt>>
     {
         private readonly PartialSeptuplet<VectorXYInt>[] _values;
 
+        /// <summary>
+        /// Initializes a new instance of the IndexPartialSeptupletMap type.
+        /// </summary>
+        /// <param name="width">The Width value.</param>
+        /// <param name="height">The Height value.</param>
+        /// <param name="layout">The Layout value.</param>
         public IndexPartialSeptupletMap(
             int width,
             int height,
@@ -44,14 +53,30 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width { get; }
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height { get; }
 
+        /// <summary>
+        /// Gets the Count value.
+        /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialSeptuplet<VectorXYInt> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,6 +90,10 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialSeptuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

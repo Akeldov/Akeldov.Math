@@ -29,6 +29,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// Gets normalized vertex offsets for a unit-radius hex in the specified layout.
         /// </summary>
+        /// <param name="layout">The Layout value.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetNormalizedHexVertices(Layout layout)
         {
@@ -45,6 +46,10 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="layout">The layout value.</param>
         [Obsolete("Use GetNormalizedHexVertices instead.")]
         public static VectorXY[] GetNormalizedHexVertexes(Layout layout)
         {

@@ -5,8 +5,16 @@ using System;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class HexVertexBarycentricGridExtensions
     {
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="grid">The Grid value.</param>
+        /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
         public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricTripletGrid grid,
             Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
@@ -30,6 +38,11 @@ namespace Akeldov.Math.Hexes.Topology
             return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
 
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="grid">The Grid value.</param>
+        /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
         public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
             Func<PartialTriplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
@@ -53,6 +66,12 @@ namespace Akeldov.Math.Hexes.Topology
             return new Raster<RGBA16BitColor>(rasterGrid, values);
         }
 
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="grid">The Grid value.</param>
+        /// <param name="chromaticIndexPartialTripletGrid">The ChromaticIndexPartialTripletGrid value.</param>
+        /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
         public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
             ChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,

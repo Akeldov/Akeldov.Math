@@ -4,8 +4,16 @@ using System;
 
 namespace Akeldov.Math.Hexes.Topology.Maps.BoundingBox
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static class HexAdjacencyMapExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="hexAdjacencyMap">The hexAdjacencyMap value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
         public static VectorXY GetBoundingBoxSize(this IndexSeptupletMap hexAdjacencyMap, float hexRadius)
         {
             if (hexAdjacencyMap == null)
@@ -21,6 +29,11 @@ namespace Akeldov.Math.Hexes.Topology.Maps.BoundingBox
                 hexAdjacencyMap.Layout);
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="hexAdjacencyMap">The hexAdjacencyMap value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
         public static VectorXY GetBoundingBoxSize(this IndexPartialSeptupletMap hexAdjacencyMap, float hexRadius)
         {
             if (hexAdjacencyMap == null)

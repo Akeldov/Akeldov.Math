@@ -7,10 +7,18 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the IndexPartialSeptupletGrid type.
+    /// </summary>
     public sealed class IndexPartialSeptupletGrid : IGrid<PartialSeptuplet<VectorXYInt>>
     {
         private PartialSeptuplet<VectorXYInt>[] _values;
 
+        /// <summary>
+        /// Initializes a new instance of the IndexPartialSeptupletGrid type.
+        /// </summary>
+        /// <param name="hexAdjacencyMap">The HexAdjacencyMap value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public IndexPartialSeptupletGrid(
             IndexPartialSeptupletMap hexAdjacencyMap,
             VectorXYInt resolution)
@@ -57,14 +65,30 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the Resolution value.
+        /// </summary>
         public VectorXYInt Resolution { get; private set; }
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width { get; private set; }
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height { get; private set; }
 
+        /// <summary>
+        /// Gets the Count value.
+        /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialSeptuplet<VectorXYInt> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,6 +102,10 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialSeptuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

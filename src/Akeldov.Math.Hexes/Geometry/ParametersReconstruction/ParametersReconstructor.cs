@@ -3,8 +3,17 @@ using System;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Represents a ParametersReconstructor instance.
+    /// </summary>
     public static class ParametersReconstructor
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="size">The size value.</param>
+        /// <param name="dim">The dim value.</param>
+        /// <param name="xOriented">The xOriented value.</param>
         public static float GetApothem(VectorXY size, VectorXYInt dim, bool xOriented)
         {
             if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
@@ -28,6 +37,12 @@ namespace Akeldov.Math.Hexes.Geometry
             return (float)apothem;
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="landscapeMetricSize">The landscapeMetricSize value.</param>
+        /// <param name="hexApothem">The hexApothem value.</param>
+        /// <param name="xOrientation">The xOrientation value.</param>
         public static VectorXYInt GetDim(VectorXY landscapeMetricSize, float hexApothem, bool xOrientation)
         {
             if (!landscapeMetricSize.IsFinite || landscapeMetricSize.X < 0f || landscapeMetricSize.Y < 0f)

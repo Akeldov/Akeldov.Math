@@ -9,6 +9,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets the six adjacent hex indexes.
         /// </summary>
+        /// <param name="index">The Index value.</param>
+        /// <param name="layout">The Layout value.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt[] GetAdjacents(this VectorXYInt index, Layout layout)

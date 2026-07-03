@@ -5,10 +5,19 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Chromatization
 {
+    /// <summary>
+    /// Initializes a new instance of the ChromaticIndexMap type.
+    /// </summary>
     public sealed class ChromaticIndexMap : IHexMap<byte>
     {
         private readonly byte[] _values;
 
+        /// <summary>
+        /// Initializes a new instance of the ChromaticIndexMap type.
+        /// </summary>
+        /// <param name="width">The width value.</param>
+        /// <param name="height">The height value.</param>
+        /// <param name="layout">The layout value.</param>
         public ChromaticIndexMap(int width, int height, Layout layout)
         {
             if (width < 0)
@@ -43,12 +52,25 @@ namespace Akeldov.Math.Hexes.Chromatization
             }
         }
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width { get; }
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height { get; }
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public byte this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -62,6 +84,10 @@ namespace Akeldov.Math.Hexes.Chromatization
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public byte this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

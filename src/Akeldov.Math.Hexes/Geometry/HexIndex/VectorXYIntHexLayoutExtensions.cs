@@ -7,6 +7,13 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYIntExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <param name="hexApothem">The hexApothem value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, Layout layout)
         {
@@ -19,6 +26,14 @@ namespace Akeldov.Math.Hexes.Geometry
             return index.GetHexCenter(hexApothem, hexRadius, GetOffsetOrigin(hexApothem, hexRadius, layout), layout);
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <param name="hexApothem">The hexApothem value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
+        /// <param name="origin">The origin value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, VectorXY origin, Layout layout)
         {

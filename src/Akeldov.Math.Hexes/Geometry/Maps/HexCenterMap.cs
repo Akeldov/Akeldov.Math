@@ -5,10 +5,21 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Initializes a new instance of the HexCenterMap type.
+    /// </summary>
     public sealed class HexCenterMap : IHexMap<PointXY>
     {
         private readonly PointXY[] _values;
 
+        /// <summary>
+        /// Initializes a new instance of the HexCenterMap type.
+        /// </summary>
+        /// <param name="width">The Width value.</param>
+        /// <param name="height">The Height value.</param>
+        /// <param name="origin">The Origin value.</param>
+        /// <param name="apothem">The Apothem value.</param>
+        /// <param name="layout">The Layout value.</param>
         public HexCenterMap(
             int width,
             int height,
@@ -57,6 +68,13 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the HexCenterMap type.
+        /// </summary>
+        /// <param name="radius">The Radius value.</param>
+        /// <param name="width">The Width value.</param>
+        /// <param name="height">The Height value.</param>
+        /// <param name="layout">The Layout value.</param>
         public HexCenterMap(
             int width,
             int height,
@@ -66,16 +84,35 @@ namespace Akeldov.Math.Hexes.Geometry
         {
         }
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width { get; }
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height { get; }
 
+        /// <summary>
+        /// Gets the Origin value.
+        /// </summary>
         public VectorXY Origin { get; }
 
+        /// <summary>
+        /// Gets the Apothem value.
+        /// </summary>
         public float Apothem { get; }
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PointXY this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -89,6 +126,10 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PointXY this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

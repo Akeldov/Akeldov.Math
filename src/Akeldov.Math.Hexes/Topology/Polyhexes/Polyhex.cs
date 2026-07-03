@@ -4,16 +4,27 @@ using System.Text;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Represents a Polyhex instance.
+    /// </summary>
     public class Polyhex : IPolyhex, IEquatable<Polyhex>
     {
         private readonly bool[] _cells;
         private readonly int _hash;
 
+        /// <summary>
+        /// Initializes a new instance of the Polyhex type.
+        /// </summary>
+        /// <param name="intMask">The IntMask value.</param>
         public Polyhex(int[,] intMask)
             : this((intMask ?? throw new ArgumentNullException(nameof(intMask))).ToBoolMask())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Polyhex type.
+        /// </summary>
+        /// <param name="boolMask">The BoolMask value.</param>
         public Polyhex(bool[,] boolMask)
         {
             if (boolMask == null)
@@ -48,6 +59,10 @@ namespace Akeldov.Math.Hexes.Topology
             _hash = hash.ToHashCode();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Polyhex type.
+        /// </summary>
+        /// <param name="qrsResolution">The qrsResolution value.</param>
         public Polyhex(VectorQRSInt qrsResolution)
         {
             if (qrsResolution.Q <= 0 || qrsResolution.R <= 0)
@@ -101,15 +116,30 @@ namespace Akeldov.Math.Hexes.Topology
             _hash = hash.ToHashCode();
         }
 
+        /// <summary>
+        /// Gets the QRSResolution value.
+        /// </summary>
         public VectorQRSInt QRSResolution { get; }
 
+        /// <summary>
+        /// Gets the HexCount value.
+        /// </summary>
         public int HexCount { get; }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public bool this[VectorQRSInt index]
         {
             get => this[index.Q, index.R];
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="QIndex">The QIndex value.</param>
+        /// <param name="RIndex">The RIndex value.</param>
         public bool this[int QIndex, int RIndex]
         {
             get
@@ -122,16 +152,25 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
         public Polyhex GetExtended()
         {
             return new Polyhex(ToBoolArray().GetExtended());
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
         public Polyhex GetContour()
         {
             return new Polyhex(ToBoolArray().GetContour());
         }
 
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
         public bool[,] ToBoolArray()
         {
             var result = new bool[QRSResolution.Q, QRSResolution.R];
@@ -147,10 +186,16 @@ namespace Akeldov.Math.Hexes.Topology
             return result;
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode() => _hash;
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Polyhex other && Equals(other);
 
+        /// <summary>
+        /// Performs the Equals operation.
+        /// </summary>
+        /// <param name="other">The other value.</param>
         public bool Equals(Polyhex? other)
         {
             if (other is null)
@@ -168,6 +213,7 @@ namespace Akeldov.Math.Hexes.Topology
             return true;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -184,8 +230,17 @@ namespace Akeldov.Math.Hexes.Topology
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Performs the implicit operator Polyhex operation.
+        /// </summary>
+        /// <param name="boolMask">The BoolMask value.</param>
         public static implicit operator Polyhex(bool[,] boolMask) => new Polyhex(boolMask);
 
+        /// <summary>
+        /// Applies the operator == operator.
+        /// </summary>
+        /// <param name="left">The left value.</param>
+        /// <param name="right">The right value.</param>
         public static bool operator ==(Polyhex? left, Polyhex? right)
         {
             if (ReferenceEquals(left, right))
@@ -197,6 +252,11 @@ namespace Akeldov.Math.Hexes.Topology
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Applies the operator != operator.
+        /// </summary>
+        /// <param name="left">The left value.</param>
+        /// <param name="right">The right value.</param>
         public static bool operator !=(Polyhex? left, Polyhex? right) => !(left == right);
 
         private int GetFlatIndex(int q, int r) => q * QRSResolution.R + r;

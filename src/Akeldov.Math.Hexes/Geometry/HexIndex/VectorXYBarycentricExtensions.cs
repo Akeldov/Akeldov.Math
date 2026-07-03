@@ -3,8 +3,18 @@ using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class VectorXYExtensions
     {
+        /// <summary>
+        /// Performs the BarycentricCoordinates operation.
+        /// </summary>
+        /// <param name="p">The p value.</param>
+        /// <param name="a">The a value.</param>
+        /// <param name="b">The b value.</param>
+        /// <param name="c">The c value.</param>
         public static Triplet<float> BarycentricCoordinates(this PointXY p, VectorXY a, VectorXY b, VectorXY c)
         {
             VectorXY v0 = new VectorXY(b.X - a.X, b.Y - a.Y);
@@ -22,16 +32,22 @@ namespace Akeldov.Math.Hexes.Geometry
             if (denom == 0)
                 denom = 1;
 
-            
+
             float wB = (d11 * d20 - d01 * d21) / denom;
             float wC = (d00 * d21 - d01 * d20) / denom;
 
-            
+
             float wA = 1.0f - wB - wC;
 
             return new Triplet<float>(wA, wB, wC);
         }
 
+        /// <summary>
+        /// Performs the BarycentricCoordinates operation.
+        /// </summary>
+        /// <param name="p">The p value.</param>
+        /// <param name="a">The a value.</param>
+        /// <param name="b">The b value.</param>
         public static Pair<float> BarycentricCoordinates(this PointXY p, VectorXY a, VectorXY b)
         {
             VectorXY ab = b - a;

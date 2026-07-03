@@ -56,6 +56,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets library-owned mutable offsets for the row layout.
         /// </summary>
+        /// <param name="y">The Y value.</param>
+        /// <param name="evenRowsAreShifted">The EvenRowsAreShifted value.</param>
         /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static sbyte[] GetRowOffsets(int y, bool evenRowsAreShifted)
         {
@@ -66,6 +68,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets library-owned mutable vector offsets for the row layout.
         /// </summary>
+        /// <param name="axisIsEven">The AxisIsEven value.</param>
+        /// <param name="evenRowsAreShifted">The EvenRowsAreShifted value.</param>
         /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static VectorXYInt[] GetRowVectorOffsets(bool axisIsEven, bool evenRowsAreShifted)
         {
@@ -76,6 +80,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets library-owned mutable offsets for the column layout.
         /// </summary>
+        /// <param name="x">The X value.</param>
+        /// <param name="evenColumnsAreShifted">The EvenColumnsAreShifted value.</param>
         /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static sbyte[] GetColumnOffsets(int x, bool evenColumnsAreShifted)
         {
@@ -86,6 +92,9 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets library-owned mutable offsets for the specified layout and index.
         /// </summary>
+        /// <param name="layout">The Layout value.</param>
+        /// <param name="x">The X value.</param>
+        /// <param name="y">The Y value.</param>
         /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         internal static sbyte[] GetOffsets(Layout layout, int x, int y)
         {

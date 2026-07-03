@@ -1,9 +1,16 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static class FloatExtensions
     {
+        /// <summary>
+        /// Performs the ConvertHexApothemToRadius operation.
+        /// </summary>
+        /// <param name="apothem">The apothem value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ConvertHexApothemToRadius(this float apothem)
         {
@@ -13,6 +20,10 @@ namespace Akeldov.Math.Hexes.Geometry
             return Constants.Apothem2Radius * apothem;
         }
 
+        /// <summary>
+        /// Performs the ConvertHexRadiusToApothem operation.
+        /// </summary>
+        /// <param name="radius">The radius value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ConvertHexRadiusToApothem(this float radius)
         {

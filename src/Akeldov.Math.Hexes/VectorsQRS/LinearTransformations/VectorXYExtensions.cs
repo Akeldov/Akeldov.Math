@@ -5,6 +5,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     public static partial class VectorXYExtensions
     {
+        /// <summary>
+        /// Rotates the value using the specified angle.
+        /// </summary>
+        /// <param name="point">The point value.</param>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Rotate(this VectorXY point, SixfoldAngle angle)
         {

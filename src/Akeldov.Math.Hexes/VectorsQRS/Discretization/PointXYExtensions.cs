@@ -6,6 +6,13 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     public static partial class PointXYExtensions
     {
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
+        /// <param name="point">The point value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
+        /// <param name="hexFieldOrigin">The hexFieldOrigin value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt ToXYIndex(this PointXY point, float hexRadius, VectorXY hexFieldOrigin, Layout layout)
         {

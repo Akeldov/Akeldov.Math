@@ -7,6 +7,9 @@ using System;
 
 namespace Akeldov.Math.Hexes.Rasterization
 {
+    /// <summary>
+    /// Initializes a new instance of the HexFieldChromatizationRGBA16BitRasterizer type.
+    /// </summary>
     public sealed class HexFieldChromatizationRGBA16BitRasterizer :
         IRasterizer<ChromaticIndexMap, Raster<RGBA16BitColor>>
     {
@@ -36,6 +39,12 @@ namespace Akeldov.Math.Hexes.Rasterization
         private readonly float _apothem;
         private readonly Func<byte, RGBA16BitColor> _chromaticIndexToColor;
 
+        /// <summary>
+        /// Initializes a new instance of the HexFieldChromatizationRGBA16BitRasterizer type.
+        /// </summary>
+        /// <param name="origin">The Origin value.</param>
+        /// <param name="apothem">The Apothem value.</param>
+        /// <param name="chromaticIndexToColor">The ChromaticIndexToColor value.</param>
         public HexFieldChromatizationRGBA16BitRasterizer(
             VectorXY origin,
             float apothem,
@@ -52,6 +61,11 @@ namespace Akeldov.Math.Hexes.Rasterization
             _chromaticIndexToColor = chromaticIndexToColor ?? throw new ArgumentNullException(nameof(chromaticIndexToColor));
         }
 
+        /// <summary>
+        /// Rasterizes the specified hex-grid data.
+        /// </summary>
+        /// <param name="source">The source value.</param>
+        /// <param name="grid">The grid value.</param>
         public Raster<RGBA16BitColor> Rasterize(ChromaticIndexMap source, RasterGrid grid)
         {
             if (source == null)
@@ -80,6 +94,11 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new Raster<RGBA16BitColor>(grid, values);
         }
 
+        /// <summary>
+        /// Creates a value from the specified inputs.
+        /// </summary>
+        /// <param name="source">The source value.</param>
+        /// <param name="pixelsPerApothem">The pixelsPerApothem value.</param>
         public RasterGrid CreateGrid(ChromaticIndexMap source, float pixelsPerApothem)
         {
             if (source == null)

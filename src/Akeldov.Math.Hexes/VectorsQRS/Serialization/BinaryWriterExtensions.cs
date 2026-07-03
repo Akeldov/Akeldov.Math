@@ -1,11 +1,19 @@
-﻿using System.IO;
+using System.IO;
 using System;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static class BinaryWriterExtensions
     {
+        /// <summary>
+        /// Writes the value to the specified binary writer.
+        /// </summary>
+        /// <param name="writer">The writer value.</param>
+        /// <param name="vector">The vector value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, VectorQRSInt vector)
         {
@@ -16,6 +24,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             writer.Write(vector.R);
         }
 
+        /// <summary>
+        /// Writes the value to the specified binary writer.
+        /// </summary>
+        /// <param name="writer">The writer value.</param>
+        /// <param name="vector">The vector value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, VectorQRS vector)
         {
@@ -26,6 +39,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
             writer.Write(vector.R);
         }
 
+        /// <summary>
+        /// Writes the value to the specified binary writer.
+        /// </summary>
+        /// <param name="writer">The writer value.</param>
+        /// <param name="angle">The angle value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, SixfoldAngle angle)
         {

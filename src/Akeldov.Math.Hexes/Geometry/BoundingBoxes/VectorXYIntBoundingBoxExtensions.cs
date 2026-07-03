@@ -5,8 +5,18 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class VectorXYIntExtensions
     {
+        /// <summary>
+        /// Performs the BoundingBox operation.
+        /// </summary>
+        /// <param name="dim">The dim value.</param>
+        /// <param name="hexApothem">The hexApothem value.</param>
+        /// <param name="hexRadius">The hexRadius value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY BoundingBox(this VectorXYInt dim, float hexApothem, float hexRadius, Layout layout)
         {

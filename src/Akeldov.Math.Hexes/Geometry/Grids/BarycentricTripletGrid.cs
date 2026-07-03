@@ -7,6 +7,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the BarycentricTripletGrid type.
+    /// </summary>
     public sealed class BarycentricTripletGrid : IGrid<Triplet<float>>
     {
         private const float DefaultHexRadius = 1f;
@@ -25,6 +28,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         private VectorXY CellSize { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the BarycentricTripletGrid type.
+        /// </summary>
+        /// <param name="indexSeptupletMap">The IndexSeptupletMap value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public BarycentricTripletGrid(
             IndexSeptupletMap indexSeptupletMap,
             VectorXYInt resolution)
@@ -47,6 +55,14 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the BarycentricTripletGrid type.
+        /// </summary>
+        /// <param name="hexWidth">The HexWidth value.</param>
+        /// <param name="hexHeight">The HexHeight value.</param>
+        /// <param name="layout">The Layout value.</param>
+        /// <param name="hexOrigin">The HexOrigin value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public BarycentricTripletGrid(
             int hexWidth,
             int hexHeight,
@@ -71,6 +87,16 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the BarycentricTripletGrid type.
+        /// </summary>
+        /// <param name="hexWidth">The HexWidth value.</param>
+        /// <param name="hexHeight">The HexHeight value.</param>
+        /// <param name="layout">The Layout value.</param>
+        /// <param name="hexOrigin">The HexOrigin value.</param>
+        /// <param name="gridOrigin">The GridOrigin value.</param>
+        /// <param name="gridSize">The GridSize value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public BarycentricTripletGrid(
             int hexWidth,
             int hexHeight,
@@ -100,22 +126,50 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Gets the HexResolution value.
+        /// </summary>
         public VectorXYInt HexResolution { get; private set; }
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; private set; }
 
+        /// <summary>
+        /// Gets the Resolution value.
+        /// </summary>
         public VectorXYInt Resolution { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionX value.
+        /// </summary>
         public int ResolutionX { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionY value.
+        /// </summary>
         public int ResolutionY { get; private set; }
 
+        /// <summary>
+        /// Gets the Count value.
+        /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width => ResolutionX;
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height => ResolutionY;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public Triplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -126,12 +180,21 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public Triplet<float> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
         }
 
+        /// <summary>
+        /// Tries to get a value at the specified index.
+        /// </summary>
+        /// <param name="gridIndex">The gridIndex value.</param>
+        /// <param name="barycentricCoordinates">The barycentricCoordinates value.</param>
         public bool TryGetValue(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
         {
             if (!ContainsGridIndex(gridIndex))
@@ -145,6 +208,10 @@ namespace Akeldov.Math.Hexes.Topology
             return true;
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="gridIndex">The gridIndex value.</param>
         public Triplet<float> GetBarycentricCoordinates(VectorXYInt gridIndex)
         {
             ThrowIfGridIndexOutOfBounds(gridIndex);

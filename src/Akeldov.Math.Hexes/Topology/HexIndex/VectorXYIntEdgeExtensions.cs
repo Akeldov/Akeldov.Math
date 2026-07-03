@@ -5,8 +5,17 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class VectorXYIntExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <param name="hexEdge">The hexEdge value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetAdjacent(this VectorXYInt index, HexEdge hexEdge, Layout layout)
         {
@@ -18,6 +27,12 @@ namespace Akeldov.Math.Hexes.Topology
             return index + relativeNeighborIndex;
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <param name="direction">The direction value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetAdjacent(this VectorXYInt index, SixfoldAngle direction, Layout layout)
         {

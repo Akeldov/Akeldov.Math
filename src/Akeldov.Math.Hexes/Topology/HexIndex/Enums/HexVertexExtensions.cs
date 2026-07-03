@@ -4,8 +4,15 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static class HexVertexExtensions
     {
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="hexVertex">The hexVertex value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<HexEdge> GetAdjacentEdges(this HexVertex hexVertex)
         {
@@ -16,6 +23,11 @@ namespace Akeldov.Math.Hexes.Topology
             return GetPointyTopAdjacentEdges(hexVertexIndex);
         }
 
+        /// <summary>
+        /// Gets a value derived from the specified hex-grid data.
+        /// </summary>
+        /// <param name="hexVertex">The hexVertex value.</param>
+        /// <param name="layout">The layout value.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<HexEdge> GetAdjacentEdges(this HexVertex hexVertex, Layout layout)
         {

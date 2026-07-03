@@ -4,8 +4,16 @@ using System.IO;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Provides extension methods for hex-grid operations.
+    /// </summary>
     public static partial class BinaryWriterExtensions
     {
+        /// <summary>
+        /// Writes the value to the specified binary writer.
+        /// </summary>
+        /// <param name="binaryWriter">The BinaryWriter value.</param>
+        /// <param name="polyhexStamp">The PolyhexStamp value.</param>
         public static void Write(
             this BinaryWriter binaryWriter,
             Polyhex? polyhexStamp)

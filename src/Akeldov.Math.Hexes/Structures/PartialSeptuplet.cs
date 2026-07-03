@@ -1,7 +1,22 @@
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Represents a PartialSeptuplet value.
+    /// </summary>
+    /// <typeparam name="T">The type of value handled by this member.</typeparam>
     public readonly struct PartialSeptuplet<T>
     {
+        /// <summary>
+        /// Performs the PartialSeptuplet operation.
+        /// </summary>
+        /// <param name="main">The Main value.</param>
+        /// <param name="adjacent0">The Adjacent0 value.</param>
+        /// <param name="adjacent1">The Adjacent1 value.</param>
+        /// <param name="adjacent2">The Adjacent2 value.</param>
+        /// <param name="adjacent3">The Adjacent3 value.</param>
+        /// <param name="adjacent4">The Adjacent4 value.</param>
+        /// <param name="adjacent5">The Adjacent5 value.</param>
+        /// <param name="presence">The Presence value.</param>
         public PartialSeptuplet(
             T main,
             T adjacent0,
@@ -22,6 +37,23 @@ namespace Akeldov.Math.Hexes.Topology
             Presence = presence;
         }
 
+        /// <summary>
+        /// Performs the PartialSeptuplet operation.
+        /// </summary>
+        /// <param name="hasMain">The HasMain value.</param>
+        /// <param name="hasAdjacent0">The HasAdjacent0 value.</param>
+        /// <param name="hasAdjacent1">The HasAdjacent1 value.</param>
+        /// <param name="hasAdjacent2">The HasAdjacent2 value.</param>
+        /// <param name="hasAdjacent3">The HasAdjacent3 value.</param>
+        /// <param name="hasAdjacent4">The HasAdjacent4 value.</param>
+        /// <param name="hasAdjacent5">The HasAdjacent5 value.</param>
+        /// <param name="main">The Main value.</param>
+        /// <param name="adjacent0">The Adjacent0 value.</param>
+        /// <param name="adjacent1">The Adjacent1 value.</param>
+        /// <param name="adjacent2">The Adjacent2 value.</param>
+        /// <param name="adjacent3">The Adjacent3 value.</param>
+        /// <param name="adjacent4">The Adjacent4 value.</param>
+        /// <param name="adjacent5">The Adjacent5 value.</param>
         public PartialSeptuplet(
             T main,
             T adjacent0,
@@ -56,6 +88,11 @@ namespace Akeldov.Math.Hexes.Topology
         {
         }
 
+        /// <summary>
+        /// Performs the PartialSeptuplet operation.
+        /// </summary>
+        /// <param name="presence">The presence value.</param>
+        /// <param name="septuplet">The Septuplet value.</param>
         public PartialSeptuplet(Septuplet<T> septuplet, SeptupletPresenceFlags presence)
             : this(
                 septuplet.Main,
@@ -69,36 +106,84 @@ namespace Akeldov.Math.Hexes.Topology
         {
         }
 
+        /// <summary>
+        /// Gets the Main value.
+        /// </summary>
         public T Main { get; }
 
+        /// <summary>
+        /// Gets the Adjacent0 value.
+        /// </summary>
         public T Adjacent0 { get; }
 
+        /// <summary>
+        /// Gets the Adjacent1 value.
+        /// </summary>
         public T Adjacent1 { get; }
 
+        /// <summary>
+        /// Gets the Adjacent2 value.
+        /// </summary>
         public T Adjacent2 { get; }
 
+        /// <summary>
+        /// Gets the Adjacent3 value.
+        /// </summary>
         public T Adjacent3 { get; }
 
+        /// <summary>
+        /// Gets the Adjacent4 value.
+        /// </summary>
         public T Adjacent4 { get; }
 
+        /// <summary>
+        /// Gets the Adjacent5 value.
+        /// </summary>
         public T Adjacent5 { get; }
 
+        /// <summary>
+        /// Gets the Presence value.
+        /// </summary>
         public SeptupletPresenceFlags Presence { get; }
 
+        /// <summary>
+        /// Performs the HasMain operation.
+        /// </summary>
         public bool HasMain => (Presence & SeptupletPresenceFlags.Main) != 0;
 
+        /// <summary>
+        /// Performs the HasAdjacent0 operation.
+        /// </summary>
         public bool HasAdjacent0 => (Presence & SeptupletPresenceFlags.Adjacent0) != 0;
 
+        /// <summary>
+        /// Performs the HasAdjacent1 operation.
+        /// </summary>
         public bool HasAdjacent1 => (Presence & SeptupletPresenceFlags.Adjacent1) != 0;
 
+        /// <summary>
+        /// Performs the HasAdjacent2 operation.
+        /// </summary>
         public bool HasAdjacent2 => (Presence & SeptupletPresenceFlags.Adjacent2) != 0;
 
+        /// <summary>
+        /// Performs the HasAdjacent3 operation.
+        /// </summary>
         public bool HasAdjacent3 => (Presence & SeptupletPresenceFlags.Adjacent3) != 0;
 
+        /// <summary>
+        /// Performs the HasAdjacent4 operation.
+        /// </summary>
         public bool HasAdjacent4 => (Presence & SeptupletPresenceFlags.Adjacent4) != 0;
 
+        /// <summary>
+        /// Performs the HasAdjacent5 operation.
+        /// </summary>
         public bool HasAdjacent5 => (Presence & SeptupletPresenceFlags.Adjacent5) != 0;
 
+        /// <summary>
+        /// Converts the value to the requested representation.
+        /// </summary>
         public Septuplet<T> ToSeptuplet()
         {
             return new Septuplet<T>(
@@ -111,6 +196,16 @@ namespace Akeldov.Math.Hexes.Topology
                 Adjacent5);
         }
 
+        /// <summary>
+        /// Performs the Deconstruct operation.
+        /// </summary>
+        /// <param name="main">The Main value.</param>
+        /// <param name="adjacent0">The Adjacent0 value.</param>
+        /// <param name="adjacent1">The Adjacent1 value.</param>
+        /// <param name="adjacent2">The Adjacent2 value.</param>
+        /// <param name="adjacent3">The Adjacent3 value.</param>
+        /// <param name="adjacent4">The Adjacent4 value.</param>
+        /// <param name="adjacent5">The Adjacent5 value.</param>
         public void Deconstruct(
             out T main,
             out T adjacent0,
@@ -129,6 +224,17 @@ namespace Akeldov.Math.Hexes.Topology
             adjacent5 = Adjacent5;
         }
 
+        /// <summary>
+        /// Performs the Deconstruct operation.
+        /// </summary>
+        /// <param name="main">The Main value.</param>
+        /// <param name="adjacent0">The Adjacent0 value.</param>
+        /// <param name="adjacent1">The Adjacent1 value.</param>
+        /// <param name="adjacent2">The Adjacent2 value.</param>
+        /// <param name="adjacent3">The Adjacent3 value.</param>
+        /// <param name="adjacent4">The Adjacent4 value.</param>
+        /// <param name="adjacent5">The Adjacent5 value.</param>
+        /// <param name="presence">The Presence value.</param>
         public void Deconstruct(
             out T main,
             out T adjacent0,

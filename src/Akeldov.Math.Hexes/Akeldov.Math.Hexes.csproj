@@ -14,7 +14,6 @@
     <PackageTags>math;geometry;hex;hex-grid;vectors;topology;rasterization;voronoi;polyhex</PackageTags>
     <RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
     <PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Hexes/</PackageProjectUrl>
-    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

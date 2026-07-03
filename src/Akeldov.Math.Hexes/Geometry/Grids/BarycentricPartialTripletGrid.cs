@@ -7,6 +7,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
+    /// <summary>
+    /// Initializes a new instance of the BarycentricPartialTripletGrid type.
+    /// </summary>
     public sealed class BarycentricPartialTripletGrid : IGrid<PartialTriplet<float>>
     {
         private const float DefaultHexRadius = 1f;
@@ -29,6 +32,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         private VectorXY CellSize { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the BarycentricPartialTripletGrid type.
+        /// </summary>
+        /// <param name="indexSeptupletMap">The IndexSeptupletMap value.</param>
+        /// <param name="resolution">The Resolution value.</param>
         public BarycentricPartialTripletGrid(
             IndexSeptupletMap indexSeptupletMap,
             VectorXYInt resolution)
@@ -54,22 +62,50 @@ namespace Akeldov.Math.Hexes.Topology
                 resolution);
         }
 
+        /// <summary>
+        /// Gets the HexResolution value.
+        /// </summary>
         public VectorXYInt HexResolution { get; private set; }
 
+        /// <summary>
+        /// Gets the Layout value.
+        /// </summary>
         public Layout Layout { get; private set; }
 
+        /// <summary>
+        /// Gets the Resolution value.
+        /// </summary>
         public VectorXYInt Resolution { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionX value.
+        /// </summary>
         public int ResolutionX { get; private set; }
 
+        /// <summary>
+        /// Gets the ResolutionY value.
+        /// </summary>
         public int ResolutionY { get; private set; }
 
+        /// <summary>
+        /// Gets the Count value.
+        /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the Width value.
+        /// </summary>
         public int Width => ResolutionX;
 
+        /// <summary>
+        /// Gets the Height value.
+        /// </summary>
         public int Height => ResolutionY;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialTriplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -80,12 +116,21 @@ namespace Akeldov.Math.Hexes.Topology
             }
         }
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index value.</param>
         public PartialTriplet<float> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
         }
 
+        /// <summary>
+        /// Tries to get a value at the specified index.
+        /// </summary>
+        /// <param name="gridIndex">The gridIndex value.</param>
+        /// <param name="barycentricCoordinates">The barycentricCoordinates value.</param>
         public bool TryGetValue(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
         {
             if (!ContainsGridIndex(gridIndex))
