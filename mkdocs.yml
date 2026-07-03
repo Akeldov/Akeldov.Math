@@ -108,6 +108,14 @@ nav:
               - Stress Tests: Spatial2D/testing/stress-tests.md
       - Akeldov.Math.Hexes:
           - Overview: Hexes/index.md
+          - Vectors: Hexes/vectors.md
+          - Layouts: Hexes/layouts.md
+          - Topology: Hexes/topology.md
+          - Geometry: Hexes/geometry.md
+          - Maps: Hexes/maps.md
+          - Grids: Hexes/grids.md
+          - Chromatization: Hexes/chromatization.md
+          - Utility Structures: Hexes/utility-structures.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
   - About: about.md

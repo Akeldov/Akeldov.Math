@@ -4,11 +4,22 @@ Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, 
 
 ## Features
 
-- QRS axial vector types and conversion helpers for row- and column-oriented hex layouts.
-- Odd/even row and column layout helpers for centers, vertices, adjacency, and bounding boxes.
-- Hex maps and grids for topology, barycentric sampling, chromatic indexes, and rasterization.
+- QRS axial vector types and conversion helpers.
+- Odd/even row and column layout helpers.
+- Hex topology, geometry, maps, grids, chromatization, and rasterization helpers.
 - Polyhex masks, contour generation, apothem offsets, and region conversion helpers.
 - Weighted Voronoi partitioning over hex center maps.
+
+## Topics
+
+- [Vectors](vectors.md)
+- [Layouts](layouts.md)
+- [Topology](topology.md)
+- [Geometry](geometry.md)
+- [Maps](maps.md)
+- [Grids](grids.md)
+- [Chromatization](chromatization.md)
+- [Utility Structures](utility-structures.md)
 
 ## Installation
 
