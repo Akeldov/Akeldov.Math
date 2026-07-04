@@ -4,22 +4,48 @@ Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, 
 
 ## Features
 
-- QRS axial vector types and conversion helpers.
-- Odd/even row and column layout helpers.
-- Hex topology, geometry, maps, grids, chromatization, and rasterization helpers.
-- Polyhex masks, contour generation, apothem offsets, and region conversion helpers.
-- Weighted Voronoi partitioning over hex center maps.
-
-## Topics
-
 - [Vectors](vectors.md)
+    - [Types](vectors/types.md)
+    - [Coordinate Conversions](vectors/coordinate-conversions.md)
+    - [Discretization](vectors/discretization.md)
+    - [Transformations](vectors/transformations.md)
+    - [Serialization](vectors/serialization.md)
 - [Layouts](layouts.md)
+    - [Layout Values](layouts/layout-values.md)
+    - [Orientation](layouts/orientation.md)
+    - [Coordinate Rules](layouts/coordinate-rules.md)
+    - [Geometry Rules](layouts/geometry-rules.md)
 - [Topology](topology.md)
+    - [Edges and Vertices](topology/edges-and-vertices.md)
+    - [Adjacency](topology/adjacency.md)
+    - [Topology Maps](topology/topology-maps.md)
+    - [Topology Grids](topology/topology-grids.md)
+    - [Polyhex Topology](topology/polyhex-topology.md)
 - [Geometry](geometry.md)
+    - [Hex Geometry](geometry/hex-geometry.md)
+    - [Geometry Maps](geometry/maps.md)
+    - [Geometry Grids](geometry/grids.md)
+    - [Polyhex Geometry](geometry/polyhex-geometry.md)
+    - [Field Parameters](geometry/field-parameters.md)
+    - [Partitioning](geometry/partitioning.md)
 - [Maps](maps.md)
+    - [IHexMap](maps/ihexmap.md)
+    - [HexMap](maps/hexmap.md)
+    - [Shared Map Behavior](maps/shared-map-behavior.md)
 - [Grids](grids.md)
+    - [IGrid](grids/igrid.md)
+    - [Shared Grid Behavior](grids/shared-grid-behavior.md)
+    - [Rasterization Integration](grids/rasterization-integration.md)
 - [Chromatization](chromatization.md)
+    - [Chromatic Indexes](chromatization/chromatic-indexes.md)
+    - [Chromatic Maps](chromatization/chromatic-maps.md)
+    - [Chromatic Grids](chromatization/chromatic-grids.md)
+    - [Rasterization](chromatization/rasterization.md)
 - [Utility Structures](utility-structures.md)
+    - [Generic Containers](utility-structures/generic-containers.md)
+    - [Presence Flags](utility-structures/presence-flags.md)
+    - [Sixfold Angles](utility-structures/sixfold-angles.md)
+    - [Binary Helpers](utility-structures/binary-helpers.md)
 
 ## Installation
 
