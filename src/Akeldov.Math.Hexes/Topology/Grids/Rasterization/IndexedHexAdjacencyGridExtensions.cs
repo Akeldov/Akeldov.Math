@@ -22,20 +22,9 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
             if (indexedHexAdjacencyGrid == null)
                 throw new ArgumentNullException(nameof(indexedHexAdjacencyGrid));
 
-            if (colorSelector == null)
-                throw new ArgumentNullException(nameof(colorSelector));
-
-            var values = new RGBA16BitColor[indexedHexAdjacencyGrid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = colorSelector(indexedHexAdjacencyGrid[i]);
-
-            return new Raster<RGBA16BitColor>(
-                new RasterGrid(
-                    new PointXY(0f, 0f),
-                    new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
-                    indexedHexAdjacencyGrid.Resolution),
-                values);
+            return indexedHexAdjacencyGrid.Rasterize(
+                CreateRasterGrid(indexedHexAdjacencyGrid),
+                colorSelector);
         }
 
         /// <summary>
@@ -50,20 +39,25 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
             if (indexedHexAdjacencyGrid == null)
                 throw new ArgumentNullException(nameof(indexedHexAdjacencyGrid));
 
-            if (colorSelector == null)
-                throw new ArgumentNullException(nameof(colorSelector));
+            return indexedHexAdjacencyGrid.Rasterize(
+                CreateRasterGrid(indexedHexAdjacencyGrid),
+                colorSelector);
+        }
 
-            var values = new RGBA16BitColor[indexedHexAdjacencyGrid.Count];
+        private static RasterGrid CreateRasterGrid(IndexSeptupletGrid indexedHexAdjacencyGrid)
+        {
+            return new RasterGrid(
+                new PointXY(0f, 0f),
+                new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
+                indexedHexAdjacencyGrid.Resolution);
+        }
 
-            for (int i = 0; i < values.Length; i++)
-                values[i] = colorSelector(indexedHexAdjacencyGrid[i]);
-
-            return new Raster<RGBA16BitColor>(
-                new RasterGrid(
-                    new PointXY(0f, 0f),
-                    new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
-                    indexedHexAdjacencyGrid.Resolution),
-                values);
+        private static RasterGrid CreateRasterGrid(IndexPartialSeptupletGrid indexedHexAdjacencyGrid)
+        {
+            return new RasterGrid(
+                new PointXY(0f, 0f),
+                new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
+                indexedHexAdjacencyGrid.Resolution);
         }
     }
 }

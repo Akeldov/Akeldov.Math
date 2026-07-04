@@ -6,7 +6,6 @@
 
 - Width.
 - Height.
-- Count.
 
 ## Access
 
@@ -18,3 +17,9 @@
 
 - Keeps sampled data independent from topology, geometry, or chromatization.
 - Allows rasterization helpers to consume grids through a common surface.
+
+## Rasterization
+
+- `IGrid<TValue>` can be rasterized with an explicit `RasterGrid`.
+- The raster grid resolution must match the grid width and height.
+- Domain-specific grid types may expose convenience rasterization methods that supply their own raster geometry.

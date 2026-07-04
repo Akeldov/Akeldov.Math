@@ -19,20 +19,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            if (tripletToColor == null)
-                throw new ArgumentNullException(nameof(tripletToColor));
-
-            var values = new RGBA16BitColor[grid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = tripletToColor(grid[i]);
-
-            var rasterGrid = new RasterGrid(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
-
-            return new Raster<RGBA16BitColor>(rasterGrid, values);
+            return grid.Rasterize(CreateRasterGrid(grid), tripletToColor);
         }
 
         /// <summary>
@@ -47,20 +34,23 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            if (tripletToColor == null)
-                throw new ArgumentNullException(nameof(tripletToColor));
+            return grid.Rasterize(CreateRasterGrid(grid), tripletToColor);
+        }
 
-            var values = new RGBA16BitColor[grid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = tripletToColor(grid[i]);
-
-            var rasterGrid = new RasterGrid(
+        private static RasterGrid CreateRasterGrid(IndexTripletGrid grid)
+        {
+            return new RasterGrid(
                 (PointXY)grid.Origin,
                 grid.Size,
                 grid.Resolution);
+        }
 
-            return new Raster<RGBA16BitColor>(rasterGrid, values);
+        private static RasterGrid CreateRasterGrid(IndexPartialTripletGrid grid)
+        {
+            return new RasterGrid(
+                (PointXY)grid.Origin,
+                grid.Size,
+                grid.Resolution);
         }
     }
 }

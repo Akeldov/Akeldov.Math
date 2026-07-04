@@ -22,20 +22,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            if (barycentricCoordinatesToColor == null)
-                throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
-
-            var values = new RGBA16BitColor[grid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = barycentricCoordinatesToColor(grid[i]);
-
-            var rasterGrid = new RasterGrid(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
-
-            return new Raster<RGBA16BitColor>(rasterGrid, values);
+            return grid.Rasterize(CreateRasterGrid(grid), barycentricCoordinatesToColor);
         }
 
         /// <summary>
@@ -50,20 +37,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            if (barycentricCoordinatesToColor == null)
-                throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
-
-            var values = new RGBA16BitColor[grid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = barycentricCoordinatesToColor(grid[i]);
-
-            var rasterGrid = new RasterGrid(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
-
-            return new Raster<RGBA16BitColor>(rasterGrid, values);
+            return grid.Rasterize(CreateRasterGrid(grid), barycentricCoordinatesToColor);
         }
 
         /// <summary>
@@ -94,6 +68,22 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Resolution);
 
             return new Raster<RGBA16BitColor>(rasterGrid, values);
+        }
+
+        private static RasterGrid CreateRasterGrid(BarycentricTripletGrid grid)
+        {
+            return new RasterGrid(
+                (PointXY)grid.Origin,
+                grid.Size,
+                grid.Resolution);
+        }
+
+        private static RasterGrid CreateRasterGrid(BarycentricPartialTripletGrid grid)
+        {
+            return new RasterGrid(
+                (PointXY)grid.Origin,
+                grid.Size,
+                grid.Resolution);
         }
     }
 }

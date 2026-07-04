@@ -22,15 +22,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            if (chromaticIndicesToColor == null)
-                throw new ArgumentNullException(nameof(chromaticIndicesToColor));
-
-            var values = new RGBA16BitColor[grid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = chromaticIndicesToColor(grid[i]);
-
-            return new Raster<RGBA16BitColor>(CreateRasterGrid(grid), values);
+            return grid.Rasterize(CreateRasterGrid(grid), chromaticIndicesToColor);
         }
 
         /// <summary>
@@ -45,15 +37,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            if (chromaticIndicesToColor == null)
-                throw new ArgumentNullException(nameof(chromaticIndicesToColor));
-
-            var values = new RGBA16BitColor[grid.Count];
-
-            for (int i = 0; i < values.Length; i++)
-                values[i] = chromaticIndicesToColor(grid[i]);
-
-            return new Raster<RGBA16BitColor>(CreateRasterGrid(grid), values);
+            return grid.Rasterize(CreateRasterGrid(grid), chromaticIndicesToColor);
         }
 
         private static RasterGrid CreateRasterGrid(ChromaticIndexTripletGrid grid)
