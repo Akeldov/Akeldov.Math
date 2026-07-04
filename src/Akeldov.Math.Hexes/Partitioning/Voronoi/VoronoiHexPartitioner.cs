@@ -27,7 +27,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Assigns every center from the specified hex center map to its nearest weighted Voronoi site.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
-        /// <returns>A new, mutable, caller-owned hex partition map.</returns>
+        /// <returns>
+        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// Use <see cref="VoronoiHexPartitionMap.ToMutableHexMap"/> to create a mutable
+        /// caller-owned assignment copy.
+        /// </returns>
         public VoronoiHexPartitionMap Partition(HexCenterMap hexCenters)
         {
             if (hexCenters == null)

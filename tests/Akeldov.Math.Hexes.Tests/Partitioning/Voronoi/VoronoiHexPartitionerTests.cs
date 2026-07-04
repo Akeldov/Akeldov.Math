@@ -35,7 +35,7 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
-    public void Partition_ReturnsHexMapOfVoronoiCells()
+    public void Partition_ReturnsReadOnlyHexMapOfVoronoiCells()
     {
         var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
         var hexCenters = new HexCenterMap(2, 2, VectorXY.Zero, 1f, Layout.EvenQ);
@@ -44,13 +44,37 @@ public class VoronoiHexPartitionerTests
         var map = partitioner.Partition(hexCenters);
         IHexMap<VoronoiCell> hexMap = map;
 
-        Assert.That(map, Is.InstanceOf<HexMap<VoronoiCell>>());
+        Assert.That(map, Is.Not.InstanceOf<HexMap<VoronoiCell>>());
         Assert.That(map.Centers, Is.SameAs(hexCenters));
         Assert.That(hexMap.Width, Is.EqualTo(2));
         Assert.That(hexMap.Height, Is.EqualTo(2));
         Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(map.Cells, Has.Count.EqualTo(1));
         Assert.That(map.Cells[0].HexIndexes, Has.Count.EqualTo(4));
+    }
+
+    [Test]
+    public void ToMutableHexMap_ReturnsCallerOwnedAssignmentCopy()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(4f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(3, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var partitioner = new VoronoiHexPartitioner(sites);
+        var map = partitioner.Partition(hexCenters);
+
+        HexMap<VoronoiCell> mutableMap = map.ToMutableHexMap();
+        mutableMap[0] = map.Cells[1];
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mutableMap[0], Is.SameAs(map.Cells[1]));
+            Assert.That(map[0], Is.SameAs(map.Cells[0]));
+            Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }));
+            Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
+        });
     }
 
     [Test]

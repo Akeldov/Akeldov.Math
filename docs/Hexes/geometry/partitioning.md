@@ -13,6 +13,9 @@ Partitioning assigns hex centers to weighted Voronoi sites.
 - `VoronoiHexPartitionMap` stores Voronoi cells in a hex map.
 - The map preserves layout and index metadata.
 - Hex centers provide the sampled point set for partitioning.
+- Cell assignments are read-only on the partition result, so they remain consistent with `Cells`.
+- `Cells` is a read-only semantic result, one cell per source site.
+- Use `ToMutableHexMap()` to create a mutable caller-owned copy of the per-hex assignments.
 
 ## Weighted Sites
 
