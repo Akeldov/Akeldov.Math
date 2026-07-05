@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Akeldov.Math.Graphs</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Stanislav Akeldov</Authors>
+    <Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
+    <Description>Graph data structures and algorithms for Akeldov.Math libraries.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>math;graphs;graph-algorithms;data-structures</PackageTags>
+    <RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
