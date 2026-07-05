@@ -40,17 +40,17 @@ namespace Akeldov.Math.Hexes.Topology
             return grid.Rasterize(CreateRasterGrid(grid), chromaticIndicesToColor);
         }
 
-        private static RasterGrid CreateRasterGrid(ChromaticIndexTripletGrid grid)
+        private static SpatialRasterGrid CreateRasterGrid(ChromaticIndexTripletGrid grid)
         {
-            return new RasterGrid(
+            return new SpatialRasterGrid(
                 (PointXY)grid.Origin,
                 grid.Size,
                 grid.Resolution);
         }
 
-        private static RasterGrid CreateRasterGrid(ChromaticIndexPartialTripletGrid grid)
+        private static SpatialRasterGrid CreateRasterGrid(ChromaticIndexPartialTripletGrid grid)
         {
-            return new RasterGrid(
+            return new SpatialRasterGrid(
                 (PointXY)grid.Origin,
                 grid.Size,
                 grid.Resolution);

@@ -28,7 +28,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         /// </summary>
         /// <param name="source">The source value.</param>
         /// <param name="grid">The grid value.</param>
-        public Raster<RGBA16BitColor> Rasterize(HexCenterMap source, RasterGrid grid)
+        public Raster<RGBA16BitColor> Rasterize(HexCenterMap source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         /// </summary>
         /// <param name="source">The source value.</param>
         /// <param name="pixelsPerApothem">The pixelsPerApothem value.</param>
-        public static RasterGrid CreateGrid(HexCenterMap source, float pixelsPerApothem)
+        public static SpatialRasterGrid CreateGrid(HexCenterMap source, float pixelsPerApothem)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -73,7 +73,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             int rasterWidth = CalculateRasterResolution(bounds.Width, pixelsPerWorldUnit);
             int rasterHeight = CalculateRasterResolution(bounds.Height, pixelsPerWorldUnit);
 
-            return new RasterGrid(
+            return new SpatialRasterGrid(
                 new PointXY(bounds.MinX, bounds.MinY),
                 new VectorXY(bounds.Width, bounds.Height),
                 new VectorXYInt(rasterWidth, rasterHeight));
@@ -92,7 +92,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             PointXY center,
             float radius,
             VectorXY[] normalizedVertices,
-            RasterGrid grid,
+            SpatialRasterGrid grid,
             RGBA16BitColor[] values,
             RGBA16BitColor color)
         {
@@ -164,7 +164,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 throw new ArgumentOutOfRangeException(nameof(source), "Hex field apothem must be finite and positive.");
         }
 
-        private static void ValidateGrid(RasterGrid grid)
+        private static void ValidateGrid(SpatialRasterGrid grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");

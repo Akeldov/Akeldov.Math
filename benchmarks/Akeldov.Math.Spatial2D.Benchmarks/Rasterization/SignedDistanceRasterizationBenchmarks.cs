@@ -14,7 +14,7 @@ public class SignedDistanceRasterizationBenchmarks
 {
     private CompositeContour _contour = null!;
     private ContourBasedRegion _region = null!;
-    private RasterGrid _grid;
+    private SpatialRasterGrid _grid;
     private SignedPointDistanceProviderGray8BitRasterizer _contourGray8Rasterizer = null!;
     private SignedPointDistanceProviderGray16BitRasterizer _contourGray16Rasterizer = null!;
     private SignedPointDistanceProviderGray8BitRasterizer _regionGray8Rasterizer = null!;
@@ -32,7 +32,7 @@ public class SignedDistanceRasterizationBenchmarks
             CreateSquareContour(0f, 0f, 100f, 100f),
             CreateSquareContour(35f, 35f, 65f, 65f)
         });
-        _grid = new RasterGrid(
+        _grid = new SpatialRasterGrid(
             origin: new PointXY(-10f, -10f),
             size: new VectorXY(120f, 120f),
             resolution: new VectorXYInt(Resolution, Resolution));

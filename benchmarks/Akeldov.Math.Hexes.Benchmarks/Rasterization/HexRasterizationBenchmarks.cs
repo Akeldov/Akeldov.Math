@@ -16,7 +16,7 @@ public class HexRasterizationBenchmarks
     private IndexSeptupletMap _adjacencyMap = null!;
     private HexFieldTopologyRGBA16BitRasterizer _topologyRasterizer = null!;
     private IndexSeptupletGrid _adjacencyGrid = null!;
-    private RasterGrid _topologyGrid;
+    private SpatialRasterGrid _topologyGrid;
 
     [Params(32, 128)]
     public int Size { get; set; }

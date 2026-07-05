@@ -23,7 +23,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
             origin: new VectorXY(0f, 0f),
             apothem: 8f,
             chromaticIndexToColor: ToSnapshotColor);
-        RasterGrid grid = rasterizer.CreateGrid(chromatization, pixelsPerApothem: 8f);
+        SpatialRasterGrid grid = rasterizer.CreateGrid(chromatization, pixelsPerApothem: 8f);
         Raster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

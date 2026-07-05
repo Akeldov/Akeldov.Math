@@ -10,12 +10,12 @@ public class GeometrySceneSnapshotTests
     private const string SmileyApprovedFileName = "geometry-scene-smiley-circle-arc-rgba16.png";
     private const string PrismApprovedFileName = "geometry-scene-triangular-prism-rgba16.png";
 
-    private static readonly RasterGrid SnapshotGrid = new RasterGrid(
+    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(180, 126));
 
-    private static readonly RasterGrid PrismSnapshotGrid = new RasterGrid(
+    private static readonly SpatialRasterGrid PrismSnapshotGrid = new SpatialRasterGrid(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(2160, 1512));

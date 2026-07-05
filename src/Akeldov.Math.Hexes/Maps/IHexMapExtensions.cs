@@ -20,7 +20,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
         public static Raster<TColor> Rasterize<TValue, TColor>(
             this IHexMap<TValue> map,
-            RasterGrid rasterGrid,
+            SpatialRasterGrid rasterGrid,
             Func<TValue, TColor> colorSelector)
         {
             if (map == null)

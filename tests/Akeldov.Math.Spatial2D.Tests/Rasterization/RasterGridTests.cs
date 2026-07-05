@@ -7,7 +7,7 @@ public class RasterGridTests
     [Test]
     public void Constructor_WhenValuesAreValid_StoresValuesAndCalculatesCellSize()
     {
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(1f, 2f),
             size: new VectorXY(10f, 6f),
             resolution: new VectorXYInt(5, 3));
@@ -23,7 +23,7 @@ public class RasterGridTests
     public void Constructor_WhenOriginCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new RasterGrid(new PointXY(x, y), VectorXY.One, VectorXYInt.One));
+            new SpatialRasterGrid(new PointXY(x, y), VectorXY.One, VectorXYInt.One));
 
         Assert.That(exception!.ParamName, Is.EqualTo("origin"));
     }
@@ -39,7 +39,7 @@ public class RasterGridTests
     public void Constructor_WhenSizeIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new RasterGrid(new PointXY(0f, 0f), new VectorXY(x, y), VectorXYInt.One));
+            new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(x, y), VectorXYInt.One));
 
         Assert.That(exception!.ParamName, Is.EqualTo("size"));
     }
@@ -51,7 +51,7 @@ public class RasterGridTests
     public void Constructor_WhenResolutionIsInvalid_Throws(int x, int y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new RasterGrid(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(x, y)));
+            new SpatialRasterGrid(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(x, y)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("resolution"));
     }
@@ -59,7 +59,7 @@ public class RasterGridTests
     [Test]
     public void GetCellCenter_WhenIndexIsInsideGrid_ReturnsWorldCoordinateCenter()
     {
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(1f, 2f),
             size: new VectorXY(10f, 6f),
             resolution: new VectorXYInt(5, 3));
@@ -77,7 +77,7 @@ public class RasterGridTests
     [TestCase(0, 3)]
     public void GetCellCenter_WhenIndexIsOutsideGrid_Throws(int x, int y)
     {
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(1f, 2f),
             size: new VectorXY(10f, 6f),
             resolution: new VectorXYInt(5, 3));
@@ -91,8 +91,8 @@ public class RasterGridTests
     [Test]
     public void Equals_WhenOriginSizeAndResolutionAreEqual_ReturnsTrue()
     {
-        var left = new RasterGrid(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
-        var right = new RasterGrid(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
+        var left = new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
+        var right = new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
 
         Assert.That(left, Is.EqualTo(right));
         Assert.That(left == right, Is.True);

@@ -10,7 +10,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveIsLine_MapsDistanceToGray8()
     {
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         Raster<byte> raster = curve.Rasterize(grid, new PointDistanceProviderGray8BitRasterizer(ToGray8));
 
@@ -27,7 +27,7 @@ public class CurveRasterizationTests
             new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
             new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
         };
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         Raster<byte> raster = curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8));
 
@@ -40,7 +40,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveIsProvided_MapsDistanceAndCurveCoordinateToGray8()
     {
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         Raster<byte> raster = curve.Rasterize(
             grid,
@@ -60,7 +60,7 @@ public class CurveRasterizationTests
             new ParameterizedSegment(new PointXY(-1f, -1f), new PointXY(1f, -1f)),
             new ParameterizedSegment(new PointXY(-1f, 1f), new PointXY(1f, 1f))
         };
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         Raster<byte> raster = curves.Rasterize(
             grid,
@@ -93,7 +93,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveCollectionIsEmpty_Throws()
     {
         IReadOnlyList<ICurve> curves = Array.Empty<ICurve>();
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() =>
             curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
@@ -105,7 +105,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveCollectionContainsNull_Throws()
     {
         IReadOnlyList<ICurve> curves = new ICurve[] { null! };
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() =>
             curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
@@ -117,7 +117,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveCollectionIsEmpty_Throws()
     {
         IReadOnlyList<IParameterizedCurve> curves = Array.Empty<IParameterizedCurve>();
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() =>
             curves.Rasterize(grid, new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8)));
@@ -129,7 +129,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveCollectionContainsNull_Throws()
     {
         IReadOnlyList<IParameterizedCurve> curves = new IParameterizedCurve[] { null! };
-        RasterGrid grid = CreateThreeByThreeGrid();
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() =>
             curves.Rasterize(grid, new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8)));
@@ -137,9 +137,9 @@ public class CurveRasterizationTests
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
 
-    private static RasterGrid CreateThreeByThreeGrid()
+    private static SpatialRasterGrid CreateThreeByThreeGrid()
     {
-        return new RasterGrid(
+        return new SpatialRasterGrid(
             origin: new PointXY(-1.5f, -1.5f),
             size: new VectorXY(3f, 3f),
             resolution: new VectorXYInt(3, 3));

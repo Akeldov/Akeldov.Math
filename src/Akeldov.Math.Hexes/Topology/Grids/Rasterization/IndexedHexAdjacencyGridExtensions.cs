@@ -44,17 +44,17 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
                 colorSelector);
         }
 
-        private static RasterGrid CreateRasterGrid(IndexSeptupletGrid indexedHexAdjacencyGrid)
+        private static SpatialRasterGrid CreateRasterGrid(IndexSeptupletGrid indexedHexAdjacencyGrid)
         {
-            return new RasterGrid(
+            return new SpatialRasterGrid(
                 new PointXY(0f, 0f),
                 new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
                 indexedHexAdjacencyGrid.Resolution);
         }
 
-        private static RasterGrid CreateRasterGrid(IndexPartialSeptupletGrid indexedHexAdjacencyGrid)
+        private static SpatialRasterGrid CreateRasterGrid(IndexPartialSeptupletGrid indexedHexAdjacencyGrid)
         {
-            return new RasterGrid(
+            return new SpatialRasterGrid(
                 new PointXY(0f, 0f),
                 new VectorXY(indexedHexAdjacencyGrid.Width, indexedHexAdjacencyGrid.Height),
                 indexedHexAdjacencyGrid.Resolution);

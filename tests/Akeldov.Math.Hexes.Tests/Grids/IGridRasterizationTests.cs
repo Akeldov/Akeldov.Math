@@ -11,7 +11,7 @@ public class IGridRasterizationTests
     public void Rasterize_MapsToRGBA16BitColorRaster()
     {
         IGrid<int> grid = new TestGrid<int>(2, 1, new[] { 10, 20 });
-        var rasterGrid = new RasterGrid(
+        var rasterGrid = new SpatialRasterGrid(
             new PointXY(10f, 20f),
             new VectorXY(30f, 40f),
             new VectorXYInt(2, 1));
@@ -33,7 +33,7 @@ public class IGridRasterizationTests
     public void Rasterize_MapsToArbitraryRasterValueType()
     {
         IGrid<int> grid = new TestGrid<int>(2, 1, new[] { 10, 20 });
-        var rasterGrid = new RasterGrid(
+        var rasterGrid = new SpatialRasterGrid(
             new PointXY(0f, 0f),
             new VectorXY(2f, 1f),
             new VectorXYInt(2, 1));
@@ -50,11 +50,11 @@ public class IGridRasterizationTests
     {
         IGrid<int> grid = new TestGrid<int>(2, 1, new[] { 10, 20 });
         IGrid<int> nullGrid = null!;
-        var rasterGrid = new RasterGrid(
+        var rasterGrid = new SpatialRasterGrid(
             new PointXY(0f, 0f),
             new VectorXY(2f, 1f),
             new VectorXYInt(2, 1));
-        var mismatchedRasterGrid = new RasterGrid(
+        var mismatchedRasterGrid = new SpatialRasterGrid(
             new PointXY(0f, 0f),
             new VectorXY(3f, 1f),
             new VectorXYInt(3, 1));

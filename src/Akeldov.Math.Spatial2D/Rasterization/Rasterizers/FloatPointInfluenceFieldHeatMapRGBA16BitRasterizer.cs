@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         IRasterizer<FloatPointInfluenceField, Raster<RGBA16BitColor>>
     {
         /// <inheritdoc/>
-        public Raster<RGBA16BitColor> Rasterize(FloatPointInfluenceField source, RasterGrid grid)
+        public Raster<RGBA16BitColor> Rasterize(FloatPointInfluenceField source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -48,7 +48,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             }
         }
 
-        private static void ValidateGrid(RasterGrid grid)
+        private static void ValidateGrid(SpatialRasterGrid grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");

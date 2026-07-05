@@ -18,7 +18,7 @@ public class HexFieldTopologyRasterizationTests
             2f,
             _ => new RGBA16BitColor(1, 2, 3, 4));
 
-        RasterGrid grid = rasterizer.CreateGrid(topology, 3f);
+        SpatialRasterGrid grid = rasterizer.CreateGrid(topology, 3f);
         Raster<RGBA16BitColor> raster = rasterizer.Rasterize(topology, grid);
 
         Assert.That(raster.Width, Is.EqualTo(6));
@@ -40,7 +40,7 @@ public class HexFieldTopologyRasterizationTests
                 mappedIndices.Add(index);
                 return index.X == 0 ? red : blue;
             });
-        RasterGrid grid = rasterizer.CreateGrid(topology, 4f);
+        SpatialRasterGrid grid = rasterizer.CreateGrid(topology, 4f);
 
         Raster<RGBA16BitColor> raster = rasterizer.Rasterize(topology, grid);
 
@@ -57,7 +57,7 @@ public class HexFieldTopologyRasterizationTests
     public void Rasterize_UsesProvidedGrid()
     {
         var topology = new IndexSeptupletMap(1, 1, Layout.OddR);
-        var grid = new RasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
+        var grid = new SpatialRasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
         var rasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
             2f,

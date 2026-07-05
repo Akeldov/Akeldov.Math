@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>The raster artifact produced from the source object.</returns>
         public static TRaster Rasterize<TSource, TRaster>(
             this TSource source,
-            RasterGrid grid,
+            SpatialRasterGrid grid,
             IRasterizer<TSource, TRaster> rasterizer)
         {
             if (source is null)
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA raster showing the culling selection map.</returns>
         public static Raster<RGBA16BitColor> RasterizeCullingMap<TPointSource>(
             this IReadOnlyList<TPointSource> source,
-            RasterGrid grid,
+            SpatialRasterGrid grid,
             IInfluenceSourceCuller<TPointSource> culler,
             Func<PointXY, RGBA16BitColor> sourcePositionToColor)
             where TPointSource : IPointInfluenceSource
@@ -61,7 +61,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA heat map raster produced from the influence field values.</returns>
         public static Raster<RGBA16BitColor> RasterizeHeatMap(
             this FloatPointInfluenceField source,
-            RasterGrid grid)
+            SpatialRasterGrid grid)
         {
             return source.Rasterize(grid, new FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer());
         }
@@ -78,7 +78,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA raster produced from the nearest Poisson disk point sample at each cell center.</returns>
         public static Raster<RGBA16BitColor> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> source,
-            RasterGrid grid,
+            SpatialRasterGrid grid,
             Func<PoissonDiskPointSample, float, RGBA16BitColor> sampleDistanceToColor)
         {
             return source.Rasterize(
@@ -98,7 +98,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit grayscale raster produced from the nearest Poisson disk point sample at each cell center.</returns>
         public static Raster<ushort> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> source,
-            RasterGrid grid,
+            SpatialRasterGrid grid,
             Func<PoissonDiskPointSample, float, ushort> sampleDistanceToGrayLevel)
         {
             return source.Rasterize(

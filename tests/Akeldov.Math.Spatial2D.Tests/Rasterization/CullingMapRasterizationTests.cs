@@ -10,7 +10,7 @@ public class CullingMapRasterizationTests
     public void RasterizeCullingMap_WhenCullerSelectsOneTwoAndThreeSources_BlendsSourceColorsInLinearRgb()
     {
         TestPointSource[] sources = CreateSources();
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
@@ -29,7 +29,7 @@ public class CullingMapRasterizationTests
     public void RasterizeCullingMap_WhenColorSelectorUsesPosition_ColorsSelectedSourcePosition()
     {
         TestPointSource[] sources = CreateSources();
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(2f, 0f),
             size: new VectorXY(1f, 1f),
             resolution: new VectorXYInt(1, 1));
@@ -107,9 +107,9 @@ public class CullingMapRasterizationTests
         Assert.That(exception!.Message, Does.Contain("not present"));
     }
 
-    private static RasterGrid CreateGrid()
+    private static SpatialRasterGrid CreateGrid()
     {
-        return new RasterGrid(new PointXY(0f, 0f), new VectorXY(1f, 1f), new VectorXYInt(1, 1));
+        return new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(1f, 1f), new VectorXYInt(1, 1));
     }
 
     private static TestPointSource[] CreateSources()

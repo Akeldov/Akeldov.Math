@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Raster<byte> Rasterize(ISignedPointDistanceProvider source, RasterGrid grid)
+        public Raster<byte> Rasterize(ISignedPointDistanceProvider source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -46,7 +46,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new Raster<byte>(grid, values);
         }
 
-        private static void ValidateGrid(RasterGrid grid)
+        private static void ValidateGrid(SpatialRasterGrid grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");

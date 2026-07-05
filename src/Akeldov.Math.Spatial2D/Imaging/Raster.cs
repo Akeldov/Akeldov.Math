@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D.Rasterization;
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
-    /// Stores a rectangular raster of color values sampled on a <see cref="RasterGrid"/>.
+    /// Stores a rectangular raster of color values sampled on a <see cref="SpatialRasterGrid"/>.
     /// </summary>
     /// <typeparam name="TColor">The color value type stored in each raster cell.</typeparam>
     public class Raster<TColor> : IGrid<TColor>
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="values">
         /// The cell values in row-major order. The array is retained as raster state and must contain one value per grid cell.
         /// </param>
-        public Raster(RasterGrid grid, TColor[] values)
+        public Raster(SpatialRasterGrid grid, TColor[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <summary>
         /// Gets the raster sampling grid.
         /// </summary>
-        public RasterGrid Grid { get; }
+        public SpatialRasterGrid Grid { get; }
 
         /// <summary>
         /// Gets the retained row-major raster value array.

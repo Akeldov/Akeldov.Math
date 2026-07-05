@@ -151,8 +151,8 @@ public class GrayRasterTests
         Assert.That(bytes[25], Is.EqualTo(0));
     }
 
-    private static RasterGrid CreateGrid()
+    private static SpatialRasterGrid CreateGrid()
     {
-        return new RasterGrid(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(2, 2));
+        return new SpatialRasterGrid(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(2, 2));
     }
 }

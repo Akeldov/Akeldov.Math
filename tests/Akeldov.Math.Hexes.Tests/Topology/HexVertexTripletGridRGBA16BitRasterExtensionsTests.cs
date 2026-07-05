@@ -22,7 +22,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
 
         Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(_ => new RGBA16BitColor(1, 2, 3, 4));
 
-        Assert.That(raster.Grid, Is.EqualTo(new RasterGrid(
+        Assert.That(raster.Grid, Is.EqualTo(new SpatialRasterGrid(
             new PointXY(-1f, -2f),
             new VectorXY(4f, 5f),
             new VectorXYInt(3, 2))));

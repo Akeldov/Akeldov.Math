@@ -14,7 +14,7 @@ public class PoissonDiskPointSampleRasterizationTests
             new PoissonDiskPointSample(new PointXY(0.5f, 0.5f), 1f),
             new PoissonDiskPointSample(new PointXY(2.5f, 0.5f), 2f)
         };
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
@@ -34,7 +34,7 @@ public class PoissonDiskPointSampleRasterizationTests
             new PoissonDiskPointSample(new PointXY(0.5f, 0.5f), 1f),
             new PoissonDiskPointSample(new PointXY(2.5f, 0.5f), 2f)
         };
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
@@ -53,7 +53,7 @@ public class PoissonDiskPointSampleRasterizationTests
         {
             new PoissonDiskPointSample(new PointXY(0.5f, 0.5f), 1f)
         };
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
@@ -164,9 +164,9 @@ public class PoissonDiskPointSampleRasterizationTests
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
 
-    private static RasterGrid CreateGrid()
+    private static SpatialRasterGrid CreateGrid()
     {
-        return new RasterGrid(new PointXY(0f, 0f), new VectorXY(1f, 1f), new VectorXYInt(1, 1));
+        return new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(1f, 1f), new VectorXYInt(1, 1));
     }
 
     private static RGBA16BitColor ToColor(PoissonDiskPointSample sample, float distance)

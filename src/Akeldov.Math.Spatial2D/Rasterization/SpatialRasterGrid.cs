@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Describes an axis-aligned rectangular raster sampling grid in two-dimensional space.
     /// </summary>
-    public readonly struct RasterGrid : IEquatable<RasterGrid>
+    public readonly struct SpatialRasterGrid : IEquatable<SpatialRasterGrid>
     {
         private readonly PointXY _origin;
         private readonly VectorXY _size;
@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="origin">The lower-left grid origin in world coordinates.</param>
         /// <param name="size">The grid size in world coordinates. Both components must be finite and positive.</param>
         /// <param name="resolution">The grid resolution in cells. Both components must be positive.</param>
-        public RasterGrid(PointXY origin, VectorXY size, VectorXYInt resolution)
+        public SpatialRasterGrid(PointXY origin, VectorXY size, VectorXYInt resolution)
         {
             PointXYValidation.ThrowIfNotFinite(
                 origin,
@@ -89,13 +89,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         /// <param name="other">The raster grid to compare with this raster grid.</param>
         /// <returns><see langword="true"/> if both raster grids are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(RasterGrid other) =>
+        public bool Equals(SpatialRasterGrid other) =>
             Origin.Equals(other.Origin) &&
             Size.Equals(other.Size) &&
             Resolution.Equals(other.Resolution);
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is RasterGrid other && Equals(other);
+        public override bool Equals(object? obj) => obj is SpatialRasterGrid other && Equals(other);
 
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(Origin, Size, Resolution);
@@ -115,7 +115,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="left">The first raster grid.</param>
         /// <param name="right">The second raster grid.</param>
         /// <returns><see langword="true"/> if the raster grids are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(RasterGrid left, RasterGrid right) => left.Equals(right);
+        public static bool operator ==(SpatialRasterGrid left, SpatialRasterGrid right) => left.Equals(right);
 
         /// <summary>
         /// Indicates whether two raster grids are different.
@@ -123,6 +123,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="left">The first raster grid.</param>
         /// <param name="right">The second raster grid.</param>
         /// <returns><see langword="true"/> if the raster grids are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(RasterGrid left, RasterGrid right) => !(left == right);
+        public static bool operator !=(SpatialRasterGrid left, SpatialRasterGrid right) => !(left == right);
     }
 }

@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 
 public class FloatPointInfluenceFieldHeatMapSnapshotTests
 {
-    private static readonly RasterGrid SnapshotGrid = new RasterGrid(
+    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(160, 112));

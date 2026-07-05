@@ -13,7 +13,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
             new FloatPointInfluenceSource(1f, new PointXY(0.5f, 0.5f), 0f),
             new FloatPointInfluenceSource(1f, new PointXY(1.5f, 0.5f), 50f),
             new FloatPointInfluenceSource(1f, new PointXY(2.5f, 0.5f), 100f));
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
@@ -31,7 +31,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
         FloatPointInfluenceField field = CreateNearestField(
             new FloatPointInfluenceSource(1f, new PointXY(0.5f, 0.5f), 7f),
             new FloatPointInfluenceSource(1f, new PointXY(1.5f, 0.5f), 7f));
-        var grid = new RasterGrid(
+        var grid = new SpatialRasterGrid(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(1f, 1f),
             resolution: new VectorXYInt(1, 1));
@@ -81,8 +81,8 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
             sources);
     }
 
-    private static RasterGrid CreateGrid()
+    private static SpatialRasterGrid CreateGrid()
     {
-        return new RasterGrid(new PointXY(0f, 0f), new VectorXY(1f, 1f), new VectorXYInt(1, 1));
+        return new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(1f, 1f), new VectorXYInt(1, 1));
     }
 }
