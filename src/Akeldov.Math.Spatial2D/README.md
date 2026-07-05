@@ -25,7 +25,7 @@ The library is organized around practical 2D geometry workflows.
 
 - Axis-aligned raster grids for sampling geometry into cells.
 - Signed-distance rasterizers for contours and regions.
-- Mutable grayscale and RGBA rasters.
+- Mutable spatial and non-spatial grayscale and RGBA rasters.
 - Color helpers for normalized values, blending, and temperature heat maps.
 - 8-bit BMP and 16-bit PNG export helpers.
 

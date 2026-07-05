@@ -1,5 +1,4 @@
 using System.IO;
-using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
@@ -13,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void SaveAsPng(this SpatialRaster<byte> raster, string path)
+        public static void SaveAsPng(this IGrid<byte> raster, string path)
         {
             PngEncoder.Save(raster, path);
         }
@@ -23,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void SaveAsPng(this SpatialRaster<byte> raster, Stream stream)
+        public static void SaveAsPng(this IGrid<byte> raster, Stream stream)
         {
             PngEncoder.Save(raster, stream);
         }
@@ -33,7 +32,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void SaveAsPng(this SpatialRaster<ushort> raster, string path)
+        public static void SaveAsPng(this IGrid<ushort> raster, string path)
         {
             PngEncoder.Save(raster, path);
         }
@@ -43,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void SaveAsPng(this SpatialRaster<ushort> raster, Stream stream)
+        public static void SaveAsPng(this IGrid<ushort> raster, Stream stream)
         {
             PngEncoder.Save(raster, stream);
         }
@@ -53,7 +52,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void SaveAsPng(this SpatialRaster<RGBA8BitColor> raster, string path)
+        public static void SaveAsPng(this IGrid<RGBA8BitColor> raster, string path)
         {
             PngEncoder.Save(raster, path);
         }
@@ -63,7 +62,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void SaveAsPng(this SpatialRaster<RGBA8BitColor> raster, Stream stream)
+        public static void SaveAsPng(this IGrid<RGBA8BitColor> raster, Stream stream)
         {
             PngEncoder.Save(raster, stream);
         }
@@ -73,7 +72,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void SaveAsPng(this SpatialRaster<RGBA16BitColor> raster, string path)
+        public static void SaveAsPng(this IGrid<RGBA16BitColor> raster, string path)
         {
             PngEncoder.Save(raster, path);
         }
@@ -83,7 +82,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void SaveAsPng(this SpatialRaster<RGBA16BitColor> raster, Stream stream)
+        public static void SaveAsPng(this IGrid<RGBA16BitColor> raster, Stream stream)
         {
             PngEncoder.Save(raster, stream);
         }

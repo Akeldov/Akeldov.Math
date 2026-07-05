@@ -5,7 +5,12 @@ Rasterization samples geometry on a rectangular grid.
 Spatial raster grids, rasters, rasterizers, and scene composition live in
 the `Akeldov.Math.Spatial2D.Rasterization` namespace.
 Image export helpers and color types live in `Akeldov.Math.Spatial2D.Imaging`.
-Reusable rasterization strategies implement `ISpatialRasterizer<TSource, TValue>`.
+Reusable spatial rasterization strategies implement `ISpatialRasterizer<TSource, TValue>`.
+Reusable non-spatial rasterization strategies implement `IRasterizer<TSource, TValue>`.
+
+`SpatialRaster<TValue>` stores values sampled on a `SpatialRasterGrid`.
+`Raster<TValue>` stores the same rectangular value layout without world-space origin or size.
+Both implement `IGrid<TValue>`, so image export works for either spatial or non-spatial rasters.
 
 ## Topics
 
@@ -23,6 +28,10 @@ Reusable rasterization strategies implement `ISpatialRasterizer<TSource, TValue>
 Image export helpers live in `Akeldov.Math.Spatial2D.Imaging`.
 
 Use BMP export for simple 8-bit previews and PNG export for 16-bit grayscale or RGBA output.
+PNG export accepts `IGrid<byte>`, `IGrid<ushort>`, `IGrid<RGBA8BitColor>`, and
+`IGrid<RGBA16BitColor>`.
+BMP export accepts `IGrid<byte>` and `IGrid<RGBA8BitColor>`.
+Image files need raster dimensions and values, not world-space bounds.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
@@ -39,8 +48,9 @@ var mask = new SpatialRaster<byte>(
     new byte[grid.Resolution.X * grid.Resolution.Y]);
 mask.SaveAsBmp("mask.bmp");
 
-var distance = new SpatialRaster<ushort>(
+Raster<ushort> distance = new SpatialRaster<ushort>(
     grid,
-    new ushort[grid.Resolution.X * grid.Resolution.Y]);
+    new ushort[grid.Resolution.X * grid.Resolution.Y])
+    .ToRaster();
 distance.SaveAsPng("distance.png");
 ```

@@ -22,7 +22,7 @@ The library is organized around a few practical geometry workflows.
 
 - Axis-aligned raster grids for sampling geometry into cells.
 - Signed-distance rasterizers for contours and regions.
-- Mutable grayscale and RGBA rasters with 8-bit BMP and 16-bit PNG export helpers.
+- Mutable spatial and non-spatial grayscale and RGBA rasters with image export helpers.
 
 ### Spatial Sampling
 
