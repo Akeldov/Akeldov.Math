@@ -53,6 +53,22 @@ public class CurveRasterizationTests
     }
 
     [Test]
+    public void Rasterize_WhenParameterizedCurveIsProvided_MapsDistanceAndCurveCoordinateToGray16()
+    {
+        IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+
+        SpatialRaster<ushort> raster = curve.Rasterize(
+            grid,
+            new ParameterizedCurveDistanceGray16BitRasterizer(ToParameterizedGray16));
+
+        Assert.That(raster[0, 1], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(2000));
+        Assert.That(raster[2, 1], Is.EqualTo(4000));
+        Assert.That(raster[1, 2], Is.EqualTo(3000));
+    }
+
+    [Test]
     public void Rasterize_WhenParameterizedCurveCollectionIsProvided_MapsNearestProjectionToGray8()
     {
         IReadOnlyList<IParameterizedCurve> curves = new IParameterizedCurve[]
@@ -72,6 +88,39 @@ public class CurveRasterizationTests
     }
 
     [Test]
+    public void Rasterize_WhenParameterizedCurveCollectionIsProvided_MapsNearestProjectionToGray16()
+    {
+        IReadOnlyList<IParameterizedCurve> curves = new IParameterizedCurve[]
+        {
+            new ParameterizedSegment(new PointXY(-1f, -1f), new PointXY(1f, -1f)),
+            new ParameterizedSegment(new PointXY(-1f, 1f), new PointXY(1f, 1f))
+        };
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+
+        SpatialRaster<ushort> raster = curves.Rasterize(
+            grid,
+            new ParameterizedCurveCollectionDistanceGray16BitRasterizer(ToParameterizedGray16));
+
+        Assert.That(raster[0, 0], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(3000));
+        Assert.That(raster[2, 2], Is.EqualTo(4000));
+    }
+
+    [Test]
+    public void Constructor_WhenParameterizedCurveCollectionGray16MapperIsNull_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new ParameterizedCurveCollectionDistanceGray16BitRasterizer(null!));
+    }
+
+    [Test]
+    public void Constructor_WhenParameterizedCurveGray16MapperIsNull_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new ParameterizedCurveDistanceGray16BitRasterizer(null!));
+    }
+
+    [Test]
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
@@ -86,7 +135,11 @@ public class CurveRasterizationTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             parameterizedCurve.Rasterize(default, new ParameterizedCurveDistanceGray8BitRasterizer(ToParameterizedGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
+            parameterizedCurve.Rasterize(default, new ParameterizedCurveDistanceGray16BitRasterizer(ToParameterizedGray16)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
             parameterizedCurves.Rasterize(default, new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            parameterizedCurves.Rasterize(default, new ParameterizedCurveCollectionDistanceGray16BitRasterizer(ToParameterizedGray16)));
     }
 
     [Test]
@@ -123,6 +176,11 @@ public class CurveRasterizationTests
             curves.Rasterize(grid, new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
+
+        exception = Assert.Throws<ArgumentException>(() =>
+            curves.Rasterize(grid, new ParameterizedCurveCollectionDistanceGray16BitRasterizer(ToParameterizedGray16)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
 
     [Test]
@@ -133,6 +191,11 @@ public class CurveRasterizationTests
 
         var exception = Assert.Throws<ArgumentException>(() =>
             curves.Rasterize(grid, new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
+
+        exception = Assert.Throws<ArgumentException>(() =>
+            curves.Rasterize(grid, new ParameterizedCurveCollectionDistanceGray16BitRasterizer(ToParameterizedGray16)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
@@ -153,5 +216,10 @@ public class CurveRasterizationTests
     private static byte ToParameterizedGray8(float distance, float curveCoordinate)
     {
         return (byte)MathF.Round(distance * 10f + curveCoordinate * 20f);
+    }
+
+    private static ushort ToParameterizedGray16(float distance, float curveCoordinate)
+    {
+        return (ushort)MathF.Round(distance * 1000f + curveCoordinate * 2000f);
     }
 }
