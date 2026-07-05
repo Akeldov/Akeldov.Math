@@ -1,6 +1,4 @@
 using Akeldov.Math.Hexes.Topology;
-using Akeldov.Math.Hexes.Topology.Grids.Rasterization;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -28,7 +26,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
             indexPartialSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        SpatialRaster<RGBA16BitColor> raster = indexPartialSeptupletGrid.Rasterize(ToMainIndexColor);
+        var raster = indexPartialSeptupletGrid.Rasterize((PartialSeptuplet<VectorXYInt> x) => ToMainIndexColor(x));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -50,7 +48,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
             indexPartialSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        SpatialRaster<RGBA16BitColor> raster = indexPartialSeptupletGrid.Rasterize(ToAdjacent1IndexColor);
+        var raster = indexPartialSeptupletGrid.Rasterize((PartialSeptuplet<VectorXYInt> x) => ToAdjacent1IndexColor(x));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -90,7 +88,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         return (ushort)MathF.Round(value * ushort.MaxValue);
     }
 
-    private static byte[] SaveToPngBytes(SpatialRaster<RGBA16BitColor> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

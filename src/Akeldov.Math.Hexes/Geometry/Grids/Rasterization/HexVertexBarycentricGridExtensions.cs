@@ -15,9 +15,9 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="grid">The Grid value.</param>
         /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
-        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<TValue> Rasterize<TValue>(
             this BarycentricTripletGrid grid,
-            Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
+            Func<Triplet<float>, TValue> barycentricCoordinatesToColor)
         {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
@@ -30,9 +30,9 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="grid">The Grid value.</param>
         /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
-        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<TValue> Rasterize<TValue>(
             this BarycentricPartialTripletGrid grid,
-            Func<PartialTriplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
+            Func<PartialTriplet<float>, TValue> barycentricCoordinatesToColor)
         {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
@@ -46,10 +46,10 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="grid">The Grid value.</param>
         /// <param name="chromaticIndexPartialTripletGrid">The ChromaticIndexPartialTripletGrid value.</param>
         /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
-        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<TValue> Rasterize<TValue>(
             this BarycentricPartialTripletGrid grid,
             ChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
-            Func<PartialTriplet<float>, PartialTriplet<byte>, RGBA16BitColor> barycentricCoordinatesToColor)
+            Func<PartialTriplet<float>, PartialTriplet<byte>, TValue> barycentricCoordinatesToColor)
         {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
@@ -57,7 +57,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (barycentricCoordinatesToColor == null)
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
-            var values = new RGBA16BitColor[grid.Count];
+            var values = new TValue[grid.Count];
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = barycentricCoordinatesToColor(grid[i], chromaticIndexPartialTripletGrid[i]);
@@ -67,7 +67,7 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new SpatialRaster<RGBA16BitColor>(rasterGrid, values);
+            return new SpatialRaster<TValue>(rasterGrid, values);
         }
 
         private static SpatialRasterGrid CreateRasterGrid(BarycentricTripletGrid grid)

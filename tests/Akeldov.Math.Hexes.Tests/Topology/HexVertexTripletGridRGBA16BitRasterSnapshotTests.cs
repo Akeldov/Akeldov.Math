@@ -60,7 +60,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             layout: layout,
             hexOrigin: VectorXY.Zero,
             resolution: new VectorXYInt(64, 64));
-        SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToBarycentricMainSnapshotColor);
+        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToBarycentricMainSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -78,7 +78,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new BarycentricPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToBarycentricPartialTripletSnapshotColor);
+        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToBarycentricPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -98,7 +98,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             layout: layout,
             hexOrigin: VectorXY.Zero,
             resolution: new VectorXYInt(64, 64));
-        SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToChromaticIndexTripletSnapshotColor);
+        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToChromaticIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -116,7 +116,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new ChromaticIndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToChromaticIndexPartialTripletSnapshotColor);
+        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToChromaticIndexPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -137,7 +137,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var chromaticGrid = new ChromaticIndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
-        SpatialRaster<RGBA16BitColor> raster = barycentricGrid.ToRGBA16BitRaster(
+        SpatialRaster<RGBA16BitColor> raster = barycentricGrid.Rasterize(
             chromaticGrid,
             ToChromaticBarycentricPartialBlendSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);

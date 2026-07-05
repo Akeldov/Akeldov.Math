@@ -15,9 +15,9 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="grid">The Grid value.</param>
         /// <param name="chromaticIndicesToColor">The ChromaticIndicesToColor value.</param>
-        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<TValue> Rasterize<TValue>(
             this ChromaticIndexTripletGrid grid,
-            Func<Triplet<byte>, RGBA16BitColor> chromaticIndicesToColor)
+            Func<Triplet<byte>, TValue> chromaticIndicesToColor)
         {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
@@ -30,9 +30,9 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="grid">The Grid value.</param>
         /// <param name="chromaticIndicesToColor">The ChromaticIndicesToColor value.</param>
-        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<TValue> Rasterize<TValue>(
             this ChromaticIndexPartialTripletGrid grid,
-            Func<PartialTriplet<byte>, RGBA16BitColor> chromaticIndicesToColor)
+            Func<PartialTriplet<byte>, TValue> chromaticIndicesToColor)
         {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));

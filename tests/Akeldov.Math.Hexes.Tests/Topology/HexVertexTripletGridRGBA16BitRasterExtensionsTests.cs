@@ -32,7 +32,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(
+        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(
             triplet => triplet.Main == 0 ? red : blue);
 
         Assert.That(raster.Values, Is.EqualTo(new[] { red }));
@@ -46,7 +46,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         ChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
 
         Assert.Throws<ArgumentNullException>(() => indexTripletGrid.Rasterize((Triplet<VectorXYInt> _) => (RGBA16BitColor)default));
-        Assert.Throws<ArgumentNullException>(() => barycentricGrid.ToRGBA16BitRaster(_ => default));
-        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.ToRGBA16BitRaster(_ => default));
+        Assert.Throws<ArgumentNullException>(() => barycentricGrid.Rasterize((Triplet<float> _) => (RGBA16BitColor)default));
+        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.Rasterize((Triplet<byte> _) => (RGBA16BitColor)default));
     }
 }

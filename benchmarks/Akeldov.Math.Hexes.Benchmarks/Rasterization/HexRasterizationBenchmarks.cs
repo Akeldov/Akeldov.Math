@@ -1,7 +1,5 @@
 using Akeldov.Math.Hexes.Rasterization;
 using Akeldov.Math.Hexes.Topology;
-using Akeldov.Math.Hexes.Topology.Grids.Rasterization;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -53,9 +51,9 @@ public class HexRasterizationBenchmarks
     }
 
     [Benchmark]
-    public SpatialRaster<RGBA16BitColor> RasterizeAdjacencyGrid()
+    public Raster<RGBA16BitColor> RasterizeAdjacencyGrid()
     {
-        return _adjacencyGrid.Rasterize(adjacency => ToAdjacencyIndexColor(adjacency.Main));
+        return _adjacencyGrid.Rasterize((Septuplet<VectorXYInt> adjacency) => ToAdjacencyIndexColor(adjacency.Main));
     }
 
     private static RGBA16BitColor ToIndexColor(VectorXYInt index)
