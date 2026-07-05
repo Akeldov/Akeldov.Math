@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
-    public static class IParameterizedCurveIReadOnlyListExtensions
+    public static partial class RasterizationExtensions
     {
         public static SpatialRaster<byte> Rasterize(
             this IReadOnlyList<IParameterizedCurve> curves,

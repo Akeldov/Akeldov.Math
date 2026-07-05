@@ -20,6 +20,19 @@ public class CurveRasterizationTests
     }
 
     [Test]
+    public void Rasterize_WhenCurveIsLine_MapsDistanceToGray16()
+    {
+        ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+
+        SpatialRaster<ushort> raster = curve.Rasterize(grid, new PointDistanceProviderGray16BitRasterizer(ToGray16));
+
+        Assert.That(raster[1, 0], Is.EqualTo(1000));
+        Assert.That(raster[1, 1], Is.EqualTo(0));
+        Assert.That(raster[1, 2], Is.EqualTo(1000));
+    }
+
+    [Test]
     public void Rasterize_WhenCurveCollectionIsProvided_MapsDistanceToNearestCurve()
     {
         IReadOnlyList<ICurve> curves = new ICurve[]
@@ -33,6 +46,23 @@ public class CurveRasterizationTests
 
         Assert.That(raster[1, 0], Is.EqualTo(0));
         Assert.That(raster[1, 1], Is.EqualTo(10));
+        Assert.That(raster[1, 2], Is.EqualTo(0));
+    }
+
+    [Test]
+    public void Rasterize_WhenCurveCollectionIsProvided_MapsDistanceToNearestCurveGray16()
+    {
+        IReadOnlyList<ICurve> curves = new ICurve[]
+        {
+            new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
+            new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
+        };
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+
+        SpatialRaster<ushort> raster = curves.Rasterize(grid, new PointDistanceProviderCollectionGray16BitRasterizer(ToGray16));
+
+        Assert.That(raster[1, 0], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(1000));
         Assert.That(raster[1, 2], Is.EqualTo(0));
     }
 
@@ -121,6 +151,20 @@ public class CurveRasterizationTests
     }
 
     [Test]
+    public void Constructor_WhenPointDistanceProviderCollectionGray16MapperIsNull_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new PointDistanceProviderCollectionGray16BitRasterizer(null!));
+    }
+
+    [Test]
+    public void Constructor_WhenPointDistanceProviderGray16MapperIsNull_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new PointDistanceProviderGray16BitRasterizer(null!));
+    }
+
+    [Test]
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
@@ -131,7 +175,11 @@ public class CurveRasterizationTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             curve.Rasterize(default, new PointDistanceProviderGray8BitRasterizer(ToGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
+            curve.Rasterize(default, new PointDistanceProviderGray16BitRasterizer(ToGray16)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
             curves.Rasterize(default, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            curves.Rasterize(default, new PointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             parameterizedCurve.Rasterize(default, new ParameterizedCurveDistanceGray8BitRasterizer(ToParameterizedGray8)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -152,6 +200,11 @@ public class CurveRasterizationTests
             curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
+
+        exception = Assert.Throws<ArgumentException>(() =>
+            curves.Rasterize(grid, new PointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
 
     [Test]
@@ -162,6 +215,11 @@ public class CurveRasterizationTests
 
         var exception = Assert.Throws<ArgumentException>(() =>
             curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
+
+        exception = Assert.Throws<ArgumentException>(() =>
+            curves.Rasterize(grid, new PointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
@@ -211,6 +269,11 @@ public class CurveRasterizationTests
     private static byte ToGray8(float distance)
     {
         return (byte)MathF.Round(distance * 10f);
+    }
+
+    private static ushort ToGray16(float distance)
+    {
+        return (ushort)MathF.Round(distance * 1000f);
     }
 
     private static byte ToParameterizedGray8(float distance, float curveCoordinate)
