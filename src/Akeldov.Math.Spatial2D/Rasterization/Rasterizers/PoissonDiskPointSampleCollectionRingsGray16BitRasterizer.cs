@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes Poisson disk point samples into a 16-bit grayscale raster with sample points and minimal-distance rings.
     /// </summary>
     public sealed class PoissonDiskPointSampleCollectionRingsGray16BitRasterizer :
-        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, SpatialRaster<ushort>>
+        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, ushort>
     {
         private readonly float _pointRadius;
         private readonly float _ringThickness;

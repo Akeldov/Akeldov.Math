@@ -5,7 +5,7 @@ Rasterization samples geometry on a rectangular grid.
 Spatial raster grids, rasters, rasterizers, and scene composition live in
 the `Akeldov.Math.Spatial2D.Rasterization` namespace.
 Image export helpers and color types live in `Akeldov.Math.Spatial2D.Imaging`.
-Reusable rasterization strategies implement `ISpatialRasterizer<TSource, TRaster>`.
+Reusable rasterization strategies implement `ISpatialRasterizer<TSource, TValue>`.
 
 ## Topics
 

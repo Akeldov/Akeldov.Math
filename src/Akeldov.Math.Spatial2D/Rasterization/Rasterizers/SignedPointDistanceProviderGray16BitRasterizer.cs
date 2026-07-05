@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes signed point-distance providers into 16-bit grayscale rasters using signed distance mapping.
     /// </summary>
-    public sealed class SignedPointDistanceProviderGray16BitRasterizer : ISpatialRasterizer<ISignedPointDistanceProvider, SpatialRaster<ushort>>
+    public sealed class SignedPointDistanceProviderGray16BitRasterizer : ISpatialRasterizer<ISignedPointDistanceProvider, ushort>
     {
         private readonly Func<float, ushort> _signedDistanceToGrayLevel;
 
