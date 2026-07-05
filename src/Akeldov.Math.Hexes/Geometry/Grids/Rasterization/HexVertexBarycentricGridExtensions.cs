@@ -15,7 +15,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="grid">The Grid value.</param>
         /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
-        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricTripletGrid grid,
             Func<Triplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
@@ -30,7 +30,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="grid">The Grid value.</param>
         /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
-        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
             Func<PartialTriplet<float>, RGBA16BitColor> barycentricCoordinatesToColor)
         {
@@ -46,7 +46,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="grid">The Grid value.</param>
         /// <param name="chromaticIndexPartialTripletGrid">The ChromaticIndexPartialTripletGrid value.</param>
         /// <param name="barycentricCoordinatesToColor">The BarycentricCoordinatesToColor value.</param>
-        public static Raster<RGBA16BitColor> ToRGBA16BitRaster(
+        public static SpatialRaster<RGBA16BitColor> ToRGBA16BitRaster(
             this BarycentricPartialTripletGrid grid,
             ChromaticIndexPartialTripletGrid chromaticIndexPartialTripletGrid,
             Func<PartialTriplet<float>, PartialTriplet<byte>, RGBA16BitColor> barycentricCoordinatesToColor)
@@ -67,7 +67,7 @@ namespace Akeldov.Math.Hexes.Topology
                 grid.Size,
                 grid.Resolution);
 
-            return new Raster<RGBA16BitColor>(rasterGrid, values);
+            return new SpatialRaster<RGBA16BitColor>(rasterGrid, values);
         }
 
         private static SpatialRasterGrid CreateRasterGrid(BarycentricTripletGrid grid)

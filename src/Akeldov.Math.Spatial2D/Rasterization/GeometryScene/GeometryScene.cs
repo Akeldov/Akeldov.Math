@@ -84,7 +84,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         /// <param name="grid">The grid that defines raster bounds, resolution, and cell centers.</param>
         /// <returns>A raster whose value array is new, mutable, and owned by the caller.</returns>
-        public Raster<TColor> Rasterize(SpatialRasterGrid grid)
+        public SpatialRaster<TColor> Rasterize(SpatialRasterGrid grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
@@ -120,7 +120,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            var raster = new Raster<TColor>(grid, values);
+            var raster = new SpatialRaster<TColor>(grid, values);
             return raster;
         }
     }

@@ -21,7 +21,7 @@ public class RegionRasterizationTests
             size: new VectorXY(4f, 4f),
             resolution: new VectorXYInt(4, 4));
 
-        Raster<byte> raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
+        SpatialRaster<byte> raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 1], Is.EqualTo(byte.MinValue));
@@ -38,7 +38,7 @@ public class RegionRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        Raster<byte> raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
+        SpatialRaster<byte> raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 0], Is.EqualTo(byte.MaxValue));

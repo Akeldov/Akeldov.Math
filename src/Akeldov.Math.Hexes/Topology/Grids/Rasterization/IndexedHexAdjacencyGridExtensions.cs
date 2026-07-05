@@ -15,7 +15,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
         /// </summary>
         /// <param name="indexedHexAdjacencyGrid">The IndexedHexAdjacencyGrid value.</param>
         /// <param name="colorSelector">The ColorSelector value.</param>
-        public static Raster<RGBA16BitColor> Rasterize(
+        public static SpatialRaster<RGBA16BitColor> Rasterize(
             this IndexSeptupletGrid indexedHexAdjacencyGrid,
             Func<Septuplet<VectorXYInt>, RGBA16BitColor> colorSelector)
         {
@@ -32,7 +32,7 @@ namespace Akeldov.Math.Hexes.Topology.Grids.Rasterization
         /// </summary>
         /// <param name="indexedHexAdjacencyGrid">The IndexedHexAdjacencyGrid value.</param>
         /// <param name="colorSelector">The ColorSelector value.</param>
-        public static Raster<RGBA16BitColor> Rasterize(
+        public static SpatialRaster<RGBA16BitColor> Rasterize(
             this IndexPartialSeptupletGrid indexedHexAdjacencyGrid,
             Func<PartialSeptuplet<VectorXYInt>, RGBA16BitColor> colorSelector)
         {

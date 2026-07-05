@@ -17,7 +17,7 @@ public class CurveSnapshotTests
         string approvedFileName,
         Func<ICurve> createCurve)
     {
-        Raster<byte> raster = createCurve().Rasterize(
+        SpatialRaster<byte> raster = createCurve().Rasterize(
             SnapshotGrid,
             new PointDistanceProviderGray8BitRasterizer(ToDistanceGray8));
 
@@ -31,7 +31,7 @@ public class CurveSnapshotTests
         string approvedFileName,
         Func<IParameterizedCurve> createCurve)
     {
-        Raster<byte> raster = createCurve().Rasterize(
+        SpatialRaster<byte> raster = createCurve().Rasterize(
             SnapshotGrid,
             new ParameterizedCurveDistanceGray8BitRasterizer(ToGrowingThicknessGray8));
 
@@ -147,7 +147,7 @@ public class CurveSnapshotTests
         return (byte)MathF.Round(normalized * byte.MaxValue);
     }
 
-    private static byte[] SaveToPngBytes(Raster<byte> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(SpatialRaster<byte> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

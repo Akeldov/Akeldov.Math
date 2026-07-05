@@ -18,7 +18,7 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             CreateSources());
 
-        Raster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
+        SpatialRaster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
         byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-nearest-heatmap-rgba16.png");
 
         AssertMatchesApprovedPng("float-point-influence-field-nearest-heatmap-rgba16.png", actual);
@@ -31,7 +31,7 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
             new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>(),
             CreateSources());
 
-        Raster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
+        SpatialRaster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
         byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-heatmap-rgba16.png");
 
         AssertMatchesApprovedPng("float-point-influence-field-heatmap-rgba16.png", actual);
@@ -44,7 +44,7 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
             new BarycentricFloatSampler<FloatPointInfluenceSource>(),
             CreateSources());
 
-        Raster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
+        SpatialRaster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
         byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-barycentric-heatmap-rgba16.png");
 
         AssertMatchesApprovedPng("float-point-influence-field-barycentric-heatmap-rgba16.png", actual);
@@ -57,7 +57,7 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
             new BarycentricFloatSampler<FloatPointInfluenceSource>(),
             CreateBinaryCornerSources());
 
-        Raster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
+        SpatialRaster<RGBA16BitColor> raster = field.RasterizeHeatMap(SnapshotGrid);
         byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-binary-corners-heatmap-rgba16.png");
 
         AssertMatchesApprovedPng("float-point-influence-field-binary-corners-heatmap-rgba16.png", actual);
@@ -86,7 +86,7 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
         };
     }
 
-    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(SpatialRaster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

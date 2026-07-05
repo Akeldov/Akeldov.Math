@@ -12,7 +12,7 @@ public class CurveRasterizationTests
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        Raster<byte> raster = curve.Rasterize(grid, new PointDistanceProviderGray8BitRasterizer(ToGray8));
+        SpatialRaster<byte> raster = curve.Rasterize(grid, new PointDistanceProviderGray8BitRasterizer(ToGray8));
 
         Assert.That(raster[1, 0], Is.EqualTo(10));
         Assert.That(raster[1, 1], Is.EqualTo(0));
@@ -29,7 +29,7 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        Raster<byte> raster = curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8));
+        SpatialRaster<byte> raster = curves.Rasterize(grid, new PointDistanceProviderCollectionGray8BitRasterizer(ToGray8));
 
         Assert.That(raster[1, 0], Is.EqualTo(0));
         Assert.That(raster[1, 1], Is.EqualTo(10));
@@ -42,7 +42,7 @@ public class CurveRasterizationTests
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        Raster<byte> raster = curve.Rasterize(
+        SpatialRaster<byte> raster = curve.Rasterize(
             grid,
             new ParameterizedCurveDistanceGray8BitRasterizer(ToParameterizedGray8));
 
@@ -62,7 +62,7 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        Raster<byte> raster = curves.Rasterize(
+        SpatialRaster<byte> raster = curves.Rasterize(
             grid,
             new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8));
 

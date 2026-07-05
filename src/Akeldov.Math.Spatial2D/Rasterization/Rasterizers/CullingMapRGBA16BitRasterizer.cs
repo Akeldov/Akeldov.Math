@@ -15,7 +15,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// </remarks>
     /// <typeparam name="TPointSource">The point influence source type.</typeparam>
     public sealed class CullingMapRGBA16BitRasterizer<TPointSource> :
-        IRasterizer<IReadOnlyList<TPointSource>, Raster<RGBA16BitColor>>
+        IRasterizer<IReadOnlyList<TPointSource>, SpatialRaster<RGBA16BitColor>>
         where TPointSource : IPointInfluenceSource
     {
         private const float SrgbLinearThreshold = 0.04045f;
@@ -38,7 +38,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Raster<RGBA16BitColor> Rasterize(IReadOnlyList<TPointSource> source, SpatialRasterGrid grid)
+        public SpatialRaster<RGBA16BitColor> Rasterize(IReadOnlyList<TPointSource> source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -61,7 +61,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new Raster<RGBA16BitColor>(grid, values);
+            return new SpatialRaster<RGBA16BitColor>(grid, values);
         }
 
         private IReadOnlyList<TPointSource> Cull(PointXY point)

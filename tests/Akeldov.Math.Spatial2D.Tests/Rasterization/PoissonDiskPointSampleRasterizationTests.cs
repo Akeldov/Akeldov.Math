@@ -19,7 +19,7 @@ public class PoissonDiskPointSampleRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        Raster<RGBA16BitColor> raster = samples.Rasterize(grid, ToColor);
+        SpatialRaster<RGBA16BitColor> raster = samples.Rasterize(grid, ToColor);
 
         Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(1000, 0, 0, ushort.MaxValue)));
         Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(1000, 1000, 0, ushort.MaxValue)));
@@ -39,7 +39,7 @@ public class PoissonDiskPointSampleRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        Raster<ushort> raster = samples.Rasterize(grid, ToGray16);
+        SpatialRaster<ushort> raster = samples.Rasterize(grid, ToGray16);
 
         Assert.That(raster[0, 0], Is.EqualTo(1000));
         Assert.That(raster[1, 0], Is.EqualTo(1100));
@@ -64,7 +64,7 @@ public class PoissonDiskPointSampleRasterizationTests
             ringGrayLevel: 100,
             pointGrayLevel: 200);
 
-        Raster<ushort> raster = samples.Rasterize(grid, rasterizer);
+        SpatialRaster<ushort> raster = samples.Rasterize(grid, rasterizer);
 
         Assert.That(raster[0, 0], Is.EqualTo(200));
         Assert.That(raster[1, 0], Is.EqualTo(100));

@@ -18,7 +18,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        Raster<RGBA16BitColor> raster = field.RasterizeHeatMap(grid);
+        SpatialRaster<RGBA16BitColor> raster = field.RasterizeHeatMap(grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(0f, 0f, 100f)));
         Assert.That(raster[1, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(50f, 0f, 100f)));
@@ -36,7 +36,7 @@ public class FloatPointInfluenceFieldHeatMapRasterizationTests
             size: new VectorXY(1f, 1f),
             resolution: new VectorXYInt(1, 1));
 
-        Raster<RGBA16BitColor> raster = field.RasterizeHeatMap(grid);
+        SpatialRaster<RGBA16BitColor> raster = field.RasterizeHeatMap(grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(RGBA16BitColor.FromTemperature(7f, 7f, 7f)));
     }

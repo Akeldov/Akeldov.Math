@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes parameterized curve collections into 8-bit grayscale rasters using nearest projection mapping.
     /// </summary>
     public sealed class ParameterizedCurveCollectionDistanceGray8BitRasterizer :
-        IRasterizer<IReadOnlyList<IParameterizedCurve>, Raster<byte>>
+        IRasterizer<IReadOnlyList<IParameterizedCurve>, SpatialRaster<byte>>
     {
         private readonly Func<float, float, byte> _projectionToGrayLevel;
 
@@ -26,7 +26,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public Raster<byte> Rasterize(IReadOnlyList<IParameterizedCurve> source, SpatialRasterGrid grid)
+        public SpatialRaster<byte> Rasterize(IReadOnlyList<IParameterizedCurve> source, SpatialRasterGrid grid)
         {
             ValidateSource(source);
             ValidateGrid(grid);
@@ -47,7 +47,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new Raster<byte>(grid, values);
+            return new SpatialRaster<byte>(grid, values);
         }
 
         private static ParameterizedCurveProjection ProjectToNearestCurve(

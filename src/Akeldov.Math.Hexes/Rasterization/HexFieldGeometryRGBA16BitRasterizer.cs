@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes.Rasterization
     /// Initializes a new instance of the HexFieldGeometryRGBA16BitRasterizer type.
     /// </summary>
     public sealed class HexFieldGeometryRGBA16BitRasterizer :
-        IRasterizer<HexCenterMap, Raster<RGBA16BitColor>>
+        IRasterizer<HexCenterMap, SpatialRaster<RGBA16BitColor>>
     {
         private readonly Func<PointXY, RGBA16BitColor> _centerToColor;
 
@@ -28,7 +28,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         /// </summary>
         /// <param name="source">The source value.</param>
         /// <param name="grid">The grid value.</param>
-        public Raster<RGBA16BitColor> Rasterize(HexCenterMap source, SpatialRasterGrid grid)
+        public SpatialRaster<RGBA16BitColor> Rasterize(HexCenterMap source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -48,7 +48,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 RasterizeHex(center, radius, normalizedVertices, grid, values, color);
             }
 
-            return new Raster<RGBA16BitColor>(grid, values);
+            return new SpatialRaster<RGBA16BitColor>(grid, values);
         }
 
         /// <summary>

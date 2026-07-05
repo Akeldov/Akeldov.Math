@@ -18,7 +18,7 @@ public class IGridRasterizationTests
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        Raster<RGBA16BitColor> raster = grid.Rasterize(
+        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(
             rasterGrid,
             value => value == 10 ? red : blue);
 
@@ -38,7 +38,7 @@ public class IGridRasterizationTests
             new VectorXY(2f, 1f),
             new VectorXYInt(2, 1));
 
-        Raster<byte> raster = grid.Rasterize(
+        SpatialRaster<byte> raster = grid.Rasterize(
             rasterGrid,
             value => (byte)(value / 10));
 

@@ -9,7 +9,7 @@ public class GrayRasterTests
     public void Gray8BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
         byte[] values = { 1, 2, 3, 4 };
-        var raster = new Raster<byte>(CreateGrid(), values);
+        var raster = new SpatialRaster<byte>(CreateGrid(), values);
 
         values[1] = 9;
 
@@ -21,7 +21,7 @@ public class GrayRasterTests
     public void Gray8BitRasterClone_WhenCloneBufferChanges_DoesNotChangeSource()
     {
         byte[] values = { 1, 2, 3, 4 };
-        var raster = new Raster<byte>(CreateGrid(), values);
+        var raster = new SpatialRaster<byte>(CreateGrid(), values);
 
         var clone = raster.Clone();
         clone[1, 0] = 9;
@@ -34,13 +34,13 @@ public class GrayRasterTests
     public void Gray8BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
-            new Raster<byte>(CreateGrid(), new byte[3]));
+            new SpatialRaster<byte>(CreateGrid(), new byte[3]));
     }
 
     [Test]
     public void Gray8BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
     {
-        var raster = new Raster<byte>(CreateGrid(), new byte[4]);
+        var raster = new SpatialRaster<byte>(CreateGrid(), new byte[4]);
 
         raster[1, 0] = 9;
 
@@ -52,7 +52,7 @@ public class GrayRasterTests
     public void SaveAsPng_WhenRasterIsGray8Bit_WritesPng8()
     {
         byte[] values = { 0x12, 0x56, 0x34, 0x78 };
-        var raster = new Raster<byte>(CreateGrid(), values);
+        var raster = new SpatialRaster<byte>(CreateGrid(), values);
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "gray8.png");
 
         raster.SaveAsPng(path);
@@ -69,7 +69,7 @@ public class GrayRasterTests
     [Test]
     public void SaveAsPng_WhenGray8BitStreamIsProvided_WritesPng8()
     {
-        var raster = new Raster<byte>(CreateGrid(), new byte[] { 0x12, 0x56, 0x34, 0x78 });
+        var raster = new SpatialRaster<byte>(CreateGrid(), new byte[] { 0x12, 0x56, 0x34, 0x78 });
         using var stream = new MemoryStream();
 
         raster.SaveAsPng(stream);
@@ -83,7 +83,7 @@ public class GrayRasterTests
     [Test]
     public void SaveAsBmp_WhenGray8BitStreamIsProvided_WritesBmp8()
     {
-        var raster = new Raster<byte>(CreateGrid(), new byte[] { 0x12, 0x56, 0x34, 0x78 });
+        var raster = new SpatialRaster<byte>(CreateGrid(), new byte[] { 0x12, 0x56, 0x34, 0x78 });
         using var stream = new MemoryStream();
 
         raster.SaveAsBmp(stream);
@@ -98,7 +98,7 @@ public class GrayRasterTests
     public void Gray16BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
         ushort[] values = { 1, 2, 3, 4 };
-        var raster = new Raster<ushort>(CreateGrid(), values);
+        var raster = new SpatialRaster<ushort>(CreateGrid(), values);
 
         values[1] = 9;
 
@@ -110,7 +110,7 @@ public class GrayRasterTests
     public void Gray16BitRasterClone_WhenCloneBufferChanges_DoesNotChangeSource()
     {
         ushort[] values = { 1, 2, 3, 4 };
-        var raster = new Raster<ushort>(CreateGrid(), values);
+        var raster = new SpatialRaster<ushort>(CreateGrid(), values);
 
         var clone = raster.Clone();
         clone[1, 0] = 9;
@@ -123,13 +123,13 @@ public class GrayRasterTests
     public void Gray16BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
-            new Raster<ushort>(CreateGrid(), new ushort[3]));
+            new SpatialRaster<ushort>(CreateGrid(), new ushort[3]));
     }
 
     [Test]
     public void Gray16BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
     {
-        var raster = new Raster<ushort>(CreateGrid(), new ushort[4]);
+        var raster = new SpatialRaster<ushort>(CreateGrid(), new ushort[4]);
 
         raster[1, 0] = 9;
 
@@ -140,7 +140,7 @@ public class GrayRasterTests
     [Test]
     public void SaveAsPng_WhenGray16BitStreamIsProvided_WritesPng16()
     {
-        var raster = new Raster<ushort>(CreateGrid(), new ushort[] { 0x1234, 0x5678, 0x9abc, 0xdef0 });
+        var raster = new SpatialRaster<ushort>(CreateGrid(), new ushort[] { 0x1234, 0x5678, 0x9abc, 0xdef0 });
         using var stream = new MemoryStream();
 
         raster.SaveAsPng(stream);

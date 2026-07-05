@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// Stores a rectangular raster of color values sampled on a <see cref="SpatialRasterGrid"/>.
     /// </summary>
     /// <typeparam name="TColor">The color value type stored in each raster cell.</typeparam>
-    public class Raster<TColor> : IGrid<TColor>
+    public class SpatialRaster<TColor> : IGrid<TColor>
     {
         /// <summary>
         /// Initializes a new raster with the specified grid and color values.
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="values">
         /// The cell values in row-major order. The array is retained as raster state and must contain one value per grid cell.
         /// </param>
-        public Raster(SpatialRasterGrid grid, TColor[] values)
+        public SpatialRaster(SpatialRasterGrid grid, TColor[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
@@ -100,9 +100,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// Creates a raster with the same grid and a copied value array.
         /// </summary>
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
-        public Raster<TColor> Clone()
+        public SpatialRaster<TColor> Clone()
         {
-            return new Raster<TColor>(Grid, (TColor[])Values.Clone());
+            return new SpatialRaster<TColor>(Grid, (TColor[])Values.Clone());
         }
 
         private int GetLinearIndex(int x, int y)

@@ -18,7 +18,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="rasterGrid">The raster geometry. Its resolution must match the map dimensions.</param>
         /// <param name="colorSelector">The function that maps each map value to a raster color.</param>
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
-        public static Raster<TColor> Rasterize<TValue, TColor>(
+        public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
             this IHexMap<TValue> map,
             SpatialRasterGrid rasterGrid,
             Func<TValue, TColor> colorSelector)
@@ -39,7 +39,7 @@ namespace Akeldov.Math.Hexes
             for (int i = 0; i < values.Length; i++)
                 values[i] = colorSelector(map[i]);
 
-            return new Raster<TColor>(rasterGrid, values);
+            return new SpatialRaster<TColor>(rasterGrid, values);
         }
     }
 }

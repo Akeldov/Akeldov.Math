@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes.Rasterization
     /// Initializes a new instance of the HexFieldTopologyRGBA16BitRasterizer type.
     /// </summary>
     public sealed class HexFieldTopologyRGBA16BitRasterizer :
-        IRasterizer<IndexSeptupletMap, Raster<RGBA16BitColor>>
+        IRasterizer<IndexSeptupletMap, SpatialRaster<RGBA16BitColor>>
     {
         private const float ApothemToRadius = 1.1547005f;
 
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         /// </summary>
         /// <param name="source">The source value.</param>
         /// <param name="grid">The grid value.</param>
-        public Raster<RGBA16BitColor> Rasterize(IndexSeptupletMap source, SpatialRasterGrid grid)
+        public SpatialRaster<RGBA16BitColor> Rasterize(IndexSeptupletMap source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -88,7 +88,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                 }
             }
 
-            return new Raster<RGBA16BitColor>(grid, values);
+            return new SpatialRaster<RGBA16BitColor>(grid, values);
         }
 
         /// <summary>

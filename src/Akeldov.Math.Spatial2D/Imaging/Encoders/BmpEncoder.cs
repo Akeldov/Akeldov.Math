@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void Save(Raster<byte> raster, string path)
+        public static void Save(SpatialRaster<byte> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void Save(Raster<byte> raster, Stream stream)
+        public static void Save(SpatialRaster<byte> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -51,7 +51,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void Save(Raster<RGBA8BitColor> raster, string path)
+        public static void Save(SpatialRaster<RGBA8BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void Save(Raster<RGBA8BitColor> raster, Stream stream)
+        public static void Save(SpatialRaster<RGBA8BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
