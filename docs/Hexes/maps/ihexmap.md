@@ -20,6 +20,6 @@
 
 ## Rasterization
 
-- `IHexMap<TValue>` can be rasterized with an explicit `RasterGrid`.
+- `IHexMap<TValue>` can be rasterized with an explicit `SpatialRasterGrid`.
 - The raster grid resolution must match the map width and height.
 - This rasterization maps each hex-map value to one raster value; geometry-aware hex-field rasterizers can draw hex cells at arbitrary pixel density.

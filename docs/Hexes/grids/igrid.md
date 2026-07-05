@@ -20,6 +20,6 @@
 
 ## Rasterization
 
-- `IGrid<TValue>` can be rasterized with an explicit `RasterGrid`.
+- `IGrid<TValue>` can be rasterized with an explicit `SpatialRasterGrid`.
 - The raster grid resolution must match the grid width and height.
 - Domain-specific grid types may expose convenience rasterization methods that supply their own raster geometry.

@@ -17,7 +17,7 @@ var region = new ContourBasedRegion(new IContour[]
     CreateSquareContour(1f, 1f, 3f, 3f)
 });
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(-0.5f, -0.5f),
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(160, 160));
@@ -25,7 +25,7 @@ var grid = new RasterGrid(
 var rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(distance =>
     distance <= 0f ? byte.MaxValue : byte.MinValue);
 
-Raster<byte> raster = region.Rasterize(grid, rasterizer);
+SpatialRaster<byte> raster = region.Rasterize(grid, rasterizer);
 raster.SaveAsBmp("region-mask.bmp");
 
 static IContour CreateSquareContour(float left, float bottom, float right, float top)

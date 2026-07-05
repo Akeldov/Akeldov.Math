@@ -2,12 +2,14 @@
 
 Rasterization samples geometry on a rectangular grid.
 
-The core types live in the `Akeldov.Math.Spatial2D.Rasterization` namespace.
-Rasters and image export helpers live in `Akeldov.Math.Spatial2D.Imaging`.
+Spatial raster grids, rasters, rasterizers, and scene composition live in
+the `Akeldov.Math.Spatial2D.Rasterization` namespace.
+Image export helpers and color types live in `Akeldov.Math.Spatial2D.Imaging`.
+Reusable rasterization strategies implement `ISpatialRasterizer<TSource, TRaster>`.
 
 ## Topics
 
-- [RasterGrid](raster-grid.md)
+- [SpatialRasterGrid](spatial-raster-grid.md)
 - [Gray Rasters](gray-rasters.md)
 - [RGBA Rasters](rgba-rasters.md)
 - [GeometryScene](geometry-scenes.md)
@@ -18,7 +20,7 @@ Rasters and image export helpers live in `Akeldov.Math.Spatial2D.Imaging`.
 
 ## PNG and BMP Export
 
-Raster image helpers live in `Akeldov.Math.Spatial2D.Imaging`.
+Image export helpers live in `Akeldov.Math.Spatial2D.Imaging`.
 
 Use BMP export for simple 8-bit previews and PNG export for 16-bit grayscale or RGBA output.
 
@@ -27,17 +29,17 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));
 
-var mask = new Raster<byte>(
+var mask = new SpatialRaster<byte>(
     grid,
     new byte[grid.Resolution.X * grid.Resolution.Y]);
 mask.SaveAsBmp("mask.bmp");
 
-var distance = new Raster<ushort>(
+var distance = new SpatialRaster<ushort>(
     grid,
     new ushort[grid.Resolution.X * grid.Resolution.Y]);
 distance.SaveAsPng("distance.png");

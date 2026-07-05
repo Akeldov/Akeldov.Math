@@ -20,11 +20,11 @@ var field = new FloatPointInfluenceField(
     new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
     sources);
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     new PointXY(0f, 0f),
     new VectorXY(100f, 64f),
     new VectorXYInt(160, 96));
 
 var rasterizer = new FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer();
-Raster<RGBA16BitColor> raster = field.Rasterize(grid, rasterizer);
+SpatialRaster<RGBA16BitColor> raster = field.Rasterize(grid, rasterizer);
 ```

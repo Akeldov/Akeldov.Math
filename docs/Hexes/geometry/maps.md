@@ -16,11 +16,11 @@ var map = new HexCenterMap(
     apothem: 8f,
     layout: Layout.OddR);
 
-RasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(
+SpatialRasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(
     map,
     pixelsPerApothem: 24f);
 
-Raster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(ToColor)
+SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(ToColor)
     .Rasterize(map, grid);
 
 raster.SaveAsPng("hex-center-map-odd-r-rgba16.png");

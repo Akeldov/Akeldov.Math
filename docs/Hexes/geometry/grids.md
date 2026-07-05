@@ -16,7 +16,7 @@ var grid = new BarycentricTripletGrid(
     hexOrigin: VectorXY.Zero,
     resolution: new VectorXYInt(192, 192));
 
-Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 
 raster.SaveAsPng("barycentric-triplet-grid-main-odd-r-rgba16.png");
 

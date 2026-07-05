@@ -18,7 +18,7 @@ var path = new ParameterizedSegment(
     startPoint: new PointXY(-2.35f, -2.1f),
     endPoint: new PointXY(2.35f, 1.75f));
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -38,7 +38,7 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
         return (byte)MathF.Round(normalized * byte.MaxValue);
     });
 
-Raster<byte> raster = path.Rasterize(grid, rasterizer);
+SpatialRaster<byte> raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-segment-growing-thickness.png");
 ```
 

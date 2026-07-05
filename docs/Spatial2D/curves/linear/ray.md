@@ -18,7 +18,7 @@ var ray = new Ray(
     origin: new PointXY(-2.45f, -2.05f),
     angle: MathF.PI / 5f);
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -38,7 +38,7 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
         return (byte)MathF.Round(normalized * byte.MaxValue);
     });
 
-Raster<byte> raster = ray.Rasterize(grid, rasterizer);
+SpatialRaster<byte> raster = ray.Rasterize(grid, rasterizer);
 raster.SaveAsPng("ray-growing-thickness.png");
 ```
 

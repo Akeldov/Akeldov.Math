@@ -20,7 +20,7 @@ var grid = new IndexTripletGrid(
     hexOrigin: VectorXY.Zero,
     resolution: new VectorXYInt(192, 192));
 
-Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 
 raster.SaveAsPng("index-triplet-grid-odd-r-rgba16.png");
 
@@ -57,7 +57,7 @@ var grid = new BarycentricTripletGrid(
     hexOrigin: VectorXY.Zero,
     resolution: new VectorXYInt(192, 192));
 
-Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 
 raster.SaveAsPng("barycentric-triplet-grid-main-odd-r-rgba16.png");
 
@@ -86,7 +86,7 @@ var grid = new ChromaticIndexTripletGrid(
     hexOrigin: VectorXY.Zero,
     resolution: new VectorXYInt(192, 192));
 
-Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 
 raster.SaveAsPng("chromatic-index-triplet-grid-odd-r-rgba16.png");
 

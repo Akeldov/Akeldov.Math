@@ -15,7 +15,7 @@ using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using Akeldov.Math.Spatial2D.Regions;
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(256, 256));
@@ -33,7 +33,7 @@ RGBA16BitColor stroke = RGBA16BitColor.FromNormalized(0.95f, 0.1f, 0.15f, 1f);
 RGBA16BitColor marker = RGBA16BitColor.FromNormalized(0.02f, 0.02f, 0.02f, 1f);
 
 var background = RGBA16BitColor.FromNormalized(1f, 1f, 1f, 1f);
-Raster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
+SpatialRaster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
     .AddSignedPointDistanceBasedLayer(region, fill, edgeFalloff: 0.5f)
     .AddPointDistanceBasedLayer(segment, stroke, fillDistance: 1.5f, edgeFalloff: 0.5f)
     .AddPointDistanceBasedLayer(points, marker, fillDistance: 2f, edgeFalloff: 0.5f)
@@ -59,7 +59,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(100f, 70f),
     resolution: new VectorXYInt(180, 126));
@@ -94,7 +94,7 @@ RGBA16BitColor eyeColor = RGBA16BitColor.FromNormalized(0.050f, 0.060f, 0.080f, 
 RGBA16BitColor highlightColor = RGBA16BitColor.FromNormalized(1f, 1f, 1f, 0.75f);
 RGBA16BitColor cheekColor = RGBA16BitColor.FromNormalized(0.940f, 0.260f, 0.310f, 0.55f);
 
-Raster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(
+SpatialRaster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(
         background,
         RGBA16BitColor.AlphaOver)
     .AddSignedPointDistanceBasedLayer(face, faceFill, edgeFalloff: 0.55f)
@@ -184,7 +184,7 @@ RGBA16BitColor ToRainbowColor(PointXY point, ParameterizedCurveProjection projec
     return rainbowColor.ScaleAlpha(edgeCoverage);
 }
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(100f, 70f),
     resolution: new VectorXYInt(720, 504));
@@ -192,7 +192,7 @@ var grid = new RasterGrid(
 RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.018f, 0.020f, 0.030f, 1f);
 RGBA16BitColor prismFill = RGBA16BitColor.FromNormalized(0.500f, 0.640f, 0.790f, 1f);
 
-Raster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(
+SpatialRaster<RGBA16BitColor> raster = new GeometryScene<RGBA16BitColor>(
         background,
         RGBA16BitColor.AlphaOver)
     .AddParameterizedProjectionBasedLayer(outgoingBeam, ToRainbowColor)
@@ -228,7 +228,7 @@ GeometryScene<RGBA16BitColor> scene = new GeometryScene<RGBA16BitColor>(RGBA16Bi
 For non-RGBA output, pass the default color operations explicitly:
 
 ```csharp
-Raster<int> labels = new GeometryScene<int>(
+SpatialRaster<int> labels = new GeometryScene<int>(
         backgroundColor: 0,
         defaultLayerBlend: (current, next) => next == 0 ? current : next)
     .AddSignedPointDistanceBasedLayer(region, signedDistance => signedDistance <= 0f ? 1 : 0)

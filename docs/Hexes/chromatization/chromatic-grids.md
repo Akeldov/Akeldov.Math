@@ -16,7 +16,7 @@ var grid = new ChromaticIndexTripletGrid(
     hexOrigin: VectorXY.Zero,
     resolution: new VectorXYInt(192, 192));
 
-Raster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 
 raster.SaveAsPng("chromatic-index-triplet-grid-odd-r-rgba16.png");
 

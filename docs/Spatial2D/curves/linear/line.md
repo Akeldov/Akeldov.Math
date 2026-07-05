@@ -18,7 +18,7 @@ var line = new Line(
     new PointXY(-2.5f, -1.5f),
     new PointXY(2.5f, 1.75f));
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -30,7 +30,7 @@ var rasterizer = new PointDistanceProviderGray8BitRasterizer(distance =>
     return (byte)MathF.Round(normalized * byte.MaxValue);
 });
 
-Raster<byte> raster = line.Rasterize(grid, rasterizer);
+SpatialRaster<byte> raster = line.Rasterize(grid, rasterizer);
 raster.SaveAsPng("line-distance.png");
 ```
 

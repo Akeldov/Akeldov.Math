@@ -13,7 +13,7 @@ var curve = new ParameterizedSegment(
     new PointXY(0f, 0f),
     new PointXY(4f, 0f));
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(-0.5f, -1f),
     size: new VectorXY(5f, 2f),
     resolution: new VectorXYInt(160, 64));
@@ -25,5 +25,5 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
         return (byte)MathF.Round(normalized * byte.MaxValue);
     });
 
-Raster<byte> raster = curve.Rasterize(grid, rasterizer);
+SpatialRaster<byte> raster = curve.Rasterize(grid, rasterizer);
 ```

@@ -17,12 +17,12 @@ var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
 var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
 var field = new FloatPointInfluenceField(sampler, sources, culler);
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     new PointXY(0f, 0f),
     new VectorXY(100f, 64f),
     new VectorXYInt(160, 96));
 
 var rasterizer = new FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer();
-Raster<RGBA16BitColor> raster = field.Rasterize(grid, rasterizer);
+SpatialRaster<RGBA16BitColor> raster = field.Rasterize(grid, rasterizer);
 raster.SaveAsPng("influence-heatmap.png");
 ```

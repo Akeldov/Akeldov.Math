@@ -21,7 +21,7 @@ var arc = new Arc(
     startAngle: MathF.PI / 8f,
     endAngle: 5f * MathF.PI / 4f);
 
-var grid = new RasterGrid(
+var grid = new SpatialRasterGrid(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -33,7 +33,7 @@ var rasterizer = new PointDistanceProviderGray8BitRasterizer(distance =>
     return (byte)MathF.Round(normalized * byte.MaxValue);
 });
 
-Raster<byte> raster = arc.Rasterize(grid, rasterizer);
+SpatialRaster<byte> raster = arc.Rasterize(grid, rasterizer);
 raster.SaveAsPng("arc-distance.png");
 ```
 

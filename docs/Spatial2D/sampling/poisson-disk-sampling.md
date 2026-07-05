@@ -13,7 +13,7 @@ using Akeldov.Math.Spatial2D.Rasterization;
 using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
 
 var fieldSize = new VectorXY(120f, 80f);
-var grid = new RasterGrid(new PointXY(0f, 0f), fieldSize, new VectorXYInt(180, 120));
+var grid = new SpatialRasterGrid(new PointXY(0f, 0f), fieldSize, new VectorXYInt(180, 120));
 
 var sampler = new PoissonDiskPointSampler(new Random(45678), maxAttempts: 30);
 var distanceField = new FloatPointInfluenceField(
@@ -59,7 +59,7 @@ using Akeldov.Math.Spatial2D.Rasterization;
 using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
 
 var fieldSize = new VectorXY(120f, 80f);
-var grid = new RasterGrid(new PointXY(0f, 0f), fieldSize, new VectorXYInt(180, 120));
+var grid = new SpatialRasterGrid(new PointXY(0f, 0f), fieldSize, new VectorXYInt(180, 120));
 
 var sampler = new PoissonDiskPointSampler(new Random(45678), maxAttempts: 30);
 var distanceField = new FloatPointInfluenceField(
