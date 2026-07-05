@@ -31,6 +31,21 @@ public class GrayRasterTests
     }
 
     [Test]
+    public void Gray8BitRasterToRaster_ReturnsCallerOwnedRasterCopy()
+    {
+        byte[] values = { 1, 2, 3, 4 };
+        var raster = new SpatialRaster<byte>(CreateGrid(), values);
+
+        Raster<byte> nonSpatialRaster = raster.ToRaster();
+        nonSpatialRaster[1, 0] = 9;
+
+        Assert.That(nonSpatialRaster.Resolution, Is.EqualTo(raster.Grid.Resolution));
+        Assert.That(nonSpatialRaster.Values, Is.Not.SameAs(raster.Values));
+        Assert.That(raster[1, 0], Is.EqualTo(2));
+        Assert.That(nonSpatialRaster[1, 0], Is.EqualTo(9));
+    }
+
+    [Test]
     public void Gray8BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
