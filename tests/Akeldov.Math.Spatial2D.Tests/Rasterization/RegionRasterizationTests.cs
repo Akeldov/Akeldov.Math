@@ -46,17 +46,95 @@ public class RegionRasterizationTests
     }
 
     [Test]
+    public void Rasterize_WhenSignedDistanceProviderCollectionIsProvided_MapsMinimumSignedDistanceGray8()
+    {
+        IReadOnlyList<ISignedPointDistanceProvider> regions = CreateSeparatedDiskRegions();
+        var grid = CreateThreeByOneGrid();
+
+        SpatialRaster<byte> raster = regions.Rasterize(
+            grid,
+            new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue));
+
+        Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[1, 0], Is.EqualTo(byte.MinValue));
+        Assert.That(raster[2, 0], Is.EqualTo(byte.MaxValue));
+    }
+
+    [Test]
+    public void Rasterize_WhenSignedDistanceProviderCollectionIsProvided_MapsMinimumSignedDistanceGray16()
+    {
+        IReadOnlyList<ISignedPointDistanceProvider> regions = CreateSeparatedDiskRegions();
+        var grid = CreateThreeByOneGrid();
+
+        SpatialRaster<ushort> raster = regions.Rasterize(
+            grid,
+            new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16));
+
+        Assert.That(raster[0, 0], Is.EqualTo(ushort.MaxValue));
+        Assert.That(raster[1, 0], Is.EqualTo(ushort.MinValue));
+        Assert.That(raster[2, 0], Is.EqualTo(ushort.MaxValue));
+    }
+
+    [Test]
+    public void Constructor_WhenSignedDistanceCollectionMapperIsNull_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new SignedPointDistanceProviderCollectionGray8BitRasterizer(null!));
+        Assert.Throws<ArgumentNullException>(() =>
+            new SignedPointDistanceProviderCollectionGray16BitRasterizer(null!));
+    }
+
+    [Test]
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
         var region = new ContourBasedRegion(new IContour[]
         {
             CreateSquareContour(0f, 0f, 4f, 4f)
         });
+        IReadOnlyList<ISignedPointDistanceProvider> regions = new ISignedPointDistanceProvider[] { region };
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             region.Rasterize(default, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             region.Rasterize(default, new SignedPointDistanceProviderGray16BitRasterizer(ToGray16)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            regions.Rasterize(default, new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            regions.Rasterize(default, new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+    }
+
+    [Test]
+    public void Rasterize_WhenSignedDistanceProviderCollectionIsEmpty_Throws()
+    {
+        IReadOnlyList<ISignedPointDistanceProvider> regions = Array.Empty<ISignedPointDistanceProvider>();
+        var grid = CreateThreeByOneGrid();
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
+
+        exception = Assert.Throws<ArgumentException>(() =>
+            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
+    }
+
+    [Test]
+    public void Rasterize_WhenSignedDistanceProviderCollectionContainsNull_Throws()
+    {
+        IReadOnlyList<ISignedPointDistanceProvider> regions = new ISignedPointDistanceProvider[] { null! };
+        var grid = CreateThreeByOneGrid();
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
+
+        exception = Assert.Throws<ArgumentException>(() =>
+            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
 
     [Test]
@@ -115,5 +193,22 @@ public class RegionRasterizationTests
             new ParameterizedSegment(new PointXY(right, top), new PointXY(left, top)),
             new ParameterizedSegment(new PointXY(left, top), new PointXY(left, bottom))
         });
+    }
+
+    private static IReadOnlyList<ISignedPointDistanceProvider> CreateSeparatedDiskRegions()
+    {
+        return new ISignedPointDistanceProvider[]
+        {
+            new Disk(new PointXY(-1f, 0f), 0.5f),
+            new Disk(new PointXY(1f, 0f), 0.5f)
+        };
+    }
+
+    private static SpatialRasterGrid CreateThreeByOneGrid()
+    {
+        return new SpatialRasterGrid(
+            origin: new PointXY(-1.5f, -0.5f),
+            size: new VectorXY(3f, 1f),
+            resolution: new VectorXYInt(3, 1));
     }
 }

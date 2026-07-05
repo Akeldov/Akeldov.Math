@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Provides rasterization extension methods.
     /// </summary>
-    public static class RasterizationExtensions
+    public static partial class RasterizationExtensions
     {
         /// <summary>
         /// Rasterizes a source object on the specified spatial raster grid using the specified rasterizer.
