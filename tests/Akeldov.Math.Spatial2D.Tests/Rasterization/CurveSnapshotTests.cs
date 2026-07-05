@@ -17,9 +17,7 @@ public class CurveSnapshotTests
         string approvedFileName,
         Func<ICurve> createCurve)
     {
-        SpatialRaster<byte> raster = createCurve().Rasterize(
-            SnapshotGrid,
-            new PointDistanceProviderGray8BitRasterizer(ToDistanceGray8));
+        SpatialRaster<byte> raster = createCurve().Rasterize(ToDistanceGray8, SnapshotGrid);
 
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -31,9 +29,7 @@ public class CurveSnapshotTests
         string approvedFileName,
         Func<IParameterizedCurve> createCurve)
     {
-        SpatialRaster<byte> raster = createCurve().Rasterize(
-            SnapshotGrid,
-            new ParameterizedCurveDistanceGray8BitRasterizer(ToGrowingThicknessGray8));
+        SpatialRaster<byte> raster = createCurve().Rasterize(ToGrowingThicknessGray8, SnapshotGrid);
 
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

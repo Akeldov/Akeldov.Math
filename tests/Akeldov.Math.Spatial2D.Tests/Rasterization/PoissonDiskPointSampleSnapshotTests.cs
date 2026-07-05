@@ -34,14 +34,14 @@ public class PoissonDiskPointSampleSnapshotTests
         var field = new HorizontalGradientFloatField(min: 5f, max: 13f, width: FieldSize.X);
         List<PoissonDiskPointSample> samples = sampler.Sample(FieldSize, field);
 
-        SpatialRaster<ushort> raster = samples.Rasterize(
-            SnapshotGrid,
-            new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
+        var rasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
                 pointRadius: 1.45f,
                 ringThickness: 0.18f,
                 backgroundGrayLevel: 0x1010,
                 ringGrayLevel: 0x8a8a,
-                pointGrayLevel: ushort.MaxValue));
+                pointGrayLevel: ushort.MaxValue);
+
+        SpatialRaster<ushort> raster = samples.Rasterize(SnapshotGrid, rasterizer);
         byte[] actual = SaveToPngBytes(raster, "poisson-disk-samples-rings-gray16.png");
 
         Assert.That(samples, Has.Count.EqualTo(104));

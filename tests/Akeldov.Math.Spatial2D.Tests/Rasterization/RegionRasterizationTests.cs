@@ -21,7 +21,7 @@ public class RegionRasterizationTests
             size: new VectorXY(4f, 4f),
             resolution: new VectorXYInt(4, 4));
 
-        SpatialRaster<byte> raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
+        SpatialRaster<byte> raster = region.Rasterize(ToMaskValue, grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 1], Is.EqualTo(byte.MinValue));
@@ -38,7 +38,7 @@ public class RegionRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        SpatialRaster<byte> raster = region.Rasterize(grid, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue));
+        SpatialRaster<byte> raster = region.Rasterize(ToMaskValue, grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 0], Is.EqualTo(byte.MaxValue));
@@ -51,9 +51,7 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = CreateSeparatedDiskRegions();
         var grid = CreateThreeByOneGrid();
 
-        SpatialRaster<byte> raster = regions.Rasterize(
-            grid,
-            new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue));
+        SpatialRaster<byte> raster = regions.Rasterize(ToMaskValue, grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
         Assert.That(raster[1, 0], Is.EqualTo(byte.MinValue));
@@ -66,9 +64,7 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = CreateSeparatedDiskRegions();
         var grid = CreateThreeByOneGrid();
 
-        SpatialRaster<ushort> raster = regions.Rasterize(
-            grid,
-            new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16));
+        SpatialRaster<ushort> raster = regions.Rasterize(ToGray16, grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(ushort.MaxValue));
         Assert.That(raster[1, 0], Is.EqualTo(ushort.MinValue));
@@ -94,13 +90,13 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = new ISignedPointDistanceProvider[] { region };
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Rasterize(default, new SignedPointDistanceProviderGray8BitRasterizer(ToMaskValue)));
+            region.Rasterize(ToMaskValue, default));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Rasterize(default, new SignedPointDistanceProviderGray16BitRasterizer(ToGray16)));
+            region.Rasterize(ToGray16, default));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            regions.Rasterize(default, new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue)));
+            regions.Rasterize(ToMaskValue, default));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            regions.Rasterize(default, new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+            regions.Rasterize(ToGray16, default));
     }
 
     [Test]
@@ -109,13 +105,11 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = Array.Empty<ISignedPointDistanceProvider>();
         var grid = CreateThreeByOneGrid();
 
-        var exception = Assert.Throws<ArgumentException>(() =>
-            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue)));
+        var exception = Assert.Throws<ArgumentException>(() => regions.Rasterize(ToMaskValue, grid));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
 
-        exception = Assert.Throws<ArgumentException>(() =>
-            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+        exception = Assert.Throws<ArgumentException>(() => regions.Rasterize(ToGray16, grid));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
@@ -126,13 +120,11 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = new ISignedPointDistanceProvider[] { null! };
         var grid = CreateThreeByOneGrid();
 
-        var exception = Assert.Throws<ArgumentException>(() =>
-            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray8BitRasterizer(ToMaskValue)));
+        var exception = Assert.Throws<ArgumentException>(() => regions.Rasterize(ToMaskValue, grid));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
 
-        exception = Assert.Throws<ArgumentException>(() =>
-            regions.Rasterize(grid, new SignedPointDistanceProviderCollectionGray16BitRasterizer(ToGray16)));
+        exception = Assert.Throws<ArgumentException>(() => regions.Rasterize(ToGray16, grid));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
@@ -152,7 +144,7 @@ public class RegionRasterizationTests
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "square-with-square-hole-gray16.png");
 
         region
-            .Rasterize(grid, new SignedPointDistanceProviderGray16BitRasterizer(ToDistanceGray16))
+            .Rasterize(ToDistanceGray16, grid)
             .SaveAsPng(path);
 
         Assert.That(File.Exists(path), Is.True);

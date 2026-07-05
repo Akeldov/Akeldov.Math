@@ -128,13 +128,8 @@ public class HexMatrixRegionRasterizationSnapshotTests
 
     private static SpatialRaster<byte> Rasterize(IReadOnlyList<IFinitePath> contour)
     {
-        IPointDistanceProvider[] distanceProviders = contour
-            .Select(curve => (IPointDistanceProvider)curve)
-            .ToArray();
-
-        return distanceProviders.Rasterize(
-            CreateGrid(contour),
-            new PointDistanceProviderCollectionGray8BitRasterizer(ToDistanceGray8));
+        var grid = CreateGrid(contour);
+        return contour.Rasterize(ToDistanceGray8, grid);
     }
 
     private static SpatialRasterGrid CreateGrid(IReadOnlyList<IFinitePath> contour)
