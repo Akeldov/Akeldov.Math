@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// Stores a rectangular raster of color values sampled on a <see cref="RasterGrid"/>.
     /// </summary>
     /// <typeparam name="TColor">The color value type stored in each raster cell.</typeparam>
-    public class Raster<TColor>
+    public class Raster<TColor> : IGrid<TColor>
     {
         /// <summary>
         /// Initializes a new raster with the specified grid and color values.
@@ -53,6 +53,17 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <summary>
         /// Gets or sets the value at the specified raster cell.
         /// </summary>
+        /// <param name="index">The zero-based raster cell index.</param>
+        /// <returns>The value stored at the specified cell.</returns>
+        public TColor this[VectorXYInt index]
+        {
+            get => Values[GetLinearIndex(index.X, index.Y)];
+            set => Values[GetLinearIndex(index.X, index.Y)] = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the value at the specified raster cell.
+        /// </summary>
         /// <param name="x">The zero-based X cell index.</param>
         /// <param name="y">The zero-based Y cell index.</param>
         /// <returns>The value stored at the specified cell.</returns>
@@ -60,6 +71,29 @@ namespace Akeldov.Math.Spatial2D.Imaging
         {
             get => Values[GetLinearIndex(x, y)];
             set => Values[GetLinearIndex(x, y)] = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the value at the specified flat row-major raster cell index.
+        /// </summary>
+        /// <param name="index">The zero-based flat row-major raster cell index.</param>
+        /// <returns>The value stored at the specified cell.</returns>
+        public TColor this[int index]
+        {
+            get
+            {
+                if ((uint)index >= (uint)Values.Length)
+                    throw new ArgumentOutOfRangeException(nameof(index), "Raster flat index must be inside the raster value array.");
+
+                return Values[index];
+            }
+            set
+            {
+                if ((uint)index >= (uint)Values.Length)
+                    throw new ArgumentOutOfRangeException(nameof(index), "Raster flat index must be inside the raster value array.");
+
+                Values[index] = value;
+            }
         }
 
         /// <summary>
