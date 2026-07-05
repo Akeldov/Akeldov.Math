@@ -31,6 +31,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             SiteIndex = siteIndex;
             Site = site;
             HexIndexes = CopyHexIndexes(hexIndexes);
+            Adjacents = Array.AsReadOnly(Array.Empty<VoronoiCell>());
         }
 
         /// <summary>
@@ -52,6 +53,16 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Gets the read-only semantic result of hex indexes assigned to this cell.
         /// </summary>
         public IReadOnlyList<VectorXYInt> HexIndexes { get; }
+
+        /// <summary>
+        /// Gets the read-only semantic result of cells sharing at least one hex edge with this cell.
+        /// </summary>
+        /// <remarks>
+        /// Cells produced by <see cref="VoronoiHexPartitioner"/> reference neighboring cell
+        /// instances from the same partition result. Cells constructed directly start with an
+        /// empty adjacency list.
+        /// </remarks>
+        public IReadOnlyList<VoronoiCell> Adjacents { get; private set; }
 
         /// <summary>
         /// Indicates whether this cell has the same site index and site as another cell.
@@ -90,6 +101,20 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             }
 
             return Array.AsReadOnly(copy);
+        }
+
+        internal void SetAdjacents(IReadOnlyList<VoronoiCell> adjacents)
+        {
+            if (adjacents == null)
+                throw new ArgumentNullException(nameof(adjacents));
+
+            var copy = new VoronoiCell[adjacents.Count];
+            for (int i = 0; i < adjacents.Count; i++)
+            {
+                copy[i] = adjacents[i];
+            }
+
+            Adjacents = Array.AsReadOnly(copy);
         }
     }
 }

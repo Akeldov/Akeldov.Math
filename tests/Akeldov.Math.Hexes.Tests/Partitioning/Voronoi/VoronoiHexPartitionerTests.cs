@@ -30,8 +30,12 @@ public class VoronoiHexPartitionerTests
         Assert.That(map.Cells, Has.Count.EqualTo(2));
         Assert.That(map.Cells[0], Is.SameAs(map[0]));
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }));
+        Assert.That(map.Cells[0].Adjacents, Has.Count.EqualTo(1));
+        Assert.That(map.Cells[0].Adjacents[0], Is.SameAs(map.Cells[1]));
         Assert.That(map.Cells[1], Is.SameAs(map[2]));
         Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
+        Assert.That(map.Cells[1].Adjacents, Has.Count.EqualTo(1));
+        Assert.That(map.Cells[1].Adjacents[0], Is.SameAs(map.Cells[0]));
     }
 
     [Test]
@@ -194,7 +198,9 @@ public class VoronoiHexPartitionerTests
 
         Assert.That(map.Cells, Has.Count.EqualTo(2));
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+        Assert.That(map.Cells[0].Adjacents, Is.Empty);
         Assert.That(map.Cells[1].HexIndexes, Is.Empty);
+        Assert.That(map.Cells[1].Adjacents, Is.Empty);
     }
 
     [Test]
