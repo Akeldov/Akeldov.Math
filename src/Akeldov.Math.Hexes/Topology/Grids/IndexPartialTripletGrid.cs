@@ -26,9 +26,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         private float HexRadius { get; set; }
 
-        internal VectorXY Origin { get; set; }
+        private VectorXY Origin { get; set; }
 
-        internal VectorXY Size { get; set; }
+        private VectorXY Size { get; set; }
 
         private VectorXY CellSize { get; set; }
 
