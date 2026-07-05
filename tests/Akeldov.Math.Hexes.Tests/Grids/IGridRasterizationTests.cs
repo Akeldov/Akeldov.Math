@@ -88,6 +88,8 @@ public class IGridRasterizationTests
 
         public int Height { get; }
 
+        public TValue this[int x, int y] => _values[y * Width + x];
+
         public TValue this[VectorXYInt index] => _values[index.Y * Width + index.X];
 
         public TValue this[int index] => _values[index];

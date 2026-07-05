@@ -29,5 +29,36 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             return rasterizer.Rasterize(source, grid);
         }
+
+        /// <summary>
+        /// Rasterizes the specified grid using the provided raster geometry and value-to-color selector.
+        /// </summary>
+        /// <typeparam name="TGrid">The grid.</typeparam>
+        /// <typeparam name="TValue">The grid value type.</typeparam>
+        /// <typeparam name="TColor">The raster color value type.</typeparam>
+        /// <param name="grid">The grid to rasterize.</param>
+        /// <param name="colorSelector">The function that maps each grid value to a raster color.</param>
+        /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
+        public static Raster<TColor> Rasterize<TGrid, TValue, TColor>(
+            this TGrid grid,
+            Func<TValue, TColor> colorSelector)
+            where TGrid : IGrid<TValue>
+        {
+            if (grid == null)
+                throw new ArgumentNullException(nameof(grid));
+
+            if (colorSelector == null)
+                throw new ArgumentNullException(nameof(colorSelector));
+
+            var resolution = new VectorXYInt(grid.Width, grid.Height);
+
+            int count = checked(grid.Width * grid.Height);
+            var values = new TColor[count];
+
+            for (int i = 0; i < values.Length; i++)
+                values[i] = colorSelector(grid[i]);
+
+            return new Raster<TColor>(resolution, values);
+        }
     }
 }

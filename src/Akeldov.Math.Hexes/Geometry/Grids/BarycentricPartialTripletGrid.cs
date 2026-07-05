@@ -3,6 +3,7 @@ using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -101,6 +102,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// Gets the Height value.
         /// </summary>
         public int Height => ResolutionY;
+
+        public PartialTriplet<float> this[int x, int y] => _values[y * ResolutionX + x];
 
         /// <summary>
         /// Gets the value at the specified index.

@@ -166,6 +166,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         public int Height => ResolutionY;
 
+        public Triplet<float> this[int x, int y] => _values[y * ResolutionX + x];
+
         /// <summary>
         /// Gets the value at the specified index.
         /// </summary>

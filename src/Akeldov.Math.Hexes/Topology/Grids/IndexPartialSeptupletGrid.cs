@@ -85,6 +85,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         public int Count => _values.Length;
 
+        public PartialSeptuplet<VectorXYInt> this[int x, int y] => _values[y * Resolution.X + x];
+
         /// <summary>
         /// Gets the value at the specified index.
         /// </summary>
