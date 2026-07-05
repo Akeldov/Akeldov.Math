@@ -23,7 +23,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public static TRaster Rasterize<TSource, TRaster>(
             this TSource source,
             SpatialRasterGrid grid,
-            IRasterizer<TSource, TRaster> rasterizer)
+            ISpatialRasterizer<TSource, TRaster> rasterizer)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));

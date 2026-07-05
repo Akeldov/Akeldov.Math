@@ -15,7 +15,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// </remarks>
     /// <typeparam name="TPointSource">The point influence source type.</typeparam>
     public sealed class CullingMapRGBA16BitRasterizer<TPointSource> :
-        IRasterizer<IReadOnlyList<TPointSource>, SpatialRaster<RGBA16BitColor>>
+        ISpatialRasterizer<IReadOnlyList<TPointSource>, SpatialRaster<RGBA16BitColor>>
         where TPointSource : IPointInfluenceSource
     {
         private const float SrgbLinearThreshold = 0.04045f;

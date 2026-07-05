@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes.Rasterization
     /// Initializes a new instance of the HexFieldGeometryRGBA16BitRasterizer type.
     /// </summary>
     public sealed class HexFieldGeometryRGBA16BitRasterizer :
-        IRasterizer<HexCenterMap, SpatialRaster<RGBA16BitColor>>
+        ISpatialRasterizer<HexCenterMap, SpatialRaster<RGBA16BitColor>>
     {
         private readonly Func<PointXY, RGBA16BitColor> _centerToColor;
 

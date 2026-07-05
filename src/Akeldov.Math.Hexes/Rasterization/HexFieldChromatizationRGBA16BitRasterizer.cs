@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes.Rasterization
     /// Initializes a new instance of the HexFieldChromatizationRGBA16BitRasterizer type.
     /// </summary>
     public sealed class HexFieldChromatizationRGBA16BitRasterizer :
-        IRasterizer<ChromaticIndexMap, SpatialRaster<RGBA16BitColor>>
+        ISpatialRasterizer<ChromaticIndexMap, SpatialRaster<RGBA16BitColor>>
     {
         private const float ApothemToRadius = 1.1547005f;
 

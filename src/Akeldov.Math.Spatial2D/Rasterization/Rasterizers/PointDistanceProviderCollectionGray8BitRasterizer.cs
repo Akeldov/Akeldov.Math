@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes point-distance provider collections into 8-bit grayscale rasters using nearest unsigned distance mapping.
     /// </summary>
     public sealed class PointDistanceProviderCollectionGray8BitRasterizer :
-        IRasterizer<IReadOnlyList<IPointDistanceProvider>, SpatialRaster<byte>>
+        ISpatialRasterizer<IReadOnlyList<IPointDistanceProvider>, SpatialRaster<byte>>
     {
         private readonly Func<float, byte> _distanceToGrayLevel;
 

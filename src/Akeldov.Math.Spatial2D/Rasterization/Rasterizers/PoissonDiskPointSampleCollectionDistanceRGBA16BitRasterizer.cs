@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes Poisson disk point samples into a 16-bit RGBA raster using nearest-sample distance mapping.
     /// </summary>
     public sealed class PoissonDiskPointSampleCollectionDistanceRGBA16BitRasterizer :
-        IRasterizer<IReadOnlyList<PoissonDiskPointSample>, SpatialRaster<RGBA16BitColor>>
+        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, SpatialRaster<RGBA16BitColor>>
     {
         private readonly Func<PoissonDiskPointSample, float, RGBA16BitColor> _sampleDistanceToColor;
 

@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes parameterized curves into 8-bit grayscale rasters using projection-to-curve mapping.
     /// </summary>
-    public sealed class ParameterizedCurveDistanceGray8BitRasterizer : IRasterizer<IParameterizedCurve, SpatialRaster<byte>>
+    public sealed class ParameterizedCurveDistanceGray8BitRasterizer : ISpatialRasterizer<IParameterizedCurve, SpatialRaster<byte>>
     {
         private readonly Func<float, float, byte> _projectionToGrayLevel;
 
