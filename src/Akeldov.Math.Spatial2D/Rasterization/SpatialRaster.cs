@@ -3,19 +3,19 @@ using System;
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Stores a rectangular raster of color values sampled on a <see cref="SpatialRasterGrid"/>.
+    /// Stores a rectangular raster of values sampled on a <see cref="SpatialRasterGrid"/>.
     /// </summary>
-    /// <typeparam name="TColor">The color value type stored in each raster cell.</typeparam>
-    public class SpatialRaster<TColor> : IGrid<TColor>
+    /// <typeparam name="TValue">The value type stored in each raster cell.</typeparam>
+    public class SpatialRaster<TValue> : IGrid<TValue>
     {
         /// <summary>
-        /// Initializes a new raster with the specified grid and color values.
+        /// Initializes a new raster with the specified grid and values.
         /// </summary>
         /// <param name="grid">The raster sampling grid.</param>
         /// <param name="values">
         /// The cell values in row-major order. The array is retained as raster state and must contain one value per grid cell.
         /// </param>
-        public SpatialRaster(SpatialRasterGrid grid, TColor[] values)
+        public SpatialRaster(SpatialRasterGrid grid, TValue[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
@@ -37,7 +37,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Gets the retained row-major raster value array.
         /// </summary>
-        public TColor[] Values { get; }
+        public TValue[] Values { get; }
 
         /// <summary>
         /// Gets the raster width in cells.
@@ -54,7 +54,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         /// <param name="index">The zero-based raster cell index.</param>
         /// <returns>The value stored at the specified cell.</returns>
-        public TColor this[VectorXYInt index]
+        public TValue this[VectorXYInt index]
         {
             get => Values[GetLinearIndex(index.X, index.Y)];
             set => Values[GetLinearIndex(index.X, index.Y)] = value;
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="x">The zero-based X cell index.</param>
         /// <param name="y">The zero-based Y cell index.</param>
         /// <returns>The value stored at the specified cell.</returns>
-        public TColor this[int x, int y]
+        public TValue this[int x, int y]
         {
             get => Values[GetLinearIndex(x, y)];
             set => Values[GetLinearIndex(x, y)] = value;
@@ -77,7 +77,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         /// <param name="index">The zero-based flat row-major raster cell index.</param>
         /// <returns>The value stored at the specified cell.</returns>
-        public TColor this[int index]
+        public TValue this[int index]
         {
             get
             {
@@ -99,9 +99,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// Creates a raster with the same grid and a copied value array.
         /// </summary>
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
-        public SpatialRaster<TColor> Clone()
+        public SpatialRaster<TValue> Clone()
         {
-            return new SpatialRaster<TColor>(Grid, (TColor[])Values.Clone());
+            return new SpatialRaster<TValue>(Grid, (TValue[])Values.Clone());
         }
 
         private int GetLinearIndex(int x, int y)
