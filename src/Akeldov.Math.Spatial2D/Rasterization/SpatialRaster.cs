@@ -1,7 +1,6 @@
 using System;
-using Akeldov.Math.Spatial2D.Rasterization;
 
-namespace Akeldov.Math.Spatial2D.Imaging
+namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
     /// Stores a rectangular raster of color values sampled on a <see cref="SpatialRasterGrid"/>.

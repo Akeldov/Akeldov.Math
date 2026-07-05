@@ -1,4 +1,5 @@
 using System.IO;
+using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
