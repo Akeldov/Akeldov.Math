@@ -40,6 +40,7 @@ public class IndexSeptupletMapTests
 
         Assert.That(topology.Width, Is.EqualTo(3));
         Assert.That(topology.Height, Is.EqualTo(2));
+        Assert.That(topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(topology[1], Is.EqualTo(adjacency));
     }
 

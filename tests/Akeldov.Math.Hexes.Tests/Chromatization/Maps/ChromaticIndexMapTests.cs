@@ -56,6 +56,7 @@ public class ChromaticIndexMapTests
 
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(chromaticIndex));
         Assert.That(map[5], Is.EqualTo(chromaticIndex));
     }

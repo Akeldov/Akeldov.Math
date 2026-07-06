@@ -19,6 +19,11 @@ namespace Akeldov.Math.Hexes
         int Height { get; }
 
         /// <summary>
+        /// Represents the <c>Layout</c> value.
+        /// </summary>
+        Layout Layout { get; }
+
+        /// <summary>
         /// Represents the <c>this[VectorXYInt]</c> value.
         /// </summary>
         /// <param name="index">The index value.</param>
