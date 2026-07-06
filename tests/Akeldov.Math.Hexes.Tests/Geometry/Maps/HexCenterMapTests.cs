@@ -19,12 +19,42 @@ public class HexCenterMapTests
 
             Assert.That(geometry.Width, Is.EqualTo(2));
             Assert.That(geometry.Height, Is.EqualTo(2));
+            Assert.That(geometry.Geometry, Is.EqualTo(new HexMapGeometry(2, 2, origin, apothem, layout)));
             Assert.That(geometry.Origin, Is.EqualTo(origin));
             Assert.That(geometry.Apothem, Is.EqualTo(apothem));
             Assert.That(geometry.Layout, Is.EqualTo(layout));
             Assert.That(typeof(HexCenterMap).GetProperty("Centers"), Is.Null);
             VectorAssert.AreEqual(geometry[0], origin.X, origin.Y);
         }
+    }
+
+    [Test]
+    public void Constructor_UsesHexMapGeometry()
+    {
+        var geometry = new HexMapGeometry(
+            new HexMapTopology(2, 2, Layout.OddR),
+            new VectorXY(10f, 20f),
+            2f);
+
+        var map = new HexCenterMap(geometry);
+
+        Assert.That(map.Geometry, Is.EqualTo(geometry));
+        Assert.That(map.Width, Is.EqualTo(2));
+        Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map.Origin, Is.EqualTo(new VectorXY(10f, 20f)));
+        Assert.That(map.Apothem, Is.EqualTo(2f));
+        Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
+        VectorAssert.AreEqual(map[0], 10f, 20f);
+    }
+
+    [Test]
+    public void HexMapGeometry_WithRadius_UsesDefaultZeroHexCenter()
+    {
+        var geometry = new HexMapGeometry(1, 1, 2f.ConvertHexApothemToRadius(), Layout.EvenQ);
+
+        Assert.That(geometry.Topology, Is.EqualTo(new HexMapTopology(1, 1, Layout.EvenQ)));
+        Assert.That(geometry.Apothem, Is.EqualTo(2f).Within(0.00001f));
+        VectorAssert.AreEqual(geometry.Origin, 2f.ConvertHexApothemToRadius(), 6f);
     }
 
     [Test]
@@ -66,6 +96,15 @@ public class HexCenterMapTests
             new HexCenterMap(1, 1, VectorXY.Zero, apothem, Layout.OddR));
 
         Assert.That(exception!.ParamName, Is.EqualTo("apothem"));
+    }
+
+    [Test]
+    public void Constructor_WhenGeometryIsDefault_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new HexCenterMap(default(HexMapGeometry)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometry"));
     }
 
     [TestCase(0f)]

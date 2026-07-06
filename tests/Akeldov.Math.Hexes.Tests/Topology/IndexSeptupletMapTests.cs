@@ -19,6 +19,19 @@ public class IndexSeptupletMapTests
     }
 
     [Test]
+    public void Constructor_UsesHexMapTopology()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+
+        var map = new IndexSeptupletMap(topology);
+
+        Assert.That(map.Width, Is.EqualTo(3));
+        Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map.Count, Is.EqualTo(6));
+        Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
+    }
+
+    [Test]
     public void IndexSeptupletMap_ImplementsIHexMap()
     {
         IHexMap<Septuplet<VectorXYInt>> topology = new IndexSeptupletMap(3, 2, Layout.OddR);

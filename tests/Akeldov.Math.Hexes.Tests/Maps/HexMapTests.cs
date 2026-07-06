@@ -20,6 +20,32 @@ public class HexMapTests
     }
 
     [Test]
+    public void Constructor_UsesHexMapTopology()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+
+        var map = new HexMap<int>(topology);
+
+        Assert.That(map.Topology.Width, Is.EqualTo(3));
+        Assert.That(map.Topology.Height, Is.EqualTo(2));
+        Assert.That(map.Topology.Layout, Is.EqualTo(Layout.EvenQ));
+        Assert.That(map.Width, Is.EqualTo(3));
+        Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
+    }
+
+    [Test]
+    public void HexMapTopology_ExposesDimensionsLayoutAndCount()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.OddQ);
+
+        Assert.That(topology.Width, Is.EqualTo(3));
+        Assert.That(topology.Height, Is.EqualTo(2));
+        Assert.That(topology.Layout, Is.EqualTo(Layout.OddQ));
+        Assert.That(topology.Count, Is.EqualTo(6));
+    }
+
+    [Test]
     public void Indexer_UsesTopologyWidthForFlatIndex()
     {
         var topology = new IndexSeptupletMap(3, 2, Layout.OddR);
@@ -58,5 +84,13 @@ public class HexMapTests
     public void Constructor_WhenTopologyIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new HexMap<int>(null!));
+    }
+
+    [Test]
+    public void HexMapTopology_WhenArgumentsAreInvalid_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexMapTopology(-1, 1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexMapTopology(1, -1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexMapTopology(1, 1, (Layout)42));
     }
 }

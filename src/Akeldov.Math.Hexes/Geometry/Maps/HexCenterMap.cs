@@ -26,30 +26,33 @@ namespace Akeldov.Math.Hexes.Geometry
             VectorXY origin,
             float apothem,
             Layout layout)
+            : this(new HexMapGeometry(width, height, origin, apothem, layout))
         {
-            if (width < 0)
-                throw new ArgumentOutOfRangeException(nameof(width));
+        }
 
-            if (height < 0)
-                throw new ArgumentOutOfRangeException(nameof(height));
+        /// <summary>
+        /// Initializes a new instance of the HexCenterMap type.
+        /// </summary>
+        /// <param name="geometry">The geometry value.</param>
+        public HexCenterMap(HexMapGeometry geometry)
+        {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
 
-            if (!origin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex field origin components must be finite.");
+            if (float.IsNaN(geometry.Apothem) || float.IsInfinity(geometry.Apothem) || geometry.Apothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry apothem must be finite and positive.");
 
-            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+            float radius = geometry.Radius;
 
-            var radius = apothem.ConvertHexApothemToRadius();
-            var count = checked(width * height);
+            Geometry = geometry;
+            Width = geometry.Width;
+            Height = geometry.Height;
+            Origin = geometry.Origin;
+            Apothem = geometry.Apothem;
+            Layout = geometry.Layout;
+            _values = new PointXY[geometry.Count];
 
-            Width = width;
-            Height = height;
-            Origin = origin;
-            Apothem = apothem;
-            Layout = layout;
-            _values = new PointXY[count];
-
-            switch (layout)
+            switch (geometry.Layout)
             {
                 case Layout.OddR:
                     FillRowLayoutCenters(false, radius);
@@ -64,7 +67,7 @@ namespace Akeldov.Math.Hexes.Geometry
                     FillColumnLayoutCenters(true, radius);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
+                    throw new ArgumentOutOfRangeException(nameof(geometry));
             }
         }
 
@@ -80,9 +83,14 @@ namespace Akeldov.Math.Hexes.Geometry
             int height,
             float radius,
             Layout layout)
-            : this(width, height, GetDefaultOriginFromRadius(radius, layout), ConvertValidRadiusToApothem(radius), layout)
+            : this(new HexMapGeometry(width, height, radius, layout))
         {
         }
+
+        /// <summary>
+        /// Gets the Geometry value.
+        /// </summary>
+        public HexMapGeometry Geometry { get; }
 
         /// <summary>
         /// Gets the Width value.
@@ -183,37 +191,5 @@ namespace Akeldov.Math.Hexes.Geometry
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
 
-        private static float ConvertValidRadiusToApothem(float radius)
-        {
-            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
-
-            return Constants.Radius2Apothem * radius;
-        }
-
-        private static VectorXY GetDefaultOriginFromRadius(float radius, Layout layout)
-        {
-            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
-
-            return GetDefaultOrigin(Constants.Radius2Apothem * radius, radius, layout);
-        }
-
-        private static VectorXY GetDefaultOrigin(float apothem, float radius, Layout layout)
-        {
-            switch (layout)
-            {
-                case Layout.OddR:
-                    return new VectorXY(apothem, radius);
-                case Layout.EvenR:
-                    return new VectorXY(3f * apothem, radius);
-                case Layout.OddQ:
-                    return new VectorXY(radius, apothem);
-                case Layout.EvenQ:
-                    return new VectorXY(radius, 3f * apothem);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
-            }
-        }
     }
 }

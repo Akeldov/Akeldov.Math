@@ -22,19 +22,22 @@ namespace Akeldov.Math.Hexes.Topology
             int width,
             int height,
             Layout layout)
+            : this(new HexMapTopology(width, height, layout))
         {
-            if (width < 0)
-                throw new ArgumentOutOfRangeException(nameof(width));
+        }
 
-            if (height < 0)
-                throw new ArgumentOutOfRangeException(nameof(height));
+        /// <summary>
+        /// Initializes a new instance of the IndexSeptupletMap type.
+        /// </summary>
+        /// <param name="topology">The topology value.</param>
+        public IndexSeptupletMap(HexMapTopology topology)
+        {
+            Width = topology.Width;
+            Height = topology.Height;
+            Layout = topology.Layout;
+            _values = new Septuplet<VectorXYInt>[topology.Count];
 
-            Width = width;
-            Height = height;
-            Layout = layout;
-            _values = new Septuplet<VectorXYInt>[checked(width * height)];
-
-            switch (layout)
+            switch (topology.Layout)
             {
                 case Layout.OddR:
                     FillRowLayoutTopology(false);
@@ -49,7 +52,7 @@ namespace Akeldov.Math.Hexes.Topology
                     FillColumnLayoutTopology(true);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
+                    throw new ArgumentOutOfRangeException(nameof(topology));
             }
         }
 

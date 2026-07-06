@@ -18,6 +18,15 @@ namespace Akeldov.Math.Hexes
         /// Performs the HexMap operation.
         /// </summary>
         /// <param name="topology">The topology value.</param>
+        public HexMap(HexMapTopology topology)
+            : this(new IndexSeptupletMap(topology))
+        {
+        }
+
+        /// <summary>
+        /// Performs the HexMap operation.
+        /// </summary>
+        /// <param name="topology">The topology value.</param>
         public HexMap(IndexSeptupletMap topology)
         {
             Topology = topology ?? throw new ArgumentNullException(nameof(topology));
