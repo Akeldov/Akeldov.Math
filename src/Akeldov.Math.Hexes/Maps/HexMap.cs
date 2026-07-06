@@ -1,5 +1,3 @@
-using Akeldov.Math.Hexes.Topology;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -12,6 +10,11 @@ namespace Akeldov.Math.Hexes
     /// <typeparam name="TValue">The type of value handled by this member.</typeparam>
     public class HexMap<TValue> : IHexMap<TValue>
     {
+        private readonly HexMapTopology _topology;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly Layout _layout;
+
         private readonly TValue[] _values;
 
         /// <summary>
@@ -19,48 +22,72 @@ namespace Akeldov.Math.Hexes
         /// </summary>
         /// <param name="topology">The topology value.</param>
         public HexMap(HexMapTopology topology)
-            : this(new IndexSeptupletMap(topology))
         {
+            _topology = topology;
+            _width = topology.Width;
+            _height = topology.Height;
+            _layout = topology.Layout;
+            _values = new TValue[checked(topology.Width * topology.Height)];
         }
 
         /// <summary>
         /// Performs the HexMap operation.
         /// </summary>
-        /// <param name="topology">The topology value.</param>
-        public HexMap(IndexSeptupletMap topology)
+        /// <param name="width">Width of the HexMap in hexes.</param>
+        /// <param name="height">Height of the HexMap in hexes.</param>
+        /// <param name="layout">Layout of the HexMap in hexes.</param>
+        public HexMap(int width, int height, Layout layout)
         {
-            Topology = topology ?? throw new ArgumentNullException(nameof(topology));
-            _values = new TValue[checked(topology.Width * topology.Height)];
+            _topology = new HexMapTopology(width, height, layout);
+            _width = width;
+            _height = height;
+            _layout = layout;
+            _values = new TValue[checked(width * height)];
         }
 
-        internal HexMap(IndexSeptupletMap topology, TValue[] values)
+        internal HexMap(HexMapTopology topology, TValue[] values)
         {
-            Topology = topology ?? throw new ArgumentNullException(nameof(topology));
+            _topology = topology;
+            _width = topology.Width;
+            _height = topology.Height;
+            _layout = topology.Layout;
             _values = values ?? throw new ArgumentNullException(nameof(values));
 
             if (values.Length != topology.Width * topology.Height)
                 throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
         }
 
+        internal HexMap(int width, int height, Layout layout, TValue[] values)
+        {
+            _topology = new HexMapTopology(width, height, layout);
+            _width = width;
+            _height = height;
+            _layout = layout;
+            _values = values ?? throw new ArgumentNullException(nameof(values));
+
+            if (values.Length != width * height)
+                throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
+        }
+
         /// <summary>
         /// Gets the Topology value.
         /// </summary>
-        public IndexSeptupletMap Topology { get; }
+        public HexMapTopology Topology => _topology;
 
         /// <summary>
         /// Gets the Width value.
         /// </summary>
-        public int Width => Topology.Width;
+        public int Width => _width;
 
         /// <summary>
         /// Gets the Height value.
         /// </summary>
-        public int Height => Topology.Height;
+        public int Height => _height;
 
         /// <summary>
         /// Gets the Layout value.
         /// </summary>
-        public Layout Layout => Topology.Layout;
+        public Layout Layout => _layout;
 
         /// <summary>
         /// Gets the value at the specified index.

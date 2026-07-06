@@ -1,5 +1,3 @@
-using Akeldov.Math.Hexes.Topology;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Hexes.Tests.Maps;
@@ -9,11 +7,10 @@ public class HexMapTests
     [Test]
     public void Constructor_UsesTopology()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.EvenQ);
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+        var map = new HexMap<int>(3, 2, Layout.EvenQ);
 
-        var map = new HexMap<int>(topology);
-
-        Assert.That(map.Topology, Is.SameAs(topology));
+        Assert.That(map.Topology, Is.EqualTo(topology));
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));
         Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
@@ -48,8 +45,7 @@ public class HexMapTests
     [Test]
     public void Indexer_UsesTopologyWidthForFlatIndex()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.OddR);
-        var map = new HexMap<int>(topology);
+        var map = new HexMap<int>(3, 2, Layout.OddR);
 
         map[new VectorXYInt(2, 1)] = 42;
 
@@ -59,8 +55,7 @@ public class HexMapTests
     [Test]
     public void HexMap_ImplementsIHexMap()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.OddR);
-        var source = new HexMap<int>(topology);
+        var source = new HexMap<int>(3, 2, Layout.OddR);
         IHexMap<int> map = source;
 
         source[new VectorXYInt(2, 1)] = 42;
@@ -73,17 +68,10 @@ public class HexMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.OddR);
-        var map = new HexMap<int>(topology);
+        var map = new HexMap<int>(3, 2, Layout.OddR);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = map[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => map[new VectorXYInt(0, 2)] = 1);
-    }
-
-    [Test]
-    public void Constructor_WhenTopologyIsNull_Throws()
-    {
-        Assert.Throws<ArgumentNullException>(() => new HexMap<int>(null!));
     }
 
     [Test]

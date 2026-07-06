@@ -108,7 +108,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </returns>
         public HexMap<VoronoiCell> ToMutableHexMap()
         {
-            return new HexMap<VoronoiCell>(Topology, CopyAssignments(_assignments));
+            return new HexMap<VoronoiCell>(Width, Height, Layout, CopyAssignments(_assignments));
         }
 
         private static IndexSeptupletMap CreateTopology(HexCenterMap centers)
