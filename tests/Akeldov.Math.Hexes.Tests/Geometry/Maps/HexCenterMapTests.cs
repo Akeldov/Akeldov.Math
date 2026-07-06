@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Hexes.Tests.VectorsQRS;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Hexes.Tests.Geometry.Maps;
 
@@ -55,6 +56,58 @@ public class HexCenterMapTests
         Assert.That(geometry.Topology, Is.EqualTo(new HexMapTopology(1, 1, Layout.EvenQ)));
         Assert.That(geometry.Apothem, Is.EqualTo(2f).Within(0.00001f));
         VectorAssert.AreEqual(geometry.Origin, 2f.ConvertHexApothemToRadius(), 6f);
+    }
+
+    [TestCase(Layout.OddR, 8f, 17.6906f, 22f, 25.7735f)]
+    [TestCase(Layout.EvenR, 6f, 17.6906f, 20f, 25.7735f)]
+    [TestCase(Layout.OddQ, 7.6906f, 18f, 19.2376f, 28f)]
+    [TestCase(Layout.EvenQ, 7.6906f, 16f, 19.2376f, 26f)]
+    public void HexMapGeometryBoundingBox_ReturnsRectangleAroundWholeMap(
+        Layout layout,
+        float expectedMinX,
+        float expectedMinY,
+        float expectedMaxX,
+        float expectedMaxY)
+    {
+        var geometry = new HexMapGeometry(
+            width: 3,
+            height: 2,
+            origin: new VectorXY(10f, 20f),
+            apothem: 2f,
+            layout: layout);
+
+        Rectangle boundingBox = geometry.BoundingBox();
+
+        Assert.That(boundingBox.Min.X, Is.EqualTo(expectedMinX).Within(0.0001f));
+        Assert.That(boundingBox.Min.Y, Is.EqualTo(expectedMinY).Within(0.0001f));
+        Assert.That(boundingBox.Max.X, Is.EqualTo(expectedMaxX).Within(0.0001f));
+        Assert.That(boundingBox.Max.Y, Is.EqualTo(expectedMaxY).Within(0.0001f));
+    }
+
+    [Test]
+    public void HexMapGeometryBoundingBox_WhenMapIsEmpty_Throws()
+    {
+        var geometry = new HexMapGeometry(
+            new HexMapTopology(0, 1, Layout.OddR),
+            VectorXY.Zero,
+            2f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => geometry.BoundingBox());
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometry"));
+    }
+
+    [Test]
+    public void HexMapTopologyBoundingBox_WithApothemAndOrigin_ReturnsSameRectangleAsGeometry()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+        var origin = new VectorXY(10f, 20f);
+        const float apothem = 2f;
+
+        Rectangle topologyBoundingBox = topology.BoundingBox(apothem, origin);
+        Rectangle geometryBoundingBox = new HexMapGeometry(topology, origin, apothem).BoundingBox();
+
+        Assert.That(topologyBoundingBox, Is.EqualTo(geometryBoundingBox));
     }
 
     [Test]
