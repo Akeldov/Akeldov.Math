@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Hexes.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Graphs", "src\Akeldov.Math.Graphs\Akeldov.Math.Graphs.csproj", "{B3933F6E-6091-4E05-86DD-953AC5C7759B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Graphs.Tests", "tests\Akeldov.Math.Graphs.Tests\Akeldov.Math.Graphs.Tests.csproj", "{6B953B4D-8AB5-4CF8-9B61-8D79FE0D76D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{B3933F6E-6091-4E05-86DD-953AC5C7759B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3933F6E-6091-4E05-86DD-953AC5C7759B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3933F6E-6091-4E05-86DD-953AC5C7759B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B953B4D-8AB5-4CF8-9B61-8D79FE0D76D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B953B4D-8AB5-4CF8-9B61-8D79FE0D76D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B953B4D-8AB5-4CF8-9B61-8D79FE0D76D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B953B4D-8AB5-4CF8-9B61-8D79FE0D76D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{414A9EE2-69BD-40A6-9D17-CF89CE34F17F} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
 		{53D1F008-2136-40B1-B1AC-33E59490428C} = {2AA7C352-506F-4F52-8525-42B261FC906D}
 		{B3933F6E-6091-4E05-86DD-953AC5C7759B} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
+		{6B953B4D-8AB5-4CF8-9B61-8D79FE0D76D7} = {2AA7C352-506F-4F52-8525-42B261FC906D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F13E249-3E55-4FA9-80CE-D21EC009E9DD}
