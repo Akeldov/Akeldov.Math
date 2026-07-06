@@ -1,4 +1,3 @@
-using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 
