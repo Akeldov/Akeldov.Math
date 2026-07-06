@@ -8,8 +8,7 @@ namespace Akeldov.Math.Graphs
     /// <typeparam name="TVertex">The directed graph vertex type.</typeparam>
     /// <typeparam name="TEdge">The directed edge type.</typeparam>
     public interface IDirectedEdgeGraphVertex<TVertex, TEdge> : IEdgeGraphVertex<TVertex, TEdge>, IDirectedGraphVertex<TVertex>
-        where TVertex : IDirectedEdgeGraphVertex<TVertex, TEdge>, IDirectedGraphVertex<TVertex>
-        where TEdge : IDirectedEdge<TVertex, TEdge>
+        where TEdge : IDirectedEdge<TVertex>
     {
         /// <summary>
         /// Gets the read-only structural collection of edges directed into this vertex.

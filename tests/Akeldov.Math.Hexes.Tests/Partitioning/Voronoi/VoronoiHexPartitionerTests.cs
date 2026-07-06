@@ -46,8 +46,15 @@ public class VoronoiHexPartitionerTests
         {
             Assert.That(graph.Vertices, Is.SameAs(map.Cells));
             Assert.That(graph.Edges, Has.Count.EqualTo(2));
+            Assert.That(graph.GetAdjacentVertices(map.Cells[0]), Is.EqualTo(new[] { map.Cells[1] }));
+            Assert.That(graph.GetIncomingVertices(map.Cells[0]), Is.EqualTo(new[] { map.Cells[1] }));
+            Assert.That(graph.GetOutgoingVertices(map.Cells[0]), Is.EqualTo(new[] { map.Cells[1] }));
+            Assert.That(graph.GetIncidentEdges(map.Cells[0]), Is.EqualTo(new[] { incomingEdge, outgoingEdge }));
+            Assert.That(graph.GetIncomingEdges(map.Cells[0]), Is.EqualTo(new[] { incomingEdge }));
+            Assert.That(graph.GetOutgoingEdges(map.Cells[0]), Is.EqualTo(new[] { outgoingEdge }));
             Assert.That(map.Cells[0].OutgoingVertices, Is.EqualTo(new[] { map.Cells[1] }));
             Assert.That(map.Cells[0].IncomingVertices, Is.EqualTo(new[] { map.Cells[1] }));
+            Assert.That(map.Cells[0].IncidentEdges, Is.EqualTo(new[] { incomingEdge, outgoingEdge }));
             Assert.That(map.Cells[0].OutgoingEdges, Has.Count.EqualTo(1));
             Assert.That(map.Cells[0].IncomingEdges, Has.Count.EqualTo(1));
             Assert.That(outgoingEdge.FromVertex, Is.SameAs(map.Cells[0]));

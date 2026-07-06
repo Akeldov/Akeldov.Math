@@ -34,6 +34,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             HexIndexes = CopyHexIndexes(hexIndexes);
             Adjacents = Array.AsReadOnly(Array.Empty<VoronoiCell>());
             IncomingVertices = Array.AsReadOnly(Array.Empty<VoronoiCell>());
+            IncidentEdges = Array.AsReadOnly(Array.Empty<VoronoiCellEdge>());
             IncomingEdges = Array.AsReadOnly(Array.Empty<VoronoiCellEdge>());
             OutgoingEdges = Array.AsReadOnly(Array.Empty<VoronoiCellEdge>());
         }
@@ -82,6 +83,15 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Gets the read-only semantic result of cells targeted by directed edges from this cell.
         /// </summary>
         public IReadOnlyList<VoronoiCell> OutgoingVertices => Adjacents;
+
+        /// <summary>
+        /// Gets the read-only semantic result of directed edges incident to this cell.
+        /// </summary>
+        /// <remarks>
+        /// Cells produced by <see cref="VoronoiHexPartitioner"/> expose incoming edges followed
+        /// by outgoing edges. Cells constructed directly start with an empty list.
+        /// </remarks>
+        public IReadOnlyList<VoronoiCellEdge> IncidentEdges { get; private set; }
 
         /// <summary>
         /// Gets the read-only semantic result of directed edges targeting this cell.
@@ -164,6 +174,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             IncomingEdges = CopyEdges(incomingEdges);
             OutgoingEdges = CopyEdges(outgoingEdges);
+            IncidentEdges = CopyIncidentEdges(IncomingEdges, OutgoingEdges);
             IncomingVertices = CopyIncomingVertices(IncomingEdges);
         }
 
@@ -173,6 +184,24 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             for (int i = 0; i < edges.Count; i++)
             {
                 copy[i] = edges[i];
+            }
+
+            return Array.AsReadOnly(copy);
+        }
+
+        private static IReadOnlyList<VoronoiCellEdge> CopyIncidentEdges(
+            IReadOnlyList<VoronoiCellEdge> incomingEdges,
+            IReadOnlyList<VoronoiCellEdge> outgoingEdges)
+        {
+            var copy = new VoronoiCellEdge[incomingEdges.Count + outgoingEdges.Count];
+            for (int i = 0; i < incomingEdges.Count; i++)
+            {
+                copy[i] = incomingEdges[i];
+            }
+
+            for (int i = 0; i < outgoingEdges.Count; i++)
+            {
+                copy[incomingEdges.Count + i] = outgoingEdges[i];
             }
 
             return Array.AsReadOnly(copy);

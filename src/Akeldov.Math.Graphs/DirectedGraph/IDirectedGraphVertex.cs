@@ -11,7 +11,6 @@ namespace Akeldov.Math.Graphs
     /// <see cref="OutgoingVertices"/>.
     /// </remarks>
     public interface IDirectedGraphVertex<TVertex> : IGraphVertex<TVertex>
-        where TVertex : IDirectedGraphVertex<TVertex>
     {
         /// <summary>
         /// Gets the read-only structural collection of vertices with edges directed into this vertex.

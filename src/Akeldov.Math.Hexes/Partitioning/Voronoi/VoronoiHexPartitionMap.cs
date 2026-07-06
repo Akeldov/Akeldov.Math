@@ -112,6 +112,60 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public IReadOnlyCollection<VoronoiCellEdge> Edges { get; }
 
         /// <summary>
+        /// Gets the read-only semantic result of outgoing adjacent cells for the specified cell.
+        /// </summary>
+        /// <param name="vertex">The Voronoi cell whose adjacent cells should be returned.</param>
+        public IReadOnlyList<VoronoiCell> GetAdjacentVertices(VoronoiCell vertex)
+        {
+            return GetOutgoingVertices(vertex);
+        }
+
+        /// <summary>
+        /// Gets the read-only semantic result of cells with directed edges targeting the specified cell.
+        /// </summary>
+        /// <param name="vertex">The Voronoi cell whose incoming cells should be returned.</param>
+        public IReadOnlyList<VoronoiCell> GetIncomingVertices(VoronoiCell vertex)
+        {
+            return GetGraphCell(vertex).IncomingVertices;
+        }
+
+        /// <summary>
+        /// Gets the read-only semantic result of cells targeted by directed edges from the specified cell.
+        /// </summary>
+        /// <param name="vertex">The Voronoi cell whose outgoing cells should be returned.</param>
+        public IReadOnlyList<VoronoiCell> GetOutgoingVertices(VoronoiCell vertex)
+        {
+            return GetGraphCell(vertex).OutgoingVertices;
+        }
+
+        /// <summary>
+        /// Gets the read-only semantic result of directed edges incident to the specified cell.
+        /// </summary>
+        /// <param name="vertex">The Voronoi cell whose incident edges should be returned.</param>
+        public IReadOnlyList<VoronoiCellEdge> GetIncidentEdges(VoronoiCell vertex)
+        {
+            return GetGraphCell(vertex).IncidentEdges;
+        }
+
+        /// <summary>
+        /// Gets the read-only semantic result of directed edges targeting the specified cell.
+        /// </summary>
+        /// <param name="vertex">The Voronoi cell whose incoming edges should be returned.</param>
+        public IReadOnlyList<VoronoiCellEdge> GetIncomingEdges(VoronoiCell vertex)
+        {
+            return GetGraphCell(vertex).IncomingEdges;
+        }
+
+        /// <summary>
+        /// Gets the read-only semantic result of directed edges originating from the specified cell.
+        /// </summary>
+        /// <param name="vertex">The Voronoi cell whose outgoing edges should be returned.</param>
+        public IReadOnlyList<VoronoiCellEdge> GetOutgoingEdges(VoronoiCell vertex)
+        {
+            return GetGraphCell(vertex).OutgoingEdges;
+        }
+
+        /// <summary>
         /// Creates a new mutable caller-owned hex map initialized from this partition map's assignments.
         /// </summary>
         /// <returns>
@@ -165,6 +219,21 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             }
 
             return copy;
+        }
+
+        private VoronoiCell GetGraphCell(VoronoiCell vertex)
+        {
+            if (vertex == null)
+                throw new ArgumentNullException(nameof(vertex));
+
+            if (vertex.SiteIndex < Cells.Count)
+            {
+                VoronoiCell cell = Cells[vertex.SiteIndex];
+                if (cell.Equals(vertex))
+                    return cell;
+            }
+
+            throw new ArgumentException("Vertex must belong to this partition map.", nameof(vertex));
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Width + index.X;

@@ -4,10 +4,12 @@ namespace Akeldov.Math.Graphs
     /// Defines a directed edge between two graph vertices.
     /// </summary>
     /// <typeparam name="TVertex">The directed graph vertex type.</typeparam>
-    /// <typeparam name="TEdge">The directed edge type.</typeparam>
-    public interface IDirectedEdge<TVertex, TEdge> : IEdge<TVertex, TEdge>
-        where TVertex : IDirectedEdgeGraphVertex<TVertex, TEdge>, IDirectedGraphVertex<TVertex>
-        where TEdge : IDirectedEdge<TVertex, TEdge>
+    /// <remarks>
+    /// For directed edges, <see cref="IEdge{TVertex}.FirstVertex"/> is equivalent to
+    /// <see cref="FromVertex"/>, and <see cref="IEdge{TVertex}.SecondVertex"/> is equivalent to
+    /// <see cref="ToVertex"/>.
+    /// </remarks>
+    public interface IDirectedEdge<TVertex> : IEdge<TVertex>
     {
         /// <summary>
         /// Gets the source vertex of the directed edge.

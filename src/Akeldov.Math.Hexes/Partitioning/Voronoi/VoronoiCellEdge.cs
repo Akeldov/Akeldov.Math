@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Represents a directed edge between two adjacent Voronoi cells.
     /// </summary>
-    public sealed class VoronoiCellEdge : IDirectedEdge<VoronoiCell, VoronoiCellEdge>, IEquatable<VoronoiCellEdge>
+    public sealed class VoronoiCellEdge : IDirectedEdge<VoronoiCell>, IEquatable<VoronoiCellEdge>
     {
         /// <summary>
         /// Initializes a new directed Voronoi cell edge.

@@ -7,8 +7,7 @@ namespace Akeldov.Math.Graphs
     /// <typeparam name="TEdge">The weighted edge type.</typeparam>
     /// <typeparam name="TWeight">The edge weight type.</typeparam>
     public interface IWeightedEdgeGraphVertex<TVertex, TEdge, TWeight> : IEdgeGraphVertex<TVertex, TEdge>
-        where TVertex : IWeightedEdgeGraphVertex<TVertex, TEdge, TWeight>
-        where TEdge : IWeightedEdge<TVertex, TEdge, TWeight>
+        where TEdge : IWeightedEdge<TVertex, TWeight>
     {
     }
 }
