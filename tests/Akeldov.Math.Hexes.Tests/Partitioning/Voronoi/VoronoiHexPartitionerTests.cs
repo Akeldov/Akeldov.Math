@@ -56,6 +56,25 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
+    public void ToVoronoiHexPartitionMap_PartitionsHexCenters()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(4f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(3, 1, VectorXY.Zero, 1f, Layout.OddR);
+
+        var map = hexCenters.ToVoronoiHexPartitionMap(sites);
+
+        Assert.That(map.Centers, Is.SameAs(hexCenters));
+        Assert.That(map[0].SiteIndex, Is.EqualTo(0));
+        Assert.That(map[1].SiteIndex, Is.EqualTo(0));
+        Assert.That(map[2].SiteIndex, Is.EqualTo(1));
+        Assert.That(map.Cells, Has.Count.EqualTo(2));
+    }
+
+    [Test]
     public void ToMutableHexMap_ReturnsCallerOwnedAssignmentCopy()
     {
         var sites = new[]
@@ -231,5 +250,17 @@ public class VoronoiHexPartitionerTests
         var partitioner = new VoronoiHexPartitioner(new[] { new Site(new PointXY(0f, 0f), 1f) });
 
         Assert.Throws<ArgumentNullException>(() => partitioner.Partition(null!));
+    }
+
+    [Test]
+    public void ToVoronoiHexPartitionMap_WhenHexCenterMapIsNull_Throws()
+    {
+        HexCenterMap hexCenters = null!;
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
+
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            hexCenters.ToVoronoiHexPartitionMap(sites));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("hexCenters"));
     }
 }
