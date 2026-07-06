@@ -1,4 +1,3 @@
-using Akeldov.Math.Graphs;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 using System;
@@ -10,7 +9,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Represents a Voronoi cell associated with one weighted site.
     /// </summary>
-    public sealed class VoronoiCell : IDirectedEdgeGraphVertex<VoronoiCell, VoronoiCellEdge>, IEquatable<VoronoiCell>
+    public sealed class VoronoiCell : IEquatable<VoronoiCell>
     {
         /// <summary>
         /// Initializes a new Voronoi cell.
