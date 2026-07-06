@@ -31,41 +31,8 @@ public class VoronoiHexPartitionerTests
         Assert.That(map.Cells, Has.Count.EqualTo(2));
         Assert.That(map.Cells[0], Is.SameAs(map[0]));
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }));
-        Assert.That(map.Cells[0].Adjacents, Has.Count.EqualTo(1));
-        Assert.That(map.Cells[0].Adjacents[0], Is.SameAs(map.Cells[1]));
         Assert.That(map.Cells[1], Is.SameAs(map[2]));
         Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
-        Assert.That(map.Cells[1].Adjacents, Has.Count.EqualTo(1));
-        Assert.That(map.Cells[1].Adjacents[0], Is.SameAs(map.Cells[0]));
-
-        IDirectedEdgeGraph<VoronoiCell, VoronoiCellEdge> graph = map;
-        VoronoiCellEdge outgoingEdge = map.Cells[0].OutgoingEdges[0];
-        VoronoiCellEdge incomingEdge = map.Cells[0].IncomingEdges[0];
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(graph.Vertices, Is.SameAs(map.Cells));
-            Assert.That(graph.Edges, Has.Count.EqualTo(2));
-            Assert.That(graph.GetAdjacentVertices(map.Cells[0]), Is.EqualTo(new[] { map.Cells[1] }));
-            Assert.That(graph.GetIncomingVertices(map.Cells[0]), Is.EqualTo(new[] { map.Cells[1] }));
-            Assert.That(graph.GetOutgoingVertices(map.Cells[0]), Is.EqualTo(new[] { map.Cells[1] }));
-            Assert.That(graph.GetIncidentEdges(map.Cells[0]), Is.EqualTo(new[] { incomingEdge, outgoingEdge }));
-            Assert.That(graph.GetIncomingEdges(map.Cells[0]), Is.EqualTo(new[] { incomingEdge }));
-            Assert.That(graph.GetOutgoingEdges(map.Cells[0]), Is.EqualTo(new[] { outgoingEdge }));
-            Assert.That(map.Cells[0].OutgoingVertices, Is.EqualTo(new[] { map.Cells[1] }));
-            Assert.That(map.Cells[0].IncomingVertices, Is.EqualTo(new[] { map.Cells[1] }));
-            Assert.That(map.Cells[0].IncidentEdges, Is.EqualTo(new[] { incomingEdge, outgoingEdge }));
-            Assert.That(map.Cells[0].OutgoingEdges, Has.Count.EqualTo(1));
-            Assert.That(map.Cells[0].IncomingEdges, Has.Count.EqualTo(1));
-            Assert.That(outgoingEdge.FromVertex, Is.SameAs(map.Cells[0]));
-            Assert.That(outgoingEdge.ToVertex, Is.SameAs(map.Cells[1]));
-            Assert.That(outgoingEdge.FirstVertex, Is.SameAs(outgoingEdge.FromVertex));
-            Assert.That(outgoingEdge.SecondVertex, Is.SameAs(outgoingEdge.ToVertex));
-            Assert.That(incomingEdge.FromVertex, Is.SameAs(map.Cells[1]));
-            Assert.That(incomingEdge.ToVertex, Is.SameAs(map.Cells[0]));
-            Assert.That(map.Cells[1].OutgoingEdges[0], Is.SameAs(incomingEdge));
-            Assert.That(map.Cells[1].IncomingEdges[0], Is.SameAs(outgoingEdge));
-        });
     }
 
     [Test]
@@ -228,18 +195,7 @@ public class VoronoiHexPartitionerTests
 
         Assert.That(map.Cells, Has.Count.EqualTo(2));
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
-        Assert.That(map.Cells[0].Adjacents, Is.Empty);
-        Assert.That(map.Cells[0].IncomingVertices, Is.Empty);
-        Assert.That(map.Cells[0].OutgoingVertices, Is.Empty);
-        Assert.That(map.Cells[0].IncomingEdges, Is.Empty);
-        Assert.That(map.Cells[0].OutgoingEdges, Is.Empty);
         Assert.That(map.Cells[1].HexIndexes, Is.Empty);
-        Assert.That(map.Cells[1].Adjacents, Is.Empty);
-        Assert.That(map.Cells[1].IncomingVertices, Is.Empty);
-        Assert.That(map.Cells[1].OutgoingVertices, Is.Empty);
-        Assert.That(map.Cells[1].IncomingEdges, Is.Empty);
-        Assert.That(map.Cells[1].OutgoingEdges, Is.Empty);
-        Assert.That(map.Edges, Is.Empty);
     }
 
     [Test]

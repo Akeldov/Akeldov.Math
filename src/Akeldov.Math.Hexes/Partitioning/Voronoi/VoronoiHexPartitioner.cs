@@ -60,7 +60,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             }
 
             var cells = CreateCells(hexIndexBuckets);
-            PopulateAdjacents(hexCenters, cellIndexes, cells);
 
             var assignments = new VoronoiCell[count];
             for (int i = 0; i < assignments.Length; i++)
@@ -125,122 +124,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             return cells;
         }
-
-        private static void PopulateAdjacents(
-            HexCenterMap hexCenters,
-            int[] cellIndexes,
-            VoronoiCell[] cells)
-        {
-            var adjacentSiteIndexes = CreateAdjacentSiteIndexSets(cells.Length);
-            int flatIndex = 0;
-            for (int y = 0; y < hexCenters.Height; y++)
-            {
-                for (int x = 0; x < hexCenters.Width; x++)
-                {
-                    int siteIndex = cellIndexes[flatIndex];
-                    AddAdjacents(
-                        adjacentSiteIndexes,
-                        siteIndex,
-                        new VectorXYInt(x, y),
-                        hexCenters,
-                        cellIndexes);
-                    flatIndex++;
-                }
-            }
-
-            for (int i = 0; i < cells.Length; i++)
-            {
-                cells[i].SetAdjacents(GetAdjacentCells(adjacentSiteIndexes[i], cells));
-            }
-
-            PopulateDirectedEdges(adjacentSiteIndexes, cells);
-        }
-
-        private static SortedSet<int>[] CreateAdjacentSiteIndexSets(int count)
-        {
-            var adjacentSiteIndexes = new SortedSet<int>[count];
-            for (int i = 0; i < adjacentSiteIndexes.Length; i++)
-            {
-                adjacentSiteIndexes[i] = new SortedSet<int>();
-            }
-
-            return adjacentSiteIndexes;
-        }
-
-        private static void AddAdjacents(
-            SortedSet<int>[] adjacentSiteIndexes,
-            int siteIndex,
-            VectorXYInt hexIndex,
-            HexCenterMap hexCenters,
-            int[] cellIndexes)
-        {
-            VectorXYInt[] adjacents = hexIndex.GetAdjacents(hexCenters.Layout);
-            for (int i = 0; i < adjacents.Length; i++)
-            {
-                VectorXYInt adjacentIndex = adjacents[i];
-                if (!ContainsIndex(adjacentIndex, hexCenters.Width, hexCenters.Height))
-                    continue;
-
-                int adjacentSiteIndex = cellIndexes[GetFlatIndex(adjacentIndex, hexCenters.Width)];
-                if (adjacentSiteIndex == siteIndex)
-                    continue;
-
-                adjacentSiteIndexes[siteIndex].Add(adjacentSiteIndex);
-                adjacentSiteIndexes[adjacentSiteIndex].Add(siteIndex);
-            }
-        }
-
-        private static VoronoiCell[] GetAdjacentCells(SortedSet<int> adjacentSiteIndexes, VoronoiCell[] cells)
-        {
-            var adjacentCells = new VoronoiCell[adjacentSiteIndexes.Count];
-            int index = 0;
-            foreach (int adjacentSiteIndex in adjacentSiteIndexes)
-            {
-                adjacentCells[index] = cells[adjacentSiteIndex];
-                index++;
-            }
-
-            return adjacentCells;
-        }
-
-        private static void PopulateDirectedEdges(SortedSet<int>[] adjacentSiteIndexes, VoronoiCell[] cells)
-        {
-            var incomingEdges = CreateEdgeBuckets(cells.Length);
-            var outgoingEdges = CreateEdgeBuckets(cells.Length);
-            for (int i = 0; i < cells.Length; i++)
-            {
-                foreach (int adjacentSiteIndex in adjacentSiteIndexes[i])
-                {
-                    var edge = new VoronoiCellEdge(cells[i], cells[adjacentSiteIndex]);
-                    outgoingEdges[i].Add(edge);
-                    incomingEdges[adjacentSiteIndex].Add(edge);
-                }
-            }
-
-            for (int i = 0; i < cells.Length; i++)
-            {
-                cells[i].SetEdges(incomingEdges[i], outgoingEdges[i]);
-            }
-        }
-
-        private static List<VoronoiCellEdge>[] CreateEdgeBuckets(int count)
-        {
-            var buckets = new List<VoronoiCellEdge>[count];
-            for (int i = 0; i < buckets.Length; i++)
-            {
-                buckets[i] = new List<VoronoiCellEdge>();
-            }
-
-            return buckets;
-        }
-
-        private static bool ContainsIndex(VectorXYInt index, int width, int height)
-        {
-            return (uint)index.X < (uint)width &&
-                (uint)index.Y < (uint)height;
-        }
-
-        private static int GetFlatIndex(VectorXYInt index, int width) => index.Y * width + index.X;
 
         private int GetNearestWeightedCellIndex(PointXY point)
         {
