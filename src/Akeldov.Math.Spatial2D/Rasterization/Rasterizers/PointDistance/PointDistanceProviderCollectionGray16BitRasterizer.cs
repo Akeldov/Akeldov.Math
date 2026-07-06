@@ -24,6 +24,19 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <inheritdoc/>
         public SpatialRaster<ushort> Rasterize(IReadOnlyList<IPointDistanceProvider> source, SpatialRasterGrid grid)
         {
+            return Rasterize<IPointDistanceProvider>(source, grid);
+        }
+
+        /// <summary>
+        /// Rasterizes point-distance providers into a 16-bit grayscale raster using nearest unsigned distance mapping.
+        /// </summary>
+        /// <typeparam name="T">The point-distance provider type.</typeparam>
+        /// <param name="source">The point-distance providers to rasterize.</param>
+        /// <param name="grid">The spatial raster grid that describes the sampled region.</param>
+        /// <returns>A 16-bit grayscale raster produced from the nearest point-distance provider at each cell center.</returns>
+        public SpatialRaster<ushort> Rasterize<T>(IReadOnlyList<T> source, SpatialRasterGrid grid)
+            where T : IPointDistanceProvider
+        {
             ValidateSource(source);
             ValidateGrid(grid);
             var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
@@ -46,7 +59,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new SpatialRaster<ushort>(grid, values);
         }
 
-        private static float GetNearestDistance(IReadOnlyList<IPointDistanceProvider> sources, PointXY point)
+        private static float GetNearestDistance<T>(IReadOnlyList<T> sources, PointXY point)
+            where T : IPointDistanceProvider
         {
             float minDistance = float.MaxValue;
 
@@ -60,7 +74,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return minDistance;
         }
 
-        private static void ValidateSource(IReadOnlyList<IPointDistanceProvider> source)
+        private static void ValidateSource<T>(IReadOnlyList<T> source)
+            where T : IPointDistanceProvider
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -70,7 +85,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             for (int i = 0; i < source.Count; i++)
             {
-                if (source[i] == null)
+                if (source[i] is null)
                     throw new ArgumentException("Point-distance provider collection must not contain null sources.", nameof(source));
             }
         }
@@ -85,4 +100,3 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
     }
 }
-

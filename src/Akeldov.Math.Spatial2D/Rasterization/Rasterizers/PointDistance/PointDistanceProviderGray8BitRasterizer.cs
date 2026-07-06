@@ -22,7 +22,20 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <inheritdoc/>
         public SpatialRaster<byte> Rasterize(IPointDistanceProvider source, SpatialRasterGrid grid)
         {
-            if (source == null)
+            return Rasterize<IPointDistanceProvider>(source, grid);
+        }
+
+        /// <summary>
+        /// Rasterizes a point-distance provider into an 8-bit grayscale raster using unsigned distance mapping.
+        /// </summary>
+        /// <typeparam name="T">The point-distance provider type.</typeparam>
+        /// <param name="source">The point-distance provider to rasterize.</param>
+        /// <param name="grid">The spatial raster grid that describes the sampled region.</param>
+        /// <returns>An 8-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
+        public SpatialRaster<byte> Rasterize<T>(T source, SpatialRasterGrid grid)
+            where T : IPointDistanceProvider
+        {
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);

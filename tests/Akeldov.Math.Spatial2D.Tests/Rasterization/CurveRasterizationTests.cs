@@ -67,6 +67,36 @@ public class CurveRasterizationTests
     }
 
     [Test]
+    public void Rasterize_WhenPointDistanceProviderIsConcreteValueType_MapsDistanceToGray16()
+    {
+        var source = new PointXY(0f, 0f);
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+
+        SpatialRaster<ushort> raster = source.Rasterize(ToGray16, grid);
+
+        Assert.That(raster[1, 0], Is.EqualTo(1000));
+        Assert.That(raster[1, 1], Is.EqualTo(0));
+        Assert.That(raster[1, 2], Is.EqualTo(1000));
+    }
+
+    [Test]
+    public void Rasterize_WhenPointDistanceProviderCollectionIsConcreteValueTypeList_MapsNearestDistanceToGray8()
+    {
+        IReadOnlyList<PointXY> sources = new[]
+        {
+            new PointXY(0f, -1f),
+            new PointXY(0f, 1f)
+        };
+        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+
+        SpatialRaster<byte> raster = sources.Rasterize(ToGray8, grid);
+
+        Assert.That(raster[1, 0], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(10));
+        Assert.That(raster[1, 2], Is.EqualTo(0));
+    }
+
+    [Test]
     public void Rasterize_WhenParameterizedCurveIsProvided_MapsDistanceAndCurveCoordinateToGray8()
     {
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
