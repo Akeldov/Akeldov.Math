@@ -152,6 +152,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             {
                 cells[i].SetAdjacents(GetAdjacentCells(adjacentSiteIndexes[i], cells));
             }
+
+            PopulateDirectedEdges(adjacentSiteIndexes, cells);
         }
 
         private static SortedSet<int>[] CreateAdjacentSiteIndexSets(int count)
@@ -199,6 +201,37 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             }
 
             return adjacentCells;
+        }
+
+        private static void PopulateDirectedEdges(SortedSet<int>[] adjacentSiteIndexes, VoronoiCell[] cells)
+        {
+            var incomingEdges = CreateEdgeBuckets(cells.Length);
+            var outgoingEdges = CreateEdgeBuckets(cells.Length);
+            for (int i = 0; i < cells.Length; i++)
+            {
+                foreach (int adjacentSiteIndex in adjacentSiteIndexes[i])
+                {
+                    var edge = new VoronoiCellEdge(cells[i], cells[adjacentSiteIndex]);
+                    outgoingEdges[i].Add(edge);
+                    incomingEdges[adjacentSiteIndex].Add(edge);
+                }
+            }
+
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i].SetEdges(incomingEdges[i], outgoingEdges[i]);
+            }
+        }
+
+        private static List<VoronoiCellEdge>[] CreateEdgeBuckets(int count)
+        {
+            var buckets = new List<VoronoiCellEdge>[count];
+            for (int i = 0; i < buckets.Length; i++)
+            {
+                buckets[i] = new List<VoronoiCellEdge>();
+            }
+
+            return buckets;
         }
 
         private static bool ContainsIndex(VectorXYInt index, int width, int height)

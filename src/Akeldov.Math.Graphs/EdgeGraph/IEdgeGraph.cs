@@ -15,12 +15,5 @@ namespace Akeldov.Math.Graphs
         /// Gets the read-only structural collection of edges in the graph.
         /// </summary>
         IReadOnlyCollection<TEdge> Edges { get; }
-
-        /// <summary>
-        /// Gets the read-only structural collection of edges incident to the specified vertex.
-        /// </summary>
-        /// <param name="vertex">The vertex whose incident edges are requested.</param>
-        /// <returns>The incident edges. The collection is empty when the vertex has no incident edges.</returns>
-        IReadOnlyCollection<TEdge> GetIncidentEdges(TVertex vertex);
     }
 }

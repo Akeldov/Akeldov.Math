@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Akeldov.Math.Graphs\Akeldov.Math.Graphs.csproj" />
     <ProjectReference Include="..\..\src\Akeldov.Math.Hexes\Akeldov.Math.Hexes.csproj" />
   </ItemGroup>
 

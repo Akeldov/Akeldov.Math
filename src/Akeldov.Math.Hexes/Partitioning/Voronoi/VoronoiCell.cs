@@ -1,3 +1,4 @@
+using Akeldov.Math.Graphs;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 using System;
@@ -9,7 +10,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Represents a Voronoi cell associated with one weighted site.
     /// </summary>
-    public sealed class VoronoiCell : IEquatable<VoronoiCell>
+    public sealed class VoronoiCell : IDirectedEdgeGraphVertex<VoronoiCell, VoronoiCellEdge>, IEquatable<VoronoiCell>
     {
         /// <summary>
         /// Initializes a new Voronoi cell.
@@ -32,6 +33,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             Site = site;
             HexIndexes = CopyHexIndexes(hexIndexes);
             Adjacents = Array.AsReadOnly(Array.Empty<VoronoiCell>());
+            IncomingVertices = Array.AsReadOnly(Array.Empty<VoronoiCell>());
+            IncomingEdges = Array.AsReadOnly(Array.Empty<VoronoiCellEdge>());
+            OutgoingEdges = Array.AsReadOnly(Array.Empty<VoronoiCellEdge>());
         }
 
         /// <summary>
@@ -55,7 +59,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public IReadOnlyList<VectorXYInt> HexIndexes { get; }
 
         /// <summary>
-        /// Gets the read-only semantic result of cells sharing at least one hex edge with this cell.
+        /// Gets the read-only semantic result of outgoing adjacent cells sharing at least one hex edge with this cell.
         /// </summary>
         /// <remarks>
         /// Cells produced by <see cref="VoronoiHexPartitioner"/> reference neighboring cell
@@ -63,6 +67,39 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// empty adjacency list.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Adjacents { get; private set; }
+
+        /// <summary>
+        /// Gets the read-only semantic result of cells with directed edges targeting this cell.
+        /// </summary>
+        /// <remarks>
+        /// Cells produced by <see cref="VoronoiHexPartitioner"/> reference neighboring cell
+        /// instances from the same partition graph. Cells constructed directly start with an
+        /// empty incoming-vertex list.
+        /// </remarks>
+        public IReadOnlyList<VoronoiCell> IncomingVertices { get; private set; }
+
+        /// <summary>
+        /// Gets the read-only semantic result of cells targeted by directed edges from this cell.
+        /// </summary>
+        public IReadOnlyList<VoronoiCell> OutgoingVertices => Adjacents;
+
+        /// <summary>
+        /// Gets the read-only semantic result of directed edges targeting this cell.
+        /// </summary>
+        /// <remarks>
+        /// Cells produced by <see cref="VoronoiHexPartitioner"/> reference edge instances
+        /// from the same partition graph. Cells constructed directly start with an empty list.
+        /// </remarks>
+        public IReadOnlyList<VoronoiCellEdge> IncomingEdges { get; private set; }
+
+        /// <summary>
+        /// Gets the read-only semantic result of directed edges originating from this cell.
+        /// </summary>
+        /// <remarks>
+        /// Cells produced by <see cref="VoronoiHexPartitioner"/> reference edge instances
+        /// from the same partition graph. Cells constructed directly start with an empty list.
+        /// </remarks>
+        public IReadOnlyList<VoronoiCellEdge> OutgoingEdges { get; private set; }
 
         /// <summary>
         /// Indicates whether this cell has the same site index and site as another cell.
@@ -115,6 +152,41 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             }
 
             Adjacents = Array.AsReadOnly(copy);
+        }
+
+        internal void SetEdges(IReadOnlyList<VoronoiCellEdge> incomingEdges, IReadOnlyList<VoronoiCellEdge> outgoingEdges)
+        {
+            if (incomingEdges == null)
+                throw new ArgumentNullException(nameof(incomingEdges));
+
+            if (outgoingEdges == null)
+                throw new ArgumentNullException(nameof(outgoingEdges));
+
+            IncomingEdges = CopyEdges(incomingEdges);
+            OutgoingEdges = CopyEdges(outgoingEdges);
+            IncomingVertices = CopyIncomingVertices(IncomingEdges);
+        }
+
+        private static IReadOnlyList<VoronoiCellEdge> CopyEdges(IReadOnlyList<VoronoiCellEdge> edges)
+        {
+            var copy = new VoronoiCellEdge[edges.Count];
+            for (int i = 0; i < edges.Count; i++)
+            {
+                copy[i] = edges[i];
+            }
+
+            return Array.AsReadOnly(copy);
+        }
+
+        private static IReadOnlyList<VoronoiCell> CopyIncomingVertices(IReadOnlyList<VoronoiCellEdge> incomingEdges)
+        {
+            var copy = new VoronoiCell[incomingEdges.Count];
+            for (int i = 0; i < incomingEdges.Count; i++)
+            {
+                copy[i] = incomingEdges[i].FromVertex;
+            }
+
+            return Array.AsReadOnly(copy);
         }
     }
 }
