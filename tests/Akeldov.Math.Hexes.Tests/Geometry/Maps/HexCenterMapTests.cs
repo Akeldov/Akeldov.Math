@@ -145,6 +145,21 @@ public class HexCenterMapTests
     }
 
     [Test]
+    public void HexMapTopologyToSpatialRasterGrid_WithMargin_ReturnsSameGridAsGeometry()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+        var origin = new VectorXY(10f, 20f);
+        const float apothem = 2f;
+        const float pixelsPerApothem = 3f;
+        const float margin = 1.5f;
+
+        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(apothem, origin, pixelsPerApothem, margin);
+        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, apothem).ToSpatialRasterGrid(pixelsPerApothem, margin);
+
+        Assert.That(topologyGrid, Is.EqualTo(geometryGrid));
+    }
+
+    [Test]
     public void HexMapGeometryToSpatialRasterGrid_WhenPixelsPerApothemIsInvalid_Throws()
     {
         var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 2f, Layout.OddR);
@@ -153,6 +168,19 @@ public class HexCenterMapTests
             geometry.ToSpatialRasterGrid(0f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("pixelsPerApothem"));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    public void HexMapGeometryToSpatialRasterGrid_WhenMarginIsInvalid_Throws(float margin)
+    {
+        var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 2f, Layout.OddR);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            geometry.ToSpatialRasterGrid(3f, margin));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("margin"));
     }
 
     [Test]
