@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 638" width="960" height="638" role="img" aria-labelledby="title desc">
+  <title id="title">EvenR layout example</title>
+  <desc id="desc">A 4 by 3 pointy-top hex map with even rows shifted right.</desc>
+  <rect width="960" height="638" fill="#fff"/>
+  <defs>
+    <polygon id="hex" points="0,-115.4701 100,-57.735 100,57.735 0,115.4701 -100,57.735 -100,-57.735"/>
+  </defs>
+  <g fill="none" stroke="#000" stroke-width="2" stroke-linejoin="miter" shape-rendering="geometricPrecision">
+    <use href="#hex" transform="translate(230 145.4701)"/>
+    <use href="#hex" transform="translate(430 145.4701)"/>
+    <use href="#hex" transform="translate(630 145.4701)"/>
+    <use href="#hex" transform="translate(830 145.4701)"/>
+    <use href="#hex" transform="translate(130 318.6751)"/>
+    <use href="#hex" transform="translate(330 318.6751)"/>
+    <use href="#hex" transform="translate(530 318.6751)"/>
+    <use href="#hex" transform="translate(730 318.6751)"/>
+    <use href="#hex" transform="translate(230 491.8802)"/>
+    <use href="#hex" transform="translate(430 491.8802)"/>
+    <use href="#hex" transform="translate(630 491.8802)"/>
+    <use href="#hex" transform="translate(830 491.8802)"/>
+  </g>
+</svg>

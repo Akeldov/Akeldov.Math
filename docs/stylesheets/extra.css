@@ -15,6 +15,11 @@
   height: auto;
 }
 
+.md-typeset img[src*="assets/hexes/layouts/"] {
+  width: min(14rem, 100%);
+  height: auto;
+}
+
 .curve-overview-thumbnail {
   width: min(3.5rem, 100%);
   height: auto;

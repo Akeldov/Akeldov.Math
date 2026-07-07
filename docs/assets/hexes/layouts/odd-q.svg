@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 811 760" width="811" height="760" role="img" aria-labelledby="title desc">
+  <title id="title">OddQ layout example</title>
+  <desc id="desc">A 4 by 3 flat-top hex map with odd columns shifted down.</desc>
+  <rect width="811" height="760" fill="#fff"/>
+  <defs>
+    <polygon id="hex" points="115.4701,0 57.735,100 -57.735,100 -115.4701,0 -57.735,-100 57.735,-100"/>
+  </defs>
+  <g fill="none" stroke="#000" stroke-width="2" stroke-linejoin="miter" shape-rendering="geometricPrecision">
+    <use href="#hex" transform="translate(145.4701 130)"/>
+    <use href="#hex" transform="translate(145.4701 330)"/>
+    <use href="#hex" transform="translate(145.4701 530)"/>
+    <use href="#hex" transform="translate(318.6751 230)"/>
+    <use href="#hex" transform="translate(318.6751 430)"/>
+    <use href="#hex" transform="translate(318.6751 630)"/>
+    <use href="#hex" transform="translate(491.8802 130)"/>
+    <use href="#hex" transform="translate(491.8802 330)"/>
+    <use href="#hex" transform="translate(491.8802 530)"/>
+    <use href="#hex" transform="translate(665.0852 230)"/>
+    <use href="#hex" transform="translate(665.0852 430)"/>
+    <use href="#hex" transform="translate(665.0852 630)"/>
+  </g>
+</svg>
