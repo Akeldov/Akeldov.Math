@@ -34,7 +34,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Converts the vector to the QRS representation using normalized hex-grid axes.
         /// </summary>
         /// <remarks>
-        /// The normalized basis uses a hex radius of one coordinate-space unit and a hex apothem of sqrt(3) / 2.
+        /// The normalized basis maps each unit QR axis step to an XY vector with a length of one coordinate-space unit.
         /// </remarks>
         /// <param name="vector">The vector value.</param>
         /// <param name="layout">The hex layout used to select the QR axis orientation.</param>
@@ -44,7 +44,7 @@ namespace Akeldov.Math.Hexes.Geometry
             if (!vector.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(vector), vector, "Vector XY components must be finite.");
 
-            return ToVectorQRS(vector, 1f, layout);
+            return ToVectorQRS(vector, 0.5f * Constants.Apothem2Radius, layout);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

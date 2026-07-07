@@ -7,15 +7,33 @@ namespace Akeldov.Math.Hexes.Tests.Geometry.HexIndex;
 
 public class VectorQRSHexLayoutExtensionsTests
 {
-    [TestCase(Layout.OddR, 6.0622f, 4.5f)]
-    [TestCase(Layout.EvenR, 6.0622f, 4.5f)]
-    [TestCase(Layout.OddQ, 3f, 6.9282f)]
-    [TestCase(Layout.EvenQ, 3f, 6.9282f)]
+    [TestCase(Layout.OddR, 3.5f, 2.5981f)]
+    [TestCase(Layout.EvenR, 3.5f, 2.5981f)]
+    [TestCase(Layout.OddQ, 1.7321f, 4f)]
+    [TestCase(Layout.EvenQ, 1.7321f, 4f)]
     public void ToVectorXY_WithLayout_UsesNormalizedQrAxes(Layout layout, float expectedX, float expectedY)
     {
         VectorXY actual = new VectorQRS(2f, 3f).ToVectorXY(layout);
 
         VectorAssert.AreEqual(actual, expectedX, expectedY);
+    }
+
+    [TestCase(Layout.OddR, 1f, 0f, 0.5f, 0.866f)]
+    [TestCase(Layout.EvenR, 1f, 0f, 0.5f, 0.866f)]
+    [TestCase(Layout.OddQ, 0.866f, 0.5f, 0f, 1f)]
+    [TestCase(Layout.EvenQ, 0.866f, 0.5f, 0f, 1f)]
+    public void ToVectorXY_WithLayout_MapsUnitQrAxesToUnitXyVectors(
+        Layout layout,
+        float expectedQX,
+        float expectedQY,
+        float expectedRX,
+        float expectedRY)
+    {
+        VectorXY qAxis = new VectorQRS(1f, 0f).ToVectorXY(layout);
+        VectorXY rAxis = new VectorQRS(0f, 1f).ToVectorXY(layout);
+
+        VectorAssert.AreEqual(qAxis, expectedQX, expectedQY);
+        VectorAssert.AreEqual(rAxis, expectedRX, expectedRY);
     }
 
     [TestCase(Layout.OddR, 14f, 10.3923f)]
@@ -64,10 +82,10 @@ public class VectorQRSHexLayoutExtensionsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRS(1f, 2f).ToVectorXY(default(HexMapGeometry)));
     }
 
-    [TestCase(Layout.OddR, 6.0622f, 4.5f)]
-    [TestCase(Layout.EvenR, 6.0622f, 4.5f)]
-    [TestCase(Layout.OddQ, 3f, 6.9282f)]
-    [TestCase(Layout.EvenQ, 3f, 6.9282f)]
+    [TestCase(Layout.OddR, 3.5f, 2.5981f)]
+    [TestCase(Layout.EvenR, 3.5f, 2.5981f)]
+    [TestCase(Layout.OddQ, 1.7321f, 4f)]
+    [TestCase(Layout.EvenQ, 1.7321f, 4f)]
     public void ToVectorQRS_WithLayout_UsesNormalizedQrAxes(Layout layout, float x, float y)
     {
         VectorQRS actual = new VectorXY(x, y).ToVectorQRS(layout);
