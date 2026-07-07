@@ -3,6 +3,7 @@ using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Hexes.Tests.VectorsQRS;
 using Akeldov.Math.Spatial2D.Regions;
+using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Geometry.Maps;
 
@@ -108,6 +109,59 @@ public class HexCenterMapTests
         Rectangle geometryBoundingBox = new HexMapGeometry(topology, origin, apothem).BoundingBox();
 
         Assert.That(topologyBoundingBox, Is.EqualTo(geometryBoundingBox));
+    }
+
+    [Test]
+    public void HexMapGeometryToSpatialRasterGrid_UsesBoundingBoxAndPixelsPerApothem()
+    {
+        var geometry = new HexMapGeometry(
+            width: 1,
+            height: 1,
+            origin: VectorXY.Zero,
+            apothem: 2f,
+            layout: Layout.OddR);
+
+        SpatialRasterGrid grid = geometry.ToSpatialRasterGrid(pixelsPerApothem: 3f);
+
+        Assert.That(grid.Origin.X, Is.EqualTo(-2f).Within(0.0001f));
+        Assert.That(grid.Origin.Y, Is.EqualTo(-2.3094f).Within(0.0001f));
+        Assert.That(grid.Size.X, Is.EqualTo(4f).Within(0.0001f));
+        Assert.That(grid.Size.Y, Is.EqualTo(4.6188f).Within(0.0001f));
+        Assert.That(grid.Resolution, Is.EqualTo(new VectorXYInt(6, 7)));
+    }
+
+    [Test]
+    public void HexMapTopologyToSpatialRasterGrid_WithApothemAndOrigin_ReturnsSameGridAsGeometry()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+        var origin = new VectorXY(10f, 20f);
+        const float apothem = 2f;
+        const float pixelsPerApothem = 3f;
+
+        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(apothem, origin, pixelsPerApothem);
+        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, apothem).ToSpatialRasterGrid(pixelsPerApothem);
+
+        Assert.That(topologyGrid, Is.EqualTo(geometryGrid));
+    }
+
+    [Test]
+    public void HexMapGeometryToSpatialRasterGrid_WhenPixelsPerApothemIsInvalid_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 2f, Layout.OddR);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            geometry.ToSpatialRasterGrid(0f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("pixelsPerApothem"));
+    }
+
+    [Test]
+    public void HexMapGeometryToSpatialRasterGrid_WhenRasterResolutionDoesNotFitInt32_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR);
+
+        Assert.Throws<OverflowException>(() =>
+            geometry.ToSpatialRasterGrid(float.MaxValue));
     }
 
     [Test]
