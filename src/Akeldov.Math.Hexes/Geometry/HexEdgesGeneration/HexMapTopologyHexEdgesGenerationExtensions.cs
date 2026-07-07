@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Provides edge segment generation extensions for hex map topology values.
+    /// Provides edge segment generation extensions for hex map geometry and topology values.
     /// </summary>
     public static class HexMapTopologyHexEdgesGenerationExtensions
     {
@@ -62,6 +62,37 @@ namespace Akeldov.Math.Hexes.Geometry
                 throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
 
             float radius = apothem.ConvertHexApothemToRadius();
+            VectorXY origin = VectorXYInt.Zero.GetHexCenter(apothem, radius, topology.Layout);
+
+            return ToHexEdgeSegments(topology, origin, apothem, radius);
+        }
+
+        /// <summary>
+        /// Generates all unique edge segments for every hex in the geometry.
+        /// </summary>
+        /// <param name="geometry">The geometry to generate edge segments for.</param>
+        /// <returns>A new mutable list of segments owned by the caller. Shared hex edges appear only once.</returns>
+        public static List<Segment> ToHexEdgeSegments(this HexMapGeometry geometry)
+        {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Apothem) || float.IsInfinity(geometry.Apothem) || geometry.Apothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry apothem must be finite and positive.");
+
+            return ToHexEdgeSegments(
+                geometry.Topology,
+                geometry.Origin,
+                geometry.Apothem,
+                geometry.Radius);
+        }
+
+        private static List<Segment> ToHexEdgeSegments(
+            HexMapTopology topology,
+            VectorXY origin,
+            float apothem,
+            float radius)
+        {
             VectorXY[] normalizedVertices = VectorXYExtensions.GetNormalizedHexVertices(topology.Layout);
             var segments = new List<Segment>();
 
@@ -70,7 +101,7 @@ namespace Akeldov.Math.Hexes.Geometry
                 for (int x = 0; x < topology.Width; x++)
                 {
                     var index = new VectorXYInt(x, y);
-                    VectorXY center = index.GetHexCenter(apothem, radius, topology.Layout);
+                    VectorXY center = index.GetHexCenter(apothem, radius, origin, topology.Layout);
                     int flatIndex = GetFlatIndex(index, topology.Width);
 
                     for (int edgeIndex = 0; edgeIndex < 6; edgeIndex++)
