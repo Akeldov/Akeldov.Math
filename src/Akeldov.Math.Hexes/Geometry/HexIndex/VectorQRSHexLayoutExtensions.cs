@@ -11,28 +11,6 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorQRSExtensions
     {
         /// <summary>
-        /// Converts the vector to the XY representation using the specified map geometry.
-        /// </summary>
-        /// <remarks>
-        /// The geometry origin is not applied because the converted value is a vector, not a point.
-        /// </remarks>
-        /// <param name="vector">The vector value.</param>
-        /// <param name="geometry">The hex map geometry.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY ToVectorXY(this VectorQRS vector, HexMapGeometry geometry)
-        {
-            if (float.IsNaN(vector.Q) || float.IsInfinity(vector.Q) ||
-                float.IsNaN(vector.R) || float.IsInfinity(vector.R) ||
-                float.IsNaN(vector.S) || float.IsInfinity(vector.S))
-                throw new ArgumentOutOfRangeException(nameof(vector), vector, "Vector QRS components must be finite.");
-
-            if (float.IsNaN(geometry.Apothem) || float.IsInfinity(geometry.Apothem) || geometry.Apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry apothem must be finite and positive.");
-
-            return ToVectorXY(vector, geometry.Apothem, geometry.Radius, geometry.Layout);
-        }
-
-        /// <summary>
         /// Converts the vector to the XY representation using normalized hex-grid axes.
         /// </summary>
         /// <remarks>
