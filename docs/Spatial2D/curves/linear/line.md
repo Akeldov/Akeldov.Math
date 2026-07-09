@@ -34,9 +34,7 @@ SpatialRaster<byte> raster = line.Rasterize(grid, rasterizer);
 raster.SaveAsPng("line-distance.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Line distance raster" src="../../../../assets/spatial2d/curves/line-distance.png">
-</p>
+![Line distance raster](../../../assets/spatial2d/curves/line-distance.png)
 
 You can also construct a line from implicit equation coefficients.
 

@@ -37,9 +37,7 @@ SpatialRaster<byte> raster = arc.Rasterize(grid, rasterizer);
 raster.SaveAsPng("arc-distance.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Arc distance raster" src="../../../../assets/spatial2d/curves/arc-distance.png">
-</p>
+![Arc distance raster](../../../assets/spatial2d/curves/arc-distance.png)
 
 When a point's direction from the center is inside the arc's angular region, projection lands on the source circle.
 When the direction is outside the angular region, projection clamps to the nearest endpoint.

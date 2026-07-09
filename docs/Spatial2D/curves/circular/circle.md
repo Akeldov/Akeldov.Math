@@ -34,9 +34,7 @@ SpatialRaster<byte> raster = circle.Rasterize(grid, rasterizer);
 raster.SaveAsPng("circle-distance.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Circle distance raster" src="../../../../assets/spatial2d/curves/circle-distance.png">
-</p>
+![Circle distance raster](../../../assets/spatial2d/curves/circle-distance.png)
 
 ```csharp
 var circle = new Circle(

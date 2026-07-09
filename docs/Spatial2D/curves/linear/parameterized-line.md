@@ -41,9 +41,7 @@ SpatialRaster<byte> raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-line-growing-thickness.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Parameterized line growing-thickness raster" src="../../../../assets/spatial2d/curves/parameterized-line-growing-thickness.png">
-</p>
+![Parameterized line growing-thickness raster](../../../assets/spatial2d/curves/parameterized-line-growing-thickness.png)
 
 You can project points onto the line and get their signed coordinate.
 

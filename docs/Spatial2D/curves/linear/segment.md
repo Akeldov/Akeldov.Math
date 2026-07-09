@@ -34,9 +34,7 @@ SpatialRaster<byte> raster = segment.Rasterize(grid, rasterizer);
 raster.SaveAsPng("segment-distance.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Segment distance raster" src="../../../../assets/spatial2d/curves/segment-distance.png">
-</p>
+![Segment distance raster](../../../assets/spatial2d/curves/segment-distance.png)
 
 Endpoint inclusion matters for ray intersections at exact endpoints.
 

@@ -42,9 +42,7 @@ SpatialRaster<byte> raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-segment-growing-thickness.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Parameterized segment growing-thickness raster" src="../../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png">
-</p>
+![Parameterized segment growing-thickness raster](../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png)
 
 Reversing the endpoints reverses the coordinate domain.
 

@@ -20,9 +20,12 @@
   height: auto;
 }
 
-.curve-overview-thumbnail {
-  width: min(3.5rem, 100%);
-  height: auto;
+.md-typeset .curve-overview-thumbnail {
+  width: 10rem;
+  min-width: 10rem;
+  max-width: 10rem;
+  height: 10rem;
+  object-fit: contain;
   margin-right: 0.5rem;
   vertical-align: middle;
 }

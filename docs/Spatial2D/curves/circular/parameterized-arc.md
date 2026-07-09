@@ -44,9 +44,7 @@ SpatialRaster<byte> raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-arc-growing-thickness.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Parameterized arc growing-thickness raster" src="../../../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png">
-</p>
+![Parameterized arc growing-thickness raster](../../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png)
 
 `AngularDirection.Counterclockwise` increases the angle from `StartAngle` toward `EndAngle`.
 `AngularDirection.Clockwise` traverses from the same start point in the opposite direction.

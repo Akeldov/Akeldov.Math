@@ -42,9 +42,7 @@ SpatialRaster<byte> raster = ray.Rasterize(grid, rasterizer);
 raster.SaveAsPng("ray-growing-thickness.png");
 ```
 
-<p>
-  <img class="curve-snapshot" alt="Ray growing-thickness raster" src="../../../../assets/spatial2d/curves/ray-growing-thickness.png">
-</p>
+![Ray growing-thickness raster](../../../assets/spatial2d/curves/ray-growing-thickness.png)
 
 Points that would project behind the origin clamp to the origin.
 
