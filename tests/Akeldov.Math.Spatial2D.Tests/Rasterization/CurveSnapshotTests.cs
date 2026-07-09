@@ -82,6 +82,33 @@ public class CurveSnapshotTests
                 3f * MathF.PI / 2f,
                 AngularDirection.Clockwise)))
             .SetName("ParameterizedArc_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "quadratic-bezier-distance.png",
+            Curve(() => new QuadraticBezier(
+                new PointXY(-2.25f, -1.85f),
+                new PointXY(-0.25f, 2.45f),
+                new PointXY(2.25f, -1.35f))))
+            .SetName("QuadraticBezier_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "cubic-bezier-distance.png",
+            Curve(() => new CubicBezier(
+                new PointXY(-2.5f, -2.1f),
+                new PointXY(-2.15f, 2.3f),
+                new PointXY(2.35f, 2.1f),
+                new PointXY(2.5f, -1.8f))))
+            .SetName("CubicBezier_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "bezier-curve-distance.png",
+            Curve(() => new BezierCurve(
+                new PointXY(-2.35f, -1.9f),
+                new PointXY(-1.4f, 2.25f),
+                new PointXY(0.15f, -2.3f),
+                new PointXY(1.5f, 2.15f),
+                new PointXY(2.35f, -1.65f))))
+            .SetName("BezierCurve_MatchesApprovedImage");
     }
 
     private static IEnumerable<TestCaseData> ParameterizedThicknessCurveCases()
@@ -110,6 +137,33 @@ public class CurveSnapshotTests
             "parameterized-segment-growing-thickness.png",
             ParameterizedCurve(() => new ParameterizedSegment(new PointXY(-2.35f, -2.1f), new PointXY(2.35f, 1.75f))))
             .SetName("ParameterizedSegment_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "quadratic-bezier-growing-thickness.png",
+            ParameterizedCurve(() => new QuadraticBezier(
+                new PointXY(-2.25f, -1.85f),
+                new PointXY(-0.25f, 2.45f),
+                new PointXY(2.25f, -1.35f))))
+            .SetName("QuadraticBezier_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "cubic-bezier-growing-thickness.png",
+            ParameterizedCurve(() => new CubicBezier(
+                new PointXY(-2.5f, -2.1f),
+                new PointXY(-2.15f, 2.3f),
+                new PointXY(2.35f, 2.1f),
+                new PointXY(2.5f, -1.8f))))
+            .SetName("CubicBezier_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "bezier-curve-growing-thickness.png",
+            ParameterizedCurve(() => new BezierCurve(
+                new PointXY(-2.35f, -1.9f),
+                new PointXY(-1.4f, 2.25f),
+                new PointXY(0.15f, -2.3f),
+                new PointXY(1.5f, 2.15f),
+                new PointXY(2.35f, -1.65f))))
+            .SetName("BezierCurve_GrowingThickness_MatchesApprovedImage");
     }
 
     private static Func<ICurve> Curve(Func<ICurve> createCurve)
