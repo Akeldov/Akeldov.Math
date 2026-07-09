@@ -18,6 +18,7 @@ Both implement `IGrid<TValue>`, so image export works for either spatial or non-
 - [Gray Rasters](gray-rasters.md)
 - [RGBA Rasters](rgba-rasters.md)
 - [GeometryScene](geometry-scenes.md)
+- [Text Layers](text-layers.md)
 - [Curve Distance Rasterization](curve-distance-rasterization.md)
 - [Contour Signed Distance](contour-signed-distance.md)
 - [Region Signed Distance](region-signed-distance.md)

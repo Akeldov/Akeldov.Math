@@ -81,6 +81,7 @@ nav:
               - Gray Rasters: Spatial2D/rasterization/gray-rasters.md
               - RGBA Rasters: Spatial2D/rasterization/rgba-rasters.md
               - GeometryScene: Spatial2D/rasterization/geometry-scenes.md
+              - Text Layers: Spatial2D/rasterization/text-layers.md
               - Curve Distance Rasterization: Spatial2D/rasterization/curve-distance-rasterization.md
               - Contour Signed Distance: Spatial2D/rasterization/contour-signed-distance.md
               - Region Signed Distance: Spatial2D/rasterization/region-signed-distance.md
