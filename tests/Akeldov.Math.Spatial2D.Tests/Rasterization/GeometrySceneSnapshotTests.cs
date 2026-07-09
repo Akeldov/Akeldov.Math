@@ -9,6 +9,7 @@ public class GeometrySceneSnapshotTests
 {
     private const string SmileyApprovedFileName = "geometry-scene-smiley-circle-arc-rgba16.png";
     private const string PrismApprovedFileName = "geometry-scene-triangular-prism-rgba16.png";
+    private const string SimpleTextApprovedFileName = "geometry-scene-simple-text-rgba16.png";
 
     private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
         origin: new PointXY(0f, 0f),
@@ -19,6 +20,11 @@ public class GeometrySceneSnapshotTests
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(2160, 1512));
+
+    private static readonly SpatialRasterGrid TextSnapshotGrid = new SpatialRasterGrid(
+        origin: new PointXY(0f, 0f),
+        size: new VectorXY(8f, 8f),
+        resolution: new VectorXYInt(128, 128));
 
     [Test]
     public void Rasterize_WithPointEyesArcSmileAndFilledCircle_MatchesApprovedImage()
@@ -199,6 +205,47 @@ public class GeometrySceneSnapshotTests
         byte[] actual = File.ReadAllBytes(actualPath);
 
         AssertMatchesApprovedPng(PrismApprovedFileName, actual);
+    }
+
+    [Test]
+    public void Rasterize_WithSimpleTrueTypeText_MatchesApprovedImage()
+    {
+        string? fontPath = GetSystemTimesNewRomanPath();
+        if (fontPath is null)
+        {
+            Assert.Ignore("Times New Roman is not available on this machine.");
+            return;
+        }
+
+        TrueTypeFont font = TrueTypeFont.Load(fontPath);
+
+        RGBA16BitColor background = RGBA16BitColor.FromNormalized(0.965f, 0.972f, 0.982f, 1f);
+        RGBA16BitColor textColor = RGBA16BitColor.FromNormalized(0.055f, 0.085f, 0.165f, 0.95f);
+
+        string actualPath = GetActualPath(SimpleTextApprovedFileName);
+        var raster = new GeometryScene<RGBA16BitColor>(background, RGBA16BitColor.AlphaOver)
+            .AddTextLayer(
+                font,
+                "A",
+                origin: new PointXY(1f, 1f),
+                fontSize: 6f,
+                color: textColor,
+                edgeFalloff: 0.08f)
+            .Rasterize(TextSnapshotGrid);
+
+        raster.SaveAsPng(actualPath);
+        byte[] actual = File.ReadAllBytes(actualPath);
+
+        AssertMatchesApprovedPng(SimpleTextApprovedFileName, actual);
+    }
+
+    private static string? GetSystemTimesNewRomanPath()
+    {
+        string fontPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Fonts),
+            "times.ttf");
+
+        return File.Exists(fontPath) ? fontPath : null;
     }
 
     private static void AssertMatchesApprovedPng(string approvedFileName, byte[] actual)
