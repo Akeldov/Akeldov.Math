@@ -2,6 +2,12 @@
 
 Hexes uses QRS axial coordinates as the main coordinate model for hex-grid math.
 
+`VectorQRS` represents fractional QRS coordinates, corresponding to cube or
+axial coordinates of a point in the hex coordinate plane. `VectorQRSInt` has two
+closely related roles: it can represent rounded integer QRS coordinates, or a
+hex index in QRS form. When it is used as a hex index, the mapping between that
+QRS index and row/column storage indexes depends on `Layout`.
+
 ## QRS Basis Examples
 
 QRS coordinates keep the cube-coordinate invariant `Q + R + S = 0`, so the
