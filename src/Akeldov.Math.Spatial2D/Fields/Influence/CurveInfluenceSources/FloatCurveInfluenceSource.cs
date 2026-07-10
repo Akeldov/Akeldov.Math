@@ -92,6 +92,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin) => _curve.CountRightwardCrossings(origin);
+
+        /// <inheritdoc/>
         public float Distance(PointXY point)
         {
             PointXYValidation.ThrowIfNotFinite(

@@ -199,6 +199,17 @@ namespace Akeldov.Math.Spatial2D.Contours
         public float Length => 2f * (Width + Height);
 
         /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            return new Segment(BottomLeft, BottomRight).CountRightwardCrossings(origin) +
+                new Segment(BottomRight, TopRight).CountRightwardCrossings(origin) +
+                new Segment(TopRight, TopLeft).CountRightwardCrossings(origin) +
+                new Segment(TopLeft, BottomLeft).CountRightwardCrossings(origin);
+        }
+
+        /// <inheritdoc/>
         public bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));

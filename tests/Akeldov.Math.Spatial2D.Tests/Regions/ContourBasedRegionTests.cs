@@ -260,6 +260,8 @@ public class ContourBasedRegionTests
 
         public float Length => Curves[0].Length;
 
+        public int CountRightwardCrossings(PointXY origin) => 0;
+
         public bool Encloses(
             PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
@@ -314,6 +316,8 @@ public class ContourBasedRegionTests
         public float Length => 0f;
 
         public PointXY GetPoint(float curveCoordinate) => new PointXY(0f, 0f);
+
+        public int CountRightwardCrossings(PointXY origin) => 0;
 
         public List<PointXY> GetRayIntersections(
             Ray ray,

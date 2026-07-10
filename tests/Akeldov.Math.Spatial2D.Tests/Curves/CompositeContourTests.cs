@@ -298,6 +298,22 @@ public class CompositeContourTests
     }
 
     [Test]
+    public void Encloses_WhenRayPassesThroughSharedVertex_UsesHalfOpenCrossingRule()
+    {
+        var contour = new CompositeContour(new IFinitePath[]
+        {
+            new ParameterizedSegment(new PointXY(0f, 1f), new PointXY(1f, 0f)),
+            new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(2f, 1f)),
+            new ParameterizedSegment(new PointXY(2f, 1f), new PointXY(1f, 2f)),
+            new ParameterizedSegment(new PointXY(1f, 2f), new PointXY(0f, 1f))
+        });
+
+        Assert.That(contour.Encloses(new PointXY(-1f, 0f)), Is.False);
+        Assert.That(contour.Encloses(new PointXY(-1f, 2f)), Is.False);
+        Assert.That(contour.Encloses(new PointXY(1f, 1f)), Is.True);
+    }
+
+    [Test]
     public void Distance_WhenPointIsInsideContour_ReturnsShortestBoundaryDistance()
     {
         IContour contour = CreateSquareContour();
@@ -461,6 +477,8 @@ public class CompositeContourTests
         public float Length => 0f;
 
         public PointXY GetPoint(float curveCoordinate) => new PointXY(0f, 0f);
+
+        public int CountRightwardCrossings(PointXY origin) => 0;
 
         public List<PointXY> GetRayIntersections(
             Ray ray,

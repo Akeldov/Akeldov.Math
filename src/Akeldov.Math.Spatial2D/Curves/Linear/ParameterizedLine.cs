@@ -200,6 +200,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         public bool HasSameGeometry(Line line) => _line.Equals(line);
 
         /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin) => _line.CountRightwardCrossings(origin);
+
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is ParameterizedLine other && Equals(other);
 
         /// <summary>

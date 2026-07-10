@@ -42,6 +42,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// </summary>
         public float Length => _contour.Length;
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin) => _contour.CountRightwardCrossings(origin);
+
         /// <summary>
         /// Gets the point at the start of the contour traversal.
         /// </summary>

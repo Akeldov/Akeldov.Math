@@ -89,6 +89,42 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         public PointXY EndpointB => _endpointB;
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            PointXY lower;
+            PointXY upper;
+            bool includesLower;
+
+            if (EndpointA.Y < EndpointB.Y)
+            {
+                lower = EndpointA;
+                upper = EndpointB;
+                includesLower = IncludesEndpointA;
+            }
+            else if (EndpointB.Y < EndpointA.Y)
+            {
+                lower = EndpointB;
+                upper = EndpointA;
+                includesLower = IncludesEndpointB;
+            }
+            else
+            {
+                return 0;
+            }
+
+            if (origin.Y < lower.Y || origin.Y >= upper.Y ||
+                (origin.Y == lower.Y && !includesLower))
+            {
+                return 0;
+            }
+
+            float x = lower.X + (origin.Y - lower.Y) * (upper.X - lower.X) / (upper.Y - lower.Y);
+            return x > origin.X ? 1 : 0;
+        }
+
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray is collinear with the segment
         /// and their overlap is not a single point, returns the first included point encountered along the ray.

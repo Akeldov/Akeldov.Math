@@ -132,6 +132,18 @@ namespace Akeldov.Math.Spatial2D.Curves
             -_equationC * Normal.X,
             -_equationC * Normal.Y);
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            if (EquationA == 0f)
+                return 0;
+
+            float x = -(EquationB * origin.Y + EquationC) / EquationA;
+            return x > origin.X ? 1 : 0;
+        }
+
         /// <summary>
         /// Returns the shortest distance from the specified point to this line.
         /// </summary>

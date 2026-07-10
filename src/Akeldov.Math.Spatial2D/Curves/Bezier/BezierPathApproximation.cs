@@ -149,6 +149,25 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
+        public static int CountRightwardCrossings(
+            Func<float, PointXY> pointAt,
+            PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            int count = 0;
+            PointXY previous = pointAt(0f);
+
+            for (int i = 1; i <= DefaultSegmentCount; i++)
+            {
+                PointXY current = pointAt(i / (float)DefaultSegmentCount);
+                count += new ParameterizedSegment(previous, current).CountRightwardCrossings(origin);
+                previous = current;
+            }
+
+            return count;
+        }
+
         private static void ValidateSegmentCount(int segmentCount, string parameterName)
         {
             if (segmentCount <= 0)

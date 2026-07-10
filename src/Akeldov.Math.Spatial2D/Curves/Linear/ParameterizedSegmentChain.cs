@@ -118,6 +118,18 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         public float Length => _length;
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            int count = 0;
+            for (int i = 0; i < _segments.Length; i++)
+                count += _segments[i].CountRightwardCrossings(origin);
+
+            return count;
+        }
+
         /// <summary>
         /// Returns the shortest distance from the specified point to this chain.
         /// </summary>

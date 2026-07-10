@@ -99,6 +99,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         public bool IncludesEndPoint => _includesEndPoint;
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin) =>
+            ((Segment)this).CountRightwardCrossings(origin);
+
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray is collinear with the segment
         /// and their overlap is not a single point, returns the first included point encountered along the ray.

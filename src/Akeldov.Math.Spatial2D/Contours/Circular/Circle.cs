@@ -49,6 +49,26 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// </summary>
         public float Length => 2f * MathF.PI * _radius;
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            float y = origin.Y - Center.Y;
+            float squaredHorizontalOffset = Radius * Radius - y * y;
+            if (squaredHorizontalOffset <= 0f)
+                return 0;
+
+            float horizontalOffset = MathF.Sqrt(squaredHorizontalOffset);
+            int count = 0;
+            if (Center.X - horizontalOffset > origin.X)
+                count++;
+            if (Center.X + horizontalOffset > origin.X)
+                count++;
+
+            return count;
+        }
+
         /// <summary>
         /// Returns the shortest distance from the specified point to the circle circumference.
         /// </summary>

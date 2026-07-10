@@ -163,6 +163,10 @@ namespace Akeldov.Math.Spatial2D.Curves
             return BezierPathApproximation.GetRayIntersections(GetPointAtUnchecked, ray, geometryEpsilon);
         }
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin) =>
+            BezierPathApproximation.CountRightwardCrossings(GetPointAtUnchecked, origin);
+
         /// <summary>
         /// Returns the point at the specified approximate curve length coordinate.
         /// </summary>

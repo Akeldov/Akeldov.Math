@@ -109,6 +109,35 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         public float Length => GetArcLength();
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            List<PointXY> intersections = GetRayIntersections(new Ray(origin), 0f);
+            int count = 0;
+
+            for (int i = 0; i < intersections.Count; i++)
+            {
+                PointXY intersection = intersections[i];
+                if (intersection.X <= origin.X)
+                    continue;
+
+                if (intersection.Y == Center.Y - Radius || intersection.Y == Center.Y + Radius)
+                    continue;
+
+                if (!IsFullCircle && intersection.Equals(StartPoint) && MathF.Cos(StartAngle) <= 0f)
+                    continue;
+
+                if (!IsFullCircle && intersection.Equals(EndPoint) && MathF.Cos(EndAngle) >= 0f)
+                    continue;
+
+                count++;
+            }
+
+            return count;
+        }
+
         /// <summary>
         /// Determines whether the specified point lies within this arc's angular region.
         /// </summary>

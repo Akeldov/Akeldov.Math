@@ -117,6 +117,38 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         public float Length => GetArcLength();
 
+        /// <inheritdoc/>
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            List<PointXY> intersections = GetRayIntersections(new Ray(origin), 0f);
+            float directionSign = AngularDirection == AngularDirection.Counterclockwise ? 1f : -1f;
+            int count = 0;
+
+            for (int i = 0; i < intersections.Count; i++)
+            {
+                PointXY intersection = intersections[i];
+                if (intersection.X <= origin.X)
+                    continue;
+
+                if (intersection.Y == Center.Y - Radius || intersection.Y == Center.Y + Radius)
+                    continue;
+
+                float startDerivativeY = directionSign * MathF.Cos(StartAngle);
+                float endDerivativeY = directionSign * MathF.Cos(EndAngle);
+                if (!IsFullCircle && intersection.Equals(StartPoint) && startDerivativeY <= 0f)
+                    continue;
+
+                if (!IsFullCircle && intersection.Equals(EndPoint) && endDerivativeY >= 0f)
+                    continue;
+
+                count++;
+            }
+
+            return count;
+        }
+
         /// <summary>
         /// Gets the endpoint at the start of the traversal direction.
         /// </summary>
