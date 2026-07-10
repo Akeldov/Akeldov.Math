@@ -1,10 +1,56 @@
 using Akeldov.Math.Spatial2D.Imaging;
 using System;
+using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     public static partial class GeometrySceneLayerExtensions
     {
+        /// <summary>Adds a reusable text signed-distance provider as a scene layer.</summary>
+        public static GeometryScene<TColor> AddTextLayer<TColor>(
+            this GeometryScene<TColor> scene,
+            TextSignedDistanceProvider text,
+            Func<float, TColor> signedDistanceToColor)
+        {
+            if (scene == null)
+                throw new ArgumentNullException(nameof(scene));
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+            if (signedDistanceToColor == null)
+                throw new ArgumentNullException(nameof(signedDistanceToColor));
+
+            return scene.AddLayer(new TextGeometrySceneLayer<TColor>(text, signedDistanceToColor));
+        }
+
+        /// <summary>Adds reusable text signed-distance providers as one scene layer.</summary>
+        public static GeometryScene<TColor> AddTextLayer<TColor>(
+            this GeometryScene<TColor> scene,
+            IReadOnlyList<TextSignedDistanceProvider> texts,
+            Func<float, TColor> signedDistanceToColor)
+        {
+            if (scene == null)
+                throw new ArgumentNullException(nameof(scene));
+            if (signedDistanceToColor == null)
+                throw new ArgumentNullException(nameof(signedDistanceToColor));
+
+            return scene.AddLayer(new TextGeometrySceneLayer<TColor>(texts, signedDistanceToColor));
+        }
+
+        /// <summary>Adds reusable text providers with bounds culling beyond a maximum useful distance.</summary>
+        public static GeometryScene<TColor> AddTextLayer<TColor>(
+            this GeometryScene<TColor> scene,
+            IReadOnlyList<TextSignedDistanceProvider> texts,
+            Func<float, TColor> signedDistanceToColor,
+            float maxDistance)
+        {
+            if (scene == null)
+                throw new ArgumentNullException(nameof(scene));
+            if (signedDistanceToColor == null)
+                throw new ArgumentNullException(nameof(signedDistanceToColor));
+
+            return scene.AddLayer(new TextGeometrySceneLayer<TColor>(texts, signedDistanceToColor, maxDistance));
+        }
+
         /// <summary>
         /// Adds a TrueType text layer whose color is mapped from signed distance to the text outline.
         /// </summary>
@@ -39,7 +85,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 fontSize,
                 layout ?? new TextLayoutOptions());
 
-            return scene.AddLayer(new TextGeometrySceneLayer<TColor>(textProvider, signedDistanceToColor));
+            return scene.AddTextLayer(textProvider, signedDistanceToColor);
         }
 
         /// <summary>

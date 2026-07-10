@@ -14,8 +14,24 @@ public class HexMapTopologyLayoutRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
+        string fontPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Fonts),
+            "arial.ttf");
+        if (!File.Exists(fontPath))
+        {
+            Assert.Ignore("Arial is not available on this machine.");
+            return;
+        }
+
+        TrueTypeFont font = TrueTypeFont.Load(fontPath);
         SpatialRaster<byte> raster = new HexMapTopology(4, 3, layout)
-            .Rasterize(100f, 30f, 1f, 1f, 0, 255, 100);
+            .Rasterize(
+                100f,
+                new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100),
+                new HexMapTopologyXYLabelsRasterizationOptions(
+                    font, 22f, 0, 0.8f, new VectorXY(0f, 17f)),
+                new HexMapTopologyQRSLabelsRasterizationOptions(
+                    font, 16f, 80, 0.8f, new VectorXY(0f, -17f)));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);

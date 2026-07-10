@@ -17,12 +17,21 @@ The examples below use a 4 by 3 map so the row or column offset is visible.
 - `HexOrientation.PointyTop`.
 
 ```csharp
-new HexMapTopology(4, 3, Layout.OddR)
-    .Rasterize(100f, 30f, 1f, 1f, 0, 255, 100)
+TrueTypeFont font = TrueTypeFont.Load(
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
+    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
+    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+var topology = new HexMapTopology(4, 3, Layout.OddR);
+
+topology
+    .Rasterize(100f, rasterizationOptions, xyLabelsOptions, qrsLabelsOptions)
     .SaveAsPng("OddR.png");
 ```
 
-![OddR layout example](../assets/hexes/layouts/odd-r.svg)
+![OddR layout example](../assets/hexes/layouts/odd-r.png)
 
 #### `EvenR`
 
@@ -31,12 +40,21 @@ new HexMapTopology(4, 3, Layout.OddR)
 - `HexOrientation.PointyTop`.
 
 ```csharp
-new HexMapTopology(4, 3, Layout.EvenR)
-    .Rasterize(100f, 30f, 1f, 1f, 0, 255, 100)
+TrueTypeFont font = TrueTypeFont.Load(
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
+    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
+    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+var topology = new HexMapTopology(4, 3, Layout.EvenR);
+
+topology
+    .Rasterize(100f, rasterizationOptions, xyLabelsOptions, qrsLabelsOptions)
     .SaveAsPng("EvenR.png");
 ```
 
-![EvenR layout example](../assets/hexes/layouts/even-r.svg)
+![EvenR layout example](../assets/hexes/layouts/even-r.png)
 
 ### Column Layouts
 
@@ -47,12 +65,21 @@ new HexMapTopology(4, 3, Layout.EvenR)
 - `HexOrientation.FlatTop`.
 
 ```csharp
-new HexMapTopology(4, 3, Layout.OddQ)
-    .Rasterize(100f, 30f, 1f, 1f, 0, 255, 100)
+TrueTypeFont font = TrueTypeFont.Load(
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
+    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
+    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+var topology = new HexMapTopology(4, 3, Layout.OddQ);
+
+topology
+    .Rasterize(100f, rasterizationOptions, xyLabelsOptions, qrsLabelsOptions)
     .SaveAsPng("OddQ.png");
 ```
 
-![OddQ layout example](../assets/hexes/layouts/odd-q.svg)
+![OddQ layout example](../assets/hexes/layouts/odd-q.png)
 
 #### `EvenQ`
 
@@ -61,9 +88,18 @@ new HexMapTopology(4, 3, Layout.OddQ)
 - `HexOrientation.FlatTop`.
 
 ```csharp
-new HexMapTopology(4, 3, Layout.EvenQ)
-    .Rasterize(100f, 30f, 1f, 1f, 0, 255, 100)
+TrueTypeFont font = TrueTypeFont.Load(
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
+    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
+    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+var topology = new HexMapTopology(4, 3, Layout.EvenQ);
+
+topology
+    .Rasterize(100f, rasterizationOptions, xyLabelsOptions, qrsLabelsOptions)
     .SaveAsPng("EvenQ.png");
 ```
 
-![EvenQ layout example](../assets/hexes/layouts/even-q.svg)
+![EvenQ layout example](../assets/hexes/layouts/even-q.png)
