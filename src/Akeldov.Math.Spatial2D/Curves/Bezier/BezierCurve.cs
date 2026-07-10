@@ -15,6 +15,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     public sealed class BezierCurve : IFinitePath, IEquatable<BezierCurve>
     {
         private readonly PointXY[] _controlPoints;
+        private readonly PointXY[] _approximationPoints;
         private readonly IReadOnlyList<PointXY> _readOnlyControlPoints;
         private readonly float _length;
 
@@ -58,7 +59,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             }
 
             _readOnlyControlPoints = Array.AsReadOnly(_controlPoints);
-            _length = BezierPathApproximation.GetLength(GetPointAtUnchecked);
+            _approximationPoints = BezierPathApproximation.CreatePoints(GetPointAtUnchecked);
+            _length = BezierPathApproximation.GetLength(_approximationPoints);
         }
 
         /// <summary>
@@ -164,8 +166,30 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public int CountRightwardCrossings(PointXY origin) =>
-            BezierPathApproximation.CountRightwardCrossings(GetPointAtUnchecked, origin);
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
+
+            float maxX = _controlPoints[0].X;
+            float minY = _controlPoints[0].Y;
+            float maxY = _controlPoints[0].Y;
+
+            for (int i = 1; i < _controlPoints.Length; i++)
+            {
+                PointXY point = _controlPoints[i];
+                if (point.X > maxX)
+                    maxX = point.X;
+                if (point.Y < minY)
+                    minY = point.Y;
+                if (point.Y > maxY)
+                    maxY = point.Y;
+            }
+
+            if (origin.X >= maxX || origin.Y < minY || origin.Y > maxY)
+                return 0;
+
+            return BezierPathApproximation.CountRightwardCrossings(_approximationPoints, origin);
+        }
 
         /// <summary>
         /// Returns the point at the specified approximate curve length coordinate.

@@ -145,7 +145,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) =>
-            BezierPathApproximation.CountRightwardCrossings(GetPointAtUnchecked, origin);
+            BezierPathApproximation.CountRightwardCrossings(StartPoint, ControlPoint, EndPoint, origin);
 
         /// <summary>
         /// Returns the point at the specified approximate curve length coordinate.

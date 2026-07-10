@@ -101,6 +101,43 @@ public class BezierCurveTests
     }
 
     [Test]
+    public void QuadraticBezier_CountRightwardCrossings_CountsRootsAndExcludesTangent()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+
+        Assert.That(curve.CountRightwardCrossings(new PointXY(-1f, 0.5f)), Is.EqualTo(2));
+        Assert.That(curve.CountRightwardCrossings(new PointXY(1f, 0.5f)), Is.EqualTo(1));
+        Assert.That(curve.CountRightwardCrossings(new PointXY(-1f, 1f)), Is.Zero);
+    }
+
+    [Test]
+    public void CubicBezier_CountRightwardCrossings_WhenScanlineHasThreeRoots_ReturnsThree()
+    {
+        var curve = new CubicBezier(
+            new PointXY(0f, -1f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, -2f),
+            new PointXY(3f, 1f));
+
+        Assert.That(curve.CountRightwardCrossings(new PointXY(-1f, 0f)), Is.EqualTo(3));
+    }
+
+    [Test]
+    public void BezierCurve_CountRightwardCrossings_UsesCachedApproximation()
+    {
+        var curve = new BezierCurve(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+
+        Assert.That(curve.CountRightwardCrossings(new PointXY(-1f, 0.5f)), Is.EqualTo(2));
+        Assert.That(curve.CountRightwardCrossings(new PointXY(3f, 0.5f)), Is.Zero);
+    }
+
+    [Test]
     public void QuadraticBezier_Flatten_ReturnsNewCallerOwnedMutableSegments()
     {
         var curve = new QuadraticBezier(
