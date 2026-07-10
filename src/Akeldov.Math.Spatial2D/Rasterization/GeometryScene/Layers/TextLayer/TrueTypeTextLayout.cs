@@ -81,7 +81,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                     compositeContours.Add(contour);
             }
 
-            return new TextSignedDistanceProvider(compositeContours);
+            return new TextSignedDistanceProvider(
+                compositeContours,
+                left + offset.X,
+                bottom + offset.Y,
+                right + offset.X,
+                top + offset.Y);
         }
 
         private static float AddLine(

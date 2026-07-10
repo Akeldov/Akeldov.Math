@@ -111,13 +111,20 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (edgeFalloff <= 0f || float.IsNaN(edgeFalloff) || float.IsInfinity(edgeFalloff))
                 throw new ArgumentOutOfRangeException(nameof(edgeFalloff), "Text layer edge falloff must be finite and positive.");
 
-            return scene.AddTextLayer(
+            if (scene == null)
+                throw new ArgumentNullException(nameof(scene));
+
+            TextSignedDistanceProvider textProvider = TrueTypeTextLayout.CreateText(
                 font,
                 text,
                 origin,
                 fontSize,
-                d => d <= 0f ? color : ApplyOutsideFalloff(color, d, edgeFalloff),
                 layout);
+
+            return scene.AddLayer(new FilledTextGeometrySceneLayer(
+                textProvider,
+                color,
+                edgeFalloff));
         }
 
         private static RGBA16BitColor ApplyOutsideFalloff(
