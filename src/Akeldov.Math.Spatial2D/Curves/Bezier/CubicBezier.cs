@@ -123,7 +123,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate distance to this curve.</returns>
         public float Distance(PointXY point)
         {
-            return Project(point).Distance;
+            return ProjectClosest(point).Distance;
         }
 
         /// <summary>
@@ -133,8 +133,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate projection point and distance to this curve.</returns>
         public CurveProjection Project(PointXY point)
         {
-            ParameterizedCurveProjection projection = ProjectWithParameter(point);
-            return new CurveProjection(projection.ProjectedPoint, projection.Distance);
+            return ProjectClosest(point);
         }
 
         /// <summary>
@@ -265,6 +264,57 @@ namespace Akeldov.Math.Spatial2D.Curves
                     ControlPointA.Y * controlAAmount +
                     ControlPointB.Y * controlBAmount +
                     EndPoint.Y * endAmount);
+        }
+
+        private CurveProjection ProjectClosest(PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(point, nameof(point), "Point coordinates must be finite.");
+
+            PointXY bestPoint = StartPoint;
+            float bestSquaredDistance = (point - bestPoint).SquaredLength;
+
+            for (int seedIndex = 0; seedIndex <= 8; seedIndex++)
+            {
+                float parameter = seedIndex * 0.125f;
+
+                for (int iteration = 0; iteration < 6; iteration++)
+                {
+                    float inverse = 1f - parameter;
+                    PointXY curvePoint = GetPointAtUnchecked(parameter);
+                    VectorXY firstDerivative = 3f * (
+                        inverse * inverse * (ControlPointA - StartPoint) +
+                        2f * inverse * parameter * (ControlPointB - ControlPointA) +
+                        parameter * parameter * (EndPoint - ControlPointB));
+                    VectorXY secondDerivative = 6f * (
+                        inverse * ((ControlPointB - ControlPointA) - (ControlPointA - StartPoint)) +
+                        parameter * ((EndPoint - ControlPointB) - (ControlPointB - ControlPointA)));
+                    VectorXY delta = curvePoint - point;
+                    float denominator = firstDerivative.SquaredLength + VectorXY.Dot(delta, secondDerivative);
+                    if (denominator == 0f)
+                        break;
+
+                    float next = parameter - VectorXY.Dot(delta, firstDerivative) / denominator;
+                    parameter = MathF.Max(0f, MathF.Min(1f, next));
+                }
+
+                PointXY candidate = GetPointAtUnchecked(parameter);
+                float squaredDistance = (point - candidate).SquaredLength;
+                if (squaredDistance < bestSquaredDistance)
+                {
+                    bestPoint = candidate;
+                    bestSquaredDistance = squaredDistance;
+                }
+            }
+
+            PointXY end = EndPoint;
+            float endSquaredDistance = (point - end).SquaredLength;
+            if (endSquaredDistance < bestSquaredDistance)
+            {
+                bestPoint = end;
+                bestSquaredDistance = endSquaredDistance;
+            }
+
+            return new CurveProjection(bestPoint, MathF.Sqrt(bestSquaredDistance));
         }
     }
 }

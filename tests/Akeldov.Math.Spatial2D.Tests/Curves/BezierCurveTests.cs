@@ -33,6 +33,35 @@ public class BezierCurveTests
     }
 
     [Test]
+    public void QuadraticBezier_Project_WhenClosestPointIsInterior_ReturnsCurvePoint()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+
+        CurveProjection projection = curve.Project(new PointXY(1f, 2f));
+
+        AssertPoint(projection.ProjectedPoint, 1f, 1f);
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void CubicBezier_Project_WhenClosestPointIsInterior_ReturnsCurvePoint()
+    {
+        var curve = new CubicBezier(
+            new PointXY(0f, 0f),
+            new PointXY(0f, 3f),
+            new PointXY(3f, 3f),
+            new PointXY(3f, 0f));
+
+        CurveProjection projection = curve.Project(new PointXY(1.5f, 3f));
+
+        AssertPoint(projection.ProjectedPoint, 1.5f, 2.25f);
+        Assert.That(projection.Distance, Is.EqualTo(0.75f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void BezierCurve_GetPointAt_UsesArbitraryDegreeDeCasteljauEvaluation()
     {
         var curve = new BezierCurve(

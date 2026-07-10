@@ -128,7 +128,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate distance to this curve.</returns>
         public float Distance(PointXY point)
         {
-            return Project(point).Distance;
+            return BezierPathApproximation.ProjectWithParameter(_approximationPoints, point).Distance;
         }
 
         /// <summary>
@@ -138,7 +138,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate projection point and distance to this curve.</returns>
         public CurveProjection Project(PointXY point)
         {
-            ParameterizedCurveProjection projection = ProjectWithParameter(point);
+            ParameterizedCurveProjection projection =
+                BezierPathApproximation.ProjectWithParameter(_approximationPoints, point);
             return new CurveProjection(projection.ProjectedPoint, projection.Distance);
         }
 
@@ -149,7 +150,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate projection point, length coordinate, and distance to this curve.</returns>
         public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
-            return BezierPathApproximation.ProjectWithParameter(GetPointAtUnchecked, point);
+            return BezierPathApproximation.ProjectWithParameter(_approximationPoints, point);
         }
 
         /// <summary>

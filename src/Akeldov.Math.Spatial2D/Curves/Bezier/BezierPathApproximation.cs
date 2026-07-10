@@ -136,6 +136,48 @@ namespace Akeldov.Math.Spatial2D.Curves
             return closestProjection;
         }
 
+        public static ParameterizedCurveProjection ProjectWithParameter(
+            PointXY[] approximationPoints,
+            PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(point, nameof(point), "Point coordinates must be finite.");
+
+            PointXY closestPoint = approximationPoints[0];
+            float closestSquaredDistance = (point - closestPoint).SquaredLength;
+            float closestCoordinate = 0f;
+            float previousCoordinate = 0f;
+
+            for (int i = 1; i < approximationPoints.Length; i++)
+            {
+                PointXY start = approximationPoints[i - 1];
+                PointXY end = approximationPoints[i];
+                VectorXY direction = end - start;
+                float squaredLength = direction.SquaredLength;
+                float parameter = squaredLength == 0f
+                    ? 0f
+                    : VectorXY.Dot(point - start, direction) / squaredLength;
+                parameter = MathF.Max(0f, MathF.Min(1f, parameter));
+
+                PointXY candidate = start + direction * parameter;
+                float squaredDistance = (point - candidate).SquaredLength;
+                float segmentLength = MathF.Sqrt(squaredLength);
+
+                if (squaredDistance < closestSquaredDistance)
+                {
+                    closestPoint = candidate;
+                    closestSquaredDistance = squaredDistance;
+                    closestCoordinate = previousCoordinate + segmentLength * parameter;
+                }
+
+                previousCoordinate += segmentLength;
+            }
+
+            return new ParameterizedCurveProjection(
+                closestPoint,
+                closestCoordinate,
+                MathF.Sqrt(closestSquaredDistance));
+        }
+
         public static List<PointXY> GetRayIntersections(
             Func<float, PointXY> pointAt,
             Ray ray,

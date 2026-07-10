@@ -106,7 +106,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate distance to this curve.</returns>
         public float Distance(PointXY point)
         {
-            return Project(point).Distance;
+            return ProjectClosest(point).Distance;
         }
 
         /// <summary>
@@ -116,8 +116,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The approximate projection point and distance to this curve.</returns>
         public CurveProjection Project(PointXY point)
         {
-            ParameterizedCurveProjection projection = ProjectWithParameter(point);
-            return new CurveProjection(projection.ProjectedPoint, projection.Distance);
+            return ProjectClosest(point);
         }
 
         /// <summary>
@@ -225,6 +224,110 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new PointXY(
                 StartPoint.X * startAmount + ControlPoint.X * controlAmount + EndPoint.X * endAmount,
                 StartPoint.Y * startAmount + ControlPoint.Y * controlAmount + EndPoint.Y * endAmount);
+        }
+
+        private CurveProjection ProjectClosest(PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(point, nameof(point), "Point coordinates must be finite.");
+
+            VectorXY quadratic = (EndPoint - ControlPoint) - (ControlPoint - StartPoint);
+            VectorXY linear = 2f * (ControlPoint - StartPoint);
+            VectorXY offset = StartPoint - point;
+            double cubicCoefficient = 2.0 * VectorXY.Dot(quadratic, quadratic);
+            double quadraticCoefficient = 3.0 * VectorXY.Dot(quadratic, linear);
+            double linearCoefficient =
+                VectorXY.Dot(linear, linear) + 2.0 * VectorXY.Dot(offset, quadratic);
+            double constantCoefficient = VectorXY.Dot(offset, linear);
+
+            Span<double> boundaries = stackalloc double[4];
+            int boundaryCount = 1;
+            boundaries[0] = 0.0;
+            double derivativeDiscriminant =
+                4.0 * quadraticCoefficient * quadraticCoefficient -
+                12.0 * cubicCoefficient * linearCoefficient;
+
+            if (cubicCoefficient != 0.0 && derivativeDiscriminant >= 0.0)
+            {
+                double sqrt = System.Math.Sqrt(derivativeDiscriminant);
+                AddBoundary(boundaries, ref boundaryCount,
+                    (-2.0 * quadraticCoefficient - sqrt) / (6.0 * cubicCoefficient));
+                AddBoundary(boundaries, ref boundaryCount,
+                    (-2.0 * quadraticCoefficient + sqrt) / (6.0 * cubicCoefficient));
+            }
+            else if (cubicCoefficient == 0.0 && quadraticCoefficient != 0.0)
+            {
+                AddBoundary(boundaries, ref boundaryCount,
+                    -linearCoefficient / (2.0 * quadraticCoefficient));
+            }
+
+            if (boundaryCount == 3 && boundaries[1] > boundaries[2])
+            {
+                double temporary = boundaries[1];
+                boundaries[1] = boundaries[2];
+                boundaries[2] = temporary;
+            }
+
+            boundaries[boundaryCount++] = 1.0;
+            Span<double> candidates = stackalloc double[8];
+            int candidateCount = 0;
+
+            for (int i = 0; i < boundaryCount; i++)
+                candidates[candidateCount++] = boundaries[i];
+
+            for (int i = 1; i < boundaryCount; i++)
+            {
+                double from = boundaries[i - 1];
+                double to = boundaries[i];
+                double fromValue = EvaluateCubic(
+                    cubicCoefficient, quadraticCoefficient, linearCoefficient, constantCoefficient, from);
+                double toValue = EvaluateCubic(
+                    cubicCoefficient, quadraticCoefficient, linearCoefficient, constantCoefficient, to);
+
+                if ((fromValue < 0.0) == (toValue < 0.0) || fromValue == 0.0 || toValue == 0.0)
+                    continue;
+
+                for (int iteration = 0; iteration < 32; iteration++)
+                {
+                    double middle = (from + to) * 0.5;
+                    double middleValue = EvaluateCubic(
+                        cubicCoefficient, quadraticCoefficient, linearCoefficient, constantCoefficient, middle);
+                    if ((middleValue < 0.0) == (fromValue < 0.0))
+                    {
+                        from = middle;
+                        fromValue = middleValue;
+                    }
+                    else
+                    {
+                        to = middle;
+                    }
+                }
+
+                candidates[candidateCount++] = (from + to) * 0.5;
+            }
+
+            PointXY bestPoint = StartPoint;
+            float bestSquaredDistance = (point - bestPoint).SquaredLength;
+            for (int i = 1; i < candidateCount; i++)
+            {
+                PointXY candidate = GetPointAtUnchecked((float)candidates[i]);
+                float squaredDistance = (point - candidate).SquaredLength;
+                if (squaredDistance < bestSquaredDistance)
+                {
+                    bestPoint = candidate;
+                    bestSquaredDistance = squaredDistance;
+                }
+            }
+
+            return new CurveProjection(bestPoint, MathF.Sqrt(bestSquaredDistance));
+        }
+
+        private static double EvaluateCubic(double cubic, double quadratic, double linear, double constant, double t) =>
+            ((cubic * t + quadratic) * t + linear) * t + constant;
+
+        private static void AddBoundary(Span<double> boundaries, ref int count, double value)
+        {
+            if (value > 0.0 && value < 1.0)
+                boundaries[count++] = value;
         }
     }
 }
