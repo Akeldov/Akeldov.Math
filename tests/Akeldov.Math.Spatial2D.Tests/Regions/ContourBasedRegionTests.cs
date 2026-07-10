@@ -119,7 +119,7 @@ public class ContourBasedRegionTests
     }
 
     [Test]
-    public void Contains_WhenPointIsWithinCustomGeometryEpsilonOfBoundary_ReturnsTrue()
+    public void Contains_WhenGeometryEpsilonChanges_DoesNotChangeCrossingResult()
     {
         IRegion region = new ContourBasedRegion(new IContour[]
         {
@@ -129,19 +129,19 @@ public class ContourBasedRegionTests
         var point = new PointXY(-0.0005f, 0.5f);
 
         Assert.That(region.Contains(point), Is.False);
-        Assert.That(region.Contains(point, 0.001f), Is.True);
+        Assert.That(region.Contains(point, 0.001f), Is.False);
     }
 
     [Test]
-    public void Contains_PassesGeometryEpsilonToContours()
+    public void Contains_UsesContourRightwardCrossings()
     {
-        var contour = new EpsilonAwareContour();
+        var contour = new CrossingAwareContour();
         IRegion region = new ContourBasedRegion(new IContour[] { contour });
 
         bool contains = region.Contains(new PointXY(0f, 0f), 0.25f);
 
         Assert.That(contains, Is.True);
-        Assert.That(contour.LastGeometryEpsilon, Is.EqualTo(0.25f));
+        Assert.That(contour.CountRightwardCrossingsCallCount, Is.EqualTo(1));
     }
 
     [Test]
@@ -247,27 +247,30 @@ public class ContourBasedRegionTests
         });
     }
 
-    private sealed class EpsilonAwareContour : IContour
+    private sealed class CrossingAwareContour : IContour
     {
         private static readonly IFinitePath[] ContourCurves =
         {
             new DistantBoundaryCurve()
         };
 
-        public float LastGeometryEpsilon { get; private set; }
+        public int CountRightwardCrossingsCallCount { get; private set; }
 
         public IReadOnlyList<IFinitePath> Curves => ContourCurves;
 
         public float Length => Curves[0].Length;
 
-        public int CountRightwardCrossings(PointXY origin) => 0;
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            CountRightwardCrossingsCallCount++;
+            return 1;
+        }
 
         public bool Encloses(
             PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            LastGeometryEpsilon = geometryEpsilon;
-            return geometryEpsilon == 0.25f;
+            return false;
         }
 
         public float Distance(PointXY point)

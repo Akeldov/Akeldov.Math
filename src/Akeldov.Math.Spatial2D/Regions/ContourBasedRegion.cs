@@ -58,15 +58,12 @@ namespace Akeldov.Math.Spatial2D.Regions
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            int enclosingContourCount = 0;
+            int crossingCount = 0;
 
             for (int i = 0; i < _contours.Length; i++)
-            {
-                if (_contours[i].Encloses(point, geometryEpsilon))
-                    enclosingContourCount++;
-            }
+                crossingCount += _contours[i].CountRightwardCrossings(point);
 
-            return enclosingContourCount % 2 == 1;
+            return crossingCount % 2 == 1;
         }
 
         /// <inheritdoc/>
