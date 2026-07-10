@@ -369,15 +369,15 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void Encloses_PassesGeometryEpsilonToCurveRayIntersections()
+    public void Encloses_UsesCurveRightwardCrossings()
     {
-        var curve = new EpsilonAwareCurve();
+        var curve = new CrossingAwareCurve();
         IContour contour = new CompositeContour(new IFinitePath[] { curve });
 
         bool encloses = contour.Encloses(new PointXY(0f, 0f), 0.25f);
 
         Assert.That(encloses, Is.True);
-        Assert.That(curve.LastGeometryEpsilon, Is.EqualTo(0.25f));
+        Assert.That(curve.CountRightwardCrossingsCallCount, Is.EqualTo(1));
     }
 
     [Test]
@@ -462,9 +462,9 @@ public class CompositeContourTests
             AngularDirection.Counterclockwise);
     }
 
-    private sealed class EpsilonAwareCurve : IFinitePath
+    private sealed class CrossingAwareCurve : IFinitePath
     {
-        public float LastGeometryEpsilon { get; private set; }
+        public int CountRightwardCrossingsCallCount { get; private set; }
 
         public PointXY StartPoint => new PointXY(0f, 0f);
 
@@ -478,17 +478,17 @@ public class CompositeContourTests
 
         public PointXY GetPoint(float curveCoordinate) => new PointXY(0f, 0f);
 
-        public int CountRightwardCrossings(PointXY origin) => 0;
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            CountRightwardCrossingsCallCount++;
+            return 1;
+        }
 
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            LastGeometryEpsilon = geometryEpsilon;
-
-            return geometryEpsilon.AlmostEquals(0.25f)
-                ? new List<PointXY> { new PointXY(1f, 0f) }
-                : new List<PointXY>();
+            return new List<PointXY>();
         }
 
         public float Distance(PointXY point) => 1f;

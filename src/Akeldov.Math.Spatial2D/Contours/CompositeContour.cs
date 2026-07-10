@@ -94,29 +94,17 @@ namespace Akeldov.Math.Spatial2D.Contours
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            var ray = new Ray(point);
-            int intersectionCount = 0;
+            int crossingCount = 0;
 
             for (int i = 0; i < _curves.Length; i++)
             {
-                IFinitePath curve = _curves[i];
-
-                if (curve.Distance(point) <= geometryEpsilon)
+                if (_curves[i].Distance(point) <= geometryEpsilon)
                     return true;
 
-                List<PointXY> curveIntersections = curve.GetRayIntersections(ray, geometryEpsilon);
-                if (curveIntersections == null)
-                    continue;
-
-                for (int j = 0; j < curveIntersections.Count; j++)
-                {
-                    PointXY intersection = curveIntersections[j];
-                    if (ShouldCountRayIntersection(curve, point, intersection, geometryEpsilon))
-                        intersectionCount++;
-                }
+                crossingCount += _curves[i].CountRightwardCrossings(point);
             }
 
-            return intersectionCount % 2 == 1;
+            return crossingCount % 2 == 1;
         }
 
         /// <inheritdoc/>
@@ -271,38 +259,5 @@ namespace Akeldov.Math.Spatial2D.Contours
             intersections.Add(point);
         }
 
-        private static bool ShouldCountRayIntersection(
-            IFinitePath curve,
-            PointXY rayOrigin,
-            PointXY intersection,
-            float geometryEpsilon)
-        {
-            if (intersection.X <= rayOrigin.X + geometryEpsilon)
-                return false;
-
-            if (IsHorizontalSegmentOnScanline(curve, rayOrigin.Y, geometryEpsilon))
-                return false;
-
-            if (curve.StartPoint.AlmostEquals(curve.EndPoint, geometryEpsilon))
-                return true;
-
-            if (intersection.AlmostEquals(curve.StartPoint, geometryEpsilon))
-                return curve.EndPoint.Y > curve.StartPoint.Y + geometryEpsilon;
-
-            if (intersection.AlmostEquals(curve.EndPoint, geometryEpsilon))
-                return curve.StartPoint.Y > curve.EndPoint.Y + geometryEpsilon;
-
-            return true;
-        }
-
-        private static bool IsHorizontalSegmentOnScanline(
-            IFinitePath curve,
-            float scanlineY,
-            float geometryEpsilon)
-        {
-            return curve is ParameterizedSegment &&
-                curve.StartPoint.Y.AlmostEquals(scanlineY, geometryEpsilon) &&
-                curve.EndPoint.Y.AlmostEquals(scanlineY, geometryEpsilon);
-        }
     }
 }
