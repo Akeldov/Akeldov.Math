@@ -10,11 +10,10 @@ QRS index and row/column storage indexes depends on `Layout`.
 
 ## QRS Basis Examples
 
-QRS coordinates keep the cube-coordinate invariant `Q + R + S = 0`, so the
-three visible coordinate axes are drawn as directions in that two-dimensional
-plane. These examples build the basis of the QRS coordinate system: it is
-equivalent to a QR basis drawn with axes separated by 120 degrees instead of
-the 90 degrees used by a Cartesian XY basis.
+QRS coordinates keep the cube-coordinate invariant `Q + R + S = 0`. The
+diagrams show the three positive cube-coordinate directions, separated by 120
+degrees: red is `+Q`, green is `+R`, and blue is `+S`. The two independent
+axial basis vectors `(1, 0)` and `(0, 1)` are separated by 60 degrees.
 
 ### `OddR` and `EvenR`
 
@@ -24,18 +23,24 @@ world-space directions of QRS vectors.
 
 ```csharp
 var p0 = new PointXY(0, 0);
-var segmentQ = new ParameterizedSegment(p0, p0 + new VectorQRS(1, 0).ToVectorXY(Layout.OddR));
-var segmentR = new ParameterizedSegment(p0, p0 + new VectorQRS(-1, 1).ToVectorXY(Layout.OddR));
-var segmentS = new ParameterizedSegment(p0, p0 + new VectorQRS(0, -1).ToVectorXY(Layout.OddR));
+VectorXY q = new VectorQRS(1, 0).ToVectorXY(Layout.OddR);
+VectorXY r = new VectorQRS(-1, 1).ToVectorXY(Layout.OddR);
+VectorXY s = new VectorQRS(0, -1).ToVectorXY(Layout.OddR);
+TrueTypeFont font = TrueTypeFont.Load(
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
 
-var gameScene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver);
+var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.White, RGBA16BitColor.AlphaOver);
+var centered = new TextLayoutOptions { Anchor = TextAnchor.Center };
 
-gameScene
-    .AddPointDistanceBasedLayer(segmentQ, RGBA16BitColor.Red, 0.01f, 0.01f)
-    .AddPointDistanceBasedLayer(segmentR, RGBA16BitColor.Green, 0.01f, 0.01f)
-    .AddPointDistanceBasedLayer(segmentS, RGBA16BitColor.Blue, 0.01f, 0.01f)
-    .Rasterize(new SpatialRasterGrid(new PointXY(-1, -1), new VectorXY(2, 2), new VectorXYInt(300, 300)))
-    .SaveAsPng("qrsBasis.png");
+scene
+    .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + q * 0.82f), RGBA16BitColor.Red, 0.01f, 0.01f)
+    .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + r * 0.82f), RGBA16BitColor.Green, 0.01f, 0.01f)
+    .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + s * 0.82f), RGBA16BitColor.Blue, 0.01f, 0.01f)
+    .AddTextLayer(font, "+Q", p0 + q * 0.98f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
+    .AddTextLayer(font, "+R", p0 + r * 0.98f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
+    .AddTextLayer(font, "+S", p0 + s * 0.98f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
+    .Rasterize(new SpatialRasterGrid(new PointXY(-1.1f, -1.1f), new VectorXY(2.2f, 2.2f), new VectorXYInt(300, 300)))
+    .SaveAsPng("qrs-basis-pointy-top.png");
 ```
 
 ![QRS basis for OddR and EvenR pointy-top layouts](../assets/hexes/vectors/qrs-basis-pointy-top.png)
@@ -48,18 +53,24 @@ world-space directions of QRS vectors.
 
 ```csharp
 var p0 = new PointXY(0, 0);
-var segmentQ = new ParameterizedSegment(p0, p0 + new VectorQRS(1, 0).ToVectorXY(Layout.OddQ));
-var segmentR = new ParameterizedSegment(p0, p0 + new VectorQRS(-1, 1).ToVectorXY(Layout.OddQ));
-var segmentS = new ParameterizedSegment(p0, p0 + new VectorQRS(0, -1).ToVectorXY(Layout.OddQ));
+VectorXY q = new VectorQRS(1, 0).ToVectorXY(Layout.OddQ);
+VectorXY r = new VectorQRS(-1, 1).ToVectorXY(Layout.OddQ);
+VectorXY s = new VectorQRS(0, -1).ToVectorXY(Layout.OddQ);
+TrueTypeFont font = TrueTypeFont.Load(
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
 
-var gameScene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.AlphaOver);
+var scene = new GeometryScene<RGBA16BitColor>(RGBA16BitColor.White, RGBA16BitColor.AlphaOver);
+var centered = new TextLayoutOptions { Anchor = TextAnchor.Center };
 
-gameScene
-    .AddPointDistanceBasedLayer(segmentQ, RGBA16BitColor.Red, 0.01f, 0.01f)
-    .AddPointDistanceBasedLayer(segmentR, RGBA16BitColor.Green, 0.01f, 0.01f)
-    .AddPointDistanceBasedLayer(segmentS, RGBA16BitColor.Blue, 0.01f, 0.01f)
-    .Rasterize(new SpatialRasterGrid(new PointXY(-1, -1), new VectorXY(2, 2), new VectorXYInt(300, 300)))
-    .SaveAsPng("qrsBasis.png");
+scene
+    .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + q * 0.82f), RGBA16BitColor.Red, 0.01f, 0.01f)
+    .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + r * 0.82f), RGBA16BitColor.Green, 0.01f, 0.01f)
+    .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + s * 0.82f), RGBA16BitColor.Blue, 0.01f, 0.01f)
+    .AddTextLayer(font, "+Q", p0 + q * 0.98f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
+    .AddTextLayer(font, "+R", p0 + r * 0.98f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
+    .AddTextLayer(font, "+S", p0 + s * 0.98f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
+    .Rasterize(new SpatialRasterGrid(new PointXY(-1.1f, -1.1f), new VectorXY(2.2f, 2.2f), new VectorXYInt(300, 300)))
+    .SaveAsPng("qrs-basis-flat-top.png");
 ```
 
 ![QRS basis for OddQ and EvenQ flat-top layouts](../assets/hexes/vectors/qrs-basis-flat-top.png)
