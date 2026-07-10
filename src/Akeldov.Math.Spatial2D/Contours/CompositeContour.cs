@@ -97,12 +97,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             int crossingCount = 0;
 
             for (int i = 0; i < _curves.Length; i++)
-            {
-                if (_curves[i].Distance(point) <= geometryEpsilon)
-                    return true;
-
                 crossingCount += _curves[i].CountRightwardCrossings(point);
-            }
 
             return crossingCount % 2 == 1;
         }

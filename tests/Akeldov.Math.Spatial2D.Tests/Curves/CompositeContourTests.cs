@@ -273,18 +273,18 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void Encloses_WhenPointIsOnContour_ReturnsTrue()
+    public void Encloses_WhenPointIsOnRightmostBoundary_UsesOpenRayCrossings()
     {
         var contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
 
-        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.True);
+        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.False);
     }
 
     [Test]
-    public void Encloses_WhenPointIsWithinCustomGeometryEpsilonOfContour_ReturnsTrue()
+    public void Encloses_WhenGeometryEpsilonChanges_DoesNotChangeCrossingResult()
     {
         IContour contour = new CompositeContour(new IFinitePath[]
         {
@@ -294,7 +294,7 @@ public class CompositeContourTests
         var point = new PointXY(1.0005f, 0f);
 
         Assert.That(contour.Encloses(point), Is.False);
-        Assert.That(contour.Encloses(point, 0.001f), Is.True);
+        Assert.That(contour.Encloses(point, 0.001f), Is.False);
     }
 
     [Test]
@@ -356,7 +356,7 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsWithinTolerance_ReturnsNegativeDistance()
+    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsOutside_ReturnsPositiveDistance()
     {
         IContour contour = new CompositeContour(new IFinitePath[]
         {
@@ -365,7 +365,7 @@ public class CompositeContourTests
 
         float signedDistance = contour.SignedDistance(new PointXY(1.0005f, 0f), 0.001f);
 
-        Assert.That(signedDistance, Is.EqualTo(-0.0005f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(signedDistance, Is.EqualTo(0.0005f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
