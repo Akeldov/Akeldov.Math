@@ -2,6 +2,8 @@
 
 `VectorXYInt` represents a two-dimensional vector with integer components. Use it for raster resolutions, grid dimensions, discrete offsets, and other values that must remain integral.
 
+Unlike the world-space `PointXY` and `VectorXY` types, `VectorXYInt` commonly represents discrete quantities such as cell coordinates, grid dimensions, and raster resolutions.
+
 ## Construction and Components
 
 ```csharp

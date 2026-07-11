@@ -2,6 +2,8 @@
 
 `PointXY` represents a two-dimensional position with single-precision floating-point coordinates. Use it for world-space positions, curve endpoints, region centers, sample locations, and other values that identify a point rather than an offset or direction.
 
+Spatial2D uses conventional Cartesian coordinates. Geometric distances and curve coordinates are measured in the same world units as the source points. Raster grids use `PointXY` values for world-space positions and bounds.
+
 ## Construction and coordinates
 
 ```csharp

@@ -2,6 +2,8 @@
 
 `VectorXY` represents a two-dimensional vector with single-precision floating-point components. Use it for geometric directions, offsets, sizes, and calculations that can produce fractional values.
 
+In Spatial2D's Cartesian coordinate model, a `PointXY` identifies a position while a `VectorXY` identifies an offset or direction. Vector components and lengths use the same world units as the points and geometry with which they operate. Raster grids use `VectorXY` values for world-space sizes and bounds.
+
 ## Construction and Components
 
 ```csharp

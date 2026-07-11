@@ -27,14 +27,14 @@ nav:
           - Getting Started: Spatial2D/getting-started.md
           - Concepts:
               - Overview: Spatial2D/concepts/index.md
-              - Coordinate Model: Spatial2D/concepts/coordinate-model.md
-              - Points and Vectors: Spatial2D/concepts/points-and-vectors.md
               - Angles and Units: Spatial2D/concepts/angles-and-units.md
               - Floating-Point Tolerances: Spatial2D/concepts/floating-point-tolerances.md
               - Collection Ownership: Spatial2D/concepts/collection-ownership.md
-              - Scaling: Spatial2D/concepts/scaling.md
-          - Points: Spatial2D/points.md
+          - Points:
+              - Overview: Spatial2D/points/index.md
+              - PointXY: Spatial2D/points/pointxy.md
           - Vectors:
+              - Overview: Spatial2D/vectors/index.md
               - VectorXY: Spatial2D/vectors/vectorxy.md
               - VectorXYInt: Spatial2D/vectors/vectorxyint.md
           - Curves:
