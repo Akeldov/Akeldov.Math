@@ -5,6 +5,16 @@ namespace Akeldov.Math.Spatial2D.Tests.Vectors;
 public class VectorXYTests
 {
     [Test]
+    public void BasisVectors_ReturnStandardCartesianBasis()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(VectorXY.BasisX, Is.EqualTo(new VectorXY(1f, 0f)));
+            Assert.That(VectorXY.BasisY, Is.EqualTo(new VectorXY(0f, 1f)));
+        });
+    }
+
+    [Test]
     public void Normalize_WhenVectorHasLength_ReturnsUnitVector()
     {
         var vector = new VectorXY(3f, 4f);

@@ -44,6 +44,16 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         public static VectorXYInt One => new VectorXYInt(1, 1);
 
+        /// <summary>
+        /// Gets the standard basis vector along the positive X axis.
+        /// </summary>
+        public static VectorXYInt BasisX => new VectorXYInt(1, 0);
+
+        /// <summary>
+        /// Gets the standard basis vector along the positive Y axis.
+        /// </summary>
+        public static VectorXYInt BasisY => new VectorXYInt(0, 1);
+
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is VectorXYInt other && Equals(other);
 

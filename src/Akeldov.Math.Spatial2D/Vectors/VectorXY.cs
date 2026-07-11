@@ -57,6 +57,16 @@ namespace Akeldov.Math.Spatial2D
         public static VectorXY One => new VectorXY(1f, 1f);
 
         /// <summary>
+        /// Gets the standard basis vector along the positive X axis.
+        /// </summary>
+        public static VectorXY BasisX => new VectorXY(1f, 0f);
+
+        /// <summary>
+        /// Gets the standard basis vector along the positive Y axis.
+        /// </summary>
+        public static VectorXY BasisY => new VectorXY(0f, 1f);
+
+        /// <summary>
         /// Returns a vector with the same direction and a length of one.
         /// </summary>
         /// <returns>The normalized vector, or <see cref="Zero"/> when this vector has zero length.</returns>

@@ -3,6 +3,16 @@ namespace Akeldov.Math.Spatial2D.Tests.Vectors;
 public class VectorXYIntTests
 {
     [Test]
+    public void BasisVectors_ReturnStandardCartesianBasis()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(VectorXYInt.BasisX, Is.EqualTo(new VectorXYInt(1, 0)));
+            Assert.That(VectorXYInt.BasisY, Is.EqualTo(new VectorXYInt(0, 1)));
+        });
+    }
+
+    [Test]
     public void Length_WhenSquaredComponentsExceedIntRange_ReturnsFloatLength()
     {
         var vector = new VectorXYInt(50_000, 0);
