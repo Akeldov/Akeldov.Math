@@ -19,3 +19,16 @@ float perimeter = contour.Length; // 14
 The type exposes `Width`, `Height`, `Size`, `Center`, and all four named corners. `Encloses` tests exact membership in the bounded rectangle. `Distance`, `SignedDistance`, `Project`, and `GetRayIntersections` operate on its boundary.
 
 `Rectangle` and `ToRegion` return the corresponding filled region. Explicit conversions are available to `Rectangle` and [`ParameterizedRectangleContour`](parameterized-rectangle-contour.md). Value equality compares the normalized bounds.
+
+## Rasterization example
+
+```csharp
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+IContour contour = new RectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f));
+var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("rectangle-contour.png");
+```
+
+![Rectangle contour raster](../../assets/spatial2d/contours/rectangle-contour-distance.png)

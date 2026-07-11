@@ -27,3 +27,16 @@ var polygon = new CompositeContour(
 ```
 
 `Curves` exposes the read-only structural view and `Length` returns their total length. The contour supports enclosure, crossings, ray intersections, projection, and signed or unsigned distance. Use [`ParameterizedCompositeContour`](parameterized-composite-contour.md) when a continuous length coordinate is required across the constituent paths.
+
+## Rasterization example
+
+```csharp
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+IContour contour = new CompositeContour(new PointXY(-2f, -1.5f), new PointXY(2f, -1.5f), new PointXY(0f, 2f));
+var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("composite-contour.png");
+```
+
+![Composite contour raster](../../assets/spatial2d/contours/composite-contour-distance.png)

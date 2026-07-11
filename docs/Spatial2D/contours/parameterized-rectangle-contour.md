@@ -24,3 +24,16 @@ By default, coordinate `0` is the right-edge midpoint and coordinates increase c
 The contour exposes its normalized bounds, dimensions, center, corners, parameter origin, direction, and perimeter length. It supports all regular contour queries plus `GetPoint` and `ProjectWithParameter`.
 
 `Rectangle` and `ToRegion` return the filled rectangle. Explicit conversion to `RectangleContour` removes the parameterization; conversion to `Rectangle` returns the region.
+
+## Rasterization example
+
+```csharp
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+IContour contour = new ParameterizedRectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f));
+var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("parameterized-rectangle-contour.png");
+```
+
+![Parameterized rectangle contour raster](../../assets/spatial2d/contours/parameterized-rectangle-contour-growing-thickness.png)

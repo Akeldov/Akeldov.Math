@@ -23,3 +23,16 @@ Rotation is expressed in radians. By default, coordinate `0` is the right-edge m
 The type exposes the center, size, rotation, local axes, corners, parameter origin, direction, and perimeter. In addition to regular contour queries, it provides `GetPoint` and `ProjectWithParameter`.
 
 Use `ToRegion` or `Rectangle` for the filled oriented rectangle. Explicit conversions to `OrientedRectangleContour` and `OrientedRectangle` remove parameterization.
+
+## Rasterization example
+
+```csharp
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+IContour contour = new ParameterizedOrientedRectangleContour(new PointXY(0f, 0f), new VectorXY(4f, 2.2f), MathF.PI / 6f);
+var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("parameterized-oriented-rectangle-contour.png");
+```
+
+![Parameterized oriented rectangle contour raster](../../assets/spatial2d/contours/parameterized-oriented-rectangle-contour-growing-thickness.png)
