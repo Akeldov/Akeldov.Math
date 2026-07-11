@@ -29,6 +29,7 @@ The contour exposes its normalized bounds, dimensions, center, corners, paramete
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new ParameterizedRectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f));

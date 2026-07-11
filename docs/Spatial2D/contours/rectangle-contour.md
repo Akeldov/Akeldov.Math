@@ -24,6 +24,7 @@ The type exposes `Width`, `Height`, `Size`, `Center`, and all four named corners
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new RectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f));

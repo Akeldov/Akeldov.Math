@@ -9,9 +9,9 @@ Each curve must continue from the previous curve, and the final curve must close
 using System;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
-using Akeldov.Math.Spatial2D.Curves;
 
 var contour = new CompositeContour(new IFinitePath[]
 {
@@ -52,6 +52,9 @@ Use contours for boundaries. Use [regions](../regions/index.md) when you need fi
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
 
 var square = new CompositeContour(
     new PointXY(0f, 0f),

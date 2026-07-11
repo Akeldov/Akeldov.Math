@@ -26,6 +26,7 @@ All non-parameterized contour operations are available, including enclosure, ray
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new ParameterizedCircle(new PointXY(0f, 0f), 1.8f, -MathF.PI / 2f);

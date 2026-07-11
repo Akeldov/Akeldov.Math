@@ -28,6 +28,7 @@ Use `ToRegion` or `Rectangle` for the filled oriented rectangle. Explicit conver
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new ParameterizedOrientedRectangleContour(new PointXY(0f, 0f), new VectorXY(4f, 2.2f), MathF.PI / 6f);

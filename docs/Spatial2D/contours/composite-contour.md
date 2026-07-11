@@ -32,6 +32,7 @@ var polygon = new CompositeContour(
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new CompositeContour(new PointXY(-2f, -1.5f), new PointXY(2f, -1.5f), new PointXY(0f, 2f));

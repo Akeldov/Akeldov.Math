@@ -27,6 +27,7 @@ The same closed-chain and length validation rules as [`CompositeContour`](compos
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new ParameterizedCompositeContour(new IFinitePath[]

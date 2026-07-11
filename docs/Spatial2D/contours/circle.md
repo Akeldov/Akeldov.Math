@@ -24,6 +24,7 @@ When projecting the center of a nonzero circle, the positive X-axis point is use
 
 ```csharp
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new Circle(new PointXY(0.1f, -0.15f), 1.75f);
