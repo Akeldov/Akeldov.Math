@@ -5,14 +5,14 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>0.6.0</Version>
+		<Version>0.7.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added parameterized contour APIs, circular and rectangular contour types, point-based CompositeContour construction, ParameterizedSegmentChain paths, Disk regions, generic GeometryScene raster composition, angle-based Line and ParameterizedLine constructors, directed line side helpers, finite-path normalized coordinates, and ParameterizedSegment shorten/extend helpers. Consolidated raster and color APIs around Raster&lt;T&gt; and RGBA8Bit/RGBA16Bit color namespaces. Breaking changes include GeometryScene layer method renames and Spatial2D type namespace moves for normalized subrectangles, rectangle regions, circular contours, raster encoders, and color types. Expanded curve, contour, region, rasterization, geometry scene, snapshot, fuzz, stress, and benchmark coverage, and refreshed Spatial2D documentation and rendered assets.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added quadratic, cubic, and arbitrary-degree Bezier curve primitives; TrueType text layout and GeometryScene text layers; generic grid abstractions; bounds- and pixel-density-based spatial raster grid construction; typed curve, contour, region, signed-distance, and collection rasterization overloads; 8-bit and 16-bit grayscale color types; and curve stroke rasterization. Breaking changes include replacing RasterGrid with SpatialRasterGrid, separating non-spatial Raster&lt;T&gt; from SpatialRaster&lt;T&gt;, changing rasterizer contracts to return spatial rasters, regrouping rasterizer types and extensions by source type, replacing primitive grayscale raster values with Gray8BitColor and Gray16BitColor, and removing tolerance from containment classification. Improved Bezier projection, contour and region enclosure, and text rasterization performance. Expanded vector, curve, contour, region, rasterization, text, snapshot, fuzz, stress, benchmark, and documentation coverage.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>math;geometry;2d;vectors;spatial;curves;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
+		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
 		<RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
 		<PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Spatial2D/</PackageProjectUrl>
 	</PropertyGroup>

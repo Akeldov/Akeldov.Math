@@ -10,7 +10,8 @@ The library is organized around practical 2D geometry workflows.
 
 - Point and vector types: `PointXY`, `VectorXY`, and `VectorXYInt`.
 - Vector math helpers for distance, transformations, rounding, scaling, and serialization.
-- Curve primitives: `Line`, `Ray`, `Segment`, and `Arc`.
+- Linear and circular curve primitives, including parameterized lines, segments, arcs, and paths.
+- Quadratic, cubic, and arbitrary-degree Bézier curves.
 - Projection, distance, intersection, angle, contour, and centroid helpers.
 
 ### Boundaries and Areas
@@ -23,10 +24,12 @@ The library is organized around practical 2D geometry workflows.
 
 ### Rasterization and Imaging
 
-- Axis-aligned raster grids for sampling geometry into cells.
-- Signed-distance rasterizers for contours and regions.
-- Mutable spatial and non-spatial grayscale and RGBA rasters.
+- Generic grids and axis-aligned spatial raster grids with bounds- and pixel-density-based construction.
+- Mutable non-spatial `Raster<T>` and world-space `SpatialRaster<T>` data.
+- Distance, signed-distance, and stroke rasterizers for curves, contours, regions, and collections.
+- 8-bit and 16-bit grayscale and RGBA color types.
 - Color helpers for normalized values, blending, and temperature heat maps.
+- Generic geometry scenes with composable shape and TrueType text layers.
 - 8-bit BMP and 16-bit PNG export helpers.
 
 ### Spatial Sampling and Partitioning

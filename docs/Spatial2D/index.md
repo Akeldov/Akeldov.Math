@@ -45,7 +45,7 @@ Akeldov.Math.Spatial2D is a .NET library for two-dimensional geometry, curves, c
 ## Installation
 
 ```powershell
-dotnet add package Akeldov.Math.Spatial2D --version 0.6.0
+dotnet add package Akeldov.Math.Spatial2D --version 0.7.0
 ```
 
 ## Target Frameworks
