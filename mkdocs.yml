@@ -34,7 +34,9 @@ nav:
               - Collection Ownership: Spatial2D/concepts/collection-ownership.md
               - Scaling: Spatial2D/concepts/scaling.md
           - Points: Spatial2D/points.md
-          - Vectors: Spatial2D/vectors.md
+          - Vectors:
+              - VectorXY: Spatial2D/vectors/vectorxy.md
+              - VectorXYInt: Spatial2D/vectors/vectorxyint.md
           - Curves:
               - Overview: Spatial2D/curves/index.md
               - Curve Interfaces: Spatial2D/curves/curve-interfaces.md
