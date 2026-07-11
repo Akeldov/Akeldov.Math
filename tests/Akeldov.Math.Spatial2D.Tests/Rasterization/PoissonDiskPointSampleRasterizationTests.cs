@@ -60,9 +60,9 @@ public class PoissonDiskPointSampleRasterizationTests
         var rasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
             pointRadius: 0.2f,
             ringThickness: 0.2f,
-            backgroundGrayLevel: 10,
-            ringGrayLevel: 100,
-            pointGrayLevel: 200);
+            backgroundGrayLevel: new Gray16BitColor(10),
+            ringGrayLevel: new Gray16BitColor(100),
+            pointGrayLevel: new Gray16BitColor(200));
 
         SpatialRaster<Gray16BitColor> raster = samples.Rasterize(grid, rasterizer);
 
@@ -89,9 +89,9 @@ public class PoissonDiskPointSampleRasterizationTests
     public void Constructor_WhenRingRasterizerMetricsAreInvalid_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0f, 0.2f, 0, 1, 2));
+            new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0f, 0.2f, new(0), new(1), new(2)));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0f, 0, 1, 2));
+            new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0f, new(0), new(1), new(2)));
     }
 
     [Test]
@@ -110,7 +110,7 @@ public class PoissonDiskPointSampleRasterizationTests
     {
         var rgbaRasterizer = new PoissonDiskPointSampleCollectionDistanceRGBA16BitRasterizer(ToColor);
         var grayRasterizer = new PoissonDiskPointSampleCollectionDistanceGray16BitRasterizer(ToGray16);
-        var ringsRasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0.1f, 0, 1, 2);
+        var ringsRasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0.1f, new(0), new(1), new(2));
         var samples = new[] { default(PoissonDiskPointSample) };
 
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -131,7 +131,7 @@ public class PoissonDiskPointSampleRasterizationTests
     {
         var rgbaRasterizer = new PoissonDiskPointSampleCollectionDistanceRGBA16BitRasterizer(ToColor);
         var grayRasterizer = new PoissonDiskPointSampleCollectionDistanceGray16BitRasterizer(ToGray16);
-        var ringsRasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0.1f, 0, 1, 2);
+        var ringsRasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0.1f, new(0), new(1), new(2));
         var samples = new[] { new PoissonDiskPointSample(new PointXY(0f, 0f), 1f) };
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -156,7 +156,7 @@ public class PoissonDiskPointSampleRasterizationTests
     [Test]
     public void RasterizeRings_WhenSourceIsEmpty_Throws()
     {
-        var rasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0.1f, 0, 1, 2);
+        var rasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(0.2f, 0.1f, new(0), new(1), new(2));
 
         var exception = Assert.Throws<ArgumentException>(() =>
             rasterizer.Rasterize(Array.Empty<PoissonDiskPointSample>(), CreateGrid()));
@@ -180,6 +180,6 @@ public class PoissonDiskPointSampleRasterizationTests
 
     private static Gray16BitColor ToGray16(PoissonDiskPointSample sample, float distance)
     {
-        return (ushort)MathF.Round(sample.MinimalDistance * 1000f + distance * 100f);
+        return new Gray16BitColor((ushort)MathF.Round(sample.MinimalDistance * 1000f + distance * 100f));
     }
 }

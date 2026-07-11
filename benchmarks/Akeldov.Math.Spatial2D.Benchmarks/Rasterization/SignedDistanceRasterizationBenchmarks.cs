@@ -79,7 +79,7 @@ public class SignedDistanceRasterizationBenchmarks
     private static Gray8BitColor ToGray8(float signedDistance)
     {
         if (signedDistance <= 0f)
-            return byte.MaxValue;
+            return Gray8BitColor.White;
 
         const float falloffDistance = 4f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
@@ -89,7 +89,7 @@ public class SignedDistanceRasterizationBenchmarks
     private static Gray16BitColor ToGray16(float signedDistance)
     {
         if (signedDistance <= 0f)
-            return ushort.MaxValue;
+            return Gray16BitColor.White;
 
         const float falloffDistance = 4f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);

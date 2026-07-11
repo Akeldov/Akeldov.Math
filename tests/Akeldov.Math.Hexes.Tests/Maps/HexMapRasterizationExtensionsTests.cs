@@ -91,7 +91,7 @@ public class HexMapRasterizationExtensionsTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(expected.Values.Any(value => value != 0), Is.True);
+            Assert.That(expected.Values.Any(value => value != Gray8BitColor.Black), Is.True);
             Assert.That(actual.Grid, Is.EqualTo(expected.Grid));
             Assert.That(actual.Values, Is.EqualTo(expected.Values));
         });
@@ -108,12 +108,12 @@ public class HexMapRasterizationExtensionsTests
         }
 
         var topology = new HexMapTopology(1, 1, Layout.OddR);
-        var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, 0, 255, 20);
+        var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, Gray8BitColor.Black, Gray8BitColor.White, 20);
         SpatialRaster<Gray8BitColor> plain = topology.Rasterize(10f, options);
         SpatialRaster<Gray8BitColor> labeled = topology.Rasterize(
             10f,
             options,
-            new HexMapTopologyXYLabelsRasterizationOptions(font, 4f, 0, 0.2f));
+            new HexMapTopologyXYLabelsRasterizationOptions(font, 4f, Gray8BitColor.Black, 0.2f));
 
         Assert.That(labeled.Values, Is.Not.EqualTo(plain.Values));
     }
@@ -129,12 +129,12 @@ public class HexMapRasterizationExtensionsTests
         }
 
         var topology = new HexMapTopology(1, 1, Layout.OddR);
-        var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, 0, 255, 20);
+        var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, Gray8BitColor.Black, Gray8BitColor.White, 20);
         SpatialRaster<Gray8BitColor> plain = topology.Rasterize(10f, options);
         SpatialRaster<Gray8BitColor> labeled = topology.Rasterize(
             10f,
             options,
-            new HexMapTopologyQRSLabelsRasterizationOptions(font, 3f, 0, 0.2f));
+            new HexMapTopologyQRSLabelsRasterizationOptions(font, 3f, Gray8BitColor.Black, 0.2f));
 
         Assert.That(labeled.Values, Is.Not.EqualTo(plain.Values));
     }
@@ -150,15 +150,15 @@ public class HexMapRasterizationExtensionsTests
         }
 
         var topology = new HexMapTopology(1, 1, Layout.OddR);
-        var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, 0, 255, 20);
+        var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, Gray8BitColor.Black, Gray8BitColor.White, 20);
         SpatialRaster<Gray8BitColor> plain = topology.Rasterize(10f, options);
         SpatialRaster<Gray8BitColor> labeled = topology.Rasterize(
             10f,
             options,
             new HexMapTopologyXYLabelsRasterizationOptions(
-                font, 3f, 0, 0.2f, new VectorXY(0f, 2f)),
+                font, 3f, Gray8BitColor.Black, 0.2f, new VectorXY(0f, 2f)),
             new HexMapTopologyQRSLabelsRasterizationOptions(
-                font, 2f, 0, 0.2f, new VectorXY(0f, -2f)));
+                font, 2f, Gray8BitColor.Black, 0.2f, new VectorXY(0f, -2f)));
 
         Assert.That(labeled.Values, Is.Not.EqualTo(plain.Values));
     }

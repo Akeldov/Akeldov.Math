@@ -139,7 +139,7 @@ public class ContourRasterizationImageTests
 
         const float falloffDistance = 0.2f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
-        return (byte)System.MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)System.MathF.Round(normalized * byte.MaxValue));
     }
 
     private static Gray16BitColor ToGray16(float signedDistance)
@@ -148,6 +148,6 @@ public class ContourRasterizationImageTests
 
         const float falloffDistance = 0.2f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
-        return (ushort)System.MathF.Round(normalized * ushort.MaxValue);
+        return new Gray16BitColor((ushort)System.MathF.Round(normalized * ushort.MaxValue));
     }
 }

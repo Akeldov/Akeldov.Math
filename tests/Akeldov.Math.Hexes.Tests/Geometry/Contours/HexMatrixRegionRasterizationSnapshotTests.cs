@@ -187,7 +187,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
     {
         const float falloffDistance = 0.08f;
         float normalized = 1f - System.Math.Clamp(distance / falloffDistance, 0f, 1f);
-        return (byte)MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
     }
 
     private static byte[] SaveToPngBytes(SpatialRaster<Gray8BitColor> raster, string approvedFileName)

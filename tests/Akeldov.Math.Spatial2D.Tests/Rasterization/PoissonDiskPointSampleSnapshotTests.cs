@@ -37,9 +37,9 @@ public class PoissonDiskPointSampleSnapshotTests
         var rasterizer = new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
                 pointRadius: 1.45f,
                 ringThickness: 0.18f,
-                backgroundGrayLevel: 0x1010,
-                ringGrayLevel: 0x8a8a,
-                pointGrayLevel: ushort.MaxValue);
+                backgroundGrayLevel: new Gray16BitColor(0x1010),
+                ringGrayLevel: new Gray16BitColor(0x8a8a),
+                pointGrayLevel: Gray16BitColor.White);
 
         SpatialRaster<Gray16BitColor> raster = samples.Rasterize(SnapshotGrid, rasterizer);
         byte[] actual = SaveToPngBytes(raster, "poisson-disk-samples-rings-gray16.png");

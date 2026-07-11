@@ -27,11 +27,11 @@ public class HexMapTopologyLayoutRasterizationSnapshotTests
         SpatialRaster<Gray8BitColor> raster = new HexMapTopology(4, 3, layout)
             .Rasterize(
                 100f,
-                new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100),
+                new HexMapTopologyRasterizationOptions(30f, 1f, 1f, Gray8BitColor.Black, Gray8BitColor.White, 100),
                 new HexMapTopologyXYLabelsRasterizationOptions(
-                    font, 22f, 0, 0.8f, new VectorXY(0f, 17f)),
+                    font, 22f, Gray8BitColor.Black, 0.8f, new VectorXY(0f, 17f)),
                 new HexMapTopologyQRSLabelsRasterizationOptions(
-                    font, 16f, 80, 0.8f, new VectorXY(0f, -17f)));
+                    font, 16f, new Gray8BitColor(80), 0.8f, new VectorXY(0f, -17f)));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);

@@ -33,7 +33,7 @@ public class RasterizationStressTests
             sawInsideDistance |= distance < 0f;
             sawOutsideDistance |= distance > 0f;
 
-            return distance <= 0f ? ushort.MaxValue : ushort.MinValue;
+            return distance <= 0f ? Gray16BitColor.White : Gray16BitColor.Black;
         });
 
         SpatialRaster<Gray16BitColor> raster = rasterizer.Rasterize(region, grid);

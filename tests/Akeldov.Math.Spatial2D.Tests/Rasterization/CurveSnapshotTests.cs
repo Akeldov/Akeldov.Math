@@ -180,7 +180,7 @@ public class CurveSnapshotTests
     {
         const float falloffDistance = 0.25f;
         float normalized = 1f - System.Math.Clamp(distance / falloffDistance, 0f, 1f);
-        return (byte)MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
     }
 
     private static Gray8BitColor ToGrowingThicknessGray8(float distance, float curveCoordinate)
@@ -194,7 +194,7 @@ public class CurveSnapshotTests
         float thickness = baseThickness + MathF.Min(nonNegativeCoordinate * thicknessPerWorldUnit, maxThicknessGrowth);
         float normalized = 1f - System.Math.Clamp((distance - thickness) / edgeFalloff, 0f, 1f);
 
-        return (byte)MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
     }
 
     private static byte[] SaveToPngBytes(SpatialRaster<Gray8BitColor> raster, string approvedFileName)

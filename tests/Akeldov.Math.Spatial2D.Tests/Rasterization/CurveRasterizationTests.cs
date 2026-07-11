@@ -91,8 +91,8 @@ public class CurveRasterizationTests
         SpatialRaster<Gray16BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
-            curveColor: (ushort)2000,
-            backgroundColor: (ushort)1000,
+            curveColor: new Gray16BitColor(2000),
+            backgroundColor: new Gray16BitColor(1000),
             spatialRasterGrid: grid);
 
         Assert.That(raster[0, 0].Value, Is.EqualTo(1500));
@@ -439,21 +439,21 @@ public class CurveRasterizationTests
 
     private static Gray8BitColor ToGray8(float distance)
     {
-        return (byte)MathF.Round(distance * 10f);
+        return new Gray8BitColor((byte)MathF.Round(distance * 10f));
     }
 
     private static Gray16BitColor ToGray16(float distance)
     {
-        return (ushort)MathF.Round(distance * 1000f);
+        return new Gray16BitColor((ushort)MathF.Round(distance * 1000f));
     }
 
     private static Gray8BitColor ToParameterizedGray8(float distance, float curveCoordinate)
     {
-        return (byte)MathF.Round(distance * 10f + curveCoordinate * 20f);
+        return new Gray8BitColor((byte)MathF.Round(distance * 10f + curveCoordinate * 20f));
     }
 
     private static Gray16BitColor ToParameterizedGray16(float distance, float curveCoordinate)
     {
-        return (ushort)MathF.Round(distance * 1000f + curveCoordinate * 2000f);
+        return new Gray16BitColor((ushort)MathF.Round(distance * 1000f + curveCoordinate * 2000f));
     }
 }

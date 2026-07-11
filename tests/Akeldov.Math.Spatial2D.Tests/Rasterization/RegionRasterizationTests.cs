@@ -158,22 +158,22 @@ public class RegionRasterizationTests
 
     private static Gray8BitColor ToMaskValue(float signedDistance)
     {
-        return signedDistance <= 0f ? byte.MaxValue : byte.MinValue;
+        return signedDistance <= 0f ? Gray8BitColor.White : Gray8BitColor.Black;
     }
 
     private static Gray16BitColor ToGray16(float signedDistance)
     {
-        return signedDistance <= 0f ? ushort.MaxValue : ushort.MinValue;
+        return signedDistance <= 0f ? Gray16BitColor.White : Gray16BitColor.Black;
     }
 
     private static Gray16BitColor ToDistanceGray16(float signedDistance)
     {
         if (signedDistance <= 0f)
-            return ushort.MaxValue;
+            return Gray16BitColor.White;
 
         const float falloffDistance = 0.2f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
-        return (ushort)System.MathF.Round(normalized * ushort.MaxValue);
+        return new Gray16BitColor((ushort)System.MathF.Round(normalized * ushort.MaxValue));
     }
 
     private static CompositeContour CreateSquareContour(float left, float bottom, float right, float top)
