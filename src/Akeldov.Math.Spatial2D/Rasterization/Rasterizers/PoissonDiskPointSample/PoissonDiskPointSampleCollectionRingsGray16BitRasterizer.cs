@@ -9,13 +9,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes Poisson disk point samples into a 16-bit grayscale raster with sample points and minimal-distance rings.
     /// </summary>
     public sealed class PoissonDiskPointSampleCollectionRingsGray16BitRasterizer :
-        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, ushort>
+        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, Gray16BitColor>
     {
         private readonly float _pointRadius;
         private readonly float _ringThickness;
-        private readonly ushort _backgroundGrayLevel;
-        private readonly ushort _ringGrayLevel;
-        private readonly ushort _pointGrayLevel;
+        private readonly Gray16BitColor _backgroundGrayLevel;
+        private readonly Gray16BitColor _ringGrayLevel;
+        private readonly Gray16BitColor _pointGrayLevel;
 
         /// <summary>
         /// Initializes a new Poisson disk point sample ring rasterizer.
@@ -28,9 +28,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
             float pointRadius,
             float ringThickness,
-            ushort backgroundGrayLevel,
-            ushort ringGrayLevel,
-            ushort pointGrayLevel)
+            Gray16BitColor backgroundGrayLevel,
+            Gray16BitColor ringGrayLevel,
+            Gray16BitColor pointGrayLevel)
         {
             if (pointRadius <= 0f || float.IsNaN(pointRadius) || float.IsInfinity(pointRadius))
                 throw new ArgumentOutOfRangeException(nameof(pointRadius), "Point radius must be finite and positive.");
@@ -46,14 +46,14 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<ushort> Rasterize(IReadOnlyList<PoissonDiskPointSample> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize(IReadOnlyList<PoissonDiskPointSample> source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
             PoissonDiskPointSample[] samples = CopySamples(source);
-            var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float edgeFalloff = MathF.Max(cellSize.X, cellSize.Y) * 0.5f;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
@@ -70,10 +70,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<ushort>(grid, values);
+            return new SpatialRaster<Gray16BitColor>(grid, values);
         }
 
-        private ushort RasterizeCell(PoissonDiskPointSample[] samples, PointXY point, float edgeFalloff)
+        private Gray16BitColor RasterizeCell(PoissonDiskPointSample[] samples, PointXY point, float edgeFalloff)
         {
             float ringAmount = 0f;
             float pointAmount = 0f;
@@ -89,8 +89,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                     edgeFalloff));
             }
 
-            ushort grayLevel = Blend(_backgroundGrayLevel, _ringGrayLevel, ringAmount);
-            return Blend(grayLevel, _pointGrayLevel, pointAmount);
+            Gray16BitColor grayLevel = Gray16BitColor.Blend(_backgroundGrayLevel, _ringGrayLevel, ringAmount);
+            return Gray16BitColor.Blend(grayLevel, _pointGrayLevel, pointAmount);
         }
 
         private static float GetCoverage(float distance, float radius, float edgeFalloff)
@@ -99,13 +99,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 return 1f;
 
             return 1f - MathF.Min(MathF.Max((distance - radius) / edgeFalloff, 0f), 1f);
-        }
-
-        private static ushort Blend(ushort from, ushort to, float amount)
-        {
-            amount = MathF.Min(MathF.Max(amount, 0f), 1f);
-            float inverseAmount = 1f - amount;
-            return (ushort)MathF.Round(from * inverseAmount + to * amount);
         }
 
         private static float DistanceSquared(PointXY left, PointXY right)

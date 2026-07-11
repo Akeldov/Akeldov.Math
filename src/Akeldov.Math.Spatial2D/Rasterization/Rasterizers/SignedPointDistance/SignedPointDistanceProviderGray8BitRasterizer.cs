@@ -6,27 +6,27 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes signed point-distance providers into 8-bit grayscale rasters using signed distance mapping.
     /// </summary>
-    public sealed class SignedPointDistanceProviderGray8BitRasterizer : ISpatialRasterizer<ISignedPointDistanceProvider, byte>
+    public sealed class SignedPointDistanceProviderGray8BitRasterizer : ISpatialRasterizer<ISignedPointDistanceProvider, Gray8BitColor>
     {
-        private readonly Func<float, byte> _signedDistanceToGrayLevel;
+        private readonly Func<float, Gray8BitColor> _signedDistanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new signed point-distance provider rasterizer.
         /// </summary>
         /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to an 8-bit grayscale value. Negative distances are inside the source; positive distances are outside.</param>
-        public SignedPointDistanceProviderGray8BitRasterizer(Func<float, byte> signedDistanceToGrayLevel)
+        public SignedPointDistanceProviderGray8BitRasterizer(Func<float, Gray8BitColor> signedDistanceToGrayLevel)
         {
             _signedDistanceToGrayLevel = signedDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(signedDistanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<byte> Rasterize(ISignedPointDistanceProvider source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray8BitColor> Rasterize(ISignedPointDistanceProvider source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
-            var values = new byte[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray8BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -43,7 +43,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<byte>(grid, values);
+            return new SpatialRaster<Gray8BitColor>(grid, values);
         }
 
         private static void ValidateGrid(SpatialRasterGrid grid)

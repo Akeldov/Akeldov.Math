@@ -41,7 +41,7 @@ public class PoissonDiskPointSampleSnapshotTests
                 ringGrayLevel: 0x8a8a,
                 pointGrayLevel: ushort.MaxValue);
 
-        SpatialRaster<ushort> raster = samples.Rasterize(SnapshotGrid, rasterizer);
+        SpatialRaster<Gray16BitColor> raster = samples.Rasterize(SnapshotGrid, rasterizer);
         byte[] actual = SaveToPngBytes(raster, "poisson-disk-samples-rings-gray16.png");
 
         Assert.That(samples, Has.Count.EqualTo(104));
@@ -77,7 +77,7 @@ public class PoissonDiskPointSampleSnapshotTests
             from.Blue * inverseAmount + to.Blue * amount);
     }
 
-    private static byte[] SaveToPngBytes(SpatialRaster<ushort> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(SpatialRaster<Gray16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

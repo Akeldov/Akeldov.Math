@@ -27,10 +27,10 @@ var rasterizer = new PointDistanceProviderGray8BitRasterizer(distance =>
 {
     const float falloffDistance = 0.25f;
     float normalized = 1f - Math.Clamp(distance / falloffDistance, 0f, 1f);
-    return (byte)MathF.Round(normalized * byte.MaxValue);
+    return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
 });
 
-SpatialRaster<byte> raster = segment.Rasterize(grid, rasterizer);
+SpatialRaster<Gray8BitColor> raster = segment.Rasterize(grid, rasterizer);
 raster.SaveAsPng("segment-distance.png");
 ```
 

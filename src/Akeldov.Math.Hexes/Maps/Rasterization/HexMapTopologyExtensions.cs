@@ -1,4 +1,5 @@
-﻿using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Rasterization;
 
@@ -20,7 +21,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
         /// <param name="options">The rendering and output parameters.</param>
         /// <returns>A raster of the hex map edge segments.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology hexMapTopology,
             float apothem,
             HexMapTopologyRasterizationOptions options)
@@ -39,7 +40,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="origin">The center of the zero hex.</param>
         /// <param name="options">The rendering and output parameters.</param>
         /// <returns>A raster of the hex map edge segments.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology hexMapTopology,
             float apothem,
             VectorXY origin,
@@ -61,32 +62,32 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>Rasterizes a topology with XY index labels.</summary>
-        public static SpatialRaster<byte> Rasterize(this HexMapTopology topology, float apothem,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem,
             HexMapTopologyRasterizationOptions options, HexMapTopologyXYLabelsRasterizationOptions labels) =>
             topology.Rasterize(apothem, VectorXY.Zero, options, labels);
 
         /// <summary>Rasterizes a topology at an origin with XY index labels.</summary>
-        public static SpatialRaster<byte> Rasterize(this HexMapTopology topology, float apothem, VectorXY origin,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem, VectorXY origin,
             HexMapTopologyRasterizationOptions options, HexMapTopologyXYLabelsRasterizationOptions labels)
         {
             var geometry = new HexMapGeometry(topology, origin, apothem);
-            SpatialRaster<byte> raster = topology.Rasterize(apothem, origin, options);
+            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(apothem, origin, options);
             AddLabels(raster, new HexCenterMap(geometry), labels.Font, labels.FontSize, labels.Color,
                 labels.EdgeFalloff, labels.Offset, index => $"({index.X}, {index.Y})");
             return raster;
         }
 
         /// <summary>Rasterizes a topology with QRS index labels.</summary>
-        public static SpatialRaster<byte> Rasterize(this HexMapTopology topology, float apothem,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem,
             HexMapTopologyRasterizationOptions options, HexMapTopologyQRSLabelsRasterizationOptions labels) =>
             topology.Rasterize(apothem, VectorXY.Zero, options, labels);
 
         /// <summary>Rasterizes a topology at an origin with QRS index labels.</summary>
-        public static SpatialRaster<byte> Rasterize(this HexMapTopology topology, float apothem, VectorXY origin,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem, VectorXY origin,
             HexMapTopologyRasterizationOptions options, HexMapTopologyQRSLabelsRasterizationOptions labels)
         {
             var geometry = new HexMapGeometry(topology, origin, apothem);
-            SpatialRaster<byte> raster = topology.Rasterize(apothem, origin, options);
+            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(apothem, origin, options);
             AddLabels(raster, new HexCenterMap(geometry), labels.Font, labels.FontSize, labels.Color,
                 labels.EdgeFalloff, labels.Offset, index =>
                 {
@@ -97,7 +98,7 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>Rasterizes a topology with both XY and QRS index labels.</summary>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology topology,
             float apothem,
             HexMapTopologyRasterizationOptions options,
@@ -106,7 +107,7 @@ namespace Akeldov.Math.Hexes
             topology.Rasterize(apothem, VectorXY.Zero, options, xyLabels, qrsLabels);
 
         /// <summary>Rasterizes a topology at an origin with both XY and QRS index labels.</summary>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology topology,
             float apothem,
             VectorXY origin,
@@ -116,7 +117,7 @@ namespace Akeldov.Math.Hexes
         {
             var geometry = new HexMapGeometry(topology, origin, apothem);
             var centers = new HexCenterMap(geometry);
-            SpatialRaster<byte> raster = topology.Rasterize(apothem, origin, options);
+            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(apothem, origin, options);
 
             AddLabels(raster, centers, xyLabels.Font, xyLabels.FontSize, xyLabels.Color,
                 xyLabels.EdgeFalloff, xyLabels.Offset, index => $"({index.X}, {index.Y})");
@@ -130,8 +131,8 @@ namespace Akeldov.Math.Hexes
             return raster;
         }
 
-        private static void AddLabels(SpatialRaster<byte> target, HexCenterMap centers, TrueTypeFont font,
-            float fontSize, byte color, float edgeFalloff, VectorXY offset, Func<VectorXYInt, string> getLabel)
+        private static void AddLabels(SpatialRaster<Gray8BitColor> target, HexCenterMap centers, TrueTypeFont font,
+            float fontSize, Gray8BitColor color, float edgeFalloff, VectorXY offset, Func<VectorXYInt, string> getLabel)
         {
             var texts = new List<TextSignedDistanceProvider>(centers.Width * centers.Height);
             for (int y = 0; y < centers.Height; y++)
@@ -158,8 +159,8 @@ namespace Akeldov.Math.Hexes
                 if (coverage <= 0f)
                     continue;
 
-                byte current = target.Values[i];
-                target.Values[i] = (byte)MathF.Round(current + (color - current) * coverage);
+                Gray8BitColor current = target.Values[i];
+                target.Values[i] = Gray8BitColor.Blend(current, color, coverage);
             }
         }
     }

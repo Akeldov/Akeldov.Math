@@ -8,21 +8,21 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes point-distance provider collections into 8-bit grayscale rasters using nearest unsigned distance mapping.
     /// </summary>
     public sealed class PointDistanceProviderCollectionGray8BitRasterizer :
-        ISpatialRasterizer<IReadOnlyList<IPointDistanceProvider>, byte>
+        ISpatialRasterizer<IReadOnlyList<IPointDistanceProvider>, Gray8BitColor>
     {
-        private readonly Func<float, byte> _distanceToGrayLevel;
+        private readonly Func<float, Gray8BitColor> _distanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new point-distance provider collection rasterizer.
         /// </summary>
         /// <param name="distanceToGrayLevel">The function that maps nearest unsigned distance to an 8-bit grayscale value.</param>
-        public PointDistanceProviderCollectionGray8BitRasterizer(Func<float, byte> distanceToGrayLevel)
+        public PointDistanceProviderCollectionGray8BitRasterizer(Func<float, Gray8BitColor> distanceToGrayLevel)
         {
             _distanceToGrayLevel = distanceToGrayLevel ?? throw new ArgumentNullException(nameof(distanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<byte> Rasterize(IReadOnlyList<IPointDistanceProvider> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray8BitColor> Rasterize(IReadOnlyList<IPointDistanceProvider> source, SpatialRasterGrid grid)
         {
             return Rasterize<IPointDistanceProvider>(source, grid);
         }
@@ -34,12 +34,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The point-distance providers to rasterize.</param>
         /// <param name="grid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the nearest point-distance provider at each cell center.</returns>
-        public SpatialRaster<byte> Rasterize<T>(IReadOnlyList<T> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray8BitColor> Rasterize<T>(IReadOnlyList<T> source, SpatialRasterGrid grid)
             where T : IPointDistanceProvider
         {
             ValidateSource(source);
             ValidateGrid(grid);
-            var values = new byte[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray8BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<byte>(grid, values);
+            return new SpatialRaster<Gray8BitColor>(grid, values);
         }
 
         private static float GetNearestDistance<T>(IReadOnlyList<T> sources, PointXY point)

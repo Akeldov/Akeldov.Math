@@ -1,7 +1,7 @@
 # Gray Rasters
 
-`Raster<byte>` and `Raster<ushort>` store rectangular grayscale samples without spatial bounds.
-`SpatialRaster<byte>` and `SpatialRaster<ushort>` store grayscale samples together with a
+`Raster<Gray8BitColor>` and `Raster<Gray16BitColor>` store rectangular grayscale samples without spatial bounds.
+`SpatialRaster<Gray8BitColor>` and `SpatialRaster<Gray16BitColor>` store grayscale samples together with a
 `SpatialRasterGrid`.
 
 Use 8-bit rasters for masks and lightweight previews.
@@ -18,11 +18,11 @@ var grid = new SpatialRasterGrid(
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));
 
-var values = new byte[grid.Resolution.X * grid.Resolution.Y];
-var raster = new SpatialRaster<byte>(grid, values);
+var values = new Gray8BitColor[grid.Resolution.X * grid.Resolution.Y];
+var raster = new SpatialRaster<Gray8BitColor>(grid, values);
 raster.SaveAsBmp("preview.bmp");
 
-Raster<byte> detachedRaster = raster.ToRaster();
+Raster<Gray8BitColor> detachedRaster = raster.ToRaster();
 detachedRaster.SaveAsPng("preview-copy.png");
 ```
 

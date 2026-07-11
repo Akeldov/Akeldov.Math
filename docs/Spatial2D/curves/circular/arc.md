@@ -30,10 +30,10 @@ var rasterizer = new PointDistanceProviderGray8BitRasterizer(distance =>
 {
     const float falloffDistance = 0.25f;
     float normalized = 1f - Math.Clamp(distance / falloffDistance, 0f, 1f);
-    return (byte)MathF.Round(normalized * byte.MaxValue);
+    return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
 });
 
-SpatialRaster<byte> raster = arc.Rasterize(grid, rasterizer);
+SpatialRaster<Gray8BitColor> raster = arc.Rasterize(grid, rasterizer);
 raster.SaveAsPng("arc-distance.png");
 ```
 

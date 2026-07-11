@@ -36,7 +36,7 @@ public class RasterizationStressTests
             return distance <= 0f ? ushort.MaxValue : ushort.MinValue;
         });
 
-        SpatialRaster<ushort> raster = rasterizer.Rasterize(region, grid);
+        SpatialRaster<Gray16BitColor> raster = rasterizer.Rasterize(region, grid);
 
         Assert.That(raster.Width, Is.EqualTo(grid.Resolution.X));
         Assert.That(raster.Height, Is.EqualTo(grid.Resolution.Y));

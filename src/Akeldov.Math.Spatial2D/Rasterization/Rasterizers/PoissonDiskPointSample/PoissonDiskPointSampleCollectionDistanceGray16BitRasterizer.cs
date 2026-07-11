@@ -9,9 +9,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes Poisson disk point samples into a 16-bit grayscale raster using nearest-sample distance mapping.
     /// </summary>
     public sealed class PoissonDiskPointSampleCollectionDistanceGray16BitRasterizer :
-        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, ushort>
+        ISpatialRasterizer<IReadOnlyList<PoissonDiskPointSample>, Gray16BitColor>
     {
-        private readonly Func<PoissonDiskPointSample, float, ushort> _sampleDistanceToGrayLevel;
+        private readonly Func<PoissonDiskPointSample, float, Gray16BitColor> _sampleDistanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new Poisson disk point sample rasterizer.
@@ -21,20 +21,20 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// to a 16-bit grayscale value.
         /// </param>
         public PoissonDiskPointSampleCollectionDistanceGray16BitRasterizer(
-            Func<PoissonDiskPointSample, float, ushort> sampleDistanceToGrayLevel)
+            Func<PoissonDiskPointSample, float, Gray16BitColor> sampleDistanceToGrayLevel)
         {
             _sampleDistanceToGrayLevel = sampleDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(sampleDistanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<ushort> Rasterize(IReadOnlyList<PoissonDiskPointSample> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize(IReadOnlyList<PoissonDiskPointSample> source, SpatialRasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
             PoissonDiskPointSample[] samples = CopySamples(source);
-            var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -51,7 +51,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<ushort>(grid, values);
+            return new SpatialRaster<Gray16BitColor>(grid, values);
         }
 
         private static PoissonDiskPointSample FindNearestSample(

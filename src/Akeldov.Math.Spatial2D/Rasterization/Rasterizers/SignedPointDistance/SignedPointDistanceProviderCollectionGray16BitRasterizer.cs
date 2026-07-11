@@ -8,9 +8,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes signed point-distance provider collections into 16-bit grayscale rasters using minimum signed distance mapping.
     /// </summary>
     public sealed class SignedPointDistanceProviderCollectionGray16BitRasterizer :
-        ISpatialRasterizer<IReadOnlyList<ISignedPointDistanceProvider>, ushort>
+        ISpatialRasterizer<IReadOnlyList<ISignedPointDistanceProvider>, Gray16BitColor>
     {
-        private readonly Func<float, ushort> _signedDistanceToGrayLevel;
+        private readonly Func<float, Gray16BitColor> _signedDistanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new signed point-distance provider collection rasterizer.
@@ -19,17 +19,17 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// The function that maps the minimum signed distance to a 16-bit grayscale value.
         /// Negative distances are inside at least one source; positive distances are outside all sources.
         /// </param>
-        public SignedPointDistanceProviderCollectionGray16BitRasterizer(Func<float, ushort> signedDistanceToGrayLevel)
+        public SignedPointDistanceProviderCollectionGray16BitRasterizer(Func<float, Gray16BitColor> signedDistanceToGrayLevel)
         {
             _signedDistanceToGrayLevel = signedDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(signedDistanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<ushort> Rasterize(IReadOnlyList<ISignedPointDistanceProvider> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize(IReadOnlyList<ISignedPointDistanceProvider> source, SpatialRasterGrid grid)
         {
             ValidateSource(source);
             ValidateGrid(grid);
-            var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -46,7 +46,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<ushort>(grid, values);
+            return new SpatialRaster<Gray16BitColor>(grid, values);
         }
 
         private static float GetMinimumSignedDistance(IReadOnlyList<ISignedPointDistanceProvider> sources, PointXY point)

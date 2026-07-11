@@ -6,21 +6,21 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Rasterizes point-distance providers into 16-bit grayscale rasters using unsigned distance mapping.
     /// </summary>
-    public sealed class PointDistanceProviderGray16BitRasterizer : ISpatialRasterizer<IPointDistanceProvider, ushort>
+    public sealed class PointDistanceProviderGray16BitRasterizer : ISpatialRasterizer<IPointDistanceProvider, Gray16BitColor>
     {
-        private readonly Func<float, ushort> _distanceToGrayLevel;
+        private readonly Func<float, Gray16BitColor> _distanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new point-distance provider rasterizer.
         /// </summary>
         /// <param name="distanceToGrayLevel">The function that maps unsigned distance to a 16-bit grayscale value.</param>
-        public PointDistanceProviderGray16BitRasterizer(Func<float, ushort> distanceToGrayLevel)
+        public PointDistanceProviderGray16BitRasterizer(Func<float, Gray16BitColor> distanceToGrayLevel)
         {
             _distanceToGrayLevel = distanceToGrayLevel ?? throw new ArgumentNullException(nameof(distanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<ushort> Rasterize(IPointDistanceProvider source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize(IPointDistanceProvider source, SpatialRasterGrid grid)
         {
             return Rasterize<IPointDistanceProvider>(source, grid);
         }
@@ -32,14 +32,14 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The point-distance provider to rasterize.</param>
         /// <param name="grid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
-        public SpatialRaster<ushort> Rasterize<T>(T source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize<T>(T source, SpatialRasterGrid grid)
             where T : IPointDistanceProvider
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
-            var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<ushort>(grid, values);
+            return new SpatialRaster<Gray16BitColor>(grid, values);
         }
 
         private static void ValidateGrid(SpatialRasterGrid grid)

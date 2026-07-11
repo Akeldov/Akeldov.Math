@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void Save(IGrid<byte> raster, string path)
+        public static void Save(IGrid<Gray8BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void Save(IGrid<byte> raster, Stream stream)
+        public static void Save(IGrid<Gray8BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -84,7 +84,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentException("Raster width and height must be positive.");
         }
 
-        private static void WriteGray8(IGrid<byte> raster, Stream stream)
+        private static void WriteGray8(IGrid<Gray8BitColor> raster, Stream stream)
         {
             int width = raster.Width;
             int height = raster.Height;
@@ -162,7 +162,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             }
         }
 
-        private static void WriteGray8Pixels(BinaryWriter writer, IGrid<byte> raster, int rowStride)
+        private static void WriteGray8Pixels(BinaryWriter writer, IGrid<Gray8BitColor> raster, int rowStride)
         {
             int width = raster.Width;
             int height = raster.Height;
@@ -170,7 +170,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
-                    writer.Write(raster[x, y]);
+                    writer.Write(raster[x, y].Value);
 
                 WritePadding(writer, padding);
             }

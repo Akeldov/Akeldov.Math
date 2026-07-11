@@ -1,4 +1,5 @@
-﻿using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes
@@ -18,12 +19,12 @@ namespace Akeldov.Math.Hexes
         /// <param name="backgroundColor">The color assigned outside the edge fade distance.</param>
         /// <param name="pixelsPerApothem">The raster resolution density in pixels per hex apothem.</param>
         /// <returns>A raster of the hex map edge segments.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapGeometry hexMapGeometry,
             float curveWidth,
             float fadeDistance,
-            byte curveColor,
-            byte backgroundColor,
+            Gray8BitColor curveColor,
+            Gray8BitColor backgroundColor,
             int pixelsPerApothem)
         {
             var spatialRasterGrid = hexMapGeometry.ToSpatialRasterGrid(pixelsPerApothem);

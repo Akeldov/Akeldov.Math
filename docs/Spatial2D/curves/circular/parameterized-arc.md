@@ -37,10 +37,10 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
         float thickness = baseThickness + MathF.Min(nonNegativeCoordinate * thicknessPerWorldUnit, maxThicknessGrowth);
         float normalized = 1f - Math.Clamp((distance - thickness) / edgeFalloff, 0f, 1f);
 
-        return (byte)MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
     });
 
-SpatialRaster<byte> raster = path.Rasterize(grid, rasterizer);
+SpatialRaster<Gray8BitColor> raster = path.Rasterize(grid, rasterizer);
 raster.SaveAsPng("parameterized-arc-growing-thickness.png");
 ```
 

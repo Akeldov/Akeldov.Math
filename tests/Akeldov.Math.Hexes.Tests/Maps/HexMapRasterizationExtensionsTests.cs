@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -11,14 +12,14 @@ public class HexMapRasterizationExtensionsTests
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);
 
-        SpatialRaster<byte> raster = topology.Rasterize(
+        SpatialRaster<Gray8BitColor> raster = topology.Rasterize(
             apothem: 2f,
             options: new HexMapTopologyRasterizationOptions(
                 margin: 1f,
                 curveWidth: 0.5f,
                 fadeDistance: 0.5f,
-                curveColor: 255,
-                backgroundColor: 0,
+                curveColor: Gray8BitColor.White,
+                backgroundColor: Gray8BitColor.Black,
                 pixelsPerApothem: 3));
 
         Assert.Multiple(() =>
@@ -38,21 +39,21 @@ public class HexMapRasterizationExtensionsTests
         var origin = new VectorXY(10f, 20f);
         var geometry = new HexMapGeometry(topology, origin, apothem: 2f);
 
-        SpatialRaster<byte> actual = topology.Rasterize(
+        SpatialRaster<Gray8BitColor> actual = topology.Rasterize(
             apothem: 2f,
             origin: origin,
             options: new HexMapTopologyRasterizationOptions(
                 margin: 0f,
                 curveWidth: 1f,
                 fadeDistance: 1f,
-                curveColor: 255,
-                backgroundColor: 0,
+                curveColor: Gray8BitColor.White,
+                backgroundColor: Gray8BitColor.Black,
                 pixelsPerApothem: 3));
-        SpatialRaster<byte> expected = geometry.Rasterize(
+        SpatialRaster<Gray8BitColor> expected = geometry.Rasterize(
             curveWidth: 1f,
             fadeDistance: 1f,
-            curveColor: 255,
-            backgroundColor: 0,
+            curveColor: new Gray8BitColor(255),
+            backgroundColor: Gray8BitColor.Black,
             pixelsPerApothem: 3);
 
         Assert.Multiple(() =>
@@ -73,19 +74,19 @@ public class HexMapRasterizationExtensionsTests
             layout: Layout.OddR);
         SpatialRasterGrid grid = geometry.ToSpatialRasterGrid(pixelsPerApothem: 3f);
 
-        SpatialRaster<byte> actual = geometry.Rasterize(
+        SpatialRaster<Gray8BitColor> actual = geometry.Rasterize(
             curveWidth: 1f,
             fadeDistance: 1f,
-            curveColor: 255,
-            backgroundColor: 0,
+            curveColor: Gray8BitColor.White,
+            backgroundColor: Gray8BitColor.Black,
             pixelsPerApothem: 3);
-        SpatialRaster<byte> expected = geometry
+        SpatialRaster<Gray8BitColor> expected = geometry
             .ToHexEdgeSegments()
             .Rasterize(
                 curveWidth: 1f,
                 fadeDistance: 1f,
-                curveColor: (byte)255,
-                backgroundColor: 0,
+                curveColor: Gray8BitColor.White,
+                backgroundColor: Gray8BitColor.Black,
                 spatialRasterGrid: grid);
 
         Assert.Multiple(() =>
@@ -108,8 +109,8 @@ public class HexMapRasterizationExtensionsTests
 
         var topology = new HexMapTopology(1, 1, Layout.OddR);
         var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, 0, 255, 20);
-        SpatialRaster<byte> plain = topology.Rasterize(10f, options);
-        SpatialRaster<byte> labeled = topology.Rasterize(
+        SpatialRaster<Gray8BitColor> plain = topology.Rasterize(10f, options);
+        SpatialRaster<Gray8BitColor> labeled = topology.Rasterize(
             10f,
             options,
             new HexMapTopologyXYLabelsRasterizationOptions(font, 4f, 0, 0.2f));
@@ -129,8 +130,8 @@ public class HexMapRasterizationExtensionsTests
 
         var topology = new HexMapTopology(1, 1, Layout.OddR);
         var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, 0, 255, 20);
-        SpatialRaster<byte> plain = topology.Rasterize(10f, options);
-        SpatialRaster<byte> labeled = topology.Rasterize(
+        SpatialRaster<Gray8BitColor> plain = topology.Rasterize(10f, options);
+        SpatialRaster<Gray8BitColor> labeled = topology.Rasterize(
             10f,
             options,
             new HexMapTopologyQRSLabelsRasterizationOptions(font, 3f, 0, 0.2f));
@@ -150,8 +151,8 @@ public class HexMapRasterizationExtensionsTests
 
         var topology = new HexMapTopology(1, 1, Layout.OddR);
         var options = new HexMapTopologyRasterizationOptions(1f, 0.1f, 0f, 0, 255, 20);
-        SpatialRaster<byte> plain = topology.Rasterize(10f, options);
-        SpatialRaster<byte> labeled = topology.Rasterize(
+        SpatialRaster<Gray8BitColor> plain = topology.Rasterize(10f, options);
+        SpatialRaster<Gray8BitColor> labeled = topology.Rasterize(
             10f,
             options,
             new HexMapTopologyXYLabelsRasterizationOptions(

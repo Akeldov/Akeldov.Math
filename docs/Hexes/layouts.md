@@ -19,11 +19,12 @@ The examples below use a 4 by 3 map so the row or column offset is visible.
 ```csharp
 TrueTypeFont font = TrueTypeFont.Load(
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
-var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(
+    30f, 1f, 1f, Gray8BitColor.Black, Gray8BitColor.White, 100);
 var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
-    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+    font, 22f, Gray8BitColor.Black, 0.8f, new VectorXY(0f, 17f));
 var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
-    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+    font, 16f, new Gray8BitColor(80), 0.8f, new VectorXY(0f, -17f));
 var topology = new HexMapTopology(4, 3, Layout.OddR);
 
 topology
@@ -42,11 +43,12 @@ topology
 ```csharp
 TrueTypeFont font = TrueTypeFont.Load(
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
-var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(
+    30f, 1f, 1f, Gray8BitColor.Black, Gray8BitColor.White, 100);
 var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
-    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+    font, 22f, Gray8BitColor.Black, 0.8f, new VectorXY(0f, 17f));
 var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
-    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+    font, 16f, new Gray8BitColor(80), 0.8f, new VectorXY(0f, -17f));
 var topology = new HexMapTopology(4, 3, Layout.EvenR);
 
 topology
@@ -67,11 +69,12 @@ topology
 ```csharp
 TrueTypeFont font = TrueTypeFont.Load(
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
-var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(
+    30f, 1f, 1f, Gray8BitColor.Black, Gray8BitColor.White, 100);
 var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
-    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+    font, 22f, Gray8BitColor.Black, 0.8f, new VectorXY(0f, 17f));
 var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
-    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+    font, 16f, new Gray8BitColor(80), 0.8f, new VectorXY(0f, -17f));
 var topology = new HexMapTopology(4, 3, Layout.OddQ);
 
 topology
@@ -90,11 +93,12 @@ topology
 ```csharp
 TrueTypeFont font = TrueTypeFont.Load(
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
-var rasterizationOptions = new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100);
+var rasterizationOptions = new HexMapTopologyRasterizationOptions(
+    30f, 1f, 1f, Gray8BitColor.Black, Gray8BitColor.White, 100);
 var xyLabelsOptions = new HexMapTopologyXYLabelsRasterizationOptions(
-    font, 22f, 0, 0.8f, new VectorXY(0f, 17f));
+    font, 22f, Gray8BitColor.Black, 0.8f, new VectorXY(0f, 17f));
 var qrsLabelsOptions = new HexMapTopologyQRSLabelsRasterizationOptions(
-    font, 16f, 80, 0.8f, new VectorXY(0f, -17f));
+    font, 16f, new Gray8BitColor(80), 0.8f, new VectorXY(0f, -17f));
 var topology = new HexMapTopology(4, 3, Layout.EvenQ);
 
 topology

@@ -22,8 +22,8 @@ var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
     (distance, curveCoordinate) =>
     {
         float normalized = 1f - Math.Clamp(distance / 0.25f, 0f, 1f);
-        return (byte)MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
     });
 
-SpatialRaster<byte> raster = curve.Rasterize(grid, rasterizer);
+SpatialRaster<Gray8BitColor> raster = curve.Rasterize(grid, rasterizer);
 ```

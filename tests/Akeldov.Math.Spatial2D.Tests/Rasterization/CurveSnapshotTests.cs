@@ -17,7 +17,7 @@ public class CurveSnapshotTests
         string approvedFileName,
         Func<ICurve> createCurve)
     {
-        SpatialRaster<byte> raster = createCurve().Rasterize(ToDistanceGray8, SnapshotGrid);
+        SpatialRaster<Gray8BitColor> raster = createCurve().Rasterize(ToDistanceGray8, SnapshotGrid);
 
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -29,7 +29,7 @@ public class CurveSnapshotTests
         string approvedFileName,
         Func<IParameterizedCurve> createCurve)
     {
-        SpatialRaster<byte> raster = createCurve().Rasterize(ToGrowingThicknessGray8, SnapshotGrid);
+        SpatialRaster<Gray8BitColor> raster = createCurve().Rasterize(ToGrowingThicknessGray8, SnapshotGrid);
 
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -176,14 +176,14 @@ public class CurveSnapshotTests
         return createCurve;
     }
 
-    private static byte ToDistanceGray8(float distance)
+    private static Gray8BitColor ToDistanceGray8(float distance)
     {
         const float falloffDistance = 0.25f;
         float normalized = 1f - System.Math.Clamp(distance / falloffDistance, 0f, 1f);
         return (byte)MathF.Round(normalized * byte.MaxValue);
     }
 
-    private static byte ToGrowingThicknessGray8(float distance, float curveCoordinate)
+    private static Gray8BitColor ToGrowingThicknessGray8(float distance, float curveCoordinate)
     {
         const float baseThickness = 0.05f;
         const float thicknessPerWorldUnit = 0.065f;
@@ -197,7 +197,7 @@ public class CurveSnapshotTests
         return (byte)MathF.Round(normalized * byte.MaxValue);
     }
 
-    private static byte[] SaveToPngBytes(SpatialRaster<byte> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(SpatialRaster<Gray8BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

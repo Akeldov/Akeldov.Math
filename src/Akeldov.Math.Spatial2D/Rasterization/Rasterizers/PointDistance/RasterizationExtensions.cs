@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 using System;
 using System.Collections.Generic;
 
@@ -15,9 +16,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the nearest point-distance provider at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize<T>(
+        public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this IReadOnlyList<T> pointDistanceProviders,
-            Func<float, byte> distanceToGrayLevel,
+            Func<float, Gray8BitColor> distanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
             where T : IPointDistanceProvider
         {
@@ -43,9 +44,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize<T>(
+        public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this T pointDistanceProvider,
-            Func<float, byte> distanceToGrayLevel,
+            Func<float, Gray8BitColor> distanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
             where T : IPointDistanceProvider
         {
@@ -71,9 +72,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the nearest point-distance provider at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize<T>(
+        public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this IReadOnlyList<T> pointDistanceProviders,
-            Func<float, ushort> distanceToGrayLevel,
+            Func<float, Gray16BitColor> distanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
             where T : IPointDistanceProvider
         {
@@ -99,9 +100,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize<T>(
+        public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this T pointDistanceProvider,
-            Func<float, ushort> distanceToGrayLevel,
+            Func<float, Gray16BitColor> distanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
             where T : IPointDistanceProvider
         {

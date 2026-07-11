@@ -22,10 +22,10 @@ var grid = new SpatialRasterGrid(
 var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(distance =>
 {
     float normalized = System.Math.Clamp((distance + 1f) / 2f, 0f, 1f);
-    return (ushort)(normalized * ushort.MaxValue);
+    return new Gray16BitColor((ushort)(normalized * ushort.MaxValue));
 });
 
-SpatialRaster<ushort> raster = region.Rasterize(grid, rasterizer);
+SpatialRaster<Gray16BitColor> raster = region.Rasterize(grid, rasterizer);
 raster.SaveAsPng("signed-distance.png");
 
 static IContour CreateSquareContour(float left, float bottom, float right, float top)

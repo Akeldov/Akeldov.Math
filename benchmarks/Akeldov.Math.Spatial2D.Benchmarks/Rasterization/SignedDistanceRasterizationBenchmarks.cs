@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -41,25 +42,25 @@ public class SignedDistanceRasterizationBenchmarks
     }
 
     [Benchmark]
-    public SpatialRaster<byte> RasterizeContourGray8()
+    public SpatialRaster<Gray8BitColor> RasterizeContourGray8()
     {
         return _contour.Rasterize(_grid, _contourGray8Rasterizer);
     }
 
     [Benchmark]
-    public SpatialRaster<ushort> RasterizeContourGray16()
+    public SpatialRaster<Gray16BitColor> RasterizeContourGray16()
     {
         return _contour.Rasterize(_grid, _contourGray16Rasterizer);
     }
 
     [Benchmark]
-    public SpatialRaster<byte> RasterizeRegionGray8()
+    public SpatialRaster<Gray8BitColor> RasterizeRegionGray8()
     {
         return _region.Rasterize(_grid, _regionGray8Rasterizer);
     }
 
     [Benchmark]
-    public SpatialRaster<ushort> RasterizeRegionGray16()
+    public SpatialRaster<Gray16BitColor> RasterizeRegionGray16()
     {
         return _region.Rasterize(_grid, _regionGray16Rasterizer);
     }
@@ -75,23 +76,23 @@ public class SignedDistanceRasterizationBenchmarks
         });
     }
 
-    private static byte ToGray8(float signedDistance)
+    private static Gray8BitColor ToGray8(float signedDistance)
     {
         if (signedDistance <= 0f)
             return byte.MaxValue;
 
         const float falloffDistance = 4f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
-        return (byte)MathF.Round(normalized * byte.MaxValue);
+        return new Gray8BitColor((byte)MathF.Round(normalized * byte.MaxValue));
     }
 
-    private static ushort ToGray16(float signedDistance)
+    private static Gray16BitColor ToGray16(float signedDistance)
     {
         if (signedDistance <= 0f)
             return ushort.MaxValue;
 
         const float falloffDistance = 4f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
-        return (ushort)MathF.Round(normalized * ushort.MaxValue);
+        return new Gray16BitColor((ushort)MathF.Round(normalized * ushort.MaxValue));
     }
 }

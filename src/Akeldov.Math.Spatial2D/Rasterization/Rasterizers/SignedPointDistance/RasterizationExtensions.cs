@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 using System;
 using System.Collections.Generic;
 
@@ -15,9 +16,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the minimum signed distance at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this IReadOnlyList<ISignedPointDistanceProvider> signedPointDistanceProviders,
-            Func<float, byte> signedDistanceToGrayLevel,
+            Func<float, Gray8BitColor> signedDistanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new SignedPointDistanceProviderCollectionGray8BitRasterizer(signedDistanceToGrayLevel);
@@ -35,9 +36,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the signed distance at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this ISignedPointDistanceProvider signedPointDistanceProvider,
-            Func<float, byte> signedDistanceToGrayLevel,
+            Func<float, Gray8BitColor> signedDistanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(signedDistanceToGrayLevel);
@@ -55,9 +56,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the minimum signed distance at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize(
+        public static SpatialRaster<Gray16BitColor> Rasterize(
             this IReadOnlyList<ISignedPointDistanceProvider> signedPointDistanceProviders,
-            Func<float, ushort> signedDistanceToGrayLevel,
+            Func<float, Gray16BitColor> signedDistanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new SignedPointDistanceProviderCollectionGray16BitRasterizer(signedDistanceToGrayLevel);
@@ -75,9 +76,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the signed distance at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize(
+        public static SpatialRaster<Gray16BitColor> Rasterize(
             this ISignedPointDistanceProvider signedPointDistanceProvider,
-            Func<float, ushort> signedDistanceToGrayLevel,
+            Func<float, Gray16BitColor> signedDistanceToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(signedDistanceToGrayLevel);

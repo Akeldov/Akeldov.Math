@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the nearest parameterized curve projection at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this IReadOnlyList<IParameterizedCurve> curves,
-            Func<float, float, byte> projectionToGrayLevel,
+            Func<float, float, Gray8BitColor> projectionToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new ParameterizedCurveCollectionDistanceGray8BitRasterizer(projectionToGrayLevel);
@@ -36,9 +37,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the parameterized curve projection at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize(
+        public static SpatialRaster<Gray8BitColor> Rasterize(
             this IParameterizedCurve curve,
-            Func<float, float, byte> projectionToGrayLevel,
+            Func<float, float, Gray8BitColor> projectionToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(projectionToGrayLevel);
@@ -56,9 +57,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the nearest parameterized curve projection at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize(
+        public static SpatialRaster<Gray16BitColor> Rasterize(
             this IReadOnlyList<IParameterizedCurve> curves,
-            Func<float, float, ushort> projectionToGrayLevel,
+            Func<float, float, Gray16BitColor> projectionToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new ParameterizedCurveCollectionDistanceGray16BitRasterizer(projectionToGrayLevel);
@@ -76,9 +77,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the parameterized curve projection at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize(
+        public static SpatialRaster<Gray16BitColor> Rasterize(
             this IParameterizedCurve curve,
-            Func<float, float, ushort> projectionToGrayLevel,
+            Func<float, float, Gray16BitColor> projectionToGrayLevel,
             SpatialRasterGrid spatialRasterGrid)
         {
             var rasterizer = new ParameterizedCurveDistanceGray16BitRasterizer(projectionToGrayLevel);

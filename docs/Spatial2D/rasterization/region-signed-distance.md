@@ -25,7 +25,7 @@ var grid = new SpatialRasterGrid(
 var rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(distance =>
     distance <= 0f ? byte.MaxValue : byte.MinValue);
 
-SpatialRaster<byte> raster = region.Rasterize(grid, rasterizer);
+SpatialRaster<Gray8BitColor> raster = region.Rasterize(grid, rasterizer);
 raster.SaveAsBmp("region-mask.bmp");
 
 static IContour CreateSquareContour(float left, float bottom, float right, float top)

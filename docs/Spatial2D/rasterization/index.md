@@ -44,14 +44,14 @@ var grid = new SpatialRasterGrid(
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));
 
-var mask = new SpatialRaster<byte>(
+var mask = new SpatialRaster<Gray8BitColor>(
     grid,
-    new byte[grid.Resolution.X * grid.Resolution.Y]);
+    new Gray8BitColor[grid.Resolution.X * grid.Resolution.Y]);
 mask.SaveAsBmp("mask.bmp");
 
-Raster<ushort> distance = new SpatialRaster<ushort>(
+Raster<Gray16BitColor> distance = new SpatialRaster<Gray16BitColor>(
     grid,
-    new ushort[grid.Resolution.X * grid.Resolution.Y])
+    new Gray16BitColor[grid.Resolution.X * grid.Resolution.Y])
     .ToRaster();
 distance.SaveAsPng("distance.png");
 ```

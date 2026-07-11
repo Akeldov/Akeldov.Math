@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using Akeldov.Math.Spatial2D;
 using System;
@@ -15,7 +16,7 @@ namespace Akeldov.Math.Hexes
         public HexMapTopologyQRSLabelsRasterizationOptions(
             TrueTypeFont font,
             float fontSize,
-            byte color,
+            Gray8BitColor color,
             float edgeFalloff,
             VectorXY offset = default)
         {
@@ -38,7 +39,7 @@ namespace Akeldov.Math.Hexes
         /// <summary>Gets the label font size in coordinate-space units.</summary>
         public float FontSize { get; }
         /// <summary>Gets the grayscale label color.</summary>
-        public byte Color { get; }
+        public Gray8BitColor Color { get; }
         /// <summary>Gets the label edge falloff in coordinate-space units.</summary>
         public float EdgeFalloff { get; }
         /// <summary>Gets the label offset from the hex center in coordinate-space units.</summary>

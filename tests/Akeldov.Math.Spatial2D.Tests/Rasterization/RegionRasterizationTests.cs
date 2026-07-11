@@ -21,12 +21,12 @@ public class RegionRasterizationTests
             size: new VectorXY(4f, 4f),
             resolution: new VectorXYInt(4, 4));
 
-        SpatialRaster<byte> raster = region.Rasterize(ToMaskValue, grid);
+        SpatialRaster<Gray8BitColor> raster = region.Rasterize(ToMaskValue, grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
-        Assert.That(raster[1, 1], Is.EqualTo(byte.MinValue));
-        Assert.That(raster[2, 2], Is.EqualTo(byte.MinValue));
-        Assert.That(raster[3, 3], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(byte.MinValue));
+        Assert.That(raster[2, 2].Value, Is.EqualTo(byte.MinValue));
+        Assert.That(raster[3, 3].Value, Is.EqualTo(byte.MaxValue));
     }
 
     [Test]
@@ -38,11 +38,11 @@ public class RegionRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        SpatialRaster<byte> raster = region.Rasterize(ToMaskValue, grid);
+        SpatialRaster<Gray8BitColor> raster = region.Rasterize(ToMaskValue, grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
-        Assert.That(raster[1, 0], Is.EqualTo(byte.MaxValue));
-        Assert.That(raster[2, 0], Is.EqualTo(byte.MinValue));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[2, 0].Value, Is.EqualTo(byte.MinValue));
     }
 
     [Test]
@@ -51,11 +51,11 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = CreateSeparatedDiskRegions();
         var grid = CreateThreeByOneGrid();
 
-        SpatialRaster<byte> raster = regions.Rasterize(ToMaskValue, grid);
+        SpatialRaster<Gray8BitColor> raster = regions.Rasterize(ToMaskValue, grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
-        Assert.That(raster[1, 0], Is.EqualTo(byte.MinValue));
-        Assert.That(raster[2, 0], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(byte.MinValue));
+        Assert.That(raster[2, 0].Value, Is.EqualTo(byte.MaxValue));
     }
 
     [Test]
@@ -64,11 +64,11 @@ public class RegionRasterizationTests
         IReadOnlyList<ISignedPointDistanceProvider> regions = CreateSeparatedDiskRegions();
         var grid = CreateThreeByOneGrid();
 
-        SpatialRaster<ushort> raster = regions.Rasterize(ToGray16, grid);
+        SpatialRaster<Gray16BitColor> raster = regions.Rasterize(ToGray16, grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(ushort.MaxValue));
-        Assert.That(raster[1, 0], Is.EqualTo(ushort.MinValue));
-        Assert.That(raster[2, 0], Is.EqualTo(ushort.MaxValue));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(ushort.MaxValue));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(ushort.MinValue));
+        Assert.That(raster[2, 0].Value, Is.EqualTo(ushort.MaxValue));
     }
 
     [Test]
@@ -156,17 +156,17 @@ public class RegionRasterizationTests
         Assert.That(bytes[25], Is.EqualTo(0));
     }
 
-    private static byte ToMaskValue(float signedDistance)
+    private static Gray8BitColor ToMaskValue(float signedDistance)
     {
         return signedDistance <= 0f ? byte.MaxValue : byte.MinValue;
     }
 
-    private static ushort ToGray16(float signedDistance)
+    private static Gray16BitColor ToGray16(float signedDistance)
     {
         return signedDistance <= 0f ? ushort.MaxValue : ushort.MinValue;
     }
 
-    private static ushort ToDistanceGray16(float signedDistance)
+    private static Gray16BitColor ToDistanceGray16(float signedDistance)
     {
         if (signedDistance <= 0f)
             return ushort.MaxValue;

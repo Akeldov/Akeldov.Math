@@ -9,9 +9,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes parameterized curve collections into 16-bit grayscale rasters using nearest projection mapping.
     /// </summary>
     public sealed class ParameterizedCurveCollectionDistanceGray16BitRasterizer :
-        ISpatialRasterizer<IReadOnlyList<IParameterizedCurve>, ushort>
+        ISpatialRasterizer<IReadOnlyList<IParameterizedCurve>, Gray16BitColor>
     {
-        private readonly Func<float, float, ushort> _projectionToGrayLevel;
+        private readonly Func<float, float, Gray16BitColor> _projectionToGrayLevel;
 
         /// <summary>
         /// Initializes a new parameterized curve collection rasterizer.
@@ -20,17 +20,17 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// The function that maps distance to the nearest curve and its curve coordinate to a 16-bit grayscale value.
         /// The first argument is distance in world coordinate units; the second argument is curve coordinate on the nearest curve.
         /// </param>
-        public ParameterizedCurveCollectionDistanceGray16BitRasterizer(Func<float, float, ushort> projectionToGrayLevel)
+        public ParameterizedCurveCollectionDistanceGray16BitRasterizer(Func<float, float, Gray16BitColor> projectionToGrayLevel)
         {
             _projectionToGrayLevel = projectionToGrayLevel ?? throw new ArgumentNullException(nameof(projectionToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<ushort> Rasterize(IReadOnlyList<IParameterizedCurve> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize(IReadOnlyList<IParameterizedCurve> source, SpatialRasterGrid grid)
         {
             ValidateSource(source);
             ValidateGrid(grid);
-            var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
+            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -47,7 +47,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<ushort>(grid, values);
+            return new SpatialRaster<Gray16BitColor>(grid, values);
         }
 
         private static ParameterizedCurveProjection ProjectToNearestCurve(

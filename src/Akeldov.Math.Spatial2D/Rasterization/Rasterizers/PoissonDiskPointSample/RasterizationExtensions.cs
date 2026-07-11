@@ -39,10 +39,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// to a 16-bit grayscale value.
         /// </param>
         /// <returns>A 16-bit grayscale raster produced from the nearest Poisson disk point sample at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize(
+        public static SpatialRaster<Gray16BitColor> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> sources,
             SpatialRasterGrid grid,
-            Func<PoissonDiskPointSample, float, ushort> sampleDistanceToGrayLevel)
+            Func<PoissonDiskPointSample, float, Gray16BitColor> sampleDistanceToGrayLevel)
         {
             var rasterizer = new PoissonDiskPointSampleCollectionDistanceGray16BitRasterizer(sampleDistanceToGrayLevel);
             return rasterizer.Rasterize(sources, grid);

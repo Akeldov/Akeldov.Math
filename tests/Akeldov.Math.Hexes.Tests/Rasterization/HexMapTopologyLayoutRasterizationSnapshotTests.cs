@@ -24,7 +24,7 @@ public class HexMapTopologyLayoutRasterizationSnapshotTests
         }
 
         TrueTypeFont font = TrueTypeFont.Load(fontPath);
-        SpatialRaster<byte> raster = new HexMapTopology(4, 3, layout)
+        SpatialRaster<Gray8BitColor> raster = new HexMapTopology(4, 3, layout)
             .Rasterize(
                 100f,
                 new HexMapTopologyRasterizationOptions(30f, 1f, 1f, 0, 255, 100),
@@ -37,7 +37,7 @@ public class HexMapTopologyLayoutRasterizationSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    private static byte[] SaveToPngBytes(SpatialRaster<byte> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(SpatialRaster<Gray8BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

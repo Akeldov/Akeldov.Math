@@ -12,11 +12,11 @@ public class CurveRasterizationTests
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<byte> raster = curve.Rasterize(ToGray8, grid);
+        SpatialRaster<Gray8BitColor> raster = curve.Rasterize(ToGray8, grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(10));
-        Assert.That(raster[1, 1], Is.EqualTo(0));
-        Assert.That(raster[1, 2], Is.EqualTo(10));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(10));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(10));
     }
 
     [Test]
@@ -25,11 +25,11 @@ public class CurveRasterizationTests
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<ushort> raster = curve.Rasterize(ToGray16, grid);
+        SpatialRaster<Gray16BitColor> raster = curve.Rasterize(ToGray16, grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(1000));
-        Assert.That(raster[1, 1], Is.EqualTo(0));
-        Assert.That(raster[1, 2], Is.EqualTo(1000));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(1000));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(1000));
     }
 
     [Test]
@@ -42,11 +42,11 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<byte> raster = curves.Rasterize(ToGray8, grid);
+        SpatialRaster<Gray8BitColor> raster = curves.Rasterize(ToGray8, grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(10));
-        Assert.That(raster[1, 2], Is.EqualTo(0));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(10));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(0));
     }
 
     [Test]
@@ -59,11 +59,11 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<ushort> raster = curves.Rasterize(ToGray16, grid);
+        SpatialRaster<Gray16BitColor> raster = curves.Rasterize(ToGray16, grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(1000));
-        Assert.That(raster[1, 2], Is.EqualTo(0));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(1000));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(0));
     }
 
     [Test]
@@ -72,14 +72,14 @@ public class CurveRasterizationTests
         var curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateHalfFadeGrid();
 
-        SpatialRaster<byte> raster = curve.Rasterize(
+        SpatialRaster<Gray8BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
-            curveColor: 200,
-            backgroundColor: 100,
+            curveColor: new Gray8BitColor(200),
+            backgroundColor: new Gray8BitColor(100),
             spatialRasterGrid: grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(150));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(150));
     }
 
     [Test]
@@ -88,14 +88,14 @@ public class CurveRasterizationTests
         var curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateHalfFadeGrid();
 
-        SpatialRaster<ushort> raster = curve.Rasterize(
+        SpatialRaster<Gray16BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
             curveColor: (ushort)2000,
             backgroundColor: (ushort)1000,
             spatialRasterGrid: grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(1500));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(1500));
     }
 
     [Test]
@@ -140,16 +140,16 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<byte> raster = curves.Rasterize(
+        SpatialRaster<Gray8BitColor> raster = curves.Rasterize(
             curveWidth: 0.5f,
             fadeDistance: 0f,
-            curveColor: 200,
-            backgroundColor: 10,
+            curveColor: new Gray8BitColor(200),
+            backgroundColor: new Gray8BitColor(10),
             spatialRasterGrid: grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(200));
-        Assert.That(raster[1, 1], Is.EqualTo(10));
-        Assert.That(raster[1, 2], Is.EqualTo(200));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(200));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(10));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(200));
     }
 
     [Test]
@@ -182,11 +182,11 @@ public class CurveRasterizationTests
         var source = new PointXY(0f, 0f);
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<ushort> raster = source.Rasterize(ToGray16, grid);
+        SpatialRaster<Gray16BitColor> raster = source.Rasterize(ToGray16, grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(1000));
-        Assert.That(raster[1, 1], Is.EqualTo(0));
-        Assert.That(raster[1, 2], Is.EqualTo(1000));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(1000));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(1000));
     }
 
     [Test]
@@ -199,11 +199,11 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<byte> raster = sources.Rasterize(ToGray8, grid);
+        SpatialRaster<Gray8BitColor> raster = sources.Rasterize(ToGray8, grid);
 
-        Assert.That(raster[1, 0], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(10));
-        Assert.That(raster[1, 2], Is.EqualTo(0));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(10));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(0));
     }
 
     [Test]
@@ -212,12 +212,12 @@ public class CurveRasterizationTests
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<byte> raster = curve.Rasterize(ToParameterizedGray8, grid);
+        SpatialRaster<Gray8BitColor> raster = curve.Rasterize(ToParameterizedGray8, grid);
 
-        Assert.That(raster[0, 1], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(20));
-        Assert.That(raster[2, 1], Is.EqualTo(40));
-        Assert.That(raster[1, 2], Is.EqualTo(30));
+        Assert.That(raster[0, 1].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(20));
+        Assert.That(raster[2, 1].Value, Is.EqualTo(40));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(30));
     }
 
     [Test]
@@ -226,12 +226,12 @@ public class CurveRasterizationTests
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<ushort> raster = curve.Rasterize(ToParameterizedGray16, grid);
+        SpatialRaster<Gray16BitColor> raster = curve.Rasterize(ToParameterizedGray16, grid);
 
-        Assert.That(raster[0, 1], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(2000));
-        Assert.That(raster[2, 1], Is.EqualTo(4000));
-        Assert.That(raster[1, 2], Is.EqualTo(3000));
+        Assert.That(raster[0, 1].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(2000));
+        Assert.That(raster[2, 1].Value, Is.EqualTo(4000));
+        Assert.That(raster[1, 2].Value, Is.EqualTo(3000));
     }
 
     [Test]
@@ -244,11 +244,11 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<byte> raster = curves.Rasterize(ToParameterizedGray8, grid);
+        SpatialRaster<Gray8BitColor> raster = curves.Rasterize(ToParameterizedGray8, grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(30));
-        Assert.That(raster[2, 2], Is.EqualTo(40));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(30));
+        Assert.That(raster[2, 2].Value, Is.EqualTo(40));
     }
 
     [Test]
@@ -261,11 +261,11 @@ public class CurveRasterizationTests
         };
         SpatialRasterGrid grid = CreateThreeByThreeGrid();
 
-        SpatialRaster<ushort> raster = curves.Rasterize(ToParameterizedGray16, grid);
+        SpatialRaster<Gray16BitColor> raster = curves.Rasterize(ToParameterizedGray16, grid);
 
-        Assert.That(raster[0, 0], Is.EqualTo(0));
-        Assert.That(raster[1, 1], Is.EqualTo(3000));
-        Assert.That(raster[2, 2], Is.EqualTo(4000));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(0));
+        Assert.That(raster[1, 1].Value, Is.EqualTo(3000));
+        Assert.That(raster[2, 2].Value, Is.EqualTo(4000));
     }
 
     [Test]
@@ -393,31 +393,31 @@ public class CurveRasterizationTests
 
         Assert.That(
             Assert.Throws<ArgumentNullException>(() =>
-                nullCurveValue.Rasterize(1f, 0f, (byte)1, (byte)0, grid))!.ParamName,
+                nullCurveValue.Rasterize(1f, 0f, new Gray8BitColor(1), new Gray8BitColor(0), grid))!.ParamName,
             Is.EqualTo("curve"));
         Assert.That(
             Assert.Throws<ArgumentNullException>(() =>
-                ((IReadOnlyList<Line>)null!).Rasterize(1f, 0f, (byte)1, (byte)0, grid))!.ParamName,
+                ((IReadOnlyList<Line>)null!).Rasterize(1f, 0f, new Gray8BitColor(1), new Gray8BitColor(0), grid))!.ParamName,
             Is.EqualTo("curves"));
         Assert.That(
             Assert.Throws<ArgumentException>(() =>
-                emptyCurves.Rasterize(1f, 0f, (byte)1, (byte)0, grid))!.ParamName,
+                emptyCurves.Rasterize(1f, 0f, new Gray8BitColor(1), new Gray8BitColor(0), grid))!.ParamName,
             Is.EqualTo("curves"));
         Assert.That(
             Assert.Throws<ArgumentException>(() =>
-                nullCurve.Rasterize(1f, 0f, (byte)1, (byte)0, grid))!.ParamName,
+                nullCurve.Rasterize(1f, 0f, new Gray8BitColor(1), new Gray8BitColor(0), grid))!.ParamName,
             Is.EqualTo("curves"));
         Assert.That(
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                curve.Rasterize(float.NaN, 0f, (byte)1, (byte)0, grid))!.ParamName,
+                curve.Rasterize(float.NaN, 0f, new Gray8BitColor(1), new Gray8BitColor(0), grid))!.ParamName,
             Is.EqualTo("curveWidth"));
         Assert.That(
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                curve.Rasterize(1f, -1f, (byte)1, (byte)0, grid))!.ParamName,
+                curve.Rasterize(1f, -1f, new Gray8BitColor(1), new Gray8BitColor(0), grid))!.ParamName,
             Is.EqualTo("fadeDistance"));
         Assert.That(
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                curve.Rasterize(1f, 0f, (byte)1, (byte)0, default))!.ParamName,
+                curve.Rasterize(1f, 0f, new Gray8BitColor(1), new Gray8BitColor(0), default))!.ParamName,
             Is.EqualTo("spatialRasterGrid"));
     }
 
@@ -437,22 +437,22 @@ public class CurveRasterizationTests
             resolution: new VectorXYInt(3, 3));
     }
 
-    private static byte ToGray8(float distance)
+    private static Gray8BitColor ToGray8(float distance)
     {
         return (byte)MathF.Round(distance * 10f);
     }
 
-    private static ushort ToGray16(float distance)
+    private static Gray16BitColor ToGray16(float distance)
     {
         return (ushort)MathF.Round(distance * 1000f);
     }
 
-    private static byte ToParameterizedGray8(float distance, float curveCoordinate)
+    private static Gray8BitColor ToParameterizedGray8(float distance, float curveCoordinate)
     {
         return (byte)MathF.Round(distance * 10f + curveCoordinate * 20f);
     }
 
-    private static ushort ToParameterizedGray16(float distance, float curveCoordinate)
+    private static Gray16BitColor ToParameterizedGray16(float distance, float curveCoordinate)
     {
         return (ushort)MathF.Round(distance * 1000f + curveCoordinate * 2000f);
     }

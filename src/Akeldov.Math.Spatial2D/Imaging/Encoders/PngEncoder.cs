@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(IGrid<byte> raster, string path)
+        public static void Save(IGrid<Gray8BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(IGrid<byte> raster, Stream stream)
+        public static void Save(IGrid<Gray8BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -51,7 +51,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(IGrid<ushort> raster, string path)
+        public static void Save(IGrid<Gray16BitColor> raster, string path)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(IGrid<ushort> raster, Stream stream)
+        public static void Save(IGrid<Gray16BitColor> raster, Stream stream)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -148,7 +148,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentException("Raster width and height must be positive.");
         }
 
-        private static void WriteGray8(IGrid<byte> raster, Stream stream)
+        private static void WriteGray8(IGrid<Gray8BitColor> raster, Stream stream)
         {
             byte[] scanlines = CreateGray8Scanlines(raster);
 
@@ -158,7 +158,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
-        private static byte[] CreateGray8Scanlines(IGrid<byte> raster)
+        private static byte[] CreateGray8Scanlines(IGrid<Gray8BitColor> raster)
         {
             int width = raster.Width;
             int height = raster.Height;
@@ -172,13 +172,13 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 scanlines[offset] = 0;
 
                 for (int x = 0; x < width; x++)
-                    scanlines[offset + 1 + x] = raster[x, y];
+                    scanlines[offset + 1 + x] = raster[x, y].Value;
             }
 
             return scanlines;
         }
 
-        private static void WriteGray16(IGrid<ushort> raster, Stream stream)
+        private static void WriteGray16(IGrid<Gray16BitColor> raster, Stream stream)
         {
             byte[] scanlines = CreateGray16Scanlines(raster);
 
@@ -188,7 +188,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
-        private static byte[] CreateGray16Scanlines(IGrid<ushort> raster)
+        private static byte[] CreateGray16Scanlines(IGrid<Gray16BitColor> raster)
         {
             int width = raster.Width;
             int height = raster.Height;
@@ -204,7 +204,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
                 for (int x = 0; x < width; x++)
                 {
-                    ushort value = raster[x, y];
+                    ushort value = raster[x, y].Value;
                     int valueOffset = offset + 1 + x * 2;
                     WriteUInt16BigEndian(scanlines, valueOffset, value);
                 }

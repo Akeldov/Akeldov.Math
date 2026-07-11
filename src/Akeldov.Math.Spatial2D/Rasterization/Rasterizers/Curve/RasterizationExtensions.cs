@@ -18,12 +18,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the nearest curve distance at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize<T>(
+        public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this IReadOnlyList<T> curves,
             float curveWidth,
             float fadeDistance,
-            byte curveColor,
-            byte backgroundColor,
+            Gray8BitColor curveColor,
+            Gray8BitColor backgroundColor,
             SpatialRasterGrid spatialRasterGrid)
             where T : ICurve
         {
@@ -62,12 +62,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the curve distance at each cell center.</returns>
-        public static SpatialRaster<byte> Rasterize<T>(
+        public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this T curve,
             float curveWidth,
             float fadeDistance,
-            byte curveColor,
-            byte backgroundColor,
+            Gray8BitColor curveColor,
+            Gray8BitColor backgroundColor,
             SpatialRasterGrid spatialRasterGrid)
             where T : ICurve
         {
@@ -93,12 +93,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the nearest curve distance at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize<T>(
+        public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this IReadOnlyList<T> curves,
             float curveWidth,
             float fadeDistance,
-            ushort curveColor,
-            ushort backgroundColor,
+            Gray16BitColor curveColor,
+            Gray16BitColor backgroundColor,
             SpatialRasterGrid spatialRasterGrid)
             where T : ICurve
         {
@@ -137,12 +137,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the curve distance at each cell center.</returns>
-        public static SpatialRaster<ushort> Rasterize<T>(
+        public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this T curve,
             float curveWidth,
             float fadeDistance,
-            ushort curveColor,
-            ushort backgroundColor,
+            Gray16BitColor curveColor,
+            Gray16BitColor backgroundColor,
             SpatialRasterGrid spatialRasterGrid)
             where T : ICurve
         {
@@ -349,12 +349,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return minDistance;
         }
 
-        private static byte MapDistanceToColor(
+        private static Gray8BitColor MapDistanceToColor(
             float distance,
             float curveWidth,
             float fadeDistance,
-            byte curveColor,
-            byte backgroundColor)
+            Gray8BitColor curveColor,
+            Gray8BitColor backgroundColor)
         {
             float backgroundAmount = GetBackgroundBlendAmount(distance, curveWidth, fadeDistance);
 
@@ -364,15 +364,15 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (backgroundAmount >= 1f)
                 return backgroundColor;
 
-            return ToByte(curveColor + (backgroundColor - curveColor) * backgroundAmount);
+            return Gray8BitColor.Blend(curveColor, backgroundColor, backgroundAmount);
         }
 
-        private static ushort MapDistanceToColor(
+        private static Gray16BitColor MapDistanceToColor(
             float distance,
             float curveWidth,
             float fadeDistance,
-            ushort curveColor,
-            ushort backgroundColor)
+            Gray16BitColor curveColor,
+            Gray16BitColor backgroundColor)
         {
             float backgroundAmount = GetBackgroundBlendAmount(distance, curveWidth, fadeDistance);
 
@@ -382,7 +382,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (backgroundAmount >= 1f)
                 return backgroundColor;
 
-            return ToUInt16(curveColor + (backgroundColor - curveColor) * backgroundAmount);
+            return Gray16BitColor.Blend(curveColor, backgroundColor, backgroundAmount);
         }
 
         private static RGBA8BitColor MapDistanceToColor(

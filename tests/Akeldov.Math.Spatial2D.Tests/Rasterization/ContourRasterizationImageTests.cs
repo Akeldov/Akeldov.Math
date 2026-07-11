@@ -19,7 +19,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsBmp_WhenRasterHasZeroSize_Throws()
     {
-        var raster = new SpatialRaster<byte>(default, Array.Empty<byte>());
+        var raster = new SpatialRaster<Gray8BitColor>(default, Array.Empty<Gray8BitColor>());
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray8.bmp");
 
         if (File.Exists(path))
@@ -32,7 +32,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsPng_WhenRasterHasZeroSize_Throws()
     {
-        var raster = new SpatialRaster<ushort>(default, Array.Empty<ushort>());
+        var raster = new SpatialRaster<Gray16BitColor>(default, Array.Empty<Gray16BitColor>());
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray16.png");
 
         if (File.Exists(path))
@@ -133,7 +133,7 @@ public class ContourRasterizationImageTests
             resolution: new VectorXYInt(128, 128));
     }
 
-    private static byte ToGray8(float signedDistance)
+    private static Gray8BitColor ToGray8(float signedDistance)
     {
         signedDistance = MathF.Abs(signedDistance);
 
@@ -142,7 +142,7 @@ public class ContourRasterizationImageTests
         return (byte)System.MathF.Round(normalized * byte.MaxValue);
     }
 
-    private static ushort ToGray16(float signedDistance)
+    private static Gray16BitColor ToGray16(float signedDistance)
     {
         signedDistance = MathF.Abs(signedDistance);
 

@@ -12,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output BMP file path.</param>
-        public static void SaveAsBmp(this IGrid<byte> raster, string path)
+        public static void SaveAsBmp(this IGrid<Gray8BitColor> raster, string path)
         {
             BmpEncoder.Save(raster, path);
         }
@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output BMP stream.</param>
-        public static void SaveAsBmp(this IGrid<byte> raster, Stream stream)
+        public static void SaveAsBmp(this IGrid<Gray8BitColor> raster, Stream stream)
         {
             BmpEncoder.Save(raster, stream);
         }

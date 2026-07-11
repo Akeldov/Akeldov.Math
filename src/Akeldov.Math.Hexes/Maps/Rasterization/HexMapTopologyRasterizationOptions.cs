@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Imaging;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
@@ -18,8 +19,8 @@ namespace Akeldov.Math.Hexes
             float margin,
             float curveWidth,
             float fadeDistance,
-            byte curveColor,
-            byte backgroundColor,
+            Gray8BitColor curveColor,
+            Gray8BitColor backgroundColor,
             int pixelsPerApothem)
         {
             Margin = margin;
@@ -48,12 +49,12 @@ namespace Akeldov.Math.Hexes
         /// <summary>
         /// Gets the grayscale color assigned to edge centers.
         /// </summary>
-        public byte CurveColor { get; }
+        public Gray8BitColor CurveColor { get; }
 
         /// <summary>
         /// Gets the grayscale color assigned outside the edge fade distance.
         /// </summary>
-        public byte BackgroundColor { get; }
+        public Gray8BitColor BackgroundColor { get; }
 
         /// <summary>
         /// Gets the raster resolution density in pixels per hex apothem.

@@ -39,11 +39,11 @@ public class PoissonDiskPointSampleRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        SpatialRaster<ushort> raster = samples.Rasterize(grid, ToGray16);
+        SpatialRaster<Gray16BitColor> raster = samples.Rasterize(grid, ToGray16);
 
-        Assert.That(raster[0, 0], Is.EqualTo(1000));
-        Assert.That(raster[1, 0], Is.EqualTo(1100));
-        Assert.That(raster[2, 0], Is.EqualTo(2000));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(1000));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(1100));
+        Assert.That(raster[2, 0].Value, Is.EqualTo(2000));
     }
 
     [Test]
@@ -64,11 +64,11 @@ public class PoissonDiskPointSampleRasterizationTests
             ringGrayLevel: 100,
             pointGrayLevel: 200);
 
-        SpatialRaster<ushort> raster = samples.Rasterize(grid, rasterizer);
+        SpatialRaster<Gray16BitColor> raster = samples.Rasterize(grid, rasterizer);
 
-        Assert.That(raster[0, 0], Is.EqualTo(200));
-        Assert.That(raster[1, 0], Is.EqualTo(100));
-        Assert.That(raster[2, 0], Is.EqualTo(10));
+        Assert.That(raster[0, 0].Value, Is.EqualTo(200));
+        Assert.That(raster[1, 0].Value, Is.EqualTo(100));
+        Assert.That(raster[2, 0].Value, Is.EqualTo(10));
     }
 
     [Test]
@@ -178,7 +178,7 @@ public class PoissonDiskPointSampleRasterizationTests
             ushort.MaxValue);
     }
 
-    private static ushort ToGray16(PoissonDiskPointSample sample, float distance)
+    private static Gray16BitColor ToGray16(PoissonDiskPointSample sample, float distance)
     {
         return (ushort)MathF.Round(sample.MinimalDistance * 1000f + distance * 100f);
     }

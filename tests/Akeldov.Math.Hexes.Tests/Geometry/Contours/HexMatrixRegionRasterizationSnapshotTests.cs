@@ -23,7 +23,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
         string approvedFileName)
     {
         ContourBasedRegion region = CreateSnapshotGeometry().ToRegion(layout);
-        SpatialRaster<byte> raster = Rasterize(region);
+        SpatialRaster<Gray8BitColor> raster = Rasterize(region);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -44,7 +44,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
             .SelectMany(GetCurves)
             .Concat(geometry.ToApothemOffsetRegion(layout).Contours.SelectMany(GetCurves))
             .ToArray();
-        SpatialRaster<byte> raster = Rasterize(contour);
+        SpatialRaster<Gray8BitColor> raster = Rasterize(contour);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -62,7 +62,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
 
         Assert.That(region.Contours, Has.Count.GreaterThan(1));
 
-        SpatialRaster<byte> raster = Rasterize(region);
+        SpatialRaster<Gray8BitColor> raster = Rasterize(region);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -87,7 +87,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
             .SelectMany(GetCurves)
             .Concat(offsetRegion.Contours.SelectMany(GetCurves))
             .ToArray();
-        SpatialRaster<byte> raster = Rasterize(contour);
+        SpatialRaster<Gray8BitColor> raster = Rasterize(contour);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -121,12 +121,12 @@ public class HexMatrixRegionRasterizationSnapshotTests
             apothem: 1f);
     }
 
-    private static SpatialRaster<byte> Rasterize(ContourBasedRegion region)
+    private static SpatialRaster<Gray8BitColor> Rasterize(ContourBasedRegion region)
     {
         return Rasterize(region.Contours.SelectMany(GetCurves).ToArray());
     }
 
-    private static SpatialRaster<byte> Rasterize(IReadOnlyList<IFinitePath> contour)
+    private static SpatialRaster<Gray8BitColor> Rasterize(IReadOnlyList<IFinitePath> contour)
     {
         var grid = CreateGrid(contour);
         return contour.Rasterize(ToDistanceGray8, grid);
@@ -183,14 +183,14 @@ public class HexMatrixRegionRasterizationSnapshotTests
         maxY = MathF.Max(maxY, arc.Center.Y + arc.Radius);
     }
 
-    private static byte ToDistanceGray8(float distance)
+    private static Gray8BitColor ToDistanceGray8(float distance)
     {
         const float falloffDistance = 0.08f;
         float normalized = 1f - System.Math.Clamp(distance / falloffDistance, 0f, 1f);
         return (byte)MathF.Round(normalized * byte.MaxValue);
     }
 
-    private static byte[] SaveToPngBytes(SpatialRaster<byte> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(SpatialRaster<Gray8BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);
