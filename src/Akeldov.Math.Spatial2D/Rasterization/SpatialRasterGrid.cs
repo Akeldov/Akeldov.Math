@@ -21,21 +21,151 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="resolution">The grid resolution in cells. Both components must be positive.</param>
         public SpatialRasterGrid(PointXY origin, VectorXY size, VectorXYInt resolution)
         {
-            PointXYValidation.ThrowIfNotFinite(
-                origin,
-                nameof(origin),
-                "Raster grid origin coordinates must be finite.");
+            if (float.IsNaN(origin.X) || float.IsInfinity(origin.X) ||
+                float.IsNaN(origin.Y) || float.IsInfinity(origin.Y))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(origin),
+                    origin,
+                    "Raster grid origin coordinates must be finite.");
+            }
 
             if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(size), "Raster grid size components must be finite and positive.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(size),
+                    size,
+                    "Raster grid size components must be finite and positive.");
 
             if (resolution.X <= 0 || resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(resolution), "Raster grid resolution components must be positive.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(resolution),
+                    resolution,
+                    "Raster grid resolution components must be positive.");
 
             _origin = origin;
             _size = size;
             _resolution = resolution;
             _cellSize = new VectorXY(size.X / resolution.X, size.Y / resolution.Y);
+        }
+
+        /// <summary>
+        /// Initializes a new raster grid from an origin, size, and minimum pixel density.
+        /// </summary>
+        /// <param name="origin">The lower-left grid origin in world coordinates.</param>
+        /// <param name="size">The grid size in world coordinates. Both components must be finite and positive.</param>
+        /// <param name="minimumPixelsPerUnit">
+        /// The minimum number of pixels per world-space unit. The resolution is rounded up independently for each axis.
+        /// </param>
+        public SpatialRasterGrid(PointXY origin, VectorXY size, int minimumPixelsPerUnit)
+        {
+            if (minimumPixelsPerUnit <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minimumPixelsPerUnit),
+                    minimumPixelsPerUnit,
+                    "Minimum pixels per unit must be positive.");
+            }
+
+            var bounds = new SpatialRasterGrid(origin, size, VectorXYInt.One);
+            double resolutionX = System.Math.Ceiling((double)bounds.Size.X * minimumPixelsPerUnit);
+            double resolutionY = System.Math.Ceiling((double)bounds.Size.Y * minimumPixelsPerUnit);
+
+            if (double.IsInfinity(resolutionX) || resolutionX > int.MaxValue ||
+                double.IsInfinity(resolutionY) || resolutionY > int.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minimumPixelsPerUnit),
+                    minimumPixelsPerUnit,
+                    "The resulting raster grid resolution must fit in a 32-bit signed integer on both axes.");
+            }
+
+            _origin = bounds.Origin;
+            _size = bounds.Size;
+            _resolution = new VectorXYInt((int)resolutionX, (int)resolutionY);
+            _cellSize = new VectorXY(
+                _size.X / _resolution.X,
+                _size.Y / _resolution.Y);
+        }
+
+        /// <summary>
+        /// Initializes a new raster grid from any two diagonally opposite corners.
+        /// </summary>
+        /// <param name="cornerA">The first corner in world coordinates.</param>
+        /// <param name="cornerB">The diagonally opposite corner in world coordinates. Corner order does not matter.</param>
+        /// <param name="resolution">The grid resolution in cells. Both components must be positive.</param>
+        public SpatialRasterGrid(PointXY cornerA, PointXY cornerB, VectorXYInt resolution)
+        {
+            if (float.IsNaN(cornerA.X) || float.IsInfinity(cornerA.X) ||
+                float.IsNaN(cornerA.Y) || float.IsInfinity(cornerA.Y))
+                throw new ArgumentOutOfRangeException(
+                    nameof(cornerA),
+                    cornerA,
+                    "Raster grid corner coordinates must be finite.");
+
+            if (float.IsNaN(cornerB.X) || float.IsInfinity(cornerB.X) ||
+                float.IsNaN(cornerB.Y) || float.IsInfinity(cornerB.Y))
+                throw new ArgumentOutOfRangeException(
+                    nameof(cornerB),
+                    cornerB,
+                    "Raster grid corner coordinates must be finite.");
+
+            float minX = MathF.Min(cornerA.X, cornerB.X);
+            float minY = MathF.Min(cornerA.Y, cornerB.Y);
+            float width = MathF.Abs(cornerB.X - cornerA.X);
+            float height = MathF.Abs(cornerB.Y - cornerA.Y);
+
+            if (width <= 0f || height <= 0f)
+                throw new ArgumentException("Raster grid corners must define a rectangle with positive width and height.", nameof(cornerB));
+
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(resolution),
+                    resolution,
+                    "Raster grid resolution components must be positive.");
+
+            _origin = new PointXY(minX, minY);
+            _size = new VectorXY(width, height);
+            _resolution = resolution;
+            _cellSize = new VectorXY(width / resolution.X, height / resolution.Y);
+        }
+
+        /// <summary>
+        /// Initializes a new raster grid from any two diagonally opposite corners and a minimum pixel density.
+        /// </summary>
+        /// <param name="cornerA">The first corner in world coordinates.</param>
+        /// <param name="cornerB">The diagonally opposite corner in world coordinates. Corner order does not matter.</param>
+        /// <param name="minimumPixelsPerUnit">
+        /// The minimum number of pixels per world-space unit. The resolution is rounded up independently for each axis.
+        /// </param>
+        public SpatialRasterGrid(PointXY cornerA, PointXY cornerB, int minimumPixelsPerUnit)
+        {
+            if (minimumPixelsPerUnit <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minimumPixelsPerUnit),
+                    minimumPixelsPerUnit,
+                    "Minimum pixels per unit must be positive.");
+            }
+
+            var bounds = new SpatialRasterGrid(cornerA, cornerB, VectorXYInt.One);
+            double resolutionX = System.Math.Ceiling((double)bounds.Size.X * minimumPixelsPerUnit);
+            double resolutionY = System.Math.Ceiling((double)bounds.Size.Y * minimumPixelsPerUnit);
+
+            if (double.IsInfinity(resolutionX) || resolutionX > int.MaxValue ||
+                double.IsInfinity(resolutionY) || resolutionY > int.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minimumPixelsPerUnit),
+                    minimumPixelsPerUnit,
+                    "The resulting raster grid resolution must fit in a 32-bit signed integer on both axes.");
+            }
+
+            _origin = bounds.Origin;
+            _size = bounds.Size;
+            _resolution = new VectorXYInt((int)resolutionX, (int)resolutionY);
+            _cellSize = new VectorXY(
+                _size.X / _resolution.X,
+                _size.Y / _resolution.Y);
         }
 
         /// <summary>
