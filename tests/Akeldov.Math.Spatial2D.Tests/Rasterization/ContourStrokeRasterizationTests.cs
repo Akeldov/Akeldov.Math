@@ -1,4 +1,5 @@
 using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
@@ -84,7 +85,7 @@ public class ContourStrokeRasterizationTests
         var exception = Assert.Throws<ArgumentNullException>(() =>
             contour.Rasterize(0.2f, 0.1f, RGBA16BitColor.Red, CreateGrid()));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("contour"));
+        Assert.That(exception!.ParamName, Is.EqualTo("curve"));
     }
 
     private static SpatialRasterGrid CreateGrid() => new SpatialRasterGrid(

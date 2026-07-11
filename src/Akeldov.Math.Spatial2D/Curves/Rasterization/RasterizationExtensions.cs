@@ -2,33 +2,40 @@ using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 
-namespace Akeldov.Math.Spatial2D.Contours
+namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides rasterization extensions for contours.
+    /// Provides convenient stroke rasterization extensions for curves.
     /// </summary>
     public static partial class RasterizationExtensions
     {
         /// <summary>
-        /// Rasterizes a contour stroke into an 8-bit grayscale raster with a black background.
+        /// Rasterizes a curve stroke into an 8-bit grayscale raster with a black background.
         /// </summary>
-        /// <param name="contour">The contour to rasterize.</param>
+        /// <typeparam name="TCurve">The curve type.</typeparam>
+        /// <param name="curve">The curve to rasterize.</param>
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The grayscale stroke color.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
-        /// <returns>An 8-bit grayscale raster with the contour drawn over black.</returns>
-        public static SpatialRaster<Gray8BitColor> Rasterize(
-            this IContour contour,
+        /// <returns>An 8-bit grayscale raster with the curve drawn over black.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
+        /// or when <paramref name="spatialRasterGrid"/> is invalid.
+        /// </exception>
+        public static SpatialRaster<Gray8BitColor> Rasterize<TCurve>(
+            this TCurve curve,
             float width,
             float edgeFalloff,
             Gray8BitColor color,
             SpatialRasterGrid spatialRasterGrid)
+            where TCurve : ICurve
         {
-            if (contour == null)
-                throw new ArgumentNullException(nameof(contour));
+            if (curve == null)
+                throw new ArgumentNullException(nameof(curve));
 
-            return contour.Rasterize(
+            return curve.Rasterize(
                 width,
                 edgeFalloff,
                 color,
@@ -37,25 +44,32 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <summary>
-        /// Rasterizes a contour stroke into a 16-bit grayscale raster with a black background.
+        /// Rasterizes a curve stroke into a 16-bit grayscale raster with a black background.
         /// </summary>
-        /// <param name="contour">The contour to rasterize.</param>
+        /// <typeparam name="TCurve">The curve type.</typeparam>
+        /// <param name="curve">The curve to rasterize.</param>
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The grayscale stroke color.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
-        /// <returns>A 16-bit grayscale raster with the contour drawn over black.</returns>
-        public static SpatialRaster<Gray16BitColor> Rasterize(
-            this IContour contour,
+        /// <returns>A 16-bit grayscale raster with the curve drawn over black.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
+        /// or when <paramref name="spatialRasterGrid"/> is invalid.
+        /// </exception>
+        public static SpatialRaster<Gray16BitColor> Rasterize<TCurve>(
+            this TCurve curve,
             float width,
             float edgeFalloff,
             Gray16BitColor color,
             SpatialRasterGrid spatialRasterGrid)
+            where TCurve : ICurve
         {
-            if (contour == null)
-                throw new ArgumentNullException(nameof(contour));
+            if (curve == null)
+                throw new ArgumentNullException(nameof(curve));
 
-            return contour.Rasterize(
+            return curve.Rasterize(
                 width,
                 edgeFalloff,
                 color,
@@ -64,30 +78,32 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <summary>
-        /// Rasterizes a contour stroke into an 8-bit RGBA raster with a transparent background.
+        /// Rasterizes a curve stroke into an 8-bit RGBA raster with a transparent background.
         /// </summary>
-        /// <param name="contour">The contour to rasterize.</param>
+        /// <typeparam name="TCurve">The curve type.</typeparam>
+        /// <param name="curve">The curve to rasterize.</param>
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative alpha falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The stroke color.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
-        /// <returns>An 8-bit RGBA raster with the contour drawn over transparency.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="contour"/> is null.</exception>
+        /// <returns>An 8-bit RGBA raster with the curve drawn over transparency.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
         /// or when <paramref name="spatialRasterGrid"/> is invalid.
         /// </exception>
-        public static SpatialRaster<RGBA8BitColor> Rasterize(
-            this IContour contour,
+        public static SpatialRaster<RGBA8BitColor> Rasterize<TCurve>(
+            this TCurve curve,
             float width,
             float edgeFalloff,
             RGBA8BitColor color,
             SpatialRasterGrid spatialRasterGrid)
+            where TCurve : ICurve
         {
-            if (contour == null)
-                throw new ArgumentNullException(nameof(contour));
+            if (curve == null)
+                throw new ArgumentNullException(nameof(curve));
 
-            return contour.Rasterize(
+            return curve.Rasterize(
                 width,
                 edgeFalloff,
                 color,
@@ -96,30 +112,32 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <summary>
-        /// Rasterizes a contour stroke into a 16-bit RGBA raster with a transparent background.
+        /// Rasterizes a curve stroke into a 16-bit RGBA raster with a transparent background.
         /// </summary>
-        /// <param name="contour">The contour to rasterize.</param>
+        /// <typeparam name="TCurve">The curve type.</typeparam>
+        /// <param name="curve">The curve to rasterize.</param>
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative alpha falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The stroke color.</param>
         /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
-        /// <returns>A 16-bit RGBA raster with the contour drawn over transparency.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="contour"/> is null.</exception>
+        /// <returns>A 16-bit RGBA raster with the curve drawn over transparency.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
         /// or when <paramref name="spatialRasterGrid"/> is invalid.
         /// </exception>
-        public static SpatialRaster<RGBA16BitColor> Rasterize(
-            this IContour contour,
+        public static SpatialRaster<RGBA16BitColor> Rasterize<TCurve>(
+            this TCurve curve,
             float width,
             float edgeFalloff,
             RGBA16BitColor color,
             SpatialRasterGrid spatialRasterGrid)
+            where TCurve : ICurve
         {
-            if (contour == null)
-                throw new ArgumentNullException(nameof(contour));
+            if (curve == null)
+                throw new ArgumentNullException(nameof(curve));
 
-            return contour.Rasterize(
+            return curve.Rasterize(
                 width,
                 edgeFalloff,
                 color,
