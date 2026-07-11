@@ -103,12 +103,8 @@ namespace Akeldov.Math.Spatial2D.Regions
         public PointXY TopRight => Center + AxisX * (Width * 0.5f) + AxisY * (Height * 0.5f);
 
         /// <inheritdoc/>
-        public bool Contains(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Contains(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
@@ -118,10 +114,8 @@ namespace Akeldov.Math.Spatial2D.Regions
             float localX = VectorXY.Dot(centered, AxisX);
             float localY = VectorXY.Dot(centered, AxisY);
 
-            return localX >= -Width * 0.5f - geometryEpsilon &&
-                localX <= Width * 0.5f + geometryEpsilon &&
-                localY >= -Height * 0.5f - geometryEpsilon &&
-                localY <= Height * 0.5f + geometryEpsilon;
+            return localX >= -Width * 0.5f && localX <= Width * 0.5f &&
+                localY >= -Height * 0.5f && localY <= Height * 0.5f;
         }
 
         /// <inheritdoc/>
@@ -140,7 +134,11 @@ namespace Akeldov.Math.Spatial2D.Regions
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Contains(point, geometryEpsilon) ? -distance : distance;
+            VectorXY local = GetCenteredLocalCoordinates(point);
+            return local.X >= -Width * 0.5f - geometryEpsilon &&
+                local.X <= Width * 0.5f + geometryEpsilon &&
+                local.Y >= -Height * 0.5f - geometryEpsilon &&
+                local.Y <= Height * 0.5f + geometryEpsilon ? -distance : distance;
         }
 
         /// <summary>

@@ -66,9 +66,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         public PointXY EndpointB => EndPoint;
 
         /// <inheritdoc/>
-        public bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Encloses(PointXY point)
         {
-            return _contour.Encloses(point, geometryEpsilon);
+            return _contour.Encloses(point);
         }
 
         /// <inheritdoc/>

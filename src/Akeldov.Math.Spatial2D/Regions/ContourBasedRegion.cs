@@ -49,10 +49,8 @@ namespace Akeldov.Math.Spatial2D.Regions
         public FillRule FillRule => _fillRule;
 
         /// <inheritdoc/>
-        public bool Contains(PointXY point, float geometryEpsilon = 1E-06F)
+        public bool Contains(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
@@ -92,7 +90,7 @@ namespace Akeldov.Math.Spatial2D.Regions
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Contains(point, geometryEpsilon) ? -distance : distance;
+            return Contains(point) ? -distance : distance;
         }
     }
 }

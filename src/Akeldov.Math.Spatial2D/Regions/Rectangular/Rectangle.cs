@@ -95,21 +95,15 @@ namespace Akeldov.Math.Spatial2D.Regions
         public PointXY TopRight => Max;
 
         /// <inheritdoc/>
-        public bool Contains(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Contains(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            return point.X >= Min.X - geometryEpsilon &&
-                point.X <= Max.X + geometryEpsilon &&
-                point.Y >= Min.Y - geometryEpsilon &&
-                point.Y <= Max.Y + geometryEpsilon;
+            return point.X >= Min.X && point.X <= Max.X &&
+                point.Y >= Min.Y && point.Y <= Max.Y;
         }
 
         /// <inheritdoc/>
@@ -131,7 +125,10 @@ namespace Akeldov.Math.Spatial2D.Regions
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Contains(point, geometryEpsilon) ? -distance : distance;
+            return point.X >= Min.X - geometryEpsilon &&
+                point.X <= Max.X + geometryEpsilon &&
+                point.Y >= Min.Y - geometryEpsilon &&
+                point.Y <= Max.Y + geometryEpsilon ? -distance : distance;
         }
 
         /// <summary>

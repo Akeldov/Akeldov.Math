@@ -52,18 +52,14 @@ namespace Akeldov.Math.Spatial2D.Regions
         public float Diameter => 2f * Radius;
 
         /// <inheritdoc/>
-        public bool Contains(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Contains(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            return point.Distance(Center) <= Radius + geometryEpsilon;
+            return point.Distance(Center) <= Radius;
         }
 
         /// <inheritdoc/>
@@ -85,7 +81,7 @@ namespace Akeldov.Math.Spatial2D.Regions
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Contains(point, geometryEpsilon) ? -distance : distance;
+            return point.Distance(Center) <= Radius + geometryEpsilon ? -distance : distance;
         }
 
         /// <summary>

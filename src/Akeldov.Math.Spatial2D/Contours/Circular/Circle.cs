@@ -170,18 +170,14 @@ namespace Akeldov.Math.Spatial2D.Contours
             string.Format(CultureInfo.InvariantCulture, "Circle(center: {0}, radius: {1})", Center, Radius);
 
         /// <inheritdoc/>
-        public bool Encloses(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Encloses(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            return point.Distance(_center) <= _radius + geometryEpsilon;
+            return point.Distance(_center) <= _radius;
         }
 
         /// <inheritdoc/>
@@ -192,7 +188,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Encloses(point, geometryEpsilon) ? -distance : distance;
+            return point.Distance(_center) <= _radius + geometryEpsilon ? -distance : distance;
         }
 
         /// <summary>

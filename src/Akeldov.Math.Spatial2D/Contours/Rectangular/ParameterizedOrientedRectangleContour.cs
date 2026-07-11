@@ -210,16 +210,12 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Encloses(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             VectorXY local = GetCenteredLocalCoordinates(point);
 
-            return local.X >= -Width * 0.5f - geometryEpsilon &&
-                local.X <= Width * 0.5f + geometryEpsilon &&
-                local.Y >= -Height * 0.5f - geometryEpsilon &&
-                local.Y <= Height * 0.5f + geometryEpsilon;
+            return local.X >= -Width * 0.5f && local.X <= Width * 0.5f &&
+                local.Y >= -Height * 0.5f && local.Y <= Height * 0.5f;
         }
 
         /// <inheritdoc/>
@@ -337,7 +333,11 @@ namespace Akeldov.Math.Spatial2D.Contours
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Encloses(point, geometryEpsilon) ? -distance : distance;
+            VectorXY local = GetCenteredLocalCoordinates(point);
+            return local.X >= -Width * 0.5f - geometryEpsilon &&
+                local.X <= Width * 0.5f + geometryEpsilon &&
+                local.Y >= -Height * 0.5f - geometryEpsilon &&
+                local.Y <= Height * 0.5f + geometryEpsilon ? -distance : distance;
         }
 
         /// <summary>

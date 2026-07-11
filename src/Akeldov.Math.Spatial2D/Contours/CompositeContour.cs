@@ -85,10 +85,8 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public bool Encloses(PointXY point, float geometryEpsilon = 1E-06F)
+        public bool Encloses(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
@@ -172,7 +170,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Encloses(point, geometryEpsilon) ? -distance : distance;
+            return Encloses(point) ? -distance : distance;
         }
 
         private static IFinitePath[] CreateCurvesFromPoints(IReadOnlyList<PointXY> points, string parameterName)

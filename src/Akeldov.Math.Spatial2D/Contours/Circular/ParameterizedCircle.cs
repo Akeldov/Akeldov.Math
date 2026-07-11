@@ -88,11 +88,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         public int CountRightwardCrossings(PointXY origin) => _circle.CountRightwardCrossings(origin);
 
         /// <inheritdoc/>
-        public bool Encloses(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Encloses(PointXY point)
         {
-            return _circle.Encloses(point, geometryEpsilon);
+            return _circle.Encloses(point);
         }
 
         /// <inheritdoc/>

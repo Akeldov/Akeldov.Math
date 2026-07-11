@@ -39,16 +39,6 @@ public class RectangleTests
     }
 
     [Test]
-    public void Contains_WithCustomGeometryEpsilon_IncludesNearbyPoint()
-    {
-        IRegion rectangle = new Rectangle(
-            new PointXY(0f, 0f),
-            new PointXY(1f, 1f));
-
-        Assert.That(rectangle.Contains(new PointXY(-0.0005f, 0.5f), 0.001f), Is.True);
-    }
-
-    [Test]
     public void IRegion_ExposesSignedPointDistanceProviderContract()
     {
         IRegion rectangle = new Rectangle(
@@ -114,8 +104,8 @@ public class RectangleTests
             new PointXY(-tiny, -tiny),
             new PointXY(tiny, tiny));
 
-        Assert.That(tinyRectangle.Contains(new PointXY(0f, 0f), geometryEpsilon: 0f), Is.True);
-        Assert.That(tinyRectangle.Contains(new PointXY(2f * tiny, 0f), geometryEpsilon: 0f), Is.False);
+        Assert.That(tinyRectangle.Contains(new PointXY(0f, 0f)), Is.True);
+        Assert.That(tinyRectangle.Contains(new PointXY(2f * tiny, 0f)), Is.False);
 
         const float large = 1_000_000f;
         var largeRectangle = new Rectangle(

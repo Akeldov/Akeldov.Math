@@ -24,7 +24,7 @@ public class RegionStressTests
             if (boundaryDistance <= 0.01f)
                 continue;
 
-            bool contains = rectangle.Contains(point, geometryEpsilon: 0f);
+            bool contains = rectangle.Contains(point);
             float signedDistance = contour.SignedDistance(point, geometryEpsilon: 0f);
 
             Assert.That(float.IsNaN(signedDistance), Is.False, $"Seed: {seed}, iteration: {i}.");
@@ -57,7 +57,7 @@ public class RegionStressTests
 
     private static float GetDistanceToBoundary(Rectangle rectangle, PointXY point)
     {
-        if (rectangle.Contains(point, geometryEpsilon: 0f))
+        if (rectangle.Contains(point))
         {
             return MathF.Min(
                 MathF.Min(point.X - rectangle.Min.X, rectangle.Max.X - point.X),

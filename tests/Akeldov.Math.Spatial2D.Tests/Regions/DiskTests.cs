@@ -61,16 +61,6 @@ public class DiskTests
     }
 
     [Test]
-    public void Contains_WithCustomGeometryEpsilon_IncludesNearbyPoint()
-    {
-        IRegion disk = new Disk(new PointXY(0f, 0f), 5f);
-        var point = new PointXY(5.0005f, 0f);
-
-        Assert.That(disk.Contains(point), Is.False);
-        Assert.That(disk.Contains(point, 0.001f), Is.True);
-    }
-
-    [Test]
     public void Contains_WhenPointCoordinateIsInvalid_Throws()
     {
         IRegion disk = new Disk(new PointXY(0f, 0f), 1f);
@@ -79,20 +69,6 @@ public class DiskTests
             disk.Contains(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void Contains_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        IRegion disk = new Disk(new PointXY(0f, 0f), 1f);
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            disk.Contains(new PointXY(0f, 0f), geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
     [Test]
@@ -129,8 +105,8 @@ public class DiskTests
     {
         IRegion disk = new Disk(new PointXY(1f, 2f), 0f);
 
-        Assert.That(disk.Contains(new PointXY(1f, 2f), geometryEpsilon: 0f), Is.True);
-        Assert.That(disk.Contains(new PointXY(1.001f, 2f), geometryEpsilon: 0f), Is.False);
+        Assert.That(disk.Contains(new PointXY(1f, 2f)), Is.True);
+        Assert.That(disk.Contains(new PointXY(1.001f, 2f)), Is.False);
         Assert.That(disk.Distance(new PointXY(4f, 6f)), Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
     }
 

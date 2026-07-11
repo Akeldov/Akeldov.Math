@@ -40,17 +40,6 @@ public class OrientedRectangleTests
     }
 
     [Test]
-    public void Contains_WithCustomGeometryEpsilon_IncludesNearbyPoint()
-    {
-        IRegion rectangle = new OrientedRectangle(
-            new PointXY(0f, 0f),
-            new VectorXY(4f, 2f),
-            MathF.PI * 0.5f);
-
-        Assert.That(rectangle.Contains(new PointXY(1.0005f, 0f), 0.001f), Is.True);
-    }
-
-    [Test]
     public void IRegion_ExposesSignedPointDistanceProviderContract()
     {
         IRegion rectangle = new OrientedRectangle(

@@ -284,20 +284,6 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void Encloses_WhenGeometryEpsilonChanges_DoesNotChangeCrossingResult()
-    {
-        IContour contour = new CompositeContour(new IFinitePath[]
-        {
-            CreateUnitCirclePath()
-        });
-
-        var point = new PointXY(1.0005f, 0f);
-
-        Assert.That(contour.Encloses(point), Is.False);
-        Assert.That(contour.Encloses(point, 0.001f), Is.False);
-    }
-
-    [Test]
     public void Encloses_WhenRayPassesThroughSharedVertex_UsesHalfOpenCrossingRule()
     {
         var contour = new CompositeContour(new IFinitePath[]
@@ -374,7 +360,7 @@ public class CompositeContourTests
         var curve = new CrossingAwareCurve();
         IContour contour = new CompositeContour(new IFinitePath[] { curve });
 
-        bool encloses = contour.Encloses(new PointXY(0f, 0f), 0.25f);
+        bool encloses = contour.Encloses(new PointXY(0f, 0f));
 
         Assert.That(encloses, Is.True);
         Assert.That(curve.CountRightwardCrossingsCallCount, Is.EqualTo(1));
@@ -403,23 +389,6 @@ public class CompositeContourTests
             contour.Distance(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
-    }
-
-    [TestCase(-1e-6f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void Encloses_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        IContour contour = new CompositeContour(new IFinitePath[]
-        {
-            CreateUnitCirclePath()
-        });
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Encloses(new PointXY(0f, 0f), geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
     [TestCase(-1e-6f)]

@@ -119,26 +119,12 @@ public class ContourBasedRegionTests
     }
 
     [Test]
-    public void Contains_WhenGeometryEpsilonChanges_DoesNotChangeCrossingResult()
-    {
-        IRegion region = new ContourBasedRegion(new IContour[]
-        {
-            CreateSquareContour(0f, 0f, 1f, 1f)
-        });
-
-        var point = new PointXY(-0.0005f, 0.5f);
-
-        Assert.That(region.Contains(point), Is.False);
-        Assert.That(region.Contains(point, 0.001f), Is.False);
-    }
-
-    [Test]
     public void Contains_UsesContourRightwardCrossings()
     {
         var contour = new CrossingAwareContour();
         IRegion region = new ContourBasedRegion(new IContour[] { contour });
 
-        bool contains = region.Contains(new PointXY(0f, 0f), 0.25f);
+        bool contains = region.Contains(new PointXY(0f, 0f));
 
         Assert.That(contains, Is.True);
         Assert.That(contour.CountRightwardCrossingsCallCount, Is.EqualTo(1));
@@ -219,23 +205,6 @@ public class ContourBasedRegionTests
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
-    [TestCase(-1e-6f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void Contains_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        IRegion region = new ContourBasedRegion(new IContour[]
-        {
-            CreateSquareContour(0f, 0f, 1f, 1f)
-        });
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Contains(new PointXY(0f, 0f), geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
-    }
-
     private static CompositeContour CreateSquareContour(float left, float bottom, float right, float top)
     {
         return new CompositeContour(new IFinitePath[]
@@ -266,9 +235,7 @@ public class ContourBasedRegionTests
             return 1;
         }
 
-        public bool Encloses(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Encloses(PointXY point)
         {
             return false;
         }
@@ -290,7 +257,7 @@ public class ContourBasedRegionTests
         public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             float distance = Distance(point);
-            return Encloses(point, geometryEpsilon) ? -distance : distance;
+            return Encloses(point) ? -distance : distance;
         }
 
         public List<PointXY> GetRayIntersections(

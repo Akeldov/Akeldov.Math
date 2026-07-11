@@ -215,16 +215,6 @@ public class CircleTests
     }
 
     [Test]
-    public void Encloses_WithCustomGeometryEpsilon_IncludesNearbyOutsidePoint()
-    {
-        var circle = new Circle(new PointXY(0f, 0f), 5f);
-        var point = new PointXY(5.0005f, 0f);
-
-        Assert.That(circle.Encloses(point), Is.False);
-        Assert.That(circle.Encloses(point, 0.001f), Is.True);
-    }
-
-    [Test]
     public void Encloses_WhenPointCoordinateIsInvalid_Throws()
     {
         var circle = new Circle(new PointXY(0f, 0f), 1f);
@@ -233,20 +223,6 @@ public class CircleTests
             circle.Encloses(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void Encloses_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        var circle = new Circle(new PointXY(0f, 0f), 1f);
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            circle.Encloses(new PointXY(0f, 0f), geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
     [Test]

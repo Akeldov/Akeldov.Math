@@ -8,7 +8,7 @@ public class RectanglePropertyFuzzTests
 
     [TestCase(31415)]
     [TestCase(27182)]
-    public void Contains_WithGeneratedRectangles_MatchesExpandedBounds(int seed)
+    public void Contains_WithGeneratedRectangles_MatchesBounds(int seed)
     {
         var random = new Random(seed);
 
@@ -24,13 +24,11 @@ public class RectanglePropertyFuzzTests
             float geometryEpsilon = NextGeometryEpsilon(random);
             PointXY point = NextPointAroundRectangle(random, rectangle, geometryEpsilon);
 
-            bool expected = point.X >= rectangle.Min.X - geometryEpsilon &&
-                point.X <= rectangle.Max.X + geometryEpsilon &&
-                point.Y >= rectangle.Min.Y - geometryEpsilon &&
-                point.Y <= rectangle.Max.Y + geometryEpsilon;
+            bool expected = point.X >= rectangle.Min.X && point.X <= rectangle.Max.X &&
+                point.Y >= rectangle.Min.Y && point.Y <= rectangle.Max.Y;
 
             Assert.That(
-                rectangle.Contains(point, geometryEpsilon),
+                rectangle.Contains(point),
                 Is.EqualTo(expected),
                 $"Seed: {seed}, iteration: {iteration}, rectangle: {rectangle}, point: {point}, epsilon: {geometryEpsilon}.");
         }
@@ -58,7 +56,7 @@ public class RectanglePropertyFuzzTests
             if (distanceToBoundary <= 0.01f)
                 continue;
 
-            bool contains = rectangle.Contains(point, geometryEpsilon: 0f);
+            bool contains = rectangle.Contains(point);
             float signedDistance = region.Contours[0].SignedDistance(point, geometryEpsilon: 0f);
 
             Assert.That(
@@ -97,7 +95,7 @@ public class RectanglePropertyFuzzTests
 
     private static float GetDistanceToBoundary(Rectangle rectangle, PointXY point)
     {
-        if (rectangle.Contains(point, geometryEpsilon: 0f))
+        if (rectangle.Contains(point))
         {
             return MathF.Min(
                 MathF.Min(point.X - rectangle.Min.X, rectangle.Max.X - point.X),
