@@ -69,6 +69,21 @@ public class CurveSnapshotTests
             .SetName("Circle_MatchesApprovedImage");
 
         yield return new TestCaseData(
+            "rectangle-contour-distance.png",
+            Curve(() => new RectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f))))
+            .SetName("RectangleContour_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "oriented-rectangle-contour-distance.png",
+            Curve(() => new OrientedRectangleContour(new PointXY(0f, 0f), new VectorXY(4f, 2.2f), MathF.PI / 6f)))
+            .SetName("OrientedRectangleContour_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "composite-contour-distance.png",
+            Curve(() => CreateCompositeContour()))
+            .SetName("CompositeContour_MatchesApprovedImage");
+
+        yield return new TestCaseData(
             "arc-distance.png",
             Curve(() => new Arc(new PointXY(-0.2f, -0.25f), 2f, MathF.PI / 8f, 5f * MathF.PI / 4f)))
             .SetName("Arc_MatchesApprovedImage");
@@ -129,6 +144,26 @@ public class CurveSnapshotTests
             .SetName("ParameterizedArc_GrowingThickness_MatchesApprovedImage");
 
         yield return new TestCaseData(
+            "parameterized-circle-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedCircle(new PointXY(0f, 0f), 1.8f, -MathF.PI / 2f)))
+            .SetName("ParameterizedCircle_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "parameterized-rectangle-contour-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedRectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f))))
+            .SetName("ParameterizedRectangleContour_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "parameterized-oriented-rectangle-contour-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedOrientedRectangleContour(new PointXY(0f, 0f), new VectorXY(4f, 2.2f), MathF.PI / 6f)))
+            .SetName("ParameterizedOrientedRectangleContour_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "parameterized-composite-contour-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedCompositeContour(CreateCompositePaths())))
+            .SetName("ParameterizedCompositeContour_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
             "ray-growing-thickness.png",
             ParameterizedCurve(() => new Ray(new PointXY(-2.45f, -2.05f), MathF.PI / 5f)))
             .SetName("Ray_GrowingThickness_MatchesApprovedImage");
@@ -170,6 +205,21 @@ public class CurveSnapshotTests
     {
         return createCurve;
     }
+
+    private static CompositeContour CreateCompositeContour() => new CompositeContour(CreateCompositePaths());
+
+    private static IFinitePath[] CreateCompositePaths() =>
+        new IFinitePath[]
+    {
+        new ParameterizedSegment(new PointXY(-2f, -1.5f), new PointXY(1f, -1.7320508f)),
+        new ParameterizedArc(
+            new PointXY(0f, 0f),
+            2f,
+            -MathF.PI / 3f,
+            2f * MathF.PI / 3f,
+            AngularDirection.Counterclockwise),
+        new ParameterizedSegment(new PointXY(-1f, 1.7320508f), new PointXY(-2f, -1.5f))
+    };
 
     private static Func<IParameterizedCurve> ParameterizedCurve(Func<IParameterizedCurve> createCurve)
     {
