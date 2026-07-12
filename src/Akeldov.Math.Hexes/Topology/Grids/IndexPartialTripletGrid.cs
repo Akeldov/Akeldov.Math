@@ -102,6 +102,11 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         public int Height => ResolutionY;
 
+        /// <summary>
+        /// Gets the value at the specified grid coordinates.
+        /// </summary>
+        /// <param name="x">The horizontal grid coordinate.</param>
+        /// <param name="y">The vertical grid coordinate.</param>
         public PartialTriplet<VectorXYInt> this[int x, int y] => _values[y * ResolutionX + x];
 
         /// <summary>

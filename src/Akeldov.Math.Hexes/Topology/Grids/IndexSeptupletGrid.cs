@@ -111,6 +111,11 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         public int Count => _values.Length;
 
+        /// <summary>
+        /// Gets the value at the specified grid coordinates.
+        /// </summary>
+        /// <param name="x">The horizontal grid coordinate.</param>
+        /// <param name="y">The vertical grid coordinate.</param>
         public Septuplet<VectorXYInt> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
