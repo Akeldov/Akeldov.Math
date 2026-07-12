@@ -21,8 +21,8 @@ public class HexCenterMapRasterizationSnapshotTests
             origin: new VectorXY(0f, 0f),
             apothem: 8f,
             layout: layout);
-        SpatialRasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, pixelsPerApothem: 8f);
-        SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(ToSnapshotColor)
+        SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, pixelsPerApothem: 8f);
+        SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(ToSnapshotColor)
             .Rasterize(geometry, grid);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

@@ -63,6 +63,11 @@ namespace Akeldov.Math.Hexes.Chromatization
         public int Height { get; }
 
         /// <summary>
+        /// Gets the map resolution in hexes.
+        /// </summary>
+        public VectorXYInt Resolution => new VectorXYInt(Width, Height);
+
+        /// <summary>
         /// Gets the Layout value.
         /// </summary>
         public Layout Layout { get; }

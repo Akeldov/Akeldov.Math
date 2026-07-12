@@ -12,20 +12,17 @@ public class IHexMapRasterizationTests
     public void Rasterize_MapsToRGBA16BitColorRaster()
     {
         IHexMap<int> map = CreateMap(new[] { 10, 20 });
-        var rasterGrid = new SpatialRasterGrid(
-            new PointXY(10f, 20f),
-            new VectorXY(30f, 40f),
-            new VectorXYInt(2, 1));
+        var resolution = new VectorXYInt(2, 1);
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        SpatialRaster<RGBA16BitColor> raster = map.Rasterize(
-            rasterGrid,
+        Raster<RGBA16BitColor> raster = map.Rasterize(
+            resolution,
             value => value == 10 ? red : blue);
 
         Assert.Multiple(() =>
         {
-            Assert.That(raster.Grid, Is.EqualTo(rasterGrid));
+            Assert.That(raster.Resolution, Is.EqualTo(resolution));
             Assert.That(raster.Values, Is.EqualTo(new[] { red, blue }));
         });
     }
@@ -34,13 +31,10 @@ public class IHexMapRasterizationTests
     public void Rasterize_MapsToArbitraryRasterValueType()
     {
         IHexMap<int> map = CreateMap(new[] { 10, 20 });
-        var rasterGrid = new SpatialRasterGrid(
-            new PointXY(0f, 0f),
-            new VectorXY(2f, 1f),
-            new VectorXYInt(2, 1));
+        var resolution = new VectorXYInt(2, 1);
 
-        SpatialRaster<byte> raster = map.Rasterize(
-            rasterGrid,
+        Raster<byte> raster = map.Rasterize(
+            resolution,
             value => (byte)(value / 10));
 
         Assert.That(raster.Values, Is.EqualTo(new byte[] { 1, 2 }));
@@ -51,26 +45,19 @@ public class IHexMapRasterizationTests
     {
         IHexMap<int> map = CreateMap(new[] { 10, 20 });
         IHexMap<int> nullMap = null!;
-        var rasterGrid = new SpatialRasterGrid(
-            new PointXY(0f, 0f),
-            new VectorXY(2f, 1f),
-            new VectorXYInt(2, 1));
-        var mismatchedRasterGrid = new SpatialRasterGrid(
-            new PointXY(0f, 0f),
-            new VectorXY(3f, 1f),
-            new VectorXYInt(3, 1));
+        var resolution = new VectorXYInt(2, 1);
 
         Assert.Multiple(() =>
         {
             Assert.That(
-                Assert.Throws<ArgumentNullException>(() => nullMap.Rasterize(rasterGrid, _ => 0))!.ParamName,
+                Assert.Throws<ArgumentNullException>(() => nullMap.Rasterize(resolution, _ => 0))!.ParamName,
                 Is.EqualTo("map"));
             Assert.That(
-                Assert.Throws<ArgumentNullException>(() => map.Rasterize<int, int>(rasterGrid, null!))!.ParamName,
+                Assert.Throws<ArgumentNullException>(() => map.Rasterize<int, int>(resolution, null!))!.ParamName,
                 Is.EqualTo("colorSelector"));
             Assert.That(
-                Assert.Throws<ArgumentException>(() => map.Rasterize(mismatchedRasterGrid, _ => 0))!.ParamName,
-                Is.EqualTo("rasterGrid"));
+                Assert.Throws<ArgumentOutOfRangeException>(() => map.Rasterize(new VectorXYInt(0, 1), _ => 0))!.ParamName,
+                Is.EqualTo("resolution"));
         });
     }
 

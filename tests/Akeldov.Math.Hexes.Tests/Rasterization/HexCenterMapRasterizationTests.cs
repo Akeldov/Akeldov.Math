@@ -14,8 +14,8 @@ public class HexCenterMapRasterizationTests
     {
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
 
-        SpatialRasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 3f);
-        SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(
+        SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, 3f);
+        SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(
                 _ => new RGBA16BitColor(1, 2, 3, 4))
             .Rasterize(geometry, grid);
 
@@ -31,8 +31,8 @@ public class HexCenterMapRasterizationTests
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var mappedCenters = new List<PointXY>();
 
-        SpatialRasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 4f);
-        SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(
+        SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, 4f);
+        SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(
                 center =>
             {
                 mappedCenters.Add(center);
@@ -53,7 +53,7 @@ public class HexCenterMapRasterizationTests
     public void Constructor_WhenColorMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new HexFieldGeometryRGBA16BitRasterizer(null!));
+            new HexCenterMapRGBA16BitRasterizer(null!));
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class HexCenterMapRasterizationTests
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 0f));
+            HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, 0f));
     }
 
     [Test]
@@ -71,7 +71,7 @@ public class HexCenterMapRasterizationTests
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 1f, Layout.OddR);
 
         Assert.Throws<OverflowException>(() =>
-            HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, float.MaxValue));
+            HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, float.MaxValue));
     }
 
     [Test]
@@ -80,7 +80,7 @@ public class HexCenterMapRasterizationTests
         var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
         var grid = new SpatialRasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
 
-        SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(
+        SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(
                 _ => new RGBA16BitColor(1, 2, 3, 4))
             .Rasterize(geometry, grid);
 

@@ -64,6 +64,11 @@ namespace Akeldov.Math.Hexes.Topology
         public int Height { get; }
 
         /// <summary>
+        /// Gets the map resolution in hexes.
+        /// </summary>
+        public VectorXYInt Resolution => new VectorXYInt(Width, Height);
+
+        /// <summary>
         /// Gets the Count value.
         /// </summary>
         public int Count => _values.Length;

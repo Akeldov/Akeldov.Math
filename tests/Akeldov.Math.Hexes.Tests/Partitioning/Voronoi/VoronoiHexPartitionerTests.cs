@@ -47,8 +47,7 @@ public class VoronoiHexPartitionerTests
 
         Assert.That(map, Is.Not.InstanceOf<HexMap<VoronoiCell>>());
         Assert.That(map.Centers, Is.SameAs(hexCenters));
-        Assert.That(hexMap.Width, Is.EqualTo(2));
-        Assert.That(hexMap.Height, Is.EqualTo(2));
+        Assert.That(hexMap.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
         Assert.That(hexMap.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(map.Cells, Has.Count.EqualTo(1));

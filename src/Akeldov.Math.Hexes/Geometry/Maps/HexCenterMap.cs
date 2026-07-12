@@ -103,6 +103,11 @@ namespace Akeldov.Math.Hexes.Geometry
         public int Height { get; }
 
         /// <summary>
+        /// Gets the map resolution in hexes.
+        /// </summary>
+        public VectorXYInt Resolution => new VectorXYInt(Width, Height);
+
+        /// <summary>
         /// Gets the Origin value.
         /// </summary>
         public VectorXY Origin { get; }

@@ -1,3 +1,7 @@
+using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Regions;
 using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 
@@ -14,12 +18,12 @@ namespace Akeldov.Math.Hexes
         /// <typeparam name="TValue">The map value type.</typeparam>
         /// <typeparam name="TColor">The raster color value type.</typeparam>
         /// <param name="map">The map to rasterize.</param>
-        /// <param name="rasterGrid">The raster geometry. Its resolution must match the map dimensions.</param>
+        /// <param name="resolution">The raster resolution</param>
         /// <param name="colorSelector">The function that maps each map value to a raster color.</param>
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
-        public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
+        public static Raster<TColor> Rasterize<TValue, TColor>(
             this IHexMap<TValue> map,
-            SpatialRasterGrid rasterGrid,
+            VectorXYInt resolution,
             Func<TValue, TColor> colorSelector)
         {
             if (map == null)
@@ -28,17 +32,43 @@ namespace Akeldov.Math.Hexes
             if (colorSelector == null)
                 throw new ArgumentNullException(nameof(colorSelector));
 
-            if (rasterGrid.Resolution.X != map.Width ||
-                rasterGrid.Resolution.Y != map.Height)
-                throw new ArgumentException("Raster grid resolution must match map dimensions.", nameof(rasterGrid));
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Raster resolution components must be positive.");
 
-            int count = checked(map.Width * map.Height);
+            if (map.Resolution.X <= 0 || map.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(map), "Hex map resolution components must be positive.");
+
+            int count = checked(resolution.X * resolution.Y);
             var values = new TColor[count];
+            var geometry = new HexMapGeometry(
+                map.Resolution.X,
+                map.Resolution.Y,
+                radius: 1f,
+                layout: map.Layout);
+            Rectangle bounds = geometry.BoundingBox();
+            float pixelWidth = bounds.Size.X / resolution.X;
+            float pixelHeight = bounds.Size.Y / resolution.Y;
 
-            for (int i = 0; i < values.Length; i++)
-                values[i] = colorSelector(map[i]);
+            for (int y = 0; y < resolution.Y; y++)
+            {
+                float pointY = bounds.Min.Y + (y + 0.5f) * pixelHeight;
 
-            return new SpatialRaster<TColor>(rasterGrid, values);
+                for (int x = 0; x < resolution.X; x++)
+                {
+                    var point = new PointXY(
+                        bounds.Min.X + (x + 0.5f) * pixelWidth,
+                        pointY);
+                    VectorXYInt hexIndex = point.ToXYIndex(geometry.Radius, geometry.Origin, map.Layout);
+
+                    if ((uint)hexIndex.X < (uint)map.Resolution.X &&
+                        (uint)hexIndex.Y < (uint)map.Resolution.Y)
+                    {
+                        values[y * resolution.X + x] = colorSelector(map[hexIndex]);
+                    }
+                }
+            }
+
+            return new Raster<TColor>(resolution, values);
         }
     }
 }

@@ -11,8 +11,7 @@ public class IndexPartialSeptupletMapTests
     {
         var topology = new IndexPartialSeptupletMap(3, 2, Layout.EvenQ);
 
-        Assert.That(topology.Width, Is.EqualTo(3));
-        Assert.That(topology.Height, Is.EqualTo(2));
+        Assert.That(topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Count, Is.EqualTo(6));
         Assert.That(topology.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(typeof(IndexPartialSeptupletMap).GetProperty("Adjacent"), Is.Null);
@@ -25,8 +24,7 @@ public class IndexPartialSeptupletMapTests
 
         PartialSeptuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
-        Assert.That(topology.Width, Is.EqualTo(3));
-        Assert.That(topology.Height, Is.EqualTo(2));
+        Assert.That(topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(topology[1], Is.EqualTo(adjacency));
     }

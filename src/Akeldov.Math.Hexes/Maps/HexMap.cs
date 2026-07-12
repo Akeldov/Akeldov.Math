@@ -85,6 +85,11 @@ namespace Akeldov.Math.Hexes
         public int Height => _height;
 
         /// <summary>
+        /// Gets the map resolution in hexes.
+        /// </summary>
+        public VectorXYInt Resolution => new VectorXYInt(_width, _height);
+
+        /// <summary>
         /// Gets the Layout value.
         /// </summary>
         public Layout Layout => _layout;

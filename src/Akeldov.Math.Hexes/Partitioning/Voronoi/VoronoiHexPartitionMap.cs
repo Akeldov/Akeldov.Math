@@ -59,6 +59,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public int Height => Topology.Height;
 
         /// <summary>
+        /// Gets the map resolution in hexes.
+        /// </summary>
+        public VectorXYInt Resolution => new VectorXYInt(Topology.Width, Topology.Height);
+
+        /// <summary>
         /// Gets the hex layout used by the partition map.
         /// </summary>
         public Layout Layout => Topology.Layout;
