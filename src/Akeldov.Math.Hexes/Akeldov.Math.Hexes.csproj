@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Akeldov.Math.Graphs\Akeldov.Math.Graphs.csproj" />
     <ProjectReference Include="..\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj" />
   </ItemGroup>
 
