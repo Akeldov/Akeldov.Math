@@ -10,39 +10,40 @@ namespace Akeldov.Math.Hexes.Geometry
     public readonly struct HexMapGeometry : IEquatable<HexMapGeometry>
     {
         /// <summary>
-        /// Initializes a new hex map geometry from an apothem value.
+        /// Initializes a new hex map geometry from a radius value.
         /// </summary>
         /// <param name="width">The map width in hexes.</param>
         /// <param name="height">The map height in hexes.</param>
         /// <param name="origin">The center of the zero hex.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="layout">The hex layout used by the map.</param>
-        public HexMapGeometry(int width, int height, VectorXY origin, float apothem, Layout layout)
-            : this(new HexMapTopology(width, height, layout), origin, apothem)
+        public HexMapGeometry(int width, int height, VectorXY origin, float radius, Layout layout)
+            : this(new HexMapTopology(width, height, layout), origin, radius)
         {
         }
 
         /// <summary>
-        /// Initializes a new hex map geometry from an apothem value.
+        /// Initializes a new hex map geometry from a radius value.
         /// </summary>
         /// <param name="topology">The map topology.</param>
         /// <param name="origin">The center of the zero hex.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="origin"/> contains a non-finite component, or
-        /// when <paramref name="apothem"/> is not finite and positive.
+        /// when <paramref name="radius"/> is not finite and positive.
         /// </exception>
-        public HexMapGeometry(HexMapTopology topology, VectorXY origin, float apothem)
+        public HexMapGeometry(HexMapTopology topology, VectorXY origin, float radius)
         {
             if (!origin.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex map origin components must be finite.");
 
-            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
 
             Topology = topology;
             Origin = origin;
-            Apothem = apothem;
+            Radius = radius;
+            Apothem = Constants.Radius2Apothem * radius;
         }
 
         /// <summary>
@@ -74,6 +75,7 @@ namespace Akeldov.Math.Hexes.Geometry
 
             Topology = topology;
             Origin = GetDefaultOrigin(apothem, radius, topology.Layout);
+            Radius = radius;
             Apothem = apothem;
         }
 
@@ -95,44 +97,44 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// Gets the hex radius. The unit is the coordinate-space unit.
         /// </summary>
-        public float Radius => Apothem.ConvertHexApothemToRadius();
+        public float Radius { get; }
 
         /// <summary>
-        /// Indicates whether this geometry has the same topology, origin, and apothem as another geometry.
+        /// Indicates whether this geometry has the same topology, origin, and radius as another geometry.
         /// </summary>
         /// <param name="other">The geometry to compare with this geometry.</param>
         /// <returns><see langword="true"/> if both geometries are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(HexMapGeometry other) =>
             Topology.Equals(other.Topology) &&
             Origin.Equals(other.Origin) &&
-            Apothem.Equals(other.Apothem);
+            Radius.Equals(other.Radius);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is HexMapGeometry other && Equals(other);
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Topology, Origin, Apothem);
+        public override int GetHashCode() => HashCode.Combine(Topology, Origin, Radius);
 
         /// <inheritdoc/>
         public override string ToString() =>
             string.Format(
                 CultureInfo.InvariantCulture,
-                "HexMapGeometry(topology: {0}, origin: {1}, apothem: {2})",
+                "HexMapGeometry(topology: {0}, origin: {1}, radius: {2})",
                 Topology,
                 Origin,
-                Apothem);
+                Radius);
 
         /// <summary>
-        /// Deconstructs this geometry into its topology, origin, and apothem.
+        /// Deconstructs this geometry into its topology, origin, and radius.
         /// </summary>
         /// <param name="topology">The map topology.</param>
         /// <param name="origin">The center of the zero hex.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
-        public void Deconstruct(out HexMapTopology topology, out VectorXY origin, out float apothem)
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        public void Deconstruct(out HexMapTopology topology, out VectorXY origin, out float radius)
         {
             topology = Topology;
             origin = Origin;
-            apothem = Apothem;
+            radius = Radius;
         }
 
         /// <summary>

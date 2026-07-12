@@ -13,16 +13,16 @@ public class HexCenterMapTests
     public void Constructor_UsesOriginAsZeroHexCenter_ForEveryLayout()
     {
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
+        const float radius = 2f;
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            var geometry = new HexCenterMap(2, 2, origin, apothem, layout);
+            var geometry = new HexCenterMap(2, 2, origin, radius, layout);
 
             Assert.That(geometry.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
-            Assert.That(geometry.Geometry, Is.EqualTo(new HexMapGeometry(2, 2, origin, apothem, layout)));
+            Assert.That(geometry.Geometry, Is.EqualTo(new HexMapGeometry(2, 2, origin, radius, layout)));
             Assert.That(geometry.Origin, Is.EqualTo(origin));
-            Assert.That(geometry.Apothem, Is.EqualTo(apothem));
+            Assert.That(geometry.Apothem, Is.EqualTo(radius.ConvertHexRadiusToApothem()));
             Assert.That(geometry.Layout, Is.EqualTo(layout));
             Assert.That(typeof(HexCenterMap).GetProperty("Centers"), Is.Null);
             VectorAssert.AreEqual(geometry[0], origin.X, origin.Y);
@@ -43,7 +43,7 @@ public class HexCenterMapTests
         Assert.That(map.Width, Is.EqualTo(2));
         Assert.That(map.Height, Is.EqualTo(2));
         Assert.That(map.Origin, Is.EqualTo(new VectorXY(10f, 20f)));
-        Assert.That(map.Apothem, Is.EqualTo(2f));
+        Assert.That(map.Apothem, Is.EqualTo(2f.ConvertHexRadiusToApothem()));
         Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
         VectorAssert.AreEqual(map[0], 10f, 20f);
     }
@@ -73,7 +73,7 @@ public class HexCenterMapTests
             width: 3,
             height: 2,
             origin: new VectorXY(10f, 20f),
-            apothem: 2f,
+            radius: 2f.ConvertHexApothemToRadius(),
             layout: layout);
 
         Rectangle boundingBox = geometry.BoundingBox();
@@ -98,14 +98,14 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void HexMapTopologyBoundingBox_WithApothemAndOrigin_ReturnsSameRectangleAsGeometry()
+    public void HexMapTopologyBoundingBox_WithRadiusAndOrigin_ReturnsSameRectangleAsGeometry()
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
+        const float radius = 2f;
 
-        Rectangle topologyBoundingBox = topology.BoundingBox(apothem, origin);
-        Rectangle geometryBoundingBox = new HexMapGeometry(topology, origin, apothem).BoundingBox();
+        Rectangle topologyBoundingBox = topology.BoundingBox(radius, origin);
+        Rectangle geometryBoundingBox = new HexMapGeometry(topology, origin, radius).BoundingBox();
 
         Assert.That(topologyBoundingBox, Is.EqualTo(geometryBoundingBox));
     }
@@ -117,7 +117,7 @@ public class HexCenterMapTests
             width: 1,
             height: 1,
             origin: VectorXY.Zero,
-            apothem: 2f,
+            radius: 2f.ConvertHexApothemToRadius(),
             layout: Layout.OddR);
 
         SpatialRasterGrid grid = geometry.ToSpatialRasterGrid(pixelsPerApothem: 3f);
@@ -130,15 +130,15 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void HexMapTopologyToSpatialRasterGrid_WithApothemAndOrigin_ReturnsSameGridAsGeometry()
+    public void HexMapTopologyToSpatialRasterGrid_WithRadiusAndOrigin_ReturnsSameGridAsGeometry()
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
+        const float radius = 2f;
         const float pixelsPerApothem = 3f;
 
-        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(apothem, origin, pixelsPerApothem);
-        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, apothem).ToSpatialRasterGrid(pixelsPerApothem);
+        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(radius, origin, pixelsPerApothem);
+        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem);
 
         Assert.That(topologyGrid, Is.EqualTo(geometryGrid));
     }
@@ -148,12 +148,12 @@ public class HexCenterMapTests
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
+        const float radius = 2f;
         const float pixelsPerApothem = 3f;
         const float margin = 1.5f;
 
-        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(apothem, origin, pixelsPerApothem, margin);
-        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, apothem).ToSpatialRasterGrid(pixelsPerApothem, margin);
+        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(radius, origin, pixelsPerApothem, margin);
+        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem, margin);
 
         Assert.That(topologyGrid, Is.EqualTo(geometryGrid));
     }
@@ -224,12 +224,12 @@ public class HexCenterMapTests
     [TestCase(0f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
-    public void Constructor_WhenApothemIsInvalid_Throws(float apothem)
+    public void Constructor_WithOrigin_WhenRadiusIsInvalid_Throws(float radius)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new HexCenterMap(1, 1, VectorXY.Zero, apothem, Layout.OddR));
+            new HexCenterMap(1, 1, VectorXY.Zero, radius, Layout.OddR));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("apothem"));
+        Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
     [Test]

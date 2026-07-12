@@ -19,7 +19,7 @@ public class HexCenterMapRasterizationSnapshotTests
             width: 5,
             height: 4,
             origin: new VectorXY(0f, 0f),
-            apothem: 8f,
+            radius: 8f.ConvertHexApothemToRadius(),
             layout: layout);
         SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, pixelsPerApothem: 8f);
         SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(ToSnapshotColor)

@@ -13,7 +13,7 @@ public class HexMapRasterizationExtensionsTests
         var topology = new HexMapTopology(1, 1, Layout.OddR);
 
         SpatialRaster<Gray8BitColor> raster = topology.Rasterize(
-            apothem: 2f,
+            radius: 2f,
             options: new HexMapTopologyRasterizationOptions(
                 margin: 1f,
                 curveWidth: 0.5f,
@@ -24,11 +24,11 @@ public class HexMapRasterizationExtensionsTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(raster.Grid.Origin.X, Is.EqualTo(-3f).Within(0.0001f));
-            Assert.That(raster.Grid.Origin.Y, Is.EqualTo(-3.3094f).Within(0.0001f));
-            Assert.That(raster.Grid.Size.X, Is.EqualTo(6f).Within(0.0001f));
-            Assert.That(raster.Grid.Size.Y, Is.EqualTo(6.6188f).Within(0.0001f));
-            Assert.That(raster.Grid.Resolution, Is.EqualTo(new VectorXYInt(9, 10)));
+            Assert.That(raster.Grid.Origin.X, Is.EqualTo(-2.7321f).Within(0.0001f));
+            Assert.That(raster.Grid.Origin.Y, Is.EqualTo(-3f).Within(0.0001f));
+            Assert.That(raster.Grid.Size.X, Is.EqualTo(5.4641f).Within(0.0001f));
+            Assert.That(raster.Grid.Size.Y, Is.EqualTo(6f).Within(0.0001f));
+            Assert.That(raster.Grid.Resolution, Is.EqualTo(new VectorXYInt(10, 11)));
         });
     }
 
@@ -37,10 +37,10 @@ public class HexMapRasterizationExtensionsTests
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);
         var origin = new VectorXY(10f, 20f);
-        var geometry = new HexMapGeometry(topology, origin, apothem: 2f);
+        var geometry = new HexMapGeometry(topology, origin, radius: 2f.ConvertHexApothemToRadius());
 
         SpatialRaster<Gray8BitColor> actual = topology.Rasterize(
-            apothem: 2f,
+            radius: 2f.ConvertHexApothemToRadius(),
             origin: origin,
             options: new HexMapTopologyRasterizationOptions(
                 margin: 0f,
@@ -70,7 +70,7 @@ public class HexMapRasterizationExtensionsTests
             width: 1,
             height: 1,
             origin: new VectorXY(10f, 20f),
-            apothem: 2f,
+            radius: 2f.ConvertHexApothemToRadius(),
             layout: Layout.OddR);
         SpatialRasterGrid grid = geometry.ToSpatialRasterGrid(pixelsPerApothem: 3f);
 

@@ -43,7 +43,7 @@ public class HexCenterMapRasterizationTests
         Assert.That(mappedCenters, Is.EqualTo(new[]
         {
             new PointXY(0f, 0f),
-            new PointXY(4f, 0f)
+            new PointXY(3.4641016f, 0f)
         }));
         Assert.That(raster.Values.Count(x => x == red), Is.GreaterThan(0));
         Assert.That(raster.Values.Count(x => x == blue), Is.GreaterThan(0));

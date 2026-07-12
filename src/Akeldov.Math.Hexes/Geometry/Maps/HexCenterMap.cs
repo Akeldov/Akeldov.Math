@@ -18,15 +18,15 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <param name="width">The Width value.</param>
         /// <param name="height">The Height value.</param>
         /// <param name="origin">The Origin value.</param>
-        /// <param name="apothem">The Apothem value.</param>
+        /// <param name="radius">The hex radius from center to vertex.</param>
         /// <param name="layout">The Layout value.</param>
         public HexCenterMap(
             int width,
             int height,
             VectorXY origin,
-            float apothem,
+            float radius,
             Layout layout)
-            : this(new HexMapGeometry(width, height, origin, apothem, layout))
+            : this(new HexMapGeometry(width, height, origin, radius, layout))
         {
         }
 
@@ -39,8 +39,8 @@ namespace Akeldov.Math.Hexes.Geometry
             if (!geometry.Origin.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
 
-            if (float.IsNaN(geometry.Apothem) || float.IsInfinity(geometry.Apothem) || geometry.Apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry apothem must be finite and positive.");
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
 
             float radius = geometry.Radius;
 

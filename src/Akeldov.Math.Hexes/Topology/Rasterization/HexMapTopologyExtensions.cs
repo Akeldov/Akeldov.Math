@@ -18,16 +18,16 @@ namespace Akeldov.Math.Hexes
         /// Rasterizes unique hex edge segments for the whole topology with the zero hex center at the coordinate origin.
         /// </summary>
         /// <param name="hexMapTopology">The topology to rasterize.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="options">The rendering and output parameters.</param>
         /// <returns>A raster of the hex map edge segments.</returns>
         public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology hexMapTopology,
-            float apothem,
+            float radius,
             HexMapTopologyRasterizationOptions options)
         {
             return hexMapTopology.Rasterize(
-                apothem,
+                radius,
                 VectorXY.Zero,
                 options);
         }
@@ -36,17 +36,17 @@ namespace Akeldov.Math.Hexes
         /// Rasterizes unique hex edge segments for the whole topology with the specified zero hex center.
         /// </summary>
         /// <param name="hexMapTopology">The topology to rasterize.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="origin">The center of the zero hex.</param>
         /// <param name="options">The rendering and output parameters.</param>
         /// <returns>A raster of the hex map edge segments.</returns>
         public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology hexMapTopology,
-            float apothem,
+            float radius,
             VectorXY origin,
             HexMapTopologyRasterizationOptions options)
         {
-            var hexMapGeometry = new HexMapGeometry(hexMapTopology.Resolution.X, hexMapTopology.Resolution.Y, origin, apothem, hexMapTopology.Layout);
+            var hexMapGeometry = new HexMapGeometry(hexMapTopology.Resolution.X, hexMapTopology.Resolution.Y, origin, radius, hexMapTopology.Layout);
             var spatialRasterGrid = hexMapGeometry.ToSpatialRasterGrid(options.PixelsPerApothem, options.Margin);
 
             var res = hexMapGeometry
@@ -62,32 +62,32 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>Rasterizes a topology with XY index labels.</summary>
-        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float radius,
             HexMapTopologyRasterizationOptions options, HexMapTopologyXYLabelsRasterizationOptions labels) =>
-            topology.Rasterize(apothem, VectorXY.Zero, options, labels);
+            topology.Rasterize(radius, VectorXY.Zero, options, labels);
 
         /// <summary>Rasterizes a topology at an origin with XY index labels.</summary>
-        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem, VectorXY origin,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float radius, VectorXY origin,
             HexMapTopologyRasterizationOptions options, HexMapTopologyXYLabelsRasterizationOptions labels)
         {
-            var geometry = new HexMapGeometry(topology, origin, apothem);
-            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(apothem, origin, options);
+            var geometry = new HexMapGeometry(topology, origin, radius);
+            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(radius, origin, options);
             AddLabels(raster, new HexCenterMap(geometry), labels.Font, labels.FontSize, labels.Color,
                 labels.EdgeFalloff, labels.Offset, index => $"({index.X}, {index.Y})");
             return raster;
         }
 
         /// <summary>Rasterizes a topology with QRS index labels.</summary>
-        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float radius,
             HexMapTopologyRasterizationOptions options, HexMapTopologyQRSLabelsRasterizationOptions labels) =>
-            topology.Rasterize(apothem, VectorXY.Zero, options, labels);
+            topology.Rasterize(radius, VectorXY.Zero, options, labels);
 
         /// <summary>Rasterizes a topology at an origin with QRS index labels.</summary>
-        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float apothem, VectorXY origin,
+        public static SpatialRaster<Gray8BitColor> Rasterize(this HexMapTopology topology, float radius, VectorXY origin,
             HexMapTopologyRasterizationOptions options, HexMapTopologyQRSLabelsRasterizationOptions labels)
         {
-            var geometry = new HexMapGeometry(topology, origin, apothem);
-            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(apothem, origin, options);
+            var geometry = new HexMapGeometry(topology, origin, radius);
+            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(radius, origin, options);
             AddLabels(raster, new HexCenterMap(geometry), labels.Font, labels.FontSize, labels.Color,
                 labels.EdgeFalloff, labels.Offset, index =>
                 {
@@ -100,24 +100,24 @@ namespace Akeldov.Math.Hexes
         /// <summary>Rasterizes a topology with both XY and QRS index labels.</summary>
         public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology topology,
-            float apothem,
+            float radius,
             HexMapTopologyRasterizationOptions options,
             HexMapTopologyXYLabelsRasterizationOptions xyLabels,
             HexMapTopologyQRSLabelsRasterizationOptions qrsLabels) =>
-            topology.Rasterize(apothem, VectorXY.Zero, options, xyLabels, qrsLabels);
+            topology.Rasterize(radius, VectorXY.Zero, options, xyLabels, qrsLabels);
 
         /// <summary>Rasterizes a topology at an origin with both XY and QRS index labels.</summary>
         public static SpatialRaster<Gray8BitColor> Rasterize(
             this HexMapTopology topology,
-            float apothem,
+            float radius,
             VectorXY origin,
             HexMapTopologyRasterizationOptions options,
             HexMapTopologyXYLabelsRasterizationOptions xyLabels,
             HexMapTopologyQRSLabelsRasterizationOptions qrsLabels)
         {
-            var geometry = new HexMapGeometry(topology, origin, apothem);
+            var geometry = new HexMapGeometry(topology, origin, radius);
             var centers = new HexCenterMap(geometry);
-            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(apothem, origin, options);
+            SpatialRaster<Gray8BitColor> raster = topology.Rasterize(radius, origin, options);
 
             AddLabels(raster, centers, xyLabels.Font, xyLabels.FontSize, xyLabels.Color,
                 xyLabels.EdgeFalloff, xyLabels.Offset, index => $"({index.X}, {index.Y})");

@@ -174,7 +174,7 @@ public class VoronoiHexPartitionerTests
             width: 2,
             height: 1,
             origin: new VectorXY(float.MaxValue, 0f),
-            apothem: float.MaxValue / 4f,
+            radius: (float.MaxValue / 4f).ConvertHexApothemToRadius(),
             layout: Layout.OddR);
         var partitioner = new VoronoiHexPartitioner(sites);
 

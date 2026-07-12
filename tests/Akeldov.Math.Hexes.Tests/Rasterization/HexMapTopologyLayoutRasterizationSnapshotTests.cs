@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -26,7 +27,7 @@ public class HexMapTopologyLayoutRasterizationSnapshotTests
         TrueTypeFont font = TrueTypeFont.Load(fontPath);
         SpatialRaster<Gray8BitColor> raster = new HexMapTopology(4, 3, layout)
             .Rasterize(
-                100f,
+                100f.ConvertHexApothemToRadius(),
                 new HexMapTopologyRasterizationOptions(30f, 1f, 1f, Gray8BitColor.Black, Gray8BitColor.White, 100),
                 new HexMapTopologyXYLabelsRasterizationOptions(
                     font, 22f, Gray8BitColor.Black, 0.8f, new VectorXY(0f, 17f)),

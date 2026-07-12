@@ -16,32 +16,32 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Creates a spatial raster grid that covers the whole hex map.
         /// </summary>
         /// <param name="topology">The hex map topology.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="origin">The center of the zero hex.</param>
         /// <param name="pixelsPerApothem">The raster resolution density in pixels per hex apothem.</param>
         /// <returns>A raster grid covering all hexes in the map.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="pixelsPerApothem"/> is not finite and positive,
         /// when <paramref name="origin"/> contains a non-finite component,
-        /// when <paramref name="apothem"/> is not finite and positive,
+        /// when <paramref name="radius"/> is not finite and positive,
         /// when <paramref name="topology"/> has empty dimensions, or when its layout is unsupported.
         /// </exception>
         /// <exception cref="OverflowException">Thrown when the raster resolution does not fit <see cref="int"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SpatialRasterGrid ToSpatialRasterGrid(
             this HexMapTopology topology,
-            float apothem,
+            float radius,
             VectorXY origin,
             float pixelsPerApothem)
         {
-            return new HexMapGeometry(topology, origin, apothem).ToSpatialRasterGrid(pixelsPerApothem);
+            return new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem);
         }
 
         /// <summary>
         /// Creates a spatial raster grid that covers the whole hex map with an outer margin.
         /// </summary>
         /// <param name="topology">The hex map topology.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="origin">The center of the zero hex.</param>
         /// <param name="pixelsPerApothem">The raster resolution density in pixels per hex apothem.</param>
         /// <param name="margin">The non-negative margin added to each side of the map bounding box. The unit is the coordinate-space unit.</param>
@@ -50,19 +50,19 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Thrown when <paramref name="pixelsPerApothem"/> is not finite and positive,
         /// when <paramref name="margin"/> is negative or non-finite,
         /// when <paramref name="origin"/> contains a non-finite component,
-        /// when <paramref name="apothem"/> is not finite and positive,
+        /// when <paramref name="radius"/> is not finite and positive,
         /// when <paramref name="topology"/> has empty dimensions, or when its layout is unsupported.
         /// </exception>
         /// <exception cref="OverflowException">Thrown when the raster resolution does not fit <see cref="int"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SpatialRasterGrid ToSpatialRasterGrid(
             this HexMapTopology topology,
-            float apothem,
+            float radius,
             VectorXY origin,
             float pixelsPerApothem,
             float margin)
         {
-            return new HexMapGeometry(topology, origin, apothem).ToSpatialRasterGrid(pixelsPerApothem, margin);
+            return new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem, margin);
         }
 
         /// <summary>
@@ -105,18 +105,18 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Returns the axis-aligned bounding box of the whole hex map as a rectangle.
         /// </summary>
         /// <param name="topology">The hex map topology.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="origin">The center of the zero hex.</param>
         /// <returns>The axis-aligned rectangle that contains all hexes in the map.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="origin"/> contains a non-finite component,
-        /// when <paramref name="apothem"/> is not finite and positive,
+        /// when <paramref name="radius"/> is not finite and positive,
         /// when <paramref name="topology"/> has empty dimensions, or when its layout is unsupported.
         /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Rectangle BoundingBox(this HexMapTopology topology, float apothem, VectorXY origin)
+        public static Rectangle BoundingBox(this HexMapTopology topology, float radius, VectorXY origin)
         {
-            return new HexMapGeometry(topology, origin, apothem).BoundingBox();
+            return new HexMapGeometry(topology, origin, radius).BoundingBox();
         }
 
         /// <summary>
