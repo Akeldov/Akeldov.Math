@@ -1,4 +1,5 @@
 using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 
@@ -23,7 +24,7 @@ public class HexGeometryArgumentValidationTests
     }
 
     [Test]
-    public void BoundingBoxHelpers_WhenApothemOrRadiusIsInvalid_Throw()
+    public void BoundingBoxHelpers_WhenSizeIsInvalid_Throw()
     {
         Assert.Multiple(() =>
         {
@@ -34,10 +35,7 @@ public class HexGeometryArgumentValidationTests
                 () => _ = new VectorXYInt(1, 1).BoundingBox(1f, float.PositiveInfinity, Layout.OddR),
                 "hexRadius");
             AssertArgumentOutOfRange(
-                () => _ = new VectorQRSInt(1, 1).BoundingBoxSize(float.PositiveInfinity, 1f, Layout.OddR),
-                "apothem");
-            AssertArgumentOutOfRange(
-                () => _ = new VectorQRSInt(1, 1).BoundingBoxSize(1f, float.PositiveInfinity, Layout.OddR),
+                () => _ = new VectorQRSInt(1, 1).BoundingBoxSize(float.PositiveInfinity, Layout.OddR),
                 "radius");
         });
     }
@@ -156,7 +154,22 @@ public class HexGeometryArgumentValidationTests
             AssertArgumentOutOfRange(
                 () => _ = new PointXY(0f, 0f).GetClosestVertexIndex(1f, new VectorXY(float.PositiveInfinity, 0f), Layout.OddR),
                 "hexCenter");
+            AssertArgumentOutOfRange(
+                () => _ = new PointXY(0f, 0f).GetClosestHexVertexIndex(0f, VectorXY.Zero, Layout.OddR),
+                "radius");
+            AssertArgumentOutOfRange(
+                () => _ = new PointXY(0f, 0f).GetClosestHexVertexIndex(1f, new VectorXY(float.PositiveInfinity, 0f), Layout.OddR),
+                "hexFieldOrigin");
         });
+    }
+
+    [Test]
+    public void GetClosestHexVertexIndex_DerivesApothemFromRadius()
+    {
+        var result = new PointXY(0f, 0f).GetClosestHexVertexIndex(2f, VectorXY.Zero, Layout.OddR);
+
+        Assert.That(result.hexIndex, Is.EqualTo(VectorXYInt.Zero));
+        Assert.That(result.hexVertex, Is.EqualTo(HexVertex.Vertex0));
     }
 
     private static void AssertArgumentOutOfRange(TestDelegate action, string parameterName)

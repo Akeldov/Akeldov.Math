@@ -10,7 +10,8 @@ namespace Akeldov.Math.Hexes.Tests.Geometry.Contours;
 
 public class HexMatrixApothemOffsetRegionTests
 {
-    private const float Apothem = 1.25f;
+    private const float Radius = 1.25f;
+    private static readonly float Apothem = Radius.ConvertHexRadiusToApothem();
     private const float Epsilon = 1e-4f;
 
     [TestCase(Layout.OddR)]
@@ -84,7 +85,7 @@ public class HexMatrixApothemOffsetRegionTests
     [Test]
     public void ToApothemOffsetRegion_WhenPolyhexIsEmpty_Throws()
     {
-        var geometry = new PolyhexGeometry(new[,] { { false } }, Apothem);
+        var geometry = new PolyhexGeometry(new[,] { { false } }, Radius);
 
         Assert.Throws<InvalidOperationException>(() => geometry.ToApothemOffsetRegion());
     }
@@ -100,7 +101,7 @@ public class HexMatrixApothemOffsetRegionTests
                 { false, true,  true,  true  },
                 { false, false, true,  false }
             },
-            Apothem);
+            Radius);
     }
 
     private static void AssertEveryCurvePointStaysAtApothemDistance(
@@ -120,7 +121,7 @@ public class HexMatrixApothemOffsetRegionTests
 
                 for (int j = 0; j <= sampleCount; j++)
                 {
-                    float coordinate = curve.Length * j / sampleCount;
+                    float coordinate = j == sampleCount ? curve.Length : curve.Length * j / sampleCount;
                     PointXY point = curve.GetPoint(coordinate);
 
                     Assert.That(

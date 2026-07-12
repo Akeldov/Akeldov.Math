@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -13,8 +14,6 @@ namespace Akeldov.Math.Hexes.Rasterization
     public sealed class HexFieldTopologyRGBA16BitRasterizer :
         ISpatialRasterizer<IndexSeptupletMap, RGBA16BitColor>
     {
-        private const float ApothemToRadius = 1.1547005f;
-
         private static readonly VectorXY[] RowLayoutNormalizedHexVertices =
         {
             new VectorXY(0.8660254f, 0.5f),
@@ -36,6 +35,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         };
 
         private readonly VectorXY _origin;
+        private readonly float _radius;
         private readonly float _apothem;
         private readonly Func<VectorXYInt, RGBA16BitColor> _indexToColor;
 
@@ -43,21 +43,22 @@ namespace Akeldov.Math.Hexes.Rasterization
         /// Initializes a new instance of the HexFieldTopologyRGBA16BitRasterizer type.
         /// </summary>
         /// <param name="origin">The Origin value.</param>
-        /// <param name="apothem">The Apothem value.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="indexToColor">The IndexToColor value.</param>
         public HexFieldTopologyRGBA16BitRasterizer(
             VectorXY origin,
-            float apothem,
+            float radius,
             Func<VectorXYInt, RGBA16BitColor> indexToColor)
         {
             if (!origin.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex field origin components must be finite.");
 
-            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(apothem));
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius));
 
             _origin = origin;
-            _apothem = apothem;
+            _radius = radius;
+            _apothem = radius.ConvertHexRadiusToApothem();
             _indexToColor = indexToColor ?? throw new ArgumentNullException(nameof(indexToColor));
         }
 
@@ -74,7 +75,6 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateSource(source);
             ValidateGrid(grid);
 
-            float radius = _apothem * ApothemToRadius;
             VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
 
@@ -82,9 +82,9 @@ namespace Akeldov.Math.Hexes.Rasterization
             {
                 for (int x = 0; x < source.Width; x++)
                 {
-                    VectorXY center = GetHexCenter(x, y, source.Layout, radius);
+                    VectorXY center = GetHexCenter(x, y, source.Layout);
                     RGBA16BitColor color = _indexToColor(new VectorXYInt(x, y));
-                    RasterizeHex(center, radius, normalizedVertices, grid, values, color);
+                    RasterizeHex(center, _radius, normalizedVertices, grid, values, color);
                 }
             }
 
@@ -106,9 +106,8 @@ namespace Akeldov.Math.Hexes.Rasterization
 
             ValidateSource(source);
 
-            float radius = _apothem * ApothemToRadius;
             VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Layout);
-            RasterBounds bounds = GetBounds(source, radius, normalizedVertices);
+            RasterBounds bounds = GetBounds(source, normalizedVertices);
             double pixelsPerWorldUnit = (double)pixelsPerApothem / _apothem;
             int rasterWidth = CalculateRasterResolution(bounds.Width, pixelsPerWorldUnit);
             int rasterHeight = CalculateRasterResolution(bounds.Height, pixelsPerWorldUnit);
@@ -128,25 +127,25 @@ namespace Akeldov.Math.Hexes.Rasterization
             return resolution < 1d ? 1 : (int)resolution;
         }
 
-        private VectorXY GetHexCenter(int x, int y, Layout layout, float radius)
+        private VectorXY GetHexCenter(int x, int y, Layout layout)
         {
             switch (layout)
             {
                 case Layout.OddR:
                     return new VectorXY(
                         _origin.X + x * 2f * _apothem + ((y & 1) == 1 ? _apothem : 0f),
-                        _origin.Y + 1.5f * radius * y);
+                        _origin.Y + 1.5f * _radius * y);
                 case Layout.EvenR:
                     return new VectorXY(
                         _origin.X + x * 2f * _apothem + ((y & 1) == 0 ? _apothem : 0f) - _apothem,
-                        _origin.Y + 1.5f * radius * y);
+                        _origin.Y + 1.5f * _radius * y);
                 case Layout.OddQ:
                     return new VectorXY(
-                        _origin.X + 1.5f * radius * x,
+                        _origin.X + 1.5f * _radius * x,
                         _origin.Y + y * 2f * _apothem + ((x & 1) == 1 ? _apothem : 0f));
                 case Layout.EvenQ:
                     return new VectorXY(
-                        _origin.X + 1.5f * radius * x,
+                        _origin.X + 1.5f * _radius * x,
                         _origin.Y + y * 2f * _apothem + ((x & 1) == 0 ? _apothem : 0f) - _apothem);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
@@ -220,10 +219,9 @@ namespace Akeldov.Math.Hexes.Rasterization
 
         private RasterBounds GetBounds(
             IndexSeptupletMap source,
-            float radius,
             VectorXY[] normalizedVertices)
         {
-            RasterBounds bounds = GetHexBounds(GetHexCenter(0, 0, source.Layout, radius), radius, normalizedVertices);
+            RasterBounds bounds = GetHexBounds(GetHexCenter(0, 0, source.Layout), _radius, normalizedVertices);
 
             for (int y = 0; y < source.Height; y++)
             {
@@ -232,7 +230,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                     if (x == 0 && y == 0)
                         continue;
 
-                    bounds = bounds.Include(GetHexBounds(GetHexCenter(x, y, source.Layout, radius), radius, normalizedVertices));
+                    bounds = bounds.Include(GetHexBounds(GetHexCenter(x, y, source.Layout), _radius, normalizedVertices));
                 }
             }
 

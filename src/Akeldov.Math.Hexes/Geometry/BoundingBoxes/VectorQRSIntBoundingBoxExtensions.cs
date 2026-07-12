@@ -10,22 +10,20 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorQRSIntExtensions
     {
         /// <summary>
-        /// Performs the BoundingBoxSize operation.
+        /// Returns the bounding-box size of a rectangular hex grid.
         /// </summary>
         /// <param name="size">The size value.</param>
-        /// <param name="apothem">The apothem value.</param>
-        /// <param name="radius">The radius value.</param>
-        /// <param name="layout">The layout value.</param>
-        public static VectorXY BoundingBoxSize(this VectorQRSInt size, float apothem, float radius, Layout layout)
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        /// <param name="layout">The hex layout.</param>
+        public static VectorXY BoundingBoxSize(this VectorQRSInt size, float radius, Layout layout)
         {
             if (size.Q < 0 || size.R < 0)
                 throw new ArgumentOutOfRangeException(nameof(size), size, "Cannot calculate bounding box for size with negative components.");
 
-            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
-
             if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+
+            float apothem = radius.ConvertHexRadiusToApothem();
 
             if (size.Q == 0 || size.R == 0)
                 return new VectorXY(0, 0);

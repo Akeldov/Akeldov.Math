@@ -8,20 +8,19 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorXYExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Returns the containing hex index and the closest vertex of that hex.
         /// </summary>
         /// <param name="point">The Point value.</param>
-        /// <param name="apothem">The Apothem value.</param>
-        /// <param name="radius">The Radius value.</param>
-        /// <param name="hexFieldOrigin">The HexFieldOrigin value.</param>
-        /// <param name="layout">The Layout value.</param>
-        public static (VectorXYInt hexIndex, HexVertex hexVertex) GetClosestVertexIndex(
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        /// <param name="hexFieldOrigin">The center of the zero hex.</param>
+        /// <param name="layout">The hex layout.</param>
+        public static (VectorXYInt hexIndex, HexVertex hexVertex) GetClosestHexVertexIndex(
             this PointXY point,
-            float apothem,
             float radius,
             VectorXY hexFieldOrigin,
             Layout layout)
         {
+            float apothem = radius.ConvertHexRadiusToApothem();
             var hexIndex = point.ToXYIndex(radius, hexFieldOrigin, layout);
             var hexCenter = hexIndex.GetHexCenter(apothem, radius, hexFieldOrigin, layout);
             var closestVertexIndex = point.GetClosestVertexIndex(radius, hexCenter, layout);

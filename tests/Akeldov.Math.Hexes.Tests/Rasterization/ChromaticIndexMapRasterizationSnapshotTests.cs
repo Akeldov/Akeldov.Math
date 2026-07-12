@@ -1,4 +1,5 @@
 using Akeldov.Math.Hexes.Chromatization;
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Rasterization;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -21,7 +22,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
             layout: layout);
         var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
             origin: new VectorXY(0f, 0f),
-            apothem: 8f,
+            radius: 8f.ConvertHexApothemToRadius(),
             chromaticIndexToColor: ToSnapshotColor);
         SpatialRasterGrid grid = rasterizer.CreateGrid(chromatization, pixelsPerApothem: 8f);
         SpatialRaster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);

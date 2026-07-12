@@ -104,7 +104,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
                 { false, true,  true,  true  },
                 { false, false, true,  false }
             },
-            apothem: 1f);
+            radius: 1f.ConvertHexApothemToRadius());
     }
 
     private static PolyhexGeometry CreateHollowSnapshotGeometry()
@@ -118,7 +118,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
                 { true, false, false, true,  true },
                 { true, true,  true,  true,  true }
             },
-            apothem: 1f);
+            radius: 1f.ConvertHexApothemToRadius());
     }
 
     private static SpatialRaster<Gray8BitColor> Rasterize(ContourBasedRegion region)

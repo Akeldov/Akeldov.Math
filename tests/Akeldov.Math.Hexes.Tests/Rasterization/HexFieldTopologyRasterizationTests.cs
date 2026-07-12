@@ -72,10 +72,12 @@ public class HexFieldTopologyRasterizationTests
     }
 
     [Test]
-    public void Constructor_WhenApothemIsInvalid_Throws()
+    public void Constructor_WhenRadiusIsInvalid_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             new HexFieldTopologyRGBA16BitRasterizer(new VectorXY(0f, 0f), 0f, _ => default));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
     [Test]

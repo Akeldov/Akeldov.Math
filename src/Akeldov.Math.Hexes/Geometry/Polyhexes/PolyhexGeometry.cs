@@ -17,25 +17,25 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Initializes a new instance of the PolyhexGeometry type.
         /// </summary>
         /// <param name="polyhex">The polyhex value.</param>
-        /// <param name="apothem">The apothem value.</param>
-        public PolyhexGeometry(Polyhex polyhex, float apothem)
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        public PolyhexGeometry(Polyhex polyhex, float radius)
         {
             _polyhex = polyhex ?? throw new ArgumentNullException(nameof(polyhex));
 
-            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
 
-            _hexApothem = apothem;
-            _hexRadius = _hexApothem.ConvertHexApothemToRadius();
+            _hexRadius = radius;
+            _hexApothem = radius.ConvertHexRadiusToApothem();
         }
 
         /// <summary>
         /// Initializes a new instance of the PolyhexGeometry type.
         /// </summary>
         /// <param name="boolMask">The BoolMask value.</param>
-        /// <param name="apothem">The Apothem value.</param>
-        public PolyhexGeometry(bool[,] boolMask, float apothem)
-            : this(new Polyhex(boolMask), apothem)
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        public PolyhexGeometry(bool[,] boolMask, float radius)
+            : this(new Polyhex(boolMask), radius)
         {
         }
 
@@ -43,9 +43,9 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Initializes a new instance of the PolyhexGeometry type.
         /// </summary>
         /// <param name="intMask">The IntMask value.</param>
-        /// <param name="apothem">The Apothem value.</param>
-        public PolyhexGeometry(int[,] intMask, float apothem)
-            : this(new Polyhex(intMask), apothem)
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        public PolyhexGeometry(int[,] intMask, float radius)
+            : this(new Polyhex(intMask), radius)
         {
         }
 
@@ -53,9 +53,9 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Initializes a new instance of the PolyhexGeometry type.
         /// </summary>
         /// <param name="qrsResolution">The qrsResolution value.</param>
-        /// <param name="apothem">The Apothem value.</param>
-        public PolyhexGeometry(VectorQRSInt qrsResolution, float apothem)
-            : this(new Polyhex(qrsResolution), apothem)
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
+        public PolyhexGeometry(VectorQRSInt qrsResolution, float radius)
+            : this(new Polyhex(qrsResolution), radius)
         {
         }
 

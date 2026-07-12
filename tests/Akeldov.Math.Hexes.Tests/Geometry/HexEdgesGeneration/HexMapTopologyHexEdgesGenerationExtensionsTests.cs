@@ -18,7 +18,7 @@ public class HexMapTopologyHexEdgesGenerationExtensionsTests
         List<Segment> segments = topology.ToHexEdgeSegments(2f);
 
         Assert.That(segments, Has.Count.EqualTo(6));
-        Assert.That(segments.Select(segment => segment.Length), Is.All.EqualTo(2f.ConvertHexApothemToRadius()).Within(0.0001f));
+        Assert.That(segments.Select(segment => segment.Length), Is.All.EqualTo(2f).Within(0.0001f));
         AssertSegmentsAreUnique(segments);
     }
 
@@ -69,7 +69,7 @@ public class HexMapTopologyHexEdgesGenerationExtensionsTests
 
         List<Segment> geometrySegments = geometry.ToHexEdgeSegments();
         List<Segment> expectedSegments = topology
-            .ToHexEdgeSegments(apothem)
+            .ToHexEdgeSegments(radius)
             .Select(segment => segment + translation)
             .ToList();
 
@@ -103,14 +103,14 @@ public class HexMapTopologyHexEdgesGenerationExtensionsTests
     [TestCase(0f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
-    public void ToHexEdgeSegments_WhenApothemIsInvalid_Throws(float apothem)
+    public void ToHexEdgeSegments_WhenRadiusIsInvalid_Throws(float radius)
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            topology.ToHexEdgeSegments(apothem));
+            topology.ToHexEdgeSegments(radius));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("apothem"));
+        Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
     private static void AssertSegmentsAreUnique(IReadOnlyCollection<Segment> segments)

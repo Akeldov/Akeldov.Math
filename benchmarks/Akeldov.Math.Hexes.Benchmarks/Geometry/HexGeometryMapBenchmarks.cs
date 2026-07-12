@@ -22,14 +22,14 @@ public class HexGeometryMapBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _centerMap = new HexCenterMap(Size, Size, VectorXY.Zero, apothem: 8f, Layout);
+        _centerMap = new HexCenterMap(Size, Size, VectorXY.Zero, radius: 8f, Layout);
         _indices = CreateIndices(Size, Size);
     }
 
     [Benchmark]
     public HexCenterMap ConstructCenterMap()
     {
-        return new HexCenterMap(Size, Size, VectorXY.Zero, apothem: 8f, Layout);
+        return new HexCenterMap(Size, Size, VectorXY.Zero, radius: 8f, Layout);
     }
 
     [Benchmark]

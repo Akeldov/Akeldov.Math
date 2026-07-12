@@ -54,14 +54,14 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Generates all unique edge segments for every hex in the topology.
         /// </summary>
         /// <param name="topology">The topology to generate edge segments for.</param>
-        /// <param name="apothem">The hex apothem. The unit is the coordinate-space unit.</param>
+        /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <returns>A new mutable list of segments owned by the caller. Shared hex edges appear only once.</returns>
-        public static List<Segment> ToHexEdgeSegments(this HexMapTopology topology, float apothem)
+        public static List<Segment> ToHexEdgeSegments(this HexMapTopology topology, float radius)
         {
-            if (float.IsNaN(apothem) || float.IsInfinity(apothem) || apothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(apothem), apothem, "Hex apothem must be finite and positive.");
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
 
-            float radius = apothem.ConvertHexApothemToRadius();
+            float apothem = radius.ConvertHexRadiusToApothem();
             VectorXY origin = VectorXYInt.Zero.GetHexCenter(apothem, radius, topology.Layout);
 
             return ToHexEdgeSegments(topology, origin, apothem, radius);
