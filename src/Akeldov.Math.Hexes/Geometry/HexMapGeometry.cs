@@ -83,26 +83,6 @@ namespace Akeldov.Math.Hexes.Geometry
         public HexMapTopology Topology { get; }
 
         /// <summary>
-        /// Gets the map width in hexes.
-        /// </summary>
-        public int Width => Topology.Resolution.X;
-
-        /// <summary>
-        /// Gets the map height in hexes.
-        /// </summary>
-        public int Height => Topology.Resolution.Y;
-
-        /// <summary>
-        /// Gets the total number of cells in the map.
-        /// </summary>
-        public int Count => Topology.Count;
-
-        /// <summary>
-        /// Gets the hex layout used by the map.
-        /// </summary>
-        public Layout Layout => Topology.Layout;
-
-        /// <summary>
         /// Gets the center of the zero hex.
         /// </summary>
         public VectorXY Origin { get; }

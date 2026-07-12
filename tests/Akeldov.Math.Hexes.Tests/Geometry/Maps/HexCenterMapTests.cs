@@ -19,8 +19,7 @@ public class HexCenterMapTests
         {
             var geometry = new HexCenterMap(2, 2, origin, apothem, layout);
 
-            Assert.That(geometry.Width, Is.EqualTo(2));
-            Assert.That(geometry.Height, Is.EqualTo(2));
+            Assert.That(geometry.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
             Assert.That(geometry.Geometry, Is.EqualTo(new HexMapGeometry(2, 2, origin, apothem, layout)));
             Assert.That(geometry.Origin, Is.EqualTo(origin));
             Assert.That(geometry.Apothem, Is.EqualTo(apothem));

@@ -137,26 +137,26 @@ namespace Akeldov.Math.Hexes.Geometry
             if (float.IsNaN(geometry.Apothem) || float.IsInfinity(geometry.Apothem) || geometry.Apothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry apothem must be finite and positive.");
 
-            if (geometry.Width <= 0 || geometry.Height <= 0)
+            if (geometry.Topology.Resolution.X <= 0 || geometry.Topology.Resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry dimensions must be positive.");
 
             float radius = geometry.Radius;
-            VectorXY size = new VectorXYInt(geometry.Width, geometry.Height).BoundingBox(
+            VectorXY size = geometry.Topology.Resolution.BoundingBox(
                 geometry.Apothem,
                 radius,
-                geometry.Layout);
+                geometry.Topology.Layout);
 
             float minX;
             float minY;
 
-            switch (geometry.Layout)
+            switch (geometry.Topology.Layout)
             {
                 case Layout.OddR:
                     minX = geometry.Origin.X - geometry.Apothem;
                     minY = geometry.Origin.Y - radius;
                     break;
                 case Layout.EvenR:
-                    minX = geometry.Origin.X - geometry.Apothem * (geometry.Height == 1 ? 1f : 2f);
+                    minX = geometry.Origin.X - geometry.Apothem * (geometry.Topology.Resolution.Y == 1 ? 1f : 2f);
                     minY = geometry.Origin.Y - radius;
                     break;
                 case Layout.OddQ:
@@ -165,7 +165,7 @@ namespace Akeldov.Math.Hexes.Geometry
                     break;
                 case Layout.EvenQ:
                     minX = geometry.Origin.X - radius;
-                    minY = geometry.Origin.Y - geometry.Apothem * (geometry.Width == 1 ? 1f : 2f);
+                    minY = geometry.Origin.Y - geometry.Apothem * (geometry.Topology.Resolution.X == 1 ? 1f : 2f);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry layout is not supported.");

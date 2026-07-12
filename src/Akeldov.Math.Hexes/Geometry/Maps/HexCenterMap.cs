@@ -45,14 +45,14 @@ namespace Akeldov.Math.Hexes.Geometry
             float radius = geometry.Radius;
 
             Geometry = geometry;
-            Width = geometry.Width;
-            Height = geometry.Height;
+            Width = geometry.Topology.Resolution.X;
+            Height = geometry.Topology.Resolution.Y;
             Origin = geometry.Origin;
             Apothem = geometry.Apothem;
-            Layout = geometry.Layout;
-            _values = new PointXY[geometry.Count];
+            Layout = geometry.Topology.Layout;
+            _values = new PointXY[geometry.Topology.Count];
 
-            switch (geometry.Layout)
+            switch (geometry.Topology.Layout)
             {
                 case Layout.OddR:
                     FillRowLayoutCenters(false, radius);
