@@ -98,6 +98,37 @@ result with invariants.
 Do not change a caller-owned mutable return to `IReadOnlyList<T>` solely for consistency. Treat
 the return type as part of the ownership contract.
 
+## Commit Names
+
+Use the following format for commit names:
+
+```text
+<type>(<scope>): <description>
+```
+
+`type` must be one of the main Conventional Commits prefixes, generally written as a full word
+rather than an abbreviation. Use `feature` instead of `feat` and `performance` instead of `perf`.
+Documentation is the exception and must still use `docs`, not `documentation`. The supported
+types are `feature`, `fix`, `docs`, `test`, `refactor`, `performance`, `style`, `build`,
+`continuous-integration`, `chore`, and `revert`.
+
+`scope` must be the domain name of the primary affected library, such as `hexes`, `spatial2d`,
+or `graphs`. For changes in a test library, derive the scope from the library under test rather
+than from the test project name. Omit the scope when a commit affects multiple libraries or
+cannot be associated with one specific library. When the scope is omitted, use:
+
+```text
+<type>: <description>
+```
+
+Examples:
+
+```text
+feature(hexes): add pixel-based map rasterization
+test(spatial2d): cover Voronoi partition edge cases
+build: update shared package configuration
+```
+
 ## Tests
 
 When sandboxing is active, request elevated access immediately for .NET build and test commands.
