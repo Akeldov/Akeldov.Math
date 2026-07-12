@@ -46,14 +46,5 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
-        /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
-        /// </summary>
-        /// <param name="layout">The layout value.</param>
-        [Obsolete("Use GetNormalizedHexVertices instead.")]
-        public static VectorXY[] GetNormalizedHexVertexes(Layout layout)
-        {
-            return GetNormalizedHexVertices(layout);
-        }
     }
 }

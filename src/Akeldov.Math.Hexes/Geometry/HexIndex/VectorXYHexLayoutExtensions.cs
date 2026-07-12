@@ -47,20 +47,6 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
-        /// </summary>
-        /// <param name="q">The q value.</param>
-        /// <param name="r">The r value.</param>
-        /// <param name="hexApothem">The hexApothem value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="layout">The layout value.</param>
-        [Obsolete("Use GetHexVertices instead.")]
-        public static VectorXY[] GetHexVertexes(int q, int r, float hexApothem, float hexRadius, Layout layout)
-        {
-            return GetHexVertices(q, r, hexApothem, hexRadius, layout);
-        }
-
-        /// <summary>
         /// Gets the six vertex positions for the specified hex center.
         /// </summary>
         /// <param name="hexCenter">The HexCenter value.</param>
@@ -82,18 +68,6 @@ namespace Akeldov.Math.Hexes.Geometry
                 vertices[i] = hexCenter + normalizedHexVertices[i] * hexRadius;
             }
             return vertices;
-        }
-
-        /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
-        /// </summary>
-        /// <param name="hexCenter">The hexCenter value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="layout">The layout value.</param>
-        [Obsolete("Use GetHexVertices instead.")]
-        public static VectorXY[] GetHexVertexes(this VectorXY hexCenter, float hexRadius, Layout layout)
-        {
-            return hexCenter.GetHexVertices(hexRadius, layout);
         }
 
         private static VectorXY GetAxialOrigin(float hexApothem, float hexRadius, Layout layout)
