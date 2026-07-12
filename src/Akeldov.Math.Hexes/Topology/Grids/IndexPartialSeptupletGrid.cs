@@ -38,7 +38,7 @@ namespace Akeldov.Math.Hexes.Topology
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
 
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, radius, hexAdjacencyMap.Layout);
+            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, radius, hexAdjacencyMap.Topology.Layout);
             var boundingBoxSize = geometry.GetBoundingBoxSize();
 
             if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
@@ -48,7 +48,7 @@ namespace Akeldov.Math.Hexes.Topology
             var stepY = boundingBoxSize.Y / Height;
 
             _values = new PartialSeptuplet<VectorXYInt>[checked(Width * Height)];
-            switch (hexAdjacencyMap.Layout)
+            switch (hexAdjacencyMap.Topology.Layout)
             {
                 case Layout.OddR:
                     Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.OddR, new VectorXY(apothem, radius));
@@ -63,7 +63,7 @@ namespace Akeldov.Math.Hexes.Topology
                     Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.EvenQ, new VectorXY(radius, 2f * apothem));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap.Layout));
+                    throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap.Topology.Layout));
             }
         }
 
@@ -154,7 +154,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (ContainsCell(hexAdjacencyMap, cellIndex))
                 return hexAdjacencyMap[cellIndex];
 
-            sbyte[] offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Layout, cellIndex.X, cellIndex.Y);
+            sbyte[] offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Topology.Layout, cellIndex.X, cellIndex.Y);
             return new PartialSeptuplet<VectorXYInt>(
                 new Septuplet<VectorXYInt>(
                     cellIndex,

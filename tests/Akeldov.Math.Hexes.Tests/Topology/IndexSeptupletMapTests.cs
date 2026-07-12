@@ -11,9 +11,9 @@ public class IndexSeptupletMapTests
     {
         var topology = new IndexSeptupletMap(3, 2, Layout.EvenQ);
 
-        Assert.That(topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
+        Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Count, Is.EqualTo(6));
-        Assert.That(topology.Layout, Is.EqualTo(Layout.EvenQ));
+        Assert.That(topology.Topology.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(typeof(IndexSeptupletMap).GetProperty("Adjacent"), Is.Null);
     }
 
@@ -27,7 +27,7 @@ public class IndexSeptupletMapTests
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));
         Assert.That(map.Count, Is.EqualTo(6));
-        Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
+        Assert.That(map.Topology.Layout, Is.EqualTo(Layout.EvenQ));
     }
 
     [Test]
@@ -37,8 +37,8 @@ public class IndexSeptupletMapTests
 
         Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
-        Assert.That(topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
-        Assert.That(topology.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
+        Assert.That(topology.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(topology[1], Is.EqualTo(adjacency));
     }
 

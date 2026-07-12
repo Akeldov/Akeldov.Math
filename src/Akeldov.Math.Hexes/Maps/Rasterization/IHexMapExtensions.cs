@@ -35,16 +35,16 @@ namespace Akeldov.Math.Hexes
             if (resolution.X <= 0 || resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Raster resolution components must be positive.");
 
-            if (map.Resolution.X <= 0 || map.Resolution.Y <= 0)
+            if (map.Topology.Resolution.X <= 0 || map.Topology.Resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(map), "Hex map resolution components must be positive.");
 
             int count = checked(resolution.X * resolution.Y);
             var values = new TColor[count];
             var geometry = new HexMapGeometry(
-                map.Resolution.X,
-                map.Resolution.Y,
+                map.Topology.Resolution.X,
+                map.Topology.Resolution.Y,
                 radius: 1f,
-                layout: map.Layout);
+                layout: map.Topology.Layout);
             Rectangle bounds = geometry.GetBoundingBox();
             float pixelWidth = bounds.Size.X / resolution.X;
             float pixelHeight = bounds.Size.Y / resolution.Y;
@@ -58,10 +58,10 @@ namespace Akeldov.Math.Hexes
                     var point = new PointXY(
                         bounds.Min.X + (x + 0.5f) * pixelWidth,
                         pointY);
-                    VectorXYInt hexIndex = point.ToXYIndex(geometry.Radius, geometry.Origin, map.Layout);
+                    VectorXYInt hexIndex = point.ToXYIndex(geometry.Radius, geometry.Origin, map.Topology.Layout);
 
-                    if ((uint)hexIndex.X < (uint)map.Resolution.X &&
-                        (uint)hexIndex.Y < (uint)map.Resolution.Y)
+                    if ((uint)hexIndex.X < (uint)map.Topology.Resolution.X &&
+                        (uint)hexIndex.Y < (uint)map.Topology.Resolution.Y)
                     {
                         values[y * resolution.X + x] = colorSelector(map[hexIndex]);
                     }

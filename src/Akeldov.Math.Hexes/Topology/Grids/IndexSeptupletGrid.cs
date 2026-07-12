@@ -51,7 +51,7 @@ namespace Akeldov.Math.Hexes.Topology
 
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, radius, hexAdjacencyMap.Layout);
+            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, radius, hexAdjacencyMap.Topology.Layout);
             VectorXY boundingBoxSize = geometry.GetBoundingBoxSize();
             if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid size components must be finite and positive.");
@@ -72,7 +72,7 @@ namespace Akeldov.Math.Hexes.Topology
             var stepY = gridSize.Y / Height;
 
             _values = new Septuplet<VectorXYInt>[checked(Width * Height)];
-            switch (hexAdjacencyMap.Layout)
+            switch (hexAdjacencyMap.Topology.Layout)
             {
                 case Layout.OddR:
                     Fill(hexAdjacencyMap, radius, gridOrigin, stepX, stepY, Layout.OddR, new VectorXY(apothem, radius));
@@ -87,7 +87,7 @@ namespace Akeldov.Math.Hexes.Topology
                     Fill(hexAdjacencyMap, radius, gridOrigin, stepX, stepY, Layout.EvenQ, new VectorXY(radius, 2f * apothem));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap.Layout));
+                    throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap.Topology.Layout));
             }
         }
 
@@ -179,7 +179,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (ContainsCell(hexAdjacencyMap, cellIndex))
                 return hexAdjacencyMap[cellIndex];
 
-            sbyte[] offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Layout, cellIndex.X, cellIndex.Y);
+            sbyte[] offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Topology.Layout, cellIndex.X, cellIndex.Y);
             return new Septuplet<VectorXYInt>(
                 cellIndex,
                 new VectorXYInt(cellIndex.X + offsets[0], cellIndex.Y + offsets[1]),

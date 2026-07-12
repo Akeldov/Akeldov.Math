@@ -31,7 +31,7 @@ namespace Akeldov.Math.Hexes.Topology
 
             Width = width;
             Height = height;
-            Layout = layout;
+            Topology = new HexMapTopology(width, height, layout);
             _values = new PartialSeptuplet<VectorXYInt>[checked(width * height)];
 
             switch (layout)
@@ -64,19 +64,14 @@ namespace Akeldov.Math.Hexes.Topology
         public int Height { get; }
 
         /// <summary>
-        /// Gets the map resolution in hexes.
+        /// Gets the map topology.
         /// </summary>
-        public VectorXYInt Resolution => new VectorXYInt(Width, Height);
+        public HexMapTopology Topology { get; }
 
         /// <summary>
         /// Gets the Count value.
         /// </summary>
         public int Count => _values.Length;
-
-        /// <summary>
-        /// Gets the Layout value.
-        /// </summary>
-        public Layout Layout { get; }
 
         /// <summary>
         /// Gets the value at the specified index.

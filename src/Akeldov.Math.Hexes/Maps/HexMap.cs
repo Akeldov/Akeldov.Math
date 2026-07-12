@@ -13,8 +13,6 @@ namespace Akeldov.Math.Hexes
         private readonly HexMapTopology _topology;
         private readonly int _width;
         private readonly int _height;
-        private readonly Layout _layout;
-
         private readonly TValue[] _values;
 
         /// <summary>
@@ -26,7 +24,6 @@ namespace Akeldov.Math.Hexes
             _topology = topology;
             _width = topology.Resolution.X;
             _height = topology.Resolution.Y;
-            _layout = topology.Layout;
             _values = new TValue[topology.Count];
         }
 
@@ -41,7 +38,6 @@ namespace Akeldov.Math.Hexes
             _topology = new HexMapTopology(width, height, layout);
             _width = width;
             _height = height;
-            _layout = layout;
             _values = new TValue[checked(width * height)];
         }
 
@@ -50,7 +46,6 @@ namespace Akeldov.Math.Hexes
             _topology = topology;
             _width = topology.Resolution.X;
             _height = topology.Resolution.Y;
-            _layout = topology.Layout;
             _values = values ?? throw new ArgumentNullException(nameof(values));
 
             if (values.Length != topology.Count)
@@ -62,7 +57,6 @@ namespace Akeldov.Math.Hexes
             _topology = new HexMapTopology(width, height, layout);
             _width = width;
             _height = height;
-            _layout = layout;
             _values = values ?? throw new ArgumentNullException(nameof(values));
 
             if (values.Length != width * height)
@@ -83,16 +77,6 @@ namespace Akeldov.Math.Hexes
         /// Gets the Height value.
         /// </summary>
         public int Height => _height;
-
-        /// <summary>
-        /// Gets the map resolution in hexes.
-        /// </summary>
-        public VectorXYInt Resolution => new VectorXYInt(_width, _height);
-
-        /// <summary>
-        /// Gets the Layout value.
-        /// </summary>
-        public Layout Layout => _layout;
 
         /// <summary>
         /// Gets the value at the specified index.

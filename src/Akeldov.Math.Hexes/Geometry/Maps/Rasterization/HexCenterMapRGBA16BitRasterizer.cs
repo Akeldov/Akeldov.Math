@@ -37,7 +37,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateGrid(grid);
 
             float radius = source.Apothem.ConvertHexApothemToRadius();
-            VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Layout);
+            VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Topology.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             int count = checked(source.Width * source.Height);
 
@@ -67,7 +67,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateSource(source);
 
             float radius = source.Apothem.ConvertHexApothemToRadius();
-            VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Layout);
+            VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Topology.Layout);
             RasterBounds bounds = GetBounds(source, radius, normalizedVertices);
             double pixelsPerWorldUnit = (double)pixelsPerApothem / source.Apothem;
             int rasterWidth = CalculateRasterResolution(bounds.Width, pixelsPerWorldUnit);

@@ -49,7 +49,6 @@ namespace Akeldov.Math.Hexes.Geometry
             Height = geometry.Topology.Resolution.Y;
             Origin = geometry.Origin;
             Apothem = geometry.Apothem;
-            Layout = geometry.Topology.Layout;
             _values = new PointXY[geometry.Topology.Count];
 
             switch (geometry.Topology.Layout)
@@ -93,6 +92,11 @@ namespace Akeldov.Math.Hexes.Geometry
         public HexMapGeometry Geometry { get; }
 
         /// <summary>
+        /// Gets the map topology.
+        /// </summary>
+        public HexMapTopology Topology => Geometry.Topology;
+
+        /// <summary>
         /// Gets the Width value.
         /// </summary>
         public int Width { get; }
@@ -103,11 +107,6 @@ namespace Akeldov.Math.Hexes.Geometry
         public int Height { get; }
 
         /// <summary>
-        /// Gets the map resolution in hexes.
-        /// </summary>
-        public VectorXYInt Resolution => new VectorXYInt(Width, Height);
-
-        /// <summary>
         /// Gets the Origin value.
         /// </summary>
         public VectorXY Origin { get; }
@@ -116,11 +115,6 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Gets the Apothem value.
         /// </summary>
         public float Apothem { get; }
-
-        /// <summary>
-        /// Gets the Layout value.
-        /// </summary>
-        public Layout Layout { get; }
 
         /// <summary>
         /// Gets the value at the specified index.

@@ -19,11 +19,11 @@ public class HexCenterMapTests
         {
             var geometry = new HexCenterMap(2, 2, origin, radius, layout);
 
-            Assert.That(geometry.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
+            Assert.That(geometry.Topology.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
             Assert.That(geometry.Geometry, Is.EqualTo(new HexMapGeometry(2, 2, origin, radius, layout)));
             Assert.That(geometry.Origin, Is.EqualTo(origin));
             Assert.That(geometry.Apothem, Is.EqualTo(radius.ConvertHexRadiusToApothem()));
-            Assert.That(geometry.Layout, Is.EqualTo(layout));
+            Assert.That(geometry.Topology.Layout, Is.EqualTo(layout));
             Assert.That(typeof(HexCenterMap).GetProperty("Centers"), Is.Null);
             VectorAssert.AreEqual(geometry[0], origin.X, origin.Y);
         }
@@ -44,7 +44,7 @@ public class HexCenterMapTests
         Assert.That(map.Height, Is.EqualTo(2));
         Assert.That(map.Origin, Is.EqualTo(new VectorXY(10f, 20f)));
         Assert.That(map.Apothem, Is.EqualTo(2f.ConvertHexRadiusToApothem()));
-        Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
         VectorAssert.AreEqual(map[0], 10f, 20f);
     }
 
@@ -262,8 +262,8 @@ public class HexCenterMapTests
 
         PointXY center = source[5];
 
-        Assert.That(map.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
-        Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
+        Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(center));
         Assert.That(map[5], Is.EqualTo(center));
     }

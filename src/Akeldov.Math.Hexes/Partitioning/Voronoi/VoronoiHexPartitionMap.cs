@@ -1,5 +1,4 @@
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (assignments.Length != count)
                 throw new ArgumentException("Assignment count must match center map dimensions.", nameof(assignments));
 
-            Topology = CreateTopology(centers);
+            Topology = centers.Topology;
             _assignments = CopyAssignments(assignments);
             Cells = Array.AsReadOnly(CopyCells(cells));
         }
@@ -46,27 +45,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <summary>
         /// Gets the topology used by the partition map.
         /// </summary>
-        public IndexSeptupletMap Topology { get; }
-
-        /// <summary>
-        /// Gets the map width in hexes.
-        /// </summary>
-        public int Width => Topology.Resolution.X;
-
-        /// <summary>
-        /// Gets the map height in hexes.
-        /// </summary>
-        public int Height => Topology.Resolution.Y;
-
-        /// <summary>
-        /// Gets the map resolution in hexes.
-        /// </summary>
-        public VectorXYInt Resolution => Topology.Resolution;
-
-        /// <summary>
-        /// Gets the hex layout used by the partition map.
-        /// </summary>
-        public Layout Layout => Topology.Layout;
+        public HexMapTopology Topology { get; }
 
         /// <summary>
         /// Gets the Voronoi cell assigned to the specified hex index.
@@ -113,15 +92,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </returns>
         public HexMap<VoronoiCell> ToMutableHexMap()
         {
-            return new HexMap<VoronoiCell>(Width, Height, Layout, CopyAssignments(_assignments));
-        }
-
-        private static IndexSeptupletMap CreateTopology(HexCenterMap centers)
-        {
-            if (centers == null)
-                throw new ArgumentNullException(nameof(centers));
-
-            return new IndexSeptupletMap(centers.Width, centers.Height, centers.Layout);
+            return new HexMap<VoronoiCell>(Topology.Resolution.X, Topology.Resolution.Y, Topology.Layout, CopyAssignments(_assignments));
         }
 
         private static VoronoiCell[] CopyAssignments(VoronoiCell[] assignments)

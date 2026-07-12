@@ -9,14 +9,9 @@ namespace Akeldov.Math.Hexes
     public interface IHexMap<TValue>
     {
         /// <summary>
-        /// Gets the map resolution in hexes.
+        /// Gets the map topology.
         /// </summary>
-        VectorXYInt Resolution { get; }
-
-        /// <summary>
-        /// Represents the <c>Layout</c> value.
-        /// </summary>
-        Layout Layout { get; }
+        HexMapTopology Topology { get; }
 
         /// <summary>
         /// Represents the <c>this[VectorXYInt]</c> value.

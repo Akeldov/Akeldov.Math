@@ -12,6 +12,38 @@ namespace Akeldov.Math.Hexes
         /// <summary>
         /// Initializes a new hex map topology.
         /// </summary>
+        /// <param name="resolution">The map resolution in hexes.</param>
+        /// <param name="layout">The hex layout used by the map.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when a <paramref name="resolution"/> component is negative, or
+        /// when <paramref name="layout"/> is not supported.
+        /// </exception>
+        /// <exception cref="OverflowException">Thrown when the cell count does not fit <see cref="int"/>.</exception>
+        public HexMapTopology(VectorXYInt resolution, Layout layout)
+        {
+            if (resolution.X < 0 || resolution.Y < 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Map resolution components must be non-negative.");
+
+            switch (layout)
+            {
+                case Layout.OddR:
+                case Layout.EvenR:
+                case Layout.OddQ:
+                case Layout.EvenQ:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+
+            _ = checked(resolution.X * resolution.Y);
+
+            Resolution = resolution;
+            Layout = layout;
+        }
+
+        /// <summary>
+        /// Initializes a new hex map topology.
+        /// </summary>
         /// <param name="width">The map width in hexes.</param>
         /// <param name="height">The map height in hexes.</param>
         /// <param name="layout">The hex layout used by the map.</param>

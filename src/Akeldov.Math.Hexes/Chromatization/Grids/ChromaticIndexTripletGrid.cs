@@ -41,14 +41,14 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(hexAdjacencyMap));
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, DefaultHexRadius, hexAdjacencyMap.Layout);
+            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, DefaultHexRadius, hexAdjacencyMap.Topology.Layout);
             VectorXY gridSize = geometry.GetBoundingBoxSize();
 
             Initialize(
                 hexAdjacencyMap.Width,
                 hexAdjacencyMap.Height,
-                hexAdjacencyMap.Layout,
-                GetDefaultHexOrigin(hexAdjacencyMap.Layout, apothem, DefaultHexRadius),
+                hexAdjacencyMap.Topology.Layout,
+                GetDefaultHexOrigin(hexAdjacencyMap.Topology.Layout, apothem, DefaultHexRadius),
                 apothem,
                 DefaultHexRadius,
                 VectorXY.Zero,

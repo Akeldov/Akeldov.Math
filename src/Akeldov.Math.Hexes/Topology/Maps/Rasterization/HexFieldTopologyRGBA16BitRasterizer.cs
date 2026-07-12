@@ -75,14 +75,14 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateSource(source);
             ValidateGrid(grid);
 
-            VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Layout);
+            VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Topology.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
 
             for (int y = 0; y < source.Height; y++)
             {
                 for (int x = 0; x < source.Width; x++)
                 {
-                    VectorXY center = GetHexCenter(x, y, source.Layout);
+                    VectorXY center = GetHexCenter(x, y, source.Topology.Layout);
                     RGBA16BitColor color = _indexToColor(new VectorXYInt(x, y));
                     RasterizeHex(center, _radius, normalizedVertices, grid, values, color);
                 }
@@ -106,7 +106,7 @@ namespace Akeldov.Math.Hexes.Rasterization
 
             ValidateSource(source);
 
-            VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Layout);
+            VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Topology.Layout);
             RasterBounds bounds = GetBounds(source, normalizedVertices);
             double pixelsPerWorldUnit = (double)pixelsPerApothem / _apothem;
             int rasterWidth = CalculateRasterResolution(bounds.Width, pixelsPerWorldUnit);
@@ -221,7 +221,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             IndexSeptupletMap source,
             VectorXY[] normalizedVertices)
         {
-            RasterBounds bounds = GetHexBounds(GetHexCenter(0, 0, source.Layout), _radius, normalizedVertices);
+            RasterBounds bounds = GetHexBounds(GetHexCenter(0, 0, source.Topology.Layout), _radius, normalizedVertices);
 
             for (int y = 0; y < source.Height; y++)
             {
@@ -230,7 +230,7 @@ namespace Akeldov.Math.Hexes.Rasterization
                     if (x == 0 && y == 0)
                         continue;
 
-                    bounds = bounds.Include(GetHexBounds(GetHexCenter(x, y, source.Layout), _radius, normalizedVertices));
+                    bounds = bounds.Include(GetHexBounds(GetHexCenter(x, y, source.Topology.Layout), _radius, normalizedVertices));
                 }
             }
 

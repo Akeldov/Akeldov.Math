@@ -30,7 +30,7 @@ namespace Akeldov.Math.Hexes.Chromatization
 
             Width = width;
             Height = height;
-            Layout = layout;
+            Topology = new HexMapTopology(width, height, layout);
             _values = new byte[count];
 
             switch (layout)
@@ -63,14 +63,9 @@ namespace Akeldov.Math.Hexes.Chromatization
         public int Height { get; }
 
         /// <summary>
-        /// Gets the map resolution in hexes.
+        /// Gets the map topology.
         /// </summary>
-        public VectorXYInt Resolution => new VectorXYInt(Width, Height);
-
-        /// <summary>
-        /// Gets the Layout value.
-        /// </summary>
-        public Layout Layout { get; }
+        public HexMapTopology Topology { get; }
 
         /// <summary>
         /// Gets the value at the specified index.

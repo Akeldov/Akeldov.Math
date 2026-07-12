@@ -40,14 +40,14 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(indexSeptupletMap));
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            var geometry = new HexMapGeometry(indexSeptupletMap.Width, indexSeptupletMap.Height, DefaultHexRadius, indexSeptupletMap.Layout);
+            var geometry = new HexMapGeometry(indexSeptupletMap.Width, indexSeptupletMap.Height, DefaultHexRadius, indexSeptupletMap.Topology.Layout);
             VectorXY gridSize = geometry.GetBoundingBoxSize();
 
             Initialize(
                 indexSeptupletMap.Width,
                 indexSeptupletMap.Height,
-                indexSeptupletMap.Layout,
-                GetDefaultHexOrigin(indexSeptupletMap.Layout, apothem, DefaultHexRadius),
+                indexSeptupletMap.Topology.Layout,
+                GetDefaultHexOrigin(indexSeptupletMap.Topology.Layout, apothem, DefaultHexRadius),
                 apothem,
                 DefaultHexRadius,
                 VectorXY.Zero,
