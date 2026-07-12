@@ -1,9 +1,7 @@
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -49,7 +47,8 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            VectorXY gridSize = indexSeptupletMap.GetBoundingBoxSize(DefaultHexRadius);
+            var geometry = new HexMapGeometry(indexSeptupletMap.Width, indexSeptupletMap.Height, DefaultHexRadius, indexSeptupletMap.Layout);
+            VectorXY gridSize = geometry.GetBoundingBoxSize();
 
             Initialize(
                 indexSeptupletMap.Width,

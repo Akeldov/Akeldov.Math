@@ -45,7 +45,7 @@ namespace Akeldov.Math.Hexes
                 map.Resolution.Y,
                 radius: 1f,
                 layout: map.Layout);
-            Rectangle bounds = geometry.BoundingBox();
+            Rectangle bounds = geometry.GetBoundingBox();
             float pixelWidth = bounds.Size.X / resolution.X;
             float pixelHeight = bounds.Size.Y / resolution.Y;
 

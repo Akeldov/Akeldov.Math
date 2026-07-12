@@ -1,6 +1,5 @@
 using Akeldov.Math.Hexes.Chromatization;
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
@@ -42,7 +41,8 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(hexAdjacencyMap));
 
             float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            VectorXY gridSize = hexAdjacencyMap.GetBoundingBoxSize(DefaultHexRadius);
+            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, DefaultHexRadius, hexAdjacencyMap.Layout);
+            VectorXY gridSize = geometry.GetBoundingBoxSize();
 
             Initialize(
                 hexAdjacencyMap.Width,

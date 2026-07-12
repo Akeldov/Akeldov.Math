@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+    /// <summary>
+    /// Provides geometry extension methods for QRS hex indexes.
+    /// </summary>
     public static partial class VectorQRSIntExtensions
     {
         /// <summary>

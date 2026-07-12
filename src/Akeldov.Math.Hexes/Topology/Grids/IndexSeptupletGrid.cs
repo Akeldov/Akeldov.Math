@@ -1,5 +1,4 @@
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Topology.Maps.BoundingBox;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
@@ -52,7 +51,8 @@ namespace Akeldov.Math.Hexes.Topology
 
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
-            var boundingBoxSize = hexAdjacencyMap.GetBoundingBoxSize(radius);
+            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, radius, hexAdjacencyMap.Layout);
+            VectorXY boundingBoxSize = geometry.GetBoundingBoxSize();
             if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid size components must be finite and positive.");
 

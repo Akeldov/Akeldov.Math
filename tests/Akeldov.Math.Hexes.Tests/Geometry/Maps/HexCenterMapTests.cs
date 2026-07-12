@@ -76,12 +76,14 @@ public class HexCenterMapTests
             radius: 2f.ConvertHexApothemToRadius(),
             layout: layout);
 
-        Rectangle boundingBox = geometry.BoundingBox();
+        Rectangle boundingBox = geometry.GetBoundingBox();
 
         Assert.That(boundingBox.Min.X, Is.EqualTo(expectedMinX).Within(0.0001f));
         Assert.That(boundingBox.Min.Y, Is.EqualTo(expectedMinY).Within(0.0001f));
         Assert.That(boundingBox.Max.X, Is.EqualTo(expectedMaxX).Within(0.0001f));
         Assert.That(boundingBox.Max.Y, Is.EqualTo(expectedMaxY).Within(0.0001f));
+        Assert.That(geometry.GetBoundingBoxSize().X, Is.EqualTo(boundingBox.Size.X).Within(0.0001f));
+        Assert.That(geometry.GetBoundingBoxSize().Y, Is.EqualTo(boundingBox.Size.Y).Within(0.0001f));
     }
 
     [Test]
@@ -92,7 +94,7 @@ public class HexCenterMapTests
             VectorXY.Zero,
             2f);
 
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => geometry.BoundingBox());
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => geometry.GetBoundingBox());
 
         Assert.That(exception!.ParamName, Is.EqualTo("geometry"));
     }
@@ -104,8 +106,8 @@ public class HexCenterMapTests
         var origin = new VectorXY(10f, 20f);
         const float radius = 2f;
 
-        Rectangle topologyBoundingBox = topology.BoundingBox(radius, origin);
-        Rectangle geometryBoundingBox = new HexMapGeometry(topology, origin, radius).BoundingBox();
+        Rectangle topologyBoundingBox = topology.GetBoundingBox(origin, radius);
+        Rectangle geometryBoundingBox = new HexMapGeometry(topology, origin, radius).GetBoundingBox();
 
         Assert.That(topologyBoundingBox, Is.EqualTo(geometryBoundingBox));
     }

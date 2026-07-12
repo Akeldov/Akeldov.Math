@@ -24,23 +24,6 @@ public class HexGeometryArgumentValidationTests
     }
 
     [Test]
-    public void BoundingBoxHelpers_WhenSizeIsInvalid_Throw()
-    {
-        Assert.Multiple(() =>
-        {
-            AssertArgumentOutOfRange(
-                () => _ = new VectorXYInt(1, 1).BoundingBox(float.PositiveInfinity, 1f, Layout.OddR),
-                "hexApothem");
-            AssertArgumentOutOfRange(
-                () => _ = new VectorXYInt(1, 1).BoundingBox(1f, float.PositiveInfinity, Layout.OddR),
-                "hexRadius");
-            AssertArgumentOutOfRange(
-                () => _ = new VectorQRSInt(1, 1).BoundingBoxSize(float.PositiveInfinity, Layout.OddR),
-                "radius");
-        });
-    }
-
-    [Test]
     public void ParameterReconstruction_WhenArgumentsAreInvalid_Throws()
     {
         Assert.Multiple(() =>
