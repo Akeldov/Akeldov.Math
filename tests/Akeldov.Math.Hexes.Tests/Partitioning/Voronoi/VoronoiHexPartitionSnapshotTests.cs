@@ -23,7 +23,7 @@ public class VoronoiHexPartitionSnapshotTests
             new Site(centers[new VectorXYInt(9, 7)], 1.1f)
         };
         VoronoiHexPartitionMap partition = centers.ToVoronoiHexPartitionMap(sites);
-        var resolution = new VectorXYInt(partition.Resolution.X * 32, partition.Resolution.Y * 32);
+        var resolution = partition.Resolution * 32;
         Raster<RGBA16BitColor> raster = partition.Rasterize(resolution, ToSnapshotColor);
         string actualPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, ApprovedFileName.Replace(".png", ".actual.png"));
         raster.SaveAsPng(actualPath);
