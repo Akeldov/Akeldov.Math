@@ -46,7 +46,7 @@ namespace Akeldov.Math.Hexes
             VectorXY origin,
             HexMapTopologyRasterizationOptions options)
         {
-            var hexMapGeometry = new HexMapGeometry(hexMapTopology.Width, hexMapTopology.Height, origin, apothem, hexMapTopology.Layout);
+            var hexMapGeometry = new HexMapGeometry(hexMapTopology.Resolution.X, hexMapTopology.Resolution.Y, origin, apothem, hexMapTopology.Layout);
             var spatialRasterGrid = hexMapGeometry.ToSpatialRasterGrid(options.PixelsPerApothem, options.Margin);
 
             var res = hexMapGeometry

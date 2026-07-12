@@ -96,19 +96,19 @@ namespace Akeldov.Math.Hexes.Geometry
             VectorXY[] normalizedVertices = VectorXYExtensions.GetNormalizedHexVertices(topology.Layout);
             var segments = new List<Segment>();
 
-            for (int y = 0; y < topology.Height; y++)
+            for (int y = 0; y < topology.Resolution.Y; y++)
             {
-                for (int x = 0; x < topology.Width; x++)
+                for (int x = 0; x < topology.Resolution.X; x++)
                 {
                     var index = new VectorXYInt(x, y);
                     VectorXY center = index.GetHexCenter(apothem, radius, origin, topology.Layout);
-                    int flatIndex = GetFlatIndex(index, topology.Width);
+                    int flatIndex = GetFlatIndex(index, topology.Resolution.X);
 
                     for (int edgeIndex = 0; edgeIndex < 6; edgeIndex++)
                     {
                         VectorXYInt adjacentIndex = GetAdjacentIndex(index, edgeIndex, topology.Layout);
-                        if (IsInside(adjacentIndex, topology.Width, topology.Height) &&
-                            GetFlatIndex(adjacentIndex, topology.Width) < flatIndex)
+                        if (IsInside(adjacentIndex, topology.Resolution.X, topology.Resolution.Y) &&
+                            GetFlatIndex(adjacentIndex, topology.Resolution.X) < flatIndex)
                             continue;
 
                         VectorXY startPoint = center + normalizedVertices[edgeIndex] * radius;

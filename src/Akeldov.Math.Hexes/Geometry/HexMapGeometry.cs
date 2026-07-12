@@ -85,12 +85,12 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// Gets the map width in hexes.
         /// </summary>
-        public int Width => Topology.Width;
+        public int Width => Topology.Resolution.X;
 
         /// <summary>
         /// Gets the map height in hexes.
         /// </summary>
-        public int Height => Topology.Height;
+        public int Height => Topology.Resolution.Y;
 
         /// <summary>
         /// Gets the total number of cells in the map.

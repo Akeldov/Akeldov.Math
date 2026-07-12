@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Hexes
 {
@@ -40,25 +41,19 @@ namespace Akeldov.Math.Hexes
 
             _ = checked(width * height);
 
-            Width = width;
-            Height = height;
+            Resolution = new VectorXYInt(width, height);
             Layout = layout;
         }
 
         /// <summary>
-        /// Gets the map width in hexes.
+        /// Gets the map resolution in hexes.
         /// </summary>
-        public int Width { get; }
-
-        /// <summary>
-        /// Gets the map height in hexes.
-        /// </summary>
-        public int Height { get; }
+        public VectorXYInt Resolution { get; }
 
         /// <summary>
         /// Gets the total number of cells in the map.
         /// </summary>
-        public int Count => checked(Width * Height);
+        public int Count => checked(Resolution.X * Resolution.Y);
 
         /// <summary>
         /// Gets the hex layout used by the map.
@@ -71,23 +66,22 @@ namespace Akeldov.Math.Hexes
         /// <param name="other">The topology to compare with this topology.</param>
         /// <returns><see langword="true"/> if both topologies are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(HexMapTopology other) =>
-            Width == other.Width &&
-            Height == other.Height &&
+            Resolution == other.Resolution &&
             Layout == other.Layout;
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is HexMapTopology other && Equals(other);
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Width, Height, Layout);
+        public override int GetHashCode() => HashCode.Combine(Resolution, Layout);
 
         /// <inheritdoc/>
         public override string ToString() =>
             string.Format(
                 CultureInfo.InvariantCulture,
                 "HexMapTopology(width: {0}, height: {1}, layout: {2})",
-                Width,
-                Height,
+                Resolution.X,
+                Resolution.Y,
                 Layout);
 
         /// <summary>
@@ -98,8 +92,8 @@ namespace Akeldov.Math.Hexes
         /// <param name="layout">The hex layout used by the map.</param>
         public void Deconstruct(out int width, out int height, out Layout layout)
         {
-            width = Width;
-            height = Height;
+            width = Resolution.X;
+            height = Resolution.Y;
             layout = Layout;
         }
 

@@ -32,8 +32,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="topology">The topology value.</param>
         public IndexSeptupletMap(HexMapTopology topology)
         {
-            Width = topology.Width;
-            Height = topology.Height;
+            Width = topology.Resolution.X;
+            Height = topology.Resolution.Y;
             Layout = topology.Layout;
             _values = new Septuplet<VectorXYInt>[topology.Count];
 

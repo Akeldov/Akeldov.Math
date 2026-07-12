@@ -22,8 +22,7 @@ public class HexMapTests
 
         var map = new HexMap<int>(topology);
 
-        Assert.That(map.Topology.Width, Is.EqualTo(3));
-        Assert.That(map.Topology.Height, Is.EqualTo(2));
+        Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(map.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Layout, Is.EqualTo(Layout.EvenQ));
@@ -34,8 +33,7 @@ public class HexMapTests
     {
         var topology = new HexMapTopology(3, 2, Layout.OddQ);
 
-        Assert.That(topology.Width, Is.EqualTo(3));
-        Assert.That(topology.Height, Is.EqualTo(2));
+        Assert.That(topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Layout, Is.EqualTo(Layout.OddQ));
         Assert.That(topology.Count, Is.EqualTo(6));
     }

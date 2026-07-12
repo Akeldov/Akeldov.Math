@@ -24,10 +24,10 @@ namespace Akeldov.Math.Hexes
         public HexMap(HexMapTopology topology)
         {
             _topology = topology;
-            _width = topology.Width;
-            _height = topology.Height;
+            _width = topology.Resolution.X;
+            _height = topology.Resolution.Y;
             _layout = topology.Layout;
-            _values = new TValue[checked(topology.Width * topology.Height)];
+            _values = new TValue[topology.Count];
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace Akeldov.Math.Hexes
         internal HexMap(HexMapTopology topology, TValue[] values)
         {
             _topology = topology;
-            _width = topology.Width;
-            _height = topology.Height;
+            _width = topology.Resolution.X;
+            _height = topology.Resolution.Y;
             _layout = topology.Layout;
             _values = values ?? throw new ArgumentNullException(nameof(values));
 
-            if (values.Length != topology.Width * topology.Height)
+            if (values.Length != topology.Count)
                 throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
         }
 
@@ -103,8 +103,8 @@ namespace Akeldov.Math.Hexes
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index.X < 0 || index.X >= Topology.Width ||
-                    index.Y < 0 || index.Y >= Topology.Height)
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 return _values[GetFlatIndex(index)];
@@ -112,8 +112,8 @@ namespace Akeldov.Math.Hexes
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                if (index.X < 0 || index.X >= Topology.Width ||
-                    index.Y < 0 || index.Y >= Topology.Height)
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 _values[GetFlatIndex(index)] = value;
@@ -133,6 +133,6 @@ namespace Akeldov.Math.Hexes
             set => _values[index] = value;
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Width + index.X;
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
     }
 }

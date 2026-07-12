@@ -51,17 +51,17 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <summary>
         /// Gets the map width in hexes.
         /// </summary>
-        public int Width => Topology.Width;
+        public int Width => Topology.Resolution.X;
 
         /// <summary>
         /// Gets the map height in hexes.
         /// </summary>
-        public int Height => Topology.Height;
+        public int Height => Topology.Resolution.Y;
 
         /// <summary>
         /// Gets the map resolution in hexes.
         /// </summary>
-        public VectorXYInt Resolution => new VectorXYInt(Topology.Width, Topology.Height);
+        public VectorXYInt Resolution => Topology.Resolution;
 
         /// <summary>
         /// Gets the hex layout used by the partition map.
@@ -77,8 +77,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index.X < 0 || index.X >= Topology.Width ||
-                    index.Y < 0 || index.Y >= Topology.Height)
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 return _assignments[GetFlatIndex(index)];
@@ -138,6 +138,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return copy;
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Width + index.X;
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
     }
 }
