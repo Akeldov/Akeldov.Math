@@ -22,20 +22,20 @@ public class HexGeometryMapBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _centerMap = new HexCenterMap(Size, Size, VectorXY.Zero, radius: 8f, Layout);
+        _centerMap = new HexCenterMap(new HexMapGeometry(Size, Size, VectorXY.Zero, radius: 8f, Layout));
         _indices = CreateIndices(Size, Size);
     }
 
     [Benchmark]
     public HexCenterMap ConstructCenterMap()
     {
-        return new HexCenterMap(Size, Size, VectorXY.Zero, radius: 8f, Layout);
+        return new HexCenterMap(new HexMapGeometry(Size, Size, VectorXY.Zero, radius: 8f, Layout));
     }
 
     [Benchmark]
     public HexCenterMap ConstructCenterMapWithDefaultOrigin()
     {
-        return new HexCenterMap(Size, Size, 8f.ConvertHexApothemToRadius(), Layout);
+        return new HexCenterMap(new HexMapGeometry(Size, Size, 8f.ConvertHexApothemToRadius(), Layout));
     }
 
     [Benchmark]

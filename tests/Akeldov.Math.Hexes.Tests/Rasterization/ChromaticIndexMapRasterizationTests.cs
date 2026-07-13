@@ -12,7 +12,7 @@ public class ChromaticIndexMapRasterizationTests
     [Test]
     public void Rasterize_UsesPixelsPerApothemForRasterResolution()
     {
-        var chromatization = new ChromaticIndexMap(1, 1, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(new HexMapTopology(1, 1, Layout.OddR));
         var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
             2f,
@@ -28,7 +28,7 @@ public class ChromaticIndexMapRasterizationTests
     [Test]
     public void Rasterize_MapsChromaticIndexToColor()
     {
-        var chromatization = new ChromaticIndexMap(2, 1, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(new HexMapTopology(2, 1, Layout.OddR));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var mappedIndices = new List<byte>();
@@ -52,7 +52,7 @@ public class ChromaticIndexMapRasterizationTests
     [Test]
     public void Rasterize_UsesProvidedGrid()
     {
-        var chromatization = new ChromaticIndexMap(1, 1, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(new HexMapTopology(1, 1, Layout.OddR));
         var grid = new SpatialRasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
         var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
@@ -95,7 +95,7 @@ public class ChromaticIndexMapRasterizationTests
     [Test]
     public void CreateGrid_WhenPixelsPerApothemIsInvalid_Throws()
     {
-        var chromatization = new ChromaticIndexMap(1, 1, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(new HexMapTopology(1, 1, Layout.OddR));
         var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
             2f,
@@ -108,7 +108,7 @@ public class ChromaticIndexMapRasterizationTests
     [Test]
     public void CreateGrid_WhenRasterResolutionDoesNotFitInt32_ThrowsOverflowException()
     {
-        var chromatization = new ChromaticIndexMap(1, 1, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(new HexMapTopology(1, 1, Layout.OddR));
         var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
             new VectorXY(0f, 0f),
             1f,

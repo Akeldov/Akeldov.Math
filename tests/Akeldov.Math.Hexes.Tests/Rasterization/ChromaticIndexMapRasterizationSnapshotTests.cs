@@ -16,10 +16,8 @@ public class ChromaticIndexMapRasterizationSnapshotTests
     [TestCase(Layout.EvenQ, "chromatic-index-map-even-q-rgba16.png")]
     public void Rasterize_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
     {
-        var chromatization = new ChromaticIndexMap(
-            width: 5,
-            height: 4,
-            layout: layout);
+        var topology = new HexMapTopology(5, 4, layout);
+        var chromatization = new ChromaticIndexMap(topology);
         var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
             origin: new VectorXY(0f, 0f),
             radius: 8f.ConvertHexApothemToRadius(),

@@ -9,7 +9,7 @@ public class IndexPartialSeptupletMapTests
     [Test]
     public void Constructor_ExposesDimensionsAndLayout()
     {
-        var topology = new IndexPartialSeptupletMap(3, 2, Layout.EvenQ);
+        var topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 2, Layout.EvenQ));
 
         Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Count, Is.EqualTo(6));
@@ -20,7 +20,7 @@ public class IndexPartialSeptupletMapTests
     [Test]
     public void IndexPartialSeptupletMap_ImplementsIHexMap()
     {
-        IHexMap<PartialSeptuplet<VectorXYInt>> topology = new IndexPartialSeptupletMap(3, 2, Layout.OddR);
+        IHexMap<PartialSeptuplet<VectorXYInt>> topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
 
         PartialSeptuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
@@ -32,7 +32,7 @@ public class IndexPartialSeptupletMapTests
     [Test]
     public void Constructor_CreatesAdjacencyAndPresence()
     {
-        var topology = new IndexPartialSeptupletMap(3, 2, Layout.OddR);
+        var topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
 
         PartialSeptuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
@@ -61,7 +61,7 @@ public class IndexPartialSeptupletMapTests
     [Test]
     public void Constructor_WhenNeighborsAreOutside_KeepsLogicalIndices()
     {
-        var topology = new IndexPartialSeptupletMap(1, 1, Layout.OddR);
+        var topology = new IndexPartialSeptupletMap(new HexMapTopology(1, 1, Layout.OddR));
 
         PartialSeptuplet<VectorXYInt> adjacency = topology[new VectorXYInt(0, 0)];
 
@@ -92,7 +92,7 @@ public class IndexPartialSeptupletMapTests
         int adjacent5X,
         int adjacent5Y)
     {
-        var topology = new IndexPartialSeptupletMap(3, 3, layout);
+        var topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 3, layout));
 
         PartialSeptuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 1)];
 
@@ -109,7 +109,7 @@ public class IndexPartialSeptupletMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
-        var topology = new IndexPartialSeptupletMap(3, 2, Layout.OddR);
+        var topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(0, 2)]);
@@ -118,7 +118,7 @@ public class IndexPartialSeptupletMapTests
     [Test]
     public void Constructor_WhenDimensionIsNegative_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletMap(-1, 1, Layout.OddR));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletMap(1, -1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletMap(new HexMapTopology(-1, 1, Layout.OddR)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletMap(new HexMapTopology(1, -1, Layout.OddR)));
     }
 }

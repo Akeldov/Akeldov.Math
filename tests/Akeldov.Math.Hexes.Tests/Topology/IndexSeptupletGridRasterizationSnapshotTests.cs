@@ -15,15 +15,12 @@ public class IndexSeptupletGridRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var indexSeptupletMap = new IndexSeptupletMap(
-            width: 12,
-            height: 8,
-            layout: layout);
+        var indexSeptupletMap = new IndexSeptupletMap(new HexMapTopology(12, 8, layout));
         var indexSeptupletGrid = new IndexSeptupletGrid(
             indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        var raster = indexSeptupletGrid.Rasterize((Septuplet<VectorXYInt> adjacency) => ToMainIndexColor(adjacency, indexSeptupletMap.Width));
+        var raster = indexSeptupletGrid.Rasterize((Septuplet<VectorXYInt> adjacency) => ToMainIndexColor(adjacency, indexSeptupletMap.Topology.Resolution.X));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -37,15 +34,12 @@ public class IndexSeptupletGridRasterizationSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var indexSeptupletMap = new IndexSeptupletMap(
-            width: 12,
-            height: 8,
-            layout: layout);
+        var indexSeptupletMap = new IndexSeptupletMap(new HexMapTopology(12, 8, layout));
         var indexSeptupletGrid = new IndexSeptupletGrid(
             indexSeptupletMap,
             resolution: new VectorXYInt(480, 360));
 
-        var raster = indexSeptupletGrid.Rasterize((Septuplet<VectorXYInt> adjacency) => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Width));
+        var raster = indexSeptupletGrid.Rasterize((Septuplet<VectorXYInt> adjacency) => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Topology.Resolution.X));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);

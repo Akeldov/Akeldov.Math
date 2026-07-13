@@ -63,7 +63,7 @@ public class IHexMapRasterizationTests
 
     private static HexMap<int> CreateMap(int[] values)
     {
-        var map = new HexMap<int>(2, 1, Layout.OddR);
+        var map = new HexMap<int>(new HexMapTopology(2, 1, Layout.OddR));
 
         for (int i = 0; i < values.Length; i++)
             map[i] = values[i];

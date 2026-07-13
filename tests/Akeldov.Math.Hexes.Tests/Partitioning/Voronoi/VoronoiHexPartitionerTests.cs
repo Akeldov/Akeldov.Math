@@ -15,7 +15,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 1f),
             new Site(new PointXY(4f, 0f), 1f)
         };
-        var hexCenters = new HexCenterMap(3, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);
@@ -38,7 +38,7 @@ public class VoronoiHexPartitionerTests
     public void Partition_ReturnsReadOnlyHexMapOfVoronoiCells()
     {
         var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
-        var hexCenters = new HexCenterMap(2, 2, VectorXY.Zero, 1f, Layout.EvenQ);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 2, VectorXY.Zero, 1f, Layout.EvenQ));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);
@@ -61,11 +61,13 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 1f),
             new Site(new PointXY(4f, 0f), 1f)
         };
-        var hexCenters = new HexCenterMap(3, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
 
         var map = hexCenters.ToVoronoiHexPartitionMap(sites);
+        ISpatialHexMap<VoronoiCell> spatialMap = map;
 
         Assert.That(map.Centers, Is.SameAs(hexCenters));
+        Assert.That(spatialMap.Geometry, Is.EqualTo(hexCenters.Geometry));
         Assert.That(map[0].SiteIndex, Is.EqualTo(0));
         Assert.That(map[1].SiteIndex, Is.EqualTo(0));
         Assert.That(map[2].SiteIndex, Is.EqualTo(1));
@@ -80,7 +82,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 1f),
             new Site(new PointXY(4f, 0f), 1f)
         };
-        var hexCenters = new HexCenterMap(3, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
         var map = partitioner.Partition(hexCenters);
 
@@ -104,7 +106,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 1f),
             new Site(new PointXY(10f, 0f), 3f)
         };
-        var hexCenters = new HexCenterMap(1, 1, new VectorXY(3f, 0f), 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(3f, 0f), 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);
@@ -121,7 +123,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 0f),
             new Site(new PointXY(2f, 0f), 1f)
         };
-        var hexCenters = new HexCenterMap(2, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);
@@ -140,7 +142,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 1f),
             new Site(new PointXY(10f, 0f), float.PositiveInfinity)
         };
-        var hexCenters = new HexCenterMap(1, 1, new VectorXY(-100f, 0f), 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(-100f, 0f), 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);
@@ -157,7 +159,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(float.MaxValue, 0f), 1f),
             new Site(new PointXY(float.MaxValue / 2f, 0f), 1f)
         };
-        var hexCenters = new HexCenterMap(1, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);
@@ -170,12 +172,13 @@ public class VoronoiHexPartitionerTests
     public void Partition_WhenHexCenterCoordinateIsNotFinite_Throws()
     {
         var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
-        var hexCenters = new HexCenterMap(
+        var geometry = new HexMapGeometry(
             width: 2,
             height: 1,
             origin: new VectorXY(float.MaxValue, 0f),
             radius: (float.MaxValue / 4f).ConvertHexApothemToRadius(),
             layout: Layout.OddR);
+        var hexCenters = new HexCenterMap(geometry);
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -206,7 +209,7 @@ public class VoronoiHexPartitionerTests
             new Site(new PointXY(0f, 0f), 1f),
             new Site(new PointXY(100f, 0f), 1f)
         };
-        var hexCenters = new HexCenterMap(1, 1, VectorXY.Zero, 1f, Layout.OddR);
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
         var partitioner = new VoronoiHexPartitioner(sites);
 
         var map = partitioner.Partition(hexCenters);

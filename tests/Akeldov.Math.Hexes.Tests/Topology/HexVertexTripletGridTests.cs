@@ -108,7 +108,7 @@ public class HexVertexTripletGridTests
     [Test]
     public void TryGetMethods_WhenGridIndexIsOutside_ReturnFalse()
     {
-        var adjacency = new IndexSeptupletMap(2, 2, Layout.OddR);
+        var adjacency = new IndexSeptupletMap(new HexMapTopology(2, 2, Layout.OddR));
         var resolution = VectorXYInt.One;
         var indexGrid = new IndexTripletGrid(adjacency, resolution);
         var partialIndexGrid = new IndexPartialTripletGrid(adjacency, resolution);
@@ -132,8 +132,8 @@ public class HexVertexTripletGridTests
     [Test]
     public void Constructors_WhenArgumentsAreInvalid_Throw()
     {
-        var emptyAdjacency = new IndexSeptupletMap(0, 1, Layout.OddR);
-        var emptyPartialAdjacency = new IndexPartialSeptupletMap(0, 1, Layout.OddR);
+        var emptyAdjacency = new IndexSeptupletMap(new HexMapTopology(0, 1, Layout.OddR));
+        var emptyPartialAdjacency = new IndexPartialSeptupletMap(new HexMapTopology(0, 1, Layout.OddR));
 
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
@@ -142,7 +142,7 @@ public class HexVertexTripletGridTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXY.Zero, new VectorXY(0f, 1f), VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXY.Zero, new VectorXY(float.PositiveInfinity, 1f), VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(emptyAdjacency, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(new IndexSeptupletMap(1, 1, Layout.OddR), VectorXYInt.One, default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(new IndexSeptupletMap(new HexMapTopology(1, 1, Layout.OddR)), VectorXYInt.One, default));
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletGrid(emptyPartialAdjacency, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(emptyAdjacency, VectorXYInt.One));

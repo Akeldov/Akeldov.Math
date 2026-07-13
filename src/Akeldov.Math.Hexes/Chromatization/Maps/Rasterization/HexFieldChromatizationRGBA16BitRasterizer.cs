@@ -78,11 +78,11 @@ namespace Akeldov.Math.Hexes.Rasterization
             VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Topology.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
 
-            for (int y = 0; y < source.Height; y++)
+            for (int y = 0; y < source.Topology.Resolution.Y; y++)
             {
-                int rowStart = y * source.Width;
+                int rowStart = y * source.Topology.Resolution.X;
 
-                for (int x = 0; x < source.Width; x++)
+                for (int x = 0; x < source.Topology.Resolution.X; x++)
                 {
                     int index = rowStart + x;
                     VectorXY center = GetHexCenter(x, y, source.Topology.Layout);
@@ -226,9 +226,9 @@ namespace Akeldov.Math.Hexes.Rasterization
         {
             RasterBounds bounds = GetHexBounds(GetHexCenter(0, 0, source.Topology.Layout), _radius, normalizedVertices);
 
-            for (int y = 0; y < source.Height; y++)
+            for (int y = 0; y < source.Topology.Resolution.Y; y++)
             {
-                for (int x = 0; x < source.Width; x++)
+                for (int x = 0; x < source.Topology.Resolution.X; x++)
                 {
                     if (x == 0 && y == 0)
                         continue;
@@ -265,7 +265,7 @@ namespace Akeldov.Math.Hexes.Rasterization
 
         private static void ValidateSource(ChromaticIndexMap source)
         {
-            if (source.Width <= 0 || source.Height <= 0)
+            if (source.Topology.Resolution.X <= 0 || source.Topology.Resolution.Y <= 0)
                 throw new ArgumentException("Hex field chromatization must contain at least one hex.", nameof(source));
 
         }

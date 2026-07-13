@@ -5,17 +5,6 @@ namespace Akeldov.Math.Hexes.Tests.Maps;
 public class HexMapTests
 {
     [Test]
-    public void Constructor_UsesTopology()
-    {
-        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
-        var map = new HexMap<int>(3, 2, Layout.EvenQ);
-
-        Assert.That(map.Topology, Is.EqualTo(topology));
-        Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
-        Assert.That(map.Topology.Layout, Is.EqualTo(Layout.EvenQ));
-    }
-
-    [Test]
     public void Constructor_UsesHexMapTopology()
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
@@ -51,7 +40,7 @@ public class HexMapTests
     [Test]
     public void Indexer_UsesTopologyWidthForFlatIndex()
     {
-        var map = new HexMap<int>(3, 2, Layout.OddR);
+        var map = new HexMap<int>(new HexMapTopology(3, 2, Layout.OddR));
 
         map[new VectorXYInt(2, 1)] = 42;
 
@@ -61,7 +50,7 @@ public class HexMapTests
     [Test]
     public void HexMap_ImplementsIHexMap()
     {
-        var source = new HexMap<int>(3, 2, Layout.OddR);
+        var source = new HexMap<int>(new HexMapTopology(3, 2, Layout.OddR));
         IHexMap<int> map = source;
 
         source[new VectorXYInt(2, 1)] = 42;
@@ -74,7 +63,7 @@ public class HexMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
-        var map = new HexMap<int>(3, 2, Layout.OddR);
+        var map = new HexMap<int>(new HexMapTopology(3, 2, Layout.OddR));
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = map[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => map[new VectorXYInt(0, 2)] = 1);

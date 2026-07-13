@@ -15,10 +15,10 @@ public class ChromaticIndexMapTests
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            ChromaticIndexMap chromatization = new ChromaticIndexMap(width, height, layout);
+            var topology = new HexMapTopology(width, height, layout);
+            ChromaticIndexMap chromatization = new ChromaticIndexMap(topology);
 
-            Assert.That(chromatization.Width, Is.EqualTo(width));
-            Assert.That(chromatization.Height, Is.EqualTo(height));
+            Assert.That(chromatization.Topology.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
             Assert.That(chromatization.Topology.Layout, Is.EqualTo(layout));
 
             for (int y = 0; y < height; y++)
@@ -38,10 +38,10 @@ public class ChromaticIndexMapTests
     {
         var resolution = new VectorXYInt(2, 1);
 
-        ChromaticIndexMap chromatization = new ChromaticIndexMap(resolution.X, resolution.Y, Layout.OddR);
+        var topology = new HexMapTopology(resolution, Layout.OddR);
+        ChromaticIndexMap chromatization = new ChromaticIndexMap(topology);
 
-        Assert.That(chromatization.Width, Is.EqualTo(2));
-        Assert.That(chromatization.Height, Is.EqualTo(1));
+        Assert.That(chromatization.Topology.Resolution, Is.EqualTo(resolution));
         Assert.That(chromatization.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(typeof(ChromaticIndexMap).GetProperty("ChromaticIndices"), Is.Null);
     }
@@ -49,7 +49,7 @@ public class ChromaticIndexMapTests
     [Test]
     public void ChromaticIndexMap_ImplementsIHexMap()
     {
-        var source = new ChromaticIndexMap(3, 2, Layout.OddR);
+        var source = new ChromaticIndexMap(new HexMapTopology(3, 2, Layout.OddR));
         IHexMap<byte> map = source;
 
         byte chromaticIndex = source[5];
@@ -63,7 +63,7 @@ public class ChromaticIndexMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideChromatization_Throws()
     {
-        var chromatization = new ChromaticIndexMap(3, 2, Layout.OddR);
+        var chromatization = new ChromaticIndexMap(new HexMapTopology(3, 2, Layout.OddR));
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(0, 2)]);
@@ -73,18 +73,20 @@ public class ChromaticIndexMapTests
     public void Constructor_WhenWidthIsNegative_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new ChromaticIndexMap(-1, 1, Layout.OddR));
+            new ChromaticIndexMap(new HexMapTopology(-1, 1, Layout.OddR)));
     }
 
     [Test]
     public void Constructor_WhenWidthIsNegativeThroughResolution_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexMap(-1, 1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ChromaticIndexMap(new HexMapTopology(new VectorXYInt(-1, 1), Layout.OddR)));
     }
 
     [Test]
     public void Constructor_WhenLayoutIsUnsupported_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexMap(0, 0, (Layout)42));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ChromaticIndexMap(new HexMapTopology(0, 0, (Layout)42)));
     }
 }

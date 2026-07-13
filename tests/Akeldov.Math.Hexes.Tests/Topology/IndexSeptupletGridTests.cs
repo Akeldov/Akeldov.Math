@@ -12,10 +12,7 @@ public class IndexSeptupletGridTests
     [TestCase(Layout.EvenQ)]
     public void Constructor_WithSubrectangle_SamplesCorrespondingPartOfFullGrid(Layout layout)
     {
-        var map = new IndexSeptupletMap(
-            width: 12,
-            height: 8,
-            layout: layout);
+        var map = new IndexSeptupletMap(new HexMapTopology(12, 8, layout));
         var fullGrid = new IndexSeptupletGrid(
             map,
             new VectorXYInt(4, 4));
@@ -38,10 +35,7 @@ public class IndexSeptupletGridTests
     [TestCase(Layout.EvenQ)]
     public void Constructor_WithFullSubrectangle_MatchesDefaultConstructor(Layout layout)
     {
-        var map = new IndexSeptupletMap(
-            width: 12,
-            height: 8,
-            layout: layout);
+        var map = new IndexSeptupletMap(new HexMapTopology(12, 8, layout));
         var defaultGrid = new IndexSeptupletGrid(
             map,
             new VectorXYInt(4, 4));

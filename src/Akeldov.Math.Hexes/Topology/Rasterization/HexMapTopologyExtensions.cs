@@ -134,9 +134,9 @@ namespace Akeldov.Math.Hexes
         private static void AddLabels(SpatialRaster<Gray8BitColor> target, HexCenterMap centers, TrueTypeFont font,
             float fontSize, Gray8BitColor color, float edgeFalloff, VectorXY offset, Func<VectorXYInt, string> getLabel)
         {
-            var texts = new List<TextSignedDistanceProvider>(centers.Width * centers.Height);
-            for (int y = 0; y < centers.Height; y++)
-            for (int x = 0; x < centers.Width; x++)
+            var texts = new List<TextSignedDistanceProvider>(centers.Topology.Count);
+            for (int y = 0; y < centers.Topology.Resolution.Y; y++)
+            for (int x = 0; x < centers.Topology.Resolution.X; x++)
             {
                 var index = new VectorXYInt(x, y);
                 texts.Add(TextSignedDistanceProvider.Create(

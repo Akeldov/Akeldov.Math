@@ -38,14 +38,14 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            var count = checked(hexCenters.Width * hexCenters.Height);
+            var count = hexCenters.Topology.Count;
             var cellIndexes = new int[count];
             var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
 
             int flatIndex = 0;
-            for (int y = 0; y < hexCenters.Height; y++)
+            for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
             {
-                for (int x = 0; x < hexCenters.Width; x++)
+                for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
                 {
                     PointXY center = hexCenters[flatIndex];
                     if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||

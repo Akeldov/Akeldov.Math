@@ -14,7 +14,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <see cref="Cells"/> are kept consistent with the original partition result. Use
     /// <see cref="ToMutableHexMap"/> to create a new mutable caller-owned copy of the assignments.
     /// </remarks>
-    public sealed class VoronoiHexPartitionMap : IHexMap<VoronoiCell>
+    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<VoronoiCell>
     {
         private readonly VoronoiCell[] _assignments;
 
@@ -28,7 +28,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (cells == null)
                 throw new ArgumentNullException(nameof(cells));
 
-            int count = checked(centers.Width * centers.Height);
+            int count = centers.Topology.Count;
             if (assignments.Length != count)
                 throw new ArgumentException("Assignment count must match center map dimensions.", nameof(assignments));
 
@@ -46,6 +46,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Gets the topology used by the partition map.
         /// </summary>
         public HexMapTopology Topology { get; }
+
+        /// <summary>
+        /// Gets the spatial geometry used by the partition map.
+        /// </summary>
+        public HexMapGeometry Geometry => Centers.Geometry;
 
         /// <summary>
         /// Gets the Voronoi cell assigned to the specified hex index.
@@ -92,7 +97,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </returns>
         public HexMap<VoronoiCell> ToMutableHexMap()
         {
-            return new HexMap<VoronoiCell>(Topology.Resolution.X, Topology.Resolution.Y, Topology.Layout, CopyAssignments(_assignments));
+            return new HexMap<VoronoiCell>(Topology, CopyAssignments(_assignments));
         }
 
         private static VoronoiCell[] CopyAssignments(VoronoiCell[] assignments)

@@ -11,8 +11,6 @@ namespace Akeldov.Math.Hexes
     public class HexMap<TValue> : IHexMap<TValue>
     {
         private readonly HexMapTopology _topology;
-        private readonly int _width;
-        private readonly int _height;
         private readonly TValue[] _values;
 
         /// <summary>
@@ -22,44 +20,15 @@ namespace Akeldov.Math.Hexes
         public HexMap(HexMapTopology topology)
         {
             _topology = topology;
-            _width = topology.Resolution.X;
-            _height = topology.Resolution.Y;
             _values = new TValue[topology.Count];
-        }
-
-        /// <summary>
-        /// Performs the HexMap operation.
-        /// </summary>
-        /// <param name="width">Width of the HexMap in hexes.</param>
-        /// <param name="height">Height of the HexMap in hexes.</param>
-        /// <param name="layout">Layout of the HexMap in hexes.</param>
-        public HexMap(int width, int height, Layout layout)
-        {
-            _topology = new HexMapTopology(width, height, layout);
-            _width = width;
-            _height = height;
-            _values = new TValue[checked(width * height)];
         }
 
         internal HexMap(HexMapTopology topology, TValue[] values)
         {
             _topology = topology;
-            _width = topology.Resolution.X;
-            _height = topology.Resolution.Y;
             _values = values ?? throw new ArgumentNullException(nameof(values));
 
             if (values.Length != topology.Count)
-                throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
-        }
-
-        internal HexMap(int width, int height, Layout layout, TValue[] values)
-        {
-            _topology = new HexMapTopology(width, height, layout);
-            _width = width;
-            _height = height;
-            _values = values ?? throw new ArgumentNullException(nameof(values));
-
-            if (values.Length != width * height)
                 throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
         }
 
@@ -67,16 +36,6 @@ namespace Akeldov.Math.Hexes
         /// Gets the Topology value.
         /// </summary>
         public HexMapTopology Topology => _topology;
-
-        /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width => _width;
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height => _height;
 
         /// <summary>
         /// Gets the value at the specified index.

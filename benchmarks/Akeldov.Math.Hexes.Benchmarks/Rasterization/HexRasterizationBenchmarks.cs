@@ -25,7 +25,7 @@ public class HexRasterizationBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _adjacencyMap = new IndexSeptupletMap(Size, Size, Layout);
+        _adjacencyMap = new IndexSeptupletMap(new HexMapTopology(Size, Size, Layout));
         _topologyRasterizer = new HexFieldTopologyRGBA16BitRasterizer(
             origin: VectorXY.Zero,
             radius: 8f,

@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -15,26 +14,10 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Initializes a new instance of the IndexSeptupletMap type.
         /// </summary>
-        /// <param name="width">The Width value.</param>
-        /// <param name="height">The Height value.</param>
-        /// <param name="layout">The Layout value.</param>
-        public IndexSeptupletMap(
-            int width,
-            int height,
-            Layout layout)
-            : this(new HexMapTopology(width, height, layout))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the IndexSeptupletMap type.
-        /// </summary>
         /// <param name="topology">The topology value.</param>
         public IndexSeptupletMap(HexMapTopology topology)
         {
             Topology = topology;
-            Width = topology.Resolution.X;
-            Height = topology.Resolution.Y;
             _values = new Septuplet<VectorXYInt>[topology.Count];
 
             switch (topology.Layout)
@@ -57,24 +40,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width { get; }
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height { get; }
-
-        /// <summary>
         /// Gets the map topology.
         /// </summary>
         public HexMapTopology Topology { get; }
-
-        /// <summary>
-        /// Gets the Count value.
-        /// </summary>
-        public int Count => _values.Length;
 
         /// <summary>
         /// Gets the value at the specified index.
@@ -85,8 +53,8 @@ namespace Akeldov.Math.Hexes.Topology
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index.X < 0 || index.X >= Width ||
-                    index.Y < 0 || index.Y >= Height)
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 return _values[GetFlatIndex(index)];
@@ -103,16 +71,16 @@ namespace Akeldov.Math.Hexes.Topology
             get => _values[index];
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
 
         private void FillRowLayoutTopology(bool evenRowsAreShifted)
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 0; y < Topology.Resolution.Y; y++)
             {
-                var rowStart = y * Width;
+                var rowStart = y * Topology.Resolution.X;
                 var offsets = HexAdjacencyOffsets.GetRowOffsets(y, evenRowsAreShifted);
 
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < Topology.Resolution.X; x++)
                 {
                     _values[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
@@ -121,11 +89,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void FillColumnLayoutTopology(bool evenColumnsAreShifted)
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 0; y < Topology.Resolution.Y; y++)
             {
-                var rowStart = y * Width;
+                var rowStart = y * Topology.Resolution.X;
 
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < Topology.Resolution.X; x++)
                 {
                     var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
                     _values[rowStart + x] = CreateAdjacency(x, y, offsets);

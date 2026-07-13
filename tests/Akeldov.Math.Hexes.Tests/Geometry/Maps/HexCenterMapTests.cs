@@ -17,12 +17,12 @@ public class HexCenterMapTests
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            var geometry = new HexCenterMap(2, 2, origin, radius, layout);
+            var geometry = new HexCenterMap(new HexMapGeometry(2, 2, origin, radius, layout));
 
             Assert.That(geometry.Topology.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
             Assert.That(geometry.Geometry, Is.EqualTo(new HexMapGeometry(2, 2, origin, radius, layout)));
-            Assert.That(geometry.Origin, Is.EqualTo(origin));
-            Assert.That(geometry.Apothem, Is.EqualTo(radius.ConvertHexRadiusToApothem()));
+            Assert.That(geometry.Geometry.Origin, Is.EqualTo(origin));
+            Assert.That(geometry.Geometry.Apothem, Is.EqualTo(radius.ConvertHexRadiusToApothem()));
             Assert.That(geometry.Topology.Layout, Is.EqualTo(layout));
             Assert.That(typeof(HexCenterMap).GetProperty("Centers"), Is.Null);
             VectorAssert.AreEqual(geometry[0], origin.X, origin.Y);
@@ -40,10 +40,9 @@ public class HexCenterMapTests
         var map = new HexCenterMap(geometry);
 
         Assert.That(map.Geometry, Is.EqualTo(geometry));
-        Assert.That(map.Width, Is.EqualTo(2));
-        Assert.That(map.Height, Is.EqualTo(2));
-        Assert.That(map.Origin, Is.EqualTo(new VectorXY(10f, 20f)));
-        Assert.That(map.Apothem, Is.EqualTo(2f.ConvertHexRadiusToApothem()));
+        Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
+        Assert.That(map.Geometry.Origin, Is.EqualTo(new VectorXY(10f, 20f)));
+        Assert.That(map.Geometry.Apothem, Is.EqualTo(2f.ConvertHexRadiusToApothem()));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
         VectorAssert.AreEqual(map[0], 10f, 20f);
     }
@@ -210,7 +209,7 @@ public class HexCenterMapTests
     [TestCase(Layout.EvenQ, 2.3094f, 6f)]
     public void Constructor_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
     {
-        var geometry = new HexCenterMap(1, 1, 2f.ConvertHexApothemToRadius(), layout);
+        var geometry = new HexCenterMap(new HexMapGeometry(1, 1, 2f.ConvertHexApothemToRadius(), layout));
         VectorAssert.AreEqual(geometry[0], expectedX, expectedY);
     }
 
@@ -218,7 +217,7 @@ public class HexCenterMapTests
     public void Constructor_WhenOriginIsNotFinite_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new HexCenterMap(1, 1, new VectorXY(float.PositiveInfinity, 0f), 2f, Layout.OddR));
+            new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(float.PositiveInfinity, 0f), 2f, Layout.OddR)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("origin"));
     }
@@ -229,7 +228,7 @@ public class HexCenterMapTests
     public void Constructor_WithOrigin_WhenRadiusIsInvalid_Throws(float radius)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new HexCenterMap(1, 1, VectorXY.Zero, radius, Layout.OddR));
+            new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, radius, Layout.OddR)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
@@ -249,21 +248,22 @@ public class HexCenterMapTests
     public void Constructor_WithoutOrigin_WhenRadiusIsInvalid_Throws(float radius)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new HexCenterMap(1, 1, radius, Layout.OddR));
+            new HexCenterMap(new HexMapGeometry(1, 1, radius, Layout.OddR)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
     [Test]
-    public void HexCenterMap_ImplementsIHexMap()
+    public void HexCenterMap_ImplementsISpatialHexMap()
     {
-        var source = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
-        IHexMap<PointXY> map = source;
+        var source = new HexCenterMap(new HexMapGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR));
+        ISpatialHexMap<PointXY> map = source;
 
         PointXY center = source[5];
 
         Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(map.Geometry, Is.EqualTo(source.Geometry));
         Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(center));
         Assert.That(map[5], Is.EqualTo(center));
     }
@@ -271,7 +271,7 @@ public class HexCenterMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideMap_Throws()
     {
-        var geometry = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
+        var geometry = new HexCenterMap(new HexMapGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR));
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(0, 2)]);

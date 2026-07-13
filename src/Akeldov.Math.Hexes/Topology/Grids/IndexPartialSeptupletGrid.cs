@@ -28,7 +28,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (resolution.X <= 0 || resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
-            if (hexAdjacencyMap.Width <= 0 || hexAdjacencyMap.Height <= 0)
+            if (hexAdjacencyMap.Topology.Resolution.X <= 0 || hexAdjacencyMap.Topology.Resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid dimensions must be positive.");
 
             Resolution = resolution;
@@ -38,7 +38,7 @@ namespace Akeldov.Math.Hexes.Topology
             var radius = 1f;
             var apothem = radius.ConvertHexRadiusToApothem();
 
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Width, hexAdjacencyMap.Height, radius, hexAdjacencyMap.Topology.Layout);
+            var geometry = new HexMapGeometry(hexAdjacencyMap.Topology.Resolution.X, hexAdjacencyMap.Topology.Resolution.Y, radius, hexAdjacencyMap.Topology.Layout);
             var boundingBoxSize = geometry.GetBoundingBoxSize();
 
             if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
@@ -169,8 +169,8 @@ namespace Akeldov.Math.Hexes.Topology
 
         private static bool ContainsCell(IndexPartialSeptupletMap hexAdjacencyMap, VectorXYInt cellIndex)
         {
-            return (uint)cellIndex.X < (uint)hexAdjacencyMap.Width &&
-                (uint)cellIndex.Y < (uint)hexAdjacencyMap.Height;
+            return (uint)cellIndex.X < (uint)hexAdjacencyMap.Topology.Resolution.X &&
+                (uint)cellIndex.Y < (uint)hexAdjacencyMap.Topology.Resolution.Y;
         }
     }
 }

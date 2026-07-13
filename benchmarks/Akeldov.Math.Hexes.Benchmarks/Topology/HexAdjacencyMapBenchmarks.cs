@@ -21,14 +21,14 @@ public class HexAdjacencyMapBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _adjacencyMap = new IndexSeptupletMap(Size, Size, Layout);
+        _adjacencyMap = new IndexSeptupletMap(new HexMapTopology(Size, Size, Layout));
         _indices = CreateIndices(Size, Size);
     }
 
     [Benchmark]
     public IndexSeptupletMap ConstructAdjacencyMap()
     {
-        return new IndexSeptupletMap(Size, Size, Layout);
+        return new IndexSeptupletMap(new HexMapTopology(Size, Size, Layout));
     }
 
     [Benchmark]

@@ -14,7 +14,7 @@ public class VoronoiHexPartitionSnapshotTests
     [Test]
     public void Partition_WithWeightedSites_MatchesApprovedImage()
     {
-        var centers = new HexCenterMap(12, 9, VectorXY.Zero, 1f, Layout.OddR);
+        var centers = new HexCenterMap(new HexMapGeometry(12, 9, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[]
         {
             new Site(centers[new VectorXYInt(1, 1)], 1f),

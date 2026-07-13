@@ -36,10 +36,10 @@ namespace Akeldov.Math.Hexes.Rasterization
             ValidateSource(source);
             ValidateGrid(grid);
 
-            float radius = source.Apothem.ConvertHexApothemToRadius();
+            float radius = source.Geometry.Radius;
             VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Topology.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            int count = checked(source.Width * source.Height);
+            int count = source.Topology.Count;
 
             for (int i = 0; i < count; i++)
             {
@@ -66,10 +66,10 @@ namespace Akeldov.Math.Hexes.Rasterization
 
             ValidateSource(source);
 
-            float radius = source.Apothem.ConvertHexApothemToRadius();
+            float radius = source.Geometry.Radius;
             VectorXY[] normalizedVertices = Geometry.VectorXYExtensions.GetNormalizedHexVertices(source.Topology.Layout);
             RasterBounds bounds = GetBounds(source, radius, normalizedVertices);
-            double pixelsPerWorldUnit = (double)pixelsPerApothem / source.Apothem;
+            double pixelsPerWorldUnit = (double)pixelsPerApothem / source.Geometry.Apothem;
             int rasterWidth = CalculateRasterResolution(bounds.Width, pixelsPerWorldUnit);
             int rasterHeight = CalculateRasterResolution(bounds.Height, pixelsPerWorldUnit);
 
@@ -144,7 +144,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             float radius,
             VectorXY[] normalizedVertices)
         {
-            int count = checked(source.Width * source.Height);
+            int count = source.Topology.Count;
             RasterBounds bounds = GetHexBounds(source[0], radius, normalizedVertices);
 
             for (int i = 1; i < count; i++)
@@ -157,10 +157,10 @@ namespace Akeldov.Math.Hexes.Rasterization
 
         private static void ValidateSource(HexCenterMap source)
         {
-            if (source.Width <= 0 || source.Height <= 0)
+            if (source.Topology.Resolution.X <= 0 || source.Topology.Resolution.Y <= 0)
                 throw new ArgumentException("Hex field geometry must contain at least one hex.", nameof(source));
 
-            if (float.IsNaN(source.Apothem) || float.IsInfinity(source.Apothem) || source.Apothem <= 0f)
+            if (float.IsNaN(source.Geometry.Apothem) || float.IsInfinity(source.Geometry.Apothem) || source.Geometry.Apothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(source), "Hex field apothem must be finite and positive.");
         }
 

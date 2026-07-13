@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -15,25 +14,13 @@ namespace Akeldov.Math.Hexes.Chromatization
         /// <summary>
         /// Initializes a new instance of the ChromaticIndexMap type.
         /// </summary>
-        /// <param name="width">The width value.</param>
-        /// <param name="height">The height value.</param>
-        /// <param name="layout">The layout value.</param>
-        public ChromaticIndexMap(int width, int height, Layout layout)
+        /// <param name="topology">The map topology.</param>
+        public ChromaticIndexMap(HexMapTopology topology)
         {
-            if (width < 0)
-                throw new ArgumentOutOfRangeException(nameof(width));
+            Topology = topology;
+            _values = new byte[topology.Count];
 
-            if (height < 0)
-                throw new ArgumentOutOfRangeException(nameof(height));
-
-            var count = checked(width * height);
-
-            Width = width;
-            Height = height;
-            Topology = new HexMapTopology(width, height, layout);
-            _values = new byte[count];
-
-            switch (layout)
+            switch (topology.Layout)
             {
                 case Layout.OddR:
                     FillRowLayoutChromaticIndices(false);
@@ -48,19 +35,9 @@ namespace Akeldov.Math.Hexes.Chromatization
                     FillColumnLayoutChromaticIndices(true);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
+                    throw new ArgumentOutOfRangeException(nameof(topology));
             }
         }
-
-        /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width { get; }
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height { get; }
 
         /// <summary>
         /// Gets the map topology.
@@ -76,8 +53,8 @@ namespace Akeldov.Math.Hexes.Chromatization
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index.X < 0 || index.X >= Width ||
-                    index.Y < 0 || index.Y >= Height)
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 return _values[GetFlatIndex(index)];
@@ -96,14 +73,14 @@ namespace Akeldov.Math.Hexes.Chromatization
 
         private void FillRowLayoutChromaticIndices(bool shiftedRowsUseUpperOffset)
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 0; y < Topology.Resolution.Y; y++)
             {
-                int rowStart = y * Width;
+                int rowStart = y * Topology.Resolution.X;
                 int qOffset = shiftedRowsUseUpperOffset
                     ? (y + (y & 1)) / 2
                     : (y - (y & 1)) / 2;
 
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < Topology.Resolution.X; x++)
                 {
                     _values[rowStart + x] = (byte)PositiveModulo(x - qOffset - y, 3);
                 }
@@ -112,11 +89,11 @@ namespace Akeldov.Math.Hexes.Chromatization
 
         private void FillColumnLayoutChromaticIndices(bool shiftedColumnsUseUpperOffset)
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 0; y < Topology.Resolution.Y; y++)
             {
-                int rowStart = y * Width;
+                int rowStart = y * Topology.Resolution.X;
 
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < Topology.Resolution.X; x++)
                 {
                     int rOffset = shiftedColumnsUseUpperOffset
                         ? (x + (x & 1)) / 2
@@ -133,6 +110,6 @@ namespace Akeldov.Math.Hexes.Chromatization
             return result < 0 ? result + divisor : result;
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
     }
 }

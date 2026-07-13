@@ -19,9 +19,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         string approvedFileName)
     {
         var indexPartialSeptupletMap = new IndexPartialSeptupletMap(
-            width: MapWidth,
-            height: MapHeight,
-            layout: layout);
+            new HexMapTopology(MapWidth, MapHeight, layout));
         var indexPartialSeptupletGrid = new IndexPartialSeptupletGrid(
             indexPartialSeptupletMap,
             resolution: new VectorXYInt(480, 360));
@@ -41,9 +39,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         string approvedFileName)
     {
         var indexPartialSeptupletMap = new IndexPartialSeptupletMap(
-            width: MapWidth,
-            height: MapHeight,
-            layout: layout);
+            new HexMapTopology(MapWidth, MapHeight, layout));
         var indexPartialSeptupletGrid = new IndexPartialSeptupletGrid(
             indexPartialSeptupletMap,
             resolution: new VectorXYInt(480, 360));

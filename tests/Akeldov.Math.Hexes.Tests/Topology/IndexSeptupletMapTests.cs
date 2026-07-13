@@ -9,10 +9,10 @@ public class IndexSeptupletMapTests
     [Test]
     public void Constructor_ExposesDimensionsAndLayout()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.EvenQ);
+        var topology = new IndexSeptupletMap(new HexMapTopology(3, 2, Layout.EvenQ));
 
         Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
-        Assert.That(topology.Count, Is.EqualTo(6));
+        Assert.That(topology.Topology.Count, Is.EqualTo(6));
         Assert.That(topology.Topology.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(typeof(IndexSeptupletMap).GetProperty("Adjacent"), Is.Null);
     }
@@ -24,16 +24,15 @@ public class IndexSeptupletMapTests
 
         var map = new IndexSeptupletMap(topology);
 
-        Assert.That(map.Width, Is.EqualTo(3));
-        Assert.That(map.Height, Is.EqualTo(2));
-        Assert.That(map.Count, Is.EqualTo(6));
+        Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
+        Assert.That(map.Topology.Count, Is.EqualTo(6));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.EvenQ));
     }
 
     [Test]
     public void IndexSeptupletMap_ImplementsIHexMap()
     {
-        IHexMap<Septuplet<VectorXYInt>> topology = new IndexSeptupletMap(3, 2, Layout.OddR);
+        IHexMap<Septuplet<VectorXYInt>> topology = new IndexSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
 
         Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
@@ -45,7 +44,7 @@ public class IndexSeptupletMapTests
     [Test]
     public void Constructor_CreatesAdjacency()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.OddR);
+        var topology = new IndexSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
         Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
         Assert.That(adjacency.Main, Is.EqualTo(new VectorXYInt(1, 0)));
@@ -74,7 +73,7 @@ public class IndexSeptupletMapTests
         int adjacent5X,
         int adjacent5Y)
     {
-        var topology = new IndexSeptupletMap(3, 3, layout);
+        var topology = new IndexSeptupletMap(new HexMapTopology(3, 3, layout));
 
         Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 1)];
 
@@ -90,7 +89,7 @@ public class IndexSeptupletMapTests
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
-        var topology = new IndexSeptupletMap(3, 2, Layout.OddR);
+        var topology = new IndexSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(0, 2)]);
@@ -99,7 +98,7 @@ public class IndexSeptupletMapTests
     [Test]
     public void Constructor_WhenDimensionIsNegative_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletMap(-1, 1, Layout.OddR));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletMap(1, -1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletMap(new HexMapTopology(-1, 1, Layout.OddR)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletMap(new HexMapTopology(1, -1, Layout.OddR)));
     }
 }

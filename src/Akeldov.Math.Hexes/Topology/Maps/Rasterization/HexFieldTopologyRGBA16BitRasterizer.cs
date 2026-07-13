@@ -78,9 +78,9 @@ namespace Akeldov.Math.Hexes.Rasterization
             VectorXY[] normalizedVertices = GetNormalizedHexVertices(source.Topology.Layout);
             var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
 
-            for (int y = 0; y < source.Height; y++)
+            for (int y = 0; y < source.Topology.Resolution.Y; y++)
             {
-                for (int x = 0; x < source.Width; x++)
+                for (int x = 0; x < source.Topology.Resolution.X; x++)
                 {
                     VectorXY center = GetHexCenter(x, y, source.Topology.Layout);
                     RGBA16BitColor color = _indexToColor(new VectorXYInt(x, y));
@@ -223,9 +223,9 @@ namespace Akeldov.Math.Hexes.Rasterization
         {
             RasterBounds bounds = GetHexBounds(GetHexCenter(0, 0, source.Topology.Layout), _radius, normalizedVertices);
 
-            for (int y = 0; y < source.Height; y++)
+            for (int y = 0; y < source.Topology.Resolution.Y; y++)
             {
-                for (int x = 0; x < source.Width; x++)
+                for (int x = 0; x < source.Topology.Resolution.X; x++)
                 {
                     if (x == 0 && y == 0)
                         continue;
@@ -262,11 +262,11 @@ namespace Akeldov.Math.Hexes.Rasterization
 
         private static void ValidateSource(IndexSeptupletMap source)
         {
-            if (source.Width <= 0 || source.Height <= 0)
+            if (source.Topology.Resolution.X <= 0 || source.Topology.Resolution.Y <= 0)
                 throw new ArgumentException("Hex field topology must contain at least one hex.", nameof(source));
 
-            int expectedCount = checked(source.Width * source.Height);
-            if (source.Count != expectedCount)
+            int expectedCount = checked(source.Topology.Resolution.X * source.Topology.Resolution.Y);
+            if (source.Topology.Count != expectedCount)
             {
                 throw new ArgumentException("Hex adjacency map array length must match its dimensions.", nameof(source));
             }

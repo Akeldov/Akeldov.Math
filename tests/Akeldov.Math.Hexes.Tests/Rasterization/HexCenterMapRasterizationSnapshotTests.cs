@@ -15,12 +15,13 @@ public class HexCenterMapRasterizationSnapshotTests
     [TestCase(Layout.EvenQ, "hex-center-map-even-q-rgba16.png")]
     public void Rasterize_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
     {
-        var geometry = new HexCenterMap(
+        var mapGeometry = new HexMapGeometry(
             width: 5,
             height: 4,
             origin: new VectorXY(0f, 0f),
             radius: 8f.ConvertHexApothemToRadius(),
             layout: layout);
+        var geometry = new HexCenterMap(mapGeometry);
         SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, pixelsPerApothem: 8f);
         SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(ToSnapshotColor)
             .Rasterize(geometry, grid);

@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -15,26 +14,15 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Initializes a new instance of the IndexPartialSeptupletMap type.
         /// </summary>
-        /// <param name="width">The Width value.</param>
-        /// <param name="height">The Height value.</param>
-        /// <param name="layout">The Layout value.</param>
-        public IndexPartialSeptupletMap(
-            int width,
-            int height,
-            Layout layout)
+        /// <param name="topology">The map topology.</param>
+        public IndexPartialSeptupletMap(HexMapTopology topology)
         {
-            if (width < 0)
-                throw new ArgumentOutOfRangeException(nameof(width));
+            Width = topology.Resolution.X;
+            Height = topology.Resolution.Y;
+            Topology = topology;
+            _values = new PartialSeptuplet<VectorXYInt>[topology.Count];
 
-            if (height < 0)
-                throw new ArgumentOutOfRangeException(nameof(height));
-
-            Width = width;
-            Height = height;
-            Topology = new HexMapTopology(width, height, layout);
-            _values = new PartialSeptuplet<VectorXYInt>[checked(width * height)];
-
-            switch (layout)
+            switch (topology.Layout)
             {
                 case Layout.OddR:
                     FillRowLayoutTopology(false);
@@ -49,7 +37,7 @@ namespace Akeldov.Math.Hexes.Topology
                     FillColumnLayoutTopology(true);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
+                    throw new ArgumentOutOfRangeException(nameof(topology));
             }
         }
 

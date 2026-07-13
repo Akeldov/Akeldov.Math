@@ -12,7 +12,7 @@ public class HexCenterMapRasterizationTests
     [Test]
     public void Rasterize_UsesPixelsPerApothemForRasterResolution()
     {
-        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR));
 
         SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, 3f);
         SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(
@@ -26,7 +26,7 @@ public class HexCenterMapRasterizationTests
     [Test]
     public void Rasterize_MapsHexCenterToColor()
     {
-        var geometry = new HexCenterMap(2, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(new HexMapGeometry(2, 1, new VectorXY(0f, 0f), 2f, Layout.OddR));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var mappedCenters = new List<PointXY>();
@@ -59,7 +59,7 @@ public class HexCenterMapRasterizationTests
     [Test]
     public void CreateGrid_WhenPixelsPerApothemIsInvalid_Throws()
     {
-        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR));
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, 0f));
@@ -68,7 +68,7 @@ public class HexCenterMapRasterizationTests
     [Test]
     public void CreateGrid_WhenRasterResolutionDoesNotFitInt32_ThrowsOverflowException()
     {
-        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 1f, Layout.OddR);
+        var geometry = new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(0f, 0f), 1f, Layout.OddR));
 
         Assert.Throws<OverflowException>(() =>
             HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, float.MaxValue));
@@ -77,7 +77,7 @@ public class HexCenterMapRasterizationTests
     [Test]
     public void Rasterize_UsesProvidedGrid()
     {
-        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(new HexMapGeometry(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR));
         var grid = new SpatialRasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
 
         SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(
