@@ -11,8 +11,6 @@ namespace Akeldov.Math.Hexes.Topology
     /// </summary>
     public sealed class BarycentricTripletGrid : IGrid<Triplet<float>>
     {
-        private const float DefaultHexRadius = 1f;
-
         private Triplet<float>[] _values = Array.Empty<Triplet<float>>();
 
         private VectorXY HexOrigin { get; set; }
@@ -30,97 +28,47 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Initializes a new instance of the BarycentricTripletGrid type.
         /// </summary>
-        /// <param name="indexSeptupletMap">The IndexSeptupletMap value.</param>
+        /// <param name="geometry">The hex map geometry.</param>
         /// <param name="resolution">The Resolution value.</param>
         public BarycentricTripletGrid(
-            IndexSeptupletMap indexSeptupletMap,
+            HexMapGeometry geometry,
             VectorXYInt resolution)
         {
-            if (indexSeptupletMap == null)
-                throw new ArgumentNullException(nameof(indexSeptupletMap));
+            if (geometry.Topology.Resolution.X <= 0 || geometry.Topology.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map dimensions must be positive.");
 
-            float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            var geometry = new HexMapGeometry(indexSeptupletMap.Topology, DefaultHexRadius);
-            VectorXY gridSize = geometry.GetBoundingBoxSize();
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
-            Initialize(
-                indexSeptupletMap.Topology.Resolution.X,
-                indexSeptupletMap.Topology.Resolution.Y,
-                indexSeptupletMap.Topology.Layout,
-                GetDefaultHexOrigin(indexSeptupletMap.Topology.Layout, apothem, DefaultHexRadius),
-                apothem,
-                DefaultHexRadius,
-                VectorXY.Zero,
-                gridSize,
-                resolution);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the BarycentricTripletGrid type.
-        /// </summary>
-        /// <param name="hexWidth">The HexWidth value.</param>
-        /// <param name="hexHeight">The HexHeight value.</param>
-        /// <param name="layout">The Layout value.</param>
-        /// <param name="hexOrigin">The HexOrigin value.</param>
-        /// <param name="resolution">The Resolution value.</param>
-        public BarycentricTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            VectorXYInt resolution)
-        {
-            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
-
-            float hexApothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            Bounds bounds = GetBounds(hexWidth, hexHeight, layout, hexOrigin, hexApothem, DefaultHexRadius);
+            var bounds = geometry.GetBoundingBox();
+            VectorXY gridOrigin = geometry.Topology.Layout switch
+            {
+                Layout.EvenR when geometry.Topology.Resolution.Y > 1 => new VectorXY(
+                    geometry.Origin.X - geometry.Apothem - Geometry.Constants.Cos30Deg * geometry.Radius,
+                    bounds.Min.Y),
+                Layout.EvenQ when geometry.Topology.Resolution.X > 1 => new VectorXY(
+                    bounds.Min.X,
+                    geometry.Origin.Y - geometry.Apothem - Geometry.Constants.Sin60Deg * geometry.Radius),
+                _ => new VectorXY(bounds.Min.X, bounds.Min.Y),
+            };
+            VectorXY gridSize = geometry.Topology.Layout switch
+            {
+                Layout.EvenR when geometry.Topology.Resolution.Y > 1 => new VectorXY(
+                    2f * geometry.Apothem * (geometry.Topology.Resolution.X - 1) + geometry.Apothem + 2f * Geometry.Constants.Cos30Deg * geometry.Radius,
+                    bounds.Height),
+                Layout.EvenQ when geometry.Topology.Resolution.X > 1 => new VectorXY(
+                    bounds.Width,
+                    2f * geometry.Apothem * (geometry.Topology.Resolution.Y - 1) + geometry.Apothem + 2f * Geometry.Constants.Sin60Deg * geometry.Radius),
+                _ => bounds.Size,
+            };
 
             Initialize(
-                hexWidth,
-                hexHeight,
-                layout,
-                hexOrigin,
-                hexApothem,
-                DefaultHexRadius,
-                new VectorXY(bounds.MinX, bounds.MinY),
-                new VectorXY(bounds.Width, bounds.Height),
-                resolution);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the BarycentricTripletGrid type.
-        /// </summary>
-        /// <param name="hexWidth">The HexWidth value.</param>
-        /// <param name="hexHeight">The HexHeight value.</param>
-        /// <param name="layout">The Layout value.</param>
-        /// <param name="hexOrigin">The HexOrigin value.</param>
-        /// <param name="gridOrigin">The GridOrigin value.</param>
-        /// <param name="gridSize">The GridSize value.</param>
-        /// <param name="resolution">The Resolution value.</param>
-        public BarycentricTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            VectorXY gridOrigin,
-            VectorXY gridSize,
-            VectorXYInt resolution)
-        {
-            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
-
-            if (!gridOrigin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
-
-            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
-
-            Initialize(
-                hexWidth,
-                hexHeight,
-                layout,
-                hexOrigin,
-                DefaultHexRadius.ConvertHexRadiusToApothem(),
-                DefaultHexRadius,
+                geometry.Topology.Resolution.X,
+                geometry.Topology.Resolution.Y,
+                geometry.Topology.Layout,
+                geometry.Origin,
+                geometry.Apothem,
+                geometry.Radius,
                 gridOrigin,
                 gridSize,
                 resolution);
@@ -364,62 +312,6 @@ namespace Akeldov.Math.Hexes.Topology
             return closestVertexIndex;
         }
 
-        private static VectorXY GetDefaultHexOrigin(Layout layout, float apothem, float radius)
-        {
-            switch (layout)
-            {
-                case Layout.OddR:
-                    return new VectorXY(apothem, radius);
-                case Layout.EvenR:
-                    return new VectorXY(2f * apothem, radius);
-                case Layout.OddQ:
-                    return new VectorXY(radius, apothem);
-                case Layout.EvenQ:
-                    return new VectorXY(radius, 2f * apothem);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
-            }
-        }
-
-        private static Bounds GetBounds(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY origin,
-            float apothem,
-            float radius)
-        {
-            switch (layout)
-            {
-                case Layout.OddR:
-                    return new Bounds(
-                        origin.X - Geometry.Constants.Cos30Deg * radius,
-                        origin.Y - radius,
-                        origin.X + 2f * apothem * (hexWidth - 1) + (hexHeight > 1 ? apothem : 0f) + Geometry.Constants.Cos30Deg * radius,
-                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
-                case Layout.EvenR:
-                    return new Bounds(
-                        origin.X - (hexHeight > 1 ? apothem : 0f) - Geometry.Constants.Cos30Deg * radius,
-                        origin.Y - radius,
-                        origin.X + 2f * apothem * (hexWidth - 1) + Geometry.Constants.Cos30Deg * radius,
-                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
-                case Layout.OddQ:
-                    return new Bounds(
-                        origin.X - radius,
-                        origin.Y - Geometry.Constants.Sin60Deg * radius,
-                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
-                        origin.Y + 2f * apothem * (hexHeight - 1) + (hexWidth > 1 ? apothem : 0f) + Geometry.Constants.Sin60Deg * radius);
-                case Layout.EvenQ:
-                    return new Bounds(
-                        origin.X - radius,
-                        origin.Y - (hexWidth > 1 ? apothem : 0f) - Geometry.Constants.Sin60Deg * radius,
-                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
-                        origin.Y + 2f * apothem * (hexHeight - 1) + Geometry.Constants.Sin60Deg * radius);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
-            }
-        }
-
         private static void ValidateHexGrid(
             int hexWidth,
             int hexHeight,
@@ -463,27 +355,5 @@ namespace Akeldov.Math.Hexes.Topology
             return x * x + y * y;
         }
 
-        private readonly struct Bounds
-        {
-            public Bounds(float minX, float minY, float maxX, float maxY)
-            {
-                MinX = minX;
-                MinY = minY;
-                MaxX = maxX;
-                MaxY = maxY;
-            }
-
-            public float MinX { get; }
-
-            public float MinY { get; }
-
-            public float MaxX { get; }
-
-            public float MaxY { get; }
-
-            public float Width => MaxX - MinX;
-
-            public float Height => MaxY - MinY;
-        }
     }
 }

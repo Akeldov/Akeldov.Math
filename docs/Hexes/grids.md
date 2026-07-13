@@ -51,10 +51,7 @@ Geometry grids can visualize sampled barycentric weights.
 
 ```csharp
 var grid = new BarycentricTripletGrid(
-    hexWidth: 5,
-    hexHeight: 4,
-    layout: Layout.OddR,
-    hexOrigin: VectorXY.Zero,
+    new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR),
     resolution: new VectorXYInt(192, 192));
 
 SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);

@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -55,10 +56,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         string approvedFileName)
     {
         var grid = new BarycentricTripletGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
+            new HexMapGeometry(5, 4, VectorXY.Zero, 1f, layout),
             resolution: new VectorXYInt(64, 64));
         SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToBarycentricMainSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);

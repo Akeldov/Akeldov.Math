@@ -10,10 +10,7 @@ Geometry grids sample Spatial2D values from a hex field.
 
 ```csharp
 var grid = new BarycentricTripletGrid(
-    hexWidth: 5,
-    hexHeight: 4,
-    layout: Layout.OddR,
-    hexOrigin: VectorXY.Zero,
+    new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR),
     resolution: new VectorXYInt(192, 192));
 
 SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
