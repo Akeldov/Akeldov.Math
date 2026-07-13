@@ -8,6 +8,33 @@ namespace Akeldov.Math.Hexes.Tests.Maps;
 public class HexMapRasterizationExtensionsTests
 {
     [Test]
+    public void SpatialHexMapToSpatialRasterGrid_ReturnsGridForMapGeometry()
+    {
+        var geometry = new HexMapGeometry(
+            width: 2,
+            height: 3,
+            origin: new VectorXY(10f, 20f),
+            radius: 2f,
+            layout: Layout.EvenQ);
+        ISpatialHexMap<PointXY> map = new HexCenterMap(geometry);
+
+        SpatialRasterGrid actual = map.ToSpatialRasterGrid(pixelsPerApothem: 4f, margin: 1.5f);
+        SpatialRasterGrid expected = geometry.ToSpatialRasterGrid(pixelsPerApothem: 4f, margin: 1.5f);
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void SpatialHexMapToSpatialRasterGrid_WhenMapIsNull_Throws()
+    {
+        ISpatialHexMap<PointXY> map = null!;
+
+        var exception = Assert.Throws<ArgumentNullException>(() => map.ToSpatialRasterGrid(3f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
+
+    [Test]
     public void HexMapTopologyRasterize_WithMargin_ExpandsGridByMarginOnEachSide()
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);

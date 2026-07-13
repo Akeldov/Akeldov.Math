@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Rasterization;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
@@ -12,9 +11,8 @@ namespace Akeldov.Math.Hexes.Benchmarks.Rasterization;
 public class HexRasterizationBenchmarks
 {
     private IndexSeptupletMap _adjacencyMap = null!;
-    private HexFieldTopologyRGBA16BitRasterizer _topologyRasterizer = null!;
     private IndexSeptupletGrid _adjacencyGrid = null!;
-    private SpatialRasterGrid _topologyGrid;
+    private VectorXYInt _topologyResolution;
 
     [Params(32, 128)]
     public int Size { get; set; }
@@ -26,14 +24,10 @@ public class HexRasterizationBenchmarks
     public void Setup()
     {
         _adjacencyMap = new IndexSeptupletMap(new HexMapTopology(Size, Size, Layout));
-        _topologyRasterizer = new HexFieldTopologyRGBA16BitRasterizer(
-            origin: VectorXY.Zero,
-            radius: 8f,
-            indexToColor: ToIndexColor);
-        _topologyGrid = _topologyRasterizer.CreateGrid(_adjacencyMap, pixelsPerApothem: 2f);
+        _topologyResolution = new VectorXYInt(Size * 8, Size * 8);
         _adjacencyGrid = new IndexSeptupletGrid(
             _adjacencyMap,
-            resolution: new VectorXYInt(Size * 8, Size * 8));
+            resolution: _topologyResolution);
     }
 
     [Benchmark]
@@ -45,9 +39,11 @@ public class HexRasterizationBenchmarks
     }
 
     [Benchmark]
-    public SpatialRaster<RGBA16BitColor> RasterizeTopology()
+    public Raster<RGBA16BitColor> RasterizeTopology()
     {
-        return _topologyRasterizer.Rasterize(_adjacencyMap, _topologyGrid);
+        return _adjacencyMap.Rasterize(
+            _topologyResolution,
+            (Septuplet<VectorXYInt> adjacency) => ToIndexColor(adjacency.Main));
     }
 
     [Benchmark]

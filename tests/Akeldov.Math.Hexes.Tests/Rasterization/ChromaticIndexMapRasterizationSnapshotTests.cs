@@ -1,7 +1,5 @@
 using Akeldov.Math.Hexes.Chromatization;
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Rasterization;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -18,12 +16,8 @@ public class ChromaticIndexMapRasterizationSnapshotTests
     {
         var topology = new HexMapTopology(5, 4, layout);
         var chromatization = new ChromaticIndexMap(topology);
-        var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
-            origin: new VectorXY(0f, 0f),
-            radius: 8f.ConvertHexApothemToRadius(),
-            chromaticIndexToColor: ToSnapshotColor);
-        SpatialRasterGrid grid = rasterizer.CreateGrid(chromatization, pixelsPerApothem: 8f);
-        SpatialRaster<RGBA16BitColor> raster = rasterizer.Rasterize(chromatization, grid);
+        SpatialRasterGrid grid = chromatization.Topology.ToSpatialRasterGrid(1f, VectorXY.Zero, 8f);
+        Raster<RGBA16BitColor> raster = chromatization.Rasterize(grid.Resolution, ToSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -44,7 +38,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
         }
     }
 
-    private static byte[] SaveToPngBytes(SpatialRaster<RGBA16BitColor> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

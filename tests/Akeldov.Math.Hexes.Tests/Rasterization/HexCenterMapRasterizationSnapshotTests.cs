@@ -1,6 +1,4 @@
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Rasterization;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -22,9 +20,7 @@ public class HexCenterMapRasterizationSnapshotTests
             radius: 8f.ConvertHexApothemToRadius(),
             layout: layout);
         var geometry = new HexCenterMap(mapGeometry);
-        SpatialRasterGrid grid = HexCenterMapRGBA16BitRasterizer.CreateGrid(geometry, pixelsPerApothem: 8f);
-        SpatialRaster<RGBA16BitColor> raster = new HexCenterMapRGBA16BitRasterizer(ToSnapshotColor)
-            .Rasterize(geometry, grid);
+        SpatialRaster<RGBA16BitColor> raster = geometry.Rasterize(8f, 0f, ToSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
