@@ -16,7 +16,7 @@ public class RegionRasterizationTests
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(4f, 4f),
             resolution: new VectorXYInt(4, 4));
@@ -33,7 +33,7 @@ public class RegionRasterizationTests
     public void Rasterize_WhenSourceIsRectangleRegion_UsesRegionSignedDistance()
     {
         IRegion region = new Rectangle(new PointXY(0f, 0f), new PointXY(2f, 2f));
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
@@ -137,7 +137,7 @@ public class RegionRasterizationTests
             CreateSquareContour(0f, 0f, 4f, 4f),
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 5f),
             resolution: new VectorXYInt(160, 160));
@@ -196,9 +196,9 @@ public class RegionRasterizationTests
         };
     }
 
-    private static SpatialRasterGrid CreateThreeByOneGrid()
+    private static RasterGeometry CreateThreeByOneGrid()
     {
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(-1.5f, -0.5f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));

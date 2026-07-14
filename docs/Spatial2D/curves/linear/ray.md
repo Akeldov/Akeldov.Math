@@ -18,7 +18,7 @@ var ray = new Ray(
     origin: new PointXY(-2.45f, -2.05f),
     angle: MathF.PI / 5f);
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));

@@ -23,7 +23,7 @@ var curve = new QuadraticBezier(
     controlPoint: new PointXY(-0.25f, 2.45f),
     endPoint: new PointXY(2.25f, -1.35f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));

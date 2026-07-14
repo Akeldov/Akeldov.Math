@@ -133,8 +133,8 @@ public class RGBA8BitRasterTests
         return new SpatialRaster<RGBA8BitColor>(CreateGrid(), values);
     }
 
-    private static SpatialRasterGrid CreateGrid()
+    private static RasterGeometry CreateGrid()
     {
-        return new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(2f, 3f), new VectorXYInt(2, 3));
+        return new RasterGeometry(new PointXY(0f, 0f), new VectorXY(2f, 3f), new VectorXYInt(2, 3));
     }
 }

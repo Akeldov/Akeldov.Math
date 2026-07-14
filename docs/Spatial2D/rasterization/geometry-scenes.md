@@ -15,7 +15,7 @@ using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 using Akeldov.Math.Spatial2D.Regions;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(256, 256));
@@ -59,7 +59,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(100f, 70f),
     resolution: new VectorXYInt(180, 126));
@@ -184,7 +184,7 @@ RGBA16BitColor ToRainbowColor(PointXY point, ParameterizedCurveProjection projec
     return rainbowColor.ScaleAlpha(edgeCoverage);
 }
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(100f, 70f),
     resolution: new VectorXYInt(720, 504));

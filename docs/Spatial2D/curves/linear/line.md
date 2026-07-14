@@ -18,7 +18,7 @@ var line = new Line(
     new PointXY(-2.5f, -1.5f),
     new PointXY(2.5f, 1.75f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -27,7 +27,7 @@ SpatialRaster<Gray8BitColor> raster = line.Rasterize(
     width: 0f,
     edgeFalloff: 0.25f,
     color: new Gray8BitColor(byte.MaxValue),
-    spatialRasterGrid: grid);
+    rasterGeometry: grid);
 raster.SaveAsPng("line-distance.png");
 ```
 

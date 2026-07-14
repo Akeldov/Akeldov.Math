@@ -8,13 +8,13 @@ Image export helpers and color types live in `Akeldov.Math.Spatial2D.Imaging`.
 Reusable spatial rasterization strategies implement `ISpatialRasterizer<TSource, TValue>`.
 Reusable non-spatial rasterization strategies implement `IRasterizer<TSource, TValue>`.
 
-`SpatialRaster<TValue>` stores values sampled on a `SpatialRasterGrid`.
+`SpatialRaster<TValue>` stores values sampled on a `RasterGeometry`.
 `Raster<TValue>` stores the same rectangular value layout without world-space origin or size.
 Both implement `IGrid<TValue>`, so image export works for either spatial or non-spatial rasters.
 
 ## Topics
 
-- [SpatialRasterGrid](spatial-raster-grid.md)
+- [RasterGeometry](raster-geometry.md)
 - [Gray Rasters](gray-rasters.md)
 - [RGBA Rasters](rgba-rasters.md)
 - [GeometryScene](geometry-scenes.md)
@@ -39,7 +39,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));

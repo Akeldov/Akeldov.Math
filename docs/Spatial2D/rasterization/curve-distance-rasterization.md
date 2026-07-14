@@ -13,7 +13,7 @@ var curve = new ParameterizedSegment(
     new PointXY(0f, 0f),
     new PointXY(4f, 0f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-0.5f, -1f),
     size: new VectorXY(5f, 2f),
     resolution: new VectorXYInt(160, 64));

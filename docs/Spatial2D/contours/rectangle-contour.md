@@ -28,7 +28,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new RectangleContour(new PointXY(-2f, -1.4f), new PointXY(2f, 1.4f));
-var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+var grid = new RasterGeometry(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
 contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("rectangle-contour.png");
 ```
 

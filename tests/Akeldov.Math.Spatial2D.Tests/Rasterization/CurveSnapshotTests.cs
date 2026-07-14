@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 
 public class CurveSnapshotTests
 {
-    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry SnapshotGrid = new RasterGeometry(
         origin: new PointXY(-3f, -3f),
         size: new VectorXY(6f, 6f),
         resolution: new VectorXYInt(96, 96));

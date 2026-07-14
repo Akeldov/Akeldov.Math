@@ -19,7 +19,7 @@ var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
     apothem: 8f,
     chromaticIndexToColor: ToColor);
 
-SpatialRasterGrid grid = rasterizer.CreateGrid(map, pixelsPerApothem: 24f);
+RasterGeometry grid = rasterizer.CreateGrid(map, pixelsPerApothem: 24f);
 SpatialRaster<RGBA16BitColor> raster = rasterizer.Rasterize(map, grid);
 
 raster.SaveAsPng("chromatic-index-map-odd-r-rgba16.png");

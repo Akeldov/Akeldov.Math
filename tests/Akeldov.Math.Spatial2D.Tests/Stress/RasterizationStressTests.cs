@@ -17,7 +17,7 @@ public class RasterizationStressTests
             new Rectangle(new PointXY(0f, 0f), new PointXY(200f, 200f)).ToContour(),
             new Rectangle(new PointXY(75f, 75f), new PointXY(125f, 125f)).ToContour()
         });
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             new PointXY(-25f, -25f),
             new VectorXY(250f, 250f),
             new VectorXYInt(512, 512));

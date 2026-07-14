@@ -27,11 +27,11 @@ namespace Akeldov.Math.Hexes
             Gray8BitColor backgroundColor,
             int pixelsPerApothem)
         {
-            var spatialRasterGrid = hexMapGeometry.ToSpatialRasterGrid(pixelsPerApothem);
+            var rasterGeometry = hexMapGeometry.ToRasterGeometry(pixelsPerApothem);
 
             var res = hexMapGeometry
                 .ToHexEdgeSegments()
-                .Rasterize(curveWidth, fadeDistance, curveColor, backgroundColor, spatialRasterGrid);
+                .Rasterize(curveWidth, fadeDistance, curveColor, backgroundColor, rasterGeometry);
 
             return res;
         }

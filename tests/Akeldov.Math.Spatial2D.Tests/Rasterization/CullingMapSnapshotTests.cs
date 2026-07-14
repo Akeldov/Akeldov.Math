@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 
 public class CullingMapSnapshotTests
 {
-    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry SnapshotGrid = new RasterGeometry(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(160, 112));

@@ -2,7 +2,7 @@
 
 `Raster<Gray8BitColor>` and `Raster<Gray16BitColor>` store rectangular grayscale samples without spatial bounds.
 `SpatialRaster<Gray8BitColor>` and `SpatialRaster<Gray16BitColor>` store grayscale samples together with a
-`SpatialRasterGrid`.
+`RasterGeometry`.
 
 Use 8-bit rasters for masks and lightweight previews.
 Use 16-bit rasters when signed-distance or smooth field output needs more precision.
@@ -13,7 +13,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));

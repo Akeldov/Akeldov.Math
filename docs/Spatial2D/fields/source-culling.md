@@ -13,7 +13,7 @@ using Akeldov.Math.Spatial2D.Fields;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(100f, 70f),
     resolution: new VectorXYInt(160, 112));

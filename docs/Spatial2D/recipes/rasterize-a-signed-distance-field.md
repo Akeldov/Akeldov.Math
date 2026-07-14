@@ -14,7 +14,7 @@ IRegion region = new ContourBasedRegion(new IContour[]
     CreateSquareContour(1f, 1f, 3f, 3f)
 });
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-0.5f, -0.5f),
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(160, 160));

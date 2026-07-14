@@ -13,6 +13,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The source object to rasterize.</param>
         /// <param name="grid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>The spatial raster produced from the source object.</returns>
-        SpatialRaster<TValue> Rasterize(TSource source, SpatialRasterGrid grid);
+        SpatialRaster<TValue> Rasterize(TSource source, RasterGeometry grid);
     }
 }

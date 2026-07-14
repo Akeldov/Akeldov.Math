@@ -27,13 +27,13 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </exception>
         /// <exception cref="OverflowException">Thrown when the raster resolution does not fit <see cref="int"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static SpatialRasterGrid ToSpatialRasterGrid(
+        public static RasterGeometry ToRasterGeometry(
             this HexMapTopology topology,
             float radius,
             VectorXY origin,
             float pixelsPerApothem)
         {
-            return new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem);
+            return new HexMapGeometry(topology, origin, radius).ToRasterGeometry(pixelsPerApothem);
         }
 
         /// <summary>
@@ -54,14 +54,14 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </exception>
         /// <exception cref="OverflowException">Thrown when the raster resolution does not fit <see cref="int"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static SpatialRasterGrid ToSpatialRasterGrid(
+        public static RasterGeometry ToRasterGeometry(
             this HexMapTopology topology,
             float radius,
             VectorXY origin,
             float pixelsPerApothem,
             float margin)
         {
-            return new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem, margin);
+            return new HexMapGeometry(topology, origin, radius).ToRasterGeometry(pixelsPerApothem, margin);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </exception>
         /// <exception cref="OverflowException">Thrown when the raster resolution does not fit <see cref="int"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static SpatialRasterGrid ToSpatialRasterGrid(this HexMapGeometry geometry, float pixelsPerApothem, float margin = 0f)
+        public static RasterGeometry ToRasterGeometry(this HexMapGeometry geometry, float pixelsPerApothem, float margin = 0f)
         {
             if (float.IsNaN(pixelsPerApothem) || float.IsInfinity(pixelsPerApothem) || pixelsPerApothem <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(pixelsPerApothem));
@@ -94,7 +94,7 @@ namespace Akeldov.Math.Hexes.Geometry
             int rasterWidth = CalculateRasterResolution(rasterSize.X, pixelsPerWorldUnit);
             int rasterHeight = CalculateRasterResolution(rasterSize.Y, pixelsPerWorldUnit);
 
-            return new SpatialRasterGrid(
+            return new RasterGeometry(
                 boundingBox.Min - marginVector,
                 rasterSize,
                 new VectorXYInt(rasterWidth, rasterHeight));

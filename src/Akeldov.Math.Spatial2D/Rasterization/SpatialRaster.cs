@@ -3,7 +3,7 @@ using System;
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Stores a rectangular raster of values sampled on a <see cref="SpatialRasterGrid"/>.
+    /// Stores a rectangular raster of values sampled on a <see cref="RasterGeometry"/>.
     /// </summary>
     /// <typeparam name="TValue">The value type stored in each raster cell.</typeparam>
     public class SpatialRaster<TValue> : IRaster<TValue>
@@ -15,7 +15,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="values">
         /// The cell values in row-major order. The array is retained as raster state and must contain one value per grid cell.
         /// </param>
-        public SpatialRaster(SpatialRasterGrid grid, TValue[] values)
+        public SpatialRaster(RasterGeometry grid, TValue[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
@@ -32,7 +32,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Gets the raster sampling grid.
         /// </summary>
-        public SpatialRasterGrid Grid { get; }
+        public RasterGeometry Grid { get; }
 
         /// <summary>
         /// Gets the retained row-major raster value array.

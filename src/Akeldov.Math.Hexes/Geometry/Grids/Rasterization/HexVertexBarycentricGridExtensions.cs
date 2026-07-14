@@ -62,7 +62,7 @@ namespace Akeldov.Math.Hexes.Topology
             for (int i = 0; i < values.Length; i++)
                 values[i] = barycentricCoordinatesToColor(grid[i], chromaticIndexPartialTripletGrid[i]);
 
-            var rasterGrid = new SpatialRasterGrid(
+            var rasterGrid = new RasterGeometry(
                 (PointXY)grid.Origin,
                 grid.Size,
                 grid.Resolution);
@@ -70,17 +70,17 @@ namespace Akeldov.Math.Hexes.Topology
             return new SpatialRaster<TValue>(rasterGrid, values);
         }
 
-        private static SpatialRasterGrid CreateRasterGrid(BarycentricTripletGrid grid)
+        private static RasterGeometry CreateRasterGrid(BarycentricTripletGrid grid)
         {
-            return new SpatialRasterGrid(
+            return new RasterGeometry(
                 (PointXY)grid.Origin,
                 grid.Size,
                 grid.Resolution);
         }
 
-        private static SpatialRasterGrid CreateRasterGrid(BarycentricPartialTripletGrid grid)
+        private static RasterGeometry CreateRasterGrid(BarycentricPartialTripletGrid grid)
         {
-            return new SpatialRasterGrid(
+            return new RasterGeometry(
                 (PointXY)grid.Origin,
                 grid.Size,
                 grid.Resolution);

@@ -17,19 +17,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The grayscale stroke color.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster with the curve drawn over black.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
-        /// or when <paramref name="spatialRasterGrid"/> is invalid.
+        /// or when <paramref name="rasterGeometry"/> is invalid.
         /// </exception>
         public static SpatialRaster<Gray8BitColor> Rasterize<TCurve>(
             this TCurve curve,
             float width,
             float edgeFalloff,
             Gray8BitColor color,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where TCurve : ICurve
         {
             if (curve == null)
@@ -40,7 +40,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 edgeFalloff,
                 color,
                 default(Gray8BitColor),
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         /// <summary>
@@ -51,19 +51,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The grayscale stroke color.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster with the curve drawn over black.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
-        /// or when <paramref name="spatialRasterGrid"/> is invalid.
+        /// or when <paramref name="rasterGeometry"/> is invalid.
         /// </exception>
         public static SpatialRaster<Gray16BitColor> Rasterize<TCurve>(
             this TCurve curve,
             float width,
             float edgeFalloff,
             Gray16BitColor color,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where TCurve : ICurve
         {
             if (curve == null)
@@ -74,7 +74,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 edgeFalloff,
                 color,
                 default(Gray16BitColor),
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         /// <summary>
@@ -85,19 +85,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative alpha falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The stroke color.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit RGBA raster with the curve drawn over transparency.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
-        /// or when <paramref name="spatialRasterGrid"/> is invalid.
+        /// or when <paramref name="rasterGeometry"/> is invalid.
         /// </exception>
         public static SpatialRaster<RGBA8BitColor> Rasterize<TCurve>(
             this TCurve curve,
             float width,
             float edgeFalloff,
             RGBA8BitColor color,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where TCurve : ICurve
         {
             if (curve == null)
@@ -108,7 +108,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 edgeFalloff,
                 color,
                 RGBA8BitColor.Transparent,
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         /// <summary>
@@ -119,19 +119,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="width">The full stroke width in world coordinate units.</param>
         /// <param name="edgeFalloff">The non-negative alpha falloff outside the stroke edge, in world coordinate units.</param>
         /// <param name="color">The stroke color.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit RGBA raster with the curve drawn over transparency.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="curve"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="width"/> or <paramref name="edgeFalloff"/> is negative, NaN, or infinite,
-        /// or when <paramref name="spatialRasterGrid"/> is invalid.
+        /// or when <paramref name="rasterGeometry"/> is invalid.
         /// </exception>
         public static SpatialRaster<RGBA16BitColor> Rasterize<TCurve>(
             this TCurve curve,
             float width,
             float edgeFalloff,
             RGBA16BitColor color,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where TCurve : ICurve
         {
             if (curve == null)
@@ -142,7 +142,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 edgeFalloff,
                 color,
                 RGBA16BitColor.Transparent,
-                spatialRasterGrid);
+                rasterGeometry);
         }
     }
 }

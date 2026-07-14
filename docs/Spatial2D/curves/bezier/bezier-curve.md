@@ -26,7 +26,7 @@ var curve = new BezierCurve(
     new PointXY(1.5f, 2.15f),
     new PointXY(2.35f, -1.65f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));

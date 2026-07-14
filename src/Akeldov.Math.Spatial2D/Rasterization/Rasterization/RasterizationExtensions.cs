@@ -18,7 +18,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>The spatial raster produced from the source object.</returns>
         public static SpatialRaster<TValue> Rasterize<TSource, TValue>(
             this TSource source,
-            SpatialRasterGrid grid,
+            RasterGeometry grid,
             ISpatialRasterizer<TSource, TValue> rasterizer)
         {
             if (source is null)
@@ -72,7 +72,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
             this IRaster<TValue> grid,
-            SpatialRasterGrid rasterGrid,
+            RasterGeometry rasterGrid,
             Func<TValue, TColor> colorSelector)
         {
             if (grid == null)

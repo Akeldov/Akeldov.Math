@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 
 public class RegionOverviewSnapshotTests
 {
-    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry SnapshotGrid = new RasterGeometry(
         new PointXY(-3f, -3f),
         new VectorXY(6f, 6f),
         new VectorXYInt(96, 96));

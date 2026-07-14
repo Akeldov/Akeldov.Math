@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <summary>
     /// Describes an axis-aligned rectangular raster sampling grid in two-dimensional space.
     /// </summary>
-    public readonly struct SpatialRasterGrid : IEquatable<SpatialRasterGrid>
+    public readonly struct RasterGeometry : IEquatable<RasterGeometry>
     {
         private readonly PointXY _origin;
         private readonly VectorXY _size;
@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="origin">The lower-left grid origin in world coordinates.</param>
         /// <param name="size">The grid size in world coordinates. Both components must be finite and positive.</param>
         /// <param name="resolution">The grid resolution in cells. Both components must be positive.</param>
-        public SpatialRasterGrid(PointXY origin, VectorXY size, VectorXYInt resolution)
+        public RasterGeometry(PointXY origin, VectorXY size, VectorXYInt resolution)
         {
             if (float.IsNaN(origin.X) || float.IsInfinity(origin.X) ||
                 float.IsNaN(origin.Y) || float.IsInfinity(origin.Y))
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="minimumPixelsPerUnit">
         /// The minimum number of pixels per world-space unit. The resolution is rounded up independently for each axis.
         /// </param>
-        public SpatialRasterGrid(PointXY origin, VectorXY size, int minimumPixelsPerUnit)
+        public RasterGeometry(PointXY origin, VectorXY size, int minimumPixelsPerUnit)
         {
             if (minimumPixelsPerUnit <= 0)
             {
@@ -66,7 +66,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                     "Minimum pixels per unit must be positive.");
             }
 
-            var bounds = new SpatialRasterGrid(origin, size, VectorXYInt.One);
+            var bounds = new RasterGeometry(origin, size, VectorXYInt.One);
             double resolutionX = System.Math.Ceiling((double)bounds.Size.X * minimumPixelsPerUnit);
             double resolutionY = System.Math.Ceiling((double)bounds.Size.Y * minimumPixelsPerUnit);
 
@@ -93,7 +93,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="cornerA">The first corner in world coordinates.</param>
         /// <param name="cornerB">The diagonally opposite corner in world coordinates. Corner order does not matter.</param>
         /// <param name="resolution">The grid resolution in cells. Both components must be positive.</param>
-        public SpatialRasterGrid(PointXY cornerA, PointXY cornerB, VectorXYInt resolution)
+        public RasterGeometry(PointXY cornerA, PointXY cornerB, VectorXYInt resolution)
         {
             if (float.IsNaN(cornerA.X) || float.IsInfinity(cornerA.X) ||
                 float.IsNaN(cornerA.Y) || float.IsInfinity(cornerA.Y))
@@ -137,7 +137,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="minimumPixelsPerUnit">
         /// The minimum number of pixels per world-space unit. The resolution is rounded up independently for each axis.
         /// </param>
-        public SpatialRasterGrid(PointXY cornerA, PointXY cornerB, int minimumPixelsPerUnit)
+        public RasterGeometry(PointXY cornerA, PointXY cornerB, int minimumPixelsPerUnit)
         {
             if (minimumPixelsPerUnit <= 0)
             {
@@ -147,7 +147,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                     "Minimum pixels per unit must be positive.");
             }
 
-            var bounds = new SpatialRasterGrid(cornerA, cornerB, VectorXYInt.One);
+            var bounds = new RasterGeometry(cornerA, cornerB, VectorXYInt.One);
             double resolutionX = System.Math.Ceiling((double)bounds.Size.X * minimumPixelsPerUnit);
             double resolutionY = System.Math.Ceiling((double)bounds.Size.Y * minimumPixelsPerUnit);
 
@@ -219,13 +219,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         /// <param name="other">The raster grid to compare with this raster grid.</param>
         /// <returns><see langword="true"/> if both raster grids are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(SpatialRasterGrid other) =>
+        public bool Equals(RasterGeometry other) =>
             Origin.Equals(other.Origin) &&
             Size.Equals(other.Size) &&
             Resolution.Equals(other.Resolution);
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is SpatialRasterGrid other && Equals(other);
+        public override bool Equals(object? obj) => obj is RasterGeometry other && Equals(other);
 
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(Origin, Size, Resolution);
@@ -234,7 +234,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public override string ToString() =>
             string.Format(
                 CultureInfo.InvariantCulture,
-                "RasterGrid(origin: {0}, size: {1}, resolution: {2})",
+                "RasterGeometry(origin: {0}, size: {1}, resolution: {2})",
                 Origin,
                 Size,
                 Resolution);
@@ -245,7 +245,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="left">The first raster grid.</param>
         /// <param name="right">The second raster grid.</param>
         /// <returns><see langword="true"/> if the raster grids are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(SpatialRasterGrid left, SpatialRasterGrid right) => left.Equals(right);
+        public static bool operator ==(RasterGeometry left, RasterGeometry right) => left.Equals(right);
 
         /// <summary>
         /// Indicates whether two raster grids are different.
@@ -253,6 +253,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="left">The first raster grid.</param>
         /// <param name="right">The second raster grid.</param>
         /// <returns><see langword="true"/> if the raster grids are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(SpatialRasterGrid left, SpatialRasterGrid right) => !(left == right);
+        public static bool operator !=(RasterGeometry left, RasterGeometry right) => !(left == right);
     }
 }

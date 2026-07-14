@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 
 public class ContourSmoothingSnapshotTests
 {
-    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry SnapshotGrid = new RasterGeometry(
         origin: new PointXY(-0.5f, -0.5f),
         size: new VectorXY(5f, 5f),
         resolution: new VectorXYInt(160, 160));
@@ -29,7 +29,7 @@ public class ContourSmoothingSnapshotTests
             width: 0.08f,
             edgeFalloff: 0.04f,
             color: new Gray8BitColor(byte.MaxValue),
-            spatialRasterGrid: SnapshotGrid);
+            rasterGeometry: SnapshotGrid);
 
         string actualPath = Path.Combine(
             TestContext.CurrentContext.WorkDirectory,

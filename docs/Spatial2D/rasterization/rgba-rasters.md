@@ -2,7 +2,7 @@
 
 `Raster<RGBA8BitColor>` and `Raster<RGBA16BitColor>` store rectangular color samples with alpha.
 `SpatialRaster<RGBA8BitColor>` and `SpatialRaster<RGBA16BitColor>` store the same color values
-together with a `SpatialRasterGrid`.
+together with a `RasterGeometry`.
 
 Use RGBA rasters for heatmaps, culling maps, and visual diagnostics where a single grayscale channel is not enough.
 Both raster types implement `IGrid<TValue>`, so PNG export works for spatial and non-spatial RGBA
@@ -13,7 +13,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(64f, 64f),
     resolution: new VectorXYInt(64, 64));

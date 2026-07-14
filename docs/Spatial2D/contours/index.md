@@ -64,7 +64,7 @@ var square = new CompositeContour(
 
 CompositeContour roundedSquare = square.FilletCorners(radius: 0.5f);
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-0.5f, -0.5f),
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(160, 160));
@@ -75,13 +75,13 @@ SpatialRaster<Gray8BitColor> before = square.Rasterize(
     width: 0.08f,
     edgeFalloff: 0.04f,
     color: contourColor,
-    spatialRasterGrid: grid);
+    rasterGeometry: grid);
 
 SpatialRaster<Gray8BitColor> after = roundedSquare.Rasterize(
     width: 0.08f,
     edgeFalloff: 0.04f,
     color: contourColor,
-    spatialRasterGrid: grid);
+    rasterGeometry: grid);
 ```
 
 | Before | After |

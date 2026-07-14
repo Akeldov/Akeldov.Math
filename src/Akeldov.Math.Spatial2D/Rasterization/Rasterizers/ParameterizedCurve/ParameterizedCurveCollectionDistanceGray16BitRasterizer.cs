@@ -26,7 +26,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<Gray16BitColor> Rasterize(IReadOnlyList<IParameterizedCurve> source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray16BitColor> Rasterize(IReadOnlyList<IParameterizedCurve> source, RasterGeometry grid)
         {
             ValidateSource(source);
             ValidateGrid(grid);
@@ -81,7 +81,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             }
         }
 
-        private static void ValidateGrid(SpatialRasterGrid grid)
+        private static void ValidateGrid(RasterGeometry grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
@@ -91,4 +91,3 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
     }
 }
-

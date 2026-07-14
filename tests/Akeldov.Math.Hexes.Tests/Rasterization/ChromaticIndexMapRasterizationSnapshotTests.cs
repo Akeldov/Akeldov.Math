@@ -16,7 +16,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
     {
         var topology = new HexMapTopology(5, 4, layout);
         var chromatization = new ChromaticIndexMap(topology);
-        SpatialRasterGrid grid = chromatization.Topology.ToSpatialRasterGrid(1f, VectorXY.Zero, 8f);
+        RasterGeometry grid = chromatization.Topology.ToRasterGeometry(1f, VectorXY.Zero, 8f);
         Raster<RGBA16BitColor> raster = chromatization.Rasterize(grid.Resolution, ToSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

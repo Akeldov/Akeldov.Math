@@ -21,7 +21,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA raster showing the culling selection map.</returns>
         public static SpatialRaster<RGBA16BitColor> RasterizeCullingMap<TPointSource>(
             this IReadOnlyList<TPointSource> sources,
-            SpatialRasterGrid grid,
+            RasterGeometry grid,
             IInfluenceSourceCuller<TPointSource> culler,
             Func<PointXY, RGBA16BitColor> sourcePositionToColor)
             where TPointSource : IPointInfluenceSource

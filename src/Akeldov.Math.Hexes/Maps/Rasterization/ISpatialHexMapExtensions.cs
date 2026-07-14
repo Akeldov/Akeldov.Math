@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes
         /// or an unsupported layout.
         /// </exception>
         /// <exception cref="OverflowException">Thrown when the raster resolution does not fit <see cref="int"/>.</exception>
-        public static SpatialRasterGrid ToSpatialRasterGrid<TValue>(
+        public static RasterGeometry ToRasterGeometry<TValue>(
             this ISpatialHexMap<TValue> map,
             float pixelsPerApothem,
             float margin = 0f)
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Hexes
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
 
-            return map.Geometry.ToSpatialRasterGrid(pixelsPerApothem, margin);
+            return map.Geometry.ToRasterGeometry(pixelsPerApothem, margin);
         }
 
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
@@ -42,13 +42,13 @@ namespace Akeldov.Math.Hexes
             float margin,
             Func<TValue, TColor> colorSelector)
         {
-            var grid = map.Geometry.ToSpatialRasterGrid(pixelsPerApothem, margin);
+            var grid = map.Geometry.ToRasterGeometry(pixelsPerApothem, margin);
             return map.Rasterize(grid, colorSelector);
         }
 
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
             this ISpatialHexMap<TValue> map,
-            SpatialRasterGrid spatialRasterGrid,
+            RasterGeometry rasterGeometry,
             Func<TValue, TColor> colorSelector)
         {
             if (map == null)
@@ -57,7 +57,7 @@ namespace Akeldov.Math.Hexes
             if (colorSelector == null)
                 throw new ArgumentNullException(nameof(colorSelector));
 
-            int count = checked(spatialRasterGrid.Resolution.X * spatialRasterGrid.Resolution.Y);
+            int count = checked(rasterGeometry.Resolution.X * rasterGeometry.Resolution.Y);
             var values = new TColor[count];
             var geometry = new HexMapGeometry(
                 map.Topology.Resolution.X,
@@ -65,14 +65,14 @@ namespace Akeldov.Math.Hexes
                 radius: 1f,
                 layout: map.Topology.Layout);
             Rectangle bounds = geometry.GetBoundingBox();
-            float pixelWidth = bounds.Size.X / spatialRasterGrid.Resolution.X;
-            float pixelHeight = bounds.Size.Y / spatialRasterGrid.Resolution.Y;
+            float pixelWidth = bounds.Size.X / rasterGeometry.Resolution.X;
+            float pixelHeight = bounds.Size.Y / rasterGeometry.Resolution.Y;
 
-            for (int y = 0; y < spatialRasterGrid.Resolution.Y; y++)
+            for (int y = 0; y < rasterGeometry.Resolution.Y; y++)
             {
                 float pointY = bounds.Min.Y + (y + 0.5f) * pixelHeight;
 
-                for (int x = 0; x < spatialRasterGrid.Resolution.X; x++)
+                for (int x = 0; x < rasterGeometry.Resolution.X; x++)
                 {
                     var point = new PointXY(
                         bounds.Min.X + (x + 0.5f) * pixelWidth,
@@ -82,12 +82,12 @@ namespace Akeldov.Math.Hexes
                     if ((uint)hexIndex.X < (uint)map.Topology.Resolution.X &&
                         (uint)hexIndex.Y < (uint)map.Topology.Resolution.Y)
                     {
-                        values[y * spatialRasterGrid.Resolution.X + x] = colorSelector(map[hexIndex]);
+                        values[y * rasterGeometry.Resolution.X + x] = colorSelector(map[hexIndex]);
                     }
                 }
             }
 
-            return new SpatialRaster<TColor>(spatialRasterGrid, values);
+            return new SpatialRaster<TColor>(rasterGeometry, values);
         }
     }
 }

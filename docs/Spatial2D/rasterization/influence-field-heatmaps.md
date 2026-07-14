@@ -20,7 +20,7 @@ var field = new FloatPointInfluenceField(
     new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
     sources);
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     new PointXY(0f, 0f),
     new VectorXY(100f, 64f),
     new VectorXYInt(160, 96));

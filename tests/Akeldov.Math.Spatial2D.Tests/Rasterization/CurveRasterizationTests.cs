@@ -10,7 +10,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveIsLine_MapsDistanceToGray8()
     {
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray8BitColor> raster = curve.Rasterize(ToGray8, grid);
 
@@ -23,7 +23,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveIsLine_MapsDistanceToGray16()
     {
         ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray16BitColor> raster = curve.Rasterize(ToGray16, grid);
 
@@ -40,7 +40,7 @@ public class CurveRasterizationTests
             new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
             new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray8BitColor> raster = curves.Rasterize(ToGray8, grid);
 
@@ -57,7 +57,7 @@ public class CurveRasterizationTests
             new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
             new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray16BitColor> raster = curves.Rasterize(ToGray16, grid);
 
@@ -70,14 +70,14 @@ public class CurveRasterizationTests
     public void Rasterize_WithCurveStyle_WhenCurveIsLine_MapsWidthAndFadeToGray8()
     {
         var curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateHalfFadeGrid();
+        RasterGeometry grid = CreateHalfFadeGrid();
 
         SpatialRaster<Gray8BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
             curveColor: new Gray8BitColor(200),
             backgroundColor: new Gray8BitColor(100),
-            spatialRasterGrid: grid);
+            rasterGeometry: grid);
 
         Assert.That(raster[0, 0].Value, Is.EqualTo(150));
     }
@@ -86,14 +86,14 @@ public class CurveRasterizationTests
     public void Rasterize_WithCurveStyle_WhenCurveIsLine_MapsWidthAndFadeToGray16()
     {
         var curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateHalfFadeGrid();
+        RasterGeometry grid = CreateHalfFadeGrid();
 
         SpatialRaster<Gray16BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
             curveColor: new Gray16BitColor(2000),
             backgroundColor: new Gray16BitColor(1000),
-            spatialRasterGrid: grid);
+            rasterGeometry: grid);
 
         Assert.That(raster[0, 0].Value, Is.EqualTo(1500));
     }
@@ -102,14 +102,14 @@ public class CurveRasterizationTests
     public void Rasterize_WithCurveStyle_WhenCurveIsLine_MapsWidthAndFadeToRGBA8()
     {
         var curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateHalfFadeGrid();
+        RasterGeometry grid = CreateHalfFadeGrid();
 
         SpatialRaster<RGBA8BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
             curveColor: new RGBA8BitColor(200, 100, 0, 50),
             backgroundColor: new RGBA8BitColor(100, 200, 50, 250),
-            spatialRasterGrid: grid);
+            rasterGeometry: grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(new RGBA8BitColor(150, 150, 25, 150)));
     }
@@ -118,14 +118,14 @@ public class CurveRasterizationTests
     public void Rasterize_WithCurveStyle_WhenCurveIsLine_MapsWidthAndFadeToRGBA16()
     {
         var curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateHalfFadeGrid();
+        RasterGeometry grid = CreateHalfFadeGrid();
 
         SpatialRaster<RGBA16BitColor> raster = curve.Rasterize(
             curveWidth: 1f,
             fadeDistance: 0.5f,
             curveColor: new RGBA16BitColor(2000, 1000, 0, 500),
             backgroundColor: new RGBA16BitColor(1000, 2000, 500, 2500),
-            spatialRasterGrid: grid);
+            rasterGeometry: grid);
 
         Assert.That(raster[0, 0], Is.EqualTo(new RGBA16BitColor(1500, 1500, 250, 1500)));
     }
@@ -138,14 +138,14 @@ public class CurveRasterizationTests
             new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
             new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray8BitColor> raster = curves.Rasterize(
             curveWidth: 0.5f,
             fadeDistance: 0f,
             curveColor: new Gray8BitColor(200),
             backgroundColor: new Gray8BitColor(10),
-            spatialRasterGrid: grid);
+            rasterGeometry: grid);
 
         Assert.That(raster[1, 0].Value, Is.EqualTo(200));
         Assert.That(raster[1, 1].Value, Is.EqualTo(10));
@@ -160,7 +160,7 @@ public class CurveRasterizationTests
             new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
             new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
         var curveColor = new RGBA16BitColor(2000, 0, 0, ushort.MaxValue);
         var backgroundColor = new RGBA16BitColor(0, 0, 0, 0);
 
@@ -169,7 +169,7 @@ public class CurveRasterizationTests
             fadeDistance: 0f,
             curveColor: curveColor,
             backgroundColor: backgroundColor,
-            spatialRasterGrid: grid);
+            rasterGeometry: grid);
 
         Assert.That(raster[1, 0], Is.EqualTo(curveColor));
         Assert.That(raster[1, 1], Is.EqualTo(backgroundColor));
@@ -180,7 +180,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenPointDistanceProviderIsConcreteValueType_MapsDistanceToGray16()
     {
         var source = new PointXY(0f, 0f);
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray16BitColor> raster = source.Rasterize(ToGray16, grid);
 
@@ -197,7 +197,7 @@ public class CurveRasterizationTests
             new PointXY(0f, -1f),
             new PointXY(0f, 1f)
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray8BitColor> raster = sources.Rasterize(ToGray8, grid);
 
@@ -210,7 +210,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveIsProvided_MapsDistanceAndCurveCoordinateToGray8()
     {
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray8BitColor> raster = curve.Rasterize(ToParameterizedGray8, grid);
 
@@ -224,7 +224,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveIsProvided_MapsDistanceAndCurveCoordinateToGray16()
     {
         IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray16BitColor> raster = curve.Rasterize(ToParameterizedGray16, grid);
 
@@ -242,7 +242,7 @@ public class CurveRasterizationTests
             new ParameterizedSegment(new PointXY(-1f, -1f), new PointXY(1f, -1f)),
             new ParameterizedSegment(new PointXY(-1f, 1f), new PointXY(1f, 1f))
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray8BitColor> raster = curves.Rasterize(ToParameterizedGray8, grid);
 
@@ -259,7 +259,7 @@ public class CurveRasterizationTests
             new ParameterizedSegment(new PointXY(-1f, -1f), new PointXY(1f, -1f)),
             new ParameterizedSegment(new PointXY(-1f, 1f), new PointXY(1f, 1f))
         };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         SpatialRaster<Gray16BitColor> raster = curves.Rasterize(ToParameterizedGray16, grid);
 
@@ -326,7 +326,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveCollectionIsEmpty_Throws()
     {
         IReadOnlyList<ICurve> curves = Array.Empty<ICurve>();
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() => curves.Rasterize(ToGray8, grid));
 
@@ -341,7 +341,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenCurveCollectionContainsNull_Throws()
     {
         IReadOnlyList<ICurve> curves = new ICurve[] { null! };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() => curves.Rasterize(ToGray8, grid));
 
@@ -356,7 +356,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveCollectionIsEmpty_Throws()
     {
         IReadOnlyList<IParameterizedCurve> curves = Array.Empty<IParameterizedCurve>();
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() => curves.Rasterize(ToParameterizedGray8, grid));
 
@@ -371,7 +371,7 @@ public class CurveRasterizationTests
     public void Rasterize_WhenParameterizedCurveCollectionContainsNull_Throws()
     {
         IReadOnlyList<IParameterizedCurve> curves = new IParameterizedCurve[] { null! };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         var exception = Assert.Throws<ArgumentException>(() => curves.Rasterize(ToParameterizedGray8, grid));
 
@@ -389,7 +389,7 @@ public class CurveRasterizationTests
         ICurve nullCurveValue = null!;
         IReadOnlyList<ICurve> emptyCurves = Array.Empty<ICurve>();
         IReadOnlyList<ICurve> nullCurve = new ICurve[] { null! };
-        SpatialRasterGrid grid = CreateThreeByThreeGrid();
+        RasterGeometry grid = CreateThreeByThreeGrid();
 
         Assert.That(
             Assert.Throws<ArgumentNullException>(() =>
@@ -418,20 +418,20 @@ public class CurveRasterizationTests
         Assert.That(
             Assert.Throws<ArgumentOutOfRangeException>(() =>
                 curve.Rasterize(1f, 0f, new Gray8BitColor(1), new Gray8BitColor(0), default))!.ParamName,
-            Is.EqualTo("spatialRasterGrid"));
+            Is.EqualTo("rasterGeometry"));
     }
 
-    private static SpatialRasterGrid CreateHalfFadeGrid()
+    private static RasterGeometry CreateHalfFadeGrid()
     {
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(-0.5f, 0.5f),
             size: new VectorXY(1f, 0.5f),
             resolution: new VectorXYInt(1, 1));
     }
 
-    private static SpatialRasterGrid CreateThreeByThreeGrid()
+    private static RasterGeometry CreateThreeByThreeGrid()
     {
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(-1.5f, -1.5f),
             size: new VectorXY(3f, 3f),
             resolution: new VectorXYInt(3, 3));

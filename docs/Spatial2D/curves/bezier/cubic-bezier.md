@@ -24,7 +24,7 @@ var curve = new CubicBezier(
     controlPointB: new PointXY(2.35f, 2.1f),
     endPoint: new PointXY(2.5f, -1.8f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));

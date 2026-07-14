@@ -87,7 +87,7 @@ nav:
               - Weighted Voronoi Partitioning: Spatial2D/partitioning/weighted-voronoi-partitioning.md
           - Rasterization and Imaging:
               - Overview: Spatial2D/rasterization/index.md
-              - SpatialRasterGrid: Spatial2D/rasterization/spatial-raster-grid.md
+              - RasterGeometry: Spatial2D/rasterization/raster-geometry.md
               - Gray Rasters: Spatial2D/rasterization/gray-rasters.md
               - RGBA Rasters: Spatial2D/rasterization/rgba-rasters.md
               - GeometryScene: Spatial2D/rasterization/geometry-scenes.md

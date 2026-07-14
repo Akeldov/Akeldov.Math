@@ -17,7 +17,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA heat map raster produced from the influence field values.</returns>
         public static SpatialRaster<RGBA16BitColor> RasterizeHeatMap(
             this FloatPointInfluenceField sources,
-            SpatialRasterGrid grid)
+            RasterGeometry grid)
         {
             if (sources is null)
                 throw new ArgumentNullException(nameof(sources));

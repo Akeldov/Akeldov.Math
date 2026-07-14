@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class PoissonDiskPointSampleSnapshotTests
 {
     private static readonly VectorXY FieldSize = new VectorXY(120f, 80f);
-    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry SnapshotGrid = new RasterGeometry(
         origin: new PointXY(0f, 0f),
         size: FieldSize,
         resolution: new VectorXYInt(180, 120));

@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Tests.Maps;
 public class HexMapRasterizationExtensionsTests
 {
     [Test]
-    public void SpatialHexMapToSpatialRasterGrid_ReturnsGridForMapGeometry()
+    public void SpatialHexMapToRasterGeometry_ReturnsGridForMapGeometry()
     {
         var geometry = new HexMapGeometry(
             width: 2,
@@ -18,18 +18,18 @@ public class HexMapRasterizationExtensionsTests
             layout: Layout.EvenQ);
         ISpatialHexMap<PointXY> map = new HexCenterMap(geometry);
 
-        SpatialRasterGrid actual = map.ToSpatialRasterGrid(pixelsPerApothem: 4f, margin: 1.5f);
-        SpatialRasterGrid expected = geometry.ToSpatialRasterGrid(pixelsPerApothem: 4f, margin: 1.5f);
+        RasterGeometry actual = map.ToRasterGeometry(pixelsPerApothem: 4f, margin: 1.5f);
+        RasterGeometry expected = geometry.ToRasterGeometry(pixelsPerApothem: 4f, margin: 1.5f);
 
         Assert.That(actual, Is.EqualTo(expected));
     }
 
     [Test]
-    public void SpatialHexMapToSpatialRasterGrid_WhenMapIsNull_Throws()
+    public void SpatialHexMapToRasterGeometry_WhenMapIsNull_Throws()
     {
         ISpatialHexMap<PointXY> map = null!;
 
-        var exception = Assert.Throws<ArgumentNullException>(() => map.ToSpatialRasterGrid(3f));
+        var exception = Assert.Throws<ArgumentNullException>(() => map.ToRasterGeometry(3f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("map"));
     }
@@ -99,7 +99,7 @@ public class HexMapRasterizationExtensionsTests
             origin: new VectorXY(10f, 20f),
             radius: 2f.ConvertHexApothemToRadius(),
             layout: Layout.OddR);
-        SpatialRasterGrid grid = geometry.ToSpatialRasterGrid(pixelsPerApothem: 3f);
+        RasterGeometry grid = geometry.ToRasterGeometry(pixelsPerApothem: 3f);
 
         SpatialRaster<Gray8BitColor> actual = geometry.Rasterize(
             curveWidth: 1f,
@@ -114,7 +114,7 @@ public class HexMapRasterizationExtensionsTests
                 fadeDistance: 1f,
                 curveColor: Gray8BitColor.White,
                 backgroundColor: Gray8BitColor.Black,
-                spatialRasterGrid: grid);
+                rasterGeometry: grid);
 
         Assert.Multiple(() =>
         {

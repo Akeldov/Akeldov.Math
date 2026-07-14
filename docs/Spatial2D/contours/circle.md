@@ -28,7 +28,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 IContour contour = new Circle(new PointXY(0.1f, -0.15f), 1.75f);
-var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+var grid = new RasterGeometry(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
 contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("circle.png");
 ```
 

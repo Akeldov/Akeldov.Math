@@ -11,7 +11,7 @@ public class ContourStrokeRasterizationTests
     public void Rasterize_WithGray8Color_MatchesBlackBackgroundCurveRasterization()
     {
         IContour contour = new Circle(new PointXY(0f, 0f), 1f);
-        SpatialRasterGrid grid = CreateGrid();
+        RasterGeometry grid = CreateGrid();
         var color = new Gray8BitColor(200);
 
         SpatialRaster<Gray8BitColor> actual = contour.Rasterize(0.2f, 0.1f, color, grid);
@@ -29,7 +29,7 @@ public class ContourStrokeRasterizationTests
     public void Rasterize_WithGray16Color_MatchesBlackBackgroundCurveRasterization()
     {
         IContour contour = new Circle(new PointXY(0f, 0f), 1f);
-        SpatialRasterGrid grid = CreateGrid();
+        RasterGeometry grid = CreateGrid();
         var color = new Gray16BitColor(50000);
 
         SpatialRaster<Gray16BitColor> actual = contour.Rasterize(0.2f, 0.1f, color, grid);
@@ -47,7 +47,7 @@ public class ContourStrokeRasterizationTests
     public void Rasterize_WithRGBA8Color_MatchesTransparentBackgroundCurveRasterization()
     {
         IContour contour = new Circle(new PointXY(0f, 0f), 1f);
-        SpatialRasterGrid grid = CreateGrid();
+        RasterGeometry grid = CreateGrid();
 
         SpatialRaster<RGBA8BitColor> actual = contour.Rasterize(0.2f, 0.1f, RGBA8BitColor.Red, grid);
         SpatialRaster<RGBA8BitColor> expected = contour.Rasterize(
@@ -64,7 +64,7 @@ public class ContourStrokeRasterizationTests
     public void Rasterize_WithRGBA16Color_MatchesTransparentBackgroundCurveRasterization()
     {
         IContour contour = new Circle(new PointXY(0f, 0f), 1f);
-        SpatialRasterGrid grid = CreateGrid();
+        RasterGeometry grid = CreateGrid();
 
         SpatialRaster<RGBA16BitColor> actual = contour.Rasterize(0.2f, 0.1f, RGBA16BitColor.Red, grid);
         SpatialRaster<RGBA16BitColor> expected = contour.Rasterize(
@@ -88,7 +88,7 @@ public class ContourStrokeRasterizationTests
         Assert.That(exception!.ParamName, Is.EqualTo("curve"));
     }
 
-    private static SpatialRasterGrid CreateGrid() => new SpatialRasterGrid(
+    private static RasterGeometry CreateGrid() => new RasterGeometry(
         origin: new PointXY(-2f, -2f),
         size: new VectorXY(4f, 4f),
         resolution: new VectorXYInt(16, 16));

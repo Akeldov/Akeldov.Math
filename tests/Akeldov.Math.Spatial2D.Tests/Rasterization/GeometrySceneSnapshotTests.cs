@@ -11,17 +11,17 @@ public class GeometrySceneSnapshotTests
     private const string PrismApprovedFileName = "geometry-scene-triangular-prism-rgba16.png";
     private const string SimpleTextApprovedFileName = "geometry-scene-simple-text-rgba16.png";
 
-    private static readonly SpatialRasterGrid SnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry SnapshotGrid = new RasterGeometry(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(180, 126));
 
-    private static readonly SpatialRasterGrid PrismSnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry PrismSnapshotGrid = new RasterGeometry(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(100f, 70f),
         resolution: new VectorXYInt(2160, 1512));
 
-    private static readonly SpatialRasterGrid TextSnapshotGrid = new SpatialRasterGrid(
+    private static readonly RasterGeometry TextSnapshotGrid = new RasterGeometry(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(8f, 8f),
         resolution: new VectorXYInt(128, 128));

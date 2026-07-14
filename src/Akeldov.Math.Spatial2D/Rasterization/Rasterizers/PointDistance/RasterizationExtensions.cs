@@ -14,23 +14,23 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="distanceToGrayLevel">
         /// The function that maps nearest unsigned distance, in world coordinate units, to an 8-bit grayscale value.
         /// </param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the nearest point-distance provider at each cell center.</returns>
         public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this IReadOnlyList<T> pointDistanceProviders,
             Func<float, Gray8BitColor> distanceToGrayLevel,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : IPointDistanceProvider
         {
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProviders is IReadOnlyList<ISignedPointDistanceProvider> signedPointDistanceProviders)
             {
                 var signedRasterizer = new SignedPointDistanceProviderCollectionGray8BitRasterizer(distanceToGrayLevel);
-                return signedRasterizer.Rasterize(signedPointDistanceProviders, spatialRasterGrid);
+                return signedRasterizer.Rasterize(signedPointDistanceProviders, rasterGeometry);
             }
 
             var rasterizer = new PointDistanceProviderCollectionGray8BitRasterizer(distanceToGrayLevel);
-            var raster = rasterizer.Rasterize(pointDistanceProviders, spatialRasterGrid);
+            var raster = rasterizer.Rasterize(pointDistanceProviders, rasterGeometry);
             return raster;
         }
 
@@ -42,23 +42,23 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="distanceToGrayLevel">
         /// The function that maps unsigned distance, in world coordinate units, to an 8-bit grayscale value.
         /// </param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
         public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this T pointDistanceProvider,
             Func<float, Gray8BitColor> distanceToGrayLevel,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : IPointDistanceProvider
         {
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProvider is ISignedPointDistanceProvider signedPointDistanceProvider)
             {
                 var signedRasterizer = new SignedPointDistanceProviderGray8BitRasterizer(distanceToGrayLevel);
-                return signedRasterizer.Rasterize(signedPointDistanceProvider, spatialRasterGrid);
+                return signedRasterizer.Rasterize(signedPointDistanceProvider, rasterGeometry);
             }
 
             var rasterizer = new PointDistanceProviderGray8BitRasterizer(distanceToGrayLevel);
-            var raster = rasterizer.Rasterize(pointDistanceProvider, spatialRasterGrid);
+            var raster = rasterizer.Rasterize(pointDistanceProvider, rasterGeometry);
             return raster;
         }
 
@@ -70,23 +70,23 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="distanceToGrayLevel">
         /// The function that maps nearest unsigned distance, in world coordinate units, to a 16-bit grayscale value.
         /// </param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the nearest point-distance provider at each cell center.</returns>
         public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this IReadOnlyList<T> pointDistanceProviders,
             Func<float, Gray16BitColor> distanceToGrayLevel,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : IPointDistanceProvider
         {
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProviders is IReadOnlyList<ISignedPointDistanceProvider> signedPointDistanceProviders)
             {
                 var signedRasterizer = new SignedPointDistanceProviderCollectionGray16BitRasterizer(distanceToGrayLevel);
-                return signedRasterizer.Rasterize(signedPointDistanceProviders, spatialRasterGrid);
+                return signedRasterizer.Rasterize(signedPointDistanceProviders, rasterGeometry);
             }
 
             var rasterizer = new PointDistanceProviderCollectionGray16BitRasterizer(distanceToGrayLevel);
-            var raster = rasterizer.Rasterize(pointDistanceProviders, spatialRasterGrid);
+            var raster = rasterizer.Rasterize(pointDistanceProviders, rasterGeometry);
             return raster;
         }
 
@@ -98,23 +98,23 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="distanceToGrayLevel">
         /// The function that maps unsigned distance, in world coordinate units, to a 16-bit grayscale value.
         /// </param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
         public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this T pointDistanceProvider,
             Func<float, Gray16BitColor> distanceToGrayLevel,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : IPointDistanceProvider
         {
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProvider is ISignedPointDistanceProvider signedPointDistanceProvider)
             {
                 var signedRasterizer = new SignedPointDistanceProviderGray16BitRasterizer(distanceToGrayLevel);
-                return signedRasterizer.Rasterize(signedPointDistanceProvider, spatialRasterGrid);
+                return signedRasterizer.Rasterize(signedPointDistanceProvider, rasterGeometry);
             }
 
             var rasterizer = new PointDistanceProviderGray16BitRasterizer(distanceToGrayLevel);
-            var raster = rasterizer.Rasterize(pointDistanceProvider, spatialRasterGrid);
+            var raster = rasterizer.Rasterize(pointDistanceProvider, rasterGeometry);
             return raster;
         }
     }

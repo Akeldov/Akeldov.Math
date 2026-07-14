@@ -41,7 +41,7 @@ public class QrsBasisDocumentationSnapshotTests
             .AddTextLayer(font, "+Q", p0 + q * 1.12f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
             .AddTextLayer(font, "+R", p0 + r * 1.12f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
             .AddTextLayer(font, "+S", p0 + s * 1.12f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
-            .Rasterize(new SpatialRasterGrid(
+            .Rasterize(new RasterGeometry(
                 new PointXY(-1.25f, -1.25f),
                 new VectorXY(2.5f, 2.5f),
                 new VectorXYInt(300, 300)));

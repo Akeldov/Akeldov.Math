@@ -112,7 +112,7 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void HexMapGeometryToSpatialRasterGrid_UsesBoundingBoxAndPixelsPerApothem()
+    public void HexMapGeometryToRasterGeometry_UsesBoundingBoxAndPixelsPerApothem()
     {
         var geometry = new HexMapGeometry(
             width: 1,
@@ -121,7 +121,7 @@ public class HexCenterMapTests
             radius: 2f.ConvertHexApothemToRadius(),
             layout: Layout.OddR);
 
-        SpatialRasterGrid grid = geometry.ToSpatialRasterGrid(pixelsPerApothem: 3f);
+        RasterGeometry grid = geometry.ToRasterGeometry(pixelsPerApothem: 3f);
 
         Assert.That(grid.Origin.X, Is.EqualTo(-2f).Within(0.0001f));
         Assert.That(grid.Origin.Y, Is.EqualTo(-2.3094f).Within(0.0001f));
@@ -131,21 +131,21 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void HexMapTopologyToSpatialRasterGrid_WithRadiusAndOrigin_ReturnsSameGridAsGeometry()
+    public void HexMapTopologyToRasterGeometry_WithRadiusAndOrigin_ReturnsSameGridAsGeometry()
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
         var origin = new VectorXY(10f, 20f);
         const float radius = 2f;
         const float pixelsPerApothem = 3f;
 
-        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(radius, origin, pixelsPerApothem);
-        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem);
+        RasterGeometry topologyGrid = topology.ToRasterGeometry(radius, origin, pixelsPerApothem);
+        RasterGeometry geometryGrid = new HexMapGeometry(topology, origin, radius).ToRasterGeometry(pixelsPerApothem);
 
         Assert.That(topologyGrid, Is.EqualTo(geometryGrid));
     }
 
     [Test]
-    public void HexMapTopologyToSpatialRasterGrid_WithMargin_ReturnsSameGridAsGeometry()
+    public void HexMapTopologyToRasterGeometry_WithMargin_ReturnsSameGridAsGeometry()
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
         var origin = new VectorXY(10f, 20f);
@@ -153,19 +153,19 @@ public class HexCenterMapTests
         const float pixelsPerApothem = 3f;
         const float margin = 1.5f;
 
-        SpatialRasterGrid topologyGrid = topology.ToSpatialRasterGrid(radius, origin, pixelsPerApothem, margin);
-        SpatialRasterGrid geometryGrid = new HexMapGeometry(topology, origin, radius).ToSpatialRasterGrid(pixelsPerApothem, margin);
+        RasterGeometry topologyGrid = topology.ToRasterGeometry(radius, origin, pixelsPerApothem, margin);
+        RasterGeometry geometryGrid = new HexMapGeometry(topology, origin, radius).ToRasterGeometry(pixelsPerApothem, margin);
 
         Assert.That(topologyGrid, Is.EqualTo(geometryGrid));
     }
 
     [Test]
-    public void HexMapGeometryToSpatialRasterGrid_WhenPixelsPerApothemIsInvalid_Throws()
+    public void HexMapGeometryToRasterGeometry_WhenPixelsPerApothemIsInvalid_Throws()
     {
         var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 2f, Layout.OddR);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            geometry.ToSpatialRasterGrid(0f));
+            geometry.ToRasterGeometry(0f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("pixelsPerApothem"));
     }
@@ -173,23 +173,23 @@ public class HexCenterMapTests
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
-    public void HexMapGeometryToSpatialRasterGrid_WhenMarginIsInvalid_Throws(float margin)
+    public void HexMapGeometryToRasterGeometry_WhenMarginIsInvalid_Throws(float margin)
     {
         var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 2f, Layout.OddR);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            geometry.ToSpatialRasterGrid(3f, margin));
+            geometry.ToRasterGeometry(3f, margin));
 
         Assert.That(exception!.ParamName, Is.EqualTo("margin"));
     }
 
     [Test]
-    public void HexMapGeometryToSpatialRasterGrid_WhenRasterResolutionDoesNotFitInt32_Throws()
+    public void HexMapGeometryToRasterGeometry_WhenRasterResolutionDoesNotFitInt32_Throws()
     {
         var geometry = new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR);
 
         Assert.Throws<OverflowException>(() =>
-            geometry.ToSpatialRasterGrid(float.MaxValue));
+            geometry.ToRasterGeometry(float.MaxValue));
     }
 
     [Test]

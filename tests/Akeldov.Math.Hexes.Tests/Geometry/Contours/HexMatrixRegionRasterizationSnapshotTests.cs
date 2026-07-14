@@ -132,7 +132,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
         return contour.Rasterize(ToDistanceGray8, grid);
     }
 
-    private static SpatialRasterGrid CreateGrid(IReadOnlyList<IFinitePath> contour)
+    private static RasterGeometry CreateGrid(IReadOnlyList<IFinitePath> contour)
     {
         const float padding = 0.75f;
 
@@ -153,7 +153,7 @@ public class HexMatrixRegionRasterizationSnapshotTests
             IncludeCurveBounds(curve, ref minX, ref minY, ref maxX, ref maxY);
         }
 
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(minX - padding, minY - padding),
             size: new VectorXY(maxX - minX + 2f * padding, maxY - minY + 2f * padding),
             resolution: SnapshotResolution);

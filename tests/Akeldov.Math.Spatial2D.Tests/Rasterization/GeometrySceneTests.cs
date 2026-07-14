@@ -99,7 +99,7 @@ public class GeometrySceneTests
                 new[] { lowerSegment, upperSegment },
                 (_, projection) => projection.ProjectedPoint.Y < 1f ? 1 : 2);
 
-        var raster = scene.Rasterize(new SpatialRasterGrid(
+        var raster = scene.Rasterize(new RasterGeometry(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(1f, 3f),
             resolution: new VectorXYInt(1, 3)));
@@ -291,17 +291,17 @@ public class GeometrySceneTests
         Assert.That(raster[0, 0], Is.EqualTo(7));
     }
 
-    private static SpatialRasterGrid CreateGrid(int width, int height)
+    private static RasterGeometry CreateGrid(int width, int height)
     {
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(width, height),
             resolution: new VectorXYInt(width, height));
     }
 
-    private static SpatialRasterGrid CreateCenteredGrid(int width, int height)
+    private static RasterGeometry CreateCenteredGrid(int width, int height)
     {
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(width, height),
             resolution: new VectorXYInt(width, height));

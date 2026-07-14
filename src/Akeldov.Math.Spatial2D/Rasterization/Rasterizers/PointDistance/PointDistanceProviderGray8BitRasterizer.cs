@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public SpatialRaster<Gray8BitColor> Rasterize(IPointDistanceProvider source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray8BitColor> Rasterize(IPointDistanceProvider source, RasterGeometry grid)
         {
             return Rasterize<IPointDistanceProvider>(source, grid);
         }
@@ -32,7 +32,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="source">The point-distance provider to rasterize.</param>
         /// <param name="grid">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the point-distance provider at each cell center.</returns>
-        public SpatialRaster<Gray8BitColor> Rasterize<T>(T source, SpatialRasterGrid grid)
+        public SpatialRaster<Gray8BitColor> Rasterize<T>(T source, RasterGeometry grid)
             where T : IPointDistanceProvider
         {
             if (source is null)
@@ -59,7 +59,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new SpatialRaster<Gray8BitColor>(grid, values);
         }
 
-        private static void ValidateGrid(SpatialRasterGrid grid)
+        private static void ValidateGrid(RasterGeometry grid)
         {
             if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");

@@ -85,7 +85,7 @@ public class ContourRasterizationImageTests
     public void SaveAsPng_WhenRoundedSquareIsRasterizedToGray16Bit_WritesPng16()
     {
         CompositeContour contour = CreateSquareContour().FilletCorners(0.35f);
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 5f),
             resolution: new VectorXYInt(160, 160));
@@ -125,9 +125,9 @@ public class ContourRasterizationImageTests
         });
     }
 
-    private static SpatialRasterGrid CreateTriangleGrid()
+    private static RasterGeometry CreateTriangleGrid()
     {
-        return new SpatialRasterGrid(
+        return new RasterGeometry(
             origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 4.5f),
             resolution: new VectorXYInt(128, 128));

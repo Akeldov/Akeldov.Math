@@ -17,7 +17,7 @@ var path = new ParameterizedLine(
     new PointXY(-0.4f, -2.65f),
     new VectorXY(0.45f, 1f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));

@@ -18,7 +18,7 @@ var segment = new Segment(
     startPoint: new PointXY(-2.2f, 1.6f),
     endPoint: new PointXY(2.2f, -1.3f));
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -27,7 +27,7 @@ SpatialRaster<Gray8BitColor> raster = segment.Rasterize(
     width: 0f,
     edgeFalloff: 0.25f,
     color: new Gray8BitColor(byte.MaxValue),
-    spatialRasterGrid: grid);
+    rasterGeometry: grid);
 raster.SaveAsPng("segment-distance.png");
 ```
 

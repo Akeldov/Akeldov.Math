@@ -2,12 +2,12 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 
-public class RasterGridTests
+public class RasterGeometryTests
 {
     [Test]
     public void Constructor_WhenValuesAreValid_StoresValuesAndCalculatesCellSize()
     {
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(1f, 2f),
             size: new VectorXY(10f, 6f),
             resolution: new VectorXYInt(5, 3));
@@ -28,7 +28,7 @@ public class RasterGridTests
         float bx,
         float by)
     {
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             new PointXY(ax, ay),
             new PointXY(bx, by),
             new VectorXYInt(5, 3));
@@ -48,7 +48,7 @@ public class RasterGridTests
         float by)
     {
         var exception = Assert.Throws<ArgumentException>(() =>
-            new SpatialRasterGrid(
+            new RasterGeometry(
                 new PointXY(ax, ay),
                 new PointXY(bx, by),
                 VectorXYInt.One));
@@ -59,7 +59,7 @@ public class RasterGridTests
     [Test]
     public void PixelDensityConstructor_RoundsResolutionUpForEachAxis()
     {
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             new PointXY(4.25f, 3.5f),
             new PointXY(1f, 1f),
             minimumPixelsPerUnit: 2);
@@ -72,7 +72,7 @@ public class RasterGridTests
     [Test]
     public void OriginSizePixelDensityConstructor_RoundsResolutionUpForEachAxis()
     {
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             new PointXY(1f, 1f),
             new VectorXY(3.25f, 2.5f),
             minimumPixelsPerUnit: 2);
@@ -87,7 +87,7 @@ public class RasterGridTests
     public void PixelDensityConstructor_WhenMinimumPixelsPerUnitIsNotPositive_Throws(int minimumPixelsPerUnit)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new SpatialRasterGrid(
+            new RasterGeometry(
                 new PointXY(0f, 0f),
                 new PointXY(1f, 1f),
                 minimumPixelsPerUnit));
@@ -100,7 +100,7 @@ public class RasterGridTests
     public void Constructor_WhenOriginCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new SpatialRasterGrid(new PointXY(x, y), VectorXY.One, VectorXYInt.One));
+            new RasterGeometry(new PointXY(x, y), VectorXY.One, VectorXYInt.One));
 
         Assert.That(exception!.ParamName, Is.EqualTo("origin"));
     }
@@ -116,7 +116,7 @@ public class RasterGridTests
     public void Constructor_WhenSizeIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(x, y), VectorXYInt.One));
+            new RasterGeometry(new PointXY(0f, 0f), new VectorXY(x, y), VectorXYInt.One));
 
         Assert.That(exception!.ParamName, Is.EqualTo("size"));
     }
@@ -128,7 +128,7 @@ public class RasterGridTests
     public void Constructor_WhenResolutionIsInvalid_Throws(int x, int y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new SpatialRasterGrid(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(x, y)));
+            new RasterGeometry(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(x, y)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("resolution"));
     }
@@ -136,7 +136,7 @@ public class RasterGridTests
     [Test]
     public void GetCellCenter_WhenIndexIsInsideGrid_ReturnsWorldCoordinateCenter()
     {
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(1f, 2f),
             size: new VectorXY(10f, 6f),
             resolution: new VectorXYInt(5, 3));
@@ -154,7 +154,7 @@ public class RasterGridTests
     [TestCase(0, 3)]
     public void GetCellCenter_WhenIndexIsOutsideGrid_Throws(int x, int y)
     {
-        var grid = new SpatialRasterGrid(
+        var grid = new RasterGeometry(
             origin: new PointXY(1f, 2f),
             size: new VectorXY(10f, 6f),
             resolution: new VectorXYInt(5, 3));
@@ -168,8 +168,8 @@ public class RasterGridTests
     [Test]
     public void Equals_WhenOriginSizeAndResolutionAreEqual_ReturnsTrue()
     {
-        var left = new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
-        var right = new SpatialRasterGrid(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
+        var left = new RasterGeometry(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
+        var right = new RasterGeometry(new PointXY(0f, 0f), new VectorXY(10f, 6f), new VectorXYInt(5, 3));
 
         Assert.That(left, Is.EqualTo(right));
         Assert.That(left == right, Is.True);

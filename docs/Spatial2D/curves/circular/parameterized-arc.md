@@ -20,7 +20,7 @@ var path = new ParameterizedArc(
     endAngle: 5f * MathF.PI / 4f,
     angularDirection: AngularDirection.Counterclockwise);
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));

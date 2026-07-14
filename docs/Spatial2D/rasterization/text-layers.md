@@ -17,7 +17,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(8f, 8f),
     resolution: new VectorXYInt(128, 128));
@@ -75,7 +75,7 @@ SpatialRaster<RGBA16BitColor> centered = new GeometryScene<RGBA16BitColor>(
         color: textColor,
         edgeFalloff: 0.1f,
         layout)
-    .Rasterize(new SpatialRasterGrid(
+    .Rasterize(new RasterGeometry(
         origin: new PointXY(0f, 0f),
         size: new VectorXY(64f, 48f),
         resolution: new VectorXYInt(512, 384)));
@@ -93,7 +93,7 @@ signed distance to a color value. Negative distances are inside the text
 outline, positive distances are outside it.
 
 ```csharp
-var outlineGrid = new SpatialRasterGrid(
+var outlineGrid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
     size: new VectorXY(32f, 16f),
     resolution: new VectorXYInt(512, 256));

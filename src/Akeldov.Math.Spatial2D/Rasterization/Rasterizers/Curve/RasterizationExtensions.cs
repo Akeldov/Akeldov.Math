@@ -16,7 +16,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The grayscale value used inside the stroke.</param>
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the nearest curve distance at each cell center.</returns>
         public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this IReadOnlyList<T> curves,
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             Gray8BitColor curveColor,
             Gray8BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curves == null)
@@ -47,7 +47,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             return RasterizeCurves(
                 curves,
-                spatialRasterGrid,
+                rasterGeometry,
                 distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
@@ -60,7 +60,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The grayscale value used inside the stroke.</param>
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit grayscale raster produced from the curve distance at each cell center.</returns>
         public static SpatialRaster<Gray8BitColor> Rasterize<T>(
             this T curve,
@@ -68,7 +68,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             Gray8BitColor curveColor,
             Gray8BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curve is null)
@@ -79,7 +79,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 fadeDistance,
                 curveColor,
                 backgroundColor,
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The grayscale value used inside the stroke.</param>
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the nearest curve distance at each cell center.</returns>
         public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this IReadOnlyList<T> curves,
@@ -99,7 +99,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             Gray16BitColor curveColor,
             Gray16BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curves == null)
@@ -122,7 +122,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             return RasterizeCurves(
                 curves,
-                spatialRasterGrid,
+                rasterGeometry,
                 distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
@@ -135,7 +135,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The grayscale value used inside the stroke.</param>
         /// <param name="backgroundColor">The grayscale value used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit grayscale raster produced from the curve distance at each cell center.</returns>
         public static SpatialRaster<Gray16BitColor> Rasterize<T>(
             this T curve,
@@ -143,7 +143,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             Gray16BitColor curveColor,
             Gray16BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curve is null)
@@ -154,7 +154,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 fadeDistance,
                 curveColor,
                 backgroundColor,
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The RGBA color used inside the stroke.</param>
         /// <param name="backgroundColor">The RGBA color used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit RGBA raster produced from the nearest curve distance at each cell center.</returns>
         public static SpatialRaster<RGBA8BitColor> Rasterize<T>(
             this IReadOnlyList<T> curves,
@@ -174,7 +174,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             RGBA8BitColor curveColor,
             RGBA8BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curves == null)
@@ -197,7 +197,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             return RasterizeCurves(
                 curves,
-                spatialRasterGrid,
+                rasterGeometry,
                 distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
@@ -210,7 +210,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The RGBA color used inside the stroke.</param>
         /// <param name="backgroundColor">The RGBA color used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>An 8-bit RGBA raster produced from the curve distance at each cell center.</returns>
         public static SpatialRaster<RGBA8BitColor> Rasterize<T>(
             this T curve,
@@ -218,7 +218,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             RGBA8BitColor curveColor,
             RGBA8BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curve is null)
@@ -229,7 +229,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 fadeDistance,
                 curveColor,
                 backgroundColor,
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The RGBA color used inside the stroke.</param>
         /// <param name="backgroundColor">The RGBA color used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit RGBA raster produced from the nearest curve distance at each cell center.</returns>
         public static SpatialRaster<RGBA16BitColor> Rasterize<T>(
             this IReadOnlyList<T> curves,
@@ -249,7 +249,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             RGBA16BitColor curveColor,
             RGBA16BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curves == null)
@@ -272,7 +272,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             return RasterizeCurves(
                 curves,
-                spatialRasterGrid,
+                rasterGeometry,
                 distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
@@ -285,7 +285,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="fadeDistance">The non-negative fade distance outside the stroke edge, in world coordinate units.</param>
         /// <param name="curveColor">The RGBA color used inside the stroke.</param>
         /// <param name="backgroundColor">The RGBA color used outside the stroke and fade band.</param>
-        /// <param name="spatialRasterGrid">The spatial raster grid that describes the sampled region.</param>
+        /// <param name="rasterGeometry">The spatial raster grid that describes the sampled region.</param>
         /// <returns>A 16-bit RGBA raster produced from the curve distance at each cell center.</returns>
         public static SpatialRaster<RGBA16BitColor> Rasterize<T>(
             this T curve,
@@ -293,7 +293,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             float fadeDistance,
             RGBA16BitColor curveColor,
             RGBA16BitColor backgroundColor,
-            SpatialRasterGrid spatialRasterGrid)
+            RasterGeometry rasterGeometry)
             where T : ICurve
         {
             if (curve is null)
@@ -304,26 +304,26 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 fadeDistance,
                 curveColor,
                 backgroundColor,
-                spatialRasterGrid);
+                rasterGeometry);
         }
 
         private static SpatialRaster<TColor> RasterizeCurves<TCurve, TColor>(
             IReadOnlyList<TCurve> curves,
-            SpatialRasterGrid spatialRasterGrid,
+            RasterGeometry rasterGeometry,
             Func<float, TColor> distanceToColor)
             where TCurve : ICurve
         {
-            ValidateGrid(spatialRasterGrid);
-            var values = new TColor[checked(spatialRasterGrid.Resolution.X * spatialRasterGrid.Resolution.Y)];
-            VectorXY cellSize = spatialRasterGrid.CellSize;
-            float firstX = spatialRasterGrid.Origin.X + cellSize.X * 0.5f;
-            float firstY = spatialRasterGrid.Origin.Y + cellSize.Y * 0.5f;
+            ValidateGrid(rasterGeometry);
+            var values = new TColor[checked(rasterGeometry.Resolution.X * rasterGeometry.Resolution.Y)];
+            VectorXY cellSize = rasterGeometry.CellSize;
+            float firstX = rasterGeometry.Origin.X + cellSize.X * 0.5f;
+            float firstY = rasterGeometry.Origin.Y + cellSize.Y * 0.5f;
 
-            for (int y = 0; y < spatialRasterGrid.Resolution.Y; y++)
+            for (int y = 0; y < rasterGeometry.Resolution.Y; y++)
             {
                 float pointY = firstY + y * cellSize.Y;
-                int valueIndex = y * spatialRasterGrid.Resolution.X;
-                for (int x = 0; x < spatialRasterGrid.Resolution.X; x++)
+                int valueIndex = y * rasterGeometry.Resolution.X;
+                for (int x = 0; x < rasterGeometry.Resolution.X; x++)
                 {
                     PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     float distance = GetNearestDistance(curves, point);
@@ -331,7 +331,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 }
             }
 
-            return new SpatialRaster<TColor>(spatialRasterGrid, values);
+            return new SpatialRaster<TColor>(rasterGeometry, values);
         }
 
         private static float GetNearestDistance<T>(IReadOnlyList<T> curves, PointXY point)
@@ -459,13 +459,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return (ushort)MathF.Round(value);
         }
 
-        private static void ValidateGrid(SpatialRasterGrid spatialRasterGrid)
+        private static void ValidateGrid(RasterGeometry rasterGeometry)
         {
-            if (!spatialRasterGrid.Size.IsFinite || spatialRasterGrid.Size.X <= 0f || spatialRasterGrid.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(spatialRasterGrid), "Raster grid size components must be finite and positive.");
+            if (!rasterGeometry.Size.IsFinite || rasterGeometry.Size.X <= 0f || rasterGeometry.Size.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(rasterGeometry), "Raster grid size components must be finite and positive.");
 
-            if (spatialRasterGrid.Resolution.X <= 0 || spatialRasterGrid.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(spatialRasterGrid), "Raster grid resolution components must be positive.");
+            if (rasterGeometry.Resolution.X <= 0 || rasterGeometry.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(rasterGeometry), "Raster grid resolution components must be positive.");
         }
     }
 }

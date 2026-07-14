@@ -33,7 +33,7 @@ public class GeometrySceneTextLayerTests
                 color: RGBA16BitColor.Red,
                 edgeFalloff: 0.1f);
 
-        SpatialRaster<RGBA16BitColor> raster = scene.Rasterize(new SpatialRasterGrid(
+        SpatialRaster<RGBA16BitColor> raster = scene.Rasterize(new RasterGeometry(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(5f, 7f),
             resolution: new VectorXYInt(5, 7)));
@@ -56,7 +56,7 @@ public class GeometrySceneTextLayerTests
                 edgeFalloff: 0.1f,
                 anchor: TextAnchor.BaselineRight);
 
-        SpatialRaster<RGBA16BitColor> raster = scene.Rasterize(new SpatialRasterGrid(
+        SpatialRaster<RGBA16BitColor> raster = scene.Rasterize(new RasterGeometry(
             origin: new PointXY(0f, 0f),
             size: new VectorXY(7f, 7f),
             resolution: new VectorXYInt(7, 7)));

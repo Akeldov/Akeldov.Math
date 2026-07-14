@@ -36,7 +36,7 @@ IContour contour = new ParameterizedCompositeContour(new IFinitePath[]
     new ParameterizedSegment(new PointXY(2f, -1.5f), new PointXY(0f, 2f)),
     new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(-2f, -1.5f))
 });
-var grid = new SpatialRasterGrid(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
+var grid = new RasterGeometry(new PointXY(-3f, -3f), new VectorXY(6f, 6f), new VectorXYInt(96, 96));
 contour.Rasterize(0.08f, 0.08f, new Gray8BitColor(byte.MaxValue), grid).SaveAsPng("parameterized-composite-contour.png");
 ```
 

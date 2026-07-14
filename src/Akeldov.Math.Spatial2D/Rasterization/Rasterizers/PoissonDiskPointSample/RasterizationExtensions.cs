@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit RGBA raster produced from the nearest Poisson disk point sample at each cell center.</returns>
         public static SpatialRaster<RGBA16BitColor> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> sources,
-            SpatialRasterGrid grid,
+            RasterGeometry grid,
             Func<PoissonDiskPointSample, float, RGBA16BitColor> sampleDistanceToColor)
         {
             var rasterizer = new PoissonDiskPointSampleCollectionDistanceRGBA16BitRasterizer(sampleDistanceToColor);
@@ -41,7 +41,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A 16-bit grayscale raster produced from the nearest Poisson disk point sample at each cell center.</returns>
         public static SpatialRaster<Gray16BitColor> Rasterize(
             this IReadOnlyList<PoissonDiskPointSample> sources,
-            SpatialRasterGrid grid,
+            RasterGeometry grid,
             Func<PoissonDiskPointSample, float, Gray16BitColor> sampleDistanceToGrayLevel)
         {
             var rasterizer = new PoissonDiskPointSampleCollectionDistanceGray16BitRasterizer(sampleDistanceToGrayLevel);

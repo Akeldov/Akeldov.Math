@@ -47,7 +47,7 @@ namespace Akeldov.Math.Hexes
             HexMapTopologyRasterizationOptions options)
         {
             var hexMapGeometry = new HexMapGeometry(hexMapTopology.Resolution.X, hexMapTopology.Resolution.Y, origin, radius, hexMapTopology.Layout);
-            var spatialRasterGrid = hexMapGeometry.ToSpatialRasterGrid(options.PixelsPerApothem, options.Margin);
+            var rasterGeometry = hexMapGeometry.ToRasterGeometry(options.PixelsPerApothem, options.Margin);
 
             var res = hexMapGeometry
                 .ToHexEdgeSegments()
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Hexes
                     options.FadeDistance,
                     options.CurveColor,
                     options.BackgroundColor,
-                    spatialRasterGrid);
+                    rasterGeometry);
 
             return res;
         }

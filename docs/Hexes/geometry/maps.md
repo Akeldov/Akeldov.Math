@@ -16,7 +16,7 @@ var map = new HexCenterMap(
     apothem: 8f,
     layout: Layout.OddR);
 
-SpatialRasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(
+RasterGeometry grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(
     map,
     pixelsPerApothem: 24f);
 

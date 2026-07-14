@@ -18,7 +18,7 @@ var circle = new Circle(
     center: new PointXY(0.1f, -0.15f),
     radius: 1.75f);
 
-var grid = new SpatialRasterGrid(
+var grid = new RasterGeometry(
     origin: new PointXY(-3f, -3f),
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
@@ -27,7 +27,7 @@ SpatialRaster<Gray8BitColor> raster = circle.Rasterize(
     width: 0f,
     edgeFalloff: 0.25f,
     color: new Gray8BitColor(byte.MaxValue),
-    spatialRasterGrid: grid);
+    rasterGeometry: grid);
 raster.SaveAsPng("circle-distance.png");
 ```
 
