@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Stores a rectangular raster of values with raster-cell resolution but no spatial bounds.
     /// </summary>
     /// <typeparam name="TValue">The value type stored in each raster cell.</typeparam>
-    public class Raster<TValue> : IGrid<TValue>
+    public class Raster<TValue> : IRaster<TValue>
     {
         /// <summary>
         /// Initializes a new raster with the specified resolution and values.

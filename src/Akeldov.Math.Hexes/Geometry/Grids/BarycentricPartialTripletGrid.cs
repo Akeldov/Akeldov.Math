@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the BarycentricPartialTripletGrid type.
     /// </summary>
-    public sealed class BarycentricPartialTripletGrid : IGrid<PartialTriplet<float>>
+    public sealed class BarycentricPartialTripletGrid : IRaster<PartialTriplet<float>>
     {
         private const float DefaultHexRadius = 1f;
 

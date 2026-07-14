@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the ChromaticIndexPartialTripletGrid type.
     /// </summary>
-    public sealed class ChromaticIndexPartialTripletGrid : IGrid<PartialTriplet<byte>>
+    public sealed class ChromaticIndexPartialTripletGrid : IRaster<PartialTriplet<byte>>
     {
         private const float DefaultHexRadius = 1f;
 

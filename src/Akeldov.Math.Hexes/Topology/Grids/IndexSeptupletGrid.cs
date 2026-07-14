@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the IndexSeptupletGrid type.
     /// </summary>
-    public sealed class IndexSeptupletGrid : IGrid<Septuplet<VectorXYInt>>
+    public sealed class IndexSeptupletGrid : IRaster<Septuplet<VectorXYInt>>
     {
         private Septuplet<VectorXYInt>[] _values;
 

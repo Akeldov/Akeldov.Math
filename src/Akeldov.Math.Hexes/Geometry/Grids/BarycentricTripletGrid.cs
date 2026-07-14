@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the BarycentricTripletGrid type.
     /// </summary>
-    public sealed class BarycentricTripletGrid : IGrid<Triplet<float>>
+    public sealed class BarycentricTripletGrid : IRaster<Triplet<float>>
     {
         private Triplet<float>[] _values = Array.Empty<Triplet<float>>();
 

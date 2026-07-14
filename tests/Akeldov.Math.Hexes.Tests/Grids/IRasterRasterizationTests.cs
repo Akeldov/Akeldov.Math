@@ -5,12 +5,12 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Grids;
 
-public class IGridRasterizationTests
+public class IRasterRasterizationTests
 {
     [Test]
     public void Rasterize_MapsToRGBA16BitColorRaster()
     {
-        IGrid<int> grid = new TestGrid<int>(2, 1, new[] { 10, 20 });
+        IRaster<int> grid = new TestRaster<int>(2, 1, new[] { 10, 20 });
         var rasterGrid = new SpatialRasterGrid(
             new PointXY(10f, 20f),
             new VectorXY(30f, 40f),
@@ -32,7 +32,7 @@ public class IGridRasterizationTests
     [Test]
     public void Rasterize_MapsToArbitraryRasterValueType()
     {
-        IGrid<int> grid = new TestGrid<int>(2, 1, new[] { 10, 20 });
+        IRaster<int> grid = new TestRaster<int>(2, 1, new[] { 10, 20 });
         var rasterGrid = new SpatialRasterGrid(
             new PointXY(0f, 0f),
             new VectorXY(2f, 1f),
@@ -48,8 +48,8 @@ public class IGridRasterizationTests
     [Test]
     public void Rasterize_WhenArgumentsAreInvalid_Throws()
     {
-        IGrid<int> grid = new TestGrid<int>(2, 1, new[] { 10, 20 });
-        IGrid<int> nullGrid = null!;
+        IRaster<int> grid = new TestRaster<int>(2, 1, new[] { 10, 20 });
+        IRaster<int> nullGrid = null!;
         var rasterGrid = new SpatialRasterGrid(
             new PointXY(0f, 0f),
             new VectorXY(2f, 1f),
@@ -73,24 +73,21 @@ public class IGridRasterizationTests
         });
     }
 
-    private sealed class TestGrid<TValue> : IGrid<TValue>
+    private sealed class TestRaster<TValue> : IRaster<TValue>
     {
         private readonly TValue[] _values;
 
-        public TestGrid(int width, int height, TValue[] values)
+        public TestRaster(int width, int height, TValue[] values)
         {
-            Width = width;
-            Height = height;
+            Resolution = new VectorXYInt(width, height);
             _values = values;
         }
 
-        public int Width { get; }
+        public VectorXYInt Resolution { get; }
 
-        public int Height { get; }
+        public TValue this[int x, int y] => _values[y * Resolution.X + x];
 
-        public TValue this[int x, int y] => _values[y * Width + x];
-
-        public TValue this[VectorXYInt index] => _values[index.Y * Width + index.X];
+        public TValue this[VectorXYInt index] => _values[index.Y * Resolution.X + index.X];
 
         public TValue this[int index] => _values[index];
     }

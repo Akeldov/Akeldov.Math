@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the IndexTripletGrid type.
     /// </summary>
-    public sealed class IndexTripletGrid : IGrid<Triplet<VectorXYInt>>
+    public sealed class IndexTripletGrid : IRaster<Triplet<VectorXYInt>>
     {
         private const float DefaultHexRadius = 1f;
 

@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public static Raster<TColor> Rasterize<TGrid, TValue, TColor>(
             this TGrid grid,
             Func<TValue, TColor> colorSelector)
-            where TGrid : IGrid<TValue>
+            where TGrid : IRaster<TValue>
         {
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
@@ -50,9 +50,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (colorSelector == null)
                 throw new ArgumentNullException(nameof(colorSelector));
 
-            var resolution = new VectorXYInt(grid.Width, grid.Height);
+            VectorXYInt resolution = grid.Resolution;
 
-            int count = checked(grid.Width * grid.Height);
+            int count = checked(grid.Resolution.X * grid.Resolution.Y);
             var values = new TColor[count];
 
             for (int i = 0; i < values.Length; i++)
@@ -71,7 +71,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="colorSelector">The function that maps each grid value to a raster color.</param>
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
-            this IGrid<TValue> grid,
+            this IRaster<TValue> grid,
             SpatialRasterGrid rasterGrid,
             Func<TValue, TColor> colorSelector)
         {
@@ -81,11 +81,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (colorSelector == null)
                 throw new ArgumentNullException(nameof(colorSelector));
 
-            if (rasterGrid.Resolution.X != grid.Width ||
-                rasterGrid.Resolution.Y != grid.Height)
+            if (rasterGrid.Resolution != grid.Resolution)
                 throw new ArgumentException("Raster grid resolution must match grid dimensions.", nameof(rasterGrid));
 
-            int count = checked(grid.Width * grid.Height);
+            int count = checked(grid.Resolution.X * grid.Resolution.Y);
             var values = new TColor[count];
 
             for (int i = 0; i < values.Length; i++)

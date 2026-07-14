@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Stores a rectangular raster of values sampled on a <see cref="SpatialRasterGrid"/>.
     /// </summary>
     /// <typeparam name="TValue">The value type stored in each raster cell.</typeparam>
-    public class SpatialRaster<TValue> : IGrid<TValue>
+    public class SpatialRaster<TValue> : IRaster<TValue>
     {
         /// <summary>
         /// Initializes a new raster with the specified grid and values.
@@ -48,6 +48,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// Gets the raster height in cells.
         /// </summary>
         public int Height => Grid.Resolution.Y;
+
+        /// <summary>
+        /// Gets the raster resolution in cells.
+        /// </summary>
+        public VectorXYInt Resolution => Grid.Resolution;
 
         /// <summary>
         /// Gets or sets the value at the specified raster cell.
