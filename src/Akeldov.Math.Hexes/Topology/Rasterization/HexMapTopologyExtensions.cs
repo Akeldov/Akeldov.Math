@@ -149,7 +149,7 @@ namespace Akeldov.Math.Hexes
 
             SpatialRaster<float> label = new GeometryScene<float>(float.PositiveInfinity, MathF.Min)
                 .AddTextLayer(texts, distance => distance, edgeFalloff)
-                .Rasterize(target.Grid);
+                .Rasterize(target.Geometry);
 
             for (int i = 0; i < label.Values.Length; i++)
             {

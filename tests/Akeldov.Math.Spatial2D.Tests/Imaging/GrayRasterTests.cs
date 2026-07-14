@@ -39,7 +39,7 @@ public class GrayRasterTests
         Raster<Gray8BitColor> nonSpatialRaster = raster.ToRaster();
         nonSpatialRaster[1, 0] = new Gray8BitColor(9);
 
-        Assert.That(nonSpatialRaster.Resolution, Is.EqualTo(raster.Grid.Resolution));
+        Assert.That(nonSpatialRaster.Resolution, Is.EqualTo(raster.Geometry.Resolution));
         Assert.That(nonSpatialRaster.Values, Is.Not.SameAs(raster.Values));
         Assert.That(raster[1, 0].Value, Is.EqualTo(2));
         Assert.That(nonSpatialRaster[1, 0].Value, Is.EqualTo(9));

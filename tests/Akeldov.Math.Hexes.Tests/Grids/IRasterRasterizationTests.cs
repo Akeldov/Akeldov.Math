@@ -3,7 +3,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-namespace Akeldov.Math.Hexes.Tests.Grids;
+namespace Akeldov.Math.Hexes.Tests.Geometrys;
 
 public class IRasterRasterizationTests
 {
@@ -24,7 +24,7 @@ public class IRasterRasterizationTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(raster.Grid, Is.EqualTo(rasterGrid));
+            Assert.That(raster.Geometry, Is.EqualTo(rasterGrid));
             Assert.That(raster.Values, Is.EqualTo(new[] { red, blue }));
         });
     }

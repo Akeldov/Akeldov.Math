@@ -6,33 +6,33 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Stores a rectangular raster of values sampled on a <see cref="RasterGeometry"/>.
     /// </summary>
     /// <typeparam name="TValue">The value type stored in each raster cell.</typeparam>
-    public class SpatialRaster<TValue> : IRaster<TValue>
+    public class SpatialRaster<TValue> : ISpatialRaster<TValue>
     {
         /// <summary>
-        /// Initializes a new raster with the specified grid and values.
+        /// Initializes a new raster with the specified geometry and values.
         /// </summary>
-        /// <param name="grid">The raster sampling grid.</param>
+        /// <param name="geometry">The raster geometry.</param>
         /// <param name="values">
-        /// The cell values in row-major order. The array is retained as raster state and must contain one value per grid cell.
+        /// The cell values in row-major order. The array is retained as raster state and must contain one value per raster cell.
         /// </param>
-        public SpatialRaster(RasterGeometry grid, TValue[] values)
+        public SpatialRaster(RasterGeometry geometry, TValue[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
 
-            int expectedCount = checked(grid.Resolution.X * grid.Resolution.Y);
+            int expectedCount = checked(geometry.Resolution.X * geometry.Resolution.Y);
 
             if (values.Length != expectedCount)
-                throw new ArgumentException("Raster value count must match the raster grid resolution.", nameof(values));
+                throw new ArgumentException("Raster value count must match the raster geometry resolution.", nameof(values));
 
-            Grid = grid;
+            Geometry = geometry;
             Values = values;
         }
 
         /// <summary>
-        /// Gets the raster sampling grid.
+        /// Gets the raster geometry.
         /// </summary>
-        public RasterGeometry Grid { get; }
+        public RasterGeometry Geometry { get; }
 
         /// <summary>
         /// Gets the retained row-major raster value array.
@@ -42,17 +42,17 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Gets the raster width in cells.
         /// </summary>
-        public int Width => Grid.Resolution.X;
+        public int Width => Geometry.Resolution.X;
 
         /// <summary>
         /// Gets the raster height in cells.
         /// </summary>
-        public int Height => Grid.Resolution.Y;
+        public int Height => Geometry.Resolution.Y;
 
         /// <summary>
         /// Gets the raster resolution in cells.
         /// </summary>
-        public VectorXYInt Resolution => Grid.Resolution;
+        public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
         /// Gets or sets the value at the specified raster cell.
@@ -101,12 +101,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <summary>
-        /// Creates a raster with the same grid and a copied value array.
+        /// Creates a raster with the same geometry and a copied value array.
         /// </summary>
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
         public SpatialRaster<TValue> Clone()
         {
-            return new SpatialRaster<TValue>(Grid, (TValue[])Values.Clone());
+            return new SpatialRaster<TValue>(Geometry, (TValue[])Values.Clone());
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
         public Raster<TValue> ToRaster()
         {
-            return new Raster<TValue>(Grid.Resolution, (TValue[])Values.Clone());
+            return new Raster<TValue>(Geometry.Resolution, (TValue[])Values.Clone());
         }
 
         private int GetLinearIndex(int x, int y)

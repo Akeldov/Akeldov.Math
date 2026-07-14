@@ -51,11 +51,11 @@ public class HexMapRasterizationExtensionsTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(raster.Grid.Origin.X, Is.EqualTo(-2.7321f).Within(0.0001f));
-            Assert.That(raster.Grid.Origin.Y, Is.EqualTo(-3f).Within(0.0001f));
-            Assert.That(raster.Grid.Size.X, Is.EqualTo(5.4641f).Within(0.0001f));
-            Assert.That(raster.Grid.Size.Y, Is.EqualTo(6f).Within(0.0001f));
-            Assert.That(raster.Grid.Resolution, Is.EqualTo(new VectorXYInt(10, 11)));
+            Assert.That(raster.Geometry.Origin.X, Is.EqualTo(-2.7321f).Within(0.0001f));
+            Assert.That(raster.Geometry.Origin.Y, Is.EqualTo(-3f).Within(0.0001f));
+            Assert.That(raster.Geometry.Size.X, Is.EqualTo(5.4641f).Within(0.0001f));
+            Assert.That(raster.Geometry.Size.Y, Is.EqualTo(6f).Within(0.0001f));
+            Assert.That(raster.Geometry.Resolution, Is.EqualTo(new VectorXYInt(10, 11)));
         });
     }
 
@@ -85,7 +85,7 @@ public class HexMapRasterizationExtensionsTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(actual.Grid, Is.EqualTo(expected.Grid));
+            Assert.That(actual.Geometry, Is.EqualTo(expected.Geometry));
             Assert.That(actual.Values, Is.EqualTo(expected.Values));
         });
     }
@@ -119,7 +119,7 @@ public class HexMapRasterizationExtensionsTests
         Assert.Multiple(() =>
         {
             Assert.That(expected.Values.Any(value => value != Gray8BitColor.Black), Is.True);
-            Assert.That(actual.Grid, Is.EqualTo(expected.Grid));
+            Assert.That(actual.Geometry, Is.EqualTo(expected.Geometry));
             Assert.That(actual.Values, Is.EqualTo(expected.Values));
         });
     }
