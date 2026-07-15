@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
@@ -12,6 +13,8 @@ public class HexRasterizationBenchmarks
 {
     private IndexSeptupletMap _adjacencyMap = null!;
     private IndexSeptupletGrid _adjacencyGrid = null!;
+    private HexMapGeometry _hexMapGeometry;
+    private RasterGeometry _rasterGeometry;
     private VectorXYInt _topologyResolution;
 
     [Params(32, 128)]
@@ -25,17 +28,22 @@ public class HexRasterizationBenchmarks
     {
         _adjacencyMap = new IndexSeptupletMap(new HexMapTopology(Size, Size, Layout));
         _topologyResolution = new VectorXYInt(Size * 8, Size * 8);
+        _hexMapGeometry = new HexMapGeometry(_adjacencyMap.Topology, 1f);
+        _rasterGeometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            _hexMapGeometry.GetBoundingBoxSize(),
+            _topologyResolution);
         _adjacencyGrid = new IndexSeptupletGrid(
-            _adjacencyMap,
-            resolution: _topologyResolution);
+            _hexMapGeometry,
+            _rasterGeometry);
     }
 
     [Benchmark]
     public IndexSeptupletGrid ConstructAdjacencyGrid()
     {
         return new IndexSeptupletGrid(
-            _adjacencyMap,
-            resolution: new VectorXYInt(Size * 8, Size * 8));
+            _hexMapGeometry,
+            _rasterGeometry);
     }
 
     [Benchmark]

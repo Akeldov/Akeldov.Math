@@ -13,12 +13,14 @@ Grids are general sampled value containers used by geometry, topology, chromatiz
 Topology grids can visualize sampled index relationships.
 
 ```csharp
+var hexMapGeometry = new HexMapGeometry(5, 4, 1f, Layout.OddR);
+var rasterGeometry = new RasterGeometry(
+    new PointXY(0f, 0f),
+    hexMapGeometry.GetBoundingBoxSize(),
+    new VectorXYInt(192, 192));
 var grid = new IndexTripletGrid(
-    hexWidth: 5,
-    hexHeight: 4,
-    layout: Layout.OddR,
-    hexOrigin: VectorXY.Zero,
-    resolution: new VectorXYInt(192, 192));
+    hexMapGeometry,
+    rasterGeometry);
 
 SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 

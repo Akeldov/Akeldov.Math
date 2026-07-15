@@ -16,6 +16,15 @@ namespace Akeldov.Math.Hexes.Topology
         private Triplet<byte>[] _values = Array.Empty<Triplet<byte>>();
 
         /// <summary>
+        /// Initializes a new instance that covers the whole source hex map.
+        /// </summary>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        public ChromaticIndexTripletGrid(HexMapGeometry hexMapGeometry)
+            : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the ChromaticIndexTripletGrid type.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>

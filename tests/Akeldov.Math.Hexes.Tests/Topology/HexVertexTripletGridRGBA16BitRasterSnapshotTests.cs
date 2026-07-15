@@ -17,9 +17,10 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
+        var hexMapGeometry = CreateHexMapGeometry(layout);
         var grid = new IndexTripletGrid(
-            new HexMapTopology(5, 4, layout),
-            resolution: new VectorXYInt(64, 64));
+            hexMapGeometry,
+            new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(64, 64)));
         var raster = grid.Rasterize((Triplet<VectorXYInt> triplet) => ToIndexTripletSnapshotColor(triplet));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -34,10 +35,10 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexSeptupletMap(new HexMapTopology(5, 4, layout));
+        var hexMapGeometry = CreateHexMapGeometry(layout);
         var grid = new IndexPartialTripletGrid(
-            map,
-            resolution: new VectorXYInt(64, 64));
+            hexMapGeometry,
+            new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(64, 64)));
         var raster = grid.Rasterize((PartialTriplet<VectorXYInt> triplet) => ToIndexPartialTripletSnapshotColor(triplet));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 

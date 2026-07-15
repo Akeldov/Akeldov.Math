@@ -15,6 +15,15 @@ namespace Akeldov.Math.Hexes.Topology
         private Triplet<float>[] _values = Array.Empty<Triplet<float>>();
 
         /// <summary>
+        /// Initializes a new instance that covers the whole source hex map.
+        /// </summary>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        public BarycentricTripletGrid(HexMapGeometry hexMapGeometry)
+            : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the BarycentricTripletGrid type.
         /// </summary>
         /// <param name="hexMapGeometry">The hex map geometry.</param>

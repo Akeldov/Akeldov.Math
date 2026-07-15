@@ -10,47 +10,73 @@ namespace Akeldov.Math.Hexes.Tests.Topology;
 public class HexVertexTripletGridTests
 {
     [Test]
-    public void BarycentricTripletGrid_ExposesOnlyGeometryConstructor()
+    public void GridTypes_ExposeGeometryConstructors()
     {
-        var constructors = typeof(BarycentricTripletGrid).GetConstructors();
+        Type[] gridTypes =
+        {
+            typeof(IndexTripletGrid),
+            typeof(IndexPartialTripletGrid),
+            typeof(IndexSeptupletGrid),
+            typeof(IndexPartialSeptupletGrid),
+            typeof(BarycentricTripletGrid),
+            typeof(BarycentricPartialTripletGrid),
+            typeof(ChromaticIndexTripletGrid),
+            typeof(ChromaticIndexPartialTripletGrid),
+        };
 
-        Assert.That(constructors, Has.Length.EqualTo(1));
-        Assert.That(
-            constructors[0].GetParameters().Select(parameter => parameter.ParameterType),
-            Is.EqualTo(new[] { typeof(HexMapGeometry), typeof(RasterGeometry) }));
+        foreach (Type gridType in gridTypes)
+        {
+            var constructors = gridType.GetConstructors();
+            Type[][] signatures = constructors
+                .Select(constructor => constructor.GetParameters()
+                    .Select(parameter => parameter.ParameterType)
+                    .ToArray())
+                .ToArray();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(constructors, Has.Length.EqualTo(2), gridType.Name);
+                Assert.That(
+                    signatures.Any(signature => signature.SequenceEqual(new[] { typeof(HexMapGeometry) })),
+                    Is.True,
+                    gridType.Name);
+                Assert.That(
+                    signatures.Any(signature => signature.SequenceEqual(new[] { typeof(HexMapGeometry), typeof(RasterGeometry) })),
+                    Is.True,
+                    gridType.Name);
+            });
+        }
     }
 
     [Test]
-    public void BarycentricPartialTripletGrid_ExposesOnlyGeometryConstructor()
+    public void GridTypes_GeometryConstructor_CoversWholeHexMap()
     {
-        var constructors = typeof(BarycentricPartialTripletGrid).GetConstructors();
+        var hexMapGeometry = new HexMapGeometry(
+            3,
+            2,
+            new VectorXY(10f, -20f),
+            2f,
+            Layout.EvenQ);
+        RasterGeometry expected = hexMapGeometry.ToRasterGeometry(1f);
+        Type[] gridTypes =
+        {
+            typeof(IndexTripletGrid),
+            typeof(IndexPartialTripletGrid),
+            typeof(IndexSeptupletGrid),
+            typeof(IndexPartialSeptupletGrid),
+            typeof(BarycentricTripletGrid),
+            typeof(BarycentricPartialTripletGrid),
+            typeof(ChromaticIndexTripletGrid),
+            typeof(ChromaticIndexPartialTripletGrid),
+        };
 
-        Assert.That(constructors, Has.Length.EqualTo(1));
-        Assert.That(
-            constructors[0].GetParameters().Select(parameter => parameter.ParameterType),
-            Is.EqualTo(new[] { typeof(HexMapGeometry), typeof(RasterGeometry) }));
-    }
+        foreach (Type gridType in gridTypes)
+        {
+            object grid = Activator.CreateInstance(gridType, hexMapGeometry)!;
+            var geometry = (RasterGeometry)gridType.GetProperty("Geometry")!.GetValue(grid)!;
 
-    [Test]
-    public void ChromaticIndexTripletGrid_ExposesOnlyGeometryConstructor()
-    {
-        var constructors = typeof(ChromaticIndexTripletGrid).GetConstructors();
-
-        Assert.That(constructors, Has.Length.EqualTo(1));
-        Assert.That(
-            constructors[0].GetParameters().Select(parameter => parameter.ParameterType),
-            Is.EqualTo(new[] { typeof(HexMapGeometry), typeof(RasterGeometry) }));
-    }
-
-    [Test]
-    public void ChromaticIndexPartialTripletGrid_ExposesOnlyGeometryConstructor()
-    {
-        var constructors = typeof(ChromaticIndexPartialTripletGrid).GetConstructors();
-
-        Assert.That(constructors, Has.Length.EqualTo(1));
-        Assert.That(
-            constructors[0].GetParameters().Select(parameter => parameter.ParameterType),
-            Is.EqualTo(new[] { typeof(HexMapGeometry), typeof(RasterGeometry) }));
+            Assert.That(geometry, Is.EqualTo(expected), gridType.Name);
+        }
     }
 
     [Test]
@@ -136,11 +162,19 @@ public class HexVertexTripletGridTests
     public void IndexTripletGrid_ExposesGeometryResolutionAndSampledValues(Layout layout)
     {
         var topology = new HexMapTopology(2, 1, layout);
-        var grid = new IndexTripletGrid(topology, new VectorXYInt(4, 2));
+        var hexMapGeometry = new HexMapGeometry(topology, 1f);
+        var rasterGeometry = CreateDefaultRasterGeometry(hexMapGeometry, new VectorXYInt(4, 2));
+        var grid = new IndexTripletGrid(hexMapGeometry, rasterGeometry);
 
-        Assert.That(grid.Topology, Is.EqualTo(topology));
-        Assert.That(grid.Resolution, Is.EqualTo(new VectorXYInt(4, 2)));
-        Assert.That(grid[0], Is.EqualTo(grid[VectorXYInt.Zero]));
+        Assert.Multiple(() =>
+        {
+            Assert.That(grid, Is.AssignableTo<ISpatialRaster<Triplet<VectorXYInt>>>());
+            Assert.That(grid.SourceHexMapGeometry, Is.EqualTo(hexMapGeometry));
+            Assert.That(grid.Geometry, Is.EqualTo(rasterGeometry));
+            Assert.That(grid.Topology, Is.EqualTo(topology));
+            Assert.That(grid.Resolution, Is.EqualTo(new VectorXYInt(4, 2)));
+            Assert.That(grid[0], Is.EqualTo(grid[VectorXYInt.Zero]));
+        });
     }
 
     [Test]
@@ -154,6 +188,29 @@ public class HexVertexTripletGridTests
         Assert.That(typeof(ChromaticIndexPartialTripletGrid).GetProperty("ChromaticIndices"), Is.Null);
         Assert.That(typeof(ChromaticIndexTripletGrid).GetProperty("Layout"), Is.Null);
         Assert.That(typeof(ChromaticIndexPartialTripletGrid).GetProperty("Layout"), Is.Null);
+
+        Type[] topologyGridTypes =
+        {
+            typeof(IndexTripletGrid),
+            typeof(IndexPartialTripletGrid),
+            typeof(IndexSeptupletGrid),
+            typeof(IndexPartialSeptupletGrid),
+        };
+        string[] redundantPropertyNames =
+        {
+            "Width",
+            "Height",
+            "ResolutionX",
+            "ResolutionY",
+            "HexResolution",
+            "Layout",
+        };
+
+        foreach (Type gridType in topologyGridTypes)
+        {
+            foreach (string propertyName in redundantPropertyNames)
+                Assert.That(gridType.GetProperty(propertyName), Is.Null, $"{gridType.Name}.{propertyName}");
+        }
     }
 
     [Test]
@@ -174,13 +231,39 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
+    public void TopologyGrids_HaveOnlyLayoutFillPrivateMethods()
+    {
+        string[] expectedMethodNames = { "Fill", "FillOddR", "FillEvenR", "FillOddQ", "FillEvenQ" };
+        Type[] gridTypes =
+        {
+            typeof(IndexTripletGrid),
+            typeof(IndexPartialTripletGrid),
+            typeof(IndexSeptupletGrid),
+            typeof(IndexPartialSeptupletGrid),
+        };
+
+        foreach (Type gridType in gridTypes)
+        {
+            string[] methodNames = gridType
+                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.DeclaredOnly)
+                .Select(method => method.Name)
+                .ToArray();
+
+            Assert.That(methodNames, Is.EquivalentTo(expectedMethodNames), gridType.Name);
+        }
+    }
+
+    [Test]
     public void IndexTripletGrid_UsesNearestVertexAndLeftRightOrder()
     {
         var expected = new Triplet<VectorXYInt>(
             new VectorXYInt(0, 0),
             new VectorXYInt(0, 1),
             new VectorXYInt(1, 0));
-        var grid = new IndexTripletGrid(new HexMapTopology(2, 2, Layout.OddR), new VectorXYInt(64, 64));
+        var hexMapGeometry = new HexMapGeometry(2, 2, 1f, Layout.OddR);
+        var grid = new IndexTripletGrid(
+            hexMapGeometry,
+            CreateDefaultRasterGeometry(hexMapGeometry, new VectorXYInt(64, 64)));
         bool found = false;
 
         for (int y = 0; y < grid.Resolution.Y && !found; y++)
@@ -243,9 +326,9 @@ public class HexVertexTripletGridTests
         Triplet<byte> expected = indexTriplet.GetChromaticTriplet(Layout.OddR);
         var topology = new HexMapTopology(2, 2, Layout.OddR);
         var resolution = new VectorXYInt(64, 64);
-        var indexGrid = new IndexTripletGrid(topology, resolution);
         var hexMapGeometry = new HexMapGeometry(topology, 1f);
         var rasterGeometry = new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), resolution);
+        var indexGrid = new IndexTripletGrid(hexMapGeometry, rasterGeometry);
         var grid = new ChromaticIndexTripletGrid(hexMapGeometry, rasterGeometry);
         VectorXYInt? matchingIndex = null;
 
@@ -279,8 +362,8 @@ public class HexVertexTripletGridTests
         var resolution = VectorXYInt.One;
         var hexMapGeometry = new HexMapGeometry(adjacency.Topology, 1f);
         var rasterGeometry = new RasterGeometry(new PointXY(-2f, -2f), new VectorXY(4f, 4f), resolution);
-        var indexGrid = new IndexTripletGrid(adjacency.Topology, resolution);
-        var partialIndexGrid = new IndexPartialTripletGrid(adjacency, resolution);
+        var indexGrid = new IndexTripletGrid(hexMapGeometry, rasterGeometry);
+        var partialIndexGrid = new IndexPartialTripletGrid(hexMapGeometry, rasterGeometry);
         var barycentricGrid = new BarycentricTripletGrid(
             hexMapGeometry,
             rasterGeometry);
@@ -308,20 +391,22 @@ public class HexVertexTripletGridTests
         var emptyAdjacency = new IndexSeptupletMap(new HexMapTopology(0, 1, Layout.OddR));
         var emptyPartialAdjacency = new IndexPartialSeptupletMap(new HexMapTopology(0, 1, Layout.OddR));
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(new HexMapTopology(0, 1, Layout.OddR), VectorXYInt.One));
+        var emptyHexMapGeometry = new HexMapGeometry(emptyAdjacency.Topology, 1f);
+        var validRasterGeometry = new RasterGeometry(new PointXY(0f, 0f), VectorXY.One, VectorXYInt.One);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(emptyHexMapGeometry, validRasterGeometry));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(new HexMapGeometry(1, 1, 1f, Layout.OddR), default));
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(new HexMapGeometry(1, 1, 1f, Layout.OddR), default));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(emptyAdjacency, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(new IndexSeptupletMap(new HexMapTopology(1, 1, Layout.OddR)), VectorXYInt.One, default));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletGrid(emptyPartialAdjacency, VectorXYInt.One));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(emptyHexMapGeometry, validRasterGeometry));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(new HexMapGeometry(1, 1, 1f, Layout.OddR), default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialSeptupletGrid(new HexMapGeometry(emptyPartialAdjacency.Topology, 1f), validRasterGeometry));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexPartialTripletGrid(emptyHexMapGeometry, validRasterGeometry));
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(
             new HexMapGeometry(emptyAdjacency.Topology, 1f),
             new RasterGeometry(new PointXY(-1f, -1f), new VectorXY(2f, 2f), VectorXYInt.One)));
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricPartialTripletGrid(
             new HexMapGeometry(emptyAdjacency.Topology, 1f),
             new RasterGeometry(new PointXY(-1f, -1f), new VectorXY(2f, 2f), VectorXYInt.One)));
-        var validRasterGeometry = new RasterGeometry(new PointXY(0f, 0f), VectorXY.One, VectorXYInt.One);
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(new HexMapGeometry(emptyAdjacency.Topology, 1f), validRasterGeometry));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexPartialTripletGrid(new HexMapGeometry(emptyAdjacency.Topology, 1f), validRasterGeometry));
     }
@@ -331,6 +416,16 @@ public class HexVertexTripletGridTests
         Assert.That(actual.Main, Is.EqualTo(expected.Main));
         Assert.That(actual.Left, Is.EqualTo(expected.Left));
         Assert.That(actual.Right, Is.EqualTo(expected.Right));
+    }
+
+    private static RasterGeometry CreateDefaultRasterGeometry(
+        HexMapGeometry hexMapGeometry,
+        VectorXYInt resolution)
+    {
+        return new RasterGeometry(
+            new PointXY(0f, 0f),
+            hexMapGeometry.GetBoundingBoxSize(),
+            resolution);
     }
 
 }

@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
@@ -20,9 +21,10 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
     {
         var indexPartialSeptupletMap = new IndexPartialSeptupletMap(
             new HexMapTopology(MapWidth, MapHeight, layout));
+        var hexMapGeometry = CreateLegacySnapshotGeometry(indexPartialSeptupletMap.Topology);
         var indexPartialSeptupletGrid = new IndexPartialSeptupletGrid(
-            indexPartialSeptupletMap,
-            resolution: new VectorXYInt(480, 360));
+            hexMapGeometry,
+            new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(480, 360)));
 
         var raster = indexPartialSeptupletGrid.Rasterize((PartialSeptuplet<VectorXYInt> x) => ToMainIndexColor(x));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
@@ -40,9 +42,10 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
     {
         var indexPartialSeptupletMap = new IndexPartialSeptupletMap(
             new HexMapTopology(MapWidth, MapHeight, layout));
+        var hexMapGeometry = CreateLegacySnapshotGeometry(indexPartialSeptupletMap.Topology);
         var indexPartialSeptupletGrid = new IndexPartialSeptupletGrid(
-            indexPartialSeptupletMap,
-            resolution: new VectorXYInt(480, 360));
+            hexMapGeometry,
+            new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(480, 360)));
 
         var raster = indexPartialSeptupletGrid.Rasterize((PartialSeptuplet<VectorXYInt> x) => ToAdjacent1IndexColor(x));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
@@ -55,6 +58,22 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         return adjacency.HasMain
             ? ToIndexColor(adjacency.Main, MapWidth)
             : new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
+    }
+
+    private static HexMapGeometry CreateLegacySnapshotGeometry(HexMapTopology topology)
+    {
+        const float radius = 1f;
+        float apothem = radius.ConvertHexRadiusToApothem();
+        VectorXY origin = topology.Layout switch
+        {
+            Layout.OddR => new VectorXY(apothem, radius),
+            Layout.EvenR => new VectorXY(2f * apothem, radius),
+            Layout.OddQ => new VectorXY(radius, apothem),
+            Layout.EvenQ => new VectorXY(radius, 2f * apothem),
+            _ => throw new ArgumentOutOfRangeException(nameof(topology)),
+        };
+
+        return new HexMapGeometry(topology, origin, radius);
     }
 
     private static RGBA16BitColor ToAdjacent1IndexColor(PartialSeptuplet<VectorXYInt> adjacency)

@@ -53,6 +53,9 @@ namespace Akeldov.Math.Hexes.Topology
             1, 1
         };
 
+        internal static readonly VectorXYInt[] ColumnUnshiftedVectors = CreateVectorOffsets(ColumnUnshifted);
+        internal static readonly VectorXYInt[] ColumnShiftedVectors = CreateVectorOffsets(ColumnShifted);
+
         /// <summary>
         /// Gets library-owned mutable offsets for the row layout.
         /// </summary>

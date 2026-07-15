@@ -1,6 +1,7 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -9,105 +10,62 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the IndexPartialTripletGrid type.
     /// </summary>
-    public sealed class IndexPartialTripletGrid : IRaster<PartialTriplet<VectorXYInt>>
+    public sealed class IndexPartialTripletGrid : ISpatialRaster<PartialTriplet<VectorXYInt>>
     {
-        private const float DefaultHexRadius = 1f;
-
         private PartialTriplet<VectorXYInt>[] _values = Array.Empty<PartialTriplet<VectorXYInt>>();
 
-        private int HexWidth { get; set; }
-
-        private int HexHeight { get; set; }
-
-        private VectorXY HexOrigin { get; set; }
-
-        private float HexApothem { get; set; }
-
-        private float HexRadius { get; set; }
-
-        private VectorXY Origin { get; set; }
-
-        private VectorXY Size { get; set; }
-
-        private VectorXY CellSize { get; set; }
+        /// <summary>
+        /// Initializes a new instance that covers the whole source hex map.
+        /// </summary>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        public IndexPartialTripletGrid(HexMapGeometry hexMapGeometry)
+            : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the IndexPartialTripletGrid type.
         /// </summary>
-        /// <param name="hexAdjacencyMap">The HexAdjacencyMap value.</param>
-        /// <param name="resolution">The Resolution value.</param>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
         public IndexPartialTripletGrid(
-            IndexSeptupletMap hexAdjacencyMap,
-            VectorXYInt resolution)
+            HexMapGeometry hexMapGeometry,
+            RasterGeometry rasterGeometry)
         {
-            if (hexAdjacencyMap == null)
-                throw new ArgumentNullException(nameof(hexAdjacencyMap));
+            if (hexMapGeometry.Topology.Resolution.X <= 0 || hexMapGeometry.Topology.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexMapGeometry), hexMapGeometry, "Hex map dimensions must be positive.");
 
-            if (resolution.X <= 0 || resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
+            if (rasterGeometry.Resolution.X <= 0 || rasterGeometry.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(rasterGeometry), rasterGeometry, "Raster geometry resolution components must be positive.");
 
-            float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Topology.Resolution.X, hexAdjacencyMap.Topology.Resolution.Y, DefaultHexRadius, hexAdjacencyMap.Topology.Layout);
-            VectorXY gridSize = geometry.GetBoundingBoxSize();
+            SourceHexMapGeometry = hexMapGeometry;
+            Geometry = rasterGeometry;
+            _values = new PartialTriplet<VectorXYInt>[checked(Resolution.X * Resolution.Y)];
 
-            Initialize(
-                hexAdjacencyMap.Topology.Resolution.X,
-                hexAdjacencyMap.Topology.Resolution.Y,
-                hexAdjacencyMap.Topology.Layout,
-                GetDefaultHexOrigin(hexAdjacencyMap.Topology.Layout, apothem, DefaultHexRadius),
-                apothem,
-                DefaultHexRadius,
-                VectorXY.Zero,
-                gridSize,
-                resolution);
+            Fill();
         }
 
         /// <summary>
-        /// Gets the HexResolution value.
+        /// Gets the source hex map geometry sampled by the raster.
         /// </summary>
-        public VectorXYInt HexResolution { get; private set; }
+        public HexMapGeometry SourceHexMapGeometry { get; }
 
         /// <summary>
-        /// Gets the Layout value.
+        /// Gets the geometry used to sample the raster.
         /// </summary>
-        public Layout Layout { get; private set; }
+        public RasterGeometry Geometry { get; }
 
         /// <summary>
         /// Gets the Resolution value.
         /// </summary>
-        public VectorXYInt Resolution { get; private set; }
-
-        /// <summary>
-        /// Gets the ResolutionX value.
-        /// </summary>
-        public int ResolutionX { get; private set; }
-
-        /// <summary>
-        /// Gets the ResolutionY value.
-        /// </summary>
-        public int ResolutionY { get; private set; }
-
-        /// <summary>
-        /// Gets the Count value.
-        /// </summary>
-        public int Count => _values.Length;
-
-        /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width => ResolutionX;
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height => ResolutionY;
+        public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
         /// Gets the value at the specified grid coordinates.
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
-        public PartialTriplet<VectorXYInt> this[int x, int y] => _values[y * ResolutionX + x];
+        public PartialTriplet<VectorXYInt> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
         /// Gets the value at the specified index.
@@ -118,8 +76,11 @@ namespace Akeldov.Math.Hexes.Topology
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                ThrowIfGridIndexOutOfBounds(index);
-                return _values[GetFlatIndex(index)];
+                if ((uint)index.X >= (uint)Resolution.X ||
+                    (uint)index.Y >= (uint)Resolution.Y)
+                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+
+                return _values[index.Y * Resolution.X + index.X];
             }
         }
 
@@ -140,233 +101,219 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="indexTriplet">The indexTriplet value.</param>
         public bool TryGetValue(VectorXYInt gridIndex, out PartialTriplet<VectorXYInt> indexTriplet)
         {
-            if (!ContainsGridIndex(gridIndex))
+            if ((uint)gridIndex.X >= (uint)Resolution.X ||
+                (uint)gridIndex.Y >= (uint)Resolution.Y)
             {
                 indexTriplet = default;
                 return false;
             }
 
-            int flatIndex = GetFlatIndex(gridIndex);
-            indexTriplet = _values[flatIndex];
+            indexTriplet = _values[gridIndex.Y * Resolution.X + gridIndex.X];
             return indexTriplet.Presence != TripletPresenceFlags.None;
-        }
-
-        private void Initialize(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            float hexApothem,
-            float hexRadius,
-            VectorXY gridOrigin,
-            VectorXY gridSize,
-            VectorXYInt resolution)
-        {
-            ValidateGridParameters(hexWidth, hexHeight, hexOrigin, gridOrigin, gridSize, resolution);
-
-            HexResolution = new VectorXYInt(hexWidth, hexHeight);
-            HexWidth = hexWidth;
-            HexHeight = hexHeight;
-            Layout = layout;
-            HexOrigin = hexOrigin;
-            HexApothem = hexApothem;
-            HexRadius = hexRadius;
-            Origin = gridOrigin;
-            Size = gridSize;
-            CellSize = new VectorXY(gridSize.X / resolution.X, gridSize.Y / resolution.Y);
-            Resolution = resolution;
-            ResolutionX = resolution.X;
-            ResolutionY = resolution.Y;
-
-            _values = new PartialTriplet<VectorXYInt>[checked(resolution.X * resolution.Y)];
-
-            Fill();
         }
 
         private void Fill()
         {
-            VectorXY[] normalizedHexVertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout);
-
-            for (int y = 0; y < ResolutionY; y++)
+            switch (SourceHexMapGeometry.Topology.Layout)
             {
-                int rowStart = y * ResolutionX;
+                case Layout.OddR: FillOddR(); break;
+                case Layout.EvenR: FillEvenR(); break;
+                case Layout.OddQ: FillOddQ(); break;
+                case Layout.EvenQ: FillEvenQ(); break;
+                default: throw new ArgumentOutOfRangeException(nameof(SourceHexMapGeometry.Topology.Layout));
+            }
+        }
 
-                for (int x = 0; x < ResolutionX; x++)
+        private void FillOddR()
+        {
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowShiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
+
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            {
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
                 {
-                    int flatIndex = rowStart + x;
-                    PointXY point = GetCellCenterUnchecked(x, y);
-                    VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _values[flatIndex] = CreateIndexTriplet(point, mainIndex, normalizedHexVertices);
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt mainIndex = point.ToOddRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + mainIndex.X * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * mainIndex.Y);
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
+                    VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<VectorXYInt>(
+                        hasMain ? mainIndex : default,
+                        hasLeft ? leftIndex : default,
+                        hasRight ? rightIndex : default,
+                        hasMain, hasLeft, hasRight);
                 }
             }
         }
 
-        private PartialTriplet<VectorXYInt> CreateIndexTriplet(
-            PointXY point,
-            VectorXYInt mainIndex,
-            VectorXY[] normalizedHexVertices)
+        private void FillEvenR()
         {
-            VectorXY mainCenter = GetHexCenter(mainIndex);
-            HexVertex nearestVertex = (HexVertex)GetClosestVertexIndex(
-                point,
-                mainCenter,
-                HexRadius,
-                normalizedHexVertices,
-                out _);
-            Triplet<VectorXYInt> indexTriplet = mainIndex.GetAdjacentTriplet(nearestVertex, Layout);
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowShiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
 
-            VectorXYInt main = default;
-            VectorXYInt left = default;
-            VectorXYInt right = default;
-            TripletPresenceFlags presence = TripletPresenceFlags.None;
-
-            if (ContainsHex(indexTriplet.Main))
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
             {
-                main = indexTriplet.Main;
-                presence |= TripletPresenceFlags.Main;
-            }
-
-            if (ContainsHex(indexTriplet.Left))
-            {
-                left = indexTriplet.Left;
-                presence |= TripletPresenceFlags.Left;
-            }
-
-            if (ContainsHex(indexTriplet.Right))
-            {
-                right = indexTriplet.Right;
-                presence |= TripletPresenceFlags.Right;
-            }
-
-            return new PartialTriplet<VectorXYInt>(main, left, right, presence);
-        }
-
-        private bool ContainsHex(VectorXYInt index)
-        {
-            return (uint)index.X < (uint)HexWidth &&
-                (uint)index.Y < (uint)HexHeight;
-        }
-
-        private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
-        {
-            if (!ContainsGridIndex(index))
-                throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
-        }
-
-        private bool ContainsGridIndex(VectorXYInt index)
-        {
-            return (uint)index.X < (uint)ResolutionX &&
-                (uint)index.Y < (uint)ResolutionY;
-        }
-
-        private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
-
-        private PointXY GetCellCenterUnchecked(int x, int y)
-        {
-            return new PointXY(
-                Origin.X + (x + 0.5f) * CellSize.X,
-                Origin.Y + (y + 0.5f) * CellSize.Y);
-        }
-
-        private VectorXY GetHexCenter(VectorXYInt index)
-        {
-            switch (Layout)
-            {
-                case Layout.OddR:
-                    return new VectorXY(
-                        HexOrigin.X + index.X * 2f * HexApothem + ((index.Y & 1) == 1 ? HexApothem : 0f),
-                        HexOrigin.Y + 1.5f * HexRadius * index.Y);
-                case Layout.EvenR:
-                    return new VectorXY(
-                        HexOrigin.X + index.X * 2f * HexApothem + ((index.Y & 1) == 1 ? -HexApothem : 0f),
-                        HexOrigin.Y + 1.5f * HexRadius * index.Y);
-                case Layout.OddQ:
-                    return new VectorXY(
-                        HexOrigin.X + 1.5f * HexRadius * index.X,
-                        HexOrigin.Y + index.Y * 2f * HexApothem + ((index.X & 1) == 1 ? HexApothem : 0f));
-                case Layout.EvenQ:
-                    return new VectorXY(
-                        HexOrigin.X + 1.5f * HexRadius * index.X,
-                        HexOrigin.Y + index.Y * 2f * HexApothem + ((index.X & 1) == 1 ? -HexApothem : 0f));
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(Layout));
-            }
-        }
-
-        private static int GetClosestVertexIndex(
-            PointXY point,
-            VectorXY hexCenter,
-            float hexRadius,
-            VectorXY[] normalizedHexVertices,
-            out float minSquaredDistance)
-        {
-            minSquaredDistance = float.MaxValue;
-            int closestVertexIndex = 0;
-
-            for (int i = 0; i < normalizedHexVertices.Length; i++)
-            {
-                VectorXY vertex = hexCenter + normalizedHexVertices[i] * hexRadius;
-                float squaredDistance = SquaredDistance(point, vertex);
-
-                if (squaredDistance < minSquaredDistance)
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
                 {
-                    minSquaredDistance = squaredDistance;
-                    closestVertexIndex = i;
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt mainIndex = point.ToEvenRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + mainIndex.X * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * mainIndex.Y);
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
+                    VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<VectorXYInt>(
+                        hasMain ? mainIndex : default,
+                        hasLeft ? leftIndex : default,
+                        hasRight ? rightIndex : default,
+                        hasMain, hasLeft, hasRight);
                 }
             }
-
-            return closestVertexIndex;
         }
 
-        private static VectorXY GetDefaultHexOrigin(Layout layout, float apothem, float radius)
+        private void FillOddQ()
         {
-            switch (layout)
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
+            VectorXYInt[] oddOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
+
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
             {
-                case Layout.OddR:
-                    return new VectorXY(apothem, radius);
-                case Layout.EvenR:
-                    return new VectorXY(2f * apothem, radius);
-                case Layout.OddQ:
-                    return new VectorXY(radius, apothem);
-                case Layout.EvenQ:
-                    return new VectorXY(radius, 2f * apothem);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
+                {
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt mainIndex = point.ToOddQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * mainIndex.X,
+                        SourceHexMapGeometry.Origin.Y + mainIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
+                    VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<VectorXYInt>(
+                        hasMain ? mainIndex : default,
+                        hasLeft ? leftIndex : default,
+                        hasRight ? rightIndex : default,
+                        hasMain, hasLeft, hasRight);
+                }
             }
         }
 
-        private static void ValidateGridParameters(
-            int hexWidth,
-            int hexHeight,
-            VectorXY hexOrigin,
-            VectorXY gridOrigin,
-            VectorXY gridSize,
-            VectorXYInt resolution)
+        private void FillEvenQ()
         {
-            if (hexWidth <= 0)
-                throw new ArgumentOutOfRangeException(nameof(hexWidth), hexWidth, "Hex grid dimensions must be positive.");
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
+            VectorXYInt[] oddOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
 
-            if (hexHeight <= 0)
-                throw new ArgumentOutOfRangeException(nameof(hexHeight), hexHeight, "Hex grid dimensions must be positive.");
-
-            if (!hexOrigin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(hexOrigin), hexOrigin, "Hex origin components must be finite.");
-
-            if (!gridOrigin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
-
-            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
-
-            if (resolution.X <= 0 || resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
-        }
-
-        private static float SquaredDistance(PointXY left, VectorXY right)
-        {
-            float x = left.X - right.X;
-            float y = left.Y - right.Y;
-            return x * x + y * y;
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            {
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
+                {
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt mainIndex = point.ToEvenQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * mainIndex.X,
+                        SourceHexMapGeometry.Origin.Y + mainIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
+                    VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<VectorXYInt>(
+                        hasMain ? mainIndex : default,
+                        hasLeft ? leftIndex : default,
+                        hasRight ? rightIndex : default,
+                        hasMain, hasLeft, hasRight);
+                }
+            }
         }
     }
 }

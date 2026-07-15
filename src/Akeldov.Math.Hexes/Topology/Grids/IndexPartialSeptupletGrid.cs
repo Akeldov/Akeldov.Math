@@ -1,6 +1,7 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -9,83 +10,55 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Initializes a new instance of the IndexPartialSeptupletGrid type.
     /// </summary>
-    public sealed class IndexPartialSeptupletGrid : IRaster<PartialSeptuplet<VectorXYInt>>
+    public sealed class IndexPartialSeptupletGrid : ISpatialRaster<PartialSeptuplet<VectorXYInt>>
     {
-        private PartialSeptuplet<VectorXYInt>[] _values;
+        private PartialSeptuplet<VectorXYInt>[] _values = Array.Empty<PartialSeptuplet<VectorXYInt>>();
+
+        /// <summary>
+        /// Initializes a new instance that covers the whole source hex map.
+        /// </summary>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        public IndexPartialSeptupletGrid(HexMapGeometry hexMapGeometry)
+            : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the IndexPartialSeptupletGrid type.
         /// </summary>
-        /// <param name="hexAdjacencyMap">The HexAdjacencyMap value.</param>
-        /// <param name="resolution">The Resolution value.</param>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
         public IndexPartialSeptupletGrid(
-            IndexPartialSeptupletMap hexAdjacencyMap,
-            VectorXYInt resolution)
+            HexMapGeometry hexMapGeometry,
+            RasterGeometry rasterGeometry)
         {
-            if (hexAdjacencyMap == null)
-                throw new ArgumentNullException(nameof(hexAdjacencyMap));
+            if (hexMapGeometry.Topology.Resolution.X <= 0 || hexMapGeometry.Topology.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hexMapGeometry), hexMapGeometry, "Hex map dimensions must be positive.");
 
-            if (resolution.X <= 0 || resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
+            if (rasterGeometry.Resolution.X <= 0 || rasterGeometry.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(rasterGeometry), rasterGeometry, "Raster geometry resolution components must be positive.");
 
-            if (hexAdjacencyMap.Topology.Resolution.X <= 0 || hexAdjacencyMap.Topology.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid dimensions must be positive.");
+            SourceHexMapGeometry = hexMapGeometry;
+            Geometry = rasterGeometry;
+            _values = new PartialSeptuplet<VectorXYInt>[checked(Resolution.X * Resolution.Y)];
 
-            Resolution = resolution;
-            Width = resolution.X;
-            Height = resolution.Y;
-
-            var radius = 1f;
-            var apothem = radius.ConvertHexRadiusToApothem();
-
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Topology.Resolution.X, hexAdjacencyMap.Topology.Resolution.Y, radius, hexAdjacencyMap.Topology.Layout);
-            var boundingBoxSize = geometry.GetBoundingBoxSize();
-
-            if (!boundingBoxSize.IsFinite || boundingBoxSize.X <= 0f || boundingBoxSize.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap), hexAdjacencyMap, "Hex grid size components must be finite and positive.");
-
-            var stepX = boundingBoxSize.X / Width;
-            var stepY = boundingBoxSize.Y / Height;
-
-            _values = new PartialSeptuplet<VectorXYInt>[checked(Width * Height)];
-            switch (hexAdjacencyMap.Topology.Layout)
-            {
-                case Layout.OddR:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.OddR, new VectorXY(apothem, radius));
-                    break;
-                case Layout.EvenR:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.EvenR, new VectorXY(2f * apothem, radius));
-                    break;
-                case Layout.OddQ:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.OddQ, new VectorXY(radius, apothem));
-                    break;
-                case Layout.EvenQ:
-                    Fill(hexAdjacencyMap, radius, stepX, stepY, Layout.EvenQ, new VectorXY(radius, 2f * apothem));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(hexAdjacencyMap.Topology.Layout));
-            }
+            Fill();
         }
+
+        /// <summary>
+        /// Gets the source hex map geometry sampled by the raster.
+        /// </summary>
+        public HexMapGeometry SourceHexMapGeometry { get; }
+
+        /// <summary>
+        /// Gets the geometry used to sample the raster.
+        /// </summary>
+        public RasterGeometry Geometry { get; }
 
         /// <summary>
         /// Gets the Resolution value.
         /// </summary>
-        public VectorXYInt Resolution { get; private set; }
-
-        /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width { get; private set; }
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height { get; private set; }
-
-        /// <summary>
-        /// Gets the Count value.
-        /// </summary>
-        public int Count => _values.Length;
+        public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
         /// Gets the value at the specified grid coordinates.
@@ -103,11 +76,11 @@ namespace Akeldov.Math.Hexes.Topology
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index.X < 0 || index.X >= Width ||
-                    index.Y < 0 || index.Y >= Height)
+                if (index.X < 0 || index.X >= Resolution.X ||
+                    index.Y < 0 || index.Y >= Resolution.Y)
                     throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
 
-                return _values[GetFlatIndex(index)];
+                return _values[index.Y * Resolution.X + index.X];
             }
         }
 
@@ -121,56 +94,160 @@ namespace Akeldov.Math.Hexes.Topology
             get => _values[index];
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
-
-        private void Fill(
-            IndexPartialSeptupletMap hexAdjacencyMap,
-            float radius,
-            float stepX,
-            float stepY,
-            Layout layout,
-            VectorXY origin)
+        private void Fill()
         {
-            var index = 0;
-
-            for (int i = 0; i < Height; i++)
+            switch (SourceHexMapGeometry.Topology.Layout)
             {
-                var y = (i + 0.5f) * stepY;
+                case Layout.OddR: FillOddR(); break;
+                case Layout.EvenR: FillEvenR(); break;
+                case Layout.OddQ: FillOddQ(); break;
+                case Layout.EvenQ: FillEvenQ(); break;
+                default: throw new ArgumentOutOfRangeException(nameof(SourceHexMapGeometry.Topology.Layout));
+            }
+        }
 
-                for (int j = 0; j < Width; j++)
+        private void FillOddR()
+        {
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowShiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
+
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            {
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
                 {
-                    var x = (j + 0.5f) * stepX;
-                    var cellIndex = new PointXY(x, y).ToXYIndex(radius, origin, layout);
-                    _values[index] = CreateValue(hexAdjacencyMap, cellIndex);
-                    index = index + 1;
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt main = point.ToOddRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    VectorXYInt[] offsets = (main.Y & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt adjacent0 = main + offsets[0];
+                    VectorXYInt adjacent1 = main + offsets[1];
+                    VectorXYInt adjacent2 = main + offsets[2];
+                    VectorXYInt adjacent3 = main + offsets[3];
+                    VectorXYInt adjacent4 = main + offsets[4];
+                    VectorXYInt adjacent5 = main + offsets[5];
+                    bool hasMain = (uint)main.X < (uint)hexResolution.X && (uint)main.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialSeptuplet<VectorXYInt>(
+                        main, adjacent0, adjacent1, adjacent2, adjacent3, adjacent4, adjacent5,
+                        hasMain,
+                        hasMain && (uint)adjacent0.X < (uint)hexResolution.X && (uint)adjacent0.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent1.X < (uint)hexResolution.X && (uint)adjacent1.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent2.X < (uint)hexResolution.X && (uint)adjacent2.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent3.X < (uint)hexResolution.X && (uint)adjacent3.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent4.X < (uint)hexResolution.X && (uint)adjacent4.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent5.X < (uint)hexResolution.X && (uint)adjacent5.Y < (uint)hexResolution.Y);
                 }
             }
         }
 
-        private static PartialSeptuplet<VectorXYInt> CreateValue(
-            IndexPartialSeptupletMap hexAdjacencyMap,
-            VectorXYInt cellIndex)
+        private void FillEvenR()
         {
-            if (ContainsCell(hexAdjacencyMap, cellIndex))
-                return hexAdjacencyMap[cellIndex];
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowShiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
 
-            sbyte[] offsets = HexAdjacencyOffsets.GetOffsets(hexAdjacencyMap.Topology.Layout, cellIndex.X, cellIndex.Y);
-            return new PartialSeptuplet<VectorXYInt>(
-                new Septuplet<VectorXYInt>(
-                    cellIndex,
-                    new VectorXYInt(cellIndex.X + offsets[0], cellIndex.Y + offsets[1]),
-                    new VectorXYInt(cellIndex.X + offsets[2], cellIndex.Y + offsets[3]),
-                    new VectorXYInt(cellIndex.X + offsets[4], cellIndex.Y + offsets[5]),
-                    new VectorXYInt(cellIndex.X + offsets[6], cellIndex.Y + offsets[7]),
-                    new VectorXYInt(cellIndex.X + offsets[8], cellIndex.Y + offsets[9]),
-                    new VectorXYInt(cellIndex.X + offsets[10], cellIndex.Y + offsets[11])),
-                SeptupletPresenceFlags.None);
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            {
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
+                {
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt main = point.ToEvenRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    VectorXYInt[] offsets = (main.Y & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt adjacent0 = main + offsets[0];
+                    VectorXYInt adjacent1 = main + offsets[1];
+                    VectorXYInt adjacent2 = main + offsets[2];
+                    VectorXYInt adjacent3 = main + offsets[3];
+                    VectorXYInt adjacent4 = main + offsets[4];
+                    VectorXYInt adjacent5 = main + offsets[5];
+                    bool hasMain = (uint)main.X < (uint)hexResolution.X && (uint)main.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialSeptuplet<VectorXYInt>(
+                        main, adjacent0, adjacent1, adjacent2, adjacent3, adjacent4, adjacent5,
+                        hasMain,
+                        hasMain && (uint)adjacent0.X < (uint)hexResolution.X && (uint)adjacent0.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent1.X < (uint)hexResolution.X && (uint)adjacent1.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent2.X < (uint)hexResolution.X && (uint)adjacent2.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent3.X < (uint)hexResolution.X && (uint)adjacent3.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent4.X < (uint)hexResolution.X && (uint)adjacent4.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent5.X < (uint)hexResolution.X && (uint)adjacent5.Y < (uint)hexResolution.Y);
+                }
+            }
         }
 
-        private static bool ContainsCell(IndexPartialSeptupletMap hexAdjacencyMap, VectorXYInt cellIndex)
+        private void FillOddQ()
         {
-            return (uint)cellIndex.X < (uint)hexAdjacencyMap.Topology.Resolution.X &&
-                (uint)cellIndex.Y < (uint)hexAdjacencyMap.Topology.Resolution.Y;
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.ColumnUnshiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.ColumnShiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
+
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            {
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
+                {
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt main = point.ToOddQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    VectorXYInt[] offsets = (main.X & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt adjacent0 = main + offsets[0];
+                    VectorXYInt adjacent1 = main + offsets[1];
+                    VectorXYInt adjacent2 = main + offsets[2];
+                    VectorXYInt adjacent3 = main + offsets[3];
+                    VectorXYInt adjacent4 = main + offsets[4];
+                    VectorXYInt adjacent5 = main + offsets[5];
+                    bool hasMain = (uint)main.X < (uint)hexResolution.X && (uint)main.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialSeptuplet<VectorXYInt>(
+                        main, adjacent0, adjacent1, adjacent2, adjacent3, adjacent4, adjacent5,
+                        hasMain,
+                        hasMain && (uint)adjacent0.X < (uint)hexResolution.X && (uint)adjacent0.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent1.X < (uint)hexResolution.X && (uint)adjacent1.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent2.X < (uint)hexResolution.X && (uint)adjacent2.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent3.X < (uint)hexResolution.X && (uint)adjacent3.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent4.X < (uint)hexResolution.X && (uint)adjacent4.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent5.X < (uint)hexResolution.X && (uint)adjacent5.Y < (uint)hexResolution.Y);
+                }
+            }
+        }
+
+        private void FillEvenQ()
+        {
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.ColumnShiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.ColumnUnshiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
+            int width = Resolution.X;
+            VectorXY cellSize = Geometry.CellSize;
+
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            {
+                float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
+                for (int x = 0; x < width; x++, index++)
+                {
+                    var point = new PointXY(Geometry.Origin.X + (x + 0.5f) * cellSize.X, pointY);
+                    VectorXYInt main = point.ToEvenQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    VectorXYInt[] offsets = (main.X & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt adjacent0 = main + offsets[0];
+                    VectorXYInt adjacent1 = main + offsets[1];
+                    VectorXYInt adjacent2 = main + offsets[2];
+                    VectorXYInt adjacent3 = main + offsets[3];
+                    VectorXYInt adjacent4 = main + offsets[4];
+                    VectorXYInt adjacent5 = main + offsets[5];
+                    bool hasMain = (uint)main.X < (uint)hexResolution.X && (uint)main.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialSeptuplet<VectorXYInt>(
+                        main, adjacent0, adjacent1, adjacent2, adjacent3, adjacent4, adjacent5,
+                        hasMain,
+                        hasMain && (uint)adjacent0.X < (uint)hexResolution.X && (uint)adjacent0.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent1.X < (uint)hexResolution.X && (uint)adjacent1.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent2.X < (uint)hexResolution.X && (uint)adjacent2.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent3.X < (uint)hexResolution.X && (uint)adjacent3.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent4.X < (uint)hexResolution.X && (uint)adjacent4.Y < (uint)hexResolution.Y,
+                        hasMain && (uint)adjacent5.X < (uint)hexResolution.X && (uint)adjacent5.Y < (uint)hexResolution.Y);
+                }
+            }
         }
     }
 }

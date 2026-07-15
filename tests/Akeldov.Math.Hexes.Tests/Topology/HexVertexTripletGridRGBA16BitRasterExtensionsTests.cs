@@ -11,7 +11,10 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void IndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByIndexTriplet()
     {
-        var grid = new IndexTripletGrid(new HexMapTopology(2, 1, Layout.OddR), new VectorXYInt(4, 1));
+        var hexMapGeometry = new HexMapGeometry(2, 1, 1f, Layout.OddR);
+        var grid = new IndexTripletGrid(
+            hexMapGeometry,
+            new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(4, 1)));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 

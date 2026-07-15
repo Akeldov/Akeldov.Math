@@ -10,12 +10,14 @@ Topology grids sample index relationships into regular grid coordinates.
     - Samples vertex triplets with presence flags.
 
 ```csharp
+var hexMapGeometry = new HexMapGeometry(5, 4, 1f, Layout.OddR);
+var rasterGeometry = new RasterGeometry(
+    new PointXY(0f, 0f),
+    hexMapGeometry.GetBoundingBoxSize(),
+    new VectorXYInt(192, 192));
 var grid = new IndexTripletGrid(
-    hexWidth: 5,
-    hexHeight: 4,
-    layout: Layout.OddR,
-    hexOrigin: VectorXY.Zero,
-    resolution: new VectorXYInt(192, 192));
+    hexMapGeometry,
+    rasterGeometry);
 
 SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 
