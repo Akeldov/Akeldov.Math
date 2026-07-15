@@ -21,7 +21,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            return grid.Rasterize(CreateRasterGrid(grid), barycentricCoordinatesToColor);
+            return grid.Rasterize(grid.Geometry, barycentricCoordinatesToColor);
         }
 
         /// <summary>
@@ -41,25 +41,12 @@ namespace Akeldov.Math.Hexes.Topology
             if (barycentricCoordinatesToColor == null)
                 throw new ArgumentNullException(nameof(barycentricCoordinatesToColor));
 
-            var values = new TValue[grid.Count];
+            var values = new TValue[checked(grid.Resolution.X * grid.Resolution.Y)];
 
             for (int i = 0; i < values.Length; i++)
                 values[i] = barycentricCoordinatesToColor(grid[i], chromaticIndexPartialTripletGrid[i]);
 
-            var rasterGrid = new RasterGeometry(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
-
-            return new SpatialRaster<TValue>(rasterGrid, values);
-        }
-
-        private static RasterGeometry CreateRasterGrid(BarycentricPartialTripletGrid grid)
-        {
-            return new RasterGeometry(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
+            return new SpatialRaster<TValue>(grid.Geometry, values);
         }
     }
 }

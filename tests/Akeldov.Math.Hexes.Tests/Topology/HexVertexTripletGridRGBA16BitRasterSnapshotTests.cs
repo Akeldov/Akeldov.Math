@@ -107,10 +107,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexSeptupletMap(new HexMapTopology(5, 4, layout));
-        var grid = new BarycentricPartialTripletGrid(
-            map,
-            resolution: new VectorXYInt(64, 64));
+        var grid = CreateBarycentricPartialTripletGrid(layout, new VectorXYInt(64, 64));
         SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToBarycentricPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -164,9 +161,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         string approvedFileName)
     {
         var map = new IndexSeptupletMap(new HexMapTopology(5, 4, layout));
-        var barycentricGrid = new BarycentricPartialTripletGrid(
-            map,
-            resolution: new VectorXYInt(64, 64));
+        var barycentricGrid = CreateBarycentricPartialTripletGrid(layout, new VectorXYInt(64, 64));
         var chromaticGrid = new ChromaticIndexPartialTripletGrid(
             map,
             resolution: new VectorXYInt(64, 64));
@@ -176,6 +171,29 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
+    private static BarycentricPartialTripletGrid CreateBarycentricPartialTripletGrid(
+        Layout layout,
+        VectorXYInt resolution)
+    {
+        var topology = new HexMapTopology(5, 4, layout);
+        var defaultHexMapGeometry = new HexMapGeometry(topology, 1f);
+        VectorXY hexOrigin = layout switch
+        {
+            Layout.OddR => new VectorXY(defaultHexMapGeometry.Apothem, defaultHexMapGeometry.Radius),
+            Layout.EvenR => new VectorXY(2f * defaultHexMapGeometry.Apothem, defaultHexMapGeometry.Radius),
+            Layout.OddQ => new VectorXY(defaultHexMapGeometry.Radius, defaultHexMapGeometry.Apothem),
+            Layout.EvenQ => new VectorXY(defaultHexMapGeometry.Radius, 2f * defaultHexMapGeometry.Apothem),
+            _ => throw new ArgumentOutOfRangeException(nameof(layout)),
+        };
+        var hexMapGeometry = new HexMapGeometry(topology, hexOrigin, defaultHexMapGeometry.Radius);
+        var rasterGeometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            defaultHexMapGeometry.GetBoundingBoxSize(),
+            resolution);
+
+        return new BarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
     }
 
     private static RGBA16BitColor ToIndexTripletSnapshotColor(Triplet<VectorXYInt> triplet)

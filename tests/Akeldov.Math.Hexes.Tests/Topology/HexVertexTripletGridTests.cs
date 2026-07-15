@@ -21,6 +21,17 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
+    public void BarycentricPartialTripletGrid_ExposesOnlyGeometryConstructor()
+    {
+        var constructors = typeof(BarycentricPartialTripletGrid).GetConstructors();
+
+        Assert.That(constructors, Has.Length.EqualTo(1));
+        Assert.That(
+            constructors[0].GetParameters().Select(parameter => parameter.ParameterType),
+            Is.EqualTo(new[] { typeof(HexMapGeometry), typeof(RasterGeometry) }));
+    }
+
+    [Test]
     public void BarycentricTripletGrid_UsesProvidedRasterGeometry()
     {
         var rasterGeometry = new RasterGeometry(
@@ -32,6 +43,26 @@ public class HexVertexTripletGridTests
         var grid = new BarycentricTripletGrid(
             hexMapGeometry,
             rasterGeometry);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(grid.SourceHexMapGeometry, Is.EqualTo(hexMapGeometry));
+            Assert.That(grid.Geometry, Is.EqualTo(rasterGeometry));
+            Assert.That(grid.Resolution, Is.EqualTo(rasterGeometry.Resolution));
+            Assert.That(grid[11], Is.EqualTo(grid[new VectorXYInt(3, 2)]));
+        });
+    }
+
+    [Test]
+    public void BarycentricPartialTripletGrid_UsesProvidedGeometries()
+    {
+        var rasterGeometry = new RasterGeometry(
+            new PointXY(10f, -20f),
+            new VectorXY(8f, 6f),
+            new VectorXYInt(4, 3));
+        var hexMapGeometry = new HexMapGeometry(2, 2, 1f, Layout.OddR);
+
+        var grid = new BarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
 
         Assert.Multiple(() =>
         {
@@ -149,7 +180,9 @@ public class HexVertexTripletGridTests
         var barycentricGrid = new BarycentricTripletGrid(
             new HexMapGeometry(adjacency.Topology, 1f),
             new RasterGeometry(new PointXY(-2f, -2f), new VectorXY(4f, 4f), resolution));
-        var partialBarycentricGrid = new BarycentricPartialTripletGrid(adjacency, resolution);
+        var partialBarycentricGrid = new BarycentricPartialTripletGrid(
+            new HexMapGeometry(adjacency.Topology, 1f),
+            new RasterGeometry(new PointXY(-2f, -2f), new VectorXY(4f, 4f), resolution));
         var chromaticGrid = new ChromaticIndexTripletGrid(adjacency, resolution);
         var outsideIndex = new VectorXYInt(1, 0);
 
@@ -184,7 +217,9 @@ public class HexVertexTripletGridTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(
             new HexMapGeometry(emptyAdjacency.Topology, 1f),
             new RasterGeometry(new PointXY(-1f, -1f), new VectorXY(2f, 2f), VectorXYInt.One)));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricPartialTripletGrid(
+            new HexMapGeometry(emptyAdjacency.Topology, 1f),
+            new RasterGeometry(new PointXY(-1f, -1f), new VectorXY(2f, 2f), VectorXYInt.One)));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(emptyAdjacency, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexPartialTripletGrid(emptyAdjacency, VectorXYInt.One));
     }
