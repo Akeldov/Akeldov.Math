@@ -67,8 +67,11 @@ namespace Akeldov.Math.Hexes.Topology
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                ThrowIfGridIndexOutOfBounds(index);
-                return _values[GetFlatIndex(index)];
+                if ((uint)index.X >= (uint)Resolution.X ||
+                    (uint)index.Y >= (uint)Resolution.Y)
+                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+
+                return _values[index.Y * Resolution.X + index.X];
             }
         }
 
@@ -89,13 +92,14 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="barycentricCoordinates">The barycentricCoordinates value.</param>
         public bool TryGetValue(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
         {
-            if (!ContainsGridIndex(gridIndex))
+            if ((uint)gridIndex.X >= (uint)Resolution.X ||
+                (uint)gridIndex.Y >= (uint)Resolution.Y)
             {
                 barycentricCoordinates = default;
                 return false;
             }
 
-            int flatIndex = GetFlatIndex(gridIndex);
+            int flatIndex = gridIndex.Y * Resolution.X + gridIndex.X;
             barycentricCoordinates = _values[flatIndex];
             return true;
         }
@@ -123,9 +127,9 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void FillOddR()
         {
-            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout.OddR);
-            VectorXYInt[] evenOffsets = true.GetSharedRelativeOffsets(Layout.OddR);
-            VectorXYInt[] oddOffsets = false.GetSharedRelativeOffsets(Layout.OddR);
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowShiftedVectors;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -135,16 +139,44 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < width; x++, index++)
                 {
                     float pointX = Geometry.Origin.X + (x + 0.5f) * cellSize.X;
-                    _values[index] = CreateOddR(new PointXY(pointX, pointY), vertices, evenOffsets, oddOffsets);
+                    var point = new PointXY(pointX, pointY);
+                    VectorXYInt mainIndex = point.ToOddRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + mainIndex.X * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * mainIndex.Y);
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
+                    VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
+                    var leftCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + leftIndex.X * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * leftIndex.Y);
+                    var rightCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + rightIndex.X * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * rightIndex.Y);
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
 
         private void FillEvenR()
         {
-            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout.EvenR);
-            VectorXYInt[] evenOffsets = true.GetSharedRelativeOffsets(Layout.EvenR);
-            VectorXYInt[] oddOffsets = false.GetSharedRelativeOffsets(Layout.EvenR);
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowShiftedVectors;
+            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -154,16 +186,44 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < width; x++, index++)
                 {
                     float pointX = Geometry.Origin.X + (x + 0.5f) * cellSize.X;
-                    _values[index] = CreateEvenR(new PointXY(pointX, pointY), vertices, evenOffsets, oddOffsets);
+                    var point = new PointXY(pointX, pointY);
+                    VectorXYInt mainIndex = point.ToEvenRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + mainIndex.X * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * mainIndex.Y);
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
+                    VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
+                    var leftCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + leftIndex.X * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * leftIndex.Y);
+                    var rightCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + rightIndex.X * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
+                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * rightIndex.Y);
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
 
         private void FillOddQ()
         {
-            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout.OddQ);
-            VectorXYInt[] evenOffsets = true.GetSharedRelativeOffsets(Layout.OddQ);
-            VectorXYInt[] oddOffsets = false.GetSharedRelativeOffsets(Layout.OddQ);
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
+            VectorXYInt[] oddOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -173,16 +233,44 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < width; x++, index++)
                 {
                     float pointX = Geometry.Origin.X + (x + 0.5f) * cellSize.X;
-                    _values[index] = CreateOddQ(new PointXY(pointX, pointY), vertices, evenOffsets, oddOffsets);
+                    var point = new PointXY(pointX, pointY);
+                    VectorXYInt mainIndex = point.ToOddQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * mainIndex.X,
+                        SourceHexMapGeometry.Origin.Y + mainIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
+                    VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
+                    var leftCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * leftIndex.X,
+                        SourceHexMapGeometry.Origin.Y + leftIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
+                    var rightCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * rightIndex.X,
+                        SourceHexMapGeometry.Origin.Y + rightIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
 
         private void FillEvenQ()
         {
-            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout.EvenQ);
-            VectorXYInt[] evenOffsets = true.GetSharedRelativeOffsets(Layout.EvenQ);
-            VectorXYInt[] oddOffsets = false.GetSharedRelativeOffsets(Layout.EvenQ);
+            VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
+            VectorXYInt[] evenOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
+            VectorXYInt[] oddOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -192,124 +280,37 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < width; x++, index++)
                 {
                     float pointX = Geometry.Origin.X + (x + 0.5f) * cellSize.X;
-                    _values[index] = CreateEvenQ(new PointXY(pointX, pointY), vertices, evenOffsets, oddOffsets);
+                    var point = new PointXY(pointX, pointY);
+                    VectorXYInt mainIndex = point.ToEvenQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
+                    var mainCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * mainIndex.X,
+                        SourceHexMapGeometry.Origin.Y + mainIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((mainIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
+                    float minSquaredDistance = float.MaxValue;
+                    int closestVertex = 0;
+                    for (int vertexIndex = 0; vertexIndex < vertices.Length; vertexIndex++)
+                    {
+                        VectorXY vertexPoint = mainCenter + vertices[vertexIndex] * SourceHexMapGeometry.Radius;
+                        float deltaX = point.X - vertexPoint.X;
+                        float deltaY = point.Y - vertexPoint.Y;
+                        float squaredDistance = deltaX * deltaX + deltaY * deltaY;
+                        if (squaredDistance < minSquaredDistance)
+                        {
+                            minSquaredDistance = squaredDistance;
+                            closestVertex = vertexIndex;
+                        }
+                    }
+                    VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
+                    VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
+                    VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
+                    var leftCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * leftIndex.X,
+                        SourceHexMapGeometry.Origin.Y + leftIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
+                    var rightCenter = new VectorXY(
+                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * rightIndex.X,
+                        SourceHexMapGeometry.Origin.Y + rightIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Triplet<float> CreateOddR(PointXY point, VectorXY[] vertices, VectorXYInt[] evenOffsets, VectorXYInt[] oddOffsets)
-        {
-            VectorXYInt mainIndex = point.ToOddRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
-            VectorXY mainCenter = GetOddRHexCenter(mainIndex);
-            int vertex = GetClosestVertexIndex(point, mainCenter, SourceHexMapGeometry.Radius, vertices, out _);
-            VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
-            VectorXYInt leftIndex = mainIndex + offsets[(vertex + 1) % 6];
-            VectorXYInt rightIndex = mainIndex + offsets[vertex];
-            return point.BarycentricCoordinates(mainCenter, GetOddRHexCenter(leftIndex), GetOddRHexCenter(rightIndex));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Triplet<float> CreateEvenR(PointXY point, VectorXY[] vertices, VectorXYInt[] evenOffsets, VectorXYInt[] oddOffsets)
-        {
-            VectorXYInt mainIndex = point.ToEvenRXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
-            VectorXY mainCenter = GetEvenRHexCenter(mainIndex);
-            int vertex = GetClosestVertexIndex(point, mainCenter, SourceHexMapGeometry.Radius, vertices, out _);
-            VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
-            VectorXYInt leftIndex = mainIndex + offsets[(vertex + 1) % 6];
-            VectorXYInt rightIndex = mainIndex + offsets[vertex];
-            return point.BarycentricCoordinates(mainCenter, GetEvenRHexCenter(leftIndex), GetEvenRHexCenter(rightIndex));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Triplet<float> CreateOddQ(PointXY point, VectorXY[] vertices, VectorXYInt[] evenOffsets, VectorXYInt[] oddOffsets)
-        {
-            VectorXYInt mainIndex = point.ToOddQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
-            VectorXY mainCenter = GetOddQHexCenter(mainIndex);
-            int vertex = GetClosestVertexIndex(point, mainCenter, SourceHexMapGeometry.Radius, vertices, out _);
-            VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
-            VectorXYInt leftIndex = mainIndex + offsets[vertex];
-            VectorXYInt rightIndex = mainIndex + offsets[(vertex + 5) % 6];
-            return point.BarycentricCoordinates(mainCenter, GetOddQHexCenter(leftIndex), GetOddQHexCenter(rightIndex));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Triplet<float> CreateEvenQ(PointXY point, VectorXY[] vertices, VectorXYInt[] evenOffsets, VectorXYInt[] oddOffsets)
-        {
-            VectorXYInt mainIndex = point.ToEvenQXYIndex(SourceHexMapGeometry.Radius, SourceHexMapGeometry.Origin);
-            VectorXY mainCenter = GetEvenQHexCenter(mainIndex);
-            int vertex = GetClosestVertexIndex(point, mainCenter, SourceHexMapGeometry.Radius, vertices, out _);
-            VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
-            VectorXYInt leftIndex = mainIndex + offsets[vertex];
-            VectorXYInt rightIndex = mainIndex + offsets[(vertex + 5) % 6];
-            return point.BarycentricCoordinates(mainCenter, GetEvenQHexCenter(leftIndex), GetEvenQHexCenter(rightIndex));
-        }
-
-        private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
-        {
-            if (!ContainsGridIndex(index))
-                throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
-        }
-
-        private bool ContainsGridIndex(VectorXYInt index)
-        {
-            return (uint)index.X < (uint)Resolution.X &&
-                (uint)index.Y < (uint)Resolution.Y;
-        }
-
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Resolution.X + index.X;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private VectorXY GetOddRHexCenter(VectorXYInt index) => new VectorXY(
-            SourceHexMapGeometry.Origin.X + index.X * 2f * SourceHexMapGeometry.Apothem + ((index.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
-            SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * index.Y);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private VectorXY GetEvenRHexCenter(VectorXYInt index) => new VectorXY(
-            SourceHexMapGeometry.Origin.X + index.X * 2f * SourceHexMapGeometry.Apothem + ((index.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
-            SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * index.Y);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private VectorXY GetOddQHexCenter(VectorXYInt index) => new VectorXY(
-            SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * index.X,
-            SourceHexMapGeometry.Origin.Y + index.Y * 2f * SourceHexMapGeometry.Apothem + ((index.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private VectorXY GetEvenQHexCenter(VectorXYInt index) => new VectorXY(
-            SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * index.X,
-            SourceHexMapGeometry.Origin.Y + index.Y * 2f * SourceHexMapGeometry.Apothem + ((index.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
-
-        private static int GetClosestVertexIndex(
-            PointXY point,
-            VectorXY hexCenter,
-            float hexRadius,
-            VectorXY[] normalizedHexVertices,
-            out float minSquaredDistance)
-        {
-            minSquaredDistance = float.MaxValue;
-            int closestVertexIndex = 0;
-
-            for (int i = 0; i < normalizedHexVertices.Length; i++)
-            {
-                VectorXY vertex = hexCenter + normalizedHexVertices[i] * hexRadius;
-                float squaredDistance = SquaredDistance(point, vertex);
-
-                if (squaredDistance < minSquaredDistance)
-                {
-                    minSquaredDistance = squaredDistance;
-                    closestVertexIndex = i;
-                }
-            }
-
-            return closestVertexIndex;
-        }
-
-        private static float SquaredDistance(PointXY left, VectorXY right)
-        {
-            float x = left.X - right.X;
-            float y = left.Y - right.Y;
-            return x * x + y * y;
-        }
-
     }
 }

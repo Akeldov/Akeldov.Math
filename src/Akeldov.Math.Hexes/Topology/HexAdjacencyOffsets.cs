@@ -28,8 +28,8 @@ namespace Akeldov.Math.Hexes.Topology
             1, -1
         };
 
-        private static readonly VectorXYInt[] RowUnshiftedVectors = CreateVectorOffsets(RowUnshifted);
-        private static readonly VectorXYInt[] RowShiftedVectors = CreateVectorOffsets(RowShifted);
+        internal static readonly VectorXYInt[] RowUnshiftedVectors = CreateVectorOffsets(RowUnshifted);
+        internal static readonly VectorXYInt[] RowShiftedVectors = CreateVectorOffsets(RowShifted);
 
         private static readonly sbyte[] ColumnUnshifted = new sbyte[]
         {

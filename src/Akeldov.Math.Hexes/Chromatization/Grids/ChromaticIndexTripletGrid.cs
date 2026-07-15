@@ -143,36 +143,11 @@ namespace Akeldov.Math.Hexes.Topology
         public VectorXYInt Resolution { get; private set; }
 
         /// <summary>
-        /// Gets the ResolutionX value.
-        /// </summary>
-        public int ResolutionX { get; private set; }
-
-        /// <summary>
-        /// Gets the ResolutionY value.
-        /// </summary>
-        public int ResolutionY { get; private set; }
-
-        /// <summary>
-        /// Gets the Count value.
-        /// </summary>
-        public int Count => _values.Length;
-
-        /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width => ResolutionX;
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height => ResolutionY;
-
-        /// <summary>
         /// Gets the value at the specified grid coordinates.
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
-        public Triplet<byte> this[int x, int y] => _values[y * ResolutionX + x];
+        public Triplet<byte> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
         /// Gets the value at the specified index.
@@ -238,8 +213,6 @@ namespace Akeldov.Math.Hexes.Topology
             Size = gridSize;
             CellSize = new VectorXY(gridSize.X / resolution.X, gridSize.Y / resolution.Y);
             Resolution = resolution;
-            ResolutionX = resolution.X;
-            ResolutionY = resolution.Y;
 
             _values = new Triplet<byte>[checked(resolution.X * resolution.Y)];
 
@@ -248,19 +221,57 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void Fill()
         {
-            VectorXY[] normalizedHexVertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout);
-
-            for (int y = 0; y < ResolutionY; y++)
+            switch (Layout)
             {
-                int rowStart = y * ResolutionX;
+                case Layout.OddR: FillOddR(); break;
+                case Layout.EvenR: FillEvenR(); break;
+                case Layout.OddQ: FillOddQ(); break;
+                case Layout.EvenQ: FillEvenQ(); break;
+                default: throw new ArgumentOutOfRangeException(nameof(Layout));
+            }
+        }
 
-                for (int x = 0; x < ResolutionX; x++)
-                {
-                    int flatIndex = rowStart + x;
-                    PointXY point = GetCellCenterUnchecked(x, y);
-                    VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _values[flatIndex] = CreateChromaticIndices(point, mainIndex, normalizedHexVertices);
-                }
+        private void FillOddR()
+        {
+            VectorXY[] vertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            for (int x = 0; x < Resolution.X; x++, index++)
+            {
+                var point = new PointXY(Origin.X + (x + 0.5f) * CellSize.X, Origin.Y + (y + 0.5f) * CellSize.Y);
+                _values[index] = CreateChromaticIndices(point, point.ToOddRXYIndex(HexRadius, HexOrigin), vertices);
+            }
+        }
+
+        private void FillEvenR()
+        {
+            VectorXY[] vertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            for (int x = 0; x < Resolution.X; x++, index++)
+            {
+                var point = new PointXY(Origin.X + (x + 0.5f) * CellSize.X, Origin.Y + (y + 0.5f) * CellSize.Y);
+                _values[index] = CreateChromaticIndices(point, point.ToEvenRXYIndex(HexRadius, HexOrigin), vertices);
+            }
+        }
+
+        private void FillOddQ()
+        {
+            VectorXY[] vertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            for (int x = 0; x < Resolution.X; x++, index++)
+            {
+                var point = new PointXY(Origin.X + (x + 0.5f) * CellSize.X, Origin.Y + (y + 0.5f) * CellSize.Y);
+                _values[index] = CreateChromaticIndices(point, point.ToOddQXYIndex(HexRadius, HexOrigin), vertices);
+            }
+        }
+
+        private void FillEvenQ()
+        {
+            VectorXY[] vertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
+            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            for (int x = 0; x < Resolution.X; x++, index++)
+            {
+                var point = new PointXY(Origin.X + (x + 0.5f) * CellSize.X, Origin.Y + (y + 0.5f) * CellSize.Y);
+                _values[index] = CreateChromaticIndices(point, point.ToEvenQXYIndex(HexRadius, HexOrigin), vertices);
             }
         }
 
@@ -287,18 +298,11 @@ namespace Akeldov.Math.Hexes.Topology
 
         private bool ContainsGridIndex(VectorXYInt index)
         {
-            return (uint)index.X < (uint)ResolutionX &&
-                (uint)index.Y < (uint)ResolutionY;
+            return (uint)index.X < (uint)Resolution.X &&
+                (uint)index.Y < (uint)Resolution.Y;
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
-
-        private PointXY GetCellCenterUnchecked(int x, int y)
-        {
-            return new PointXY(
-                Origin.X + (x + 0.5f) * CellSize.X,
-                Origin.Y + (y + 0.5f) * CellSize.Y);
-        }
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Resolution.X + index.X;
 
         private VectorXY GetHexCenter(VectorXYInt index)
         {

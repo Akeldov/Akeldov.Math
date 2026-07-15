@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYExtensions
     {
-        private static readonly VectorXY[] RowLayoutNormalizedHexVertices =
+        internal static readonly VectorXY[] RowLayoutNormalizedHexVertices =
         {
             new VectorXY(Constants.Cos30Deg, Constants.Sin30Deg),
             new VectorXY(Constants.Cos90Deg, Constants.Sin90Deg),
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Geometry
             new VectorXY(Constants.Cos330Deg, Constants.Sin330Deg),
         };
 
-        private static readonly VectorXY[] ColumnLayoutNormalizedHexVertices =
+        internal static readonly VectorXY[] ColumnLayoutNormalizedHexVertices =
         {
             new VectorXY(Constants.Cos0Deg, Constants.Sin0Deg),
             new VectorXY(Constants.Cos60Deg, Constants.Sin60Deg),

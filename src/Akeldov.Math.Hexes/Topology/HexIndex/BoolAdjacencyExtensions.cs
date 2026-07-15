@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// </summary>
     public static partial class BoolExtensions
     {
-        private static readonly VectorXYInt[] ColumnUnshiftedEdgeOffsets = new VectorXYInt[]
+        internal static readonly VectorXYInt[] ColumnUnshiftedEdgeOffsets = new VectorXYInt[]
         {
             new VectorXYInt(1, 0),
             new VectorXYInt(0, 1),
@@ -20,7 +20,7 @@ namespace Akeldov.Math.Hexes.Topology
             new VectorXYInt(1, -1)
         };
 
-        private static readonly VectorXYInt[] ColumnShiftedEdgeOffsets = new VectorXYInt[]
+        internal static readonly VectorXYInt[] ColumnShiftedEdgeOffsets = new VectorXYInt[]
         {
             new VectorXYInt(1, 1),
             new VectorXYInt(0, 1),
