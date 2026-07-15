@@ -118,12 +118,14 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
+        var hexMapGeometry = CreateHexMapGeometry(layout);
+        var rasterGeometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            hexMapGeometry.GetBoundingBoxSize(),
+            new VectorXYInt(64, 64));
         var grid = new ChromaticIndexTripletGrid(
-            hexWidth: 5,
-            hexHeight: 4,
-            layout: layout,
-            hexOrigin: VectorXY.Zero,
-            resolution: new VectorXYInt(64, 64));
+            hexMapGeometry,
+            rasterGeometry);
         SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToChromaticIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -138,10 +140,14 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexSeptupletMap(new HexMapTopology(5, 4, layout));
+        var hexMapGeometry = CreateHexMapGeometry(layout);
+        var rasterGeometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            hexMapGeometry.GetBoundingBoxSize(),
+            new VectorXYInt(64, 64));
         var grid = new ChromaticIndexPartialTripletGrid(
-            map,
-            resolution: new VectorXYInt(64, 64));
+            hexMapGeometry,
+            rasterGeometry);
         SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToChromaticIndexPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
@@ -156,11 +162,10 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
-        var map = new IndexSeptupletMap(new HexMapTopology(5, 4, layout));
         var barycentricGrid = CreateBarycentricPartialTripletGrid(layout, new VectorXYInt(64, 64));
         var chromaticGrid = new ChromaticIndexPartialTripletGrid(
-            map,
-            resolution: new VectorXYInt(64, 64));
+            barycentricGrid.SourceHexMapGeometry,
+            barycentricGrid.Geometry);
         SpatialRaster<RGBA16BitColor> raster = barycentricGrid.MapValues(
             chromaticGrid,
             ToChromaticBarycentricPartialBlendSnapshotColor);
@@ -173,6 +178,17 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         VectorXYInt resolution)
     {
+        HexMapGeometry hexMapGeometry = CreateHexMapGeometry(layout);
+        var rasterGeometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            hexMapGeometry.GetBoundingBoxSize(),
+            resolution);
+
+        return new BarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
+    }
+
+    private static HexMapGeometry CreateHexMapGeometry(Layout layout)
+    {
         var topology = new HexMapTopology(5, 4, layout);
         var defaultHexMapGeometry = new HexMapGeometry(topology, 1f);
         VectorXY hexOrigin = layout switch
@@ -183,13 +199,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             Layout.EvenQ => new VectorXY(defaultHexMapGeometry.Radius, 2f * defaultHexMapGeometry.Apothem),
             _ => throw new ArgumentOutOfRangeException(nameof(layout)),
         };
-        var hexMapGeometry = new HexMapGeometry(topology, hexOrigin, defaultHexMapGeometry.Radius);
-        var rasterGeometry = new RasterGeometry(
-            new PointXY(0f, 0f),
-            defaultHexMapGeometry.GetBoundingBoxSize(),
-            resolution);
-
-        return new BarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
+        return new HexMapGeometry(topology, hexOrigin, defaultHexMapGeometry.Radius);
     }
 
     private static RGBA16BitColor ToIndexTripletSnapshotColor(Triplet<VectorXYInt> triplet)

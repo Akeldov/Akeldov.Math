@@ -9,12 +9,15 @@ Chromatic grids sample chromatic values around hex vertices.
 - Supports grid-to-raster conversion.
 
 ```csharp
+var topology = new HexMapTopology(5, 4, Layout.OddR);
+var hexMapGeometry = new HexMapGeometry(topology, 1f);
+var rasterGeometry = new RasterGeometry(
+    new PointXY(0f, 0f),
+    hexMapGeometry.GetBoundingBoxSize(),
+    new VectorXYInt(192, 192));
 var grid = new ChromaticIndexTripletGrid(
-    hexWidth: 5,
-    hexHeight: 4,
-    layout: Layout.OddR,
-    hexOrigin: VectorXY.Zero,
-    resolution: new VectorXYInt(192, 192));
+    hexMapGeometry,
+    rasterGeometry);
 
 SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 

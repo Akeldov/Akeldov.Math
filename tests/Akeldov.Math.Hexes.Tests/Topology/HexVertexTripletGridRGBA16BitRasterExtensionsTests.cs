@@ -1,4 +1,5 @@
 using Akeldov.Math.Hexes.Topology;
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -28,7 +29,10 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void ChromaticIndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByChromaticIndices()
     {
-        var grid = new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One);
+        var hexMapGeometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
+        var grid = new ChromaticIndexTripletGrid(
+            hexMapGeometry,
+            new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), VectorXYInt.One));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 

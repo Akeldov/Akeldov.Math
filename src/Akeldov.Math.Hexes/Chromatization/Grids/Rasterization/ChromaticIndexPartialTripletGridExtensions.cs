@@ -21,15 +21,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (grid == null)
                 throw new ArgumentNullException(nameof(grid));
 
-            return grid.Rasterize(CreateRasterGrid(grid), chromaticIndicesToColor);
-        }
-
-        private static RasterGeometry CreateRasterGrid(ChromaticIndexPartialTripletGrid grid)
-        {
-            return new RasterGeometry(
-                (PointXY)grid.Origin,
-                grid.Size,
-                grid.Resolution);
+            return grid.Rasterize(grid.Geometry, chromaticIndicesToColor);
         }
     }
 }
