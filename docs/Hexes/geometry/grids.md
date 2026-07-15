@@ -9,9 +9,12 @@ Geometry grids sample Spatial2D values from a hex field.
 - Exposes sampled grid metadata.
 
 ```csharp
-var grid = new BarycentricTripletGrid(
-    new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR),
-    resolution: new VectorXYInt(192, 192));
+var hexGeometry = new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR);
+var rasterGeometry = new RasterGeometry(
+    new PointXY(-4f, -4f),
+    new VectorXY(8f, 8f),
+    new VectorXYInt(192, 192));
+var grid = new BarycentricTripletGrid(hexGeometry, rasterGeometry);
 
 SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
 

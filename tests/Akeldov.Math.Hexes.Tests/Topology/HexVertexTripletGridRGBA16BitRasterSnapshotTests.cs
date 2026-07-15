@@ -4,6 +4,7 @@ using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
@@ -55,13 +56,47 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         Layout layout,
         string approvedFileName)
     {
+        var hexGeometry = new HexMapGeometry(5, 4, VectorXY.Zero, 1f, layout);
         var grid = new BarycentricTripletGrid(
-            new HexMapGeometry(5, 4, VectorXY.Zero, 1f, layout),
-            resolution: new VectorXYInt(64, 64));
+            hexGeometry,
+            CreateBarycentricSnapshotGeometry(hexGeometry, new VectorXYInt(64, 64)));
         SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToBarycentricMainSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
+    private static RasterGeometry CreateBarycentricSnapshotGeometry(
+        HexMapGeometry geometry,
+        VectorXYInt resolution)
+    {
+        Rectangle bounds = geometry.GetBoundingBox();
+        VectorXY origin = geometry.Topology.Layout switch
+        {
+            Layout.EvenR when geometry.Topology.Resolution.Y > 1 => new VectorXY(
+                geometry.Origin.X - geometry.Apothem - Akeldov.Math.Hexes.Geometry.Constants.Cos30Deg * geometry.Radius,
+                bounds.Min.Y),
+            Layout.EvenQ when geometry.Topology.Resolution.X > 1 => new VectorXY(
+                bounds.Min.X,
+                geometry.Origin.Y - geometry.Apothem - Akeldov.Math.Hexes.Geometry.Constants.Sin60Deg * geometry.Radius),
+            _ => new VectorXY(bounds.Min.X, bounds.Min.Y),
+        };
+        VectorXY size = geometry.Topology.Layout switch
+        {
+            Layout.EvenR when geometry.Topology.Resolution.Y > 1 => new VectorXY(
+                2f * geometry.Apothem * (geometry.Topology.Resolution.X - 1) +
+                geometry.Apothem +
+                2f * Akeldov.Math.Hexes.Geometry.Constants.Cos30Deg * geometry.Radius,
+                bounds.Height),
+            Layout.EvenQ when geometry.Topology.Resolution.X > 1 => new VectorXY(
+                bounds.Width,
+                2f * geometry.Apothem * (geometry.Topology.Resolution.Y - 1) +
+                geometry.Apothem +
+                2f * Akeldov.Math.Hexes.Geometry.Constants.Sin60Deg * geometry.Radius),
+            _ => bounds.Size,
+        };
+
+        return new RasterGeometry((PointXY)origin, size, resolution);
     }
 
     [TestCase(Layout.OddR, "barycentric-partial-triplet-grid-odd-r-rgba16.png")]
