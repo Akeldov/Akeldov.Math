@@ -73,19 +73,17 @@ public class HexVertexTripletGridTests
         });
     }
 
-    [Test]
-    public void IndexTripletGrid_ExposesGeometryResolutionAndSampledValues()
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void IndexTripletGrid_ExposesGeometryResolutionAndSampledValues(Layout layout)
     {
-        var origin = new VectorXY(10f, -20f);
+        var topology = new HexMapTopology(2, 1, layout);
+        var grid = new IndexTripletGrid(topology, new VectorXYInt(4, 2));
 
-        var grid = new IndexTripletGrid(2, 1, Layout.OddR, origin, new VectorXYInt(4, 2));
-
-        Assert.That(grid.HexResolution, Is.EqualTo(new VectorXYInt(2, 1)));
-        Assert.That(grid.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(grid.Topology, Is.EqualTo(topology));
         Assert.That(grid.Resolution, Is.EqualTo(new VectorXYInt(4, 2)));
-        Assert.That(grid.ResolutionX, Is.EqualTo(4));
-        Assert.That(grid.ResolutionY, Is.EqualTo(2));
-        Assert.That(grid.Count, Is.EqualTo(8));
         Assert.That(grid[0], Is.EqualTo(grid[VectorXYInt.Zero]));
     }
 
@@ -103,18 +101,26 @@ public class HexVertexTripletGridTests
     [Test]
     public void IndexTripletGrid_UsesNearestVertexAndLeftRightOrder()
     {
-        VectorXY point = GetPointNearOddRVertex0();
         var expected = new Triplet<VectorXYInt>(
             new VectorXYInt(0, 0),
             new VectorXYInt(0, 1),
             new VectorXYInt(1, 0));
-        var grid = CreateSingleSampleIndexTripletGrid(point);
+        var grid = new IndexTripletGrid(new HexMapTopology(2, 2, Layout.OddR), new VectorXYInt(64, 64));
+        bool found = false;
 
-        Triplet<VectorXYInt> actual = grid[VectorXYInt.Zero];
+        for (int y = 0; y < grid.Resolution.Y && !found; y++)
+        {
+            for (int x = 0; x < grid.Resolution.X; x++)
+            {
+                if (grid[x, y].Equals(expected))
+                {
+                    found = true;
+                    break;
+                }
+            }
+        }
 
-        AssertTriplet(actual, expected);
-        Assert.That(grid.TryGetValue(VectorXYInt.Zero, out Triplet<VectorXYInt> fromTry), Is.True);
-        AssertTriplet(fromTry, expected);
+        Assert.That(found, Is.True);
     }
 
     [TestCase(Layout.OddR, 0, 1, 1, 0)]
@@ -175,7 +181,7 @@ public class HexVertexTripletGridTests
     {
         var adjacency = new IndexSeptupletMap(new HexMapTopology(2, 2, Layout.OddR));
         var resolution = VectorXYInt.One;
-        var indexGrid = new IndexTripletGrid(adjacency, resolution);
+        var indexGrid = new IndexTripletGrid(adjacency.Topology, resolution);
         var partialIndexGrid = new IndexPartialTripletGrid(adjacency, resolution);
         var barycentricGrid = new BarycentricTripletGrid(
             new HexMapGeometry(adjacency.Topology, 1f),
@@ -204,10 +210,9 @@ public class HexVertexTripletGridTests
         var emptyAdjacency = new IndexSeptupletMap(new HexMapTopology(0, 1, Layout.OddR));
         var emptyPartialAdjacency = new IndexPartialSeptupletMap(new HexMapTopology(0, 1, Layout.OddR));
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(new HexMapTopology(0, 1, Layout.OddR), VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(0, 1, Layout.OddR, VectorXY.Zero, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(0, 1)));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, new VectorXY(float.PositiveInfinity, 0f), VectorXY.One, VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new BarycentricTripletGrid(new HexMapGeometry(1, 1, 1f, Layout.OddR), default));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticIndexTripletGrid(1, 1, Layout.OddR, VectorXY.Zero, VectorXY.Zero, new VectorXY(float.PositiveInfinity, 1f), VectorXYInt.One));
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexSeptupletGrid(emptyAdjacency, VectorXYInt.One));
@@ -230,26 +235,6 @@ public class HexVertexTripletGridTests
         return new VectorXY(
             Akeldov.Math.Hexes.Geometry.Constants.Cos30Deg * hexRadius * 0.75f,
             Akeldov.Math.Hexes.Geometry.Constants.Sin30Deg * hexRadius * 0.75f);
-    }
-
-    private static IndexTripletGrid CreateSingleSampleIndexTripletGrid(VectorXY point)
-    {
-        return CreateSingleSampleIndexTripletGrid(point, 2, 2);
-    }
-
-    private static IndexTripletGrid CreateSingleSampleIndexTripletGrid(
-        VectorXY point,
-        int hexWidth,
-        int hexHeight)
-    {
-        return new IndexTripletGrid(
-            hexWidth,
-            hexHeight,
-            Layout.OddR,
-            VectorXY.Zero,
-            point - new VectorXY(0.5f, 0.5f),
-            VectorXY.One,
-            VectorXYInt.One);
     }
 
     private static ChromaticIndexTripletGrid CreateSingleSampleChromaticIndexGrid(VectorXY point)

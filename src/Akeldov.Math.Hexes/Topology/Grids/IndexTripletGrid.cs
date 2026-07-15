@@ -11,130 +11,41 @@ namespace Akeldov.Math.Hexes.Topology
     /// </summary>
     public sealed class IndexTripletGrid : IRaster<Triplet<VectorXYInt>>
     {
-        private const float DefaultHexRadius = 1f;
-
         private Triplet<VectorXYInt>[] _values = Array.Empty<Triplet<VectorXYInt>>();
-
-        private VectorXY HexOrigin { get; set; }
-
-        private float HexApothem { get; set; }
-
-        private float HexRadius { get; set; }
-
-        internal VectorXY Origin { get; set; }
-
-        internal VectorXY Size { get; set; }
-
-        private VectorXY CellSize { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the IndexTripletGrid type.
         /// </summary>
-        /// <param name="hexAdjacencyMap">The HexAdjacencyMap value.</param>
+        /// <param name="topology">The hex map topology.</param>
         /// <param name="resolution">The Resolution value.</param>
-        public IndexTripletGrid(
-            IndexSeptupletMap hexAdjacencyMap,
-            VectorXYInt resolution)
+        public IndexTripletGrid(HexMapTopology topology, VectorXYInt resolution)
         {
-            if (hexAdjacencyMap == null)
-                throw new ArgumentNullException(nameof(hexAdjacencyMap));
-
-            float apothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            var geometry = new HexMapGeometry(hexAdjacencyMap.Topology.Resolution.X, hexAdjacencyMap.Topology.Resolution.Y, DefaultHexRadius, hexAdjacencyMap.Topology.Layout);
+            const float hexRadius = 1f;
+            float hexApothem = hexRadius.ConvertHexRadiusToApothem();
+            VectorXY hexOrigin = GetDefaultHexOrigin(topology.Layout, hexApothem, hexRadius);
+            var geometry = new HexMapGeometry(topology.Resolution.X, topology.Resolution.Y, hexRadius, topology.Layout);
             VectorXY gridSize = geometry.GetBoundingBoxSize();
+            VectorXY cellSize = new VectorXY(gridSize.X / resolution.X, gridSize.Y / resolution.Y);
 
-            Initialize(
-                hexAdjacencyMap.Topology.Resolution.X,
-                hexAdjacencyMap.Topology.Resolution.Y,
-                hexAdjacencyMap.Topology.Layout,
-                GetDefaultHexOrigin(hexAdjacencyMap.Topology.Layout, apothem, DefaultHexRadius),
-                apothem,
-                DefaultHexRadius,
+            ValidateGridParameters(
+                topology.Resolution.X,
+                topology.Resolution.Y,
+                hexOrigin,
                 VectorXY.Zero,
                 gridSize,
                 resolution);
+
+            Topology = topology;
+            Resolution = resolution;
+            _values = new Triplet<VectorXYInt>[checked(resolution.X * resolution.Y)];
+
+            Fill(hexOrigin, hexApothem, hexRadius, VectorXY.Zero, cellSize);
         }
 
         /// <summary>
-        /// Initializes a new instance of the IndexTripletGrid type.
+        /// Gets the hex map topology.
         /// </summary>
-        /// <param name="hexWidth">The HexWidth value.</param>
-        /// <param name="hexHeight">The HexHeight value.</param>
-        /// <param name="layout">The Layout value.</param>
-        /// <param name="hexOrigin">The HexOrigin value.</param>
-        /// <param name="resolution">The Resolution value.</param>
-        public IndexTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            VectorXYInt resolution)
-        {
-            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
-
-            float hexApothem = DefaultHexRadius.ConvertHexRadiusToApothem();
-            Bounds bounds = GetBounds(hexWidth, hexHeight, layout, hexOrigin, hexApothem, DefaultHexRadius);
-
-            Initialize(
-                hexWidth,
-                hexHeight,
-                layout,
-                hexOrigin,
-                hexApothem,
-                DefaultHexRadius,
-                new VectorXY(bounds.MinX, bounds.MinY),
-                new VectorXY(bounds.Width, bounds.Height),
-                resolution);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the IndexTripletGrid type.
-        /// </summary>
-        /// <param name="hexWidth">The HexWidth value.</param>
-        /// <param name="hexHeight">The HexHeight value.</param>
-        /// <param name="layout">The Layout value.</param>
-        /// <param name="hexOrigin">The HexOrigin value.</param>
-        /// <param name="gridOrigin">The GridOrigin value.</param>
-        /// <param name="gridSize">The GridSize value.</param>
-        /// <param name="resolution">The Resolution value.</param>
-        public IndexTripletGrid(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY hexOrigin,
-            VectorXY gridOrigin,
-            VectorXY gridSize,
-            VectorXYInt resolution)
-        {
-            ValidateHexGrid(hexWidth, hexHeight, hexOrigin, resolution);
-
-            if (!gridOrigin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
-
-            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
-
-            Initialize(
-                hexWidth,
-                hexHeight,
-                layout,
-                hexOrigin,
-                DefaultHexRadius.ConvertHexRadiusToApothem(),
-                DefaultHexRadius,
-                gridOrigin,
-                gridSize,
-                resolution);
-        }
-
-        /// <summary>
-        /// Gets the HexResolution value.
-        /// </summary>
-        public VectorXYInt HexResolution { get; private set; }
-
-        /// <summary>
-        /// Gets the Layout value.
-        /// </summary>
-        public Layout Layout { get; private set; }
+        public HexMapTopology Topology { get; }
 
         /// <summary>
         /// Gets the Resolution value.
@@ -142,36 +53,11 @@ namespace Akeldov.Math.Hexes.Topology
         public VectorXYInt Resolution { get; private set; }
 
         /// <summary>
-        /// Gets the ResolutionX value.
-        /// </summary>
-        public int ResolutionX { get; private set; }
-
-        /// <summary>
-        /// Gets the ResolutionY value.
-        /// </summary>
-        public int ResolutionY { get; private set; }
-
-        /// <summary>
-        /// Gets the Count value.
-        /// </summary>
-        public int Count => _values.Length;
-
-        /// <summary>
-        /// Gets the Width value.
-        /// </summary>
-        public int Width => ResolutionX;
-
-        /// <summary>
-        /// Gets the Height value.
-        /// </summary>
-        public int Height => ResolutionY;
-
-        /// <summary>
         /// Gets the value at the specified grid coordinates.
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
-        public Triplet<VectorXYInt> this[int x, int y] => _values[y * ResolutionX + x];
+        public Triplet<VectorXYInt> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
         /// Gets the value at the specified index.
@@ -215,50 +101,33 @@ namespace Akeldov.Math.Hexes.Topology
             return true;
         }
 
-        private void Initialize(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
+        private void Fill(
             VectorXY hexOrigin,
             float hexApothem,
             float hexRadius,
             VectorXY gridOrigin,
-            VectorXY gridSize,
-            VectorXYInt resolution)
+            VectorXY cellSize)
         {
-            ValidateGridParameters(hexWidth, hexHeight, hexOrigin, gridOrigin, gridSize, resolution);
+            VectorXY[] normalizedHexVertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Topology.Layout);
 
-            HexResolution = new VectorXYInt(hexWidth, hexHeight);
-            Layout = layout;
-            HexOrigin = hexOrigin;
-            HexApothem = hexApothem;
-            HexRadius = hexRadius;
-            Origin = gridOrigin;
-            Size = gridSize;
-            CellSize = new VectorXY(gridSize.X / resolution.X, gridSize.Y / resolution.Y);
-            Resolution = resolution;
-            ResolutionX = resolution.X;
-            ResolutionY = resolution.Y;
-
-            _values = new Triplet<VectorXYInt>[checked(resolution.X * resolution.Y)];
-
-            Fill();
-        }
-
-        private void Fill()
-        {
-            VectorXY[] normalizedHexVertices = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Layout);
-
-            for (int y = 0; y < ResolutionY; y++)
+            for (int y = 0; y < Resolution.Y; y++)
             {
-                int rowStart = y * ResolutionX;
+                int rowStart = y * Resolution.X;
 
-                for (int x = 0; x < ResolutionX; x++)
+                for (int x = 0; x < Resolution.X; x++)
                 {
                     int flatIndex = rowStart + x;
-                    PointXY point = GetCellCenterUnchecked(x, y);
-                    VectorXYInt mainIndex = point.ToXYIndex(HexRadius, HexOrigin, Layout);
-                    _values[flatIndex] = CreateIndexTriplet(point, mainIndex, normalizedHexVertices);
+                    PointXY point = new PointXY(
+                        gridOrigin.X + (x + 0.5f) * cellSize.X,
+                        gridOrigin.Y + (y + 0.5f) * cellSize.Y);
+                    VectorXYInt mainIndex = point.ToXYIndex(hexRadius, hexOrigin, Topology.Layout);
+                    _values[flatIndex] = CreateIndexTriplet(
+                        point,
+                        mainIndex,
+                        normalizedHexVertices,
+                        hexOrigin,
+                        hexApothem,
+                        hexRadius);
                 }
             }
         }
@@ -266,16 +135,19 @@ namespace Akeldov.Math.Hexes.Topology
         private Triplet<VectorXYInt> CreateIndexTriplet(
             PointXY point,
             VectorXYInt mainIndex,
-            VectorXY[] normalizedHexVertices)
+            VectorXY[] normalizedHexVertices,
+            VectorXY hexOrigin,
+            float hexApothem,
+            float hexRadius)
         {
-            VectorXY mainCenter = GetHexCenter(mainIndex);
+            VectorXY mainCenter = GetHexCenter(mainIndex, hexOrigin, hexApothem, hexRadius);
             HexVertex nearestVertex = (HexVertex)GetClosestVertexIndex(
                 point,
                 mainCenter,
-                HexRadius,
+                hexRadius,
                 normalizedHexVertices,
                 out _);
-            return mainIndex.GetAdjacentTriplet(nearestVertex, Layout);
+            return mainIndex.GetAdjacentTriplet(nearestVertex, Topology.Layout);
         }
 
         private void ThrowIfGridIndexOutOfBounds(VectorXYInt index)
@@ -286,41 +158,38 @@ namespace Akeldov.Math.Hexes.Topology
 
         private bool ContainsGridIndex(VectorXYInt index)
         {
-            return (uint)index.X < (uint)ResolutionX &&
-                (uint)index.Y < (uint)ResolutionY;
+            return (uint)index.X < (uint)Resolution.X &&
+                (uint)index.Y < (uint)Resolution.Y;
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Resolution.X + index.X;
 
-        private PointXY GetCellCenterUnchecked(int x, int y)
+        private VectorXY GetHexCenter(
+            VectorXYInt index,
+            VectorXY hexOrigin,
+            float hexApothem,
+            float hexRadius)
         {
-            return new PointXY(
-                Origin.X + (x + 0.5f) * CellSize.X,
-                Origin.Y + (y + 0.5f) * CellSize.Y);
-        }
-
-        private VectorXY GetHexCenter(VectorXYInt index)
-        {
-            switch (Layout)
+            switch (Topology.Layout)
             {
                 case Layout.OddR:
                     return new VectorXY(
-                        HexOrigin.X + index.X * 2f * HexApothem + ((index.Y & 1) == 1 ? HexApothem : 0f),
-                        HexOrigin.Y + 1.5f * HexRadius * index.Y);
+                        hexOrigin.X + index.X * 2f * hexApothem + ((index.Y & 1) == 1 ? hexApothem : 0f),
+                        hexOrigin.Y + 1.5f * hexRadius * index.Y);
                 case Layout.EvenR:
                     return new VectorXY(
-                        HexOrigin.X + index.X * 2f * HexApothem + ((index.Y & 1) == 1 ? -HexApothem : 0f),
-                        HexOrigin.Y + 1.5f * HexRadius * index.Y);
+                        hexOrigin.X + index.X * 2f * hexApothem + ((index.Y & 1) == 1 ? -hexApothem : 0f),
+                        hexOrigin.Y + 1.5f * hexRadius * index.Y);
                 case Layout.OddQ:
                     return new VectorXY(
-                        HexOrigin.X + 1.5f * HexRadius * index.X,
-                        HexOrigin.Y + index.Y * 2f * HexApothem + ((index.X & 1) == 1 ? HexApothem : 0f));
+                        hexOrigin.X + 1.5f * hexRadius * index.X,
+                        hexOrigin.Y + index.Y * 2f * hexApothem + ((index.X & 1) == 1 ? hexApothem : 0f));
                 case Layout.EvenQ:
                     return new VectorXY(
-                        HexOrigin.X + 1.5f * HexRadius * index.X,
-                        HexOrigin.Y + index.Y * 2f * HexApothem + ((index.X & 1) == 1 ? -HexApothem : 0f));
+                        hexOrigin.X + 1.5f * hexRadius * index.X,
+                        hexOrigin.Y + index.Y * 2f * hexApothem + ((index.X & 1) == 1 ? -hexApothem : 0f));
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(Layout));
+                    throw new ArgumentOutOfRangeException(nameof(Topology));
             }
         }
 
@@ -361,45 +230,6 @@ namespace Akeldov.Math.Hexes.Topology
                     return new VectorXY(radius, apothem);
                 case Layout.EvenQ:
                     return new VectorXY(radius, 2f * apothem);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(layout));
-            }
-        }
-
-        private static Bounds GetBounds(
-            int hexWidth,
-            int hexHeight,
-            Layout layout,
-            VectorXY origin,
-            float apothem,
-            float radius)
-        {
-            switch (layout)
-            {
-                case Layout.OddR:
-                    return new Bounds(
-                        origin.X - Geometry.Constants.Cos30Deg * radius,
-                        origin.Y - radius,
-                        origin.X + 2f * apothem * (hexWidth - 1) + (hexHeight > 1 ? apothem : 0f) + Geometry.Constants.Cos30Deg * radius,
-                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
-                case Layout.EvenR:
-                    return new Bounds(
-                        origin.X - (hexHeight > 1 ? apothem : 0f) - Geometry.Constants.Cos30Deg * radius,
-                        origin.Y - radius,
-                        origin.X + 2f * apothem * (hexWidth - 1) + Geometry.Constants.Cos30Deg * radius,
-                        origin.Y + 1.5f * radius * (hexHeight - 1) + radius);
-                case Layout.OddQ:
-                    return new Bounds(
-                        origin.X - radius,
-                        origin.Y - Geometry.Constants.Sin60Deg * radius,
-                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
-                        origin.Y + 2f * apothem * (hexHeight - 1) + (hexWidth > 1 ? apothem : 0f) + Geometry.Constants.Sin60Deg * radius);
-                case Layout.EvenQ:
-                    return new Bounds(
-                        origin.X - radius,
-                        origin.Y - (hexWidth > 1 ? apothem : 0f) - Geometry.Constants.Sin60Deg * radius,
-                        origin.X + 1.5f * radius * (hexWidth - 1) + radius,
-                        origin.Y + 2f * apothem * (hexHeight - 1) + Geometry.Constants.Sin60Deg * radius);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
@@ -448,27 +278,5 @@ namespace Akeldov.Math.Hexes.Topology
             return x * x + y * y;
         }
 
-        private readonly struct Bounds
-        {
-            public Bounds(float minX, float minY, float maxX, float maxY)
-            {
-                MinX = minX;
-                MinY = minY;
-                MaxX = maxX;
-                MaxY = maxY;
-            }
-
-            public float MinX { get; }
-
-            public float MinY { get; }
-
-            public float MaxX { get; }
-
-            public float MaxY { get; }
-
-            public float Width => MaxX - MinX;
-
-            public float Height => MaxY - MinY;
-        }
     }
 }

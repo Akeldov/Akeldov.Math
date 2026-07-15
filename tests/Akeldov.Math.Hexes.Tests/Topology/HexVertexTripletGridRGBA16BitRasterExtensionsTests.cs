@@ -10,7 +10,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void IndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByIndexTriplet()
     {
-        var grid = new IndexTripletGrid(2, 1, Layout.OddR, VectorXY.Zero, new VectorXYInt(4, 1));
+        var grid = new IndexTripletGrid(new HexMapTopology(2, 1, Layout.OddR), new VectorXYInt(4, 1));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
@@ -46,7 +46,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         ChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
 
         Assert.Throws<ArgumentNullException>(() => indexTripletGrid.Rasterize((Triplet<VectorXYInt> _) => (RGBA16BitColor)default));
-        Assert.Throws<ArgumentNullException>(() => barycentricGrid.Rasterize((Triplet<float> _) => (RGBA16BitColor)default));
+        Assert.Throws<ArgumentNullException>(() => barycentricGrid.MapValues((Triplet<float> _) => (RGBA16BitColor)default));
         Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.Rasterize((Triplet<byte> _) => (RGBA16BitColor)default));
     }
 }

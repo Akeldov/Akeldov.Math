@@ -69,6 +69,28 @@ public class DiscretizationTests
         Assert.That(actualIndex, Is.EqualTo(expectedIndex));
     }
 
+    [TestCase(Layout.OddR, 12.25f, -17.75f)]
+    [TestCase(Layout.EvenR, 6.5f, -25.25f)]
+    [TestCase(Layout.OddQ, 15.75f, -13.5f)]
+    [TestCase(Layout.EvenQ, 4.25f, -22.5f)]
+    public void LayoutSpecificXYIndexConversion_MatchesGeneralConversion(Layout layout, float x, float y)
+    {
+        var point = new PointXY(x, y);
+        var origin = new VectorXY(10f, -20f);
+        const float radius = 3f;
+
+        VectorXYInt actualIndex = layout switch
+        {
+            Layout.OddR => point.ToOddRXYIndex(radius, origin),
+            Layout.EvenR => point.ToEvenRXYIndex(radius, origin),
+            Layout.OddQ => point.ToOddQXYIndex(radius, origin),
+            Layout.EvenQ => point.ToEvenQXYIndex(radius, origin),
+            _ => throw new ArgumentOutOfRangeException(nameof(layout))
+        };
+
+        Assert.That(actualIndex, Is.EqualTo(point.ToXYIndex(radius, origin, layout)));
+    }
+
     [Test]
     public void XYPoint_ToXYIndex_ThrowsWhenHexRadiusIsZero()
     {
