@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -18,26 +17,72 @@ namespace Akeldov.Math.Hexes.Chromatization
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetChromaticClass(this VectorXYInt hexIndex, Layout layout)
         {
-            var qrsIndex = hexIndex.ToQRSIndex(layout);
+            int value;
 
             switch (layout)
             {
                 case Layout.OddR:
+                    value = hexIndex.X - (hexIndex.Y & 1);
+                    break;
                 case Layout.EvenR:
-                    return PositiveModulo(qrsIndex.Q - qrsIndex.R, 3);
+                    value = hexIndex.X + (hexIndex.Y & 1);
+                    break;
                 case Layout.OddQ:
+                    value = hexIndex.Y - (hexIndex.X & 1);
+                    break;
                 case Layout.EvenQ:
-                    return PositiveModulo(qrsIndex.R - qrsIndex.Q, 3);
+                    value = hexIndex.Y + (hexIndex.X & 1);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
+
+            int result = value % 3;
+            return result < 0 ? result + 3 : result;
         }
 
+        /// <summary>
+        /// Gets the chromatic class for the odd-row offset layout.
+        /// </summary>
+        /// <param name="hexIndex">The hex index.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int PositiveModulo(int value, int divisor)
+        public static int GetOddRChromaticClass(this VectorXYInt hexIndex)
         {
-            var result = value % divisor;
-            return result < 0 ? result + divisor : result;
+            int result = (hexIndex.X - (hexIndex.Y & 1)) % 3;
+            return result < 0 ? result + 3 : result;
+        }
+
+        /// <summary>
+        /// Gets the chromatic class for the even-row offset layout.
+        /// </summary>
+        /// <param name="hexIndex">The hex index.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetEvenRChromaticClass(this VectorXYInt hexIndex)
+        {
+            int result = (hexIndex.X + (hexIndex.Y & 1)) % 3;
+            return result < 0 ? result + 3 : result;
+        }
+
+        /// <summary>
+        /// Gets the chromatic class for the odd-column offset layout.
+        /// </summary>
+        /// <param name="hexIndex">The hex index.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetOddQChromaticClass(this VectorXYInt hexIndex)
+        {
+            int result = (hexIndex.Y - (hexIndex.X & 1)) % 3;
+            return result < 0 ? result + 3 : result;
+        }
+
+        /// <summary>
+        /// Gets the chromatic class for the even-column offset layout.
+        /// </summary>
+        /// <param name="hexIndex">The hex index.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetEvenQChromaticClass(this VectorXYInt hexIndex)
+        {
+            int result = (hexIndex.Y + (hexIndex.X & 1)) % 3;
+            return result < 0 ? result + 3 : result;
         }
     }
 }

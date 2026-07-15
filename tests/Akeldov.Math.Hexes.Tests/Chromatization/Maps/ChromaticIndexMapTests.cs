@@ -8,6 +8,36 @@ namespace Akeldov.Math.Hexes.Tests.Chromatization;
 public class ChromaticIndexMapTests
 {
     [Test]
+    public void LayoutSpecificChromaticClass_MatchesQrsChromatization()
+    {
+        foreach (Layout layout in Enum.GetValues(typeof(Layout)))
+        {
+            for (int y = -8; y <= 8; y++)
+            {
+                for (int x = -8; x <= 8; x++)
+                {
+                    var index = new VectorXYInt(x, y);
+                    var qrsIndex = index.ToQRSIndex(layout);
+                    int chromaticClass = layout switch
+                    {
+                        Layout.OddR => index.GetOddRChromaticClass(),
+                        Layout.EvenR => index.GetEvenRChromaticClass(),
+                        Layout.OddQ => index.GetOddQChromaticClass(),
+                        Layout.EvenQ => index.GetEvenQChromaticClass(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(layout)),
+                    };
+                    int expected = layout is Layout.OddR or Layout.EvenR
+                        ? ((qrsIndex.Q - qrsIndex.R) % 3 + 3) % 3
+                        : ((qrsIndex.R - qrsIndex.Q) % 3 + 3) % 3;
+
+                    Assert.That(chromaticClass, Is.EqualTo(expected), $"Layout: {layout}; index: {index}");
+                    Assert.That(index.GetChromaticClass(layout), Is.EqualTo(expected), $"Layout: {layout}; index: {index}");
+                }
+            }
+        }
+    }
+
+    [Test]
     public void Constructor_MatchesSingleHexChromaticClass_ForEveryLayout()
     {
         const int width = 5;

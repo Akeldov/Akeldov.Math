@@ -152,6 +152,25 @@ public class HexVertexTripletGridTests
         Assert.That(typeof(BarycentricPartialTripletGrid).GetProperty("BarycentricCoordinates"), Is.Null);
         Assert.That(typeof(ChromaticIndexTripletGrid).GetProperty("ChromaticIndices"), Is.Null);
         Assert.That(typeof(ChromaticIndexPartialTripletGrid).GetProperty("ChromaticIndices"), Is.Null);
+        Assert.That(typeof(ChromaticIndexTripletGrid).GetProperty("Layout"), Is.Null);
+        Assert.That(typeof(ChromaticIndexPartialTripletGrid).GetProperty("Layout"), Is.Null);
+    }
+
+    [Test]
+    public void ChromaticIndexTripletGrids_HaveOnlyLayoutFillPrivateMethods()
+    {
+        string[] expectedMethodNames = { "Fill", "FillOddR", "FillEvenR", "FillOddQ", "FillEvenQ" };
+        Type[] gridTypes = { typeof(ChromaticIndexTripletGrid), typeof(ChromaticIndexPartialTripletGrid) };
+
+        foreach (Type gridType in gridTypes)
+        {
+            string[] methodNames = gridType
+                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.DeclaredOnly)
+                .Select(method => method.Name)
+                .ToArray();
+
+            Assert.That(methodNames, Is.EquivalentTo(expectedMethodNames), gridType.Name);
+        }
     }
 
     [Test]
