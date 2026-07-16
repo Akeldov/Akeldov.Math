@@ -18,6 +18,38 @@ public class HexMapTests
     }
 
     [Test]
+    public void Constructor_WithValues_UsesProvidedArrayAsBackingStorage()
+    {
+        var values = new[] { 10, 20 };
+        var map = new HexMap<int>(new HexMapTopology(2, 1, Layout.OddR), values);
+
+        values[0] = 30;
+        map[1] = 40;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map[0], Is.EqualTo(30));
+            Assert.That(values[1], Is.EqualTo(40));
+        });
+    }
+
+    [Test]
+    public void Constructor_WithValues_WhenArrayIsInvalid_Throws()
+    {
+        var topology = new HexMapTopology(2, 1, Layout.OddR);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => new HexMap<int>(topology, null!))!.ParamName,
+                Is.EqualTo("values"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => new HexMap<int>(topology, new int[1]))!.ParamName,
+                Is.EqualTo("values"));
+        });
+    }
+
+    [Test]
     public void HexMapTopology_ExposesDimensionsLayoutAndCount()
     {
         var topology = new HexMapTopology(3, 2, Layout.OddQ);

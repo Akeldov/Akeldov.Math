@@ -20,7 +20,8 @@ namespace Akeldov.Math.Hexes
         TValue this[VectorXYInt index] { get; }
 
         /// <summary>
-        /// Represents the <c>this[int]</c> value.
+        /// Gets the value at the specified flat index. Flat indexes use row-major order: X advances
+        /// first, and coordinates <c>(x, y)</c> map to <c>y * Topology.Resolution.X + x</c>.
         /// </summary>
         /// <param name="index">The index value.</param>
         TValue this[int index] { get; }
