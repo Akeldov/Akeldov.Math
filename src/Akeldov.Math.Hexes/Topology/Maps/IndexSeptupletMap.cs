@@ -1,119 +1,146 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
     /// Initializes a new instance of the IndexSeptupletMap type.
     /// </summary>
-    public sealed class IndexSeptupletMap : IHexMap<Septuplet<VectorXYInt>>
+    public sealed class IndexSeptupletMap : SpatialHexMap<Septuplet<VectorXYInt>>
     {
-        private readonly Septuplet<VectorXYInt>[] _values;
-
         /// <summary>
         /// Initializes a new instance of the IndexSeptupletMap type.
         /// </summary>
         /// <param name="topology">The topology value.</param>
         public IndexSeptupletMap(HexMapTopology topology)
+            : this(new HexMapGeometry(topology, 1f))
         {
-            Topology = topology;
-            _values = new Septuplet<VectorXYInt>[topology.Count];
+        }
+
+        /// <summary>
+        /// Initializes a new instance with the specified spatial geometry.
+        /// </summary>
+        /// <param name="geometry">The spatial geometry of the map.</param>
+        public IndexSeptupletMap(HexMapGeometry geometry)
+            : base(geometry, CreateValues(geometry))
+        {
+        }
+
+        private static Septuplet<VectorXYInt>[] CreateValues(HexMapGeometry geometry)
+        {
+            HexMapTopology topology = geometry.Topology;
+            var values = new Septuplet<VectorXYInt>[topology.Count];
 
             switch (topology.Layout)
             {
                 case Layout.OddR:
-                    FillRowLayoutTopology(false);
+                    FillOddRAdjacency(values, topology);
                     break;
                 case Layout.EvenR:
-                    FillRowLayoutTopology(true);
+                    FillEvenRAdjacency(values, topology);
                     break;
                 case Layout.OddQ:
-                    FillColumnLayoutTopology(false);
+                    FillOddQAdjacency(values, topology);
                     break;
                 case Layout.EvenQ:
-                    FillColumnLayoutTopology(true);
+                    FillEvenQAdjacency(values, topology);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(topology));
+                    throw new ArgumentOutOfRangeException(nameof(geometry));
+            }
+
+            return values;
+        }
+
+        private static void FillOddRAdjacency(
+            Septuplet<VectorXYInt>[] values,
+            HexMapTopology topology)
+        {
+            int width = topology.Resolution.X;
+
+            for (int y = 0; y < topology.Resolution.Y; y++)
+            {
+                int rowStart = y * width;
+                VectorXYInt[] offsets = (y & 1) == 0
+                    ? HexAdjacencyOffsets.RowUnshiftedVectors
+                    : HexAdjacencyOffsets.RowShiftedVectors;
+
+                for (int x = 0; x < width; x++)
+                    values[rowStart + x] = CreateAdjacency(x, y, offsets);
             }
         }
 
-        /// <summary>
-        /// Gets the map topology.
-        /// </summary>
-        public HexMapTopology Topology { get; }
-
-        /// <summary>
-        /// Gets the value at the specified index.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        public Septuplet<VectorXYInt> this[VectorXYInt index]
+        private static void FillEvenRAdjacency(
+            Septuplet<VectorXYInt>[] values,
+            HexMapTopology topology)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (index.X < 0 || index.X >= Topology.Resolution.X ||
-                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
-                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+            int width = topology.Resolution.X;
 
-                return _values[GetFlatIndex(index)];
+            for (int y = 0; y < topology.Resolution.Y; y++)
+            {
+                int rowStart = y * width;
+                VectorXYInt[] offsets = (y & 1) == 0
+                    ? HexAdjacencyOffsets.RowShiftedVectors
+                    : HexAdjacencyOffsets.RowUnshiftedVectors;
+
+                for (int x = 0; x < width; x++)
+                    values[rowStart + x] = CreateAdjacency(x, y, offsets);
             }
         }
 
-        /// <summary>
-        /// Gets the value at the specified index.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        public Septuplet<VectorXYInt> this[int index]
+        private static void FillOddQAdjacency(
+            Septuplet<VectorXYInt>[] values,
+            HexMapTopology topology)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _values[index];
-        }
+            int width = topology.Resolution.X;
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
-
-        private void FillRowLayoutTopology(bool evenRowsAreShifted)
-        {
-            for (int y = 0; y < Topology.Resolution.Y; y++)
+            for (int y = 0; y < topology.Resolution.Y; y++)
             {
-                var rowStart = y * Topology.Resolution.X;
-                var offsets = HexAdjacencyOffsets.GetRowOffsets(y, evenRowsAreShifted);
+                int rowStart = y * width;
 
-                for (int x = 0; x < Topology.Resolution.X; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    _values[rowStart + x] = CreateAdjacency(x, y, offsets);
+                    VectorXYInt[] offsets = (x & 1) == 0
+                        ? HexAdjacencyOffsets.ColumnUnshiftedVectors
+                        : HexAdjacencyOffsets.ColumnShiftedVectors;
+                    values[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
         }
 
-        private void FillColumnLayoutTopology(bool evenColumnsAreShifted)
+        private static void FillEvenQAdjacency(
+            Septuplet<VectorXYInt>[] values,
+            HexMapTopology topology)
         {
-            for (int y = 0; y < Topology.Resolution.Y; y++)
-            {
-                var rowStart = y * Topology.Resolution.X;
+            int width = topology.Resolution.X;
 
-                for (int x = 0; x < Topology.Resolution.X; x++)
+            for (int y = 0; y < topology.Resolution.Y; y++)
+            {
+                int rowStart = y * width;
+
+                for (int x = 0; x < width; x++)
                 {
-                    var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
-                    _values[rowStart + x] = CreateAdjacency(x, y, offsets);
+                    VectorXYInt[] offsets = (x & 1) == 0
+                        ? HexAdjacencyOffsets.ColumnShiftedVectors
+                        : HexAdjacencyOffsets.ColumnUnshiftedVectors;
+                    values[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
         }
 
-        private static Septuplet<VectorXYInt> CreateAdjacency(
-            int x,
-            int y,
-            sbyte[] offsets)
+        private static Septuplet<VectorXYInt> CreateAdjacency(int x, int y, VectorXYInt[] offsets)
         {
+            var main = new VectorXYInt(x, y);
+
             return new Septuplet<VectorXYInt>(
-                new VectorXYInt(x, y),
-                new VectorXYInt(x + offsets[0], y + offsets[1]),
-                new VectorXYInt(x + offsets[2], y + offsets[3]),
-                new VectorXYInt(x + offsets[4], y + offsets[5]),
-                new VectorXYInt(x + offsets[6], y + offsets[7]),
-                new VectorXYInt(x + offsets[8], y + offsets[9]),
-                new VectorXYInt(x + offsets[10], y + offsets[11]));
+                main,
+                main + offsets[0],
+                main + offsets[1],
+                main + offsets[2],
+                main + offsets[3],
+                main + offsets[4],
+                main + offsets[5]);
         }
     }
 }

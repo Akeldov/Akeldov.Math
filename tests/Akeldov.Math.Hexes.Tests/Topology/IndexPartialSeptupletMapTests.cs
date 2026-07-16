@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -18,14 +19,18 @@ public class IndexPartialSeptupletMapTests
     }
 
     [Test]
-    public void IndexPartialSeptupletMap_ImplementsIHexMap()
+    public void IndexPartialSeptupletMap_ImplementsISpatialHexMap()
     {
-        IHexMap<PartialSeptuplet<VectorXYInt>> topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
+        var geometry = new HexMapGeometry(3, 2, new VectorXY(10f, -20f), 2f, Layout.OddR);
+        var source = new IndexPartialSeptupletMap(geometry);
+        ISpatialHexMap<PartialSeptuplet<VectorXYInt>> topology = source;
 
         PartialSeptuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
+        Assert.That(source, Is.InstanceOf<SpatialHexMap<PartialSeptuplet<VectorXYInt>>>());
         Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Topology.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(topology.Geometry, Is.EqualTo(geometry));
         Assert.That(topology[1], Is.EqualTo(adjacency));
     }
 

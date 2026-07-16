@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -30,14 +31,18 @@ public class IndexSeptupletMapTests
     }
 
     [Test]
-    public void IndexSeptupletMap_ImplementsIHexMap()
+    public void IndexSeptupletMap_ImplementsISpatialHexMap()
     {
-        IHexMap<Septuplet<VectorXYInt>> topology = new IndexSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
+        var geometry = new HexMapGeometry(3, 2, new VectorXY(10f, -20f), 2f, Layout.OddR);
+        var source = new IndexSeptupletMap(geometry);
+        ISpatialHexMap<Septuplet<VectorXYInt>> topology = source;
 
         Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
+        Assert.That(source, Is.InstanceOf<SpatialHexMap<Septuplet<VectorXYInt>>>());
         Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Topology.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(topology.Geometry, Is.EqualTo(geometry));
         Assert.That(topology[1], Is.EqualTo(adjacency));
     }
 

@@ -77,15 +77,18 @@ public class ChromaticIndexMapTests
     }
 
     [Test]
-    public void ChromaticIndexMap_ImplementsIHexMap()
+    public void ChromaticIndexMap_ImplementsISpatialHexMap()
     {
-        var source = new ChromaticIndexMap(new HexMapTopology(3, 2, Layout.OddR));
-        IHexMap<byte> map = source;
+        var geometry = new HexMapGeometry(3, 2, new VectorXY(10f, -20f), 2f, Layout.OddR);
+        var source = new ChromaticIndexMap(geometry);
+        ISpatialHexMap<byte> map = source;
 
         byte chromaticIndex = source[5];
 
+        Assert.That(source, Is.InstanceOf<SpatialHexMap<byte>>());
         Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(map.Geometry, Is.EqualTo(geometry));
         Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(chromaticIndex));
         Assert.That(map[5], Is.EqualTo(chromaticIndex));
     }

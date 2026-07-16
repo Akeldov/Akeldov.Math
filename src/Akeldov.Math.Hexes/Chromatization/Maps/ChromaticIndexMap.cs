@@ -1,115 +1,117 @@
-using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Hexes.Geometry;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Chromatization
 {
     /// <summary>
     /// Initializes a new instance of the ChromaticIndexMap type.
     /// </summary>
-    public sealed class ChromaticIndexMap : IHexMap<byte>
+    public sealed class ChromaticIndexMap : SpatialHexMap<byte>
     {
-        private readonly byte[] _values;
-
         /// <summary>
         /// Initializes a new instance of the ChromaticIndexMap type.
         /// </summary>
         /// <param name="topology">The map topology.</param>
         public ChromaticIndexMap(HexMapTopology topology)
+            : this(new HexMapGeometry(topology, 1f))
         {
-            Topology = topology;
-            _values = new byte[topology.Count];
+        }
+
+        /// <summary>
+        /// Initializes a new instance with the specified spatial geometry.
+        /// </summary>
+        /// <param name="geometry">The spatial geometry of the map.</param>
+        public ChromaticIndexMap(HexMapGeometry geometry)
+            : base(geometry, CreateValues(geometry))
+        {
+        }
+
+        private static byte[] CreateValues(HexMapGeometry geometry)
+        {
+            HexMapTopology topology = geometry.Topology;
+            var values = new byte[topology.Count];
 
             switch (topology.Layout)
             {
                 case Layout.OddR:
-                    FillRowLayoutChromaticIndices(false);
+                    FillOddRChromaticIndices(values, topology);
                     break;
                 case Layout.EvenR:
-                    FillRowLayoutChromaticIndices(true);
+                    FillEvenRChromaticIndices(values, topology);
                     break;
                 case Layout.OddQ:
-                    FillColumnLayoutChromaticIndices(false);
+                    FillOddQChromaticIndices(values, topology);
                     break;
                 case Layout.EvenQ:
-                    FillColumnLayoutChromaticIndices(true);
+                    FillEvenQChromaticIndices(values, topology);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(topology));
+                    throw new ArgumentOutOfRangeException(nameof(geometry));
             }
+
+            return values;
         }
 
-        /// <summary>
-        /// Gets the map topology.
-        /// </summary>
-        public HexMapTopology Topology { get; }
-
-        /// <summary>
-        /// Gets the value at the specified index.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        public byte this[VectorXYInt index]
+        private static void FillOddRChromaticIndices(byte[] values, HexMapTopology topology)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
+            for (int y = 0; y < topology.Resolution.Y; y++)
             {
-                if (index.X < 0 || index.X >= Topology.Resolution.X ||
-                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
-                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+                int rowStart = y * topology.Resolution.X;
+                int qOffset = (y - (y & 1)) / 2;
 
-                return _values[GetFlatIndex(index)];
-            }
-        }
-
-        /// <summary>
-        /// Gets the value at the specified index.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        public byte this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _values[index];
-        }
-
-        private void FillRowLayoutChromaticIndices(bool shiftedRowsUseUpperOffset)
-        {
-            for (int y = 0; y < Topology.Resolution.Y; y++)
-            {
-                int rowStart = y * Topology.Resolution.X;
-                int qOffset = shiftedRowsUseUpperOffset
-                    ? (y + (y & 1)) / 2
-                    : (y - (y & 1)) / 2;
-
-                for (int x = 0; x < Topology.Resolution.X; x++)
+                for (int x = 0; x < topology.Resolution.X; x++)
                 {
-                    _values[rowStart + x] = (byte)PositiveModulo(x - qOffset - y, 3);
+                    int chromaticIndex = (x - qOffset - y) % 3;
+                    values[rowStart + x] = (byte)(chromaticIndex < 0 ? chromaticIndex + 3 : chromaticIndex);
                 }
             }
         }
 
-        private void FillColumnLayoutChromaticIndices(bool shiftedColumnsUseUpperOffset)
+        private static void FillEvenRChromaticIndices(byte[] values, HexMapTopology topology)
         {
-            for (int y = 0; y < Topology.Resolution.Y; y++)
+            for (int y = 0; y < topology.Resolution.Y; y++)
             {
-                int rowStart = y * Topology.Resolution.X;
+                int rowStart = y * topology.Resolution.X;
+                int qOffset = (y + (y & 1)) / 2;
 
-                for (int x = 0; x < Topology.Resolution.X; x++)
+                for (int x = 0; x < topology.Resolution.X; x++)
                 {
-                    int rOffset = shiftedColumnsUseUpperOffset
-                        ? (x + (x & 1)) / 2
-                        : (x - (x & 1)) / 2;
-
-                    _values[rowStart + x] = (byte)PositiveModulo(y - rOffset - x, 3);
+                    int chromaticIndex = (x - qOffset - y) % 3;
+                    values[rowStart + x] = (byte)(chromaticIndex < 0 ? chromaticIndex + 3 : chromaticIndex);
                 }
             }
         }
 
-        private static int PositiveModulo(int value, int divisor)
+        private static void FillOddQChromaticIndices(byte[] values, HexMapTopology topology)
         {
-            int result = value % divisor;
-            return result < 0 ? result + divisor : result;
+            for (int y = 0; y < topology.Resolution.Y; y++)
+            {
+                int rowStart = y * topology.Resolution.X;
+
+                for (int x = 0; x < topology.Resolution.X; x++)
+                {
+                    int rOffset = (x - (x & 1)) / 2;
+
+                    int chromaticIndex = (y - rOffset - x) % 3;
+                    values[rowStart + x] = (byte)(chromaticIndex < 0 ? chromaticIndex + 3 : chromaticIndex);
+                }
+            }
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
+        private static void FillEvenQChromaticIndices(byte[] values, HexMapTopology topology)
+        {
+            for (int y = 0; y < topology.Resolution.Y; y++)
+            {
+                int rowStart = y * topology.Resolution.X;
+
+                for (int x = 0; x < topology.Resolution.X; x++)
+                {
+                    int rOffset = (x + (x & 1)) / 2;
+
+                    int chromaticIndex = (y - rOffset - x) % 3;
+                    values[rowStart + x] = (byte)(chromaticIndex < 0 ? chromaticIndex + 3 : chromaticIndex);
+                }
+            }
+        }
     }
 }

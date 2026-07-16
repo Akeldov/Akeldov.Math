@@ -1,135 +1,129 @@
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
     /// Initializes a new instance of the HexCenterMap type.
     /// </summary>
-    public sealed class HexCenterMap : ISpatialHexMap<PointXY>
+    public sealed class HexCenterMap : SpatialHexMap<PointXY>
     {
-        private readonly PointXY[] _values;
+        /// <summary>
+        /// Initializes a new instance with the specified topology and unit hex radius.
+        /// </summary>
+        /// <param name="topology">The map topology.</param>
+        public HexCenterMap(HexMapTopology topology)
+            : this(new HexMapGeometry(topology, 1f))
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the HexCenterMap type.
         /// </summary>
         /// <param name="geometry">The geometry value.</param>
         public HexCenterMap(HexMapGeometry geometry)
+            : base(geometry, CreateValues(geometry))
         {
-            if (!geometry.Origin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+        }
 
-            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
-
-            float radius = geometry.Radius;
-
-            Geometry = geometry;
-            _values = new PointXY[geometry.Topology.Count];
+        private static PointXY[] CreateValues(HexMapGeometry geometry)
+        {
+            var values = new PointXY[geometry.Topology.Count];
 
             switch (geometry.Topology.Layout)
             {
                 case Layout.OddR:
-                    FillRowLayoutCenters(false, radius);
+                    FillOddRCenters(values, geometry);
                     break;
                 case Layout.EvenR:
-                    FillRowLayoutCenters(true, radius);
+                    FillEvenRCenters(values, geometry);
                     break;
                 case Layout.OddQ:
-                    FillColumnLayoutCenters(false, radius);
+                    FillOddQCenters(values, geometry);
                     break;
                 case Layout.EvenQ:
-                    FillColumnLayoutCenters(true, radius);
+                    FillEvenQCenters(values, geometry);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(geometry));
             }
+
+            return values;
         }
 
-        /// <summary>
-        /// Gets the Geometry value.
-        /// </summary>
-        public HexMapGeometry Geometry { get; }
-
-        /// <summary>
-        /// Gets the map topology.
-        /// </summary>
-        public HexMapTopology Topology => Geometry.Topology;
-
-        /// <summary>
-        /// Gets the value at the specified index.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        public PointXY this[VectorXYInt index]
+        private static void FillOddRCenters(PointXY[] values, HexMapGeometry geometry)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
+            int width = geometry.Topology.Resolution.X;
+
+            for (int y = 0; y < geometry.Topology.Resolution.Y; y++)
             {
-                if (index.X < 0 || index.X >= Topology.Resolution.X ||
-                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
-                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+                int rowStart = y * width;
+                float xShift = (y & 1) * geometry.Apothem;
+                float centerY = geometry.Origin.Y + 1.5f * geometry.Radius * y;
 
-                return _values[GetFlatIndex(index)];
-            }
-        }
-
-        /// <summary>
-        /// Gets the value at the specified index.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        public PointXY this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _values[index];
-        }
-
-        private void FillRowLayoutCenters(bool evenRowsAreShifted, float radius)
-        {
-            for (int y = 0; y < Topology.Resolution.Y; y++)
-            {
-                var rowStart = y * Topology.Resolution.X;
-                var rowIsShifted = ((y & 1) == 0) == evenRowsAreShifted;
-                var xShift = GetShiftRelativeToOrigin(rowIsShifted, evenRowsAreShifted);
-                var centerY = Geometry.Origin.Y + 1.5f * radius * y;
-
-                for (int x = 0; x < Topology.Resolution.X; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    _values[rowStart + x] = new PointXY(
-                        Geometry.Origin.X + x * 2f * Geometry.Apothem + xShift,
+                    values[rowStart + x] = new PointXY(
+                        geometry.Origin.X + x * 2f * geometry.Apothem + xShift,
                         centerY);
                 }
             }
         }
 
-        private void FillColumnLayoutCenters(bool evenColumnsAreShifted, float radius)
+        private static void FillEvenRCenters(PointXY[] values, HexMapGeometry geometry)
         {
-            for (int y = 0; y < Topology.Resolution.Y; y++)
+            int width = geometry.Topology.Resolution.X;
+
+            for (int y = 0; y < geometry.Topology.Resolution.Y; y++)
             {
-                var rowStart = y * Topology.Resolution.X;
-                var baseY = Geometry.Origin.Y + y * 2f * Geometry.Apothem;
+                int rowStart = y * width;
+                float xShift = -(y & 1) * geometry.Apothem;
+                float centerY = geometry.Origin.Y + 1.5f * geometry.Radius * y;
 
-                for (int x = 0; x < Topology.Resolution.X; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
-                    var yShift = GetShiftRelativeToOrigin(columnIsShifted, evenColumnsAreShifted);
-
-                    _values[rowStart + x] = new PointXY(
-                        Geometry.Origin.X + 1.5f * radius * x,
-                        baseY + yShift);
+                    values[rowStart + x] = new PointXY(
+                        geometry.Origin.X + x * 2f * geometry.Apothem + xShift,
+                        centerY);
                 }
             }
         }
 
-        private float GetShiftRelativeToOrigin(bool indexIsShifted, bool originIndexIsShifted)
+        private static void FillOddQCenters(PointXY[] values, HexMapGeometry geometry)
         {
-            if (indexIsShifted == originIndexIsShifted)
-                return 0f;
+            int width = geometry.Topology.Resolution.X;
 
-            return indexIsShifted ? Geometry.Apothem : -Geometry.Apothem;
+            for (int y = 0; y < geometry.Topology.Resolution.Y; y++)
+            {
+                int rowStart = y * width;
+                float baseY = geometry.Origin.Y + y * 2f * geometry.Apothem;
+
+                for (int x = 0; x < width; x++)
+                {
+                    values[rowStart + x] = new PointXY(
+                        geometry.Origin.X + 1.5f * geometry.Radius * x,
+                        baseY + (x & 1) * geometry.Apothem);
+                }
+            }
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Resolution.X + index.X;
+        private static void FillEvenQCenters(PointXY[] values, HexMapGeometry geometry)
+        {
+            int width = geometry.Topology.Resolution.X;
+
+            for (int y = 0; y < geometry.Topology.Resolution.Y; y++)
+            {
+                int rowStart = y * width;
+                float baseY = geometry.Origin.Y + y * 2f * geometry.Apothem;
+
+                for (int x = 0; x < width; x++)
+                {
+                    values[rowStart + x] = new PointXY(
+                        geometry.Origin.X + 1.5f * geometry.Radius * x,
+                        baseY - (x & 1) * geometry.Apothem);
+                }
+            }
+        }
 
     }
 }

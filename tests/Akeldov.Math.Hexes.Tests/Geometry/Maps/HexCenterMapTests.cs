@@ -10,6 +10,16 @@ namespace Akeldov.Math.Hexes.Tests.Geometry.Maps;
 public class HexCenterMapTests
 {
     [Test]
+    public void Constructor_WithTopology_UsesUnitRadiusGeometry()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.EvenQ);
+
+        var map = new HexCenterMap(topology);
+
+        Assert.That(map.Geometry, Is.EqualTo(new HexMapGeometry(topology, 1f)));
+    }
+
+    [Test]
     public void Constructor_UsesOriginAsZeroHexCenter_ForEveryLayout()
     {
         var origin = new VectorXY(10f, 20f);
@@ -261,6 +271,7 @@ public class HexCenterMapTests
 
         PointXY center = source[5];
 
+        Assert.That(source, Is.InstanceOf<SpatialHexMap<PointXY>>());
         Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(map.Geometry, Is.EqualTo(source.Geometry));
