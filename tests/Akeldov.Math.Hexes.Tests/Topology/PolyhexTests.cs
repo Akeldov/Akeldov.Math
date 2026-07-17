@@ -84,7 +84,7 @@ public class PolyhexTests
     }
 
     [Test]
-    public void GetExtended_ReturnsPolyhex()
+    public void GetExtended_ForSingleHex_AddsHexAndSixNeighbors()
     {
         var sourceMask = new bool[1, 1];
         sourceMask[0, 0] = true;
@@ -92,9 +92,42 @@ public class PolyhexTests
 
         Polyhex extended = polyhex.GetExtended();
 
-        Assert.That(extended.QRSResolution.Q, Is.EqualTo(3));
-        Assert.That(extended.QRSResolution.R, Is.EqualTo(3));
-        Assert.That(extended[1, 1], Is.True);
+        var expected = new[,]
+        {
+            { false, true, true },
+            { true, true, true },
+            { true, true, false }
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(extended.QRSResolution.Q, Is.EqualTo(3));
+            Assert.That(extended.QRSResolution.R, Is.EqualTo(3));
+            Assert.That(extended.HexCount, Is.EqualTo(7));
+            Assert.That(extended.ToBoolArray(), Is.EqualTo(expected));
+        });
+    }
+
+    [Test]
+    public void GetExtended_ForInteriorHex_AddsInteriorNeighbors()
+    {
+        var sourceMask = new bool[3, 3];
+        sourceMask[1, 1] = true;
+        var polyhex = new Polyhex(sourceMask);
+
+        Polyhex extended = polyhex.GetExtended();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(extended.HexCount, Is.EqualTo(7));
+            Assert.That(extended[2, 2], Is.True);
+            Assert.That(extended[3, 2], Is.True);
+            Assert.That(extended[1, 2], Is.True);
+            Assert.That(extended[2, 3], Is.True);
+            Assert.That(extended[2, 1], Is.True);
+            Assert.That(extended[1, 3], Is.True);
+            Assert.That(extended[3, 1], Is.True);
+        });
     }
 
     [Test]

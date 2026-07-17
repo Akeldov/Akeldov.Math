@@ -40,43 +40,23 @@ namespace Akeldov.Math.Hexes.Topology
         {
             var res = new bool[mask.GetLength(0) + 2, mask.GetLength(1) + 2];
 
-            for (int i = 0; i < res.GetLength(0); i++)
+            for (int q = 0; q < mask.GetLength(0); q++)
             {
-                for (int j = 0; j < res.GetLength(1); j++)
+                for (int r = 0; r < mask.GetLength(1); r++)
                 {
-                    var isWithinSourceMatrix =
-                        i > 0 &&
-                        i < res.GetLength(0) - 1 &&
-                        j > 0 &&
-                        j < res.GetLength(1) - 1;
+                    if (!mask[q, r])
+                        continue;
 
-                    if (isWithinSourceMatrix)
-                    {
-                        if (mask[i - 1, j - 1])
-                        {
-                            res[i, j] = true;
-                        }
-                        else
-                        {
-                            res[i, j] = false;
-                        }
-                    }
-                    else
-                    {
-                        var sextuple = mask.GetSextuple(i - 1, j - 1);
+                    int targetQ = q + 1;
+                    int targetR = r + 1;
 
-                        var hasTrue = false;
-                        for (int k = 0; k < sextuple.Count; k++)
-                        {
-                            if (sextuple[k])
-                            {
-                                hasTrue = true;
-                                break;
-                            }
-                        }
-
-                        res[i, j] = hasTrue;
-                    }
+                    res[targetQ, targetR] = true;
+                    res[targetQ + 1, targetR] = true;
+                    res[targetQ - 1, targetR] = true;
+                    res[targetQ, targetR + 1] = true;
+                    res[targetQ, targetR - 1] = true;
+                    res[targetQ - 1, targetR + 1] = true;
+                    res[targetQ + 1, targetR - 1] = true;
                 }
             }
 
