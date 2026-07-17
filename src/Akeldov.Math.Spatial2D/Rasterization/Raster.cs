@@ -11,16 +11,32 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Initializes a new raster with the specified resolution and values.
         /// </summary>
-        /// <param name="resolution">The raster resolution in cells.</param>
+        /// <param name="resolution">The raster resolution in cells. Both components must be positive and their product must fit in a one-dimensional array.</param>
         /// <param name="values">
         /// The cell values in row-major order. The array is retained as raster state and must contain one value per raster cell.
         /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when a resolution component is not positive or the raster cell count exceeds a 32-bit array length.
+        /// </exception>
         public Raster(VectorXYInt resolution, TValue[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
 
-            int expectedCount = checked(resolution.X * resolution.Y);
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(resolution),
+                    resolution,
+                    "Raster resolution components must be positive.");
+
+            long cellCount = (long)resolution.X * resolution.Y;
+            if (cellCount > int.MaxValue)
+                throw new ArgumentOutOfRangeException(
+                    nameof(resolution),
+                    resolution,
+                    "Raster cell count must fit in a one-dimensional array.");
+
+            int expectedCount = (int)cellCount;
 
             if (values.Length != expectedCount)
                 throw new ArgumentException("Raster value count must match the raster grid resolution.", nameof(values));

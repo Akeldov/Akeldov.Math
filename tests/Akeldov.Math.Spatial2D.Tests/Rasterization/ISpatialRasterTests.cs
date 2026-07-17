@@ -5,6 +5,29 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class ISpatialRasterTests
 {
     [Test]
+    public void SpatialRaster_WhenGeometryHasDefaultValue_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new SpatialRaster<int>(default, Array.Empty<int>()));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometry"));
+    }
+
+    [Test]
+    public void SpatialRaster_WhenCellCountExceedsArrayCapacity_Throws()
+    {
+        var geometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            VectorXY.One,
+            new VectorXYInt(50_000, 50_000));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new SpatialRaster<int>(geometry, Array.Empty<int>()));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometry"));
+    }
+
+    [Test]
     public void SpatialRaster_ImplementsSpatialRasterContract()
     {
         var geometry = new RasterGeometry(

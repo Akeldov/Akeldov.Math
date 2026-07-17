@@ -19,7 +19,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsBmp_WhenRasterHasZeroSize_Throws()
     {
-        var raster = new SpatialRaster<Gray8BitColor>(default, Array.Empty<Gray8BitColor>());
+        IRaster<Gray8BitColor> raster = new ZeroSizeRaster<Gray8BitColor>();
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray8.bmp");
 
         if (File.Exists(path))
@@ -32,7 +32,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsPng_WhenRasterHasZeroSize_Throws()
     {
-        var raster = new SpatialRaster<Gray16BitColor>(default, Array.Empty<Gray16BitColor>());
+        IRaster<Gray16BitColor> raster = new ZeroSizeRaster<Gray16BitColor>();
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray16.png");
 
         if (File.Exists(path))
@@ -149,5 +149,16 @@ public class ContourRasterizationImageTests
         const float falloffDistance = 0.2f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
         return new Gray16BitColor((ushort)System.MathF.Round(normalized * ushort.MaxValue));
+    }
+
+    private sealed class ZeroSizeRaster<TValue> : IRaster<TValue>
+    {
+        public VectorXYInt Resolution => default;
+
+        public TValue this[VectorXYInt index] => throw new ArgumentOutOfRangeException(nameof(index));
+
+        public TValue this[int x, int y] => throw new ArgumentOutOfRangeException(nameof(x));
+
+        public TValue this[int index] => throw new ArgumentOutOfRangeException(nameof(index));
     }
 }

@@ -12,6 +12,8 @@ Reusable non-spatial rasterization strategies implement `IRasterizer<TSource, TV
 `Raster<TValue>` stores the same rectangular value layout without world-space origin or size.
 Both implement `IGrid<TValue>`, so image export works for either spatial or non-spatial rasters.
 
+Raster dimensions must be positive, their product must fit in a one-dimensional array, and the retained row-major value array must contain exactly one value per cell. `SpatialRaster<TValue>` additionally requires a valid, non-default `RasterGeometry`.
+
 ## Topics
 
 - [RasterGeometry](raster-geometry.md)
