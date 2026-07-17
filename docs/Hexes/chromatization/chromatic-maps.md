@@ -9,18 +9,18 @@ Chromatic maps store chromatic class values by hex index.
 - Exposes dimensions and layout metadata.
 
 ```csharp
-var map = new ChromaticIndexMap(
+var geometry = new HexMapGeometry(
     width: 5,
     height: 4,
-    layout: Layout.OddR);
-
-var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
     origin: VectorXY.Zero,
-    apothem: 8f,
-    chromaticIndexToColor: ToColor);
+    radius: 8f,
+    layout: Layout.OddR);
+var map = new ChromaticIndexMap(geometry);
 
-RasterGeometry grid = rasterizer.CreateGrid(map, pixelsPerApothem: 24f);
-SpatialRaster<RGBA16BitColor> raster = rasterizer.Rasterize(map, grid);
+SpatialRaster<RGBA16BitColor> raster = map.Rasterize(
+    pixelsPerApothem: 24f,
+    margin: 0f,
+    colorSelector: ToColor);
 
 raster.SaveAsPng("chromatic-index-map-odd-r-rgba16.png");
 

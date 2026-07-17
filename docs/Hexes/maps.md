@@ -13,19 +13,18 @@ Maps are general hex-indexed value containers. Domain-specific maps are document
 `HexCenterMap` can be rasterized by mapping each hex center to a color.
 
 ```csharp
-var map = new HexCenterMap(
+var geometry = new HexMapGeometry(
     width: 5,
     height: 4,
     origin: VectorXY.Zero,
-    apothem: 8f,
+    radius: 8f,
     layout: Layout.OddR);
+var map = new HexCenterMap(geometry);
 
-RasterGeometry grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(
-    map,
-    pixelsPerApothem: 24f);
-
-SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(ToColor)
-    .Rasterize(map, grid);
+SpatialRaster<RGBA16BitColor> raster = map.Rasterize(
+    pixelsPerApothem: 24f,
+    margin: 0f,
+    colorSelector: ToColor);
 
 raster.SaveAsPng("hex-center-map-odd-r-rgba16.png");
 
@@ -44,18 +43,18 @@ static RGBA16BitColor ToColor(PointXY center)
 `ChromaticIndexMap` is a concrete map implementation that assigns repeating chromatic classes to hex indexes.
 
 ```csharp
-var map = new ChromaticIndexMap(
+var geometry = new HexMapGeometry(
     width: 5,
     height: 4,
-    layout: Layout.OddR);
-
-var rasterizer = new HexFieldChromatizationRGBA16BitRasterizer(
     origin: VectorXY.Zero,
-    apothem: 8f,
-    chromaticIndexToColor: ToColor);
+    radius: 8f,
+    layout: Layout.OddR);
+var map = new ChromaticIndexMap(geometry);
 
-RasterGeometry grid = rasterizer.CreateGrid(map, pixelsPerApothem: 24f);
-SpatialRaster<RGBA16BitColor> raster = rasterizer.Rasterize(map, grid);
+SpatialRaster<RGBA16BitColor> raster = map.Rasterize(
+    pixelsPerApothem: 24f,
+    margin: 0f,
+    colorSelector: ToColor);
 
 raster.SaveAsPng("chromatic-index-map-odd-r-rgba16.png");
 

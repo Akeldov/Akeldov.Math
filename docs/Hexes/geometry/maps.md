@@ -9,19 +9,18 @@ Geometry maps sample Spatial2D values from a hex field.
 - Preserves layout and geometric parameters.
 
 ```csharp
-var map = new HexCenterMap(
+var geometry = new HexMapGeometry(
     width: 5,
     height: 4,
     origin: VectorXY.Zero,
-    apothem: 8f,
+    radius: 8f,
     layout: Layout.OddR);
+var map = new HexCenterMap(geometry);
 
-RasterGeometry grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(
-    map,
-    pixelsPerApothem: 24f);
-
-SpatialRaster<RGBA16BitColor> raster = new HexFieldGeometryRGBA16BitRasterizer(ToColor)
-    .Rasterize(map, grid);
+SpatialRaster<RGBA16BitColor> raster = map.Rasterize(
+    pixelsPerApothem: 24f,
+    margin: 0f,
+    colorSelector: ToColor);
 
 raster.SaveAsPng("hex-center-map-odd-r-rgba16.png");
 
