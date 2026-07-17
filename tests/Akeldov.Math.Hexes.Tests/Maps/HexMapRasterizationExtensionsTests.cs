@@ -35,6 +35,59 @@ public class HexMapRasterizationExtensionsTests
     }
 
     [Test]
+    public void SpatialHexMapRasterize_WithCustomRasterGeometry_UsesWorldCoordinates()
+    {
+        var geometry = new HexMapGeometry(
+            width: 1,
+            height: 1,
+            origin: new VectorXY(10f, 20f),
+            radius: 2f,
+            layout: Layout.OddR);
+        var map = new SpatialHexMap<int>(geometry, new[] { 7 });
+        var mapCenterGrid = new RasterGeometry(
+            new PointXY(9.5f, 19.5f),
+            VectorXY.One,
+            VectorXYInt.One);
+        var outsideGrid = new RasterGeometry(
+            new PointXY(100f, 100f),
+            VectorXY.One,
+            VectorXYInt.One);
+
+        SpatialRaster<int> mapCenterRaster = map.Rasterize(mapCenterGrid, value => value);
+        SpatialRaster<int> outsideRaster = map.Rasterize(outsideGrid, value => value);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mapCenterRaster.Geometry, Is.EqualTo(mapCenterGrid));
+            Assert.That(mapCenterRaster[0], Is.EqualTo(7));
+            Assert.That(outsideRaster.Geometry, Is.EqualTo(outsideGrid));
+            Assert.That(outsideRaster[0], Is.Zero);
+        });
+    }
+
+    [Test]
+    public void SpatialHexMapRasterize_WhenArgumentsAreNull_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, radius: 1f, layout: Layout.OddR);
+        ISpatialHexMap<int> map = new SpatialHexMap<int>(geometry, new[] { 7 });
+        ISpatialHexMap<int> nullMap = null!;
+        RasterGeometry rasterGeometry = geometry.ToRasterGeometry(pixelsPerApothem: 1f);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => nullMap.Rasterize(1f, 0f, value => value))!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => nullMap.Rasterize(rasterGeometry, value => value))!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => map.Rasterize<int, int>(rasterGeometry, null!))!.ParamName,
+                Is.EqualTo("colorSelector"));
+        });
+    }
+
+    [Test]
     public void HexMapTopologyRasterize_WithMargin_ExpandsGridByMarginOnEachSide()
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);

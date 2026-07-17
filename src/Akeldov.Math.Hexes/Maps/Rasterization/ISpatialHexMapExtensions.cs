@@ -1,12 +1,14 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Regions;
 using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 
 namespace Akeldov.Math.Hexes
 {
+    /// <summary>
+    /// Provides rasterization extensions for spatial hex maps.
+    /// </summary>
     public static class ISpatialHexMapExtensions
     {
         /// <summary>
@@ -36,16 +38,47 @@ namespace Akeldov.Math.Hexes
             return map.Geometry.ToRasterGeometry(pixelsPerApothem, margin);
         }
 
+        /// <summary>
+        /// Rasterizes a spatial hex map on a grid that covers the whole map and an optional margin.
+        /// </summary>
+        /// <typeparam name="TValue">The map value type.</typeparam>
+        /// <typeparam name="TColor">The raster value type.</typeparam>
+        /// <param name="map">The spatial hex map.</param>
+        /// <param name="pixelsPerApothem">The raster resolution density in pixels per hex apothem.</param>
+        /// <param name="margin">The non-negative margin added to each side of the map bounding box. The unit is the coordinate-space unit.</param>
+        /// <param name="colorSelector">The function that maps each map value to a raster value.</param>
+        /// <returns>A new spatial raster sampled in the coordinate space of the map geometry.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="colorSelector"/> is <see langword="null"/>.
+        /// </exception>
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
             this ISpatialHexMap<TValue> map,
             float pixelsPerApothem,
             float margin,
             Func<TValue, TColor> colorSelector)
         {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
             var grid = map.Geometry.ToRasterGeometry(pixelsPerApothem, margin);
             return map.Rasterize(grid, colorSelector);
         }
 
+        /// <summary>
+        /// Rasterizes a spatial hex map by sampling the center of every cell in the specified raster geometry.
+        /// </summary>
+        /// <typeparam name="TValue">The map value type.</typeparam>
+        /// <typeparam name="TColor">The raster value type.</typeparam>
+        /// <param name="map">The spatial hex map.</param>
+        /// <param name="rasterGeometry">The world-space raster geometry to sample.</param>
+        /// <param name="colorSelector">The function that maps each map value to a raster value.</param>
+        /// <returns>
+        /// A new spatial raster. Cells whose centers lie outside the map topology retain the default
+        /// value of <typeparamref name="TColor"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="colorSelector"/> is <see langword="null"/>.
+        /// </exception>
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
             this ISpatialHexMap<TValue> map,
             RasterGeometry rasterGeometry,
@@ -59,28 +92,24 @@ namespace Akeldov.Math.Hexes
 
             int count = checked(rasterGeometry.Resolution.X * rasterGeometry.Resolution.Y);
             var values = new TColor[count];
-            var geometry = new HexMapGeometry(
-                map.Topology.Resolution.X,
-                map.Topology.Resolution.Y,
-                radius: 1f,
-                layout: map.Topology.Layout);
-            Rectangle bounds = geometry.GetBoundingBox();
-            float pixelWidth = bounds.Size.X / rasterGeometry.Resolution.X;
-            float pixelHeight = bounds.Size.Y / rasterGeometry.Resolution.Y;
+            HexMapGeometry geometry = map.Geometry;
+            HexMapTopology topology = map.Topology;
+            float pixelWidth = rasterGeometry.CellSize.X;
+            float pixelHeight = rasterGeometry.CellSize.Y;
 
             for (int y = 0; y < rasterGeometry.Resolution.Y; y++)
             {
-                float pointY = bounds.Min.Y + (y + 0.5f) * pixelHeight;
+                float pointY = rasterGeometry.Origin.Y + (y + 0.5f) * pixelHeight;
 
                 for (int x = 0; x < rasterGeometry.Resolution.X; x++)
                 {
                     var point = new PointXY(
-                        bounds.Min.X + (x + 0.5f) * pixelWidth,
+                        rasterGeometry.Origin.X + (x + 0.5f) * pixelWidth,
                         pointY);
-                    VectorXYInt hexIndex = point.ToXYIndex(geometry.Radius, geometry.Origin, map.Topology.Layout);
+                    VectorXYInt hexIndex = point.ToXYIndex(geometry.Radius, geometry.Origin, topology.Layout);
 
-                    if ((uint)hexIndex.X < (uint)map.Topology.Resolution.X &&
-                        (uint)hexIndex.Y < (uint)map.Topology.Resolution.Y)
+                    if ((uint)hexIndex.X < (uint)topology.Resolution.X &&
+                        (uint)hexIndex.Y < (uint)topology.Resolution.Y)
                     {
                         values[y * rasterGeometry.Resolution.X + x] = colorSelector(map[hexIndex]);
                     }
