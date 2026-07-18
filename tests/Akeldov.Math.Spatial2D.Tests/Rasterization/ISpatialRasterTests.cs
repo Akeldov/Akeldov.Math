@@ -44,4 +44,23 @@ public class ISpatialRasterTests
             Assert.That(raster[1], Is.EqualTo(20));
         });
     }
+
+    [Test]
+    public void SpatialRaster_InheritsRaster()
+    {
+        var geometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            new VectorXY(2f, 1f),
+            new VectorXYInt(2, 1));
+        var spatialRaster = new SpatialRaster<int>(geometry, new[] { 10, 20 });
+
+        Raster<int> raster = spatialRaster;
+        raster[1] = 30;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(raster.Resolution, Is.EqualTo(geometry.Resolution));
+            Assert.That(spatialRaster[1], Is.EqualTo(30));
+        });
+    }
 }

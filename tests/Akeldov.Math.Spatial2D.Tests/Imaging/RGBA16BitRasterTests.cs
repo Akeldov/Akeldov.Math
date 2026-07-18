@@ -19,20 +19,6 @@ public class RGBA16BitRasterTests
     }
 
     [Test]
-    public void RGBA16BitRasterClone_WhenCloneBuffersChange_DoesNotChangeSource()
-    {
-        var raster = new SpatialRaster<RGBA16BitColor>(CreateGrid(), new RGBA16BitColor[6]);
-
-        var clone = raster.Clone();
-        var color = new RGBA16BitColor(1, 2, 3, 4);
-
-        clone[1, 2] = color;
-
-        Assert.That(raster[1, 2], Is.EqualTo(default(RGBA16BitColor)));
-        Assert.That(clone[1, 2], Is.EqualTo(color));
-    }
-
-    [Test]
     public void RGBA16BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>

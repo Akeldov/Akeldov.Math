@@ -101,15 +101,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             }
         }
 
-        /// <summary>
-        /// Creates a raster with the same resolution and a copied value array.
-        /// </summary>
-        /// <returns>A new raster whose value array is new, mutable, and owned by the caller.</returns>
-        public Raster<TValue> Clone()
-        {
-            return new Raster<TValue>(Resolution, (TValue[])Values.Clone());
-        }
-
         private int GetLinearIndex(int x, int y)
         {
             if ((uint)x >= (uint)Resolution.X)
