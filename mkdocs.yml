@@ -62,14 +62,20 @@ nav:
                   - BezierCurve: Spatial2D/curves/bezier/bezier-curve.md
           - Contours:
               - Overview: Spatial2D/contours/index.md
-              - Circle: Spatial2D/contours/circle.md
-              - ParameterizedCircle: Spatial2D/contours/parameterized-circle.md
-              - RectangleContour: Spatial2D/contours/rectangle-contour.md
-              - ParameterizedRectangleContour: Spatial2D/contours/parameterized-rectangle-contour.md
-              - OrientedRectangleContour: Spatial2D/contours/oriented-rectangle-contour.md
-              - ParameterizedOrientedRectangleContour: Spatial2D/contours/parameterized-oriented-rectangle-contour.md
-              - CompositeContour: Spatial2D/contours/composite-contour.md
-              - ParameterizedCompositeContour: Spatial2D/contours/parameterized-composite-contour.md
+              - Circular:
+                  - Overview: Spatial2D/contours/circular/index.md
+                  - Circle: Spatial2D/contours/circle.md
+                  - ParameterizedCircle: Spatial2D/contours/parameterized-circle.md
+              - Rectangular:
+                  - Overview: Spatial2D/contours/rectangular/index.md
+                  - RectangleContour: Spatial2D/contours/rectangle-contour.md
+                  - ParameterizedRectangleContour: Spatial2D/contours/parameterized-rectangle-contour.md
+                  - OrientedRectangleContour: Spatial2D/contours/oriented-rectangle-contour.md
+                  - ParameterizedOrientedRectangleContour: Spatial2D/contours/parameterized-oriented-rectangle-contour.md
+              - Composite:
+                  - Overview: Spatial2D/contours/composite/index.md
+                  - CompositeContour: Spatial2D/contours/composite-contour.md
+                  - ParameterizedCompositeContour: Spatial2D/contours/parameterized-composite-contour.md
           - Regions:
               - Overview: Spatial2D/regions/index.md
               - Disk: Spatial2D/regions/disk.md

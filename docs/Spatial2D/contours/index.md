@@ -32,15 +32,25 @@ var contour = new CompositeContour(new IFinitePath[]
 bool isInside = contour.Encloses(new PointXY(3f, 0f));
 ```
 
-## Implementations
+## [Circular](circular/index.md)
 
 The thumbnails use the same curve rasterizers as the curve overview. Non-parameterized contours show boundary distance; parameterized contours show thickness growing with the curve coordinate.
 
 | <span class="curve-overview-heading">Non-Parameterized</span> | Parameterized | <span class="curve-coordinate-domain">Coordinate Domain</span> | Notes |
 |---|---|---|---|
 | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Circle distance raster" src="../../assets/spatial2d/curves/circle-distance.png"><br><span class="curve-overview-link">[`Circle`](circle.md)</span> | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Parameterized circle growing-thickness raster" src="../../assets/spatial2d/contours/parameterized-circle-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedCircle`](parameterized-circle.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Circular boundary; parameterized version selects a start angle and traversal direction. |
+
+## [Rectangular](rectangular/index.md)
+
+| <span class="curve-overview-heading">Non-Parameterized</span> | Parameterized | <span class="curve-coordinate-domain">Coordinate Domain</span> | Notes |
+|---|---|---|---|
 | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Rectangle contour distance raster" src="../../assets/spatial2d/contours/rectangle-contour-distance.png"><br><span class="curve-overview-link">[`RectangleContour`](rectangle-contour.md)</span> | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Parameterized rectangle contour growing-thickness raster" src="../../assets/spatial2d/contours/parameterized-rectangle-contour-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedRectangleContour`](parameterized-rectangle-contour.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Axis-aligned rectangular boundary. |
 | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Oriented rectangle contour distance raster" src="../../assets/spatial2d/contours/oriented-rectangle-contour-distance.png"><br><span class="curve-overview-link">[`OrientedRectangleContour`](oriented-rectangle-contour.md)</span> | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Parameterized oriented rectangle contour growing-thickness raster" src="../../assets/spatial2d/contours/parameterized-oriented-rectangle-contour-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedOrientedRectangleContour`](parameterized-oriented-rectangle-contour.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Rectangular boundary with world-space rotation. |
+
+## [Composite](composite/index.md)
+
+| <span class="curve-overview-heading">Non-Parameterized</span> | Parameterized | <span class="curve-coordinate-domain">Coordinate Domain</span> | Notes |
+|---|---|---|---|
 | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Composite contour distance raster" src="../../assets/spatial2d/contours/composite-contour-distance.png"><br><span class="curve-overview-link">[`CompositeContour`](composite-contour.md)</span> | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Parameterized composite contour growing-thickness raster" src="../../assets/spatial2d/contours/parameterized-composite-contour-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedCompositeContour`](parameterized-composite-contour.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Closed chain composed from finite paths. |
 
 Use contours for boundaries. Use [regions](../regions/index.md) when you need filled area membership.
