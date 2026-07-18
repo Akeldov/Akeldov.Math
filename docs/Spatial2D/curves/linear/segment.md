@@ -53,7 +53,7 @@ Segment longer = closed.Extend(2f);
 
 Degenerate segments are allowed. For a zero-length `Segment`, projection returns the endpoint.
 
-Use `ParameterizedSegmentChain` when an open polyline should behave as one finite path with a single length coordinate.
+Use [`ParameterizedSegmentChain`](parameterized-segment-chain.md) when an open polyline should behave as one finite path with a single length coordinate.
 
 ```csharp
 var chain = new ParameterizedSegmentChain(

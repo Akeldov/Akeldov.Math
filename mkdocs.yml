@@ -43,16 +43,20 @@ nav:
               - Projections and Distances: Spatial2D/curves/projections-and-distances.md
               - Intersections: Spatial2D/curves/intersections.md
               - Linear:
+                  - Overview: Spatial2D/curves/linear/index.md
                   - Line: Spatial2D/curves/linear/line.md
                   - Ray: Spatial2D/curves/linear/ray.md
                   - Segment: Spatial2D/curves/linear/segment.md
                   - ParameterizedLine: Spatial2D/curves/linear/parameterized-line.md
                   - ParameterizedSegment: Spatial2D/curves/linear/parameterized-segment.md
+                  - ParameterizedSegmentChain: Spatial2D/curves/linear/parameterized-segment-chain.md
               - Circular:
+                  - Overview: Spatial2D/curves/circular/index.md
                   - Circle: Spatial2D/curves/circular/circle.md
                   - Arc: Spatial2D/curves/circular/arc.md
                   - ParameterizedArc: Spatial2D/curves/circular/parameterized-arc.md
               - Bezier:
+                  - Overview: Spatial2D/curves/bezier/index.md
                   - QuadraticBezier: Spatial2D/curves/bezier/quadratic-bezier.md
                   - CubicBezier: Spatial2D/curves/bezier/cubic-bezier.md
                   - BezierCurve: Spatial2D/curves/bezier/bezier-curve.md

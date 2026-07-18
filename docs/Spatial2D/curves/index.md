@@ -5,7 +5,7 @@ They live in the `Akeldov.Math.Spatial2D.Curves` namespace and are used by conto
 
 Every curve can measure point distance, project a point onto itself, and report intersections with a ray.
 Parameterized curves additionally expose a length-based curve coordinate through `GetPoint` and `ProjectWithParameter`.
-For open polylines, `ParameterizedSegmentChain` composes consecutive directed segments behind one finite-path API.
+For open polylines, [`ParameterizedSegmentChain`](linear/parameterized-segment-chain.md) composes consecutive directed segments behind one finite-path API.
 
 Angles are expressed in radians by default. Degree-based members use the `Deg` suffix.
 
@@ -29,6 +29,9 @@ uses the library's length-based curve coordinate.
 
 ## Topics
 
+- [Linear Curves](linear/index.md)
+- [Circular Curves](circular/index.md)
+- [Bezier Curves](bezier/index.md)
 - [Curve Interfaces](curve-interfaces.md)
 - [Projections and Distances](projections-and-distances.md)
 - [Intersections](intersections.md)
