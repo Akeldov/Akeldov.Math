@@ -21,6 +21,21 @@ The library has two raster contracts and corresponding implementations:
 
 Raster dimensions must be positive, their product must fit in a one-dimensional array, and the retained row-major value array must contain exactly one value per cell. `SpatialRaster<TValue>` additionally requires a valid, non-default `RasterGeometry`.
 
+## Field Rasterization
+
+Any `IField<TValue>` can be sampled at raster cell centers and mapped to a raster value type with `Rasterize`:
+
+```csharp
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+SpatialRaster<Gray8BitColor> raster = field.Rasterize(
+    grid,
+    value => value ? Gray8BitColor.White : Gray8BitColor.Black);
+```
+
+Cells are sampled in row-major order, starting with the lower-left row. The returned `SpatialRaster<TValue>` has a new mutable value array owned by the caller.
+
 ## Color Types
 
 Four color value types are available in `Akeldov.Math.Spatial2D.Imaging`:
