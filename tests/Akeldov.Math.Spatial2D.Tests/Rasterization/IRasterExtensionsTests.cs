@@ -37,24 +37,6 @@ public class IRasterExtensionsTests
     }
 
     [Test]
-    public void MapValues_WithGeometry_ReturnsSpatialRaster()
-    {
-        IRaster<int> raster = new TestRaster<int>(2, 1, new[] { 10, 20 });
-        var geometry = new RasterGeometry(
-            new PointXY(10f, 20f),
-            new VectorXY(30f, 40f),
-            new VectorXYInt(2, 1));
-
-        SpatialRaster<int> result = raster.MapValues(geometry, value => value * 2);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Geometry, Is.EqualTo(geometry));
-            Assert.That(result.Values, Is.EqualTo(new[] { 20, 40 }));
-        });
-    }
-
-    [Test]
     public void MapValues_WhenArgumentsAreInvalid_Throws()
     {
         IRaster<int> raster = new TestRaster<int>(2, 1, new[] { 10, 20 });
@@ -84,15 +66,6 @@ public class IRasterExtensionsTests
             Assert.That(
                 Assert.Throws<ArgumentNullException>(() => spatialRaster.MapValues((Func<int, int>)null!))!.ParamName,
                 Is.EqualTo("selector"));
-            Assert.That(
-                Assert.Throws<ArgumentNullException>(() => nullRaster.MapValues(geometry, value => value))!.ParamName,
-                Is.EqualTo("raster"));
-            Assert.That(
-                Assert.Throws<ArgumentNullException>(() => raster.MapValues(geometry, (Func<int, int>)null!))!.ParamName,
-                Is.EqualTo("selector"));
-            Assert.That(
-                Assert.Throws<ArgumentException>(() => raster.MapValues(mismatchedGeometry, value => value))!.ParamName,
-                Is.EqualTo("geometry"));
         });
     }
 

@@ -1,4 +1,4 @@
-namespace Akeldov.Math.Spatial2D
+namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
     /// Represents a rectangular raster of values.

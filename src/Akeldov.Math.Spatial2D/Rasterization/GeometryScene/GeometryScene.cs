@@ -1,4 +1,3 @@
-using Akeldov.Math.Spatial2D.Imaging;
 using System;
 using System.Collections.Generic;
 

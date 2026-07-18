@@ -20,6 +20,8 @@ public class HexVertexTripletGridTests
             typeof(IndexPartialSeptupletGrid),
             typeof(BarycentricTripletGrid),
             typeof(BarycentricPartialTripletGrid),
+            typeof(ChromaticBarycentricTripletGrid),
+            typeof(ChromaticBarycentricPartialTripletGrid),
             typeof(ChromaticIndexTripletGrid),
             typeof(ChromaticIndexPartialTripletGrid),
         };
@@ -66,6 +68,8 @@ public class HexVertexTripletGridTests
             typeof(IndexPartialSeptupletGrid),
             typeof(BarycentricTripletGrid),
             typeof(BarycentricPartialTripletGrid),
+            typeof(ChromaticBarycentricTripletGrid),
+            typeof(ChromaticBarycentricPartialTripletGrid),
             typeof(ChromaticIndexTripletGrid),
             typeof(ChromaticIndexPartialTripletGrid),
         };
