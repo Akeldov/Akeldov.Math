@@ -68,6 +68,33 @@ public class InfluenceSourceWeightValidationTests
         Assert.That(exception!.ParamName, Is.EqualTo("position"));
     }
 
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.NegativeInfinity)]
+    public void BoolPointInfluenceSource_WhenWeightIsInvalid_Throws(float weight)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new BoolPointInfluenceSource(weight, new PointXY(0f, 0f), true));
+    }
+
+    [TestCase(0f)]
+    [TestCase(float.PositiveInfinity)]
+    public void BoolPointInfluenceSource_WhenWeightIsAllowed_DoesNotThrow(float weight)
+    {
+        Assert.DoesNotThrow(() =>
+            new BoolPointInfluenceSource(weight, new PointXY(0f, 0f), true));
+    }
+
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void BoolPointInfluenceSource_WhenPositionCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new BoolPointInfluenceSource(1f, new PointXY(x, y), true));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("position"));
+    }
+
     [Test]
     public void PointInfluenceSourceDistance_WhenPointCoordinateIsInvalid_Throws()
     {
