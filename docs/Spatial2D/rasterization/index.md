@@ -2,17 +2,37 @@
 
 Rasterization samples geometry on a rectangular grid.
 
-Spatial raster grids, rasters, rasterizers, and scene composition live in
+Raster geometry, rasters, rasterizers, and scene composition live in
 the `Akeldov.Math.Spatial2D.Rasterization` namespace.
 Image export helpers and color types live in `Akeldov.Math.Spatial2D.Imaging`.
 Reusable spatial rasterization strategies implement `ISpatialRasterizer<TSource, TValue>`.
 Reusable non-spatial rasterization strategies implement `IRasterizer<TSource, TValue>`.
 
-`SpatialRaster<TValue>` stores values sampled on a `RasterGeometry`.
-`Raster<TValue>` stores the same rectangular value layout without world-space origin or size.
-Both implement `IGrid<TValue>`, so image export works for either spatial or non-spatial rasters.
+## Raster Types
+
+The library has two raster contracts and corresponding implementations:
+
+| Contract | Implementation | Spatial information |
+| --- | --- | --- |
+| `IRaster<TValue>` | `Raster<TValue>` | Resolution and row-major values only. |
+| `ISpatialRaster<TValue>` | `SpatialRaster<TValue>` | Adds `RasterGeometry`, which contains the world-space origin, size, and resolution. |
+
+`ISpatialRaster<TValue>` extends `IRaster<TValue>`, and `SpatialRaster<TValue>` derives from `Raster<TValue>`. A spatial raster can therefore be passed to APIs that only require an ordinary raster. Use `ToRaster()` when a new non-spatial raster with a copied value array is required.
 
 Raster dimensions must be positive, their product must fit in a one-dimensional array, and the retained row-major value array must contain exactly one value per cell. `SpatialRaster<TValue>` additionally requires a valid, non-default `RasterGeometry`.
+
+## Color Types
+
+Four color value types are available in `Akeldov.Math.Spatial2D.Imaging`:
+
+| Type | Channels | Precision | Total size |
+| --- | --- | --- | --- |
+| `Gray8BitColor` | Grayscale | 8 bits | 8 bits per pixel |
+| `Gray16BitColor` | Grayscale | 16 bits | 16 bits per pixel |
+| `RGBA8BitColor` | Red, green, blue, alpha | 8 bits per channel | 32 bits per pixel |
+| `RGBA16BitColor` | Red, green, blue, alpha | 16 bits per channel | 64 bits per pixel |
+
+The grayscale types represent intensity without alpha. The RGBA types include an alpha channel for transparency and compositing. All four can be used as `Raster<TValue>` or `SpatialRaster<TValue>` values.
 
 ## Topics
 
@@ -31,9 +51,9 @@ Raster dimensions must be positive, their product must fit in a one-dimensional 
 Image export helpers live in `Akeldov.Math.Spatial2D.Imaging`.
 
 Use BMP export for simple 8-bit previews and PNG export for 16-bit grayscale or RGBA output.
-PNG export accepts `IGrid<byte>`, `IGrid<ushort>`, `IGrid<RGBA8BitColor>`, and
-`IGrid<RGBA16BitColor>`.
-BMP export accepts `IGrid<byte>` and `IGrid<RGBA8BitColor>`.
+PNG export accepts `IRaster<Gray8BitColor>`, `IRaster<Gray16BitColor>`,
+`IRaster<RGBA8BitColor>`, and `IRaster<RGBA16BitColor>`.
+BMP export accepts `IRaster<Gray8BitColor>` and `IRaster<RGBA8BitColor>`.
 Image files need raster dimensions and values, not world-space bounds.
 
 ```csharp
