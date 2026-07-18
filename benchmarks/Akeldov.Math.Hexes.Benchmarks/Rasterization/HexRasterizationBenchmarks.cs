@@ -55,9 +55,9 @@ public class HexRasterizationBenchmarks
     }
 
     [Benchmark]
-    public Raster<RGBA16BitColor> RasterizeAdjacencyGrid()
+    public SpatialRaster<RGBA16BitColor> MapAdjacencyGridValues()
     {
-        return _adjacencyGrid.Rasterize((Septuplet<VectorXYInt> adjacency) => ToAdjacencyIndexColor(adjacency.Main));
+        return _adjacencyGrid.MapValues(adjacency => ToAdjacencyIndexColor(adjacency.Main));
     }
 
     private static RGBA16BitColor ToIndexColor(VectorXYInt index)

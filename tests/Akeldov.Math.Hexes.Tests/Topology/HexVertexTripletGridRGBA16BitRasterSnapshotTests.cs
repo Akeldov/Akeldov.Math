@@ -21,7 +21,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new IndexTripletGrid(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(64, 64)));
-        var raster = grid.Rasterize((Triplet<VectorXYInt> triplet) => ToIndexTripletSnapshotColor(triplet));
+        var raster = grid.MapValues(ToIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -39,7 +39,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new IndexPartialTripletGrid(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(64, 64)));
-        var raster = grid.Rasterize((PartialTriplet<VectorXYInt> triplet) => ToIndexPartialTripletSnapshotColor(triplet));
+        var raster = grid.MapValues(ToIndexPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -127,7 +127,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new ChromaticIndexTripletGrid(
             hexMapGeometry,
             rasterGeometry);
-        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToChromaticIndexTripletSnapshotColor);
+        SpatialRaster<RGBA16BitColor> raster = grid.MapValues(ToChromaticIndexTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -149,7 +149,7 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         var grid = new ChromaticIndexPartialTripletGrid(
             hexMapGeometry,
             rasterGeometry);
-        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(ToChromaticIndexPartialTripletSnapshotColor);
+        SpatialRaster<RGBA16BitColor> raster = grid.MapValues(ToChromaticIndexPartialTripletSnapshotColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);

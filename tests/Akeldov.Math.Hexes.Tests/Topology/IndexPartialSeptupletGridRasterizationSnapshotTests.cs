@@ -15,7 +15,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
     [TestCase(Layout.EvenR, "index-partial-septuplet-grid-main-index-even-r-rgba16.png")]
     [TestCase(Layout.OddQ, "index-partial-septuplet-grid-main-index-odd-q-rgba16.png")]
     [TestCase(Layout.EvenQ, "index-partial-septuplet-grid-main-index-even-q-rgba16.png")]
-    public void Rasterize_WithMainIndexColor_MatchesApprovedImage(
+    public void MapValues_WithMainIndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
@@ -26,7 +26,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(480, 360)));
 
-        var raster = indexPartialSeptupletGrid.Rasterize((PartialSeptuplet<VectorXYInt> x) => ToMainIndexColor(x));
+        var raster = indexPartialSeptupletGrid.MapValues(ToMainIndexColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -36,7 +36,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
     [TestCase(Layout.EvenR, "index-partial-septuplet-grid-adjacent-1-index-even-r-rgba16.png")]
     [TestCase(Layout.OddQ, "index-partial-septuplet-grid-adjacent-1-index-odd-q-rgba16.png")]
     [TestCase(Layout.EvenQ, "index-partial-septuplet-grid-adjacent-1-index-even-q-rgba16.png")]
-    public void Rasterize_WithAdjacent1IndexColor_MatchesApprovedImage(
+    public void MapValues_WithAdjacent1IndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
@@ -47,7 +47,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(480, 360)));
 
-        var raster = indexPartialSeptupletGrid.Rasterize((PartialSeptuplet<VectorXYInt> x) => ToAdjacent1IndexColor(x));
+        var raster = indexPartialSeptupletGrid.MapValues(ToAdjacent1IndexColor);
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
@@ -103,7 +103,7 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         return (ushort)MathF.Round(value * ushort.MaxValue);
     }
 
-    private static byte[] SaveToPngBytes(Raster<RGBA16BitColor> raster, string approvedFileName)
+    private static byte[] SaveToPngBytes(IRaster<RGBA16BitColor> raster, string approvedFileName)
     {
         string actualPath = GetActualPath(approvedFileName);
         raster.SaveAsPng(actualPath);

@@ -20,7 +20,7 @@ namespace Akeldov.Math.Hexes.Topology
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
-            return raster.Rasterize(raster.Geometry, selector);
+            return raster.MapValues(raster.Geometry, selector);
         }
     }
 }

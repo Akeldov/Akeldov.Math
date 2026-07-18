@@ -18,7 +18,7 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        var raster = grid.Rasterize((Triplet<VectorXYInt> triplet) => triplet.Main.X == 0 ? red : blue);
+        var raster = grid.MapValues(triplet => triplet.Main.X == 0 ? red : blue);
 
         Assert.That(raster.Values, Is.EqualTo(new[]
         {
@@ -39,21 +39,21 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
 
-        SpatialRaster<RGBA16BitColor> raster = grid.Rasterize(
+        SpatialRaster<RGBA16BitColor> raster = grid.MapValues(
             triplet => triplet.Main == 0 ? red : blue);
 
         Assert.That(raster.Values, Is.EqualTo(new[] { red }));
     }
 
     [Test]
-    public void ToRGBA16BitRaster_WhenGridIsNull_Throws()
+    public void MapValues_WhenRasterIsNull_Throws()
     {
         IndexTripletGrid indexTripletGrid = null!;
         BarycentricTripletGrid barycentricGrid = null!;
         ChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
 
-        Assert.Throws<ArgumentNullException>(() => indexTripletGrid.Rasterize((Triplet<VectorXYInt> _) => (RGBA16BitColor)default));
+        Assert.Throws<ArgumentNullException>(() => indexTripletGrid.MapValues((Triplet<VectorXYInt> _) => (RGBA16BitColor)default));
         Assert.Throws<ArgumentNullException>(() => barycentricGrid.MapValues((Triplet<float> _) => (RGBA16BitColor)default));
-        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.Rasterize((Triplet<byte> _) => (RGBA16BitColor)default));
+        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.MapValues((Triplet<byte> _) => (RGBA16BitColor)default));
     }
 }
