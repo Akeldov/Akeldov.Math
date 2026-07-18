@@ -1,12 +1,12 @@
-# Chromatic Grids
+# Chromatic Rasters
 
-Chromatic grids sample chromatic values around hex vertices.
+Chromatic rasters sample chromatic values around hex vertices.
 
-## `ChromaticIndexTripletGrid`
+## `ChromaticIndexTripletRaster`
 
 - Samples chromatic index triplets.
-- Uses the same vertex triplet order as topology grids.
-- Supports grid-to-raster conversion.
+- Uses the same vertex triplet order as topology rasters.
+- Implements the spatial raster contract directly.
 
 ```csharp
 var topology = new HexMapTopology(5, 4, Layout.OddR);
@@ -15,13 +15,13 @@ var rasterGeometry = new RasterGeometry(
     new PointXY(0f, 0f),
     hexMapGeometry.GetBoundingBoxSize(),
     new VectorXYInt(192, 192));
-var grid = new ChromaticIndexTripletGrid(
+var sourceRaster = new ChromaticIndexTripletRaster(
     hexMapGeometry,
     rasterGeometry);
 
-SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
 
-raster.SaveAsPng("chromatic-index-triplet-grid-odd-r-rgba16.png");
+colorRaster.SaveAsPng("chromatic-index-triplet-raster-odd-r-rgba16.png");
 
 static RGBA16BitColor ToColor(Triplet<byte> chromatic)
 {
@@ -39,9 +39,9 @@ static ushort ToChannel(float value)
 }
 ```
 
-![ChromaticIndexTripletGrid rasterized with chromatic triplet colors](../../assets/hexes/grids/chromatic-index-triplet-grid-odd-r-rgba16.png)
+![ChromaticIndexTripletRaster rasterized with chromatic triplet colors](../../assets/hexes/rasters/chromatic-index-triplet-raster-odd-r-rgba16.png)
 
-## `ChromaticIndexPartialTripletGrid`
+## `ChromaticIndexPartialTripletRaster`
 
 - Samples chromatic index triplets with presence flags.
 - Handles missing neighboring cells at field boundaries.

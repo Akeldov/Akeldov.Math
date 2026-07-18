@@ -12,7 +12,7 @@ namespace Akeldov.Math.Hexes.Benchmarks.Rasterization;
 public class HexRasterizationBenchmarks
 {
     private IndexSeptupletMap _adjacencyMap = null!;
-    private IndexSeptupletGrid _adjacencyGrid = null!;
+    private IndexSeptupletRaster _adjacencyRaster = null!;
     private HexMapGeometry _hexMapGeometry;
     private RasterGeometry _rasterGeometry;
     private VectorXYInt _topologyResolution;
@@ -33,15 +33,15 @@ public class HexRasterizationBenchmarks
             new PointXY(0f, 0f),
             _hexMapGeometry.GetBoundingBoxSize(),
             _topologyResolution);
-        _adjacencyGrid = new IndexSeptupletGrid(
+        _adjacencyRaster = new IndexSeptupletRaster(
             _hexMapGeometry,
             _rasterGeometry);
     }
 
     [Benchmark]
-    public IndexSeptupletGrid ConstructAdjacencyGrid()
+    public IndexSeptupletRaster ConstructAdjacencyRaster()
     {
-        return new IndexSeptupletGrid(
+        return new IndexSeptupletRaster(
             _hexMapGeometry,
             _rasterGeometry);
     }
@@ -55,9 +55,9 @@ public class HexRasterizationBenchmarks
     }
 
     [Benchmark]
-    public SpatialRaster<RGBA16BitColor> MapAdjacencyGridValues()
+    public SpatialRaster<RGBA16BitColor> MapAdjacencyRasterValues()
     {
-        return _adjacencyGrid.MapValues(adjacency => ToAdjacencyIndexColor(adjacency.Main));
+        return _adjacencyRaster.MapValues(adjacency => ToAdjacencyIndexColor(adjacency.Main));
     }
 
     private static RGBA16BitColor ToIndexColor(VectorXYInt index)

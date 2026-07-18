@@ -7,17 +7,17 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents barycentric coordinates sampled from a hex map and ordered by chromatic index zero, one, and two.
+    /// Represents partial barycentric coordinates sampled from a bounded hex map and ordered by chromatic index.
     /// </summary>
-    public sealed class ChromaticBarycentricTripletGrid : ISpatialRaster<ChromaticTriplet<float>>
+    public sealed class ChromaticBarycentricPartialTripletRaster : ISpatialRaster<PartialChromaticTriplet<float>>
     {
-        private readonly ChromaticTriplet<float>[] _values;
+        private readonly PartialChromaticTriplet<float>[] _values;
 
         /// <summary>
         /// Initializes a new instance that covers the whole source hex map.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
-        public ChromaticBarycentricTripletGrid(HexMapGeometry hexMapGeometry)
+        public ChromaticBarycentricPartialTripletRaster(HexMapGeometry hexMapGeometry)
             : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
         {
         }
@@ -27,7 +27,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
-        public ChromaticBarycentricTripletGrid(
+        public ChromaticBarycentricPartialTripletRaster(
             HexMapGeometry hexMapGeometry,
             RasterGeometry rasterGeometry)
         {
@@ -39,19 +39,25 @@ namespace Akeldov.Math.Hexes.Topology
 
             SourceHexMapGeometry = hexMapGeometry;
             Geometry = rasterGeometry;
-            _values = new ChromaticTriplet<float>[checked(Resolution.X * Resolution.Y)];
+            _values = new PartialChromaticTriplet<float>[checked(Resolution.X * Resolution.Y)];
 
-            var barycentricGrid = new BarycentricTripletGrid(hexMapGeometry, rasterGeometry);
-            var chromaticIndexGrid = new ChromaticIndexTripletGrid(hexMapGeometry, rasterGeometry);
+            var barycentricRaster = new BarycentricPartialTripletRaster(hexMapGeometry, rasterGeometry);
+            var chromaticIndexRaster = new ChromaticIndexTripletRaster(hexMapGeometry, rasterGeometry);
 
             for (int index = 0; index < _values.Length; index++)
             {
-                Triplet<float> barycentric = barycentricGrid[index];
-                Triplet<byte> chromaticIndices = chromaticIndexGrid[index];
-                _values[index] = new ChromaticTriplet<float>(
-                    GetCoordinate(0, barycentric, chromaticIndices),
-                    GetCoordinate(1, barycentric, chromaticIndices),
-                    GetCoordinate(2, barycentric, chromaticIndices));
+                PartialTriplet<float> barycentric = barycentricRaster[index];
+                Triplet<byte> chromaticIndices = chromaticIndexRaster[index];
+                (float Coordinate, bool IsPresent) index0 = GetCoordinate(0, barycentric, chromaticIndices);
+                (float Coordinate, bool IsPresent) index1 = GetCoordinate(1, barycentric, chromaticIndices);
+                (float Coordinate, bool IsPresent) index2 = GetCoordinate(2, barycentric, chromaticIndices);
+                _values[index] = new PartialChromaticTriplet<float>(
+                    index0.Coordinate,
+                    index1.Coordinate,
+                    index2.Coordinate,
+                    index0.IsPresent,
+                    index1.IsPresent,
+                    index2.IsPresent);
             }
         }
 
@@ -71,46 +77,48 @@ namespace Akeldov.Math.Hexes.Topology
         public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
-        /// Gets the chromatically ordered barycentric coordinates at the specified raster coordinates.
+        /// Gets the partial chromatically ordered barycentric coordinates at the specified raster coordinates.
         /// </summary>
         /// <param name="x">The zero-based raster column.</param>
         /// <param name="y">The zero-based raster row.</param>
-        public ChromaticTriplet<float> this[int x, int y] => _values[y * Resolution.X + x];
+        public PartialChromaticTriplet<float> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
-        /// Gets the chromatically ordered barycentric coordinates at the specified raster index.
+        /// Gets the partial chromatically ordered barycentric coordinates at the specified raster index.
         /// </summary>
         /// <param name="index">The zero-based two-dimensional raster index.</param>
-        public ChromaticTriplet<float> this[VectorXYInt index]
+        public PartialChromaticTriplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if ((uint)index.X >= (uint)Resolution.X ||
                     (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
 
                 return _values[index.Y * Resolution.X + index.X];
             }
         }
 
         /// <summary>
-        /// Gets the chromatically ordered barycentric coordinates at the specified flat row-major index.
+        /// Gets the partial chromatically ordered barycentric coordinates at the specified flat row-major index.
         /// </summary>
         /// <param name="index">The zero-based flat row-major raster index.</param>
-        public ChromaticTriplet<float> this[int index]
+        public PartialChromaticTriplet<float> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
         }
 
         /// <summary>
-        /// Tries to get chromatically ordered barycentric coordinates at the specified raster index.
+        /// Tries to get partial chromatically ordered barycentric coordinates at the specified raster index.
         /// </summary>
         /// <param name="gridIndex">The zero-based two-dimensional raster index.</param>
         /// <param name="barycentricCoordinates">The coordinates when the index is inside the raster; otherwise, the default value.</param>
         /// <returns><see langword="true"/> when the index is inside the raster; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetValue(VectorXYInt gridIndex, out ChromaticTriplet<float> barycentricCoordinates)
+        public bool TryGetValue(
+            VectorXYInt gridIndex,
+            out PartialChromaticTriplet<float> barycentricCoordinates)
         {
             if ((uint)gridIndex.X >= (uint)Resolution.X ||
                 (uint)gridIndex.Y >= (uint)Resolution.Y)
@@ -123,19 +131,19 @@ namespace Akeldov.Math.Hexes.Topology
             return true;
         }
 
-        private static float GetCoordinate(
+        private static (float Coordinate, bool IsPresent) GetCoordinate(
             byte chromaticIndex,
-            Triplet<float> barycentric,
+            PartialTriplet<float> barycentric,
             Triplet<byte> chromaticIndices)
         {
             if (chromaticIndices.Main == chromaticIndex)
-                return barycentric.Main;
+                return (barycentric.Main, barycentric.HasMain);
 
             if (chromaticIndices.Left == chromaticIndex)
-                return barycentric.Left;
+                return (barycentric.Left, barycentric.HasLeft);
 
             if (chromaticIndices.Right == chromaticIndex)
-                return barycentric.Right;
+                return (barycentric.Right, barycentric.HasRight);
 
             throw new InvalidOperationException($"Chromatic index triplet does not contain index {chromaticIndex}.");
         }

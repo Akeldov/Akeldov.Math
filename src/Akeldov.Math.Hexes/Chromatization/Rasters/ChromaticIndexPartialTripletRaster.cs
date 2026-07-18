@@ -9,27 +9,27 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the ChromaticIndexTripletGrid type.
+    /// Initializes a new instance of the ChromaticIndexPartialTripletRaster type.
     /// </summary>
-    public sealed class ChromaticIndexTripletGrid : ISpatialRaster<Triplet<byte>>
+    public sealed class ChromaticIndexPartialTripletRaster : ISpatialRaster<PartialTriplet<byte>>
     {
-        private Triplet<byte>[] _values = Array.Empty<Triplet<byte>>();
+        private PartialTriplet<byte>[] _values = Array.Empty<PartialTriplet<byte>>();
 
         /// <summary>
         /// Initializes a new instance that covers the whole source hex map.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
-        public ChromaticIndexTripletGrid(HexMapGeometry hexMapGeometry)
+        public ChromaticIndexPartialTripletRaster(HexMapGeometry hexMapGeometry)
             : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the ChromaticIndexTripletGrid type.
+        /// Initializes a new instance of the ChromaticIndexPartialTripletRaster type.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
-        public ChromaticIndexTripletGrid(
+        public ChromaticIndexPartialTripletRaster(
             HexMapGeometry hexMapGeometry,
             RasterGeometry rasterGeometry)
         {
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Hexes.Topology
             SourceHexMapGeometry = hexMapGeometry;
             Geometry = rasterGeometry;
 
-            _values = new Triplet<byte>[checked(Resolution.X * Resolution.Y)];
+            _values = new PartialTriplet<byte>[checked(Resolution.X * Resolution.Y)];
 
             Fill();
         }
@@ -67,20 +67,20 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
-        public Triplet<byte> this[int x, int y] => _values[y * Resolution.X + x];
+        public PartialTriplet<byte> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
         /// Gets the value at the specified index.
         /// </summary>
         /// <param name="index">The index value.</param>
-        public Triplet<byte> this[VectorXYInt index]
+        public PartialTriplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if ((uint)index.X >= (uint)Resolution.X ||
                     (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
 
                 return _values[index.Y * Resolution.X + index.X];
             }
@@ -90,29 +90,10 @@ namespace Akeldov.Math.Hexes.Topology
         /// Gets the value at the specified index.
         /// </summary>
         /// <param name="index">The index value.</param>
-        public Triplet<byte> this[int index]
+        public PartialTriplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
-        }
-
-        /// <summary>
-        /// Tries to get a value at the specified index.
-        /// </summary>
-        /// <param name="gridIndex">The gridIndex value.</param>
-        /// <param name="chromaticIndices">The chromaticIndices value.</param>
-        public bool TryGetValue(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
-        {
-            if ((uint)gridIndex.X >= (uint)Resolution.X ||
-                (uint)gridIndex.Y >= (uint)Resolution.Y)
-            {
-                chromaticIndices = default;
-                return false;
-            }
-
-            int flatIndex = gridIndex.Y * Resolution.X + gridIndex.X;
-            chromaticIndices = _values[flatIndex];
-            return true;
         }
 
         private void Fill()
@@ -132,6 +113,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
             VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
             VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowShiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -163,10 +145,16 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
                     VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
-                    _values[index] = new Triplet<byte>(
-                        (byte)mainIndex.GetOddRChromaticClass(),
-                        (byte)leftIndex.GetOddRChromaticClass(),
-                        (byte)rightIndex.GetOddRChromaticClass());
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<byte>(
+                        hasMain ? (byte)mainIndex.GetOddRChromaticClass() : default,
+                        hasLeft ? (byte)leftIndex.GetOddRChromaticClass() : default,
+                        hasRight ? (byte)rightIndex.GetOddRChromaticClass() : default,
+                        hasMain,
+                        hasLeft,
+                        hasRight);
                 }
             }
         }
@@ -176,6 +164,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.RowLayoutNormalizedHexVertices;
             VectorXYInt[] evenOffsets = HexAdjacencyOffsets.RowShiftedVectors;
             VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -207,10 +196,16 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
                     VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
-                    _values[index] = new Triplet<byte>(
-                        (byte)mainIndex.GetEvenRChromaticClass(),
-                        (byte)leftIndex.GetEvenRChromaticClass(),
-                        (byte)rightIndex.GetEvenRChromaticClass());
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<byte>(
+                        hasMain ? (byte)mainIndex.GetEvenRChromaticClass() : default,
+                        hasLeft ? (byte)leftIndex.GetEvenRChromaticClass() : default,
+                        hasRight ? (byte)rightIndex.GetEvenRChromaticClass() : default,
+                        hasMain,
+                        hasLeft,
+                        hasRight);
                 }
             }
         }
@@ -220,6 +215,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
             VectorXYInt[] evenOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
             VectorXYInt[] oddOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -251,10 +247,16 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
                     VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
-                    _values[index] = new Triplet<byte>(
-                        (byte)mainIndex.GetOddQChromaticClass(),
-                        (byte)leftIndex.GetOddQChromaticClass(),
-                        (byte)rightIndex.GetOddQChromaticClass());
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<byte>(
+                        hasMain ? (byte)mainIndex.GetOddQChromaticClass() : default,
+                        hasLeft ? (byte)leftIndex.GetOddQChromaticClass() : default,
+                        hasRight ? (byte)rightIndex.GetOddQChromaticClass() : default,
+                        hasMain,
+                        hasLeft,
+                        hasRight);
                 }
             }
         }
@@ -264,6 +266,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY[] vertices = Hexes.Geometry.VectorXYExtensions.ColumnLayoutNormalizedHexVertices;
             VectorXYInt[] evenOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
             VectorXYInt[] oddOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
+            VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
 
@@ -295,10 +298,16 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
                     VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
-                    _values[index] = new Triplet<byte>(
-                        (byte)mainIndex.GetEvenQChromaticClass(),
-                        (byte)leftIndex.GetEvenQChromaticClass(),
-                        (byte)rightIndex.GetEvenQChromaticClass());
+                    bool hasMain = (uint)mainIndex.X < (uint)hexResolution.X && (uint)mainIndex.Y < (uint)hexResolution.Y;
+                    bool hasLeft = (uint)leftIndex.X < (uint)hexResolution.X && (uint)leftIndex.Y < (uint)hexResolution.Y;
+                    bool hasRight = (uint)rightIndex.X < (uint)hexResolution.X && (uint)rightIndex.Y < (uint)hexResolution.Y;
+                    _values[index] = new PartialTriplet<byte>(
+                        hasMain ? (byte)mainIndex.GetEvenQChromaticClass() : default,
+                        hasLeft ? (byte)leftIndex.GetEvenQChromaticClass() : default,
+                        hasRight ? (byte)rightIndex.GetEvenQChromaticClass() : default,
+                        hasMain,
+                        hasLeft,
+                        hasRight);
                 }
             }
         }

@@ -5,8 +5,8 @@ Chromatic rasterization maps chromatic values into RGBA16 output.
 ## Data Sources
 
 - `ChromaticIndexMap`.
-- `ChromaticIndexTripletGrid`.
-- `ChromaticIndexPartialTripletGrid`.
+- `ChromaticIndexTripletRaster`.
+- `ChromaticIndexPartialTripletRaster`.
 
 ## Color Mapping
 
@@ -17,4 +17,4 @@ Chromatic rasterization maps chromatic values into RGBA16 output.
 ## Output
 
 - Produce RGBA16 raster data.
-- Use grid dimensions and hex geometry to place sampled values.
+- Use raster resolution and geometry to place sampled values.

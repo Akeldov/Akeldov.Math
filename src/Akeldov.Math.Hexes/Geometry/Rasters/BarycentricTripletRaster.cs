@@ -8,27 +8,27 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents barycentric coordinates sampled from a bounded hex map onto a spatial raster.
+    /// Initializes a new instance of the BarycentricTripletRaster type.
     /// </summary>
-    public sealed class BarycentricPartialTripletGrid : ISpatialRaster<PartialTriplet<float>>
+    public sealed class BarycentricTripletRaster : ISpatialRaster<Triplet<float>>
     {
-        private PartialTriplet<float>[] _values = Array.Empty<PartialTriplet<float>>();
+        private Triplet<float>[] _values = Array.Empty<Triplet<float>>();
 
         /// <summary>
         /// Initializes a new instance that covers the whole source hex map.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
-        public BarycentricPartialTripletGrid(HexMapGeometry hexMapGeometry)
+        public BarycentricTripletRaster(HexMapGeometry hexMapGeometry)
             : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BarycentricPartialTripletGrid"/> type.
+        /// Initializes a new instance of the BarycentricTripletRaster type.
         /// </summary>
-        /// <param name="hexMapGeometry">The source hex map geometry.</param>
+        /// <param name="hexMapGeometry">The hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
-        public BarycentricPartialTripletGrid(
+        public BarycentricTripletRaster(
             HexMapGeometry hexMapGeometry,
             RasterGeometry rasterGeometry)
         {
@@ -40,7 +40,7 @@ namespace Akeldov.Math.Hexes.Topology
 
             SourceHexMapGeometry = hexMapGeometry;
             Geometry = rasterGeometry;
-            _values = new PartialTriplet<float>[checked(Resolution.X * Resolution.Y)];
+            _values = new Triplet<float>[checked(Resolution.X * Resolution.Y)];
 
             Fill();
         }
@@ -56,57 +56,61 @@ namespace Akeldov.Math.Hexes.Topology
         public RasterGeometry Geometry { get; }
 
         /// <summary>
-        /// Gets the raster resolution.
+        /// Gets the Resolution value.
         /// </summary>
         public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
-        /// Gets the value at the specified raster coordinates.
+        /// Gets the value at the specified grid coordinates.
         /// </summary>
-        /// <param name="x">The horizontal raster coordinate.</param>
-        /// <param name="y">The vertical raster coordinate.</param>
-        public PartialTriplet<float> this[int x, int y] => _values[y * Resolution.X + x];
+        /// <param name="x">The horizontal grid coordinate.</param>
+        /// <param name="y">The vertical grid coordinate.</param>
+        public Triplet<float> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
-        /// Gets the value at the specified raster index.
+        /// Gets the value at the specified index.
         /// </summary>
-        /// <param name="index">The raster index.</param>
-        public PartialTriplet<float> this[VectorXYInt index]
+        /// <param name="index">The index value.</param>
+        public Triplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if ((uint)index.X >= (uint)Resolution.X || (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+                if ((uint)index.X >= (uint)Resolution.X ||
+                    (uint)index.Y >= (uint)Resolution.Y)
+                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
+
                 return _values[index.Y * Resolution.X + index.X];
             }
         }
 
         /// <summary>
-        /// Gets the value at the specified flat raster index.
+        /// Gets the value at the specified index.
         /// </summary>
-        /// <param name="index">The flat raster index.</param>
-        public PartialTriplet<float> this[int index]
+        /// <param name="index">The index value.</param>
+        public Triplet<float> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
         }
 
         /// <summary>
-        /// Tries to get a present barycentric value at the specified raster index.
+        /// Tries to get a value at the specified index.
         /// </summary>
-        /// <param name="gridIndex">The raster index.</param>
-        /// <param name="barycentricCoordinates">The sampled barycentric coordinates.</param>
-        public bool TryGetValue(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
+        /// <param name="gridIndex">The gridIndex value.</param>
+        /// <param name="barycentricCoordinates">The barycentricCoordinates value.</param>
+        public bool TryGetValue(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
         {
-            if ((uint)gridIndex.X >= (uint)Resolution.X || (uint)gridIndex.Y >= (uint)Resolution.Y)
+            if ((uint)gridIndex.X >= (uint)Resolution.X ||
+                (uint)gridIndex.Y >= (uint)Resolution.Y)
             {
                 barycentricCoordinates = default;
                 return false;
             }
 
-            barycentricCoordinates = _values[gridIndex.Y * Resolution.X + gridIndex.X];
-            return barycentricCoordinates.Presence != TripletPresenceFlags.None;
+            int flatIndex = gridIndex.Y * Resolution.X + gridIndex.X;
+            barycentricCoordinates = _values[flatIndex];
+            return true;
         }
 
         private void Fill()
@@ -137,6 +141,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowShiftedVectors;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
+
             for (int index = 0, y = 0; y < Resolution.Y; y++)
             {
                 float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
@@ -171,11 +176,7 @@ namespace Akeldov.Math.Hexes.Topology
                     var rightCenter = new VectorXY(
                         SourceHexMapGeometry.Origin.X + rightIndex.X * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
                         SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * rightIndex.Y);
-                    Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
-                    bool hasMain = (uint)mainIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)mainIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasLeft = (uint)leftIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)leftIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasRight = (uint)rightIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)rightIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    _values[index] = new PartialTriplet<float>(hasMain ? barycentric.Main : default, hasLeft ? barycentric.Left : default, hasRight ? barycentric.Right : default, hasMain, hasLeft, hasRight);
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
@@ -187,6 +188,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXYInt[] oddOffsets = HexAdjacencyOffsets.RowUnshiftedVectors;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
+
             for (int index = 0, y = 0; y < Resolution.Y; y++)
             {
                 float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
@@ -221,11 +223,7 @@ namespace Akeldov.Math.Hexes.Topology
                     var rightCenter = new VectorXY(
                         SourceHexMapGeometry.Origin.X + rightIndex.X * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
                         SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * rightIndex.Y);
-                    Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
-                    bool hasMain = (uint)mainIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)mainIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasLeft = (uint)leftIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)leftIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasRight = (uint)rightIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)rightIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    _values[index] = new PartialTriplet<float>(hasMain ? barycentric.Main : default, hasLeft ? barycentric.Left : default, hasRight ? barycentric.Right : default, hasMain, hasLeft, hasRight);
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
@@ -237,6 +235,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXYInt[] oddOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
+
             for (int index = 0, y = 0; y < Resolution.Y; y++)
             {
                 float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
@@ -271,11 +270,7 @@ namespace Akeldov.Math.Hexes.Topology
                     var rightCenter = new VectorXY(
                         SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * rightIndex.X,
                         SourceHexMapGeometry.Origin.Y + rightIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
-                    Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
-                    bool hasMain = (uint)mainIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)mainIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasLeft = (uint)leftIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)leftIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasRight = (uint)rightIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)rightIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    _values[index] = new PartialTriplet<float>(hasMain ? barycentric.Main : default, hasLeft ? barycentric.Left : default, hasRight ? barycentric.Right : default, hasMain, hasLeft, hasRight);
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
@@ -287,6 +282,7 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXYInt[] oddOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
+
             for (int index = 0, y = 0; y < Resolution.Y; y++)
             {
                 float pointY = Geometry.Origin.Y + (y + 0.5f) * cellSize.Y;
@@ -321,14 +317,9 @@ namespace Akeldov.Math.Hexes.Topology
                     var rightCenter = new VectorXY(
                         SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * rightIndex.X,
                         SourceHexMapGeometry.Origin.Y + rightIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
-                    Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
-                    bool hasMain = (uint)mainIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)mainIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasLeft = (uint)leftIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)leftIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    bool hasRight = (uint)rightIndex.X < (uint)SourceHexMapGeometry.Topology.Resolution.X && (uint)rightIndex.Y < (uint)SourceHexMapGeometry.Topology.Resolution.Y;
-                    _values[index] = new PartialTriplet<float>(hasMain ? barycentric.Main : default, hasLeft ? barycentric.Left : default, hasRight ? barycentric.Right : default, hasMain, hasLeft, hasRight);
+                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
                 }
             }
         }
-
     }
 }

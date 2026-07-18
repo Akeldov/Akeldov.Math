@@ -6,13 +6,13 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
+public class HexVertexTripletRasterRGBA16BitExtensionsTests
 {
     [Test]
-    public void IndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByIndexTriplet()
+    public void IndexTripletRaster_ToRGBA16BitRaster_MapsHitCellsByIndexTriplet()
     {
         var hexMapGeometry = new HexMapGeometry(2, 1, 1f, Layout.OddR);
-        var grid = new IndexTripletGrid(
+        var grid = new IndexTripletRaster(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(4, 1)));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
@@ -30,10 +30,10 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     }
 
     [Test]
-    public void ChromaticIndexTripletGrid_ToRGBA16BitRaster_MapsHitCellsByChromaticIndices()
+    public void ChromaticIndexTripletRaster_ToRGBA16BitRaster_MapsHitCellsByChromaticIndices()
     {
         var hexMapGeometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
-        var grid = new ChromaticIndexTripletGrid(
+        var grid = new ChromaticIndexTripletRaster(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), VectorXYInt.One));
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
@@ -48,12 +48,12 @@ public class HexVertexTripletGridRGBA16BitRasterExtensionsTests
     [Test]
     public void MapValues_WhenRasterIsNull_Throws()
     {
-        IndexTripletGrid indexTripletGrid = null!;
-        BarycentricTripletGrid barycentricGrid = null!;
-        ChromaticIndexTripletGrid chromaticIndexTripletGrid = null!;
+        IndexTripletRaster indexTripletGrid = null!;
+        BarycentricTripletRaster barycentricGrid = null!;
+        ChromaticIndexTripletRaster chromaticIndexTripletRaster = null!;
 
         Assert.Throws<ArgumentNullException>(() => indexTripletGrid.MapValues((Triplet<VectorXYInt> _) => (RGBA16BitColor)default));
         Assert.Throws<ArgumentNullException>(() => barycentricGrid.MapValues((Triplet<float> _) => (RGBA16BitColor)default));
-        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletGrid.MapValues((Triplet<byte> _) => (RGBA16BitColor)default));
+        Assert.Throws<ArgumentNullException>(() => chromaticIndexTripletRaster.MapValues((Triplet<byte> _) => (RGBA16BitColor)default));
     }
 }

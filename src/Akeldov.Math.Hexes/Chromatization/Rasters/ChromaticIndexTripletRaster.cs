@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Chromatization;
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
@@ -8,27 +9,27 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the BarycentricTripletGrid type.
+    /// Initializes a new instance of the ChromaticIndexTripletRaster type.
     /// </summary>
-    public sealed class BarycentricTripletGrid : ISpatialRaster<Triplet<float>>
+    public sealed class ChromaticIndexTripletRaster : ISpatialRaster<Triplet<byte>>
     {
-        private Triplet<float>[] _values = Array.Empty<Triplet<float>>();
+        private Triplet<byte>[] _values = Array.Empty<Triplet<byte>>();
 
         /// <summary>
         /// Initializes a new instance that covers the whole source hex map.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
-        public BarycentricTripletGrid(HexMapGeometry hexMapGeometry)
+        public ChromaticIndexTripletRaster(HexMapGeometry hexMapGeometry)
             : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the BarycentricTripletGrid type.
+        /// Initializes a new instance of the ChromaticIndexTripletRaster type.
         /// </summary>
-        /// <param name="hexMapGeometry">The hex map geometry.</param>
+        /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
-        public BarycentricTripletGrid(
+        public ChromaticIndexTripletRaster(
             HexMapGeometry hexMapGeometry,
             RasterGeometry rasterGeometry)
         {
@@ -40,7 +41,8 @@ namespace Akeldov.Math.Hexes.Topology
 
             SourceHexMapGeometry = hexMapGeometry;
             Geometry = rasterGeometry;
-            _values = new Triplet<float>[checked(Resolution.X * Resolution.Y)];
+
+            _values = new Triplet<byte>[checked(Resolution.X * Resolution.Y)];
 
             Fill();
         }
@@ -65,20 +67,20 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
-        public Triplet<float> this[int x, int y] => _values[y * Resolution.X + x];
+        public Triplet<byte> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
         /// Gets the value at the specified index.
         /// </summary>
         /// <param name="index">The index value.</param>
-        public Triplet<float> this[VectorXYInt index]
+        public Triplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if ((uint)index.X >= (uint)Resolution.X ||
                     (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
 
                 return _values[index.Y * Resolution.X + index.X];
             }
@@ -88,7 +90,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// Gets the value at the specified index.
         /// </summary>
         /// <param name="index">The index value.</param>
-        public Triplet<float> this[int index]
+        public Triplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _values[index];
@@ -98,18 +100,18 @@ namespace Akeldov.Math.Hexes.Topology
         /// Tries to get a value at the specified index.
         /// </summary>
         /// <param name="gridIndex">The gridIndex value.</param>
-        /// <param name="barycentricCoordinates">The barycentricCoordinates value.</param>
-        public bool TryGetValue(VectorXYInt gridIndex, out Triplet<float> barycentricCoordinates)
+        /// <param name="chromaticIndices">The chromaticIndices value.</param>
+        public bool TryGetValue(VectorXYInt gridIndex, out Triplet<byte> chromaticIndices)
         {
             if ((uint)gridIndex.X >= (uint)Resolution.X ||
                 (uint)gridIndex.Y >= (uint)Resolution.Y)
             {
-                barycentricCoordinates = default;
+                chromaticIndices = default;
                 return false;
             }
 
             int flatIndex = gridIndex.Y * Resolution.X + gridIndex.X;
-            barycentricCoordinates = _values[flatIndex];
+            chromaticIndices = _values[flatIndex];
             return true;
         }
 
@@ -117,20 +119,11 @@ namespace Akeldov.Math.Hexes.Topology
         {
             switch (SourceHexMapGeometry.Topology.Layout)
             {
-                case Layout.OddR:
-                    FillOddR();
-                    break;
-                case Layout.EvenR:
-                    FillEvenR();
-                    break;
-                case Layout.OddQ:
-                    FillOddQ();
-                    break;
-                case Layout.EvenQ:
-                    FillEvenQ();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(SourceHexMapGeometry.Topology.Layout));
+                case Layout.OddR: FillOddR(); break;
+                case Layout.EvenR: FillEvenR(); break;
+                case Layout.OddQ: FillOddQ(); break;
+                case Layout.EvenQ: FillEvenQ(); break;
+                default: throw new ArgumentOutOfRangeException(nameof(SourceHexMapGeometry.Topology.Layout));
             }
         }
 
@@ -170,13 +163,10 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
                     VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
-                    var leftCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + leftIndex.X * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
-                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * leftIndex.Y);
-                    var rightCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + rightIndex.X * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.Y & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f),
-                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * rightIndex.Y);
-                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+                    _values[index] = new Triplet<byte>(
+                        (byte)mainIndex.GetOddRChromaticClass(),
+                        (byte)leftIndex.GetOddRChromaticClass(),
+                        (byte)rightIndex.GetOddRChromaticClass());
                 }
             }
         }
@@ -217,13 +207,10 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.Y & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[(closestVertex + 1) % 6];
                     VectorXYInt rightIndex = mainIndex + offsets[closestVertex];
-                    var leftCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + leftIndex.X * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
-                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * leftIndex.Y);
-                    var rightCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + rightIndex.X * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.Y & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f),
-                        SourceHexMapGeometry.Origin.Y + 1.5f * SourceHexMapGeometry.Radius * rightIndex.Y);
-                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+                    _values[index] = new Triplet<byte>(
+                        (byte)mainIndex.GetEvenRChromaticClass(),
+                        (byte)leftIndex.GetEvenRChromaticClass(),
+                        (byte)rightIndex.GetEvenRChromaticClass());
                 }
             }
         }
@@ -264,13 +251,10 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
                     VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
-                    var leftCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * leftIndex.X,
-                        SourceHexMapGeometry.Origin.Y + leftIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
-                    var rightCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * rightIndex.X,
-                        SourceHexMapGeometry.Origin.Y + rightIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.X & 1) == 1 ? SourceHexMapGeometry.Apothem : 0f));
-                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+                    _values[index] = new Triplet<byte>(
+                        (byte)mainIndex.GetOddQChromaticClass(),
+                        (byte)leftIndex.GetOddQChromaticClass(),
+                        (byte)rightIndex.GetOddQChromaticClass());
                 }
             }
         }
@@ -311,15 +295,13 @@ namespace Akeldov.Math.Hexes.Topology
                     VectorXYInt[] offsets = (mainIndex.X & 1) == 0 ? evenOffsets : oddOffsets;
                     VectorXYInt leftIndex = mainIndex + offsets[closestVertex];
                     VectorXYInt rightIndex = mainIndex + offsets[(closestVertex + 5) % 6];
-                    var leftCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * leftIndex.X,
-                        SourceHexMapGeometry.Origin.Y + leftIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((leftIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
-                    var rightCenter = new VectorXY(
-                        SourceHexMapGeometry.Origin.X + 1.5f * SourceHexMapGeometry.Radius * rightIndex.X,
-                        SourceHexMapGeometry.Origin.Y + rightIndex.Y * 2f * SourceHexMapGeometry.Apothem + ((rightIndex.X & 1) == 1 ? -SourceHexMapGeometry.Apothem : 0f));
-                    _values[index] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+                    _values[index] = new Triplet<byte>(
+                        (byte)mainIndex.GetEvenQChromaticClass(),
+                        (byte)leftIndex.GetEvenQChromaticClass(),
+                        (byte)rightIndex.GetEvenQChromaticClass());
                 }
             }
         }
+
     }
 }

@@ -1,12 +1,12 @@
-# Topology Grids
+# Topology Rasters
 
-Topology grids sample index relationships into regular grid coordinates.
+Topology rasters sample index relationships at regular raster coordinates.
 
-## Triplet Grids
+## Triplet Rasters
 
-- `IndexTripletGrid`.
+- `IndexTripletRaster`.
     - Samples vertex triplets as hex indexes.
-- `IndexPartialTripletGrid`.
+- `IndexPartialTripletRaster`.
     - Samples vertex triplets with presence flags.
 
 ```csharp
@@ -15,13 +15,13 @@ var rasterGeometry = new RasterGeometry(
     new PointXY(0f, 0f),
     hexMapGeometry.GetBoundingBoxSize(),
     new VectorXYInt(192, 192));
-var grid = new IndexTripletGrid(
+var sourceRaster = new IndexTripletRaster(
     hexMapGeometry,
     rasterGeometry);
 
-SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
 
-raster.SaveAsPng("index-triplet-grid-odd-r-rgba16.png");
+colorRaster.SaveAsPng("index-triplet-raster-odd-r-rgba16.png");
 
 static RGBA16BitColor ToColor(Triplet<VectorXYInt> triplet)
 {
@@ -44,16 +44,16 @@ static ushort ToChannel(float value)
 }
 ```
 
-![IndexTripletGrid rasterized with index-derived colors](../../assets/hexes/grids/index-triplet-grid-odd-r-rgba16.png)
+![IndexTripletRaster rasterized with index-derived colors](../../assets/hexes/rasters/index-triplet-raster-odd-r-rgba16.png)
 
-## Septuplet Grids
+## Septuplet Rasters
 
-- `IndexSeptupletGrid`.
+- `IndexSeptupletRaster`.
     - Samples full neighborhood septuplets.
-- `IndexPartialSeptupletGrid`.
+- `IndexPartialSeptupletRaster`.
     - Samples partial neighborhood septuplets with presence flags.
 
 ## Rasterization Support
 
-- Topology grids can feed topology rasterization.
+- Topology rasters can feed topology rasterization.
 - Raster helpers can map index relationships into image-space samples.

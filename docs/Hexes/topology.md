@@ -7,5 +7,5 @@ Topology APIs describe adjacency, neighborhood structure, and index relationship
 - [Edges and Vertices](topology/edges-and-vertices.md)
 - [Adjacency](topology/adjacency.md)
 - [Topology Maps](topology/topology-maps.md)
-- [Topology Grids](topology/topology-grids.md)
+- [Topology Rasters](topology/topology-rasters.md)
 - [Polyhex Topology](topology/polyhex-topology.md)

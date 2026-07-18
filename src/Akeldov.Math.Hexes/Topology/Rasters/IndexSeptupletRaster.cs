@@ -8,9 +8,9 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the IndexSeptupletGrid type.
+    /// Initializes a new instance of the IndexSeptupletRaster type.
     /// </summary>
-    public sealed class IndexSeptupletGrid : ISpatialRaster<Septuplet<VectorXYInt>>
+    public sealed class IndexSeptupletRaster : ISpatialRaster<Septuplet<VectorXYInt>>
     {
         private Septuplet<VectorXYInt>[] _values = Array.Empty<Septuplet<VectorXYInt>>();
 
@@ -18,17 +18,17 @@ namespace Akeldov.Math.Hexes.Topology
         /// Initializes a new instance that covers the whole source hex map.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
-        public IndexSeptupletGrid(HexMapGeometry hexMapGeometry)
+        public IndexSeptupletRaster(HexMapGeometry hexMapGeometry)
             : this(hexMapGeometry, hexMapGeometry.ToRasterGeometry(1f))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the IndexSeptupletGrid type.
+        /// Initializes a new instance of the IndexSeptupletRaster type.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
-        public IndexSeptupletGrid(
+        public IndexSeptupletRaster(
             HexMapGeometry hexMapGeometry,
             RasterGeometry rasterGeometry)
         {
@@ -78,7 +78,7 @@ namespace Akeldov.Math.Hexes.Topology
             {
                 if (index.X < 0 || index.X >= Resolution.X ||
                     index.Y < 0 || index.Y >= Resolution.Y)
-                    throw new IndexOutOfRangeException($"Grid index out of bounds: {index}");
+                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
 
                 return _values[index.Y * Resolution.X + index.X];
             }

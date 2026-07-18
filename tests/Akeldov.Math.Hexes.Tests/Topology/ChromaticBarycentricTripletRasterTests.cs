@@ -5,7 +5,7 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class ChromaticBarycentricTripletGridTests
+public class ChromaticBarycentricTripletRasterTests
 {
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
@@ -18,9 +18,9 @@ public class ChromaticBarycentricTripletGridTests
             new PointXY(0f, 0f),
             hexMapGeometry.GetBoundingBoxSize(),
             new VectorXYInt(32, 24));
-        var barycentricGrid = new BarycentricTripletGrid(hexMapGeometry, rasterGeometry);
-        var chromaticIndexGrid = new ChromaticIndexTripletGrid(hexMapGeometry, rasterGeometry);
-        var grid = new ChromaticBarycentricTripletGrid(hexMapGeometry, rasterGeometry);
+        var barycentricGrid = new BarycentricTripletRaster(hexMapGeometry, rasterGeometry);
+        var chromaticIndexGrid = new ChromaticIndexTripletRaster(hexMapGeometry, rasterGeometry);
+        var grid = new ChromaticBarycentricTripletRaster(hexMapGeometry, rasterGeometry);
 
         Assert.Multiple(() =>
         {
@@ -56,9 +56,9 @@ public class ChromaticBarycentricTripletGridTests
             new PointXY(0f, 0f),
             hexMapGeometry.GetBoundingBoxSize(),
             new VectorXYInt(32, 32));
-        var barycentricGrid = new BarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
-        var chromaticIndexGrid = new ChromaticIndexTripletGrid(hexMapGeometry, rasterGeometry);
-        var grid = new ChromaticBarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
+        var barycentricGrid = new BarycentricPartialTripletRaster(hexMapGeometry, rasterGeometry);
+        var chromaticIndexGrid = new ChromaticIndexTripletRaster(hexMapGeometry, rasterGeometry);
+        var grid = new ChromaticBarycentricPartialTripletRaster(hexMapGeometry, rasterGeometry);
         bool foundPartialValue = false;
 
         Assert.Multiple(() =>
@@ -99,8 +99,8 @@ public class ChromaticBarycentricTripletGridTests
     {
         var hexMapGeometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
         var rasterGeometry = new RasterGeometry(new PointXY(0f, 0f), VectorXY.One, VectorXYInt.One);
-        var grid = new ChromaticBarycentricTripletGrid(hexMapGeometry, rasterGeometry);
-        var partialGrid = new ChromaticBarycentricPartialTripletGrid(hexMapGeometry, rasterGeometry);
+        var grid = new ChromaticBarycentricTripletRaster(hexMapGeometry, rasterGeometry);
+        var partialGrid = new ChromaticBarycentricPartialTripletRaster(hexMapGeometry, rasterGeometry);
 
         Assert.Multiple(() =>
         {
@@ -119,10 +119,10 @@ public class ChromaticBarycentricTripletGridTests
 
         Assert.Multiple(() =>
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricTripletGrid(hexMapGeometry, default));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricPartialTripletGrid(hexMapGeometry, default));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricTripletGrid(emptyHexMapGeometry, rasterGeometry));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricPartialTripletGrid(emptyHexMapGeometry, rasterGeometry));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricTripletRaster(hexMapGeometry, default));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricPartialTripletRaster(hexMapGeometry, default));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricTripletRaster(emptyHexMapGeometry, rasterGeometry));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new ChromaticBarycentricPartialTripletRaster(emptyHexMapGeometry, rasterGeometry));
         });
     }
 

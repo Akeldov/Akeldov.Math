@@ -6,58 +6,51 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class IndexPartialSeptupletGridRasterizationSnapshotTests
+public class IndexSeptupletRasterSnapshotTests
 {
-    private const int MapWidth = 12;
-    private const int MapHeight = 8;
-
-    [TestCase(Layout.OddR, "index-partial-septuplet-grid-main-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "index-partial-septuplet-grid-main-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "index-partial-septuplet-grid-main-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "index-partial-septuplet-grid-main-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-septuplet-raster-main-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-septuplet-raster-main-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-septuplet-raster-main-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-septuplet-raster-main-index-even-q-rgba16.png")]
     public void MapValues_WithMainIndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var indexPartialSeptupletMap = new IndexPartialSeptupletMap(
-            new HexMapTopology(MapWidth, MapHeight, layout));
-        var hexMapGeometry = CreateLegacySnapshotGeometry(indexPartialSeptupletMap.Topology);
-        var indexPartialSeptupletGrid = new IndexPartialSeptupletGrid(
+        var indexSeptupletMap = new IndexSeptupletMap(new HexMapTopology(12, 8, layout));
+        var hexMapGeometry = CreateLegacySnapshotGeometry(indexSeptupletMap.Topology);
+        var indexSeptupletGrid = new IndexSeptupletRaster(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(480, 360)));
 
-        var raster = indexPartialSeptupletGrid.MapValues(ToMainIndexColor);
+        var raster = indexSeptupletGrid.MapValues(adjacency => ToMainIndexColor(adjacency, indexSeptupletMap.Topology.Resolution.X));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    [TestCase(Layout.OddR, "index-partial-septuplet-grid-adjacent-1-index-odd-r-rgba16.png")]
-    [TestCase(Layout.EvenR, "index-partial-septuplet-grid-adjacent-1-index-even-r-rgba16.png")]
-    [TestCase(Layout.OddQ, "index-partial-septuplet-grid-adjacent-1-index-odd-q-rgba16.png")]
-    [TestCase(Layout.EvenQ, "index-partial-septuplet-grid-adjacent-1-index-even-q-rgba16.png")]
+    [TestCase(Layout.OddR, "index-septuplet-raster-adjacent-1-index-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "index-septuplet-raster-adjacent-1-index-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "index-septuplet-raster-adjacent-1-index-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "index-septuplet-raster-adjacent-1-index-even-q-rgba16.png")]
     public void MapValues_WithAdjacent1IndexColor_MatchesApprovedImage(
         Layout layout,
         string approvedFileName)
     {
-        var indexPartialSeptupletMap = new IndexPartialSeptupletMap(
-            new HexMapTopology(MapWidth, MapHeight, layout));
-        var hexMapGeometry = CreateLegacySnapshotGeometry(indexPartialSeptupletMap.Topology);
-        var indexPartialSeptupletGrid = new IndexPartialSeptupletGrid(
+        var indexSeptupletMap = new IndexSeptupletMap(new HexMapTopology(12, 8, layout));
+        var hexMapGeometry = CreateLegacySnapshotGeometry(indexSeptupletMap.Topology);
+        var indexSeptupletGrid = new IndexSeptupletRaster(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), hexMapGeometry.GetBoundingBoxSize(), new VectorXYInt(480, 360)));
 
-        var raster = indexPartialSeptupletGrid.MapValues(ToAdjacent1IndexColor);
+        var raster = indexSeptupletGrid.MapValues(adjacency => ToAdjacent1IndexColor(adjacency, indexSeptupletMap.Topology.Resolution.X));
         byte[] actual = SaveToPngBytes(raster, approvedFileName);
 
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
-    private static RGBA16BitColor ToMainIndexColor(PartialSeptuplet<VectorXYInt> adjacency)
+    private static RGBA16BitColor ToMainIndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth)
     {
-        return adjacency.HasMain
-            ? ToIndexColor(adjacency.Main, MapWidth)
-            : new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
+        return ToIndexColor(adjacency.Main, mapWidth);
     }
 
     private static HexMapGeometry CreateLegacySnapshotGeometry(HexMapTopology topology)
@@ -76,11 +69,9 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         return new HexMapGeometry(topology, origin, radius);
     }
 
-    private static RGBA16BitColor ToAdjacent1IndexColor(PartialSeptuplet<VectorXYInt> adjacency)
+    private static RGBA16BitColor ToAdjacent1IndexColor(Septuplet<VectorXYInt> adjacency, int mapWidth)
     {
-        return adjacency.HasAdjacent1
-            ? ToIndexColor(adjacency.Adjacent1, MapWidth)
-            : new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue);
+        return ToIndexColor(adjacency.Adjacent1, mapWidth);
     }
 
     private static RGBA16BitColor ToIndexColor(VectorXYInt index, int mapWidth)
@@ -121,8 +112,8 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         if (!File.Exists(approvedPath))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual index partial septuplet grid raster snapshot");
-            Assert.Fail($"Index partial septuplet grid approved image is missing. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual index septuplet grid raster snapshot");
+            Assert.Fail($"Index septuplet grid approved image is missing. Actual image: {actualPath}");
         }
 
         byte[] approved = File.ReadAllBytes(approvedPath);
@@ -130,8 +121,8 @@ public class IndexPartialSeptupletGridRasterizationSnapshotTests
         if (!BytesEqual(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
-            TestContext.AddTestAttachment(actualPath, "Actual index partial septuplet grid raster snapshot");
-            Assert.Fail($"Index partial septuplet grid raster snapshot changed. Actual image: {actualPath}");
+            TestContext.AddTestAttachment(actualPath, "Actual index septuplet grid raster snapshot");
+            Assert.Fail($"Index septuplet grid raster snapshot changed. Actual image: {actualPath}");
         }
     }
 

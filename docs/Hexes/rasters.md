@@ -1,16 +1,16 @@
-# Grids
+# Rasters
 
-Grids are general sampled value containers used by geometry, topology, chromatization, and rasterization APIs.
+Rasters are spatially sampled value containers used by geometry, topology, and chromatization APIs.
 
 ## Topics
 
-- [`IGrid<TValue>`](grids/igrid.md)
-- [Shared Grid Behavior](grids/shared-grid-behavior.md)
-- [Rasterization Integration](grids/rasterization-integration.md)
+- [`ISpatialRaster<TValue>`](rasters/ispatialraster.md)
+- [Shared Raster Behavior](rasters/shared-raster-behavior.md)
+- [Rasterization Integration](rasters/rasterization-integration.md)
 
 ## Example Outputs
 
-Topology grids can visualize sampled index relationships.
+Topology rasters can visualize sampled index relationships.
 
 ```csharp
 var hexMapGeometry = new HexMapGeometry(5, 4, 1f, Layout.OddR);
@@ -18,13 +18,13 @@ var rasterGeometry = new RasterGeometry(
     new PointXY(0f, 0f),
     hexMapGeometry.GetBoundingBoxSize(),
     new VectorXYInt(192, 192));
-var grid = new IndexTripletGrid(
+var sourceRaster = new IndexTripletRaster(
     hexMapGeometry,
     rasterGeometry);
 
-SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
 
-raster.SaveAsPng("index-triplet-grid-odd-r-rgba16.png");
+colorRaster.SaveAsPng("index-triplet-raster-odd-r-rgba16.png");
 
 static RGBA16BitColor ToColor(Triplet<VectorXYInt> triplet)
 {
@@ -47,9 +47,9 @@ static ushort ToChannel(float value)
 }
 ```
 
-![IndexTripletGrid rasterized with index-derived colors](../assets/hexes/grids/index-triplet-grid-odd-r-rgba16.png)
+![IndexTripletRaster rasterized with index-derived colors](../assets/hexes/rasters/index-triplet-raster-odd-r-rgba16.png)
 
-Geometry grids can visualize sampled barycentric weights.
+Geometry rasters can visualize sampled barycentric weights.
 
 ```csharp
 var hexGeometry = new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR);
@@ -57,11 +57,11 @@ var rasterGeometry = new RasterGeometry(
     new PointXY(-4f, -4f),
     new VectorXY(8f, 8f),
     new VectorXYInt(192, 192));
-var grid = new BarycentricTripletGrid(hexGeometry, rasterGeometry);
+var sourceRaster = new BarycentricTripletRaster(hexGeometry, rasterGeometry);
 
-SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
 
-raster.SaveAsPng("barycentric-triplet-grid-main-odd-r-rgba16.png");
+colorRaster.SaveAsPng("barycentric-triplet-raster-main-odd-r-rgba16.png");
 
 static RGBA16BitColor ToColor(Triplet<float> barycentric)
 {
@@ -76,9 +76,9 @@ static ushort ToChannel(float value)
 }
 ```
 
-![BarycentricTripletGrid rasterized with the main barycentric weight](../assets/hexes/grids/barycentric-triplet-grid-main-odd-r-rgba16.png)
+![BarycentricTripletRaster rasterized with the main barycentric weight](../assets/hexes/rasters/barycentric-triplet-raster-main-odd-r-rgba16.png)
 
-Chromatic grids can visualize sampled chromatic triplets.
+Chromatic rasters can visualize sampled chromatic triplets.
 
 ```csharp
 var topology = new HexMapTopology(5, 4, Layout.OddR);
@@ -87,13 +87,13 @@ var rasterGeometry = new RasterGeometry(
     new PointXY(0f, 0f),
     hexMapGeometry.GetBoundingBoxSize(),
     new VectorXYInt(192, 192));
-var grid = new ChromaticIndexTripletGrid(
+var sourceRaster = new ChromaticIndexTripletRaster(
     hexMapGeometry,
     rasterGeometry);
 
-SpatialRaster<RGBA16BitColor> raster = grid.ToRGBA16BitRaster(ToColor);
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
 
-raster.SaveAsPng("chromatic-index-triplet-grid-odd-r-rgba16.png");
+colorRaster.SaveAsPng("chromatic-index-triplet-raster-odd-r-rgba16.png");
 
 static RGBA16BitColor ToColor(Triplet<byte> chromatic)
 {
@@ -111,4 +111,4 @@ static ushort ToChannel(float value)
 }
 ```
 
-![ChromaticIndexTripletGrid rasterized with chromatic triplet colors](../assets/hexes/grids/chromatic-index-triplet-grid-odd-r-rgba16.png)
+![ChromaticIndexTripletRaster rasterized with chromatic triplet colors](../assets/hexes/rasters/chromatic-index-triplet-raster-odd-r-rgba16.png)

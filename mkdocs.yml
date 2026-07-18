@@ -137,13 +137,13 @@ nav:
               - Edges and Vertices: Hexes/topology/edges-and-vertices.md
               - Adjacency: Hexes/topology/adjacency.md
               - Topology Maps: Hexes/topology/topology-maps.md
-              - Topology Grids: Hexes/topology/topology-grids.md
+              - Topology Rasters: Hexes/topology/topology-rasters.md
               - Polyhex Topology: Hexes/topology/polyhex-topology.md
           - Geometry:
               - Overview: Hexes/geometry.md
               - Hex Geometry: Hexes/geometry/hex-geometry.md
               - Geometry Maps: Hexes/geometry/maps.md
-              - Geometry Grids: Hexes/geometry/grids.md
+              - Geometry Rasters: Hexes/geometry/rasters.md
               - Polyhex Geometry: Hexes/geometry/polyhex-geometry.md
               - Field Parameters: Hexes/geometry/field-parameters.md
               - Partitioning: Hexes/geometry/partitioning.md
@@ -152,16 +152,16 @@ nav:
               - IHexMap: Hexes/maps/ihexmap.md
               - HexMap: Hexes/maps/hexmap.md
               - Shared Map Behavior: Hexes/maps/shared-map-behavior.md
-          - Grids:
-              - Overview: Hexes/grids.md
-              - IGrid: Hexes/grids/igrid.md
-              - Shared Grid Behavior: Hexes/grids/shared-grid-behavior.md
-              - Rasterization Integration: Hexes/grids/rasterization-integration.md
+          - Rasters:
+              - Overview: Hexes/rasters.md
+              - ISpatialRaster: Hexes/rasters/ispatialraster.md
+              - Shared Raster Behavior: Hexes/rasters/shared-raster-behavior.md
+              - Rasterization Integration: Hexes/rasters/rasterization-integration.md
           - Chromatization:
               - Overview: Hexes/chromatization.md
               - Chromatic Indexes: Hexes/chromatization/chromatic-indexes.md
               - Chromatic Maps: Hexes/chromatization/chromatic-maps.md
-              - Chromatic Grids: Hexes/chromatization/chromatic-grids.md
+              - Chromatic Rasters: Hexes/chromatization/chromatic-rasters.md
               - Rasterization: Hexes/chromatization/rasterization.md
           - Utility Structures:
               - Overview: Hexes/utility-structures.md

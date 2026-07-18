@@ -6,20 +6,20 @@ using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
-public class IndexSeptupletGridTests
+public class IndexSeptupletRasterTests
 {
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Constructor_WithSubrectangle_SamplesCorrespondingPartOfFullGrid(Layout layout)
+    public void Constructor_WithSubrectangle_SamplesCorrespondingPartOfFullRaster(Layout layout)
     {
         var hexMapGeometry = new HexMapGeometry(12, 8, 1f, layout);
         VectorXY size = hexMapGeometry.GetBoundingBoxSize();
-        var fullGrid = new IndexSeptupletGrid(
+        var fullGrid = new IndexSeptupletRaster(
             hexMapGeometry,
             new RasterGeometry(new PointXY(0f, 0f), size, new VectorXYInt(4, 4)));
-        var subrectangleGrid = new IndexSeptupletGrid(
+        var subrectangleGrid = new IndexSeptupletRaster(
             hexMapGeometry,
             new RasterGeometry(
                 new PointXY(size.X * 0.25f, size.Y * 0.25f),
@@ -43,7 +43,7 @@ public class IndexSeptupletGridTests
             new PointXY(8f, -22f),
             new VectorXY(16f, 12f),
             new VectorXYInt(4, 3));
-        var grid = new IndexSeptupletGrid(hexMapGeometry, rasterGeometry);
+        var grid = new IndexSeptupletRaster(hexMapGeometry, rasterGeometry);
 
         Assert.Multiple(() =>
         {
