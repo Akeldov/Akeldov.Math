@@ -78,10 +78,16 @@ nav:
                   - ParameterizedCompositeContour: Spatial2D/contours/parameterized-composite-contour.md
           - Regions:
               - Overview: Spatial2D/regions/index.md
-              - Disk: Spatial2D/regions/disk.md
-              - Rectangle: Spatial2D/regions/rectangle.md
-              - OrientedRectangle: Spatial2D/regions/oriented-rectangle.md
-              - Contour-Based Regions: Spatial2D/regions/contour-based-regions.md
+              - Circular:
+                  - Overview: Spatial2D/regions/circular/index.md
+                  - Disk: Spatial2D/regions/disk.md
+              - Rectangular:
+                  - Overview: Spatial2D/regions/rectangular/index.md
+                  - Rectangle: Spatial2D/regions/rectangle.md
+                  - OrientedRectangle: Spatial2D/regions/oriented-rectangle.md
+              - Contour Based:
+                  - Overview: Spatial2D/regions/contour-based/index.md
+                  - ContourBasedRegion: Spatial2D/regions/contour-based-regions.md
           - Fields:
               - Overview: Spatial2D/fields/index.md
               - Field Interfaces: Spatial2D/fields/field-interfaces.md
