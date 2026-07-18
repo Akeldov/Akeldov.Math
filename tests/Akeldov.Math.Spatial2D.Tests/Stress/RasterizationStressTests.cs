@@ -38,8 +38,7 @@ public class RasterizationStressTests
 
         SpatialRaster<Gray16BitColor> raster = rasterizer.Rasterize(region, grid);
 
-        Assert.That(raster.Width, Is.EqualTo(grid.Resolution.X));
-        Assert.That(raster.Height, Is.EqualTo(grid.Resolution.Y));
+        Assert.That(raster.Resolution, Is.EqualTo(grid.Resolution));
         Assert.That(raster.Values, Has.Length.EqualTo(grid.Resolution.X * grid.Resolution.Y));
         Assert.That(mappedValueCount, Is.EqualTo(raster.Values.Length));
         Assert.That(sawInsideDistance, Is.True);

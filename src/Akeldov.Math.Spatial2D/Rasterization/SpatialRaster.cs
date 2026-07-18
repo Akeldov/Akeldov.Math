@@ -62,16 +62,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public TValue[] Values { get; }
 
         /// <summary>
-        /// Gets the raster width in cells.
-        /// </summary>
-        public int Width => Geometry.Resolution.X;
-
-        /// <summary>
-        /// Gets the raster height in cells.
-        /// </summary>
-        public int Height => Geometry.Resolution.Y;
-
-        /// <summary>
         /// Gets the raster resolution in cells.
         /// </summary>
         public VectorXYInt Resolution => Geometry.Resolution;
@@ -142,13 +132,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
         private int GetLinearIndex(int x, int y)
         {
-            if ((uint)x >= (uint)Width)
+            if ((uint)x >= (uint)Resolution.X)
                 throw new ArgumentOutOfRangeException(nameof(x), "Raster X index must be inside the raster width.");
 
-            if ((uint)y >= (uint)Height)
+            if ((uint)y >= (uint)Resolution.Y)
                 throw new ArgumentOutOfRangeException(nameof(y), "Raster Y index must be inside the raster height.");
 
-            return y * Width + x;
+            return y * Resolution.X + x;
         }
     }
 }
