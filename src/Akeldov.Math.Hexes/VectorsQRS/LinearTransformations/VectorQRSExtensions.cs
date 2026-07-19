@@ -6,18 +6,32 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
     public static partial class VectorQRSExtensions
     {
         /// <summary>
-        /// Rotates the value using the specified angle.
+        /// Rotates the QRS vector counterclockwise in the hex coordinate plane.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="angleRad">The angleRad value.</param>
+        /// <param name="point">The QRS vector to rotate.</param>
+        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="point"/> contains a non-finite component or
+        /// <paramref name="angleRad"/> is not finite.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS Rotate(this VectorQRS point, float angleRad)
         {
+            if (float.IsNaN(point.Q) || float.IsInfinity(point.Q) ||
+                float.IsNaN(point.R) || float.IsInfinity(point.R) ||
+                float.IsNaN(point.S) || float.IsInfinity(point.S))
+                throw new ArgumentOutOfRangeException(nameof(point), point, "QRS vector components must be finite.");
+
+            if (float.IsNaN(angleRad) || float.IsInfinity(angleRad))
+                throw new ArgumentOutOfRangeException(nameof(angleRad), angleRad, "Rotation angle must be finite.");
+
             float cos = MathF.Cos(angleRad);
             float sin = MathF.Sin(angleRad);
+            float sinOverSqrt3 = sin * 0.5773502691896258f;
+            float twoSinOverSqrt3 = 2f * sinOverSqrt3;
 
-            float q = point.Q * cos - point.R * sin;
-            float r = point.Q * sin + point.R * cos;
+            float q = point.Q * (cos - sinOverSqrt3) - point.R * twoSinOverSqrt3;
+            float r = point.Q * twoSinOverSqrt3 + point.R * (cos + sinOverSqrt3);
 
             return new VectorQRS(q, r);
         }

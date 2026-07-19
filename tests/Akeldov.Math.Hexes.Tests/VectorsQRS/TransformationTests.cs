@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 
@@ -22,11 +23,52 @@ public class TransformationTests
     }
 
     [Test]
-    public void VectorQRS_RotateByRadians_ReturnsExpectedVector()
+    public void VectorQRS_RotateByRadians_UsesAxialBasis()
     {
         var actual = new VectorQRS(2f, 3f).Rotate(MathF.PI / 2f);
 
-        VectorAssert.AreEqual(actual, -3f, 2f);
+        VectorAssert.AreEqual(actual, -4.618802f, 4.041452f);
+    }
+
+    [TestCase(SixfoldAngle.Deg0)]
+    [TestCase(SixfoldAngle.Deg60)]
+    [TestCase(SixfoldAngle.Deg120)]
+    [TestCase(SixfoldAngle.Deg180)]
+    [TestCase(SixfoldAngle.Deg240)]
+    [TestCase(SixfoldAngle.Deg300)]
+    public void VectorQRS_RotateByRadians_MatchesSixfoldRotation(SixfoldAngle angle)
+    {
+        var point = new VectorQRS(2f, -5f);
+
+        var expected = point.Rotate(angle);
+        var actual = point.Rotate(angle.AsFloatRadians());
+
+        VectorAssert.AreEqual(actual, expected.Q, expected.R);
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void VectorQRS_RotateByRadians_PreservesWorldSpaceLength(Layout layout)
+    {
+        var point = new VectorQRS(2f, -5f);
+
+        float expectedLength = point.ToVectorXY(layout).Length;
+        float actualLength = point.Rotate(0.731f).ToVectorXY(layout).Length;
+
+        Assert.That(actualLength, Is.EqualTo(expectedLength).Within(VectorAssert.Epsilon));
+    }
+
+    [Test]
+    public void VectorQRS_RotateByRadians_WhenArgumentsAreNotFinite_Throws()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new VectorQRS(float.NaN, 0f).Rotate(0f));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new VectorQRS(float.MaxValue, float.MaxValue).Rotate(0f));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new VectorQRS(1f, 2f).Rotate(float.PositiveInfinity));
+        });
     }
 
     [TestCase(SixfoldAngle.Deg0, 2, -5)]
@@ -46,11 +88,33 @@ public class TransformationTests
     }
 
     [Test]
-    public void VectorQRSInt_RotateByRadians_ReturnsExpectedVector()
+    public void VectorQRSInt_RotateByRadians_UsesAxialBasis()
     {
         var actual = new VectorQRSInt(2, 3).Rotate(MathF.PI / 2f);
 
-        VectorAssert.AreEqual(actual, -3f, 2f);
+        VectorAssert.AreEqual(actual, -4.618802f, 4.041452f);
+    }
+
+    [TestCase(SixfoldAngle.Deg0)]
+    [TestCase(SixfoldAngle.Deg60)]
+    [TestCase(SixfoldAngle.Deg120)]
+    [TestCase(SixfoldAngle.Deg180)]
+    [TestCase(SixfoldAngle.Deg240)]
+    [TestCase(SixfoldAngle.Deg300)]
+    public void VectorQRSInt_RotateByRadians_MatchesSixfoldRotation(SixfoldAngle angle)
+    {
+        var point = new VectorQRSInt(2, -5);
+
+        var expected = point.Rotate(angle);
+        var actual = point.Rotate(angle.AsFloatRadians());
+
+        VectorAssert.AreEqual(actual, expected.Q, expected.R);
+    }
+
+    [Test]
+    public void VectorQRSInt_RotateByRadians_WhenAngleIsNotFinite_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new VectorQRSInt(1, 2).Rotate(float.NaN));
     }
 
     [Test]

@@ -6,20 +6,17 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
     public static partial class VectorQRSIntExtensions
     {
         /// <summary>
-        /// Rotates the value using the specified angle.
+        /// Rotates the QRS vector counterclockwise in the hex coordinate plane.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="angleRad">The angleRad value.</param>
+        /// <param name="point">The integer QRS vector to rotate.</param>
+        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="angleRad"/> is not finite.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS Rotate(this VectorQRSInt point, float angleRad)
         {
-            float cos = MathF.Cos(angleRad);
-            float sin = MathF.Sin(angleRad);
-
-            float q = point.Q * cos - point.R * sin;
-            float r = point.Q * sin + point.R * cos;
-
-            return new VectorQRS(q, r);
+            return new VectorQRS(point.Q, point.R).Rotate(angleRad);
         }
 
         /// <summary>
