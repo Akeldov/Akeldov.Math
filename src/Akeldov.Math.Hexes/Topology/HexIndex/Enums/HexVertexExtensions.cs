@@ -5,14 +5,14 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Relates hex vertices to their incident edges.
     /// </summary>
     public static class HexVertexExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the two edges incident to the specified vertex for a pointy-top hex.
         /// </summary>
-        /// <param name="hexVertex">The hexVertex value.</param>
+        /// <param name="hexVertex">The vertex whose incident edges are requested.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<HexEdge> GetAdjacentEdges(this HexVertex hexVertex)
         {
@@ -24,10 +24,10 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the two edges incident to the specified vertex for the requested layout.
         /// </summary>
-        /// <param name="hexVertex">The hexVertex value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="hexVertex">The vertex whose incident edges are requested.</param>
+        /// <param name="layout">The layout that determines the hex orientation.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<HexEdge> GetAdjacentEdges(this HexVertex hexVertex, Layout layout)
         {

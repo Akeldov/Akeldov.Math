@@ -3,14 +3,15 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides conversions between the radius and apothem of a regular hexagon.
     /// </summary>
     public static class FloatExtensions
     {
         /// <summary>
-        /// Performs the ConvertHexApothemToRadius operation.
+        /// Converts a hex apothem to the corresponding center-to-vertex radius.
         /// </summary>
-        /// <param name="apothem">The apothem value.</param>
+        /// <param name="apothem">The positive center-to-edge distance in any coordinate-space unit.</param>
+        /// <returns>The radius in the same coordinate-space unit.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ConvertHexApothemToRadius(this float apothem)
         {
@@ -21,9 +22,10 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Performs the ConvertHexRadiusToApothem operation.
+        /// Converts a center-to-vertex hex radius to the corresponding apothem.
         /// </summary>
-        /// <param name="radius">The radius value.</param>
+        /// <param name="radius">The positive center-to-vertex distance in any coordinate-space unit.</param>
+        /// <returns>The apothem in the same coordinate-space unit.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ConvertHexRadiusToApothem(this float radius)
         {

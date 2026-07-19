@@ -3,27 +3,26 @@ using System;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Defines PairPresenceFlags values.
+    /// Identifies which positions of a <see cref="PartialPair{TValue}"/> contain values.
     /// </summary>
     [Flags]
     public enum PairPresenceFlags : byte
     {
         /// <summary>
-        /// Represents the <c>None</c> value.
+        /// Neither position is present.
         /// </summary>
         None = 0,
         /// <summary>
-        /// Represents the <c>Left</c> value.
+        /// The left position is present.
         /// </summary>
         Left = 1 << 0,
         /// <summary>
-        /// Represents the <c>Right</c> value.
+        /// The right position is present.
         /// </summary>
         Right = 1 << 1,
         /// <summary>
-        /// Represents the <c>All</c> value.
+        /// Both positions are present.
         /// </summary>
         All = Left | Right
     }
 }
-

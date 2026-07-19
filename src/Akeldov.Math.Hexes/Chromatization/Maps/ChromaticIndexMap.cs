@@ -4,12 +4,12 @@ using System;
 namespace Akeldov.Math.Hexes.Chromatization
 {
     /// <summary>
-    /// Initializes a new instance of the ChromaticIndexMap type.
+    /// Precomputes a three-color class for every cell in a hex map.
     /// </summary>
     public sealed class ChromaticIndexMap : SpatialHexMap<byte>
     {
         /// <summary>
-        /// Initializes a new instance of the ChromaticIndexMap type.
+        /// Initializes a chromatic map with unit-radius spatial geometry.
         /// </summary>
         /// <param name="topology">The map topology.</param>
         public ChromaticIndexMap(HexMapTopology topology)

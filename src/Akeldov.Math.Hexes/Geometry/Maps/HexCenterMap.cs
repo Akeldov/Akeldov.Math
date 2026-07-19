@@ -4,7 +4,7 @@ using System;
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Initializes a new instance of the HexCenterMap type.
+    /// Precomputes the world-space center of every hex in a map geometry.
     /// </summary>
     public sealed class HexCenterMap : SpatialHexMap<PointXY>
     {
@@ -18,9 +18,9 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Initializes a new instance of the HexCenterMap type.
+        /// Initializes a center map for the specified spatial geometry.
         /// </summary>
-        /// <param name="geometry">The geometry value.</param>
+        /// <param name="geometry">The topology, origin, and cell size used to compute the centers.</param>
         public HexCenterMap(HexMapGeometry geometry)
             : base(geometry, CreateValues(geometry))
         {

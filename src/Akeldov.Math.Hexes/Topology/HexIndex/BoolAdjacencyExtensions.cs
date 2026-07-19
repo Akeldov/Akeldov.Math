@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Selects layout-specific neighbor offsets from the parity of an offset-grid axis.
     /// </summary>
     public static partial class BoolExtensions
     {
@@ -33,8 +33,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets relative offsets for the six adjacent hexes.
         /// </summary>
-        /// <param name="axisIsEven">The AxisIsEven value.</param>
-        /// <param name="layout">The Layout value.</param>
+        /// <param name="axisIsEven">Whether the staggered axis coordinate is even: Y for row layouts, X for column layouts.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt[] GetRelativeOffsets(this bool axisIsEven, Layout layout)
@@ -45,8 +45,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets library-owned mutable relative offsets for the six adjacent hexes.
         /// </summary>
-        /// <param name="axisIsEven">The AxisIsEven value.</param>
-        /// <param name="layout">The Layout value.</param>
+        /// <param name="axisIsEven">Whether the staggered axis coordinate is even: Y for row layouts, X for column layouts.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         /// <remarks>The returned array is shared, owned by the library, and must not be mutated.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static VectorXYInt[] GetSharedRelativeOffsets(this bool axisIsEven, Layout layout)
@@ -67,11 +67,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the relative offset to the neighbor across the specified edge.
         /// </summary>
-        /// <param name="axisIsEven">The axisIsEven value.</param>
-        /// <param name="hexEdge">The hexEdge value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="axisIsEven">Whether the staggered axis coordinate is even: Y for row layouts, X for column layouts.</param>
+        /// <param name="hexEdge">The edge shared with the neighbor.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetRelativeOffset(this bool axisIsEven, HexEdge hexEdge, Layout layout)
         {
@@ -79,11 +79,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the relative offset to the neighbor across the edge with the specified ordinal.
         /// </summary>
-        /// <param name="axisIsEven">The axisIsEven value.</param>
-        /// <param name="hexEdge">The hexEdge value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="axisIsEven">Whether the staggered axis coordinate is even: Y for row layouts, X for column layouts.</param>
+        /// <param name="hexEdge">The zero-based edge ordinal.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetRelativeOffset(this bool axisIsEven, int hexEdge, Layout layout)
         {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes.Geometry.Contours
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Builds world-space regions offset from polyhex boundaries.
     /// </summary>
     public static partial class HexMatrixExtensions
     {

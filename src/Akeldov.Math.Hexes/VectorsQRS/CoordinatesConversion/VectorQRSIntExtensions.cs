@@ -5,15 +5,16 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides conversions from integer QRS indexes to offset-storage indexes.
     /// </summary>
     public static partial class VectorQRSIntExtensions
     {
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Converts a QRS hex index to its row-and-column offset index.
         /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="index">The QRS index to convert.</param>
+        /// <param name="layout">The offset layout of the destination index.</param>
+        /// <returns>The corresponding XY storage index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt ToXYIndex(this VectorQRSInt index, Layout layout)
         {

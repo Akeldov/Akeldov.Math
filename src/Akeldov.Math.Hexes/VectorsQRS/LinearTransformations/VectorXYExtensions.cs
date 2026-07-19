@@ -6,10 +6,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
     public static partial class VectorXYExtensions
     {
         /// <summary>
-        /// Rotates the value using the specified angle.
+        /// Rotates an XY vector counterclockwise about the origin.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="point">The vector to rotate.</param>
+        /// <param name="angle">The sixfold counterclockwise rotation.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Rotate(this VectorXY point, SixfoldAngle angle)
         {

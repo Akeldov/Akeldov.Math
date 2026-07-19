@@ -4,16 +4,17 @@ using System;
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Represents a ParametersReconstructor instance.
+    /// Reconstructs hex dimensions and scale from the physical extent of a grid.
     /// </summary>
     public static class ParametersReconstructor
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Calculates the hex apothem that fits the requested grid dimensions into a physical extent.
         /// </summary>
-        /// <param name="size">The size value.</param>
-        /// <param name="dim">The dim value.</param>
-        /// <param name="xOriented">The xOriented value.</param>
+        /// <param name="size">The physical width and height available to the grid.</param>
+        /// <param name="dim">The number of hex columns and rows.</param>
+        /// <param name="xOriented"><see langword="true"/> for X-oriented hexes; <see langword="false"/> for Y-oriented hexes.</param>
+        /// <returns>The fitted distance from a hex center to an edge.</returns>
         public static float GetApothem(VectorXY size, VectorXYInt dim, bool xOriented)
         {
             if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
@@ -38,11 +39,12 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Calculates how many hex columns and rows fit into a physical extent.
         /// </summary>
-        /// <param name="landscapeMetricSize">The landscapeMetricSize value.</param>
-        /// <param name="hexApothem">The hexApothem value.</param>
-        /// <param name="xOrientation">The xOrientation value.</param>
+        /// <param name="landscapeMetricSize">The available physical width and height.</param>
+        /// <param name="hexApothem">The distance from a hex center to an edge.</param>
+        /// <param name="xOrientation"><see langword="true"/> for X-oriented hexes; <see langword="false"/> for Y-oriented hexes.</param>
+        /// <returns>The number of hex columns and rows that fully fit in the extent.</returns>
         public static VectorXYInt GetDim(VectorXY landscapeMetricSize, float hexApothem, bool xOrientation)
         {
             if (!landscapeMetricSize.IsFinite || landscapeMetricSize.X < 0f || landscapeMetricSize.Y < 0f)

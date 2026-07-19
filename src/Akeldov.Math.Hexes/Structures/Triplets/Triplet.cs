@@ -1,17 +1,17 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents a Triplet value.
+    /// Represents a main value and its ordered left and right values.
     /// </summary>
-    /// <typeparam name="T">The type of value handled by this member.</typeparam>
+    /// <typeparam name="T">The element type.</typeparam>
     public readonly struct Triplet<T>
     {
         /// <summary>
-        /// Performs the Triplet operation.
+        /// Initializes an ordered main-left-right triplet.
         /// </summary>
-        /// <param name="main">The main value.</param>
-        /// <param name="left">The left value.</param>
-        /// <param name="right">The right value.</param>
+        /// <param name="main">The primary element.</param>
+        /// <param name="left">The element to the left of the primary element.</param>
+        /// <param name="right">The element to the right of the primary element.</param>
         public Triplet(T main, T left, T right)
         {
             Main = main;
@@ -20,26 +20,26 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the Main value.
+        /// Gets the primary element.
         /// </summary>
         public T Main { get; }
 
         /// <summary>
-        /// Gets the Left value.
+        /// Gets the left element.
         /// </summary>
         public T Left { get; }
 
         /// <summary>
-        /// Gets the Right value.
+        /// Gets the right element.
         /// </summary>
         public T Right { get; }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the triplet in main-left-right order.
         /// </summary>
-        /// <param name="main">The main value.</param>
-        /// <param name="left">The left value.</param>
-        /// <param name="right">The right value.</param>
+        /// <param name="main">Receives the primary element.</param>
+        /// <param name="left">Receives the left element.</param>
+        /// <param name="right">Receives the right element.</param>
         public void Deconstruct(out T main, out T left, out T right)
         {
             main = Main;

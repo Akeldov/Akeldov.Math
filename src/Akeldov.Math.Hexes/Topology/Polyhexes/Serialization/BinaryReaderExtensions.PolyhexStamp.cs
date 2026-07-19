@@ -5,14 +5,15 @@ using System.IO;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Reads polyhex masks from binary streams.
     /// </summary>
     public static partial class BinaryReaderExtensions
     {
         /// <summary>
-        /// Reads a value from the specified binary reader.
+        /// Reads a nullable polyhex mask written by the matching binary-writer extension.
         /// </summary>
-        /// <param name="binaryReader">The binaryReader value.</param>
+        /// <param name="binaryReader">The reader positioned at the polyhex presence flag.</param>
+        /// <returns>The reconstructed polyhex, or <see langword="null"/> when the serialized value is absent.</returns>
         public static Polyhex? ReadPolyhexStamp(
             this BinaryReader binaryReader)
         {

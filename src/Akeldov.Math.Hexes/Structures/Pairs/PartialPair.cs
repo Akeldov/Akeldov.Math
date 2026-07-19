@@ -1,17 +1,17 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents a PartialPair value.
+    /// Represents an ordered pair whose positions carry explicit presence information.
     /// </summary>
-    /// <typeparam name="T">The type of value handled by this member.</typeparam>
+    /// <typeparam name="T">The element type.</typeparam>
     public readonly struct PartialPair<T>
     {
         /// <summary>
-        /// Performs the PartialPair operation.
+        /// Initializes a partial pair from stored values and presence flags.
         /// </summary>
-        /// <param name="left">The Left value.</param>
-        /// <param name="right">The Right value.</param>
-        /// <param name="presence">The Presence value.</param>
+        /// <param name="left">The value stored at the left position.</param>
+        /// <param name="right">The value stored at the right position.</param>
+        /// <param name="presence">The positions that are semantically present.</param>
         public PartialPair(
             T left,
             T right,
@@ -23,12 +23,12 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the PartialPair operation.
+        /// Initializes a partial pair from stored values and per-position presence indicators.
         /// </summary>
-        /// <param name="left">The Left value.</param>
-        /// <param name="right">The Right value.</param>
-        /// <param name="hasLeft">The HasLeft value.</param>
-        /// <param name="hasRight">The HasRight value.</param>
+        /// <param name="left">The value stored at the left position.</param>
+        /// <param name="right">The value stored at the right position.</param>
+        /// <param name="hasLeft">Whether the left position is present.</param>
+        /// <param name="hasRight">Whether the right position is present.</param>
         public PartialPair(
             T left,
             T right,
@@ -39,42 +39,42 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the PartialPair operation.
+        /// Initializes a partial pair from a complete pair and presence flags.
         /// </summary>
-        /// <param name="pair">The Pair value.</param>
-        /// <param name="presence">The presence value.</param>
+        /// <param name="pair">The complete pair whose values are stored.</param>
+        /// <param name="presence">The positions that are semantically present.</param>
         public PartialPair(Pair<T> pair, PairPresenceFlags presence)
             : this(pair.Left, pair.Right, presence)
         {
         }
 
         /// <summary>
-        /// Gets the Left value.
+        /// Gets the value stored at the left position, regardless of presence.
         /// </summary>
         public T Left { get; }
 
         /// <summary>
-        /// Gets the Right value.
+        /// Gets the value stored at the right position, regardless of presence.
         /// </summary>
         public T Right { get; }
 
         /// <summary>
-        /// Gets the Presence value.
+        /// Gets the flags identifying the semantically present positions.
         /// </summary>
         public PairPresenceFlags Presence { get; }
 
         /// <summary>
-        /// Performs the HasLeft operation.
+        /// Gets whether the left position is present.
         /// </summary>
         public bool HasLeft => (Presence & PairPresenceFlags.Left) != 0;
 
         /// <summary>
-        /// Performs the HasRight operation.
+        /// Gets whether the right position is present.
         /// </summary>
         public bool HasRight => (Presence & PairPresenceFlags.Right) != 0;
 
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Returns the stored values as a complete pair, discarding presence information.
         /// </summary>
         public Pair<T> ToPair()
         {
@@ -82,10 +82,10 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the stored values in left-to-right order.
         /// </summary>
-        /// <param name="left">The Left value.</param>
-        /// <param name="right">The Right value.</param>
+        /// <param name="left">Receives the stored left value.</param>
+        /// <param name="right">Receives the stored right value.</param>
         public void Deconstruct(out T left, out T right)
         {
             left = Left;
@@ -93,11 +93,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the stored values and their presence flags.
         /// </summary>
-        /// <param name="left">The Left value.</param>
-        /// <param name="right">The Right value.</param>
-        /// <param name="presence">The Presence value.</param>
+        /// <param name="left">Receives the stored left value.</param>
+        /// <param name="right">Receives the stored right value.</param>
+        /// <param name="presence">Receives the present-position flags.</param>
         public void Deconstruct(
             out T left,
             out T right,
@@ -122,4 +122,3 @@ namespace Akeldov.Math.Hexes.Topology
         }
     }
 }
-

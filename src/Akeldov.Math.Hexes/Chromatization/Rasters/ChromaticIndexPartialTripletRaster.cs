@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the ChromaticIndexPartialTripletRaster type.
+    /// Rasterizes the chromatic classes of in-bounds hexes surrounding each sampled point.
     /// </summary>
     public sealed class ChromaticIndexPartialTripletRaster : ISpatialRaster<PartialTriplet<byte>>
     {
@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Initializes a new instance of the ChromaticIndexPartialTripletRaster type.
+        /// Initializes a clipped chromatic-index raster over the specified sampling geometry.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
@@ -58,21 +58,21 @@ namespace Akeldov.Math.Hexes.Topology
         public RasterGeometry Geometry { get; }
 
         /// <summary>
-        /// Gets the Resolution value.
+        /// Gets the raster resolution in cells.
         /// </summary>
         public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
-        /// Gets the value at the specified grid coordinates.
+        /// Gets the present surrounding chromatic indices at the specified raster coordinates.
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
         public PartialTriplet<byte> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets the present surrounding chromatic indices at the specified raster coordinates.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The X/Y coordinates of the raster cell.</param>
         public PartialTriplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -87,9 +87,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets the present surrounding chromatic indices at the specified flat raster index.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The zero-based row-major raster index.</param>
         public PartialTriplet<byte> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

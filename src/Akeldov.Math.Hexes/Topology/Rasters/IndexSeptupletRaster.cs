@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the IndexSeptupletRaster type.
+    /// Rasterizes a central hex index and its six adjacent indices for each sampled point.
     /// </summary>
     public sealed class IndexSeptupletRaster : ISpatialRaster<Septuplet<VectorXYInt>>
     {
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Initializes a new instance of the IndexSeptupletRaster type.
+        /// Initializes a neighborhood-index raster over the specified sampling geometry.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
@@ -56,21 +56,21 @@ namespace Akeldov.Math.Hexes.Topology
         public RasterGeometry Geometry { get; }
 
         /// <summary>
-        /// Gets the Resolution value.
+        /// Gets the raster resolution in cells.
         /// </summary>
         public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
-        /// Gets the value at the specified grid coordinates.
+        /// Gets the seven-index neighborhood at the specified raster coordinates.
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
         public Septuplet<VectorXYInt> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets the seven-index neighborhood at the specified raster coordinates.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The X/Y coordinates of the raster cell.</param>
         public Septuplet<VectorXYInt> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -85,9 +85,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets the seven-index neighborhood at the specified flat raster index.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The zero-based row-major raster index.</param>
         public Septuplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

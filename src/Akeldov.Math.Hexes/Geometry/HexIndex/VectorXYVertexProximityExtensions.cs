@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// Returns the containing hex index and the closest vertex of that hex.
         /// </summary>
-        /// <param name="point">The Point value.</param>
+        /// <param name="point">The world-space point to classify.</param>
         /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         /// <param name="hexFieldOrigin">The center of the zero hex.</param>
         /// <param name="layout">The hex layout.</param>
@@ -29,12 +29,13 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the zero-based index of the hex vertex nearest to a world-space point.
         /// </summary>
-        /// <param name="point">The Point value.</param>
-        /// <param name="radius">The Radius value.</param>
-        /// <param name="hexCenter">The HexCenter value.</param>
-        /// <param name="layout">The Layout value.</param>
+        /// <param name="point">The world-space point to compare with the vertices.</param>
+        /// <param name="radius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="hexCenter">The world-space center of the hex.</param>
+        /// <param name="layout">The layout that determines vertex orientation.</param>
+        /// <returns>An index from 0 through 5 identifying the nearest vertex.</returns>
         public static int GetClosestVertexIndex(
             this PointXY point,
             float radius,

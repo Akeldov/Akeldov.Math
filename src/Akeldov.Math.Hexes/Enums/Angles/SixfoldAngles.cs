@@ -1,7 +1,7 @@
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Represents a SixfoldAngles instance.
+    /// Provides the complete ordered set of <see cref="SixfoldAngle"/> values.
     /// </summary>
     public static class SixfoldAngles
     {
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes
         };
 
         /// <summary>
-        /// Gets all sixfold angles in clockwise order.
+        /// Gets all sixfold angles in counterclockwise order starting at zero degrees.
         /// </summary>
         /// <returns>A new, mutable array owned by the caller.</returns>
         public static SixfoldAngle[] All => (SixfoldAngle[])AllValues.Clone();

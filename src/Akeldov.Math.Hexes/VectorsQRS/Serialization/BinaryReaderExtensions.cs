@@ -5,14 +5,14 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides binary readers for QRS vectors and sixfold angles.
     /// </summary>
     public static class BinaryReaderExtensions
     {
         /// <summary>
-        /// Reads a value from the specified binary reader.
+        /// Reads an integer QRS vector encoded as Q followed by R, using two 32-bit integers.
         /// </summary>
-        /// <param name="reader">The reader value.</param>
+        /// <param name="reader">The binary reader positioned at the Q component.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRSInt ReadVectorQRSInt(this BinaryReader reader)
         {
@@ -25,9 +25,9 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         }
 
         /// <summary>
-        /// Reads a value from the specified binary reader.
+        /// Reads a fractional QRS vector encoded as Q followed by R, using two 32-bit floating-point values.
         /// </summary>
-        /// <param name="reader">The reader value.</param>
+        /// <param name="reader">The binary reader positioned at the Q component.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ReadVectorQRS(this BinaryReader reader)
         {
@@ -40,9 +40,9 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         }
 
         /// <summary>
-        /// Reads a value from the specified binary reader.
+        /// Reads a sixfold angle encoded as its 32-bit enum value.
         /// </summary>
-        /// <param name="reader">The reader value.</param>
+        /// <param name="reader">The binary reader positioned at the encoded angle.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle ReadSixfoldAngle(this BinaryReader reader)
         {

@@ -5,18 +5,18 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Represents a HexMap instance.
+    /// Stores one mutable value for every cell in a rectangular hex-map topology.
     /// </summary>
-    /// <typeparam name="TValue">The type of value handled by this member.</typeparam>
+    /// <typeparam name="TValue">The type stored in each hex cell.</typeparam>
     public class HexMap<TValue> : IHexMap<TValue>
     {
         private readonly HexMapTopology _topology;
         private readonly TValue[] _values;
 
         /// <summary>
-        /// Performs the HexMap operation.
+        /// Initializes an empty map whose cells contain the default value of <typeparamref name="TValue"/>.
         /// </summary>
-        /// <param name="topology">The topology value.</param>
+        /// <param name="topology">The layout and resolution of the map.</param>
         public HexMap(HexMapTopology topology)
         {
             _topology = topology;
@@ -53,14 +53,14 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Gets the Topology value.
+        /// Gets the layout and resolution shared by all cells in the map.
         /// </summary>
         public HexMapTopology Topology => _topology;
 
         /// <summary>
         /// Gets the value at the specified hex coordinates.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The X/Y coordinates of the hex cell.</param>
         public TValue this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -87,7 +87,7 @@ namespace Akeldov.Math.Hexes
         /// Gets the value at the specified flat index. Flat indexes use row-major order: X advances
         /// first, and coordinates <c>(x, y)</c> map to <c>y * Topology.Resolution.X + x</c>.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The zero-based row-major index.</param>
         public TValue this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

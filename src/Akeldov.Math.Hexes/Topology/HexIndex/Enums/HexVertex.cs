@@ -1,32 +1,32 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Defines HexVertex values.
+    /// Identifies a hex vertex in counterclockwise order.
     /// </summary>
     public enum HexVertex
     {
         /// <summary>
-        /// Represents the <c>Vertex0</c> value.
+        /// The vertex at 30 degrees for pointy-top hexes or 0 degrees for flat-top hexes.
         /// </summary>
         Vertex0 = 0,
         /// <summary>
-        /// Represents the <c>Vertex1</c> value.
+        /// The vertex 60 degrees counterclockwise from <see cref="Vertex0"/>.
         /// </summary>
         Vertex1 = 1,
         /// <summary>
-        /// Represents the <c>Vertex2</c> value.
+        /// The vertex 120 degrees counterclockwise from <see cref="Vertex0"/>.
         /// </summary>
         Vertex2 = 2,
         /// <summary>
-        /// Represents the <c>Vertex3</c> value.
+        /// The vertex 180 degrees counterclockwise from <see cref="Vertex0"/>.
         /// </summary>
         Vertex3 = 3,
         /// <summary>
-        /// Represents the <c>Vertex4</c> value.
+        /// The vertex 240 degrees counterclockwise from <see cref="Vertex0"/>.
         /// </summary>
         Vertex4 = 4,
         /// <summary>
-        /// Represents the <c>Vertex5</c> value.
+        /// The vertex 300 degrees counterclockwise from <see cref="Vertex0"/>.
         /// </summary>
         Vertex5 = 5
     }

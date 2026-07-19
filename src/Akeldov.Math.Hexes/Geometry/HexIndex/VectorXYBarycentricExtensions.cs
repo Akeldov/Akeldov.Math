@@ -4,17 +4,18 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides barycentric-coordinate calculations for points, segments, and triangles.
     /// </summary>
     public static partial class VectorXYExtensions
     {
         /// <summary>
-        /// Performs the BarycentricCoordinates operation.
+        /// Calculates the barycentric weights of a point relative to a triangle.
         /// </summary>
-        /// <param name="p">The p value.</param>
-        /// <param name="a">The a value.</param>
-        /// <param name="b">The b value.</param>
-        /// <param name="c">The c value.</param>
+        /// <param name="p">The point whose weights are required.</param>
+        /// <param name="a">The first triangle vertex.</param>
+        /// <param name="b">The second triangle vertex.</param>
+        /// <param name="c">The third triangle vertex.</param>
+        /// <returns>The weights associated with A, B, and C in that order.</returns>
         public static Triplet<float> BarycentricCoordinates(this PointXY p, VectorXY a, VectorXY b, VectorXY c)
         {
             VectorXY v0 = new VectorXY(b.X - a.X, b.Y - a.Y);
@@ -43,11 +44,12 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Performs the BarycentricCoordinates operation.
+        /// Calculates the affine weights of a point relative to a segment.
         /// </summary>
-        /// <param name="p">The p value.</param>
-        /// <param name="a">The a value.</param>
-        /// <param name="b">The b value.</param>
+        /// <param name="p">The point whose weights are required.</param>
+        /// <param name="a">The segment start point.</param>
+        /// <param name="b">The segment end point.</param>
+        /// <returns>The weights associated with A and B in that order.</returns>
         public static Pair<float> BarycentricCoordinates(this PointXY p, VectorXY a, VectorXY b)
         {
             VectorXY ab = b - a;

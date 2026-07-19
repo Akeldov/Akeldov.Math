@@ -1,32 +1,32 @@
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Defines SixfoldAngle values.
+    /// Specifies a counterclockwise rotation in 60-degree increments.
     /// </summary>
     public enum SixfoldAngle
     {
         /// <summary>
-        /// Represents the <c>Deg0</c> value.
+        /// A rotation of 0 degrees.
         /// </summary>
         Deg0 = 0,
         /// <summary>
-        /// Represents the <c>Deg60</c> value.
+        /// A counterclockwise rotation of 60 degrees.
         /// </summary>
         Deg60 = 1,
         /// <summary>
-        /// Represents the <c>Deg120</c> value.
+        /// A counterclockwise rotation of 120 degrees.
         /// </summary>
         Deg120 = 2,
         /// <summary>
-        /// Represents the <c>Deg180</c> value.
+        /// A rotation of 180 degrees.
         /// </summary>
         Deg180 = 3,
         /// <summary>
-        /// Represents the <c>Deg240</c> value.
+        /// A counterclockwise rotation of 240 degrees.
         /// </summary>
         Deg240 = 4,
         /// <summary>
-        /// Represents the <c>Deg300</c> value.
+        /// A counterclockwise rotation of 300 degrees.
         /// </summary>
         Deg300 = 5
     }

@@ -1,24 +1,24 @@
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Defines Layout values.
+    /// Specifies the offset-coordinate layout and hex orientation of a rectangular hex grid.
     /// </summary>
     public enum Layout
     {
         /// <summary>
-        /// Represents the <c>OddR</c> value.
+        /// Pointy-top layout whose odd-numbered rows are shifted right.
         /// </summary>
         OddR = 0,
         /// <summary>
-        /// Represents the <c>EvenR</c> value.
+        /// Pointy-top layout whose even-numbered rows are shifted right.
         /// </summary>
         EvenR = 1,
         /// <summary>
-        /// Represents the <c>OddQ</c> value.
+        /// Flat-top layout whose odd-numbered columns are shifted down.
         /// </summary>
         OddQ = 2,
         /// <summary>
-        /// Represents the <c>EvenQ</c> value.
+        /// Flat-top layout whose even-numbered columns are shifted down.
         /// </summary>
         EvenQ = 3
     }

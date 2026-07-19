@@ -7,10 +7,11 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
     public static partial class VectorXYIntExtensions
     {
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Converts a row-and-column offset index to its QRS hex index.
         /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="index">The XY storage index to convert.</param>
+        /// <param name="layout">The offset layout of the source index.</param>
+        /// <returns>The corresponding QRS index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRSInt ToQRSIndex(this VectorXYInt index, Layout layout)
         {

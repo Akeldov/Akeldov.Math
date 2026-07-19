@@ -5,16 +5,16 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides conversions from world-space points to fractional QRS coordinates.
     /// </summary>
     public static partial class PointXYExtensions
     {
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Converts a world-space point to fractional QRS coordinates relative to an origin.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="newOrigin">The newOrigin value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="point">The world-space point to convert.</param>
+        /// <param name="newOrigin">The world-space origin of the QRS coordinate system.</param>
+        /// <param name="layout">The layout that determines the orientation of the QRS basis.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ToQRS(this PointXY point, VectorXY newOrigin, Layout layout)
         {

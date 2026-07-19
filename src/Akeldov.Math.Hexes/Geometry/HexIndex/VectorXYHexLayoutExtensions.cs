@@ -7,13 +7,13 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorXYExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the world-space center of a QRS-indexed hex using the default axial origin.
         /// </summary>
-        /// <param name="q">The q value.</param>
-        /// <param name="r">The r value.</param>
-        /// <param name="hexApothem">The hexApothem value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="q">The Q component of the hex index.</param>
+        /// <param name="r">The R component of the hex index.</param>
+        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="layout">The layout that determines the world-space basis orientation.</param>
         public static VectorXY GetHexCenter(int q, int r, float hexApothem, float hexRadius, Layout layout)
         {
             if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
@@ -29,11 +29,11 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// Gets the six vertex positions for the specified hex index.
         /// </summary>
-        /// <param name="q">The Q value.</param>
-        /// <param name="r">The R value.</param>
-        /// <param name="hexApothem">The HexApothem value.</param>
-        /// <param name="hexRadius">The HexRadius value.</param>
-        /// <param name="layout">The Layout value.</param>
+        /// <param name="q">The Q component of the hex index.</param>
+        /// <param name="r">The R component of the hex index.</param>
+        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="layout">The layout that determines vertex orientation.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetHexVertices(int q, int r, float hexApothem, float hexRadius, Layout layout)
         {
@@ -49,9 +49,9 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// Gets the six vertex positions for the specified hex center.
         /// </summary>
-        /// <param name="hexCenter">The HexCenter value.</param>
-        /// <param name="hexRadius">The HexRadius value.</param>
-        /// <param name="layout">The Layout value.</param>
+        /// <param name="hexCenter">The world-space center of the hex.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="layout">The layout that determines vertex orientation.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         public static VectorXY[] GetHexVertices(this VectorXY hexCenter, float hexRadius, Layout layout)
         {

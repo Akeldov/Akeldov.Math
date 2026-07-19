@@ -5,7 +5,7 @@ using System;
 namespace Akeldov.Math.Hexes.Rectangles
 {
     /// <summary>
-    /// Represents a HexOrientedRectangle value.
+    /// Represents a rectangle rotated in 60-degree increments to align with hex-grid directions.
     /// </summary>
     public readonly struct HexOrientedRectangle
     {
@@ -19,11 +19,11 @@ namespace Akeldov.Math.Hexes.Rectangles
         private readonly PointXY _topRight;
 
         /// <summary>
-        /// Initializes a new instance of the HexOrientedRectangle type.
+        /// Initializes a rectangle from its center, unrotated size, and sixfold rotation.
         /// </summary>
-        /// <param name="center">The center value.</param>
-        /// <param name="size">The size value.</param>
-        /// <param name="rotation">The rotation value.</param>
+        /// <param name="center">The rectangle center in world coordinates.</param>
+        /// <param name="size">The width and height before rotation.</param>
+        /// <param name="rotation">The counterclockwise rotation in 60-degree steps.</param>
         public HexOrientedRectangle(PointXY center, VectorXY size, SixfoldAngle rotation)
         {
             if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
@@ -46,44 +46,44 @@ namespace Akeldov.Math.Hexes.Rectangles
         }
 
         /// <summary>
-        /// Gets the Center value.
+        /// Gets the rectangle center in world coordinates.
         /// </summary>
         public PointXY Center => _center;
 
         /// <summary>
-        /// Gets the Size value.
+        /// Gets the width and height in the rectangle's local coordinate system.
         /// </summary>
         public VectorXY Size => _size;
 
         /// <summary>
-        /// Gets the Rotation value.
+        /// Gets the counterclockwise rotation in 60-degree steps.
         /// </summary>
         public SixfoldAngle Rotation => _rotation;
 
         /// <summary>
-        /// Gets the BottomLeft value.
+        /// Gets the world position of the local bottom-left corner.
         /// </summary>
         public PointXY BottomLeft => _bottomLeft;
 
         /// <summary>
-        /// Gets the BottomRight value.
+        /// Gets the world position of the local bottom-right corner.
         /// </summary>
         public PointXY BottomRight => _bottomRight;
 
         /// <summary>
-        /// Gets the TopLeft value.
+        /// Gets the world position of the local top-left corner.
         /// </summary>
         public PointXY TopLeft => _topLeft;
 
         /// <summary>
-        /// Gets the TopRight value.
+        /// Gets the world position of the local top-right corner.
         /// </summary>
         public PointXY TopRight => _topRight;
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Converts a world point to coordinates measured from the local bottom-left corner.
         /// </summary>
-        /// <param name="point">The point value.</param>
+        /// <param name="point">The point in world coordinates.</param>
         public VectorXY GetLocalCoordinates(PointXY point)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
@@ -91,9 +91,10 @@ namespace Akeldov.Math.Hexes.Rectangles
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Converts a world point to local coordinates normalized by the rectangle size.
         /// </summary>
-        /// <param name="point">The point value.</param>
+        /// <param name="point">The point in world coordinates.</param>
+        /// <returns>Coordinates where <c>(0, 0)</c> is the local bottom-left corner and <c>(1, 1)</c> is the local top-right corner.</returns>
         public VectorXY GetLocalNormalizedCoordinates(PointXY point)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
@@ -101,10 +102,10 @@ namespace Akeldov.Math.Hexes.Rectangles
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Converts a world point to coordinates measured from the local bottom-left corner.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="isClamped">The isClamped value.</param>
+        /// <param name="point">The point in world coordinates.</param>
+        /// <param name="isClamped">Whether to clamp the result to the rectangle bounds.</param>
         public VectorXY GetLocalCoordinates(PointXY point, bool isClamped)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
@@ -114,10 +115,10 @@ namespace Akeldov.Math.Hexes.Rectangles
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Converts a world point to local coordinates normalized by the rectangle size.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="isClamped">The isClamped value.</param>
+        /// <param name="point">The point in world coordinates.</param>
+        /// <param name="isClamped">Whether to clamp each result component to the range from 0 through 1.</param>
         public VectorXY GetLocalNormalizedCoordinates(PointXY point, bool isClamped)
         {
             var localCoordinates = (point - BottomLeft).Rotate(Rotation.Negate());
@@ -128,11 +129,11 @@ namespace Akeldov.Math.Hexes.Rectangles
         }
 
         /// <summary>
-        /// Creates a value from the specified inputs.
+        /// Creates a rectangle whose local bottom-left corner is fixed at the specified world point.
         /// </summary>
-        /// <param name="bottomLeftPoint">The bottomLeftPoint value.</param>
-        /// <param name="size">The size value.</param>
-        /// <param name="rotation">The rotation value.</param>
+        /// <param name="bottomLeftPoint">The world position of the local bottom-left corner.</param>
+        /// <param name="size">The width and height before rotation.</param>
+        /// <param name="rotation">The counterclockwise rotation in 60-degree steps.</param>
         public static HexOrientedRectangle CreateFromBottomLeftPoint(PointXY bottomLeftPoint, VectorXY size, SixfoldAngle rotation)
         {
             if (float.IsNaN(bottomLeftPoint.X) || float.IsInfinity(bottomLeftPoint.X) ||

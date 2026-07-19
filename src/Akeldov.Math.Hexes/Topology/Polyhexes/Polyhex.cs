@@ -5,7 +5,7 @@ using System.Text;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents a Polyhex instance.
+    /// Represents an immutable set of hex cells in a rectangular Q/R mask.
     /// </summary>
     public class Polyhex : IPolyhex, IEquatable<Polyhex>
     {
@@ -13,18 +13,18 @@ namespace Akeldov.Math.Hexes.Topology
         private readonly int _hash;
 
         /// <summary>
-        /// Initializes a new instance of the Polyhex type.
+        /// Creates a polyhex from a rectangular integer mask.
         /// </summary>
-        /// <param name="intMask">The IntMask value.</param>
+        /// <param name="intMask">A Q/R mask in which nonzero cells belong to the polyhex. The contents are copied.</param>
         public Polyhex(int[,] intMask)
             : this((intMask ?? throw new ArgumentNullException(nameof(intMask))).ToBoolMask())
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the Polyhex type.
+        /// Creates a polyhex from a rectangular Boolean mask.
         /// </summary>
-        /// <param name="boolMask">The BoolMask value.</param>
+        /// <param name="boolMask">A Q/R mask in which <see langword="true"/> cells belong to the polyhex. The contents are copied.</param>
         public Polyhex(bool[,] boolMask)
         {
             if (boolMask == null)
@@ -60,9 +60,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Initializes a new instance of the Polyhex type.
+        /// Creates an empty polyhex mask with the specified QRS extents.
         /// </summary>
-        /// <param name="qrsResolution">The qrsResolution value.</param>
+        /// <param name="qrsResolution">The QRS extents of the mask.</param>
         public Polyhex(VectorQRSInt qrsResolution)
         {
             if (qrsResolution.Q <= 0 || qrsResolution.R <= 0)
@@ -117,29 +117,29 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the QRSResolution value.
+        /// Gets the QRS extents of the mask.
         /// </summary>
         public VectorQRSInt QRSResolution { get; }
 
         /// <summary>
-        /// Gets the HexCount value.
+        /// Gets the number of present hex cells.
         /// </summary>
         public int HexCount { get; }
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets whether the specified QRS cell belongs to the polyhex.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The integer QRS index to test.</param>
         public bool this[VectorQRSInt index]
         {
             get => this[index.Q, index.R];
         }
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets whether the cell at the specified Q/R mask coordinates belongs to the polyhex.
         /// </summary>
-        /// <param name="QIndex">The QIndex value.</param>
-        /// <param name="RIndex">The RIndex value.</param>
+        /// <param name="QIndex">The zero-based Q coordinate.</param>
+        /// <param name="RIndex">The zero-based R coordinate.</param>
         public bool this[int QIndex, int RIndex]
         {
             get
@@ -153,7 +153,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Creates a polyhex that includes this shape and every adjacent hex.
         /// </summary>
         public Polyhex GetExtended()
         {
@@ -161,7 +161,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Creates a polyhex containing the outermost present cells of this shape.
         /// </summary>
         public Polyhex GetContour()
         {
@@ -169,8 +169,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Creates a rectangular Q/R mask of the polyhex.
         /// </summary>
+        /// <returns>A new two-dimensional array owned by the caller.</returns>
         public bool[,] ToBoolArray()
         {
             var result = new bool[QRSResolution.Q, QRSResolution.R];
@@ -193,9 +194,9 @@ namespace Akeldov.Math.Hexes.Topology
         public override bool Equals(object? obj) => obj is Polyhex other && Equals(other);
 
         /// <summary>
-        /// Performs the Equals operation.
+        /// Determines whether another polyhex has the same resolution and cell mask.
         /// </summary>
-        /// <param name="other">The other value.</param>
+        /// <param name="other">The polyhex to compare with this instance.</param>
         public bool Equals(Polyhex? other)
         {
             if (other is null)
@@ -231,16 +232,16 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the implicit operator Polyhex operation.
+        /// Creates a polyhex by copying a Boolean Q/R mask.
         /// </summary>
-        /// <param name="boolMask">The BoolMask value.</param>
+        /// <param name="boolMask">A mask in which <see langword="true"/> cells belong to the polyhex.</param>
         public static implicit operator Polyhex(bool[,] boolMask) => new Polyhex(boolMask);
 
         /// <summary>
-        /// Applies the operator == operator.
+        /// Determines whether two polyhexes have the same resolution and cell mask.
         /// </summary>
-        /// <param name="left">The left value.</param>
-        /// <param name="right">The right value.</param>
+        /// <param name="left">The first polyhex to compare.</param>
+        /// <param name="right">The second polyhex to compare.</param>
         public static bool operator ==(Polyhex? left, Polyhex? right)
         {
             if (ReferenceEquals(left, right))
@@ -253,10 +254,10 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Applies the operator != operator.
+        /// Determines whether two polyhexes differ in resolution or cell mask.
         /// </summary>
-        /// <param name="left">The left value.</param>
-        /// <param name="right">The right value.</param>
+        /// <param name="left">The first polyhex to compare.</param>
+        /// <param name="right">The second polyhex to compare.</param>
         public static bool operator !=(Polyhex? left, Polyhex? right) => !(left == right);
 
         private int GetFlatIndex(int q, int r) => q * QRSResolution.R + r;

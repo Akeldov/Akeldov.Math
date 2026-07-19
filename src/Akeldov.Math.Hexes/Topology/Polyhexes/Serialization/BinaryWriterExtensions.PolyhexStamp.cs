@@ -5,15 +5,15 @@ using System.IO;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Writes polyhex masks to binary streams.
     /// </summary>
     public static partial class BinaryWriterExtensions
     {
         /// <summary>
-        /// Writes the value to the specified binary writer.
+        /// Writes a nullable polyhex mask, including its QRS resolution and Q-major cell values.
         /// </summary>
-        /// <param name="binaryWriter">The BinaryWriter value.</param>
-        /// <param name="polyhexStamp">The PolyhexStamp value.</param>
+        /// <param name="binaryWriter">The writer that receives the presence flag and, when present, the polyhex data.</param>
+        /// <param name="polyhexStamp">The polyhex to write, or <see langword="null"/> to write only an absent-value flag.</param>
         public static void Write(
             this BinaryWriter binaryWriter,
             Polyhex? polyhexStamp)

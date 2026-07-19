@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <remarks>
         /// The normalized basis maps each unit QR axis step to an XY vector with a length of one coordinate-space unit.
         /// </remarks>
-        /// <param name="vector">The vector value.</param>
+        /// <param name="vector">The finite XY vector to convert.</param>
         /// <param name="layout">The hex layout used to select the QR axis orientation.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ToVectorQRS(this VectorXY vector, Layout layout)

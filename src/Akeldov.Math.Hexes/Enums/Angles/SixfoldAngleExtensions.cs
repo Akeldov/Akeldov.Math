@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides trigonometric values and modular rotation operations for <see cref="SixfoldAngle"/>.
     /// </summary>
     public static partial class SixfoldAngleExtensions
     {
@@ -58,9 +58,9 @@ namespace Akeldov.Math.Hexes
         };
 
         /// <summary>
-        /// Performs the Sin operation.
+        /// Gets the sine of a sixfold angle.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle whose sine is required.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sin(this SixfoldAngle angle)
         {
@@ -75,9 +75,9 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Performs the Cos operation.
+        /// Gets the cosine of a sixfold angle.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle whose cosine is required.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Cos(this SixfoldAngle angle)
         {
@@ -92,9 +92,10 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Performs the AsFloatRadians operation.
+        /// Converts a sixfold angle to radians.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to convert.</param>
+        /// <returns>The angle in radians in the range [0, 2π).</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AsFloatRadians(this SixfoldAngle angle)
         {
@@ -109,9 +110,10 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Performs the AsFloatDegrees operation.
+        /// Converts a sixfold angle to degrees.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to convert.</param>
+        /// <returns>The angle in degrees in the range [0, 360).</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AsFloatDegrees(this SixfoldAngle angle)
         {
@@ -128,7 +130,7 @@ namespace Akeldov.Math.Hexes
         /// <summary>
         /// Returns the opposite angle.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to negate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Negate(this SixfoldAngle angle)
         {
@@ -143,9 +145,9 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Adds the specified rotation to the angle.
+        /// Adds 180 degrees to an angle, wrapping at 360 degrees.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to rotate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add180(this SixfoldAngle angle)
         {
@@ -169,9 +171,9 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Adds the specified rotation to the angle.
+        /// Adds 120 degrees to an angle, wrapping at 360 degrees.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to rotate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add120(this SixfoldAngle angle)
         {
@@ -195,9 +197,9 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Adds the specified rotation to the angle.
+        /// Adds 60 degrees to an angle, wrapping at 360 degrees.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to rotate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add60(this SixfoldAngle angle)
         {
@@ -221,9 +223,9 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Adds the specified rotation to the angle.
+        /// Adds 240 degrees to an angle, wrapping at 360 degrees.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to rotate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add240(this SixfoldAngle angle)
         {
@@ -247,9 +249,9 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Adds the specified rotation to the angle.
+        /// Adds 300 degrees to an angle, wrapping at 360 degrees.
         /// </summary>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="angle">The angle to rotate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SixfoldAngle Add300(this SixfoldAngle angle)
         {

@@ -1,21 +1,21 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents a Septuplet value.
+    /// Represents a main value and six adjacent values ordered by hex-edge index.
     /// </summary>
-    /// <typeparam name="T">The type of value handled by this member.</typeparam>
+    /// <typeparam name="T">The element type.</typeparam>
     public readonly struct Septuplet<T>
     {
         /// <summary>
-        /// Performs the Septuplet operation.
+        /// Initializes a main value and its six ordered adjacent values.
         /// </summary>
-        /// <param name="main">The Main value.</param>
-        /// <param name="adjacent0">The Adjacent0 value.</param>
-        /// <param name="adjacent1">The Adjacent1 value.</param>
-        /// <param name="adjacent2">The Adjacent2 value.</param>
-        /// <param name="adjacent3">The Adjacent3 value.</param>
-        /// <param name="adjacent4">The Adjacent4 value.</param>
-        /// <param name="adjacent5">The Adjacent5 value.</param>
+        /// <param name="main">The primary element.</param>
+        /// <param name="adjacent0">The element at adjacent position 0.</param>
+        /// <param name="adjacent1">The element at adjacent position 1.</param>
+        /// <param name="adjacent2">The element at adjacent position 2.</param>
+        /// <param name="adjacent3">The element at adjacent position 3.</param>
+        /// <param name="adjacent4">The element at adjacent position 4.</param>
+        /// <param name="adjacent5">The element at adjacent position 5.</param>
         public Septuplet(
             T main,
             T adjacent0,
@@ -35,50 +35,50 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the Main value.
+        /// Gets the primary element.
         /// </summary>
         public T Main { get; }
 
         /// <summary>
-        /// Gets the Adjacent0 value.
+        /// Gets the element at adjacent position 0.
         /// </summary>
         public T Adjacent0 { get; }
 
         /// <summary>
-        /// Gets the Adjacent1 value.
+        /// Gets the element at adjacent position 1.
         /// </summary>
         public T Adjacent1 { get; }
 
         /// <summary>
-        /// Gets the Adjacent2 value.
+        /// Gets the element at adjacent position 2.
         /// </summary>
         public T Adjacent2 { get; }
 
         /// <summary>
-        /// Gets the Adjacent3 value.
+        /// Gets the element at adjacent position 3.
         /// </summary>
         public T Adjacent3 { get; }
 
         /// <summary>
-        /// Gets the Adjacent4 value.
+        /// Gets the element at adjacent position 4.
         /// </summary>
         public T Adjacent4 { get; }
 
         /// <summary>
-        /// Gets the Adjacent5 value.
+        /// Gets the element at adjacent position 5.
         /// </summary>
         public T Adjacent5 { get; }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the values in main-then-adjacency order.
         /// </summary>
-        /// <param name="main">The Main value.</param>
-        /// <param name="adjacent0">The Adjacent0 value.</param>
-        /// <param name="adjacent1">The Adjacent1 value.</param>
-        /// <param name="adjacent2">The Adjacent2 value.</param>
-        /// <param name="adjacent3">The Adjacent3 value.</param>
-        /// <param name="adjacent4">The Adjacent4 value.</param>
-        /// <param name="adjacent5">The Adjacent5 value.</param>
+        /// <param name="main">Receives the primary element.</param>
+        /// <param name="adjacent0">Receives the element at adjacent position 0.</param>
+        /// <param name="adjacent1">Receives the element at adjacent position 1.</param>
+        /// <param name="adjacent2">Receives the element at adjacent position 2.</param>
+        /// <param name="adjacent3">Receives the element at adjacent position 3.</param>
+        /// <param name="adjacent4">Receives the element at adjacent position 4.</param>
+        /// <param name="adjacent5">Receives the element at adjacent position 5.</param>
         public void Deconstruct(
             out T main,
             out T adjacent0,

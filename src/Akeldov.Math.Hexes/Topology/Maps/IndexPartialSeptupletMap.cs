@@ -5,12 +5,12 @@ using System;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the IndexPartialSeptupletMap type.
+    /// Precomputes each map cell's index and its in-bounds neighboring indices.
     /// </summary>
     public sealed class IndexPartialSeptupletMap : SpatialHexMap<PartialSeptuplet<VectorXYInt>>
     {
         /// <summary>
-        /// Initializes a new instance of the IndexPartialSeptupletMap type.
+        /// Initializes a clipped adjacency map with unit-radius spatial geometry.
         /// </summary>
         /// <param name="topology">The map topology.</param>
         public IndexPartialSeptupletMap(HexMapTopology topology)
@@ -54,17 +54,17 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the Width value.
+        /// Gets the number of map columns.
         /// </summary>
         public int Width => Topology.Resolution.X;
 
         /// <summary>
-        /// Gets the Height value.
+        /// Gets the number of map rows.
         /// </summary>
         public int Height => Topology.Resolution.Y;
 
         /// <summary>
-        /// Gets the Count value.
+        /// Gets the total number of map cells.
         /// </summary>
         public int Count => Topology.Count;
 

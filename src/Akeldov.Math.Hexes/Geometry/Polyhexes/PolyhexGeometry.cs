@@ -5,7 +5,7 @@ using System;
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Represents a PolyhexGeometry instance.
+    /// Associates a polyhex mask with the physical radius and apothem of its cells.
     /// </summary>
     public class PolyhexGeometry : IPolyhexGeometry
     {
@@ -14,9 +14,9 @@ namespace Akeldov.Math.Hexes.Geometry
         private readonly float _hexRadius;
 
         /// <summary>
-        /// Initializes a new instance of the PolyhexGeometry type.
+        /// Associates an existing polyhex with a physical hex radius.
         /// </summary>
-        /// <param name="polyhex">The polyhex value.</param>
+        /// <param name="polyhex">The polyhex whose mask and QRS resolution are retained.</param>
         /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         public PolyhexGeometry(Polyhex polyhex, float radius)
         {
@@ -30,9 +30,9 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Initializes a new instance of the PolyhexGeometry type.
+        /// Creates polyhex geometry from a Boolean mask and physical hex radius.
         /// </summary>
-        /// <param name="boolMask">The BoolMask value.</param>
+        /// <param name="boolMask">A rectangular Q/R mask in which <see langword="true"/> cells belong to the polyhex.</param>
         /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         public PolyhexGeometry(bool[,] boolMask, float radius)
             : this(new Polyhex(boolMask), radius)
@@ -40,9 +40,9 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Initializes a new instance of the PolyhexGeometry type.
+        /// Creates polyhex geometry from an integer mask and physical hex radius.
         /// </summary>
-        /// <param name="intMask">The IntMask value.</param>
+        /// <param name="intMask">A rectangular Q/R mask in which nonzero cells belong to the polyhex.</param>
         /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         public PolyhexGeometry(int[,] intMask, float radius)
             : this(new Polyhex(intMask), radius)
@@ -50,9 +50,9 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Initializes a new instance of the PolyhexGeometry type.
+        /// Creates empty polyhex geometry with the specified QRS extents and physical hex radius.
         /// </summary>
-        /// <param name="qrsResolution">The qrsResolution value.</param>
+        /// <param name="qrsResolution">The QRS extents of a completely filled polyhex.</param>
         /// <param name="radius">The hex radius from center to vertex. The unit is the coordinate-space unit.</param>
         public PolyhexGeometry(VectorQRSInt qrsResolution, float radius)
             : this(new Polyhex(qrsResolution), radius)
@@ -60,46 +60,46 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Gets the QRSResolution value.
+        /// Gets the QRS extents of the polyhex mask.
         /// </summary>
         public VectorQRSInt QRSResolution => _polyhex.QRSResolution;
 
         /// <summary>
-        /// Gets the HexCount value.
+        /// Gets the number of present hex cells.
         /// </summary>
         public int HexCount => _polyhex.HexCount;
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets whether the specified QRS cell belongs to the polyhex.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The integer QRS index to test.</param>
         public bool this[VectorQRSInt index]
         {
             get => _polyhex[index];
         }
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets whether the cell at the specified Q/R mask coordinates belongs to the polyhex.
         /// </summary>
-        /// <param name="QIndex">The QIndex value.</param>
-        /// <param name="RIndex">The RIndex value.</param>
+        /// <param name="QIndex">The zero-based Q coordinate.</param>
+        /// <param name="RIndex">The zero-based R coordinate.</param>
         public bool this[int QIndex, int RIndex]
         {
             get => _polyhex[QIndex, RIndex];
         }
 
         /// <summary>
-        /// Gets the HexApothem value.
+        /// Gets the distance from a hex center to an edge.
         /// </summary>
         public float HexApothem => _hexApothem;
 
         /// <summary>
-        /// Gets the HexRadius value.
+        /// Gets the distance from a hex center to a vertex.
         /// </summary>
         public float HexRadius => _hexRadius;
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Creates a polyhex that includes this shape and every adjacent hex.
         /// </summary>
         public Polyhex GetExtended()
         {
@@ -107,7 +107,7 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Creates a polyhex containing the outermost present cells of this shape.
         /// </summary>
         public Polyhex GetContour()
         {
@@ -115,8 +115,9 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Creates a rectangular Q/R mask of the polyhex.
         /// </summary>
+        /// <returns>A new two-dimensional array owned by the caller.</returns>
         public bool[,] ToBoolArray()
         {
             return _polyhex.ToBoolArray();

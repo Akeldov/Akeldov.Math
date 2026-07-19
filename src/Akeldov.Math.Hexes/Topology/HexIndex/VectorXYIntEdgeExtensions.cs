@@ -6,16 +6,16 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Navigates from an offset-grid hex index to an edge-adjacent index.
     /// </summary>
     public static partial class VectorXYIntExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the index of the hex adjacent across the specified edge.
         /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <param name="hexEdge">The hexEdge value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="index">The source hex index.</param>
+        /// <param name="hexEdge">The edge shared with the adjacent hex.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetAdjacent(this VectorXYInt index, HexEdge hexEdge, Layout layout)
         {
@@ -28,11 +28,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the index of the adjacent hex in the specified sixfold direction.
         /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <param name="direction">The direction value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="index">The source hex index.</param>
+        /// <param name="direction">The direction in 60-degree counterclockwise steps.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetAdjacent(this VectorXYInt index, SixfoldAngle direction, Layout layout)
         {

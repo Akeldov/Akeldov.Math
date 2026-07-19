@@ -11,12 +11,13 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorXYIntExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the center of an offset-indexed hex using the layout's default field origin.
         /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <param name="hexApothem">The hexApothem value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="index">The XY offset index of the hex.</param>
+        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="layout">The offset layout of the index.</param>
+        /// <returns>The world-space center of the hex.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, Layout layout)
         {
@@ -30,13 +31,14 @@ namespace Akeldov.Math.Hexes.Geometry
         }
 
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the center of an offset-indexed hex relative to a specified zero-hex center.
         /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <param name="hexApothem">The hexApothem value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="origin">The origin value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="index">The XY offset index of the hex.</param>
+        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="origin">The world-space center of the zero hex.</param>
+        /// <param name="layout">The offset layout of the index.</param>
+        /// <returns>The world-space center of the hex.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, VectorXY origin, Layout layout)
         {

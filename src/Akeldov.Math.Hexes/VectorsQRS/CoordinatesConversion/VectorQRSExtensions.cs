@@ -4,15 +4,16 @@ using System;
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides scale conversions for fractional QRS coordinates.
     /// </summary>
     public static partial class VectorQRSExtensions
     {
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Converts radius-scaled QRS coordinates to normalized axial coordinates.
         /// </summary>
-        /// <param name="fractionalPoint">The fractionalPoint value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
+        /// <param name="fractionalPoint">The QRS coordinates expressed in coordinate-space units.</param>
+        /// <param name="hexRadius">The positive hex radius in the same coordinate-space unit.</param>
+        /// <returns>The QRS coordinates measured in hex-radius units.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRS ToNormalizedAxial(this VectorQRS fractionalPoint, float hexRadius)
         {

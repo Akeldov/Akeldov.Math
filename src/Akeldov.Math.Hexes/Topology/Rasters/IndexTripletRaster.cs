@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the IndexTripletRaster type.
+    /// Rasterizes the three hex indices surrounding each sampled point.
     /// </summary>
     public sealed class IndexTripletRaster : ISpatialRaster<Triplet<VectorXYInt>>
     {
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Initializes a new instance of the IndexTripletRaster type.
+        /// Initializes a raster over the specified sampling geometry.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
@@ -61,21 +61,21 @@ namespace Akeldov.Math.Hexes.Topology
         public HexMapTopology Topology => SourceHexMapGeometry.Topology;
 
         /// <summary>
-        /// Gets the Resolution value.
+        /// Gets the raster resolution in cells.
         /// </summary>
         public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
-        /// Gets the value at the specified grid coordinates.
+        /// Gets the surrounding hex indices at the specified raster coordinates.
         /// </summary>
         /// <param name="x">The horizontal grid coordinate.</param>
         /// <param name="y">The vertical grid coordinate.</param>
         public Triplet<VectorXYInt> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets the surrounding hex indices at the specified raster coordinates.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The X/Y coordinates of the raster cell.</param>
         public Triplet<VectorXYInt> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -90,9 +90,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the value at the specified index.
+        /// Gets the surrounding hex indices at the specified flat raster index.
         /// </summary>
-        /// <param name="index">The index value.</param>
+        /// <param name="index">The zero-based row-major raster index.</param>
         public Triplet<VectorXYInt> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -100,10 +100,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Tries to get a value at the specified index.
+        /// Tries to get the surrounding hex indices at the specified raster coordinates.
         /// </summary>
-        /// <param name="gridIndex">The gridIndex value.</param>
-        /// <param name="indexTriplet">The indexTriplet value.</param>
+        /// <param name="gridIndex">The X/Y coordinates of the raster cell.</param>
+        /// <param name="indexTriplet">Receives the three surrounding hex indices when the coordinates are in bounds.</param>
+        /// <returns><see langword="true"/> when <paramref name="gridIndex"/> is inside the raster; otherwise, <see langword="false"/>.</returns>
         public bool TryGetValue(VectorXYInt gridIndex, out Triplet<VectorXYInt> indexTriplet)
         {
             if ((uint)gridIndex.X >= (uint)Resolution.X ||

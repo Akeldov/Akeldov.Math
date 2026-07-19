@@ -1,12 +1,12 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Defines a contract for IPolyhexWithPriority implementations.
+    /// Describes a polyhex with an integer priority used to order competing shapes.
     /// </summary>
     public interface IPolyhexWithPriority : IPolyhex
     {
         /// <summary>
-        /// Represents the <c>Priority</c> value.
+        /// Gets the ordering priority of the polyhex.
         /// </summary>
         int Priority { get; }
     }

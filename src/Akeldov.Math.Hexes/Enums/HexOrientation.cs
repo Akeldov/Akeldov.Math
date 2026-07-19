@@ -1,16 +1,16 @@
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Defines HexOrientation values.
+    /// Specifies whether hexagons present a vertex or an edge at the top.
     /// </summary>
     public enum HexOrientation
     {
         /// <summary>
-        /// Represents the <c>PointyTop</c> value.
+        /// Hexagons have a vertex at the top and use row-oriented offset layouts.
         /// </summary>
         PointyTop,
         /// <summary>
-        /// Represents the <c>FlatTop</c> value.
+        /// Hexagons have a horizontal edge at the top and use column-oriented offset layouts.
         /// </summary>
         FlatTop
     }

@@ -5,15 +5,16 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Chromatization
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Computes three-color classes for offset-grid hex indices.
     /// </summary>
     public static partial class VectorXYIntExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the three-color class of the specified hex.
         /// </summary>
-        /// <param name="hexIndex">The hexIndex value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="hexIndex">The hex index to classify.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
+        /// <returns>A class index from 0 through 2; adjacent hexes have different classes.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetChromaticClass(this VectorXYInt hexIndex, Layout layout)
         {

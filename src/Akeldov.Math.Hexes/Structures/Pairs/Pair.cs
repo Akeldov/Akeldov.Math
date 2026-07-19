@@ -1,16 +1,16 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents a Pair value.
+    /// Represents an ordered pair of values.
     /// </summary>
-    /// <typeparam name="T">The type of value handled by this member.</typeparam>
+    /// <typeparam name="T">The element type.</typeparam>
     public readonly struct Pair<T>
     {
         /// <summary>
-        /// Performs the Pair operation.
+        /// Initializes an ordered pair.
         /// </summary>
-        /// <param name="left">The left value.</param>
-        /// <param name="right">The right value.</param>
+        /// <param name="left">The left element.</param>
+        /// <param name="right">The right element.</param>
         public Pair(T left, T right)
         {
             Left = left;
@@ -18,20 +18,20 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the Left value.
+        /// Gets the left element.
         /// </summary>
         public T Left { get; }
 
         /// <summary>
-        /// Gets the Right value.
+        /// Gets the right element.
         /// </summary>
         public T Right { get; }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the pair in left-to-right order.
         /// </summary>
-        /// <param name="left">The left value.</param>
-        /// <param name="right">The right value.</param>
+        /// <param name="left">Receives the left element.</param>
+        /// <param name="right">Receives the right element.</param>
         public void Deconstruct(out T left, out T right)
         {
             left = Left;

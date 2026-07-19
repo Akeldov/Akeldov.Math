@@ -5,14 +5,14 @@ using System;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Initializes a new instance of the IndexSeptupletMap type.
+    /// Precomputes each map cell's index and the indices of its six neighbors.
     /// </summary>
     public sealed class IndexSeptupletMap : SpatialHexMap<Septuplet<VectorXYInt>>
     {
         /// <summary>
-        /// Initializes a new instance of the IndexSeptupletMap type.
+        /// Initializes an adjacency map with unit-radius spatial geometry.
         /// </summary>
-        /// <param name="topology">The topology value.</param>
+        /// <param name="topology">The layout and resolution whose neighborhoods are computed.</param>
         public IndexSeptupletMap(HexMapTopology topology)
             : this(new HexMapGeometry(topology, 1f))
         {

@@ -20,10 +20,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         }
 
         /// <summary>
-        /// Rotates the value using the specified angle.
+        /// Rotates an integer QRS vector counterclockwise in 60-degree increments.
         /// </summary>
-        /// <param name="v">The v value.</param>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="v">The integer QRS vector to rotate.</param>
+        /// <param name="angle">The sixfold counterclockwise rotation.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorQRSInt Rotate(this VectorQRSInt v, SixfoldAngle angle)
         {

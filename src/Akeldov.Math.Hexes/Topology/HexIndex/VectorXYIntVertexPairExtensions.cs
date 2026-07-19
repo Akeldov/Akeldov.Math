@@ -7,11 +7,11 @@ namespace Akeldov.Math.Hexes.Topology
     public static partial class VectorXYIntExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the two neighboring hexes that meet the source hex at the specified vertex.
         /// </summary>
-        /// <param name="hexIndex">The hexIndex value.</param>
-        /// <param name="hexVertex">The hexVertex value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="hexIndex">The source hex index.</param>
+        /// <param name="hexVertex">The vertex shared by the three hexes.</param>
+        /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<VectorXYInt> GetAdjacentPair(this VectorXYInt hexIndex, HexVertex hexVertex, Layout layout)
         {

@@ -3,29 +3,29 @@ using System;
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Defines TripletPresenceFlags values.
+    /// Identifies which positions of a <see cref="PartialTriplet{TValue}"/> contain values.
     /// </summary>
     [Flags]
     public enum TripletPresenceFlags : byte
     {
         /// <summary>
-        /// Represents the <c>None</c> value.
+        /// No position is present.
         /// </summary>
         None = 0,
         /// <summary>
-        /// Represents the <c>Main</c> value.
+        /// The main position is present.
         /// </summary>
         Main = 1 << 0,
         /// <summary>
-        /// Represents the <c>Left</c> value.
+        /// The left position is present.
         /// </summary>
         Left = 1 << 1,
         /// <summary>
-        /// Represents the <c>Right</c> value.
+        /// The right position is present.
         /// </summary>
         Right = 1 << 2,
         /// <summary>
-        /// Represents the <c>All</c> value.
+        /// All three positions are present.
         /// </summary>
         All = Main | Left | Right
     }

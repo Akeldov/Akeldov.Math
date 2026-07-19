@@ -11,12 +11,13 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorQRSIntExtensions
     {
         /// <summary>
-        /// Gets a value derived from the specified hex-grid data.
+        /// Gets the world-space offset of a QRS hex index from the zero hex center.
         /// </summary>
-        /// <param name="hexIndex">The hexIndex value.</param>
-        /// <param name="hexApothem">The hexApothem value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="hexIndex">The QRS index whose offset is required.</param>
+        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="layout">The layout that determines the world-space basis orientation.</param>
+        /// <returns>The offset from the zero hex center in coordinate-space units.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY GetHexOffset(this VectorQRSInt hexIndex, float hexApothem, float hexRadius, Layout layout)
         {

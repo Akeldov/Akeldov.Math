@@ -1,22 +1,22 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Represents a PartialSeptuplet value.
+    /// Represents a main value and six adjacent values with explicit per-position presence information.
     /// </summary>
-    /// <typeparam name="T">The type of value handled by this member.</typeparam>
+    /// <typeparam name="T">The element type.</typeparam>
     public readonly struct PartialSeptuplet<T>
     {
         /// <summary>
-        /// Performs the PartialSeptuplet operation.
+        /// Initializes a partial septuplet from stored values and presence flags.
         /// </summary>
-        /// <param name="main">The Main value.</param>
-        /// <param name="adjacent0">The Adjacent0 value.</param>
-        /// <param name="adjacent1">The Adjacent1 value.</param>
-        /// <param name="adjacent2">The Adjacent2 value.</param>
-        /// <param name="adjacent3">The Adjacent3 value.</param>
-        /// <param name="adjacent4">The Adjacent4 value.</param>
-        /// <param name="adjacent5">The Adjacent5 value.</param>
-        /// <param name="presence">The Presence value.</param>
+        /// <param name="main">The value stored at the primary position.</param>
+        /// <param name="adjacent0">The value stored at adjacent position 0.</param>
+        /// <param name="adjacent1">The value stored at adjacent position 1.</param>
+        /// <param name="adjacent2">The value stored at adjacent position 2.</param>
+        /// <param name="adjacent3">The value stored at adjacent position 3.</param>
+        /// <param name="adjacent4">The value stored at adjacent position 4.</param>
+        /// <param name="adjacent5">The value stored at adjacent position 5.</param>
+        /// <param name="presence">The positions that are semantically present.</param>
         public PartialSeptuplet(
             T main,
             T adjacent0,
@@ -38,22 +38,22 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the PartialSeptuplet operation.
+        /// Initializes a partial septuplet from stored values and per-position presence indicators.
         /// </summary>
-        /// <param name="hasMain">The HasMain value.</param>
-        /// <param name="hasAdjacent0">The HasAdjacent0 value.</param>
-        /// <param name="hasAdjacent1">The HasAdjacent1 value.</param>
-        /// <param name="hasAdjacent2">The HasAdjacent2 value.</param>
-        /// <param name="hasAdjacent3">The HasAdjacent3 value.</param>
-        /// <param name="hasAdjacent4">The HasAdjacent4 value.</param>
-        /// <param name="hasAdjacent5">The HasAdjacent5 value.</param>
-        /// <param name="main">The Main value.</param>
-        /// <param name="adjacent0">The Adjacent0 value.</param>
-        /// <param name="adjacent1">The Adjacent1 value.</param>
-        /// <param name="adjacent2">The Adjacent2 value.</param>
-        /// <param name="adjacent3">The Adjacent3 value.</param>
-        /// <param name="adjacent4">The Adjacent4 value.</param>
-        /// <param name="adjacent5">The Adjacent5 value.</param>
+        /// <param name="main">The value stored at the primary position.</param>
+        /// <param name="adjacent0">The value stored at adjacent position 0.</param>
+        /// <param name="adjacent1">The value stored at adjacent position 1.</param>
+        /// <param name="adjacent2">The value stored at adjacent position 2.</param>
+        /// <param name="adjacent3">The value stored at adjacent position 3.</param>
+        /// <param name="adjacent4">The value stored at adjacent position 4.</param>
+        /// <param name="adjacent5">The value stored at adjacent position 5.</param>
+        /// <param name="hasMain">Whether the primary position is present.</param>
+        /// <param name="hasAdjacent0">Whether adjacent position 0 is present.</param>
+        /// <param name="hasAdjacent1">Whether adjacent position 1 is present.</param>
+        /// <param name="hasAdjacent2">Whether adjacent position 2 is present.</param>
+        /// <param name="hasAdjacent3">Whether adjacent position 3 is present.</param>
+        /// <param name="hasAdjacent4">Whether adjacent position 4 is present.</param>
+        /// <param name="hasAdjacent5">Whether adjacent position 5 is present.</param>
         public PartialSeptuplet(
             T main,
             T adjacent0,
@@ -89,10 +89,10 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the PartialSeptuplet operation.
+        /// Initializes a partial septuplet from a complete septuplet and presence flags.
         /// </summary>
-        /// <param name="presence">The presence value.</param>
-        /// <param name="septuplet">The Septuplet value.</param>
+        /// <param name="septuplet">The complete septuplet whose values are stored.</param>
+        /// <param name="presence">The positions that are semantically present.</param>
         public PartialSeptuplet(Septuplet<T> septuplet, SeptupletPresenceFlags presence)
             : this(
                 septuplet.Main,
@@ -107,82 +107,82 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the Main value.
+        /// Gets the value stored at the primary position, regardless of presence.
         /// </summary>
         public T Main { get; }
 
         /// <summary>
-        /// Gets the Adjacent0 value.
+        /// Gets the value stored at adjacent position 0, regardless of presence.
         /// </summary>
         public T Adjacent0 { get; }
 
         /// <summary>
-        /// Gets the Adjacent1 value.
+        /// Gets the value stored at adjacent position 1, regardless of presence.
         /// </summary>
         public T Adjacent1 { get; }
 
         /// <summary>
-        /// Gets the Adjacent2 value.
+        /// Gets the value stored at adjacent position 2, regardless of presence.
         /// </summary>
         public T Adjacent2 { get; }
 
         /// <summary>
-        /// Gets the Adjacent3 value.
+        /// Gets the value stored at adjacent position 3, regardless of presence.
         /// </summary>
         public T Adjacent3 { get; }
 
         /// <summary>
-        /// Gets the Adjacent4 value.
+        /// Gets the value stored at adjacent position 4, regardless of presence.
         /// </summary>
         public T Adjacent4 { get; }
 
         /// <summary>
-        /// Gets the Adjacent5 value.
+        /// Gets the value stored at adjacent position 5, regardless of presence.
         /// </summary>
         public T Adjacent5 { get; }
 
         /// <summary>
-        /// Gets the Presence value.
+        /// Gets the flags identifying the semantically present positions.
         /// </summary>
         public SeptupletPresenceFlags Presence { get; }
 
         /// <summary>
-        /// Performs the HasMain operation.
+        /// Gets whether the primary position is present.
         /// </summary>
         public bool HasMain => (Presence & SeptupletPresenceFlags.Main) != 0;
 
         /// <summary>
-        /// Performs the HasAdjacent0 operation.
+        /// Gets whether adjacent position 0 is present.
         /// </summary>
         public bool HasAdjacent0 => (Presence & SeptupletPresenceFlags.Adjacent0) != 0;
 
         /// <summary>
-        /// Performs the HasAdjacent1 operation.
+        /// Gets whether adjacent position 1 is present.
         /// </summary>
         public bool HasAdjacent1 => (Presence & SeptupletPresenceFlags.Adjacent1) != 0;
 
         /// <summary>
-        /// Performs the HasAdjacent2 operation.
+        /// Gets whether adjacent position 2 is present.
         /// </summary>
         public bool HasAdjacent2 => (Presence & SeptupletPresenceFlags.Adjacent2) != 0;
 
         /// <summary>
-        /// Performs the HasAdjacent3 operation.
+        /// Gets whether adjacent position 3 is present.
         /// </summary>
         public bool HasAdjacent3 => (Presence & SeptupletPresenceFlags.Adjacent3) != 0;
 
         /// <summary>
-        /// Performs the HasAdjacent4 operation.
+        /// Gets whether adjacent position 4 is present.
         /// </summary>
         public bool HasAdjacent4 => (Presence & SeptupletPresenceFlags.Adjacent4) != 0;
 
         /// <summary>
-        /// Performs the HasAdjacent5 operation.
+        /// Gets whether adjacent position 5 is present.
         /// </summary>
         public bool HasAdjacent5 => (Presence & SeptupletPresenceFlags.Adjacent5) != 0;
 
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Returns the stored values as a complete septuplet, discarding presence information.
         /// </summary>
         public Septuplet<T> ToSeptuplet()
         {
@@ -197,15 +197,15 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the stored values in main-then-adjacency order.
         /// </summary>
-        /// <param name="main">The Main value.</param>
-        /// <param name="adjacent0">The Adjacent0 value.</param>
-        /// <param name="adjacent1">The Adjacent1 value.</param>
-        /// <param name="adjacent2">The Adjacent2 value.</param>
-        /// <param name="adjacent3">The Adjacent3 value.</param>
-        /// <param name="adjacent4">The Adjacent4 value.</param>
-        /// <param name="adjacent5">The Adjacent5 value.</param>
+        /// <param name="main">Receives the stored primary value.</param>
+        /// <param name="adjacent0">Receives the value at adjacent position 0.</param>
+        /// <param name="adjacent1">Receives the value at adjacent position 1.</param>
+        /// <param name="adjacent2">Receives the value at adjacent position 2.</param>
+        /// <param name="adjacent3">Receives the value at adjacent position 3.</param>
+        /// <param name="adjacent4">Receives the value at adjacent position 4.</param>
+        /// <param name="adjacent5">Receives the value at adjacent position 5.</param>
         public void Deconstruct(
             out T main,
             out T adjacent0,
@@ -225,16 +225,16 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Performs the Deconstruct operation.
+        /// Deconstructs the stored values and their presence flags.
         /// </summary>
-        /// <param name="main">The Main value.</param>
-        /// <param name="adjacent0">The Adjacent0 value.</param>
-        /// <param name="adjacent1">The Adjacent1 value.</param>
-        /// <param name="adjacent2">The Adjacent2 value.</param>
-        /// <param name="adjacent3">The Adjacent3 value.</param>
-        /// <param name="adjacent4">The Adjacent4 value.</param>
-        /// <param name="adjacent5">The Adjacent5 value.</param>
-        /// <param name="presence">The Presence value.</param>
+        /// <param name="main">Receives the stored primary value.</param>
+        /// <param name="adjacent0">Receives the value at adjacent position 0.</param>
+        /// <param name="adjacent1">Receives the value at adjacent position 1.</param>
+        /// <param name="adjacent2">Receives the value at adjacent position 2.</param>
+        /// <param name="adjacent3">Receives the value at adjacent position 3.</param>
+        /// <param name="adjacent4">Receives the value at adjacent position 4.</param>
+        /// <param name="adjacent5">Receives the value at adjacent position 5.</param>
+        /// <param name="presence">Receives the present-position flags.</param>
         public void Deconstruct(
             out T main,
             out T adjacent0,

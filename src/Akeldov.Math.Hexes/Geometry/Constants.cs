@@ -1,131 +1,131 @@
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
-    /// Represents a Constants instance.
+    /// Provides geometric conversion factors and trigonometric values used by regular hex calculations.
     /// </summary>
     public static class Constants
     {
         /// <summary>
-        /// Defines the Apothem2Radius constant.
+        /// The factor for converting a regular hex apothem to its radius.
         /// </summary>
         public const float Apothem2Radius = 1.1547005f;
         /// <summary>
-        /// Defines the Radius2Apothem constant.
+        /// The factor for converting a regular hex radius to its apothem.
         /// </summary>
         public const float Radius2Apothem = 0.8660254f;
 
         /// <summary>
-        /// Defines the Deg30InRadians constant.
+        /// An angle of 30 degrees expressed in radians.
         /// </summary>
         public const float Deg30InRadians = 0.5235988f;
         /// <summary>
-        /// Defines the Deg60InRadians constant.
+        /// An angle of 60 degrees expressed in radians.
         /// </summary>
         public const float Deg60InRadians = 1.0471976f;
 
         /// <summary>
-        /// Defines the Cos0Deg constant.
+        /// The cosine of 0 degrees.
         /// </summary>
         public const float Cos0Deg = 1.0f;
         /// <summary>
-        /// Defines the Cos30Deg constant.
+        /// The cosine of 30 degrees.
         /// </summary>
         public const float Cos30Deg = 0.8660254f;
         /// <summary>
-        /// Defines the Cos60Deg constant.
+        /// The cosine of 60 degrees.
         /// </summary>
         public const float Cos60Deg = 0.5f;
         /// <summary>
-        /// Defines the Cos90Deg constant.
+        /// The cosine of 90 degrees.
         /// </summary>
         public const float Cos90Deg = 0.0f;
         /// <summary>
-        /// Defines the Cos120Deg constant.
+        /// The cosine of 120 degrees.
         /// </summary>
         public const float Cos120Deg = -0.5f;
         /// <summary>
-        /// Defines the Cos150Deg constant.
+        /// The cosine of 150 degrees.
         /// </summary>
         public const float Cos150Deg = -0.8660254f;
         /// <summary>
-        /// Defines the Cos180Deg constant.
+        /// The cosine of 180 degrees.
         /// </summary>
         public const float Cos180Deg = -1.0f;
         /// <summary>
-        /// Defines the Cos210Deg constant.
+        /// The cosine of 210 degrees.
         /// </summary>
         public const float Cos210Deg = -0.8660254f;
         /// <summary>
-        /// Defines the Cos240Deg constant.
+        /// The cosine of 240 degrees.
         /// </summary>
         public const float Cos240Deg = -0.5f;
         /// <summary>
-        /// Defines the Cos270Deg constant.
+        /// The cosine of 270 degrees.
         /// </summary>
         public const float Cos270Deg = 0.0f;
         /// <summary>
-        /// Defines the Cos300Deg constant.
+        /// The cosine of 300 degrees.
         /// </summary>
         public const float Cos300Deg = 0.5f;
         /// <summary>
-        /// Defines the Cos330Deg constant.
+        /// The cosine of 330 degrees.
         /// </summary>
         public const float Cos330Deg = 0.8660254f;
         /// <summary>
-        /// Defines the Cos360Deg constant.
+        /// The cosine of 360 degrees.
         /// </summary>
         public const float Cos360Deg = 1.0f;
 
         /// <summary>
-        /// Defines the Sin0Deg constant.
+        /// The sine of 0 degrees.
         /// </summary>
         public const float Sin0Deg = 0.0f;
         /// <summary>
-        /// Defines the Sin30Deg constant.
+        /// The sine of 30 degrees.
         /// </summary>
         public const float Sin30Deg = 0.5f;
         /// <summary>
-        /// Defines the Sin60Deg constant.
+        /// The sine of 60 degrees.
         /// </summary>
         public const float Sin60Deg = 0.8660254f;
         /// <summary>
-        /// Defines the Sin90Deg constant.
+        /// The sine of 90 degrees.
         /// </summary>
         public const float Sin90Deg = 1.0f;
         /// <summary>
-        /// Defines the Sin120Deg constant.
+        /// The sine of 120 degrees.
         /// </summary>
         public const float Sin120Deg = 0.8660254f;
         /// <summary>
-        /// Defines the Sin150Deg constant.
+        /// The sine of 150 degrees.
         /// </summary>
         public const float Sin150Deg = 0.5f;
         /// <summary>
-        /// Defines the Sin180Deg constant.
+        /// The sine of 180 degrees.
         /// </summary>
         public const float Sin180Deg = 0.0f;
         /// <summary>
-        /// Defines the Sin210Deg constant.
+        /// The sine of 210 degrees.
         /// </summary>
         public const float Sin210Deg = -0.5f;
         /// <summary>
-        /// Defines the Sin240Deg constant.
+        /// The sine of 240 degrees.
         /// </summary>
         public const float Sin240Deg = -0.8660254f;
         /// <summary>
-        /// Defines the Sin270Deg constant.
+        /// The sine of 270 degrees.
         /// </summary>
         public const float Sin270Deg = -1.0f;
         /// <summary>
-        /// Defines the Sin300Deg constant.
+        /// The sine of 300 degrees.
         /// </summary>
         public const float Sin300Deg = -0.8660254f;
         /// <summary>
-        /// Defines the Sin330Deg constant.
+        /// The sine of 330 degrees.
         /// </summary>
         public const float Sin330Deg = -0.5f;
         /// <summary>
-        /// Defines the Sin360Deg constant.
+        /// The sine of 360 degrees.
         /// </summary>
         public const float Sin360Deg = 0.0f;
     }

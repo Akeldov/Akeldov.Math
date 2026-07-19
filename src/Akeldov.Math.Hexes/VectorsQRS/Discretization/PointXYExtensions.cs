@@ -7,12 +7,12 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
     public static partial class PointXYExtensions
     {
         /// <summary>
-        /// Converts the value to the requested representation.
+        /// Finds the offset-grid index of the hex that contains a world-space point.
         /// </summary>
-        /// <param name="point">The point value.</param>
-        /// <param name="hexRadius">The hexRadius value.</param>
-        /// <param name="hexFieldOrigin">The hexFieldOrigin value.</param>
-        /// <param name="layout">The layout value.</param>
+        /// <param name="point">The world-space point to discretize.</param>
+        /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
+        /// <param name="hexFieldOrigin">The world-space center of the zero hex.</param>
+        /// <param name="layout">The offset layout of the destination index.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt ToXYIndex(this PointXY point, float hexRadius, VectorXY hexFieldOrigin, Layout layout)
         {

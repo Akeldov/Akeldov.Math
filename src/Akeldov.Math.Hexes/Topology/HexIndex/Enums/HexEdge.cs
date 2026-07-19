@@ -1,32 +1,33 @@
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
-    /// Defines HexEdge values.
+    /// Identifies a hex edge by the direction from the cell center to the neighboring cell.
+    /// Edge ordinals advance counterclockwise in 60-degree steps.
     /// </summary>
     public enum HexEdge
     {
         /// <summary>
-        /// Represents the <c>Edge0</c> value.
+        /// Direction 0: east in pointy-top layouts, northeast in flat-top layouts.
         /// </summary>
         Edge0 = 0,
         /// <summary>
-        /// Represents the <c>Edge1</c> value.
+        /// Direction 1: northeast in pointy-top layouts, north in flat-top layouts.
         /// </summary>
         Edge1 = 1,
         /// <summary>
-        /// Represents the <c>Edge2</c> value.
+        /// Direction 2: northwest in pointy-top layouts, northwest in flat-top layouts.
         /// </summary>
         Edge2 = 2,
         /// <summary>
-        /// Represents the <c>Edge3</c> value.
+        /// Direction 3: west in pointy-top layouts, southwest in flat-top layouts.
         /// </summary>
         Edge3 = 3,
         /// <summary>
-        /// Represents the <c>Edge4</c> value.
+        /// Direction 4: southwest in pointy-top layouts, south in flat-top layouts.
         /// </summary>
         Edge4 = 4,
         /// <summary>
-        /// Represents the <c>Edge5</c> value.
+        /// Direction 5: southeast in pointy-top layouts, southeast in flat-top layouts.
         /// </summary>
         Edge5 = 5
     }

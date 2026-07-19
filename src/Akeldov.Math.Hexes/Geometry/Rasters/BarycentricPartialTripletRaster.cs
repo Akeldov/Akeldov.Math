@@ -24,7 +24,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BarycentricPartialTripletRaster"/> type.
+        /// Initializes a clipped barycentric-weight raster over the specified sampling geometry.
         /// </summary>
         /// <param name="hexMapGeometry">The source hex map geometry.</param>
         /// <param name="rasterGeometry">The geometry that defines the sampled raster origin, size, and resolution.</param>
@@ -61,16 +61,16 @@ namespace Akeldov.Math.Hexes.Topology
         public VectorXYInt Resolution => Geometry.Resolution;
 
         /// <summary>
-        /// Gets the value at the specified raster coordinates.
+        /// Gets the present barycentric weights at the specified raster coordinates.
         /// </summary>
         /// <param name="x">The horizontal raster coordinate.</param>
         /// <param name="y">The vertical raster coordinate.</param>
         public PartialTriplet<float> this[int x, int y] => _values[y * Resolution.X + x];
 
         /// <summary>
-        /// Gets the value at the specified raster index.
+        /// Gets the present barycentric weights at the specified raster coordinates.
         /// </summary>
-        /// <param name="index">The raster index.</param>
+        /// <param name="index">The X/Y coordinates of the raster cell.</param>
         public PartialTriplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -83,9 +83,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the value at the specified flat raster index.
+        /// Gets the present barycentric weights at the specified flat raster index.
         /// </summary>
-        /// <param name="index">The flat raster index.</param>
+        /// <param name="index">The zero-based row-major raster index.</param>
         public PartialTriplet<float> this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -93,10 +93,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Tries to get a present barycentric value at the specified raster index.
+        /// Tries to get present barycentric weights at the specified raster coordinates.
         /// </summary>
-        /// <param name="gridIndex">The raster index.</param>
-        /// <param name="barycentricCoordinates">The sampled barycentric coordinates.</param>
+        /// <param name="gridIndex">The X/Y coordinates of the raster cell.</param>
+        /// <param name="barycentricCoordinates">Receives the weights for the present surrounding hexes.</param>
+        /// <returns><see langword="true"/> when the cell contains at least one in-bounds weight; otherwise, <see langword="false"/>.</returns>
         public bool TryGetValue(VectorXYInt gridIndex, out PartialTriplet<float> barycentricCoordinates)
         {
             if ((uint)gridIndex.X >= (uint)Resolution.X || (uint)gridIndex.Y >= (uint)Resolution.Y)

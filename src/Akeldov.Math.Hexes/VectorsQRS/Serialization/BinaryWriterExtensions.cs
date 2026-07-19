@@ -5,15 +5,15 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
-    /// Provides extension methods for hex-grid operations.
+    /// Provides binary writers for QRS vectors and sixfold angles.
     /// </summary>
     public static class BinaryWriterExtensions
     {
         /// <summary>
-        /// Writes the value to the specified binary writer.
+        /// Writes an integer QRS vector as Q followed by R, using two 32-bit integers.
         /// </summary>
-        /// <param name="writer">The writer value.</param>
-        /// <param name="vector">The vector value.</param>
+        /// <param name="writer">The binary writer that receives the components.</param>
+        /// <param name="vector">The integer QRS vector to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, VectorQRSInt vector)
         {
@@ -25,10 +25,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         }
 
         /// <summary>
-        /// Writes the value to the specified binary writer.
+        /// Writes a fractional QRS vector as Q followed by R, using two 32-bit floating-point values.
         /// </summary>
-        /// <param name="writer">The writer value.</param>
-        /// <param name="vector">The vector value.</param>
+        /// <param name="writer">The binary writer that receives the components.</param>
+        /// <param name="vector">The fractional QRS vector to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, VectorQRS vector)
         {
@@ -40,10 +40,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         }
 
         /// <summary>
-        /// Writes the value to the specified binary writer.
+        /// Writes a sixfold angle as its 32-bit enum value.
         /// </summary>
-        /// <param name="writer">The writer value.</param>
-        /// <param name="angle">The angle value.</param>
+        /// <param name="writer">The binary writer that receives the encoded angle.</param>
+        /// <param name="angle">The defined sixfold angle to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this BinaryWriter writer, SixfoldAngle angle)
         {
