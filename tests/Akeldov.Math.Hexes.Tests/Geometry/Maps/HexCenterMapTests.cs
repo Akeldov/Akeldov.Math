@@ -264,14 +264,16 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void HexCenterMap_ImplementsISpatialHexMap()
+    public void HexCenterMap_ImplementsReadOnlyISpatialHexMap()
     {
         var source = new HexCenterMap(new HexMapGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR));
         ISpatialHexMap<PointXY> map = source;
 
         PointXY center = source[5];
 
-        Assert.That(source, Is.InstanceOf<SpatialHexMap<PointXY>>());
+        Assert.That(source, Is.Not.InstanceOf<HexMap<PointXY>>());
+        Assert.That(typeof(HexCenterMap).GetProperty("Item", new[] { typeof(VectorXYInt) })!.SetMethod, Is.Null);
+        Assert.That(typeof(HexCenterMap).GetProperty("Item", new[] { typeof(int) })!.SetMethod, Is.Null);
         Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(map.Geometry, Is.EqualTo(source.Geometry));

@@ -1,13 +1,19 @@
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
     /// Precomputes the world-space center of every hex in a map geometry.
     /// </summary>
-    public sealed class HexCenterMap : SpatialHexMap<PointXY>
+    /// <remarks>
+    /// Centers are derived from <see cref="Geometry"/> and cannot be replaced through this map.
+    /// </remarks>
+    public sealed class HexCenterMap : ISpatialHexMap<PointXY>
     {
+        private readonly PointXY[] _values;
+
         /// <summary>
         /// Initializes a new instance with the specified topology and unit hex radius.
         /// </summary>
@@ -22,8 +28,52 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </summary>
         /// <param name="geometry">The topology, origin, and cell size used to compute the centers.</param>
         public HexCenterMap(HexMapGeometry geometry)
-            : base(geometry, CreateValues(geometry))
         {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
+
+            Geometry = geometry;
+            _values = CreateValues(geometry);
+        }
+
+        /// <summary>
+        /// Gets the spatial geometry from which the centers were computed.
+        /// </summary>
+        public HexMapGeometry Geometry { get; }
+
+        /// <summary>
+        /// Gets the layout and resolution of the center map.
+        /// </summary>
+        public HexMapTopology Topology => Geometry.Topology;
+
+        /// <summary>
+        /// Gets the world-space center at the specified hex coordinates.
+        /// </summary>
+        /// <param name="index">The X/Y coordinates of the hex cell.</param>
+        public PointXY this[VectorXYInt index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
+                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+
+                return _values[index.Y * Topology.Resolution.X + index.X];
+            }
+        }
+
+        /// <summary>
+        /// Gets the world-space center at the specified flat index.
+        /// </summary>
+        /// <param name="index">The zero-based row-major index.</param>
+        public PointXY this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _values[index];
         }
 
         private static PointXY[] CreateValues(HexMapGeometry geometry)

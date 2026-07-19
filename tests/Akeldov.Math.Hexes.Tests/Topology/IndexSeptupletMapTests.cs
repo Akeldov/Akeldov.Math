@@ -31,7 +31,7 @@ public class IndexSeptupletMapTests
     }
 
     [Test]
-    public void IndexSeptupletMap_ImplementsISpatialHexMap()
+    public void IndexSeptupletMap_ImplementsReadOnlyISpatialHexMap()
     {
         var geometry = new HexMapGeometry(3, 2, new VectorXY(10f, -20f), 2f, Layout.OddR);
         var source = new IndexSeptupletMap(geometry);
@@ -39,7 +39,9 @@ public class IndexSeptupletMapTests
 
         Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 0)];
 
-        Assert.That(source, Is.InstanceOf<SpatialHexMap<Septuplet<VectorXYInt>>>());
+        Assert.That(source, Is.Not.InstanceOf<HexMap<Septuplet<VectorXYInt>>>());
+        Assert.That(typeof(IndexSeptupletMap).GetProperty("Item", new[] { typeof(VectorXYInt) })!.SetMethod, Is.Null);
+        Assert.That(typeof(IndexSeptupletMap).GetProperty("Item", new[] { typeof(int) })!.SetMethod, Is.Null);
         Assert.That(topology.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(topology.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(topology.Geometry, Is.EqualTo(geometry));

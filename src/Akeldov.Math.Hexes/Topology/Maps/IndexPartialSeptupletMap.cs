@@ -1,14 +1,21 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
     /// <summary>
     /// Precomputes each map cell's index and its in-bounds neighboring indices.
     /// </summary>
-    public sealed class IndexPartialSeptupletMap : SpatialHexMap<PartialSeptuplet<VectorXYInt>>
+    /// <remarks>
+    /// Neighborhoods are derived from <see cref="Geometry"/> and cannot be replaced through this map.
+    /// Presence flags exclude adjacent indices outside the map bounds.
+    /// </remarks>
+    public sealed class IndexPartialSeptupletMap : ISpatialHexMap<PartialSeptuplet<VectorXYInt>>
     {
+        private readonly PartialSeptuplet<VectorXYInt>[] _values;
+
         /// <summary>
         /// Initializes a clipped adjacency map with unit-radius spatial geometry.
         /// </summary>
@@ -23,8 +30,52 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="geometry">The spatial geometry of the map.</param>
         public IndexPartialSeptupletMap(HexMapGeometry geometry)
-            : base(geometry, CreateValues(geometry))
         {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
+
+            Geometry = geometry;
+            _values = CreateValues(geometry);
+        }
+
+        /// <summary>
+        /// Gets the spatial geometry used to compute the clipped neighborhoods.
+        /// </summary>
+        public HexMapGeometry Geometry { get; }
+
+        /// <summary>
+        /// Gets the layout and resolution of the adjacency map.
+        /// </summary>
+        public HexMapTopology Topology => Geometry.Topology;
+
+        /// <summary>
+        /// Gets the clipped seven-index neighborhood at the specified hex coordinates.
+        /// </summary>
+        /// <param name="index">The X/Y coordinates of the hex cell.</param>
+        public PartialSeptuplet<VectorXYInt> this[VectorXYInt index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (index.X < 0 || index.X >= Topology.Resolution.X ||
+                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
+                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+
+                return _values[index.Y * Topology.Resolution.X + index.X];
+            }
+        }
+
+        /// <summary>
+        /// Gets the clipped seven-index neighborhood at the specified flat index.
+        /// </summary>
+        /// <param name="index">The zero-based row-major index.</param>
+        public PartialSeptuplet<VectorXYInt> this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _values[index];
         }
 
         private static PartialSeptuplet<VectorXYInt>[] CreateValues(HexMapGeometry geometry)
