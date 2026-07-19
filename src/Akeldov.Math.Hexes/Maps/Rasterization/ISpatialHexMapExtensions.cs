@@ -65,6 +65,30 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Rasterizes a spatial hex map on a grid that covers the whole map and an optional margin.
+        /// </summary>
+        /// <typeparam name="TValue">The map value type.</typeparam>
+        /// <typeparam name="TColor">The raster value type.</typeparam>
+        /// <param name="map">The spatial hex map.</param>
+        /// <param name="pixelsPerApothem">The raster resolution density in pixels per hex apothem.</param>
+        /// <param name="colorSelector">The function that maps each map value to a raster value.</param>
+        /// <returns>A new spatial raster sampled in the coordinate space of the map geometry.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="colorSelector"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
+            this ISpatialHexMap<TValue> map,
+            float pixelsPerApothem,
+            Func<TValue, TColor> colorSelector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var grid = map.Geometry.ToRasterGeometry(pixelsPerApothem);
+            return map.Rasterize(grid, colorSelector);
+        }
+
+        /// <summary>
         /// Rasterizes a spatial hex map by sampling the center of every cell in the specified raster geometry.
         /// </summary>
         /// <typeparam name="TValue">The map value type.</typeparam>
