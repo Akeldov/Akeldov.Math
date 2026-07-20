@@ -24,7 +24,7 @@ The library is organized around practical 2D geometry workflows.
 
 ### Rasterization and Imaging
 
-- Generic grids and axis-aligned spatial raster grids with bounds- and pixel-density-based construction.
+- Generic raster abstractions and axis-aligned raster geometry with bounds- and pixel-density-based construction.
 - Mutable non-spatial `Raster<T>` and world-space `SpatialRaster<T>` data.
 - Distance, signed-distance, and stroke rasterizers for curves, contours, regions, and collections.
 - 8-bit and 16-bit grayscale and RGBA color types.
@@ -39,7 +39,7 @@ The library is organized around practical 2D geometry workflows.
 
 ### Influence Fields
 
-- Influence fields for sampling values from point or curve sources.
+- Influence fields for sampling Boolean, integer, and floating-point values from point or curve sources.
 - Source culling and interpolation strategies for local field behavior.
 - Heat map rasterization for floating-point influence fields.
 

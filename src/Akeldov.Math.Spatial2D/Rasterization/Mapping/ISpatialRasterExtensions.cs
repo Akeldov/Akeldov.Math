@@ -34,6 +34,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 values[index++] = selector(raster[x, y]);
 
             return new SpatialRaster<TResult>(raster.Geometry, values);
-        }      
+        }
     }
 }
