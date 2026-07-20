@@ -9,7 +9,10 @@ namespace Akeldov.Math.Hexes.Chromatization
     /// Precomputes a three-color class for every cell in a hex map.
     /// </summary>
     /// <remarks>
-    /// Chromatic classes are derived from <see cref="Geometry"/> and cannot be replaced through this map.
+    /// Chromatic classes depend only on <see cref="HexMapGeometry.Topology"/>. The full
+    /// <see cref="Geometry"/> is retained to position the map in world space, allowing it to be
+    /// rasterized directly onto full or partial spatial raster grids without supplying a separate
+    /// hex-map placement.
     /// </remarks>
     public sealed class ChromaticIndexMap : ISpatialHexMap<byte>
     {
@@ -41,7 +44,7 @@ namespace Akeldov.Math.Hexes.Chromatization
         }
 
         /// <summary>
-        /// Gets the spatial geometry used to compute the chromatic classes.
+        /// Gets the spatial geometry that positions the chromatic map in world space.
         /// </summary>
         public HexMapGeometry Geometry { get; }
 

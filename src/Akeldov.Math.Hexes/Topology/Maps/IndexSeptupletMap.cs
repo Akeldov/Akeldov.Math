@@ -9,8 +9,10 @@ namespace Akeldov.Math.Hexes.Topology
     /// Precomputes each map cell's index and the indices of its six neighbors.
     /// </summary>
     /// <remarks>
-    /// Neighborhoods are derived from <see cref="Geometry"/> and cannot be replaced through this map.
-    /// Adjacent indices may lie outside the map bounds.
+    /// Neighborhoods depend only on <see cref="HexMapGeometry.Topology"/>. The full
+    /// <see cref="Geometry"/> is retained to position the map in world space, allowing it to be
+    /// rasterized directly onto full or partial spatial raster grids without supplying a separate
+    /// hex-map placement. Adjacent indices may lie outside the map bounds.
     /// </remarks>
     public sealed class IndexSeptupletMap : ISpatialHexMap<Septuplet<VectorXYInt>>
     {
@@ -42,7 +44,7 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Gets the spatial geometry used to compute the neighborhoods.
+        /// Gets the spatial geometry that positions the adjacency map in world space.
         /// </summary>
         public HexMapGeometry Geometry { get; }
 
