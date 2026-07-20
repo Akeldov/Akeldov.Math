@@ -20,8 +20,12 @@
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(Spatial2DPackageVersion)' == ''">
     <ProjectReference Include="..\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Spatial2DPackageVersion)' != ''">
+    <PackageReference Include="Akeldov.Math.Spatial2D" Version="$(Spatial2DPackageVersion)" />
   </ItemGroup>
 
 </Project>

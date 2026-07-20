@@ -78,3 +78,65 @@ jobs:
         run: >
           dotnet vstest $env:TEST_ASSEMBLY_PATH
           "--logger:console;verbosity=detailed"
+
+  hexes-spatial2d-version-compatibility:
+    name: Hexes tests / Spatial2D ${{ matrix.spatial2d_version }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        spatial2d_version:
+          - 0.7.0
+    env:
+      SPATIAL2D_PROJECT_PATH: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
+      HEXES_TEST_PROJECT_PATH: tests/Akeldov.Math.Hexes.Tests/Akeldov.Math.Hexes.Tests.csproj
+      HEXES_TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Hexes.Tests/bin/Debug/net6.0/Akeldov.Math.Hexes.Tests.dll
+      PACKAGE_OUTPUT_PATH: ${{ github.workspace }}/artifacts/compatibility-packages
+      NUGET_PACKAGES: ${{ github.workspace }}/artifacts/compatibility-package-cache
+      SPATIAL2D_PACKAGE_VERSION: ${{ matrix.spatial2d_version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            9.0.x
+
+      - name: Restore Spatial2D
+        shell: pwsh
+        run: dotnet restore $env:SPATIAL2D_PROJECT_PATH
+
+      - name: Pack Spatial2D
+        shell: pwsh
+        run: >
+          dotnet pack $env:SPATIAL2D_PROJECT_PATH
+          --configuration Release
+          --no-restore
+          --output $env:PACKAGE_OUTPUT_PATH
+
+      - name: Restore Hexes tests against Spatial2D package
+        shell: pwsh
+        run: >
+          dotnet restore $env:HEXES_TEST_PROJECT_PATH
+          -p:Spatial2DPackageVersion=$env:SPATIAL2D_PACKAGE_VERSION
+          -p:RestoreAdditionalProjectSources=$env:PACKAGE_OUTPUT_PATH
+
+      - name: Build Hexes tests against Spatial2D package
+        shell: pwsh
+        run: >
+          dotnet build $env:HEXES_TEST_PROJECT_PATH
+          --framework net6.0
+          --no-restore
+          --disable-build-servers
+          /maxcpucount:1
+          -p:Spatial2DPackageVersion=$env:SPATIAL2D_PACKAGE_VERSION
+
+      - name: Run Hexes tests against Spatial2D package
+        shell: pwsh
+        run: >
+          dotnet vstest $env:HEXES_TEST_ASSEMBLY_PATH
+          "--logger:console;verbosity=detailed"
