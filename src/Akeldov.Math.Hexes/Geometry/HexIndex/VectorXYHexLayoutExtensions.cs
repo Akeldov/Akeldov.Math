@@ -11,19 +11,15 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </summary>
         /// <param name="q">The Q component of the hex index.</param>
         /// <param name="r">The R component of the hex index.</param>
-        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
         /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
         /// <param name="layout">The layout that determines the world-space basis orientation.</param>
-        public static VectorXY GetHexCenter(int q, int r, float hexApothem, float hexRadius, Layout layout)
+        public static VectorXY GetHexCenter(int q, int r, float hexRadius, Layout layout)
         {
-            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
-
             if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
 
-            var origin = GetAxialOrigin(hexApothem, hexRadius, layout);
-            return new VectorQRSInt(q, r).GetHexOffset(hexApothem, hexRadius, layout) + origin;
+            var origin = GetAxialOrigin(hexRadius, layout);
+            return new VectorQRSInt(q, r).GetHexOffset(hexRadius, layout) + origin;
         }
 
         /// <summary>
@@ -31,19 +27,15 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </summary>
         /// <param name="q">The Q component of the hex index.</param>
         /// <param name="r">The R component of the hex index.</param>
-        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
         /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
         /// <param name="layout">The layout that determines vertex orientation.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
-        public static VectorXY[] GetHexVertices(int q, int r, float hexApothem, float hexRadius, Layout layout)
+        public static VectorXY[] GetHexVertices(int q, int r, float hexRadius, Layout layout)
         {
-            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
-
             if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
 
-            return GetHexCenter(q, r, hexApothem, hexRadius, layout).GetHexVertices(hexRadius, layout);
+            return GetHexCenter(q, r, hexRadius, layout).GetHexVertices(hexRadius, layout);
         }
 
         /// <summary>
@@ -70,8 +62,10 @@ namespace Akeldov.Math.Hexes.Geometry
             return vertices;
         }
 
-        private static VectorXY GetAxialOrigin(float hexApothem, float hexRadius, Layout layout)
+        private static VectorXY GetAxialOrigin(float hexRadius, Layout layout)
         {
+            float hexApothem = Constants.Radius2Apothem * hexRadius;
+
             switch (layout)
             {
                 case Layout.OddR:

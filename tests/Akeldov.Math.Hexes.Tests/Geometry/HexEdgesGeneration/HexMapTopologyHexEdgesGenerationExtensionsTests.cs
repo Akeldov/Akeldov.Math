@@ -61,11 +61,10 @@ public class HexMapTopologyHexEdgesGenerationExtensionsTests
     {
         var topology = new HexMapTopology(2, 1, layout);
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
-        float radius = apothem.ConvertHexApothemToRadius();
-        VectorXY defaultOrigin = VectorXYInt.Zero.GetHexCenter(apothem, radius, layout);
+        float radius = 2f.ConvertHexApothemToRadius();
+        VectorXY defaultOrigin = VectorXYInt.Zero.GetHexCenter(radius, layout);
         VectorXY translation = origin - defaultOrigin;
-        var geometry = new HexMapGeometry(topology, origin, apothem.ConvertHexApothemToRadius());
+        var geometry = new HexMapGeometry(topology, origin, radius);
 
         List<Segment> geometrySegments = geometry.ToHexEdgeSegments();
         List<Segment> expectedSegments = topology

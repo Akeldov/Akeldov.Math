@@ -61,10 +61,9 @@ namespace Akeldov.Math.Hexes.Geometry
             if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
 
-            float apothem = radius.ConvertHexRadiusToApothem();
-            VectorXY origin = VectorXYInt.Zero.GetHexCenter(apothem, radius, topology.Layout);
+            VectorXY origin = VectorXYInt.Zero.GetHexCenter(radius, topology.Layout);
 
-            return ToHexEdgeSegments(topology, origin, apothem, radius);
+            return ToHexEdgeSegments(topology, origin, radius);
         }
 
         /// <summary>
@@ -83,14 +82,12 @@ namespace Akeldov.Math.Hexes.Geometry
             return ToHexEdgeSegments(
                 geometry.Topology,
                 geometry.Origin,
-                geometry.Apothem,
                 geometry.Radius);
         }
 
         private static List<Segment> ToHexEdgeSegments(
             HexMapTopology topology,
             VectorXY origin,
-            float apothem,
             float radius)
         {
             VectorXY[] normalizedVertices = VectorXYExtensions.GetNormalizedHexVertices(topology.Layout);
@@ -101,7 +98,7 @@ namespace Akeldov.Math.Hexes.Geometry
                 for (int x = 0; x < topology.Resolution.X; x++)
                 {
                     var index = new VectorXYInt(x, y);
-                    VectorXY center = index.GetHexCenter(apothem, radius, origin, topology.Layout);
+                    VectorXY center = index.GetHexCenter(radius, origin, topology.Layout);
                     int flatIndex = GetFlatIndex(index, topology.Resolution.X);
 
                     for (int edgeIndex = 0; edgeIndex < 6; edgeIndex++)

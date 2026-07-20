@@ -81,32 +81,34 @@ namespace Akeldov.Math.Hexes.Geometry
             {
                 case Layout.OddR:
                 case Layout.EvenR:
-                    return RowLayoutBoundingBox(resolution, geometry.Apothem, geometry.Radius);
+                    return RowLayoutBoundingBox(resolution, geometry.Radius);
                 case Layout.OddQ:
                 case Layout.EvenQ:
-                    return ColumnLayoutBoundingBox(resolution, geometry.Apothem, geometry.Radius);
+                    return ColumnLayoutBoundingBox(resolution, geometry.Radius);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry layout is not supported.");
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static VectorXY RowLayoutBoundingBox(VectorXYInt dim, float hexApothem, float hexRadius)
+        private static VectorXY RowLayoutBoundingBox(VectorXYInt dim, float hexRadius)
         {
             if (dim.X == 0 || dim.Y == 0)
                 return new VectorXY(0, 0);
 
+            float hexApothem = Constants.Radius2Apothem * hexRadius;
             var xMetricSize = hexApothem * 2f * dim.X + hexApothem * (dim.Y == 1 ? 0 : 1);
             var yMetricSize = hexRadius * 2f + hexRadius * 1.5f * (dim.Y - 1);
             return new VectorXY(xMetricSize, yMetricSize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static VectorXY ColumnLayoutBoundingBox(VectorXYInt dim, float hexApothem, float hexRadius)
+        private static VectorXY ColumnLayoutBoundingBox(VectorXYInt dim, float hexRadius)
         {
             if (dim.X == 0 || dim.Y == 0)
                 return new VectorXY(0, 0);
 
+            float hexApothem = Constants.Radius2Apothem * hexRadius;
             var xMetricSize = hexRadius * 2f + hexRadius * 1.5f * (dim.X - 1);
             var yMetricSize = hexApothem * 2f * dim.Y + hexApothem * (dim.X == 1 ? 0 : 1);
             return new VectorXY(xMetricSize, yMetricSize);

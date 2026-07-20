@@ -14,18 +14,16 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Gets the world-space offset of a QRS hex index from the zero hex center.
         /// </summary>
         /// <param name="hexIndex">The QRS index whose offset is required.</param>
-        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
         /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
         /// <param name="layout">The layout that determines the world-space basis orientation.</param>
         /// <returns>The offset from the zero hex center in coordinate-space units.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY GetHexOffset(this VectorQRSInt hexIndex, float hexApothem, float hexRadius, Layout layout)
+        public static VectorXY GetHexOffset(this VectorQRSInt hexIndex, float hexRadius, Layout layout)
         {
-            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
-
             if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
+
+            float hexApothem = Constants.Radius2Apothem * hexRadius;
 
             switch (layout)
             {

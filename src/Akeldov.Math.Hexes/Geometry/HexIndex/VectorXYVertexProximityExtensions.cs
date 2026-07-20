@@ -20,9 +20,11 @@ namespace Akeldov.Math.Hexes.Geometry
             VectorXY hexFieldOrigin,
             Layout layout)
         {
-            float apothem = radius.ConvertHexRadiusToApothem();
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Hex radius must be finite and positive.");
+
             var hexIndex = point.ToXYIndex(radius, hexFieldOrigin, layout);
-            var hexCenter = hexIndex.GetHexCenter(apothem, radius, hexFieldOrigin, layout);
+            var hexCenter = hexIndex.GetHexCenter(radius, hexFieldOrigin, layout);
             var closestVertexIndex = point.GetClosestVertexIndex(radius, hexCenter, layout);
 
             return (hexIndex, (HexVertex)closestVertexIndex);

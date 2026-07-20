@@ -74,7 +74,7 @@ namespace Akeldov.Math.Hexes.Geometry
             float apothem = Constants.Radius2Apothem * radius;
 
             Topology = topology;
-            Origin = GetDefaultOrigin(apothem, radius, topology.Layout);
+            Origin = GetDefaultOrigin(radius, topology.Layout);
             Radius = radius;
             Apothem = apothem;
         }
@@ -153,8 +153,10 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <returns><see langword="true"/> if the geometries differ; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(HexMapGeometry left, HexMapGeometry right) => !left.Equals(right);
 
-        private static VectorXY GetDefaultOrigin(float apothem, float radius, Layout layout)
+        private static VectorXY GetDefaultOrigin(float radius, Layout layout)
         {
+            float apothem = Constants.Radius2Apothem * radius;
+
             switch (layout)
             {
                 case Layout.OddR:

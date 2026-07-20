@@ -11,12 +11,11 @@ public class VectorXYIntHexLayoutExtensionsTests
     public void GetHexCenter_WithOrigin_UsesOriginAsZeroHexCenter_ForEveryLayout()
     {
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
-        float radius = apothem.ConvertHexApothemToRadius();
+        float radius = 2f.ConvertHexApothemToRadius();
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            VectorXY center = VectorXYInt.Zero.GetHexCenter(apothem, radius, origin, layout);
+            VectorXY center = VectorXYInt.Zero.GetHexCenter(radius, origin, layout);
 
             VectorAssert.AreEqual(center, origin.X, origin.Y);
         }
@@ -34,10 +33,9 @@ public class VectorXYIntHexLayoutExtensionsTests
         float expectedY)
     {
         var origin = new VectorXY(10f, 20f);
-        const float apothem = 2f;
-        float radius = apothem.ConvertHexApothemToRadius();
+        float radius = 2f.ConvertHexApothemToRadius();
 
-        VectorXY center = new VectorXYInt(x, y).GetHexCenter(apothem, radius, origin, layout);
+        VectorXY center = new VectorXYInt(x, y).GetHexCenter(radius, origin, layout);
 
         VectorAssert.AreEqual(center, expectedX, expectedY);
     }
@@ -51,10 +49,9 @@ public class VectorXYIntHexLayoutExtensionsTests
         float expectedX,
         float expectedY)
     {
-        const float apothem = 2f;
-        float radius = apothem.ConvertHexApothemToRadius();
+        float radius = 2f.ConvertHexApothemToRadius();
 
-        VectorXY center = VectorXYInt.Zero.GetHexCenter(apothem, radius, layout);
+        VectorXY center = VectorXYInt.Zero.GetHexCenter(radius, layout);
 
         VectorAssert.AreEqual(center, expectedX, expectedY);
     }

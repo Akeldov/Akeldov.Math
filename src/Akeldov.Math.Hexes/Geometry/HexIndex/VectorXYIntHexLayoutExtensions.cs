@@ -14,42 +14,36 @@ namespace Akeldov.Math.Hexes.Geometry
         /// Gets the center of an offset-indexed hex using the layout's default field origin.
         /// </summary>
         /// <param name="index">The XY offset index of the hex.</param>
-        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
         /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
         /// <param name="layout">The offset layout of the index.</param>
         /// <returns>The world-space center of the hex.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, Layout layout)
+        public static VectorXY GetHexCenter(this VectorXYInt index, float hexRadius, Layout layout)
         {
-            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
-
             if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
 
-            return index.GetHexCenter(hexApothem, hexRadius, GetOffsetOrigin(hexApothem, hexRadius, layout), layout);
+            return index.GetHexCenter(hexRadius, GetOffsetOrigin(hexRadius, layout), layout);
         }
 
         /// <summary>
         /// Gets the center of an offset-indexed hex relative to a specified zero-hex center.
         /// </summary>
         /// <param name="index">The XY offset index of the hex.</param>
-        /// <param name="hexApothem">The positive hex apothem in coordinate-space units.</param>
         /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
         /// <param name="origin">The world-space center of the zero hex.</param>
         /// <param name="layout">The offset layout of the index.</param>
         /// <returns>The world-space center of the hex.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY GetHexCenter(this VectorXYInt index, float hexApothem, float hexRadius, VectorXY origin, Layout layout)
+        public static VectorXY GetHexCenter(this VectorXYInt index, float hexRadius, VectorXY origin, Layout layout)
         {
-            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
-
             if (float.IsNaN(hexRadius) || float.IsInfinity(hexRadius) || hexRadius <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(hexRadius), hexRadius, "Hex radius must be finite and positive.");
 
             if (!origin.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, "Hex origin components must be finite.");
+
+            float hexApothem = Constants.Radius2Apothem * hexRadius;
 
             switch (layout)
             {
@@ -74,8 +68,10 @@ namespace Akeldov.Math.Hexes.Geometry
             }
         }
 
-        private static VectorXY GetOffsetOrigin(float hexApothem, float hexRadius, Layout layout)
+        private static VectorXY GetOffsetOrigin(float hexRadius, Layout layout)
         {
+            float hexApothem = Constants.Radius2Apothem * hexRadius;
+
             switch (layout)
             {
                 case Layout.OddR:

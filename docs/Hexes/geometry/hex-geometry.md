@@ -5,7 +5,7 @@ Hex geometry maps hex indexes to world-space Spatial2D primitives.
 ## Centers
 
 - Calculate hex centers in world coordinates.
-- Apply radius, apothem, origin, and layout.
+- Use radius as the source hex size; geometry helpers derive the apothem internally.
 - Use `HexCenterMap` when centers are needed for every index in a field.
 
 ## Vertices

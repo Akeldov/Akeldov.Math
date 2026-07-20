@@ -26,24 +26,18 @@ namespace Akeldov.Math.Hexes.Geometry
                 float.IsNaN(vector.S) || float.IsInfinity(vector.S))
                 throw new ArgumentOutOfRangeException(nameof(vector), vector, "Vector QRS components must be finite.");
 
-            return ToVectorXY(vector, 0.5f, 0.5f * Constants.Apothem2Radius, layout);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static VectorXY ToVectorXY(VectorQRS vector, float hexApothem, float hexRadius, Layout layout)
-        {
             switch (layout)
             {
                 case Layout.OddR:
                 case Layout.EvenR:
                     return new VectorXY(
-                        2f * hexApothem * vector.Q + hexApothem * vector.R,
-                        1.5f * hexRadius * vector.R);
+                        vector.Q + 0.5f * vector.R,
+                        Constants.Radius2Apothem * vector.R);
                 case Layout.OddQ:
                 case Layout.EvenQ:
                     return new VectorXY(
-                        1.5f * hexRadius * vector.Q,
-                        2f * hexApothem * vector.R + hexApothem * vector.Q);
+                        Constants.Radius2Apothem * vector.Q,
+                        vector.R + 0.5f * vector.Q);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }

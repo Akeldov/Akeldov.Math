@@ -69,34 +69,28 @@ public class HexGeometryArgumentValidationTests
     }
 
     [Test]
-    public void HexLayoutHelpers_WhenApothemOrRadiusIsInvalid_Throw()
+    public void HexLayoutHelpers_WhenRadiusIsInvalid_Throw()
     {
         Assert.Multiple(() =>
         {
             AssertArgumentOutOfRange(
-                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(0, 0, float.PositiveInfinity, 1f, Layout.OddR),
-                "hexApothem");
-            AssertArgumentOutOfRange(
-                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(0, 0, 1f, float.PositiveInfinity, Layout.OddR),
+                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(0, 0, float.PositiveInfinity, Layout.OddR),
                 "hexRadius");
             AssertArgumentOutOfRange(
-                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(0, 0, float.PositiveInfinity, 1f, Layout.OddR),
-                "hexApothem");
+                () => _ = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(0, 0, float.PositiveInfinity, Layout.OddR),
+                "hexRadius");
             AssertArgumentOutOfRange(
                 () => _ = VectorXY.Zero.GetHexVertices(float.PositiveInfinity, Layout.OddR),
                 "hexRadius");
             AssertArgumentOutOfRange(
-                () => _ = VectorXYInt.Zero.GetHexCenter(float.PositiveInfinity, 1f, Layout.OddR),
-                "hexApothem");
-            AssertArgumentOutOfRange(
-                () => _ = VectorXYInt.Zero.GetHexCenter(1f, float.PositiveInfinity, Layout.OddR),
+                () => _ = VectorXYInt.Zero.GetHexCenter(float.PositiveInfinity, Layout.OddR),
                 "hexRadius");
             AssertArgumentOutOfRange(
-                () => _ = VectorXYInt.Zero.GetHexCenter(1f, 1f, new VectorXY(float.PositiveInfinity, 0f), Layout.OddR),
+                () => _ = VectorXYInt.Zero.GetHexCenter(1f, new VectorXY(float.PositiveInfinity, 0f), Layout.OddR),
                 "origin");
             AssertArgumentOutOfRange(
-                () => _ = new VectorQRSInt(1, 1).GetHexOffset(float.PositiveInfinity, 1f, Layout.OddR),
-                "hexApothem");
+                () => _ = new VectorQRSInt(1, 1).GetHexOffset(float.PositiveInfinity, Layout.OddR),
+                "hexRadius");
         });
     }
 

@@ -54,7 +54,6 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 layout != Layout.EvenQ)
                 throw new ArgumentOutOfRangeException(nameof(layout));
 
-            var hexApothem = polyhexGeometry.HexApothem;
             var hexRadius = polyhexGeometry.HexRadius;
             int qsize = polyhexGeometry.QRSResolution.Q;
             int rsize = polyhexGeometry.QRSResolution.R;
@@ -68,7 +67,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     if (!polyhexGeometry[q, r])
                         continue;
 
-                    VectorXY[] points = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(q, r, hexApothem, hexRadius, layout);
+                    VectorXY[] points = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(q, r, hexRadius, layout);
 
                     var qminClause = q < 1;
                     var rminClause = r < 1;
