@@ -11,21 +11,21 @@ QRS index and row/column storage indexes depends on `Layout`.
 ## QRS Basis Examples
 
 QRS coordinates keep the cube-coordinate invariant `Q + R + S = 0`. The
-diagrams show the three positive cube-coordinate directions, separated by 120
-degrees: red is `+Q`, green is `+R`, and blue is `+S`. The two independent
-axial basis vectors `(1, 0)` and `(0, 1)` are separated by 60 degrees.
-
-The default positive QRS basis directions are:
+diagrams show a symmetric embedding of the three component axes, separated by
+120 degrees: red is `eQ`, green is `eR`, and blue is `eS`. A valid QRS vector is
+the linear combination:
 
 ```text
-+Q = ( 1,  0, -1)
-+R = (-1,  1,  0)
-+S = ( 0, -1,  1)
+(Q, R, S) = Q * eQ + R * eR + S * eS
 ```
 
-After conversion to Spatial2D coordinates, each of these basis vectors has a
-length of `sqrt(3)`, the center-to-center distance of neighboring regular
-hexagons with radius `1.0`.
+The component axes cannot be represented individually by `VectorQRS` because
+each valid vector must satisfy the zero-sum invariant. The diagrams reconstruct
+them from the valid differences `eQ - eS = (1, 0, -1)` and
+`eR - eS = (0, 1, -1)`, with `eQ + eR + eS = 0` selecting the symmetric
+embedding. For a unit-radius hexagon, each component axis has length `1.0`,
+while the difference between two axes has length `sqrt(3)`, the center-to-center
+distance of neighboring hexagons.
 
 ### `OddR` and `EvenR`
 
@@ -35,9 +35,11 @@ world-space directions of QRS vectors.
 
 ```csharp
 var p0 = new PointXY(0, 0);
-VectorXY q = new VectorQRS(1, 0).ToVectorXY(Layout.OddR);
-VectorXY r = new VectorQRS(-1, 1).ToVectorXY(Layout.OddR);
-VectorXY s = new VectorQRS(0, -1).ToVectorXY(Layout.OddR);
+VectorXY qMinusS = new VectorQRS(1, 0).ToVectorXY(Layout.OddR);
+VectorXY rMinusS = new VectorQRS(0, 1).ToVectorXY(Layout.OddR);
+VectorXY s = (qMinusS + rMinusS) * (-1f / 3f);
+VectorXY q = qMinusS + s;
+VectorXY r = rMinusS + s;
 TrueTypeFont font = TrueTypeFont.Load(
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
 
@@ -50,14 +52,14 @@ scene
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, new PointXY(1f, 0f)), xColor, 0.006f, 0.006f)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, new PointXY(0f, 1f)), yColor, 0.006f, 0.006f)
     .AddTextLayer(font, "+X", new PointXY(0.9f, -0.08f), 0.11f, xColor, 0.01f, centered)
-    .AddTextLayer(font, "+Y", new PointXY(0f, 1.12f), 0.11f, yColor, 0.01f, centered)
+    .AddTextLayer(font, "+Y", new PointXY(0.08f, 0.9f), 0.11f, yColor, 0.01f, centered)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + q), RGBA16BitColor.Red, 0.01f, 0.01f)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + r), RGBA16BitColor.Green, 0.01f, 0.01f)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + s), RGBA16BitColor.Blue, 0.01f, 0.01f)
     .AddTextLayer(font, "+Q", p0 + q * 1.12f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
     .AddTextLayer(font, "+R", p0 + r * 1.12f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
     .AddTextLayer(font, "+S", p0 + s * 1.12f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
-    .Rasterize(new RasterGeometry(new PointXY(-2.15f, -2.15f), new VectorXY(4.3f, 4.3f), new VectorXYInt(300, 300)))
+    .Rasterize(new RasterGeometry(new PointXY(-1.25f, -1.25f), new VectorXY(2.5f, 2.5f), new VectorXYInt(300, 300)))
     .SaveAsPng("qrs-basis-pointy-top.png");
 ```
 
@@ -71,9 +73,11 @@ world-space directions of QRS vectors.
 
 ```csharp
 var p0 = new PointXY(0, 0);
-VectorXY q = new VectorQRS(1, 0).ToVectorXY(Layout.OddQ);
-VectorXY r = new VectorQRS(-1, 1).ToVectorXY(Layout.OddQ);
-VectorXY s = new VectorQRS(0, -1).ToVectorXY(Layout.OddQ);
+VectorXY qMinusS = new VectorQRS(1, 0).ToVectorXY(Layout.OddQ);
+VectorXY rMinusS = new VectorQRS(0, 1).ToVectorXY(Layout.OddQ);
+VectorXY s = (qMinusS + rMinusS) * (-1f / 3f);
+VectorXY q = qMinusS + s;
+VectorXY r = rMinusS + s;
 TrueTypeFont font = TrueTypeFont.Load(
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
 
@@ -86,14 +90,14 @@ scene
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, new PointXY(1f, 0f)), xColor, 0.006f, 0.006f)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, new PointXY(0f, 1f)), yColor, 0.006f, 0.006f)
     .AddTextLayer(font, "+X", new PointXY(0.9f, -0.08f), 0.11f, xColor, 0.01f, centered)
-    .AddTextLayer(font, "+Y", new PointXY(0f, 1.12f), 0.11f, yColor, 0.01f, centered)
+    .AddTextLayer(font, "+Y", new PointXY(0.08f, 0.9f), 0.11f, yColor, 0.01f, centered)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + q), RGBA16BitColor.Red, 0.01f, 0.01f)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + r), RGBA16BitColor.Green, 0.01f, 0.01f)
     .AddPointDistanceBasedLayer(new ParameterizedSegment(p0, p0 + s), RGBA16BitColor.Blue, 0.01f, 0.01f)
     .AddTextLayer(font, "+Q", p0 + q * 1.12f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
     .AddTextLayer(font, "+R", p0 + r * 1.12f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
     .AddTextLayer(font, "+S", p0 + s * 1.12f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
-    .Rasterize(new RasterGeometry(new PointXY(-2.15f, -2.15f), new VectorXY(4.3f, 4.3f), new VectorXYInt(300, 300)))
+    .Rasterize(new RasterGeometry(new PointXY(-1.25f, -1.25f), new VectorXY(2.5f, 2.5f), new VectorXYInt(300, 300)))
     .SaveAsPng("qrs-basis-flat-top.png");
 ```
 
