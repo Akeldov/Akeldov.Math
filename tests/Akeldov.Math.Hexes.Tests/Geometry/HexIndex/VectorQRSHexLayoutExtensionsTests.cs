@@ -11,7 +11,10 @@ public class VectorQRSHexLayoutExtensionsTests
     [TestCase(Layout.EvenR, 6.0622f, 4.5f)]
     [TestCase(Layout.OddQ, 3f, 6.9282f)]
     [TestCase(Layout.EvenQ, 3f, 6.9282f)]
-    public void ToVectorXY_WithLayout_UsesUnitRadiusQrAxes(Layout layout, float expectedX, float expectedY)
+    public void ToVectorXY_WithLayout_UsesUnitRadiusQMinusSAndRMinusSNeighborBasis(
+        Layout layout,
+        float expectedX,
+        float expectedY)
     {
         VectorXY actual = new VectorQRS(2f, 3f).ToVectorXY(layout);
 
@@ -22,18 +25,18 @@ public class VectorQRSHexLayoutExtensionsTests
     [TestCase(Layout.EvenR, 1.7321f, 0f, 0.866f, 1.5f)]
     [TestCase(Layout.OddQ, 1.5f, 0.866f, 0f, 1.7321f)]
     [TestCase(Layout.EvenQ, 1.5f, 0.866f, 0f, 1.7321f)]
-    public void ToVectorXY_WithLayout_MapsUnitQrAxesToUnitRadiusCenterOffsets(
+    public void ToVectorXY_WithLayout_MapsQMinusSAndRMinusSNeighborStepsToUnitRadiusCenterOffsets(
         Layout layout,
-        float expectedQX,
-        float expectedQY,
-        float expectedRX,
-        float expectedRY)
+        float expectedQMinusSX,
+        float expectedQMinusSY,
+        float expectedRMinusSX,
+        float expectedRMinusSY)
     {
-        VectorXY qAxis = new VectorQRS(1f, 0f).ToVectorXY(layout);
-        VectorXY rAxis = new VectorQRS(0f, 1f).ToVectorXY(layout);
+        VectorXY qMinusSNeighborOffset = new VectorQRS(1f, 0f).ToVectorXY(layout);
+        VectorXY rMinusSNeighborOffset = new VectorQRS(0f, 1f).ToVectorXY(layout);
 
-        VectorAssert.AreEqual(qAxis, expectedQX, expectedQY);
-        VectorAssert.AreEqual(rAxis, expectedRX, expectedRY);
+        VectorAssert.AreEqual(qMinusSNeighborOffset, expectedQMinusSX, expectedQMinusSY);
+        VectorAssert.AreEqual(rMinusSNeighborOffset, expectedRMinusSX, expectedRMinusSY);
     }
 
     [TestCase(Layout.OddR)]
@@ -78,7 +81,10 @@ public class VectorQRSHexLayoutExtensionsTests
     [TestCase(Layout.EvenR, 6.0622f, 4.5f)]
     [TestCase(Layout.OddQ, 3f, 6.9282f)]
     [TestCase(Layout.EvenQ, 3f, 6.9282f)]
-    public void ToVectorQRS_WithLayout_UsesUnitRadiusQrAxes(Layout layout, float x, float y)
+    public void ToVectorQRS_WithLayout_UsesUnitRadiusQMinusSAndRMinusSNeighborBasis(
+        Layout layout,
+        float x,
+        float y)
     {
         VectorQRS actual = new VectorXY(x, y).ToVectorQRS(layout);
 
