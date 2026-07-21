@@ -1,0 +1,117 @@
+name: Publish Hexes to NuGet
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_PATH: src/Akeldov.Math.Hexes/Akeldov.Math.Hexes.csproj
+  TEST_PROJECT_PATH: tests/Akeldov.Math.Hexes.Tests/Akeldov.Math.Hexes.Tests.csproj
+  TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Hexes.Tests/bin/Debug/net6.0/Akeldov.Math.Hexes.Tests.dll
+  PACKAGE_OUTPUT_PATH: artifacts/packages
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  SPATIAL2D_PACKAGE_VERSION: 0.8.0
+
+jobs:
+  publish:
+    name: Publish Akeldov.Math.Hexes
+    runs-on: windows-latest
+    environment: nuget.org
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            9.0.x
+
+      - name: Show .NET info
+        shell: pwsh
+        run: dotnet --info
+
+      - name: Restore tests against released Spatial2D
+        shell: pwsh
+        run: >
+          dotnet restore $env:TEST_PROJECT_PATH
+          -p:Spatial2DPackageVersion=$env:SPATIAL2D_PACKAGE_VERSION
+
+      - name: Build tests against released Spatial2D
+        shell: pwsh
+        run: >
+          dotnet build $env:TEST_PROJECT_PATH
+          --framework net6.0
+          --no-restore
+          --disable-build-servers
+          /maxcpucount:1
+          -p:Spatial2DPackageVersion=$env:SPATIAL2D_PACKAGE_VERSION
+
+      - name: Run tests
+        shell: pwsh
+        run: >
+          dotnet vstest $env:TEST_ASSEMBLY_PATH
+          "--logger:console;verbosity=detailed"
+
+      - name: Resolve package version
+        id: version
+        shell: pwsh
+        run: |
+          [xml]$project = Get-Content $env:PROJECT_PATH
+          $packageVersion = @($project.Project.PropertyGroup.Version | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]
+
+          if ([string]::IsNullOrWhiteSpace($packageVersion)) {
+            throw "Could not read <Version> from $env:PROJECT_PATH."
+          }
+
+          if ($packageVersion -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z][0-9A-Za-z.-]*)?$') {
+            throw "Package version '$packageVersion' does not look like a valid NuGet SemVer version."
+          }
+
+          "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
+          "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
+
+      - name: Build package
+        shell: pwsh
+        run: >
+          dotnet build $env:PROJECT_PATH
+          --configuration Release
+          --no-restore
+          --disable-build-servers
+          /p:PackageVersion=$env:PACKAGE_VERSION
+          /p:ContinuousIntegrationBuild=true
+          /maxcpucount:1
+
+      - name: Pack
+        shell: pwsh
+        run: >
+          dotnet pack $env:PROJECT_PATH
+          --configuration Release
+          --no-build
+          --output $env:PACKAGE_OUTPUT_PATH
+          /p:PackageVersion=$env:PACKAGE_VERSION
+          /p:ContinuousIntegrationBuild=true
+
+      - name: Publish to NuGet
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:NUGET_API_KEY)) {
+            throw "Repository or environment secret NUGET_API_KEY is required."
+          }
+
+          $packages = @(Get-ChildItem $env:PACKAGE_OUTPUT_PATH -Filter "Akeldov.Math.Hexes.*.nupkg")
+
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly one Hexes package, but found $($packages.Count)."
+          }
+
+          dotnet nuget push $packages[0].FullName `
+            --api-key $env:NUGET_API_KEY `
+            --source $env:NUGET_SOURCE `
+            --skip-duplicate

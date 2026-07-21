@@ -1,6 +1,6 @@
 # Akeldov.Math.Hexes
 
-Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, geometry, rasterization, polyhex contours, and partitioning utilities.
+Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, geometry, pathfinding, rasterization, polyhex contours, and partitioning utilities.
 
 ## Features
 
@@ -28,6 +28,7 @@ Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, 
     - [IHexMap](maps/ihexmap.md)
     - [HexMap](maps/hexmap.md)
     - [Shared Map Behavior](maps/shared-map-behavior.md)
+- [Pathfinding](pathfinding.md)
 - [Rasters](rasters.md)
     - [ISpatialRaster](rasters/ispatialraster.md)
     - [Shared Raster Behavior](rasters/shared-raster-behavior.md)

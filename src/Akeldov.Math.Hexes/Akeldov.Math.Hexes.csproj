@@ -1,31 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Akeldov.Math.Hexes</PackageId>
-    <Version>0.1.0</Version>
-    <Authors>Stanislav Akeldov</Authors>
-    <Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
-    <Description>Hex-grid geometry, axial coordinates, topology, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>math;geometry;hex;hex-grid;vectors;topology;rasterization;voronoi;polyhex</PackageTags>
-    <RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
-    <PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Hexes/</PackageProjectUrl>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageId>Akeldov.Math.Hexes</PackageId>
+		<Version>0.1.0</Version>
+		<Authors>Stanislav Akeldov</Authors>
+		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
+		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
+		<PackageReleaseNotes>Initial release with QRS axial coordinates; odd/even row and column layouts; topology, geometry, and mutable hex maps; weighted pathfinding; barycentric and chromatic rasterization; polyhex contours and regions; and weighted Voronoi partitioning.</PackageReleaseNotes>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>
+		<RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
+		<PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Hexes/</PackageProjectUrl>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(Spatial2DPackageVersion)' == ''">
-    <ProjectReference Include="..\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Spatial2DPackageVersion)' != ''">
-    <PackageReference Include="Akeldov.Math.Spatial2D" Version="$(Spatial2DPackageVersion)" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Akeldov.Math.Spatial2D" Version="[0.8.0, 1.0.0)" />
+	</ItemGroup>
 
 </Project>

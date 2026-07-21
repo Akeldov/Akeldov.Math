@@ -24,6 +24,10 @@ namespace Akeldov.Math.Hexes.Rectangles
         /// <param name="center">The rectangle center in world coordinates.</param>
         /// <param name="size">The width and height before rotation.</param>
         /// <param name="rotation">The counterclockwise rotation in 60-degree steps.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the center is not finite, a size component is not finite and positive,
+        /// or the rotation is not a defined sixfold angle.
+        /// </exception>
         public HexOrientedRectangle(PointXY center, VectorXY size, SixfoldAngle rotation)
         {
             if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
@@ -32,6 +36,9 @@ namespace Akeldov.Math.Hexes.Rectangles
 
             if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and positive.");
+
+            if ((uint)rotation > (uint)SixfoldAngle.Deg300)
+                throw new ArgumentOutOfRangeException(nameof(rotation), rotation, "Rectangle rotation must be a defined sixfold angle.");
 
             _center = center;
             _size = size;
@@ -134,6 +141,10 @@ namespace Akeldov.Math.Hexes.Rectangles
         /// <param name="bottomLeftPoint">The world position of the local bottom-left corner.</param>
         /// <param name="size">The width and height before rotation.</param>
         /// <param name="rotation">The counterclockwise rotation in 60-degree steps.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the bottom-left point is not finite, a size component is not finite and positive,
+        /// or the rotation is not a defined sixfold angle.
+        /// </exception>
         public static HexOrientedRectangle CreateFromBottomLeftPoint(PointXY bottomLeftPoint, VectorXY size, SixfoldAngle rotation)
         {
             if (float.IsNaN(bottomLeftPoint.X) || float.IsInfinity(bottomLeftPoint.X) ||
@@ -142,6 +153,9 @@ namespace Akeldov.Math.Hexes.Rectangles
 
             if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and positive.");
+
+            if ((uint)rotation > (uint)SixfoldAngle.Deg300)
+                throw new ArgumentOutOfRangeException(nameof(rotation), rotation, "Rectangle rotation must be a defined sixfold angle.");
 
             var center = RotateAround(bottomLeftPoint + size * 0.5f, bottomLeftPoint, rotation);
             return new HexOrientedRectangle(center, size, rotation);

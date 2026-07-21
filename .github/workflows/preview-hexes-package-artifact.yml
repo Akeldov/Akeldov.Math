@@ -1,0 +1,94 @@
+name: Build Hexes preview package artifact
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_PATH: src/Akeldov.Math.Hexes/Akeldov.Math.Hexes.csproj
+  TEST_PROJECT_PATH: tests/Akeldov.Math.Hexes.Tests/Akeldov.Math.Hexes.Tests.csproj
+  TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Hexes.Tests/bin/Debug/net6.0/Akeldov.Math.Hexes.Tests.dll
+  PACKAGE_OUTPUT_PATH: artifacts/packages
+  SPATIAL2D_PACKAGE_VERSION: 0.8.0
+
+jobs:
+  build-preview-package:
+    name: Build Hexes preview package artifact
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            9.0.x
+
+      - name: Show .NET info
+        shell: pwsh
+        run: dotnet --info
+
+      - name: Restore tests against released Spatial2D
+        shell: pwsh
+        run: >
+          dotnet restore $env:TEST_PROJECT_PATH
+          -p:Spatial2DPackageVersion=$env:SPATIAL2D_PACKAGE_VERSION
+
+      - name: Build tests against released Spatial2D
+        shell: pwsh
+        run: >
+          dotnet build $env:TEST_PROJECT_PATH
+          --framework net6.0
+          --no-restore
+          --disable-build-servers
+          /maxcpucount:1
+          -p:Spatial2DPackageVersion=$env:SPATIAL2D_PACKAGE_VERSION
+
+      - name: Run tests
+        shell: pwsh
+        run: >
+          dotnet vstest $env:TEST_ASSEMBLY_PATH
+          "--logger:console;verbosity=detailed"
+
+      - name: Create preview package version
+        id: version
+        shell: pwsh
+        run: |
+          [xml]$project = Get-Content $env:PROJECT_PATH
+          $baseVersion = @($project.Project.PropertyGroup.Version | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]
+
+          if ([string]::IsNullOrWhiteSpace($baseVersion)) {
+            throw "Could not read <Version> from $env:PROJECT_PATH."
+          }
+
+          $packageVersion = "$baseVersion-preview.${{ github.run_number }}.${{ github.run_attempt }}"
+
+          if ($packageVersion -notmatch '^\d+\.\d+\.\d+-preview\.\d+\.\d+$') {
+            throw "Generated package version '$packageVersion' is not a preview prerelease version."
+          }
+
+          "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
+          "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
+
+      - name: Pack
+        shell: pwsh
+        run: >
+          dotnet pack $env:PROJECT_PATH
+          --configuration Release
+          --no-restore
+          --output $env:PACKAGE_OUTPUT_PATH
+          /p:PackageVersion=$env:PACKAGE_VERSION
+          /p:ContinuousIntegrationBuild=true
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Akeldov.Math.Hexes.${{ steps.version.outputs.package_version }}
+          path: artifacts/packages/Akeldov.Math.Hexes.*.nupkg
+          if-no-files-found: error
+          retention-days: 14

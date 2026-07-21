@@ -168,6 +168,7 @@ nav:
               - IHexMap: Hexes/maps/ihexmap.md
               - HexMap: Hexes/maps/hexmap.md
               - Shared Map Behavior: Hexes/maps/shared-map-behavior.md
+          - Pathfinding: Hexes/pathfinding.md
           - Rasters:
               - Overview: Hexes/rasters.md
               - ISpatialRaster: Hexes/rasters/ispatialraster.md
