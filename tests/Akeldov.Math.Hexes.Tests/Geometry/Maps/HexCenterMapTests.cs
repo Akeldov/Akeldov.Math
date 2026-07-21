@@ -64,7 +64,7 @@ public class HexCenterMapTests
 
         Assert.That(geometry.Topology, Is.EqualTo(new HexMapTopology(1, 1, Layout.EvenQ)));
         Assert.That(geometry.Apothem, Is.EqualTo(2f).Within(0.00001f));
-        VectorAssert.AreEqual(geometry.Origin, 2f.ConvertHexApothemToRadius(), 6f);
+        VectorAssert.AreEqual(geometry.Origin, 2f.ConvertHexApothemToRadius(), 2f);
     }
 
     [TestCase(Layout.OddR, 8f, 17.6906f, 22f, 25.7735f)]
@@ -214,9 +214,9 @@ public class HexCenterMapTests
     }
 
     [TestCase(Layout.OddR, 2f, 2.3094f)]
-    [TestCase(Layout.EvenR, 6f, 2.3094f)]
+    [TestCase(Layout.EvenR, 2f, 2.3094f)]
     [TestCase(Layout.OddQ, 2.3094f, 2f)]
-    [TestCase(Layout.EvenQ, 2.3094f, 6f)]
+    [TestCase(Layout.EvenQ, 2.3094f, 2f)]
     public void Constructor_WithoutOrigin_PreservesDefaultZeroHexCenter(Layout layout, float expectedX, float expectedY)
     {
         var geometry = new HexCenterMap(new HexMapGeometry(1, 1, 2f.ConvertHexApothemToRadius(), layout));

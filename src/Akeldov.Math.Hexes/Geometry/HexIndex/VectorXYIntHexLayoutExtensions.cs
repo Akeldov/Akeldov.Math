@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorXYIntExtensions
     {
         /// <summary>
-        /// Gets the center of an offset-indexed hex using the layout's default field origin.
+        /// Gets the center of an offset-indexed hex using the layout's default zero-hex origin.
         /// </summary>
         /// <param name="index">The XY offset index of the hex.</param>
         /// <param name="hexRadius">The positive hex radius in coordinate-space units.</param>
@@ -75,13 +75,11 @@ namespace Akeldov.Math.Hexes.Geometry
             switch (layout)
             {
                 case Layout.OddR:
-                    return new VectorXY(hexApothem, hexRadius);
                 case Layout.EvenR:
-                    return new VectorXY(3f * hexApothem, hexRadius);
+                    return new VectorXY(hexApothem, hexRadius);
                 case Layout.OddQ:
-                    return new VectorXY(hexRadius, hexApothem);
                 case Layout.EvenQ:
-                    return new VectorXY(hexRadius, 3f * hexApothem);
+                    return new VectorXY(hexRadius, hexApothem);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }

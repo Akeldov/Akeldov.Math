@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorXYExtensions
     {
         /// <summary>
-        /// Gets the world-space center of a QRS-indexed hex using the default axial origin.
+        /// Gets the world-space center of a QRS-indexed hex using the layout's default zero-hex origin.
         /// </summary>
         /// <param name="q">The Q component of the hex index.</param>
         /// <param name="r">The R component of the hex index.</param>

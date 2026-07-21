@@ -41,9 +41,9 @@ public class VectorXYIntHexLayoutExtensionsTests
     }
 
     [TestCase(Layout.OddR, 2f, 2.3094f)]
-    [TestCase(Layout.EvenR, 6f, 2.3094f)]
+    [TestCase(Layout.EvenR, 2f, 2.3094f)]
     [TestCase(Layout.OddQ, 2.3094f, 2f)]
-    [TestCase(Layout.EvenQ, 2.3094f, 6f)]
+    [TestCase(Layout.EvenQ, 2.3094f, 2f)]
     public void GetHexCenter_WithoutOrigin_PreservesDefaultZeroHexCenter(
         Layout layout,
         float expectedX,
@@ -54,5 +54,33 @@ public class VectorXYIntHexLayoutExtensionsTests
         VectorXY center = VectorXYInt.Zero.GetHexCenter(radius, layout);
 
         VectorAssert.AreEqual(center, expectedX, expectedY);
+    }
+
+    [TestCase(Layout.OddR, 0, 0)]
+    [TestCase(Layout.OddR, 1, 0)]
+    [TestCase(Layout.OddR, 0, 1)]
+    [TestCase(Layout.OddR, -2, -3)]
+    [TestCase(Layout.EvenR, 0, 0)]
+    [TestCase(Layout.EvenR, 1, 0)]
+    [TestCase(Layout.EvenR, 0, 1)]
+    [TestCase(Layout.EvenR, -2, -3)]
+    [TestCase(Layout.OddQ, 0, 0)]
+    [TestCase(Layout.OddQ, 1, 0)]
+    [TestCase(Layout.OddQ, 0, 1)]
+    [TestCase(Layout.OddQ, -2, -3)]
+    [TestCase(Layout.EvenQ, 0, 0)]
+    [TestCase(Layout.EvenQ, 1, 0)]
+    [TestCase(Layout.EvenQ, 0, 1)]
+    [TestCase(Layout.EvenQ, -2, -3)]
+    public void GetHexCenter_WithoutOrigin_MatchesQrsPathForEveryLayout(Layout layout, int q, int r)
+    {
+        float radius = 2f.ConvertHexApothemToRadius();
+        VectorXY expected = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(q, r, radius, layout);
+
+        VectorXY actual = new VectorQRSInt(q, r)
+            .ToXYIndex(layout)
+            .GetHexCenter(radius, layout);
+
+        VectorAssert.AreEqual(actual, expected.X, expected.Y);
     }
 }

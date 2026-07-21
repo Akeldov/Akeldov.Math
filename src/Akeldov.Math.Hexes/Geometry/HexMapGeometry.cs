@@ -160,13 +160,11 @@ namespace Akeldov.Math.Hexes.Geometry
             switch (layout)
             {
                 case Layout.OddR:
-                    return new VectorXY(apothem, radius);
                 case Layout.EvenR:
-                    return new VectorXY(3f * apothem, radius);
+                    return new VectorXY(apothem, radius);
                 case Layout.OddQ:
-                    return new VectorXY(radius, apothem);
                 case Layout.EvenQ:
-                    return new VectorXY(radius, 3f * apothem);
+                    return new VectorXY(radius, apothem);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
