@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
+    /// <summary>
+    /// Provides methods for discretizing world-space points to offset hex indexes.
+    /// </summary>
     public static partial class PointXYExtensions
     {
         /// <summary>

@@ -10,8 +10,8 @@ Coordinate conversion helpers connect QRS, XY indexes, and Spatial2D coordinates
 
 ## Spatial2D Coordinates
 
-- Convert Spatial2D `PointXY` values to QRS coordinates.
-- Convert QRS values to Spatial2D vectors.
+- Convert between Spatial2D `VectorXY` values and QRS vectors.
+- Use unit-radius hex-grid axes for symmetric forward and inverse conversions.
 - Use layout orientation to choose row-oriented or column-oriented formulas.
 
 ## Layout Awareness

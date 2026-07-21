@@ -5,27 +5,6 @@ namespace Akeldov.Math.Hexes.Tests.VectorsQRS;
 
 public class CoordinatesConversionTests
 {
-    [TestCase(Layout.OddR, 0.46410155f, 6f)]
-    [TestCase(Layout.EvenR, 0.46410155f, 6f)]
-    [TestCase(Layout.OddQ, 4f, 3.1961522f)]
-    [TestCase(Layout.EvenQ, 4f, 3.1961522f)]
-    public void ToQRS_UsesOriginAndLayoutOrientation(Layout layout, float expectedQ, float expectedR)
-    {
-        var point = new PointXY(7f, 11f);
-        var origin = new VectorXY(1f, 2f);
-
-        var qrs = point.ToQRS(origin, layout);
-
-        VectorAssert.AreEqual(qrs, expectedQ, expectedR);
-    }
-
-    [Test]
-    public void ToQRS_ThrowsForInvalidLayout()
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => _ = new PointXY(1f, 2f).ToQRS(VectorXY.Zero, (Layout)42));
-    }
-
     [Test]
     public void ToNormalizedAxial_DividesByHexRadius()
     {
