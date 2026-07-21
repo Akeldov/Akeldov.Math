@@ -155,8 +155,8 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < width; x++)
                 {
                     VectorXYInt[] offsets = (x & 1) == 0
-                        ? HexAdjacencyOffsets.ColumnUnshiftedVectors
-                        : HexAdjacencyOffsets.ColumnShiftedVectors;
+                        ? BoolExtensions.ColumnUnshiftedEdgeOffsets
+                        : BoolExtensions.ColumnShiftedEdgeOffsets;
                     values[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }
@@ -175,8 +175,8 @@ namespace Akeldov.Math.Hexes.Topology
                 for (int x = 0; x < width; x++)
                 {
                     VectorXYInt[] offsets = (x & 1) == 0
-                        ? HexAdjacencyOffsets.ColumnShiftedVectors
-                        : HexAdjacencyOffsets.ColumnUnshiftedVectors;
+                        ? BoolExtensions.ColumnShiftedEdgeOffsets
+                        : BoolExtensions.ColumnUnshiftedEdgeOffsets;
                     values[rowStart + x] = CreateAdjacency(x, y, offsets);
                 }
             }

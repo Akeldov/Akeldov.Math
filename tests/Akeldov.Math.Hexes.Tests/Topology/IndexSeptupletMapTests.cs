@@ -63,34 +63,29 @@ public class IndexSeptupletMapTests
         Assert.That(adjacency.Adjacent5, Is.EqualTo(new VectorXYInt(1, -1)));
     }
 
-    [TestCase(Layout.OddQ, 2, 1, 1, 0, 0, 1, 0, 2, 1, 2, 2, 2)]
-    [TestCase(Layout.EvenQ, 2, 0, 1, 0, 0, 0, 0, 1, 1, 2, 2, 1)]
-    public void Constructor_ForFlatTopLayouts_UsesAdjacent0AsNorthEast(
-        Layout layout,
-        int adjacent0X,
-        int adjacent0Y,
-        int adjacent1X,
-        int adjacent1Y,
-        int adjacent2X,
-        int adjacent2Y,
-        int adjacent3X,
-        int adjacent3Y,
-        int adjacent4X,
-        int adjacent4Y,
-        int adjacent5X,
-        int adjacent5Y)
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void Constructor_OrdersAdjacenciesByHexEdge(Layout layout)
     {
-        var topology = new IndexSeptupletMap(new HexMapTopology(3, 3, layout));
+        var map = new IndexSeptupletMap(new HexMapTopology(4, 4, layout));
 
-        Septuplet<VectorXYInt> adjacency = topology[new VectorXYInt(1, 1)];
+        foreach (VectorXYInt index in new[] { new VectorXYInt(1, 1), new VectorXYInt(2, 2) })
+        {
+            Septuplet<VectorXYInt> adjacency = map[index];
 
-        Assert.That(adjacency.Main, Is.EqualTo(new VectorXYInt(1, 1)));
-        Assert.That(adjacency.Adjacent0, Is.EqualTo(new VectorXYInt(adjacent0X, adjacent0Y)));
-        Assert.That(adjacency.Adjacent1, Is.EqualTo(new VectorXYInt(adjacent1X, adjacent1Y)));
-        Assert.That(adjacency.Adjacent2, Is.EqualTo(new VectorXYInt(adjacent2X, adjacent2Y)));
-        Assert.That(adjacency.Adjacent3, Is.EqualTo(new VectorXYInt(adjacent3X, adjacent3Y)));
-        Assert.That(adjacency.Adjacent4, Is.EqualTo(new VectorXYInt(adjacent4X, adjacent4Y)));
-        Assert.That(adjacency.Adjacent5, Is.EqualTo(new VectorXYInt(adjacent5X, adjacent5Y)));
+            Assert.Multiple(() =>
+            {
+                Assert.That(adjacency.Main, Is.EqualTo(index));
+                Assert.That(adjacency.Adjacent0, Is.EqualTo(index.GetAdjacent(HexEdge.Edge0, layout)));
+                Assert.That(adjacency.Adjacent1, Is.EqualTo(index.GetAdjacent(HexEdge.Edge1, layout)));
+                Assert.That(adjacency.Adjacent2, Is.EqualTo(index.GetAdjacent(HexEdge.Edge2, layout)));
+                Assert.That(adjacency.Adjacent3, Is.EqualTo(index.GetAdjacent(HexEdge.Edge3, layout)));
+                Assert.That(adjacency.Adjacent4, Is.EqualTo(index.GetAdjacent(HexEdge.Edge4, layout)));
+                Assert.That(adjacency.Adjacent5, Is.EqualTo(index.GetAdjacent(HexEdge.Edge5, layout)));
+            });
+        }
     }
 
     [Test]

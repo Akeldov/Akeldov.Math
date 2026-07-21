@@ -180,8 +180,8 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void FillOddQ()
         {
-            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.ColumnUnshiftedVectors;
-            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.ColumnShiftedVectors;
+            VectorXYInt[] evenOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
+            VectorXYInt[] oddOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
             VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
@@ -216,8 +216,8 @@ namespace Akeldov.Math.Hexes.Topology
 
         private void FillEvenQ()
         {
-            VectorXYInt[] evenOffsets = HexAdjacencyOffsets.ColumnShiftedVectors;
-            VectorXYInt[] oddOffsets = HexAdjacencyOffsets.ColumnUnshiftedVectors;
+            VectorXYInt[] evenOffsets = BoolExtensions.ColumnShiftedEdgeOffsets;
+            VectorXYInt[] oddOffsets = BoolExtensions.ColumnUnshiftedEdgeOffsets;
             VectorXYInt hexResolution = SourceHexMapGeometry.Topology.Resolution;
             int width = Resolution.X;
             VectorXY cellSize = Geometry.CellSize;
