@@ -11,10 +11,11 @@ namespace Akeldov.Math.Hexes.Geometry
     public static partial class VectorXYExtensions
     {
         /// <summary>
-        /// Converts the vector to the QRS representation using normalized hex-grid axes.
+        /// Converts the vector to the QRS representation using unit-radius hex-grid axes.
         /// </summary>
         /// <remarks>
-        /// The normalized basis maps each unit QR axis step to an XY vector with a length of one coordinate-space unit.
+        /// Each unit QRS neighbor step corresponds to the center-to-center distance of a unit-radius regular hexagon,
+        /// which is <c>sqrt(3)</c> coordinate-space units.
         /// </remarks>
         /// <param name="vector">The finite XY vector to convert.</param>
         /// <param name="layout">The hex layout used to select the QR axis orientation.</param>
@@ -24,26 +25,18 @@ namespace Akeldov.Math.Hexes.Geometry
             if (!vector.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(vector), vector, "Vector XY components must be finite.");
 
-            return ToVectorQRS(vector, 0.5f * Constants.Apothem2Radius, layout);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static VectorQRS ToVectorQRS(VectorXY vector, float hexRadius, Layout layout)
-        {
-            float invertedHexRadius = 1f / hexRadius;
-
             switch (layout)
             {
                 case Layout.OddR:
                 case Layout.EvenR:
                     return new VectorQRS(
-                        (0.5773502588f * vector.X - 0.3333333333f * vector.Y) * invertedHexRadius,
-                        0.6666666666f * vector.Y * invertedHexRadius);
+                        0.5f * Constants.Apothem2Radius * vector.X - (1f / 3f) * vector.Y,
+                        (2f / 3f) * vector.Y);
                 case Layout.OddQ:
                 case Layout.EvenQ:
                     return new VectorQRS(
-                        0.6666666666f * vector.X * invertedHexRadius,
-                        (0.5773502588f * vector.Y - 0.3333333333f * vector.X) * invertedHexRadius);
+                        (2f / 3f) * vector.X,
+                        0.5f * Constants.Apothem2Radius * vector.Y - (1f / 3f) * vector.X);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }

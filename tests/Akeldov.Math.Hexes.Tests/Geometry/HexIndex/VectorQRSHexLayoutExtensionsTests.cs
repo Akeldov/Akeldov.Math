@@ -7,22 +7,22 @@ namespace Akeldov.Math.Hexes.Tests.Geometry.HexIndex;
 
 public class VectorQRSHexLayoutExtensionsTests
 {
-    [TestCase(Layout.OddR, 3.5f, 2.5981f)]
-    [TestCase(Layout.EvenR, 3.5f, 2.5981f)]
-    [TestCase(Layout.OddQ, 1.7321f, 4f)]
-    [TestCase(Layout.EvenQ, 1.7321f, 4f)]
-    public void ToVectorXY_WithLayout_UsesNormalizedQrAxes(Layout layout, float expectedX, float expectedY)
+    [TestCase(Layout.OddR, 6.0622f, 4.5f)]
+    [TestCase(Layout.EvenR, 6.0622f, 4.5f)]
+    [TestCase(Layout.OddQ, 3f, 6.9282f)]
+    [TestCase(Layout.EvenQ, 3f, 6.9282f)]
+    public void ToVectorXY_WithLayout_UsesUnitRadiusQrAxes(Layout layout, float expectedX, float expectedY)
     {
         VectorXY actual = new VectorQRS(2f, 3f).ToVectorXY(layout);
 
         VectorAssert.AreEqual(actual, expectedX, expectedY);
     }
 
-    [TestCase(Layout.OddR, 1f, 0f, 0.5f, 0.866f)]
-    [TestCase(Layout.EvenR, 1f, 0f, 0.5f, 0.866f)]
-    [TestCase(Layout.OddQ, 0.866f, 0.5f, 0f, 1f)]
-    [TestCase(Layout.EvenQ, 0.866f, 0.5f, 0f, 1f)]
-    public void ToVectorXY_WithLayout_MapsUnitQrAxesToUnitXyVectors(
+    [TestCase(Layout.OddR, 1.7321f, 0f, 0.866f, 1.5f)]
+    [TestCase(Layout.EvenR, 1.7321f, 0f, 0.866f, 1.5f)]
+    [TestCase(Layout.OddQ, 1.5f, 0.866f, 0f, 1.7321f)]
+    [TestCase(Layout.EvenQ, 1.5f, 0.866f, 0f, 1.7321f)]
+    public void ToVectorXY_WithLayout_MapsUnitQrAxesToUnitRadiusCenterOffsets(
         Layout layout,
         float expectedQX,
         float expectedQY,
@@ -34,6 +34,30 @@ public class VectorQRSHexLayoutExtensionsTests
 
         VectorAssert.AreEqual(qAxis, expectedQX, expectedQY);
         VectorAssert.AreEqual(rAxis, expectedRX, expectedRY);
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void ToVectorXY_WithLayout_MapsEveryNeighborStepToCenterDistance(Layout layout)
+    {
+        var neighborSteps = new[]
+        {
+            new VectorQRS(1f, 0f),
+            new VectorQRS(0f, 1f),
+            new VectorQRS(-1f, 1f),
+            new VectorQRS(-1f, 0f),
+            new VectorQRS(0f, -1f),
+            new VectorQRS(1f, -1f)
+        };
+
+        foreach (VectorQRS neighborStep in neighborSteps)
+        {
+            Assert.That(
+                neighborStep.ToVectorXY(layout).Length,
+                Is.EqualTo(MathF.Sqrt(3f)).Within(VectorAssert.Epsilon));
+        }
     }
 
     [Test]
@@ -50,11 +74,11 @@ public class VectorQRSHexLayoutExtensionsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRS(q, r).ToVectorXY(Layout.OddR));
     }
 
-    [TestCase(Layout.OddR, 3.5f, 2.5981f)]
-    [TestCase(Layout.EvenR, 3.5f, 2.5981f)]
-    [TestCase(Layout.OddQ, 1.7321f, 4f)]
-    [TestCase(Layout.EvenQ, 1.7321f, 4f)]
-    public void ToVectorQRS_WithLayout_UsesNormalizedQrAxes(Layout layout, float x, float y)
+    [TestCase(Layout.OddR, 6.0622f, 4.5f)]
+    [TestCase(Layout.EvenR, 6.0622f, 4.5f)]
+    [TestCase(Layout.OddQ, 3f, 6.9282f)]
+    [TestCase(Layout.EvenQ, 3f, 6.9282f)]
+    public void ToVectorQRS_WithLayout_UsesUnitRadiusQrAxes(Layout layout, float x, float y)
     {
         VectorQRS actual = new VectorXY(x, y).ToVectorQRS(layout);
 

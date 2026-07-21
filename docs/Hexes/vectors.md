@@ -24,7 +24,8 @@ The default positive QRS basis directions are:
 ```
 
 After conversion to Spatial2D coordinates, each of these basis vectors has a
-length of `1.0`.
+length of `sqrt(3)`, the center-to-center distance of neighboring regular
+hexagons with radius `1.0`.
 
 ### `OddR` and `EvenR`
 
@@ -56,7 +57,7 @@ scene
     .AddTextLayer(font, "+Q", p0 + q * 1.12f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
     .AddTextLayer(font, "+R", p0 + r * 1.12f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
     .AddTextLayer(font, "+S", p0 + s * 1.12f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
-    .Rasterize(new RasterGeometry(new PointXY(-1.25f, -1.25f), new VectorXY(2.5f, 2.5f), new VectorXYInt(300, 300)))
+    .Rasterize(new RasterGeometry(new PointXY(-2.15f, -2.15f), new VectorXY(4.3f, 4.3f), new VectorXYInt(300, 300)))
     .SaveAsPng("qrs-basis-pointy-top.png");
 ```
 
@@ -92,7 +93,7 @@ scene
     .AddTextLayer(font, "+Q", p0 + q * 1.12f, 0.13f, RGBA16BitColor.Red, 0.01f, centered)
     .AddTextLayer(font, "+R", p0 + r * 1.12f, 0.13f, RGBA16BitColor.Green, 0.01f, centered)
     .AddTextLayer(font, "+S", p0 + s * 1.12f, 0.13f, RGBA16BitColor.Blue, 0.01f, centered)
-    .Rasterize(new RasterGeometry(new PointXY(-1.25f, -1.25f), new VectorXY(2.5f, 2.5f), new VectorXYInt(300, 300)))
+    .Rasterize(new RasterGeometry(new PointXY(-2.15f, -2.15f), new VectorXY(4.3f, 4.3f), new VectorXYInt(300, 300)))
     .SaveAsPng("qrs-basis-flat-top.png");
 ```
 
