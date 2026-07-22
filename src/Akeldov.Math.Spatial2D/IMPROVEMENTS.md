@@ -5,6 +5,18 @@ documentation work. Check an item only after its tests and documentation have be
 
 ## High Priority
 
+- [ ] **Add compressed PNG output.** Replace the current uncompressed DEFLATE blocks with real
+  PNG compression and expose a sensible compression-level option without breaking the existing
+  `SaveAsPng` overloads. Verify round trips for every supported color format and benchmark the
+  file-size and encoding-time tradeoff on representative rasters.
+- [ ] **Add a floating-point signed-distance field.** Provide direct SDF rasterization to a
+  `SpatialRaster<float>` so callers can retain signed distances without mapping them to grayscale
+  or RGBA values. Support individual providers and provider collections, document the union/minimum
+  rule, and test sign, units, bounds, and non-finite input behavior.
+- [ ] **Expose Delaunay triangulation as a standalone operation.** Move the triangulation result
+  behind a public, independently callable API instead of making it available only as an internal
+  step of `DelaunayCuller<TPointSource>`. Define triangle/index ownership, deterministic behavior,
+  duplicate and collinear-point handling, and reuse the same implementation in the culler.
 - [ ] **Support point-matched TrueType composite glyphs.** Implement composite component
   placement when arguments identify parent and component points instead of an XY offset. Add a
   licensed font fixture that exercises the feature, reject invalid point indexes with a clear
