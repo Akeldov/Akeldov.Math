@@ -12,6 +12,7 @@ rasters.
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
+using System.IO.Compression;
 
 var grid = new RasterGeometry(
     origin: new PointXY(0f, 0f),
@@ -30,7 +31,10 @@ var raster = new SpatialRaster<RGBA8BitColor>(grid, values);
 raster.SaveAsPng("colors.png");
 
 Raster<RGBA8BitColor> detachedRaster = raster.ToRaster();
-detachedRaster.SaveAsPng("colors-copy.png");
+detachedRaster.SaveAsPng("colors-copy.png", CompressionLevel.Fastest);
 ```
 
 `RGBA8BitColor` and `RGBA16BitColor` both provide `FromNormalized` for channel values in the 0 to 1 range and `Blend` for linear color interpolation.
+
+`SaveAsPng` uses `CompressionLevel.Optimal` by default. Pass `NoCompression`, `Fastest`, `Optimal`,
+or, on .NET 6 and later, `SmallestSize` when file size and encoding time need an explicit tradeoff.

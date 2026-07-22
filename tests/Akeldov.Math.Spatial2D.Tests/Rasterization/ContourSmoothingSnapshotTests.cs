@@ -48,6 +48,8 @@ public class ContourSmoothingSnapshotTests
             Assert.Fail($"Approved image is missing. Actual image: {actualPath}");
         }
 
-        Assert.That(File.ReadAllBytes(actualPath), Is.EqualTo(File.ReadAllBytes(approvedPath)));
+        Assert.That(
+            PngSnapshotComparer.AreEquivalent(File.ReadAllBytes(actualPath), File.ReadAllBytes(approvedPath)),
+            Is.True);
     }
 }

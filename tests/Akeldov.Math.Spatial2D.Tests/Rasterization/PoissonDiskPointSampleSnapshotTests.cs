@@ -108,7 +108,7 @@ public class PoissonDiskPointSampleSnapshotTests
 
         byte[] approved = File.ReadAllBytes(approvedPath);
 
-        if (!BytesEqual(actual, approved))
+        if (!PngSnapshotComparer.AreEquivalent(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
             TestContext.AddTestAttachment(actualPath, "Actual Poisson disk sample raster snapshot");
@@ -121,20 +121,6 @@ public class PoissonDiskPointSampleSnapshotTests
         return Path.Combine(
             TestContext.CurrentContext.WorkDirectory,
             approvedFileName.Replace(".png", ".actual.png"));
-    }
-
-    private static bool BytesEqual(byte[] left, byte[] right)
-    {
-        if (left.Length != right.Length)
-            return false;
-
-        for (int i = 0; i < left.Length; i++)
-        {
-            if (left[i] != right[i])
-                return false;
-        }
-
-        return true;
     }
 
     private readonly struct Rgb

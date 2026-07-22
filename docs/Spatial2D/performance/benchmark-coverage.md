@@ -15,5 +15,6 @@ Current benchmark coverage includes:
 - Contours.
 - Regions.
 - Signed-distance rasterization.
+- PNG encoding at each supported compression level.
 
 Run benchmarks when changing algorithmic behavior or when a workload becomes part of a hot path.

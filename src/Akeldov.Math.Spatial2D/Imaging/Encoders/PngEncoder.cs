@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D.Rasterization;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace Akeldov.Math.Spatial2D.Imaging
@@ -20,14 +21,18 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(IRaster<Gray8BitColor> raster, string path)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<Gray8BitColor> raster,
+            string path,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
             using (var stream = File.Create(path))
-                Save(raster, stream);
+                Save(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -35,7 +40,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(IRaster<Gray8BitColor> raster, Stream stream)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<Gray8BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -44,7 +53,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            WriteGray8(raster, stream);
+            WriteGray8(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -52,14 +61,18 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(IRaster<Gray16BitColor> raster, string path)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<Gray16BitColor> raster,
+            string path,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
             using (var stream = File.Create(path))
-                Save(raster, stream);
+                Save(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -67,7 +80,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(IRaster<Gray16BitColor> raster, Stream stream)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<Gray16BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -76,7 +93,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            WriteGray16(raster, stream);
+            WriteGray16(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -84,14 +101,18 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(IRaster<RGBA8BitColor> raster, string path)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<RGBA8BitColor> raster,
+            string path,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
             using (var stream = File.Create(path))
-                Save(raster, stream);
+                Save(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -99,7 +120,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(IRaster<RGBA8BitColor> raster, Stream stream)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<RGBA8BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -108,7 +133,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            WriteRgba8(raster, stream);
+            WriteRgba8(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -116,14 +141,18 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="path">The output PNG file path.</param>
-        public static void Save(IRaster<RGBA16BitColor> raster, string path)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<RGBA16BitColor> raster,
+            string path,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
             using (var stream = File.Create(path))
-                Save(raster, stream);
+                Save(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -131,7 +160,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </summary>
         /// <param name="raster">The raster to save.</param>
         /// <param name="stream">The output PNG stream.</param>
-        public static void Save(IRaster<RGBA16BitColor> raster, Stream stream)
+        /// <param name="compressionLevel">The DEFLATE compression level to use for PNG image data.</param>
+        public static void Save(
+            IRaster<RGBA16BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -140,7 +173,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(stream));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            WriteRgba16(raster, stream);
+            WriteRgba16(raster, stream, compressionLevel);
         }
 
         private static void ValidateRasterSize(int width, int height)
@@ -149,13 +182,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentException("Raster width and height must be positive.");
         }
 
-        private static void WriteGray8(IRaster<Gray8BitColor> raster, Stream stream)
+        private static void WriteGray8(
+            IRaster<Gray8BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             byte[] scanlines = CreateGray8Scanlines(raster);
 
             WriteBytes(stream, PngSignature);
             WriteChunk(stream, "IHDR", CreateHeader(raster.Resolution.X, raster.Resolution.Y, 8, 0));
-            WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
+            WriteChunk(stream, "IDAT", CreateZlibData(scanlines, compressionLevel));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
@@ -179,13 +215,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return scanlines;
         }
 
-        private static void WriteGray16(IRaster<Gray16BitColor> raster, Stream stream)
+        private static void WriteGray16(
+            IRaster<Gray16BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             byte[] scanlines = CreateGray16Scanlines(raster);
 
             WriteBytes(stream, PngSignature);
             WriteChunk(stream, "IHDR", CreateHeader(raster.Resolution.X, raster.Resolution.Y, 16, 0));
-            WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
+            WriteChunk(stream, "IDAT", CreateZlibData(scanlines, compressionLevel));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
@@ -214,13 +253,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return scanlines;
         }
 
-        private static void WriteRgba8(IRaster<RGBA8BitColor> raster, Stream stream)
+        private static void WriteRgba8(
+            IRaster<RGBA8BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             byte[] scanlines = CreateRgba8Scanlines(raster);
 
             WriteBytes(stream, PngSignature);
             WriteChunk(stream, "IHDR", CreateHeader(raster.Resolution.X, raster.Resolution.Y, 8, 6));
-            WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
+            WriteChunk(stream, "IDAT", CreateZlibData(scanlines, compressionLevel));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
@@ -252,13 +294,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return scanlines;
         }
 
-        private static void WriteRgba16(IRaster<RGBA16BitColor> raster, Stream stream)
+        private static void WriteRgba16(
+            IRaster<RGBA16BitColor> raster,
+            Stream stream,
+            CompressionLevel compressionLevel)
         {
             byte[] scanlines = CreateRgba16Scanlines(raster);
 
             WriteBytes(stream, PngSignature);
             WriteChunk(stream, "IHDR", CreateHeader(raster.Resolution.X, raster.Resolution.Y, 16, 6));
-            WriteChunk(stream, "IDAT", CreateZlibStoredData(scanlines));
+            WriteChunk(stream, "IDAT", CreateZlibData(scanlines, compressionLevel));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
         }
 
@@ -303,24 +348,27 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return header;
         }
 
-        private static byte[] CreateZlibStoredData(byte[] data)
+        private static byte[] CreateZlibData(byte[] data, CompressionLevel compressionLevel)
         {
             using (var stream = new MemoryStream())
             {
                 stream.WriteByte(0x78);
-                stream.WriteByte(0x01);
-
-                int offset = 0;
-                while (offset < data.Length)
+                if (compressionLevel == CompressionLevel.NoCompression ||
+                    compressionLevel == CompressionLevel.Fastest)
                 {
-                    int length = System.Math.Min(65535, data.Length - offset);
-                    bool isFinal = offset + length == data.Length;
-                    stream.WriteByte(isFinal ? (byte)1 : (byte)0);
-                    WriteUInt16LittleEndian(stream, (ushort)length);
-                    WriteUInt16LittleEndian(stream, (ushort)(length ^ 0xffff));
-                    stream.Write(data, offset, length);
-                    offset += length;
+                    stream.WriteByte(0x01);
                 }
+                else if ((int)compressionLevel == 3)
+                {
+                    stream.WriteByte(0xda);
+                }
+                else
+                {
+                    stream.WriteByte(0x9c);
+                }
+
+                using (var deflateStream = new DeflateStream(stream, compressionLevel, leaveOpen: true))
+                    deflateStream.Write(data, 0, data.Length);
 
                 WriteUInt32(stream, Adler32(data));
                 return stream.ToArray();
@@ -346,12 +394,6 @@ namespace Akeldov.Math.Spatial2D.Imaging
         {
             data[offset] = (byte)(value >> 8);
             data[offset + 1] = (byte)value;
-        }
-
-        private static void WriteUInt16LittleEndian(Stream stream, ushort value)
-        {
-            stream.WriteByte((byte)(value & 0xff));
-            stream.WriteByte((byte)(value >> 8));
         }
 
         private static void WriteUInt32(Stream stream, uint value)

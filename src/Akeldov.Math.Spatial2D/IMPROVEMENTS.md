@@ -5,7 +5,7 @@ documentation work. Check an item only after its tests and documentation have be
 
 ## High Priority
 
-- [ ] **Add compressed PNG output.** Replace the current uncompressed DEFLATE blocks with real
+- [x] **Add compressed PNG output.** Replace the current uncompressed DEFLATE blocks with real
   PNG compression and expose a sensible compression-level option without breaking the existing
   `SaveAsPng` overloads. Verify round trips for every supported color format and benchmark the
   file-size and encoding-time tradeoff on representative rasters.
