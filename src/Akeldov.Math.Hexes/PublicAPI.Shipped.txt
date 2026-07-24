@@ -1,0 +1,680 @@
+#nullable enable
+Akeldov.Math.Hexes.BooleanHexMapExtensions
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.ChromaticIndexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.ChromaticIndexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> byte
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.this[int index].get -> byte
+Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions
+Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions
+Akeldov.Math.Hexes.Geometry.Constants
+Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions
+Akeldov.Math.Hexes.Geometry.FloatExtensions
+Akeldov.Math.Hexes.Geometry.HexCenterMap
+Akeldov.Math.Hexes.Geometry.HexCenterMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Geometry.HexCenterMap.HexCenterMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.Geometry.HexCenterMap.HexCenterMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.Geometry.HexCenterMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Geometry.HexCenterMap.this[int index].get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Geometry.HexCenterMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.Apothem.get -> float
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.Deconstruct(out Akeldov.Math.Hexes.HexMapTopology topology, out Akeldov.Math.Spatial2D.VectorXY origin, out float radius) -> void
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.Equals(Akeldov.Math.Hexes.Geometry.HexMapGeometry other) -> bool
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.HexMapGeometry() -> void
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.HexMapGeometry(Akeldov.Math.Hexes.HexMapTopology topology, Akeldov.Math.Spatial2D.VectorXY origin, float radius) -> void
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.HexMapGeometry(Akeldov.Math.Hexes.HexMapTopology topology, float radius) -> void
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.HexMapGeometry(int width, int height, Akeldov.Math.Spatial2D.VectorXY origin, float radius, Akeldov.Math.Hexes.Layout layout) -> void
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.HexMapGeometry(int width, int height, float radius, Akeldov.Math.Hexes.Layout layout) -> void
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.Origin.get -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.Radius.get -> float
+Akeldov.Math.Hexes.Geometry.HexMapGeometry.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions
+Akeldov.Math.Hexes.Geometry.HexMapTopologyHexEdgesGenerationExtensions
+Akeldov.Math.Hexes.Geometry.IPolyhexGeometry
+Akeldov.Math.Hexes.Geometry.IPolyhexGeometry.HexApothem.get -> float
+Akeldov.Math.Hexes.Geometry.IPolyhexGeometry.HexRadius.get -> float
+Akeldov.Math.Hexes.Geometry.ParametersReconstructor
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.GetContour() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.GetExtended() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.HexApothem.get -> float
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.HexCount.get -> int
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.HexRadius.get -> float
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.PolyhexGeometry(Akeldov.Math.Hexes.Topology.Polyhex! polyhex, float radius) -> void
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.PolyhexGeometry(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt qrsResolution, float radius) -> void
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.PolyhexGeometry(bool[,]! boolMask, float radius) -> void
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.PolyhexGeometry(int[,]! intMask, float radius) -> void
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.QRSResolution.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.this[Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt index].get -> bool
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.this[int QIndex, int RIndex].get -> bool
+Akeldov.Math.Hexes.Geometry.PolyhexGeometry.ToBoolArray() -> bool[,]!
+Akeldov.Math.Hexes.Geometry.VectorQRSExtensions
+Akeldov.Math.Hexes.Geometry.VectorQRSIntExtensions
+Akeldov.Math.Hexes.Geometry.VectorXYExtensions
+Akeldov.Math.Hexes.Geometry.VectorXYIntExtensions
+Akeldov.Math.Hexes.HexMap<TValue>
+Akeldov.Math.Hexes.HexMap<TValue>.HexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.HexMap<TValue>.HexMap(Akeldov.Math.Hexes.HexMapTopology topology, TValue[]! values) -> void
+Akeldov.Math.Hexes.HexMap<TValue>.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> TValue
+Akeldov.Math.Hexes.HexMap<TValue>.this[Akeldov.Math.Spatial2D.VectorXYInt index].set -> void
+Akeldov.Math.Hexes.HexMap<TValue>.this[int index].get -> TValue
+Akeldov.Math.Hexes.HexMap<TValue>.this[int index].set -> void
+Akeldov.Math.Hexes.HexMap<TValue>.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.HexMapGeometryExtensions
+Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.HexMapTopology.Count.get -> int
+Akeldov.Math.Hexes.HexMapTopology.Deconstruct(out int width, out int height, out Akeldov.Math.Hexes.Layout layout) -> void
+Akeldov.Math.Hexes.HexMapTopology.Equals(Akeldov.Math.Hexes.HexMapTopology other) -> bool
+Akeldov.Math.Hexes.HexMapTopology.HexMapTopology() -> void
+Akeldov.Math.Hexes.HexMapTopology.HexMapTopology(Akeldov.Math.Spatial2D.VectorXYInt resolution, Akeldov.Math.Hexes.Layout layout) -> void
+Akeldov.Math.Hexes.HexMapTopology.HexMapTopology(int width, int height, Akeldov.Math.Hexes.Layout layout) -> void
+Akeldov.Math.Hexes.HexMapTopology.Layout.get -> Akeldov.Math.Hexes.Layout
+Akeldov.Math.Hexes.HexMapTopology.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.HexMapTopologyExtensions
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.Color.get -> Akeldov.Math.Spatial2D.Imaging.Gray8BitColor
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.EdgeFalloff.get -> float
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.Font.get -> Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont!
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.FontSize.get -> float
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.HexMapTopologyQRSLabelsRasterizationOptions() -> void
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.HexMapTopologyQRSLabelsRasterizationOptions(Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont! font, float fontSize, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor color, float edgeFalloff, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> void
+Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.Offset.get -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.BackgroundColor.get -> Akeldov.Math.Spatial2D.Imaging.Gray8BitColor
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.CurveColor.get -> Akeldov.Math.Spatial2D.Imaging.Gray8BitColor
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.CurveWidth.get -> float
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.FadeDistance.get -> float
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.HexMapTopologyRasterizationOptions() -> void
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.HexMapTopologyRasterizationOptions(float margin, float curveWidth, float fadeDistance, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor curveColor, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor backgroundColor, int pixelsPerApothem) -> void
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.Margin.get -> float
+Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions.PixelsPerApothem.get -> int
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.Color.get -> Akeldov.Math.Spatial2D.Imaging.Gray8BitColor
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.EdgeFalloff.get -> float
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.Font.get -> Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont!
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.FontSize.get -> float
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.HexMapTopologyXYLabelsRasterizationOptions() -> void
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.HexMapTopologyXYLabelsRasterizationOptions(Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont! font, float fontSize, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor color, float edgeFalloff, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> void
+Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.Offset.get -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.HexOrientation
+Akeldov.Math.Hexes.HexOrientation.FlatTop = 1 -> Akeldov.Math.Hexes.HexOrientation
+Akeldov.Math.Hexes.HexOrientation.PointyTop = 0 -> Akeldov.Math.Hexes.HexOrientation
+Akeldov.Math.Hexes.IHexMap<TValue>
+Akeldov.Math.Hexes.IHexMap<TValue>.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> TValue
+Akeldov.Math.Hexes.IHexMap<TValue>.this[int index].get -> TValue
+Akeldov.Math.Hexes.IHexMap<TValue>.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.IHexMapExtensions
+Akeldov.Math.Hexes.ISpatialHexMap<TValue>
+Akeldov.Math.Hexes.ISpatialHexMap<TValue>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.ISpatialHexMapExtensions
+Akeldov.Math.Hexes.Layout
+Akeldov.Math.Hexes.Layout.EvenQ = 3 -> Akeldov.Math.Hexes.Layout
+Akeldov.Math.Hexes.Layout.EvenR = 1 -> Akeldov.Math.Hexes.Layout
+Akeldov.Math.Hexes.Layout.OddQ = 2 -> Akeldov.Math.Hexes.Layout
+Akeldov.Math.Hexes.Layout.OddR = 0 -> Akeldov.Math.Hexes.Layout
+Akeldov.Math.Hexes.LayoutExtensions
+Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.Center.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.Equals(Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell? other) -> bool
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.Site.get -> Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.SiteIndex.get -> int
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.VoronoiCell(int siteIndex, Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site site, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitioner
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitioner.Partition(Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitioner.VoronoiHexPartitioner(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites) -> void
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!>!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Centers.get -> Akeldov.Math.Hexes.Geometry.HexCenterMap!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[int index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!>!
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Pathfinding.HexPath
+Akeldov.Math.Hexes.Pathfinding.HexPath.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
+Akeldov.Math.Hexes.Pathfinding.HexPath.TotalCost.get -> float
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap.EntryCosts.get -> Akeldov.Math.Hexes.IHexMap<float>!
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap.ExitCosts.get -> Akeldov.Math.Hexes.IHexMap<float>!
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap.GetTransferCost(Akeldov.Math.Spatial2D.VectorXYInt from, Akeldov.Math.Spatial2D.VectorXYInt to) -> float
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap.HexTransferCostMap(Akeldov.Math.Hexes.IHexMap<float>! exitCosts, Akeldov.Math.Hexes.IHexMap<float>! entryCosts) -> void
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Pathfinding.HexTransferCostMapExtensions
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.BottomLeft.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.BottomRight.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.Center.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.GetLocalCoordinates(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.GetLocalCoordinates(Akeldov.Math.Spatial2D.PointXY point, bool isClamped) -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.GetLocalNormalizedCoordinates(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.GetLocalNormalizedCoordinates(Akeldov.Math.Spatial2D.PointXY point, bool isClamped) -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.HexOrientedRectangle() -> void
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.HexOrientedRectangle(Akeldov.Math.Spatial2D.PointXY center, Akeldov.Math.Spatial2D.VectorXY size, Akeldov.Math.Hexes.SixfoldAngle rotation) -> void
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.Rotation.get -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.Size.get -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.TopLeft.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.TopRight.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngle.Deg0 = 0 -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngle.Deg120 = 2 -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngle.Deg180 = 3 -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngle.Deg240 = 4 -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngle.Deg300 = 5 -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngle.Deg60 = 1 -> Akeldov.Math.Hexes.SixfoldAngle
+Akeldov.Math.Hexes.SixfoldAngleExtensions
+Akeldov.Math.Hexes.SixfoldAngles
+Akeldov.Math.Hexes.SpatialHexMap<TValue>
+Akeldov.Math.Hexes.SpatialHexMap<TValue>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.SpatialHexMap<TValue>.SpatialHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.SpatialHexMap<TValue>.SpatialHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, TValue[]! values) -> void
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.BarycentricPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.BarycentricPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<float>
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<float>
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<float>
+Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.PartialTriplet<float> barycentricCoordinates) -> bool
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.BarycentricTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.BarycentricTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.Triplet<float>
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.Triplet<float>
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.Triplet<float>
+Akeldov.Math.Hexes.Topology.BarycentricTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.Triplet<float> barycentricCoordinates) -> bool
+Akeldov.Math.Hexes.Topology.BinaryReaderExtensions
+Akeldov.Math.Hexes.Topology.BinaryWriterExtensions
+Akeldov.Math.Hexes.Topology.BoolExtensions
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.ChromaticBarycentricPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.ChromaticBarycentricPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<float>
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<float>
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<float>
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<float> barycentricCoordinates) -> bool
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.ChromaticBarycentricTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.ChromaticBarycentricTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.ChromaticTriplet<float>
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.ChromaticTriplet<float>
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.ChromaticTriplet<float>
+Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.ChromaticTriplet<float> barycentricCoordinates) -> bool
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.ChromaticIndexPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.ChromaticIndexPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<byte>
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<byte>
+Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<byte>
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.ChromaticIndexTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.ChromaticIndexTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.Triplet<byte> chromaticIndices) -> bool
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>.ChromaticTriplet() -> void
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>.ChromaticTriplet(T index0, T index1, T index2) -> void
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>.Deconstruct(out T index0, out T index1, out T index2) -> void
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>.Index0.get -> T
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>.Index1.get -> T
+Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>.Index2.get -> T
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.All = Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index0 | Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index1 | Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index2 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index0 = 1 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index1 = 2 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index2 = 4 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexEdge.Edge0 = 0 -> Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexEdge.Edge1 = 1 -> Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexEdge.Edge2 = 2 -> Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexEdge.Edge3 = 3 -> Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexEdge.Edge4 = 4 -> Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexEdge.Edge5 = 5 -> Akeldov.Math.Hexes.Topology.HexEdge
+Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertex.Vertex0 = 0 -> Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertex.Vertex1 = 1 -> Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertex.Vertex2 = 2 -> Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertex.Vertex3 = 3 -> Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertex.Vertex4 = 4 -> Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertex.Vertex5 = 5 -> Akeldov.Math.Hexes.Topology.HexVertex
+Akeldov.Math.Hexes.Topology.HexVertexExtensions
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.Count.get -> int
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.Height.get -> int
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.IndexPartialSeptupletMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.IndexPartialSeptupletMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.PartialSeptuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.this[int index].get -> Akeldov.Math.Hexes.Topology.PartialSeptuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletMap.Width.get -> int
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.IndexPartialSeptupletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.IndexPartialSeptupletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.PartialSeptuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.PartialSeptuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.PartialSeptuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.IndexPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.IndexPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.PartialTriplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.PartialTriplet<Akeldov.Math.Spatial2D.VectorXYInt> indexTriplet) -> bool
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap.IndexSeptupletMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap.IndexSeptupletMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.Septuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap.this[int index].get -> Akeldov.Math.Hexes.Topology.Septuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexSeptupletMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.IndexSeptupletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.IndexSeptupletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.Septuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.Septuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexSeptupletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.Septuplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexTripletRaster
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.Geometry.get -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.IndexTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.IndexTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.SourceHexMapGeometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.this[int index].get -> Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.this[int x, int y].get -> Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt>
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Topology.IndexTripletRaster.TryGetValue(Akeldov.Math.Spatial2D.VectorXYInt gridIndex, out Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> indexTriplet) -> bool
+Akeldov.Math.Hexes.Topology.IPolyhex
+Akeldov.Math.Hexes.Topology.IPolyhex.GetContour() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Topology.IPolyhex.GetExtended() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Topology.IPolyhex.HexCount.get -> int
+Akeldov.Math.Hexes.Topology.IPolyhex.QRSResolution.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+Akeldov.Math.Hexes.Topology.IPolyhex.this[Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt index].get -> bool
+Akeldov.Math.Hexes.Topology.IPolyhex.this[int QIndex, int RIndex].get -> bool
+Akeldov.Math.Hexes.Topology.IPolyhexWithPriority
+Akeldov.Math.Hexes.Topology.IPolyhexWithPriority.Priority.get -> int
+Akeldov.Math.Hexes.Topology.Pair<T>
+Akeldov.Math.Hexes.Topology.Pair<T>.Deconstruct(out T left, out T right) -> void
+Akeldov.Math.Hexes.Topology.Pair<T>.Left.get -> T
+Akeldov.Math.Hexes.Topology.Pair<T>.Pair() -> void
+Akeldov.Math.Hexes.Topology.Pair<T>.Pair(T left, T right) -> void
+Akeldov.Math.Hexes.Topology.Pair<T>.Right.get -> T
+Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresenceFlags.All = Akeldov.Math.Hexes.Topology.PairPresenceFlags.Left | Akeldov.Math.Hexes.Topology.PairPresenceFlags.Right -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresenceFlags.Left = 1 -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresenceFlags.Right = 2 -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Deconstruct(out T index0, out T index1, out T index2) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Deconstruct(out T index0, out T index1, out T index2, out Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.HasIndex0.get -> bool
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.HasIndex1.get -> bool
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.HasIndex2.get -> bool
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Index0.get -> T
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Index1.get -> T
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Index2.get -> T
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet() -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(Akeldov.Math.Hexes.Topology.ChromaticTriplet<T> triplet, Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(T index0, T index1, T index2, Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(T index0, T index1, T index2, bool hasIndex0, bool hasIndex1, bool hasIndex2) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.ToTriplet() -> Akeldov.Math.Hexes.Topology.ChromaticTriplet<T>
+Akeldov.Math.Hexes.Topology.PartialPair<T>
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Deconstruct(out T left, out T right) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Deconstruct(out T left, out T right, out Akeldov.Math.Hexes.Topology.PairPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.HasLeft.get -> bool
+Akeldov.Math.Hexes.Topology.PartialPair<T>.HasRight.get -> bool
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Left.get -> T
+Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair() -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(Akeldov.Math.Hexes.Topology.Pair<T> pair, Akeldov.Math.Hexes.Topology.PairPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(T left, T right, Akeldov.Math.Hexes.Topology.PairPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(T left, T right, bool hasLeft, bool hasRight) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Presence.get -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Right.get -> T
+Akeldov.Math.Hexes.Topology.PartialPair<T>.ToPair() -> Akeldov.Math.Hexes.Topology.Pair<T>
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Adjacent0.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Adjacent1.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Adjacent2.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Adjacent3.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Adjacent4.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Adjacent5.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Deconstruct(out T main, out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Deconstruct(out T main, out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5, out Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasAdjacent0.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasAdjacent1.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasAdjacent2.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasAdjacent3.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasAdjacent4.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasAdjacent5.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.HasMain.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Main.get -> T
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet() -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(Akeldov.Math.Hexes.Topology.Septuplet<T> septuplet, Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(T main, T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(T main, T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, bool hasMain, bool hasAdjacent0, bool hasAdjacent1, bool hasAdjacent2, bool hasAdjacent3, bool hasAdjacent4, bool hasAdjacent5) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.ToSeptuplet() -> Akeldov.Math.Hexes.Topology.Septuplet<T>
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Deconstruct(out T main, out T left, out T right) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Deconstruct(out T main, out T left, out T right, out Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.HasLeft.get -> bool
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.HasMain.get -> bool
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.HasRight.get -> bool
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Left.get -> T
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Main.get -> T
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet() -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(Akeldov.Math.Hexes.Topology.Triplet<T> triplet, Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(T main, T left, T right, Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(T main, T left, T right, bool hasMain, bool hasLeft, bool hasRight) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Right.get -> T
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.ToTriplet() -> Akeldov.Math.Hexes.Topology.Triplet<T>
+Akeldov.Math.Hexes.Topology.Polyhex
+Akeldov.Math.Hexes.Topology.Polyhex.Equals(Akeldov.Math.Hexes.Topology.Polyhex? other) -> bool
+Akeldov.Math.Hexes.Topology.Polyhex.GetContour() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Topology.Polyhex.GetExtended() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Topology.Polyhex.HexCount.get -> int
+Akeldov.Math.Hexes.Topology.Polyhex.Polyhex(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt qrsResolution) -> void
+Akeldov.Math.Hexes.Topology.Polyhex.Polyhex(bool[,]! boolMask) -> void
+Akeldov.Math.Hexes.Topology.Polyhex.Polyhex(int[,]! intMask) -> void
+Akeldov.Math.Hexes.Topology.Polyhex.QRSResolution.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+Akeldov.Math.Hexes.Topology.Polyhex.this[Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt index].get -> bool
+Akeldov.Math.Hexes.Topology.Polyhex.this[int QIndex, int RIndex].get -> bool
+Akeldov.Math.Hexes.Topology.Polyhex.ToBoolArray() -> bool[,]!
+Akeldov.Math.Hexes.Topology.PolyhexBuilder
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.PolyhexBuilder(Akeldov.Math.Hexes.Topology.Polyhex? polyhex) -> void
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.PolyhexBuilder(int qSize, int rSize) -> void
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.QRSResolution.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.this[Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt index].get -> bool
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.this[Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt index].set -> void
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.this[int qIndex, int rIndex].get -> bool
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.this[int qIndex, int rIndex].set -> void
+Akeldov.Math.Hexes.Topology.PolyhexBuilder.ToPolyhex() -> Akeldov.Math.Hexes.Topology.Polyhex!
+Akeldov.Math.Hexes.Topology.Septuplet<T>
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Adjacent0.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Adjacent1.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Adjacent2.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Adjacent3.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Adjacent4.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Adjacent5.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Deconstruct(out T main, out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5) -> void
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Main.get -> T
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Septuplet() -> void
+Akeldov.Math.Hexes.Topology.Septuplet<T>.Septuplet(T main, T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5) -> void
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent0 = 2 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent1 = 4 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent2 = 8 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent3 = 16 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent4 = 32 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent5 = 64 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.All = Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Main | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent0 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent1 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent2 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent3 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent4 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent5 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Main = 1 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.Triplet<T>
+Akeldov.Math.Hexes.Topology.Triplet<T>.Deconstruct(out T main, out T left, out T right) -> void
+Akeldov.Math.Hexes.Topology.Triplet<T>.Left.get -> T
+Akeldov.Math.Hexes.Topology.Triplet<T>.Main.get -> T
+Akeldov.Math.Hexes.Topology.Triplet<T>.Right.get -> T
+Akeldov.Math.Hexes.Topology.Triplet<T>.Triplet() -> void
+Akeldov.Math.Hexes.Topology.Triplet<T>.Triplet(T main, T left, T right) -> void
+Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresenceFlags.All = Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Main | Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Left | Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Right -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Left = 2 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Main = 1 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Right = 4 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.VectorXYIntExtensions
+Akeldov.Math.Hexes.Vectors.QRS.BinaryReaderExtensions
+Akeldov.Math.Hexes.Vectors.QRS.BinaryWriterExtensions
+Akeldov.Math.Hexes.Vectors.QRS.PointXYExtensions
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.Deconstruct(out float x, out float y) -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.Equals(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS other) -> bool
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.Q.get -> float
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.R.get -> float
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.S.get -> float
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.VectorQRS() -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.VectorQRS(float q, float r) -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.Deconstruct(out int q, out int r) -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.Equals(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt other) -> bool
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.Q.get -> int
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.R.get -> int
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.S.get -> int
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.VectorQRSInt() -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.VectorQRSInt(int q, int r) -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.VectorQRSInt(int q, int r, int s) -> void
+Akeldov.Math.Hexes.Vectors.QRS.VectorQRSIntExtensions
+Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions
+Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions
+const Akeldov.Math.Hexes.Geometry.Constants.Apothem2Radius = 1.1547005 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos0Deg = 1 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos120Deg = -0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos150Deg = -0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos180Deg = -1 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos210Deg = -0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos240Deg = -0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos270Deg = 0 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos300Deg = 0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos30Deg = 0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos330Deg = 0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos360Deg = 1 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos60Deg = 0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Cos90Deg = 0 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Deg30InRadians = 0.5235988 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Deg60InRadians = 1.0471976 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Radius2Apothem = 0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin0Deg = 0 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin120Deg = 0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin150Deg = 0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin180Deg = 0 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin210Deg = -0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin240Deg = -0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin270Deg = -1 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin300Deg = -0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin30Deg = 0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin330Deg = -0.5 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin360Deg = 0 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin60Deg = 0.8660254 -> float
+const Akeldov.Math.Hexes.Geometry.Constants.Sin90Deg = 1 -> float
+override Akeldov.Math.Hexes.Geometry.HexMapGeometry.Equals(object? obj) -> bool
+override Akeldov.Math.Hexes.Geometry.HexMapGeometry.GetHashCode() -> int
+override Akeldov.Math.Hexes.Geometry.HexMapGeometry.ToString() -> string!
+override Akeldov.Math.Hexes.HexMapTopology.Equals(object? obj) -> bool
+override Akeldov.Math.Hexes.HexMapTopology.GetHashCode() -> int
+override Akeldov.Math.Hexes.HexMapTopology.ToString() -> string!
+override Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.Equals(object? obj) -> bool
+override Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.GetHashCode() -> int
+override Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.ToString() -> string!
+override Akeldov.Math.Hexes.Topology.Polyhex.Equals(object? obj) -> bool
+override Akeldov.Math.Hexes.Topology.Polyhex.GetHashCode() -> int
+override Akeldov.Math.Hexes.Topology.Polyhex.ToString() -> string!
+override Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.Equals(object? obj) -> bool
+override Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.GetHashCode() -> int
+override Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.ToString() -> string!
+override Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.Equals(object? obj) -> bool
+override Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.GetHashCode() -> int
+override Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.ToString() -> string!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.HexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.HexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Layout layout) -> int
+static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetEvenQChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
+static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetEvenRChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
+static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetOddQChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
+static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetOddRChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
+static Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions.GetChromaticTriplet(this Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> vertexHexIndexTriplet, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
+static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
+static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
+static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
+static Akeldov.Math.Hexes.Geometry.FloatExtensions.ConvertHexApothemToRadius(this float apothem) -> float
+static Akeldov.Math.Hexes.Geometry.FloatExtensions.ConvertHexRadiusToApothem(this float radius) -> float
+static Akeldov.Math.Hexes.Geometry.HexMapGeometry.operator !=(Akeldov.Math.Hexes.Geometry.HexMapGeometry left, Akeldov.Math.Hexes.Geometry.HexMapGeometry right) -> bool
+static Akeldov.Math.Hexes.Geometry.HexMapGeometry.operator ==(Akeldov.Math.Hexes.Geometry.HexMapGeometry left, Akeldov.Math.Hexes.Geometry.HexMapGeometry right) -> bool
+static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.GetBoundingBox(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Spatial2D.Regions.Rectangle
+static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.GetBoundingBox(this Akeldov.Math.Hexes.HexMapTopology topology, Akeldov.Math.Spatial2D.VectorXY origin, float radius) -> Akeldov.Math.Spatial2D.Regions.Rectangle
+static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.GetBoundingBoxSize(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.ToRasterGeometry(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, float pixelsPerApothem, float margin = 0) -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.ToRasterGeometry(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, float pixelsPerApothem) -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.ToRasterGeometry(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, float pixelsPerApothem, float margin) -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+static Akeldov.Math.Hexes.Geometry.HexMapTopologyHexEdgesGenerationExtensions.ToHexEdgeSegments(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.Segment>!
+static Akeldov.Math.Hexes.Geometry.HexMapTopologyHexEdgesGenerationExtensions.ToHexEdgeSegments(this Akeldov.Math.Hexes.HexMapTopology topology, float radius) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.Segment>!
+static Akeldov.Math.Hexes.Geometry.ParametersReconstructor.GetApothem(Akeldov.Math.Spatial2D.VectorXY size, Akeldov.Math.Spatial2D.VectorXYInt dim, bool xOriented) -> float
+static Akeldov.Math.Hexes.Geometry.ParametersReconstructor.GetDim(Akeldov.Math.Spatial2D.VectorXY landscapeMetricSize, float hexApothem, bool xOrientation) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Geometry.VectorQRSExtensions.ToVectorXY(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Geometry.VectorQRSIntExtensions.GetHexOffset(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt hexIndex, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.BarycentricCoordinates(this Akeldov.Math.Spatial2D.PointXY p, Akeldov.Math.Spatial2D.VectorXY a, Akeldov.Math.Spatial2D.VectorXY b) -> Akeldov.Math.Hexes.Topology.Pair<float>
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.BarycentricCoordinates(this Akeldov.Math.Spatial2D.PointXY p, Akeldov.Math.Spatial2D.VectorXY a, Akeldov.Math.Spatial2D.VectorXY b, Akeldov.Math.Spatial2D.VectorXY c) -> Akeldov.Math.Hexes.Topology.Triplet<float>
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetClosestHexVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin, Akeldov.Math.Hexes.Layout layout) -> (Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Topology.HexVertex hexVertex)
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetClosestVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexCenter, Akeldov.Math.Hexes.Layout layout) -> int
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(int q, int r, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(int q, int r, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY[]!
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(this Akeldov.Math.Spatial2D.VectorXY hexCenter, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY[]!
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetNormalizedHexVertices(Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY[]!
+static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.ToVectorQRS(this Akeldov.Math.Spatial2D.VectorXY vector, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Geometry.VectorXYIntExtensions.GetHexCenter(this Akeldov.Math.Spatial2D.VectorXYInt index, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Geometry.VectorXYIntExtensions.GetHexCenter(this Akeldov.Math.Spatial2D.VectorXYInt index, float hexRadius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.HexMapGeometryExtensions.Rasterize(this Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, float curveWidth, float fadeDistance, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor curveColor, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor backgroundColor, int pixelsPerApothem) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopology.operator !=(Akeldov.Math.Hexes.HexMapTopology left, Akeldov.Math.Hexes.HexMapTopology right) -> bool
+static Akeldov.Math.Hexes.HexMapTopology.operator ==(Akeldov.Math.Hexes.HexMapTopology left, Akeldov.Math.Hexes.HexMapTopology right) -> bool
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology hexMapTopology, float radius, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology hexMapTopology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions labels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions labels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions xyLabels, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions qrsLabels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions labels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions labels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions xyLabels, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions qrsLabels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.IHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt resolution, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TColor>!
+static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
+static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, float margin, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
+static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
+static Akeldov.Math.Hexes.ISpatialHexMapExtensions.ToRasterGeometry<TValue>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, float margin = 0) -> Akeldov.Math.Spatial2D.Rasterization.RasterGeometry
+static Akeldov.Math.Hexes.LayoutExtensions.GetHexOrientation(this Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.HexOrientation
+static Akeldov.Math.Hexes.LayoutExtensions.IsFlatTop(this Akeldov.Math.Hexes.Layout layout) -> bool
+static Akeldov.Math.Hexes.LayoutExtensions.IsPointyTop(this Akeldov.Math.Hexes.Layout layout) -> bool
+static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
+static Akeldov.Math.Hexes.Pathfinding.HexTransferCostMapExtensions.FindShortestPath(this Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap! costs, Akeldov.Math.Spatial2D.VectorXYInt from, Akeldov.Math.Spatial2D.VectorXYInt to) -> Akeldov.Math.Hexes.Pathfinding.HexPath?
+static Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle.CreateFromBottomLeftPoint(Akeldov.Math.Spatial2D.PointXY bottomLeftPoint, Akeldov.Math.Spatial2D.VectorXY size, Akeldov.Math.Hexes.SixfoldAngle rotation) -> Akeldov.Math.Hexes.Rectangles.HexOrientedRectangle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Add120(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Add180(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Add240(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Add300(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Add60(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.AsFloatDegrees(this Akeldov.Math.Hexes.SixfoldAngle angle) -> float
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.AsFloatRadians(this Akeldov.Math.Hexes.SixfoldAngle angle) -> float
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Cos(this Akeldov.Math.Hexes.SixfoldAngle angle) -> float
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Negate(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.SixfoldAngleExtensions.Sin(this Akeldov.Math.Hexes.SixfoldAngle angle) -> float
+static Akeldov.Math.Hexes.SixfoldAngles.All.get -> Akeldov.Math.Hexes.SixfoldAngle[]!
+static Akeldov.Math.Hexes.Topology.BinaryReaderExtensions.ReadPolyhexStamp(this System.IO.BinaryReader! binaryReader) -> Akeldov.Math.Hexes.Topology.Polyhex?
+static Akeldov.Math.Hexes.Topology.BinaryWriterExtensions.Write(this System.IO.BinaryWriter! binaryWriter, Akeldov.Math.Hexes.Topology.Polyhex? polyhexStamp) -> void
+static Akeldov.Math.Hexes.Topology.BoolExtensions.GetRelativeOffset(this bool axisIsEven, Akeldov.Math.Hexes.Topology.HexEdge hexEdge, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Topology.BoolExtensions.GetRelativeOffset(this bool axisIsEven, int hexEdge, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Topology.BoolExtensions.GetRelativeOffsets(this bool axisIsEven, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt[]!
+static Akeldov.Math.Hexes.Topology.HexVertexExtensions.GetAdjacentEdges(this Akeldov.Math.Hexes.Topology.HexVertex hexVertex) -> Akeldov.Math.Hexes.Topology.Pair<Akeldov.Math.Hexes.Topology.HexEdge>
+static Akeldov.Math.Hexes.Topology.HexVertexExtensions.GetAdjacentEdges(this Akeldov.Math.Hexes.Topology.HexVertex hexVertex, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Pair<Akeldov.Math.Hexes.Topology.HexEdge>
+static Akeldov.Math.Hexes.Topology.Polyhex.implicit operator Akeldov.Math.Hexes.Topology.Polyhex!(bool[,]! boolMask) -> Akeldov.Math.Hexes.Topology.Polyhex!
+static Akeldov.Math.Hexes.Topology.Polyhex.operator !=(Akeldov.Math.Hexes.Topology.Polyhex? left, Akeldov.Math.Hexes.Topology.Polyhex? right) -> bool
+static Akeldov.Math.Hexes.Topology.Polyhex.operator ==(Akeldov.Math.Hexes.Topology.Polyhex? left, Akeldov.Math.Hexes.Topology.Polyhex? right) -> bool
+static Akeldov.Math.Hexes.Topology.VectorXYIntExtensions.GetAdjacent(this Akeldov.Math.Spatial2D.VectorXYInt index, Akeldov.Math.Hexes.SixfoldAngle direction, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Topology.VectorXYIntExtensions.GetAdjacent(this Akeldov.Math.Spatial2D.VectorXYInt index, Akeldov.Math.Hexes.Topology.HexEdge hexEdge, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Topology.VectorXYIntExtensions.GetAdjacentPair(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Topology.HexVertex hexVertex, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Pair<Akeldov.Math.Spatial2D.VectorXYInt>
+static Akeldov.Math.Hexes.Topology.VectorXYIntExtensions.GetAdjacents(this Akeldov.Math.Spatial2D.VectorXYInt index, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt[]!
+static Akeldov.Math.Hexes.Topology.VectorXYIntExtensions.GetAdjacentTriplet(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Topology.HexVertex hexVertex, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt>
+static Akeldov.Math.Hexes.Vectors.QRS.BinaryReaderExtensions.ReadSixfoldAngle(this System.IO.BinaryReader! reader) -> Akeldov.Math.Hexes.SixfoldAngle
+static Akeldov.Math.Hexes.Vectors.QRS.BinaryReaderExtensions.ReadVectorQRS(this System.IO.BinaryReader! reader) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.BinaryReaderExtensions.ReadVectorQRSInt(this System.IO.BinaryReader! reader) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.BinaryWriterExtensions.Write(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.SixfoldAngle angle) -> void
+static Akeldov.Math.Hexes.Vectors.QRS.BinaryWriterExtensions.Write(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector) -> void
+static Akeldov.Math.Hexes.Vectors.QRS.BinaryWriterExtensions.Write(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector) -> void
+static Akeldov.Math.Hexes.Vectors.QRS.PointXYExtensions.ToEvenQXYIndex(this Akeldov.Math.Spatial2D.PointXY point, float hexRadius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Vectors.QRS.PointXYExtensions.ToEvenRXYIndex(this Akeldov.Math.Spatial2D.PointXY point, float hexRadius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Vectors.QRS.PointXYExtensions.ToOddQXYIndex(this Akeldov.Math.Spatial2D.PointXY point, float hexRadius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Vectors.QRS.PointXYExtensions.ToOddRXYIndex(this Akeldov.Math.Spatial2D.PointXY point, float hexRadius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Vectors.QRS.PointXYExtensions.ToXYIndex(this Akeldov.Math.Spatial2D.PointXY point, float hexRadius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.explicit operator Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS v) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.implicit operator Akeldov.Math.Hexes.Vectors.QRS.VectorQRS(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt v) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.One.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator !=(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> bool
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator *(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector, float scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator *(float scalar, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator +(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator -(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator /(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector, float scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator ==(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> bool
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.Zero.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.Rotate(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS point, float angleRad) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.Rotate(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS v, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.ToNormalizedAxial(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS fractionalPoint, float hexRadius) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.ToQRSIndex(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS axialPoint, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.One.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator !=(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> bool
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator *(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector, int scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator *(int scalar, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator +(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator -(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator /(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector, int scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator ==(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> bool
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.Zero.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSIntExtensions.Rotate(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt point, float angleRad) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSIntExtensions.Rotate(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt v, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSIntExtensions.ToXYIndex(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt index, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Rotate(this Akeldov.Math.Spatial2D.VectorXY point, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Rotate(this Akeldov.Math.Spatial2D.VectorXY point, Akeldov.Math.Spatial2D.VectorXY pivot, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Rotate(this Akeldov.Math.Spatial2D.VectorXY point, Akeldov.Math.Spatial2D.VectorXYInt pivot, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXY point, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXY offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXY point, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXYInt offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXY point, float scaleFactor, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXY offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXY point, float scaleFactor, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXYInt offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Rotate(this Akeldov.Math.Spatial2D.VectorXYInt point, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Rotate(this Akeldov.Math.Spatial2D.VectorXYInt point, Akeldov.Math.Spatial2D.VectorXY pivot, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Rotate(this Akeldov.Math.Spatial2D.VectorXYInt point, Akeldov.Math.Spatial2D.VectorXYInt pivot, Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.ToQRSIndex(this Akeldov.Math.Spatial2D.VectorXYInt index, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXYInt point, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXY offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXYInt point, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXYInt offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXYInt point, float scaleFactor, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXY offset) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Vectors.QRS.VectorXYIntExtensions.Transform(this Akeldov.Math.Spatial2D.VectorXYInt point, float scaleFactor, Akeldov.Math.Hexes.SixfoldAngle angle, Akeldov.Math.Spatial2D.VectorXYInt offset) -> Akeldov.Math.Spatial2D.VectorXY
