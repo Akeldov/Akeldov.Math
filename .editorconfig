@@ -2,3 +2,11 @@ root = true
 
 [*]
 end_of_line = lf
+
+[src/Akeldov.Math.Hexes/**/*.cs]
+# CA1510: ArgumentNullException.ThrowIfNull is unavailable for netstandard2.1.
+dotnet_diagnostic.CA1510.severity = none
+
+[src/Akeldov.Math.Spatial2D/**/*.cs]
+# CA1510: ArgumentNullException.ThrowIfNull is unavailable for netstandard2.1.
+dotnet_diagnostic.CA1510.severity = none
