@@ -5,7 +5,8 @@ Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, 
 ## Features
 
 - [Vectors](vectors.md)
-    - [Types](vectors/types.md)
+    - [VectorQRS](vectors/vectorqrs.md)
+    - [VectorQRSInt](vectors/vectorqrsint.md)
     - [Coordinate Conversions](vectors/coordinate-conversions.md)
     - [Discretization](vectors/discretization.md)
     - [Transformations](vectors/transformations.md)

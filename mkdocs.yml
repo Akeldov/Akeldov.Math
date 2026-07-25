@@ -141,7 +141,8 @@ nav:
           - Overview: Hexes/index.md
           - Vectors:
               - Overview: Hexes/vectors.md
-              - Types: Hexes/vectors/types.md
+              - VectorQRS: Hexes/vectors/vectorqrs.md
+              - VectorQRSInt: Hexes/vectors/vectorqrsint.md
               - Coordinate Conversions: Hexes/vectors/coordinate-conversions.md
               - Discretization: Hexes/vectors/discretization.md
               - Transformations: Hexes/vectors/transformations.md

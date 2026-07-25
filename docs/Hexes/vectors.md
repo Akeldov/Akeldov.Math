@@ -4,7 +4,7 @@ Akeldov.Math.Hexes provides fractional and integer QRS vectors for continuous he
 
 ## Vector Types
 
-| | [`VectorQRS`](vectors/types.md#vectorqrs) | [`VectorQRSInt`](vectors/types.md#vectorqrsint) |
+| | [`VectorQRS`](vectors/vectorqrs.md) | [`VectorQRSInt`](vectors/vectorqrsint.md) |
 |---|---|---|
 | Components | `float` | `int` |
 | Primary use | Fractional positions, interpolation, and continuous transformations | Hex indexes, neighbor offsets, and discrete transformations |
@@ -27,7 +27,8 @@ See [Coordinate Conversions](vectors/coordinate-conversions.md) for layout-aware
 
 ## Topics
 
-- [Vector Types](vectors/types.md)
+- [VectorQRS](vectors/vectorqrs.md)
+- [VectorQRSInt](vectors/vectorqrsint.md)
 - [Coordinate Conversions](vectors/coordinate-conversions.md)
 - [Discretization](vectors/discretization.md)
 - [Transformations](vectors/transformations.md)
