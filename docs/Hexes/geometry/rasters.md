@@ -10,26 +10,19 @@ Geometry rasters sample Spatial2D values from a hex field.
 
 ```csharp
 var hexGeometry = new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR);
-var rasterGeometry = new RasterGeometry(
-    new PointXY(-4f, -4f),
-    new VectorXY(8f, 8f),
-    new VectorXYInt(192, 192));
-var sourceRaster = new BarycentricTripletRaster(hexGeometry, rasterGeometry);
+
+var sourceRaster = new BarycentricTripletRaster(
+    hexGeometry,
+    hexGeometry.ToRasterGeometry(16));
 
 SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
 
-colorRaster.SaveAsPng("barycentric-triplet-raster-main-odd-r-rgba16.png");
+colorRaster.SaveAsPng("map.png");
 
 static RGBA16BitColor ToColor(Triplet<float> barycentric)
 {
-    ushort main = ToChannel(barycentric.Main);
-    return new RGBA16BitColor(main, main, main, ushort.MaxValue);
-}
-
-static ushort ToChannel(float value)
-{
-    value = MathF.Min(MathF.Max(value, 0f), 1f);
-    return (ushort)MathF.Round(value * ushort.MaxValue);
+    float main = barycentric.Main;
+    return RGBA16BitColor.FromNormalized(main, main, main);
 }
 ```
 
@@ -40,3 +33,23 @@ static ushort ToChannel(float value)
 - Samples barycentric weights with presence flags.
 - Handles missing neighboring cells at field boundaries.
 - Supports rasterization of partial vertex neighborhoods.
+
+```csharp
+var hexGeometry = new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR);
+
+var sourceRaster = new BarycentricPartialTripletRaster(
+    hexGeometry,
+    hexGeometry.ToRasterGeometry(16));
+
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
+
+colorRaster.SaveAsPng("map.png");
+
+static RGBA16BitColor ToColor(PartialTriplet<float> barycentric)
+{
+    float main = barycentric.HasMain ? barycentric.Main : 0f;
+    return RGBA16BitColor.FromNormalized(main, main, main);
+}
+```
+
+![BarycentricPartialTripletRaster rasterized with the present main barycentric weight](../../assets/hexes/rasters/barycentric-partial-triplet-raster-odd-r-rgba16.png)

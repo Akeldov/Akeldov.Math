@@ -1,5 +1,8 @@
 using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Maps;
 
@@ -8,6 +11,22 @@ public class BooleanHexMapExtensionsTests
     [Test]
     public void And_WithHexMaps_ReturnsNewMapWithCellwiseConjunction()
     {
+        var hexGeometry = new HexMapGeometry(5, 4, VectorXY.Zero, 1f, Layout.OddR);
+
+        var sourceRaster = new BarycentricTripletRaster(hexGeometry, hexGeometry.ToRasterGeometry(16));
+
+        SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
+
+        colorRaster.SaveAsPng("map.png");
+
+        static RGBA16BitColor ToColor(Triplet<float> barycentric)
+        {
+            var main = barycentric.Main;
+            return RGBA16BitColor.FromNormalized(main, main, main);
+        }
+
+        /////////////
+
         var topology = new HexMapTopology(2, 2, Layout.EvenQ);
         IHexMap<bool> left = new HexMap<bool>(topology, new[] { true, true, false, false });
         IHexMap<bool> right = new HexMap<bool>(topology, new[] { true, false, true, false });
