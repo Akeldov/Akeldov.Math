@@ -4,10 +4,9 @@ Topology rasters sample index relationships at regular raster coordinates.
 
 ## Triplet Rasters
 
-- `IndexTripletRaster`.
-    - Samples vertex triplets as hex indexes.
-- `IndexPartialTripletRaster`.
-    - Samples vertex triplets with presence flags.
+### `IndexTripletRaster`
+
+`IndexTripletRaster` samples complete vertex triplets as hex indexes.
 
 ```csharp
 var hexMapGeometry = new HexMapGeometry(5, 4, 1f, Layout.OddR);
@@ -45,6 +44,55 @@ static ushort ToChannel(float value)
 ```
 
 ![IndexTripletRaster rasterized with index-derived colors](../../assets/hexes/rasters/index-triplet-raster-odd-r-rgba16.png)
+
+### `IndexPartialTripletRaster`
+
+`IndexPartialTripletRaster` samples vertex triplets with presence flags. Each RGB channel encodes
+its corresponding `Main`, `Left`, or `Right` index and becomes zero when that index is absent.
+
+```csharp
+var hexMapGeometry = new HexMapGeometry(5, 4, 1f, Layout.OddR);
+var rasterGeometry = new RasterGeometry(
+    new PointXY(0f, 0f),
+    hexMapGeometry.GetBoundingBoxSize(),
+    new VectorXYInt(192, 192));
+var sourceRaster = new IndexPartialTripletRaster(
+    hexMapGeometry,
+    rasterGeometry);
+
+SpatialRaster<RGBA16BitColor> colorRaster = sourceRaster.MapValues(ToColor);
+
+colorRaster.SaveAsPng("index-partial-triplet-raster-odd-r-rgba16.png");
+
+static RGBA16BitColor ToColor(PartialTriplet<VectorXYInt> triplet)
+{
+    return new RGBA16BitColor(
+        ToPresenceChannel(triplet.Main, triplet.HasMain),
+        ToPresenceChannel(triplet.Left, triplet.HasLeft),
+        ToPresenceChannel(triplet.Right, triplet.HasRight),
+        ushort.MaxValue);
+}
+
+static ushort ToPresenceChannel(VectorXYInt index, bool hasValue)
+{
+    return hasValue
+        ? ToChannel(EncodeIndex(index))
+        : (ushort)0;
+}
+
+static float EncodeIndex(VectorXYInt index)
+{
+    return 0.08f + 0.075f * (index.X + 1) + 0.12f * (index.Y + 1);
+}
+
+static ushort ToChannel(float value)
+{
+    value = MathF.Min(MathF.Max(value, 0f), 1f);
+    return (ushort)MathF.Round(value * ushort.MaxValue);
+}
+```
+
+![IndexPartialTripletRaster rasterized with missing indexes represented by zero channels](../../assets/hexes/rasters/index-partial-triplet-raster-odd-r-rgba16.png)
 
 ## Septuplet Rasters
 
