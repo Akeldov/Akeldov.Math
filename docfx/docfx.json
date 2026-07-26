@@ -155,7 +155,8 @@
       {
         "files": [
           "assets/**",
-          "versions.json"
+          "versions.json",
+          "languages.json"
         ]
       },
       {

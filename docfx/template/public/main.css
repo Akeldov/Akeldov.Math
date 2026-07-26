@@ -10,3 +10,13 @@
     margin-bottom: 0.25rem;
     text-transform: uppercase;
 }
+
+.docs-language-selector {
+    align-items: center;
+    display: flex;
+    margin-left: 0.5rem;
+}
+
+.docs-language-selector .form-select {
+    min-width: 7.5rem;
+}
