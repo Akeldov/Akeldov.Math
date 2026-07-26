@@ -1,12 +1,17 @@
 const selectorId = 'akeldov-docs-version';
 const languageSelectorId = 'akeldov-docs-language';
+const languagePreferenceKey = 'akeldov-docs-language-preference';
 const repositoryLinkId = 'akeldov-repository-link';
 
 const russianUiTranslations = new Map([
+    ['About', 'О проекте'],
+    ['API References', 'Справочник API'],
     ['Auto', 'Системная'],
     ['Dark', 'Тёмная'],
     ['Edit this page', 'Редактировать страницу'],
     ['Filter by title', 'Фильтр по заголовку'],
+    ['Home', 'Главная'],
+    ['Libraries', 'Библиотеки'],
     ['Light', 'Светлая'],
     ['Made with', 'Создано с помощью'],
     ['Next', 'Далее'],
@@ -31,9 +36,80 @@ function isRussianPage() {
         .includes('ru');
 }
 
-function localizeRussianUi() {
-    document.documentElement.lang = 'ru';
+function isApiPage() {
+    return window.location.pathname
+        .split('/')
+        .filter(Boolean)
+        .includes('api');
+}
 
+function getLanguagePreference() {
+    try {
+        return localStorage.getItem(languagePreferenceKey);
+    } catch {
+        return null;
+    }
+}
+
+function setLanguagePreference(languageCode) {
+    try {
+        localStorage.setItem(languagePreferenceKey, languageCode);
+    } catch {
+        // The URL still carries the language context when storage is unavailable.
+    }
+}
+
+function synchronizeLanguagePreference() {
+    const requestedLanguage = new URLSearchParams(window.location.search).get('lang');
+
+    if (isRussianPage() || requestedLanguage === 'ru') {
+        setLanguagePreference('ru');
+    } else if (!isApiPage()) {
+        setLanguagePreference('en');
+    }
+}
+
+function hasRussianLanguageContext() {
+    return isRussianPage()
+        || new URLSearchParams(window.location.search).get('lang') === 'ru'
+        || (isApiPage() && getLanguagePreference() === 'ru');
+}
+
+function preserveRussianLanguageContext() {
+    const pathname = window.location.pathname;
+    const languageMarker = '/ru/';
+    const apiMarker = '/api/';
+    const markerIndex = pathname.indexOf(
+        isApiPage() ? apiMarker : languageMarker);
+
+    if (markerIndex < 0) {
+        return;
+    }
+
+    const rootPath = pathname.substring(0, markerIndex + 1);
+    const apiPath = `${rootPath}api/`;
+    const russianPath = `${rootPath}ru/`;
+
+    for (const link of document.querySelectorAll('a[href]')) {
+        const url = new URL(link.href, window.location.href);
+
+        if (url.origin !== window.location.origin
+            || !url.pathname.startsWith(rootPath)) {
+            continue;
+        }
+
+        if (url.pathname.startsWith(apiPath)) {
+            url.searchParams.set('lang', 'ru');
+            link.href = url;
+        } else if (!url.pathname.startsWith(russianPath)) {
+            const relativePath = url.pathname.substring(rootPath.length);
+            url.pathname = `${russianPath}${relativePath}`;
+            link.href = url;
+        }
+    }
+}
+
+function localizeRussianUi() {
     const roots = [
         document.querySelector('header'),
         document.getElementById('breadcrumb'),
@@ -42,6 +118,14 @@ function localizeRussianUi() {
         document.querySelector('.next-article'),
         document.querySelector('footer')
     ].filter(Boolean);
+
+    if (isRussianPage()) {
+        document.documentElement.lang = 'ru';
+    } else {
+        for (const root of roots) {
+            root.lang = 'ru';
+        }
+    }
 
     for (const root of roots) {
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -63,10 +147,12 @@ function localizeRussianUi() {
             input.placeholder = translation;
         }
     }
+
+    preserveRussianLanguageContext();
 }
 
 function startRussianLocalization() {
-    if (!isRussianPage()) {
+    if (!hasRussianLanguageContext()) {
         return;
     }
 
@@ -286,6 +372,7 @@ async function addLanguageSelector() {
         } else {
             link.addEventListener('click', async event => {
                 event.preventDefault();
+                setLanguagePreference(language.code);
                 let resolvedUrl = targetUrl;
 
                 try {
@@ -346,6 +433,7 @@ async function initializeSelectors() {
 }
 
 function start() {
+    synchronizeLanguagePreference();
     startRussianLocalization();
 
     initializeSelectors().then(ready => {

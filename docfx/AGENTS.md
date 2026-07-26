@@ -109,7 +109,9 @@ Do not write or maintain generated API YAML by hand. Improve API descriptions in
 comments and regenerate the site.
 
 API documentation is always English. Do not copy API output into the Russian branch and do not
-show the language selector on API pages.
+show the language selector on API pages. Preserve the selected interface language while browsing
+API pages: API content stays English, while navigation returns users to the matching conceptual
+language branch.
 
 When adding a library API:
 
