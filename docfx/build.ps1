@@ -28,12 +28,48 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $siteRoot = Join-Path $PSScriptRoot '_site\Akeldov.Math'
+$englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'
 $russianNavigation = Get-Content -LiteralPath $russianNavigationFile -Raw -Encoding UTF8 |
     ConvertFrom-Json
 $russianOverrides = @{}
+
+if (Test-Path -LiteralPath $englishRoot) {
+    Remove-Item -LiteralPath $englishRoot -Recurse -Force
+}
+
+New-Item -ItemType Directory -Path $englishRoot | Out-Null
+Get-ChildItem -LiteralPath $siteRoot |
+    Where-Object Name -notin @('api', 'en', 'ru') |
+    ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination $englishRoot -Recurse -Force
+    }
+
+$englishTocHtml = Join-Path $englishRoot 'toc.html'
+$englishTocJson = Join-Path $englishRoot 'toc.json'
+$englishSearchIndex = Join-Path $englishRoot 'index.json'
+
+if (Test-Path -LiteralPath $englishTocHtml) {
+    $content = Get-Content -LiteralPath $englishTocHtml -Raw -Encoding UTF8
+    $content = $content.Replace('href="api/', 'href="../api/')
+    [System.IO.File]::WriteAllText(
+        $englishTocHtml,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
+foreach ($jsonFile in @($englishTocJson, $englishSearchIndex)) {
+    if (Test-Path -LiteralPath $jsonFile) {
+        $content = Get-Content -LiteralPath $jsonFile -Raw -Encoding UTF8
+        $content = $content.Replace('"href":"api/', '"href":"../api/')
+        [System.IO.File]::WriteAllText(
+            $jsonFile,
+            $content,
+            [System.Text.UTF8Encoding]::new($false))
+    }
+}
 
 if (Test-Path -LiteralPath $russianRoot) {
     Get-ChildItem -LiteralPath $russianSourceRoot -Recurse -Filter '*.md' -File |
@@ -55,7 +91,7 @@ if (Test-Path -LiteralPath $russianRoot) {
 
 New-Item -ItemType Directory -Path $russianRoot | Out-Null
 Get-ChildItem -LiteralPath $siteRoot |
-    Where-Object Name -notin @('api', 'ru') |
+    Where-Object Name -notin @('api', 'en', 'ru') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $russianRoot -Recurse -Force
     }

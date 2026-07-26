@@ -125,10 +125,11 @@ When adding a library API:
 
 Supported languages are registered in `docfx/languages.json`.
 
-English uses the original URLs. Russian uses the `/Akeldov.Math/ru/` prefix. Russian Markdown
-sources live under `docfx/ru` and mirror the English page hierarchy. The build creates an English
-fallback for pages that have not been translated yet, then overlays the generated Russian pages.
-Do not edit generated files under `_site/Akeldov.Math/ru`.
+English uses the `/Akeldov.Math/en/` prefix and Russian uses `/Akeldov.Math/ru/`. Unprefixed
+English URLs remain available as compatibility aliases. Russian Markdown sources live under
+`docfx/ru` and mirror the English page hierarchy. The build creates an English fallback for pages
+that have not been translated yet, then overlays the generated Russian pages. Do not edit
+generated files under `_site/Akeldov.Math/en` or `_site/Akeldov.Math/ru`.
 
 Shared Russian navigation labels live in `docfx/ru/navigation.json`.
 
