@@ -161,14 +161,16 @@
       {
         "src": "Spatial2D",
         "files": [
-          "versions.json"
+          "versions.json",
+          "index.html"
         ],
         "dest": "Spatial2D"
       },
       {
         "src": "Hexes",
         "files": [
-          "versions.json"
+          "versions.json",
+          "index.html"
         ],
         "dest": "Hexes"
       },
