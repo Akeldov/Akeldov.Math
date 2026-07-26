@@ -1,14 +1,2 @@
 - name: Overview
   href: index.md
-- name: Akeldov.Math.Spatial2D
-  href: Spatial2D/toc.yml
-  topicHref: Spatial2D/Akeldov.Math.Spatial2D.yml
-- name: Akeldov.Math.Hexes
-  href: Hexes/toc.yml
-  topicHref: Hexes/Akeldov.Math.Hexes.yml
-- name: Akeldov.Math.Graphs
-  href: Graphs/toc.yml
-  topicHref: Graphs/Akeldov.Math.Graphs.yml
-- name: Akeldov.Math.Intervals
-  href: Intervals/toc.yml
-  topicHref: Intervals/Akeldov.Math.Intervals.yml

@@ -1,0 +1,12 @@
+.docs-version-selector {
+    margin-bottom: 0.75rem;
+}
+
+.docs-version-selector .form-label {
+    color: var(--bs-secondary-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}

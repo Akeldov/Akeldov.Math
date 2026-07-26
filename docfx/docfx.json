@@ -10,7 +10,7 @@
           ]
         }
       ],
-      "dest": "api/Spatial2D",
+      "dest": "api/Spatial2D/latest",
       "properties": {
         "TargetFramework": "net6.0"
       }
@@ -24,7 +24,7 @@
           ]
         }
       ],
-      "dest": "api/Hexes",
+      "dest": "api/Hexes/latest",
       "properties": {
         "TargetFramework": "net6.0"
       }
@@ -38,7 +38,7 @@
           ]
         }
       ],
-      "dest": "api/Graphs",
+      "dest": "api/Graphs/latest",
       "properties": {
         "TargetFramework": "net6.0"
       }
@@ -52,7 +52,7 @@
           ]
         }
       ],
-      "dest": "api/Intervals",
+      "dest": "api/Intervals/latest",
       "properties": {
         "TargetFramework": "net6.0"
       }
@@ -62,24 +62,129 @@
     "content": [
       {
         "files": [
+          "index.md",
+          "about.md",
+          "toc.yml"
+        ]
+      },
+      {
+        "src": "Libraries",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Libraries"
+      },
+      {
+        "src": "api",
+        "files": [
+          "index.md",
+          "toc.yml"
+        ],
+        "dest": "api"
+      },
+      {
+        "src": "Spatial2D",
+        "files": [
           "**/*.{md,yml}"
         ],
         "exclude": [
-          "_site/**"
-        ]
+          "latest/api/**"
+        ],
+        "dest": "Spatial2D/latest"
+      },
+      {
+        "src": "Hexes",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "latest/api/**"
+        ],
+        "dest": "Hexes/latest"
+      },
+      {
+        "src": "Graphs",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "latest/api/**"
+        ],
+        "dest": "Graphs/latest"
+      },
+      {
+        "src": "Intervals",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "latest/api/**"
+        ],
+        "dest": "Intervals"
+      },
+      {
+        "src": "api/Spatial2D/latest",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Spatial2D/latest"
+      },
+      {
+        "src": "api/Hexes/latest",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Hexes/latest"
+      },
+      {
+        "src": "api/Graphs/latest",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Graphs/latest"
+      },
+      {
+        "src": "api/Intervals/latest",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Intervals"
       }
     ],
     "resource": [
       {
         "files": [
-          "assets/**"
+          "assets/**",
+          "versions.json"
         ]
+      },
+      {
+        "src": "Spatial2D",
+        "files": [
+          "versions.json"
+        ],
+        "dest": "Spatial2D"
+      },
+      {
+        "src": "Hexes",
+        "files": [
+          "versions.json"
+        ],
+        "dest": "Hexes"
+      },
+      {
+        "src": "Graphs",
+        "files": [
+          "versions.json"
+        ],
+        "dest": "Graphs"
       }
     ],
     "output": "_site/Akeldov.Math",
     "template": [
       "default",
-      "modern"
+      "modern",
+      "template"
     ],
     "globalMetadata": {
       "_appName": "Akeldov.Math",
