@@ -75,6 +75,13 @@
         "dest": "Libraries"
       },
       {
+        "src": "ru",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru"
+      },
+      {
         "src": "api",
         "files": [
           "index.md",

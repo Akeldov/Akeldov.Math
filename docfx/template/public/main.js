@@ -2,6 +2,19 @@ const selectorId = 'akeldov-docs-version';
 const languageSelectorId = 'akeldov-docs-language';
 const repositoryLinkId = 'akeldov-repository-link';
 
+const russianUiTranslations = new Map([
+    ['Auto', 'Системная'],
+    ['Dark', 'Тёмная'],
+    ['Edit this page', 'Редактировать страницу'],
+    ['Filter by title', 'Фильтр по заголовку'],
+    ['Light', 'Светлая'],
+    ['Made with', 'Создано с помощью'],
+    ['Next', 'Далее'],
+    ['Package version', 'Версия пакета'],
+    ['Previous', 'Назад'],
+    ['Search', 'Поиск']
+]);
+
 async function fetchJson(url) {
     try {
         const response = await fetch(url);
@@ -9,6 +22,58 @@ async function fetchJson(url) {
     } catch {
         return null;
     }
+}
+
+function isRussianPage() {
+    return window.location.pathname
+        .split('/')
+        .filter(Boolean)
+        .includes('ru');
+}
+
+function localizeRussianUi() {
+    document.documentElement.lang = 'ru';
+
+    const roots = [
+        document.querySelector('header'),
+        document.getElementById('breadcrumb'),
+        document.getElementById('toc'),
+        document.querySelector('.contribution'),
+        document.querySelector('.next-article'),
+        document.querySelector('footer')
+    ].filter(Boolean);
+
+    for (const root of roots) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        let node;
+
+        while ((node = walker.nextNode())) {
+            const value = node.nodeValue.trim();
+            const translation = russianUiTranslations.get(value);
+
+            if (translation) {
+                node.nodeValue = node.nodeValue.replace(value, translation);
+            }
+        }
+    }
+
+    for (const input of document.querySelectorAll('input[placeholder]')) {
+        const translation = russianUiTranslations.get(input.placeholder);
+        if (translation) {
+            input.placeholder = translation;
+        }
+    }
+}
+
+function startRussianLocalization() {
+    if (!isRussianPage()) {
+        return;
+    }
+
+    localizeRussianUi();
+
+    const observer = new MutationObserver(localizeRussianUi);
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
 async function getVersionContext() {
@@ -281,6 +346,8 @@ async function initializeSelectors() {
 }
 
 function start() {
+    startRussianLocalization();
+
     initializeSelectors().then(ready => {
         if (ready) {
             return;
