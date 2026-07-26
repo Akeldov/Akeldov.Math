@@ -1,3 +1,84 @@
+body > header {
+    background: linear-gradient(110deg, #263b59 0%, #315f89 100%);
+    border-bottom: 0;
+    box-shadow: 0 0.25rem 0.8rem rgba(23, 37, 58, 0.2);
+}
+
+body > header .navbar {
+    background: transparent;
+}
+
+body > header .navbar-brand,
+body > header .navbar-brand:hover,
+body > header .navbar-nav .nav-link,
+body > header .navbar-nav .nav-link.active,
+body > header .navbar-nav .nav-link.show,
+body > header form.icons .btn,
+body > header .docs-repository-link {
+    color: rgba(255, 255, 255, 0.88);
+}
+
+body > header .navbar-brand,
+body > header .navbar-brand:hover,
+body > header .navbar-nav .nav-link:hover,
+body > header .navbar-nav .nav-link:focus,
+body > header form.icons .btn:hover,
+body > header form.icons .btn:focus,
+body > header .docs-repository-link:hover,
+body > header .docs-repository-link:focus {
+    color: #fff;
+}
+
+body > main {
+    isolation: isolate;
+    position: relative;
+}
+
+body > main::before {
+    background-image:
+        linear-gradient(
+            to bottom,
+            transparent 18%,
+            var(--bs-body-bg) 100%),
+        linear-gradient(
+            rgba(65, 105, 145, 0.09) 1px,
+            transparent 1px),
+        linear-gradient(
+            90deg,
+            rgba(65, 105, 145, 0.09) 1px,
+            transparent 1px);
+    background-size: 100% 100%, 18px 18px, 18px 18px;
+    content: "";
+    height: 18rem;
+    left: 50%;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    width: 100vw;
+    z-index: -1;
+}
+
+[data-bs-theme="dark"] body > header {
+    background: linear-gradient(110deg, #111827 0%, #1d3552 100%);
+    box-shadow: 0 0.25rem 0.8rem rgba(0, 0, 0, 0.45);
+}
+
+[data-bs-theme="dark"] body > main::before {
+    background-image:
+        linear-gradient(
+            to bottom,
+            transparent 18%,
+            var(--bs-body-bg) 100%),
+        linear-gradient(
+            rgba(140, 170, 205, 0.08) 1px,
+            transparent 1px),
+        linear-gradient(
+            90deg,
+            rgba(140, 170, 205, 0.08) 1px,
+            transparent 1px);
+}
+
 .docs-version-selector {
     margin-bottom: 0.75rem;
 }
