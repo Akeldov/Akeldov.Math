@@ -13,5 +13,14 @@
       href: Intervals/index.md
 - name: API References
   href: api/
+  items:
+    - name: Akeldov.Math.Spatial2D
+      href: api/Spatial2D/latest/
+    - name: Akeldov.Math.Hexes
+      href: api/Hexes/latest/
+    - name: Akeldov.Math.Graphs
+      href: api/Graphs/latest/
+    - name: Akeldov.Math.Intervals
+      href: api/Intervals/latest/
 - name: About
   href: about.md
