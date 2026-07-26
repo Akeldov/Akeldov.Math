@@ -119,10 +119,11 @@ API pages are generated from the library project and its XML documentation throu
 Do not write or maintain generated API YAML by hand. Improve API descriptions in the C# XML
 comments and regenerate the site.
 
-API documentation is always English. Do not copy API output into the Russian branch and do not
-show the language selector on API pages. Preserve the selected interface language while browsing
-API pages: API content stays English, while navigation returns users to the matching conceptual
-language branch.
+API documentation is always English. Do not copy API output into the Russian branch. Show the
+language selector on API pages, but use it only to switch the interface language and the language
+of links back to conceptual documentation. Preserve the selected interface language while
+browsing API pages: API content and its `/api/` URL stay English, while navigation returns users
+to the matching conceptual language branch.
 
 When adding a library API:
 

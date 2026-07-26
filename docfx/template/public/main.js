@@ -92,6 +92,10 @@ function preserveRussianLanguageContext() {
     const russianPath = `${rootPath}ru/`;
 
     for (const link of document.querySelectorAll('a[href]')) {
+        if (link.closest(`#${languageSelectorId}-container`)) {
+            continue;
+        }
+
         const url = new URL(link.href, window.location.href);
 
         if (url.origin !== window.location.origin
@@ -224,18 +228,23 @@ async function getLanguageContext() {
         const segments = relativePath.split('/').filter(Boolean);
         const localizedLanguage = registry.languages.find(
             language => language.path && language.path === segments[0]);
-        const currentLanguage = localizedLanguage
-            ?? registry.languages.find(language => !language.path)
-            ?? registry.languages[0];
         const pagePath = localizedLanguage
             ? segments.slice(1).join('/')
             : segments.join('/');
-
-        if (pagePath === 'api' || pagePath.startsWith('api/')) {
-            return null;
-        }
+        const apiPage = pagePath === 'api' || pagePath.startsWith('api/');
+        const preferredLanguageCode = apiPage && hasRussianLanguageContext()
+            ? 'ru'
+            : 'en';
+        const currentLanguage = apiPage
+            ? registry.languages.find(
+                language => language.code === preferredLanguageCode)
+                ?? registry.languages[0]
+            : localizedLanguage
+                ?? registry.languages.find(language => !language.path)
+                ?? registry.languages[0];
 
         return {
+            apiPage,
             currentLanguage,
             languages: registry.languages,
             pagePath: pagePath || 'index.html',
@@ -519,10 +528,20 @@ async function addLanguageSelector() {
         const link = document.createElement('a');
         const isCurrentLanguage = language.code === context.currentLanguage.code;
         const languagePrefix = language.path ? `${language.path}/` : '';
-        const targetUrl = new URL(`${languagePrefix}${context.pagePath}`, context.rootUrl);
+        const targetUrl = context.apiPage
+            ? new URL(context.pagePath, context.rootUrl)
+            : new URL(`${languagePrefix}${context.pagePath}`, context.rootUrl);
 
         targetUrl.search = window.location.search;
         targetUrl.hash = window.location.hash;
+
+        if (context.apiPage) {
+            if (language.code === 'ru') {
+                targetUrl.searchParams.set('lang', 'ru');
+            } else {
+                targetUrl.searchParams.delete('lang');
+            }
+        }
 
         link.classList.add('dropdown-item');
         link.href = targetUrl;
@@ -542,10 +561,14 @@ async function addLanguageSelector() {
                 try {
                     const response = await fetch(resolvedUrl, { method: 'HEAD' });
                     if (!response.ok) {
-                        resolvedUrl = new URL(`${languagePrefix}index.html`, context.rootUrl);
+                        resolvedUrl = context.apiPage
+                            ? new URL('api/index.html', context.rootUrl)
+                            : new URL(`${languagePrefix}index.html`, context.rootUrl);
                     }
                 } catch {
-                    resolvedUrl = new URL(`${languagePrefix}index.html`, context.rootUrl);
+                    resolvedUrl = context.apiPage
+                        ? new URL('api/index.html', context.rootUrl)
+                        : new URL(`${languagePrefix}index.html`, context.rootUrl);
                 }
 
                 window.location.assign(resolvedUrl);
@@ -604,19 +627,36 @@ function start() {
     synchronizeLanguagePreference();
     startRussianLocalization();
 
-    initializeSelectors().then(ready => {
-        if (ready) {
+    let initializationRunning = false;
+    let initializationPending = true;
+
+    const observer = new MutationObserver(() => {
+        initializationPending = true;
+        void initializeDynamicNavigation();
+    });
+
+    async function initializeDynamicNavigation() {
+        if (initializationRunning) {
             return;
         }
 
-        const observer = new MutationObserver(async () => {
+        initializationRunning = true;
+
+        do {
+            initializationPending = false;
+
             if (await initializeSelectors()) {
                 observer.disconnect();
+                initializationRunning = false;
+                return;
             }
-        });
+        } while (initializationPending);
 
-        observer.observe(document.body, { childList: true, subtree: true });
-    });
+        initializationRunning = false;
+    }
+
+    observer.observe(document.body, { childList: true, subtree: true });
+    void initializeDynamicNavigation();
 }
 
 export default {
