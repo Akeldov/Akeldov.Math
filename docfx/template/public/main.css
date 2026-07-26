@@ -26,3 +26,46 @@
     margin-left: 0.25rem;
     order: 60;
 }
+
+@media (min-width: 768px) {
+    .navbar #navbar {
+        align-items: center;
+        column-gap: 0.5rem;
+        display: grid;
+        grid-template-areas: "navigation icons search repository";
+        grid-template-columns: minmax(0, 1fr) max-content minmax(12rem, 18rem) max-content;
+    }
+
+    .navbar #navbar > .navbar-nav {
+        grid-area: navigation;
+    }
+
+    .navbar #navbar > form.icons {
+        grid-area: icons;
+        margin-left: 0;
+    }
+
+    .navbar #navbar > form.search {
+        grid-area: search;
+        width: 100%;
+    }
+
+    .navbar #navbar > .docs-repository-link {
+        grid-area: repository;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .navbar #navbar {
+        grid-template-areas:
+            "navigation navigation navigation"
+            "icons search repository";
+        grid-template-columns: max-content minmax(12rem, 18rem) max-content;
+        justify-content: end;
+        row-gap: 0.5rem;
+    }
+
+    .navbar #navbar > .navbar-nav {
+        justify-self: start;
+    }
+}
