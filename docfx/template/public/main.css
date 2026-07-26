@@ -20,3 +20,9 @@
 .docs-language-selector .form-select {
     min-width: 7.5rem;
 }
+
+.docs-repository-link {
+    align-self: center;
+    margin-left: 0.25rem;
+    order: 60;
+}

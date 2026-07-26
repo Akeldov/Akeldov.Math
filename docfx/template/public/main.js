@@ -1,5 +1,6 @@
 const selectorId = 'akeldov-docs-version';
 const languageSelectorId = 'akeldov-docs-language';
+const repositoryLinkId = 'akeldov-repository-link';
 
 async function fetchJson(url) {
     try {
@@ -227,13 +228,39 @@ async function addLanguageSelector() {
     return true;
 }
 
+function addRepositoryLink() {
+    if (document.getElementById(repositoryLinkId)) {
+        return true;
+    }
+
+    const search = document.getElementById('search');
+    if (!search) {
+        return false;
+    }
+
+    const link = document.createElement('a');
+    link.id = repositoryLinkId;
+    link.classList.add('btn', 'border-0', 'docs-repository-link');
+    link.href = 'https://github.com/Akeldov/Akeldov.Math';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.title = 'Akeldov.Math repository';
+    link.setAttribute('aria-label', 'Akeldov.Math repository');
+    link.innerHTML = '<i class="bi bi-github"></i>';
+
+    search.insertAdjacentElement('afterend', link);
+
+    return true;
+}
+
 async function initializeSelectors() {
     const [versionReady, languageReady] = await Promise.all([
         addVersionSelector(),
         addLanguageSelector()
     ]);
+    const repositoryReady = addRepositoryLink();
 
-    return versionReady && languageReady;
+    return versionReady && languageReady && repositoryReady;
 }
 
 function start() {
