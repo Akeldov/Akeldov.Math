@@ -122,6 +122,14 @@ body > main::before {
 }
 
 @media (min-width: 768px) {
+    body > header .navbar-nav .dropdown-menu {
+        min-width: max-content;
+    }
+
+    body > header .navbar-nav .dropdown-item {
+        white-space: nowrap;
+    }
+
     .navbar #navbar {
         align-items: center;
         column-gap: 0.5rem;
