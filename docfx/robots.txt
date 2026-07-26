@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://akeldov.github.io/Akeldov.Math/sitemap.xml

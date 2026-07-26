@@ -186,6 +186,12 @@ After relevant changes, verify:
 - isolated left navigation for each API library;
 - responsive header layout;
 - search and repository link placement.
+- `robots.txt`, canonical links, language alternates, and `sitemap.xml`.
+
+The canonical public site URL is `https://akeldov.github.io/Akeldov.Math/`. Canonical conceptual
+pages use `/en/` and translated `/ru/` URLs. Unprefixed English pages and untranslated Russian
+fallback pages must point to their `/en/` canonical counterpart. API pages are canonical under
+`/api/`.
 
 The build currently emits duplicate-source warnings for `PublicAPI.Shipped.txt` and
 `PublicAPI.Unshipped.txt` in Spatial2D and Hexes. These known warnings do not by themselves mean

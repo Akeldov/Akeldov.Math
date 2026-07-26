@@ -8,6 +8,56 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+function Get-RelativeSitePath {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Root,
+
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $relativePath = $Path.Substring($Root.Length)
+    $relativePath = $relativePath.TrimStart(
+        [char][System.IO.Path]::DirectorySeparatorChar)
+    return $relativePath.Replace(
+        [System.IO.Path]::DirectorySeparatorChar,
+        '/')
+}
+
+function Set-PageSeoMetadata {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path,
+
+        [Parameter(Mandatory)]
+        [string] $CanonicalUrl,
+
+        [string] $EnglishUrl,
+
+        [string] $RussianUrl
+    )
+
+    $content = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    $lines = @(
+        "      <link rel=`"canonical`" href=`"$CanonicalUrl`">"
+    )
+
+    if ($EnglishUrl -and $RussianUrl) {
+        $lines += "      <link rel=`"alternate`" hreflang=`"en`" href=`"$EnglishUrl`">"
+        $lines += "      <link rel=`"alternate`" hreflang=`"ru`" href=`"$RussianUrl`">"
+        $lines += "      <link rel=`"alternate`" hreflang=`"x-default`" href=`"$EnglishUrl`">"
+    }
+
+    $content = $content.Replace(
+        '  </head>',
+        "$($lines -join [Environment]::NewLine)$([Environment]::NewLine)  </head>")
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $localDocfx = Join-Path $repositoryRoot '.tmp\docfx-tool\docfx.exe'
 
@@ -42,7 +92,7 @@ if (Test-Path -LiteralPath $englishRoot) {
 
 New-Item -ItemType Directory -Path $englishRoot | Out-Null
 Get-ChildItem -LiteralPath $siteRoot |
-    Where-Object Name -notin @('api', 'en', 'ru') |
+    Where-Object Name -notin @('api', 'en', 'ru', 'robots.txt', 'sitemap.xml') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $englishRoot -Recurse -Force
     }
@@ -91,7 +141,7 @@ if (Test-Path -LiteralPath $russianRoot) {
 
 New-Item -ItemType Directory -Path $russianRoot | Out-Null
 Get-ChildItem -LiteralPath $siteRoot |
-    Where-Object Name -notin @('api', 'en', 'ru') |
+    Where-Object Name -notin @('api', 'en', 'ru', 'robots.txt', 'sitemap.xml') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $russianRoot -Recurse -Force
     }
@@ -159,6 +209,137 @@ if (Test-Path -LiteralPath $russianIndex) {
         $content,
         [System.Text.UTF8Encoding]::new($false))
 }
+
+$docfxConfig = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'docfx.json') `
+    -Raw -Encoding UTF8 |
+    ConvertFrom-Json
+$siteBaseUrl = $docfxConfig.build.sitemap.baseUrl.TrimEnd('/') + '/'
+$apiRoot = Join-Path $siteRoot 'api'
+$sitemapEntries = @()
+
+Get-ChildItem -LiteralPath $englishRoot -Recurse -Filter '*.html' -File |
+    ForEach-Object {
+        $relativePath = Get-RelativeSitePath -Root $englishRoot -Path $_.FullName
+        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+
+        if ($content.Contains('<meta name="robots" content="noindex">')) {
+            return
+        }
+
+        $englishUrl = "$siteBaseUrl" + "en/$relativePath"
+        $russianUrl = if ($russianOverrides.ContainsKey(
+            $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))) {
+            "$siteBaseUrl" + "ru/$relativePath"
+        } else {
+            $null
+        }
+
+        Set-PageSeoMetadata `
+            -Path $_.FullName `
+            -CanonicalUrl $englishUrl `
+            -EnglishUrl $englishUrl `
+            -RussianUrl $russianUrl
+        $sitemapEntries += [pscustomobject]@{
+            Url = $englishUrl
+            EnglishUrl = $englishUrl
+            RussianUrl = $russianUrl
+        }
+    }
+
+Get-ChildItem -LiteralPath $russianRoot -Recurse -Filter '*.html' -File |
+    ForEach-Object {
+        $relativePath = Get-RelativeSitePath -Root $russianRoot -Path $_.FullName
+        $overrideKey = $relativePath.Replace(
+            '/',
+            [System.IO.Path]::DirectorySeparatorChar)
+        $englishUrl = "$siteBaseUrl" + "en/$relativePath"
+
+        if ($russianOverrides.ContainsKey($overrideKey)) {
+            $russianUrl = "$siteBaseUrl" + "ru/$relativePath"
+            Set-PageSeoMetadata `
+                -Path $_.FullName `
+                -CanonicalUrl $russianUrl `
+                -EnglishUrl $englishUrl `
+                -RussianUrl $russianUrl
+            $sitemapEntries += [pscustomobject]@{
+                Url = $russianUrl
+                EnglishUrl = $englishUrl
+                RussianUrl = $russianUrl
+            }
+        } else {
+            Set-PageSeoMetadata -Path $_.FullName -CanonicalUrl $englishUrl
+        }
+    }
+
+Get-ChildItem -LiteralPath $apiRoot -Recurse -Filter '*.html' -File |
+    ForEach-Object {
+        $relativePath = Get-RelativeSitePath -Root $apiRoot -Path $_.FullName
+        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+
+        if ($content.Contains('<meta name="robots" content="noindex">')) {
+            return
+        }
+
+        $canonicalUrl = "$siteBaseUrl" + "api/$relativePath"
+        Set-PageSeoMetadata -Path $_.FullName -CanonicalUrl $canonicalUrl
+        $sitemapEntries += [pscustomobject]@{
+            Url = $canonicalUrl
+            EnglishUrl = $null
+            RussianUrl = $null
+        }
+    }
+
+Get-ChildItem -LiteralPath $siteRoot -Recurse -Filter '*.html' -File |
+    Where-Object {
+        -not $_.FullName.StartsWith(
+            "$englishRoot$([System.IO.Path]::DirectorySeparatorChar)") -and
+        -not $_.FullName.StartsWith(
+            "$russianRoot$([System.IO.Path]::DirectorySeparatorChar)") -and
+        -not $_.FullName.StartsWith(
+            "$apiRoot$([System.IO.Path]::DirectorySeparatorChar)")
+    } |
+    ForEach-Object {
+        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+
+        if (-not $content.Contains('<meta name="robots" content="noindex">')) {
+            $relativePath = Get-RelativeSitePath -Root $siteRoot -Path $_.FullName
+            Set-PageSeoMetadata `
+                -Path $_.FullName `
+                -CanonicalUrl ("$siteBaseUrl" + "en/$relativePath")
+        }
+    }
+
+$sitemapLines = @(
+    '<?xml version="1.0" encoding="utf-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">'
+)
+
+foreach ($entry in $sitemapEntries | Sort-Object Url -Unique) {
+    $sitemapLines += '  <url>'
+    $sitemapLines += "    <loc>$([System.Security.SecurityElement]::Escape($entry.Url))</loc>"
+
+    if ($entry.EnglishUrl -and $entry.RussianUrl) {
+        $escapedEnglishUrl =
+            [System.Security.SecurityElement]::Escape($entry.EnglishUrl)
+        $escapedRussianUrl =
+            [System.Security.SecurityElement]::Escape($entry.RussianUrl)
+        $sitemapLines +=
+            "    <xhtml:link rel=`"alternate`" hreflang=`"en`" href=`"$escapedEnglishUrl`" />"
+        $sitemapLines +=
+            "    <xhtml:link rel=`"alternate`" hreflang=`"ru`" href=`"$escapedRussianUrl`" />"
+        $sitemapLines +=
+            "    <xhtml:link rel=`"alternate`" hreflang=`"x-default`" href=`"$escapedEnglishUrl`" />"
+    }
+
+    $sitemapLines += '  </url>'
+}
+
+$sitemapLines += '</urlset>'
+[System.IO.File]::WriteAllLines(
+    (Join-Path $siteRoot 'sitemap.xml'),
+    $sitemapLines,
+    [System.Text.UTF8Encoding]::new($false))
 
 if ($Serve) {
     & $docfx serve (Join-Path $PSScriptRoot '_site') --port $Port

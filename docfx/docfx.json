@@ -163,7 +163,8 @@
         "files": [
           "assets/**",
           "versions.json",
-          "languages.json"
+          "languages.json",
+          "robots.txt"
         ]
       },
       {
@@ -191,6 +192,11 @@
       }
     ],
     "output": "_site/Akeldov.Math",
+    "sitemap": {
+      "baseUrl": "https://akeldov.github.io/Akeldov.Math/",
+      "changefreq": "weekly",
+      "priority": 0.5
+    },
     "template": [
       "default",
       "modern",
