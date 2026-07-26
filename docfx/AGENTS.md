@@ -54,11 +54,22 @@ The global header navigation is defined in `docfx/toc.yml`. Keep its top-level g
 
 - Home
 - Libraries
-- API References
 - About
 
 Add library pages to the library's own `toc.yml`, not as unrelated top-level global entries.
 Keep conceptual documentation and API navigation separate.
+
+Library pages use a contextual second navigation row with these Diátaxis sections:
+
+- Concepts
+- Tutorials
+- How-to Guides
+- Reference
+
+The contextual navigation registry is `docfx/library-navigation.json`. Keep its library names,
+versioning mode, and API landing pages aligned with `docfx.json`. Reference links go directly
+to the selected library's independent generated API; do not restore API References as a global
+top-level navigation item.
 
 API navigation must remain independent for each library. A library API page must not show types
 from other libraries in its left navigation.

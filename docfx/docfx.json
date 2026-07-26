@@ -164,6 +164,7 @@
           "assets/**",
           "versions.json",
           "languages.json",
+          "library-navigation.json",
           "robots.txt"
         ]
       },

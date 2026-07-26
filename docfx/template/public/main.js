@@ -2,6 +2,7 @@ const selectorId = 'akeldov-docs-version';
 const languageSelectorId = 'akeldov-docs-language';
 const languagePreferenceKey = 'akeldov-docs-language-preference';
 const repositoryLinkId = 'akeldov-repository-link';
+const contextNavigationId = 'akeldov-library-navigation';
 
 const russianUiTranslations = new Map([
     ['About', 'О проекте'],
@@ -245,6 +246,169 @@ async function getLanguageContext() {
     return null;
 }
 
+async function getLibraryNavigationContext() {
+    const moduleUrl = new URL(import.meta.url);
+    const registryUrls = [
+        new URL('../../library-navigation.json', moduleUrl),
+        new URL('../library-navigation.json', moduleUrl)
+    ];
+    let registry = null;
+    let rootUrl = null;
+
+    for (const registryUrl of registryUrls) {
+        const candidate = await fetchJson(registryUrl);
+        if (Array.isArray(candidate?.libraries)) {
+            registry = candidate;
+            rootUrl = new URL('./', registryUrl);
+            break;
+        }
+    }
+
+    if (!registry || !rootUrl) {
+        return null;
+    }
+
+    const relativePath = window.location.pathname.startsWith(rootUrl.pathname)
+        ? window.location.pathname.substring(rootUrl.pathname.length)
+        : '';
+    const segments = relativePath.split('/').filter(Boolean);
+    const languagePath = segments[0] === 'en' || segments[0] === 'ru'
+        ? segments.shift()
+        : null;
+    const apiPage = segments[0] === 'api';
+
+    if (apiPage) {
+        segments.shift();
+    }
+
+    const library = registry.libraries.find(item => item.path === segments[0]);
+    if (!library) {
+        return null;
+    }
+
+    segments.shift();
+
+    const versionPath = library.versioned ? segments.shift() : null;
+    if (library.versioned && !versionPath) {
+        return null;
+    }
+
+    const language = hasRussianLanguageContext() ? 'ru' : (languagePath ?? 'en');
+    const versionPrefix = versionPath ? `${versionPath}/` : '';
+    const conceptualRootUrl = new URL(
+        `${language}/${library.path}/${versionPrefix}`,
+        rootUrl);
+    const referenceRootUrl = new URL(
+        `api/${library.path}/${versionPrefix}`,
+        rootUrl);
+
+    return {
+        activeSection: apiPage ? 'reference' : segments[0],
+        conceptualRootUrl,
+        library,
+        referenceRootUrl,
+        rootUrl,
+        russian: language === 'ru'
+    };
+}
+
+async function addLibraryNavigation() {
+    if (document.getElementById(contextNavigationId)) {
+        return true;
+    }
+
+    const header = document.querySelector('body > header');
+    if (!header) {
+        return false;
+    }
+
+    const context = await getLibraryNavigationContext();
+    if (!context) {
+        return true;
+    }
+
+    const navigation = document.createElement('nav');
+    navigation.id = contextNavigationId;
+    navigation.classList.add('docs-context-navigation');
+    navigation.setAttribute(
+        'aria-label',
+        `${context.library.name} documentation`);
+
+    const container = document.createElement('div');
+    container.classList.add('container-xxl', 'docs-context-navigation-inner');
+
+    const libraryLink = document.createElement('a');
+    libraryLink.classList.add('docs-context-library');
+    libraryLink.href = new URL('index.html', context.conceptualRootUrl);
+    libraryLink.textContent = context.library.name;
+
+    const links = document.createElement('div');
+    links.classList.add('docs-context-links');
+
+    const sections = [
+        {
+            key: 'concepts',
+            label: context.russian ? 'Концепции' : 'Concepts',
+            url: new URL('concepts/index.html', context.conceptualRootUrl)
+        },
+        {
+            key: 'tutorials',
+            label: context.russian ? 'Учебники' : 'Tutorials',
+            url: new URL('tutorials/index.html', context.conceptualRootUrl)
+        },
+        {
+            key: 'how-to-guides',
+            label: context.russian ? 'Руководства' : 'How-to Guides',
+            url: new URL('how-to-guides/index.html', context.conceptualRootUrl)
+        },
+        {
+            key: 'reference',
+            label: context.russian ? 'Справочник' : 'References',
+            url: new URL(context.library.referencePage, context.referenceRootUrl)
+        }
+    ];
+
+    for (const section of sections) {
+        const link = document.createElement('a');
+        link.classList.add('docs-context-link');
+        link.href = section.url;
+        link.textContent = section.label;
+
+        if (section.key === 'reference' && context.russian) {
+            const referenceUrl = new URL(link.href);
+            referenceUrl.searchParams.set('lang', 'ru');
+            link.href = referenceUrl;
+        }
+
+        if (context.activeSection === section.key) {
+            link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+        }
+
+        links.appendChild(link);
+    }
+
+    container.append(libraryLink, links);
+    navigation.appendChild(container);
+    header.appendChild(navigation);
+    document.body.classList.add('docs-has-context-navigation');
+
+    const synchronizeHeaderHeight = () => {
+        document.body.style.setProperty(
+            '--docs-header-height',
+            `${header.offsetHeight}px`);
+    };
+
+    synchronizeHeaderHeight();
+
+    if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(synchronizeHeaderHeight);
+        observer.observe(header);
+    }
+
+    return true;
+}
+
 async function addVersionSelector() {
     const containerId = `${selectorId}-container`;
     if (document.getElementById(selectorId) || document.getElementById(containerId)) {
@@ -423,13 +587,17 @@ function addRepositoryLink() {
 }
 
 async function initializeSelectors() {
-    const [versionReady, languageReady] = await Promise.all([
+    const [versionReady, languageReady, navigationReady] = await Promise.all([
         addVersionSelector(),
-        addLanguageSelector()
+        addLanguageSelector(),
+        addLibraryNavigation()
     ]);
     const repositoryReady = addRepositoryLink();
 
-    return versionReady && languageReady && repositoryReady;
+    return versionReady
+        && languageReady
+        && navigationReady
+        && repositoryReady;
 }
 
 function start() {

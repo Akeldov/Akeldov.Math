@@ -2,10 +2,17 @@ body > header {
     background: linear-gradient(110deg, #263b59 0%, #315f89 100%);
     border-bottom: 0;
     box-shadow: 0 0.25rem 0.8rem rgba(23, 37, 58, 0.2);
+    flex-wrap: wrap;
 }
 
 body > header .navbar {
     background: transparent;
+}
+
+body > header > .navbar,
+body > header > .docs-context-navigation {
+    flex: 0 0 100%;
+    width: 100%;
 }
 
 body > header .navbar-brand img {
@@ -121,7 +128,76 @@ body > main::before {
     order: 60;
 }
 
+.docs-context-navigation {
+    background: #345b80;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+[data-bs-theme="dark"] .docs-context-navigation {
+    background: #182b43;
+}
+
+.docs-context-navigation-inner {
+    align-items: stretch;
+    display: flex;
+    min-height: 3rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.docs-context-library,
+.docs-context-link {
+    align-items: center;
+    color: rgba(255, 255, 255, 0.82);
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding: 0.65rem 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.docs-context-library {
+    color: #fff;
+    font-weight: 600;
+    padding-left: 0;
+}
+
+.docs-context-links {
+    display: flex;
+    margin-left: 1.25rem;
+}
+
+.docs-context-link {
+    border-bottom: 0.2rem solid transparent;
+}
+
+.docs-context-library:hover,
+.docs-context-library:focus,
+.docs-context-link:hover,
+.docs-context-link:focus {
+    color: #fff;
+}
+
+.docs-context-link.active {
+    border-bottom-color: #fff;
+    color: #fff;
+}
+
 @media (min-width: 768px) {
+    body.docs-has-context-navigation > header {
+        height: auto;
+    }
+
+    body.docs-has-context-navigation > main > .toc-offcanvas,
+    body.docs-has-context-navigation > main > .affix {
+        max-height: calc(100vh - var(--docs-header-height, 108px) - 1.6rem);
+        top: calc(var(--docs-header-height, 108px) + 1.6rem);
+    }
+
+    body.docs-has-context-navigation > main > .content > article [id] {
+        scroll-margin-top: var(--docs-header-height, 108px);
+    }
+
     body > header .navbar-nav .dropdown-menu {
         min-width: max-content;
     }
@@ -154,6 +230,16 @@ body > main::before {
 
     .navbar #navbar > .docs-repository-link {
         grid-area: repository;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .docs-context-navigation-inner {
+        padding-right: 0;
+    }
+
+    .docs-context-links {
+        margin-left: 0.35rem;
     }
 }
 

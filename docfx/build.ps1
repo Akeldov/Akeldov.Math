@@ -92,7 +92,13 @@ if (Test-Path -LiteralPath $englishRoot) {
 
 New-Item -ItemType Directory -Path $englishRoot | Out-Null
 Get-ChildItem -LiteralPath $siteRoot |
-    Where-Object Name -notin @('api', 'en', 'ru', 'robots.txt', 'sitemap.xml') |
+    Where-Object Name -notin @(
+        'api',
+        'en',
+        'ru',
+        'library-navigation.json',
+        'robots.txt',
+        'sitemap.xml') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $englishRoot -Recurse -Force
     }
@@ -141,7 +147,13 @@ if (Test-Path -LiteralPath $russianRoot) {
 
 New-Item -ItemType Directory -Path $russianRoot | Out-Null
 Get-ChildItem -LiteralPath $siteRoot |
-    Where-Object Name -notin @('api', 'en', 'ru', 'robots.txt', 'sitemap.xml') |
+    Where-Object Name -notin @(
+        'api',
+        'en',
+        'ru',
+        'library-navigation.json',
+        'robots.txt',
+        'sitemap.xml') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $russianRoot -Recurse -Force
     }

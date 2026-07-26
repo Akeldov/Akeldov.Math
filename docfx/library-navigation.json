@@ -1,0 +1,28 @@
+{
+  "libraries": [
+    {
+      "path": "Spatial2D",
+      "name": "Akeldov.Math.Spatial2D",
+      "versioned": true,
+      "referencePage": "Akeldov.Math.Spatial2D.html"
+    },
+    {
+      "path": "Hexes",
+      "name": "Akeldov.Math.Hexes",
+      "versioned": true,
+      "referencePage": "Akeldov.Math.Hexes.html"
+    },
+    {
+      "path": "Graphs",
+      "name": "Akeldov.Math.Graphs",
+      "versioned": true,
+      "referencePage": "Akeldov.Math.Graphs.html"
+    },
+    {
+      "path": "Intervals",
+      "name": "Akeldov.Math.Intervals",
+      "versioned": false,
+      "referencePage": "Akeldov.Math.Intervals.html"
+    }
+  ]
+}
