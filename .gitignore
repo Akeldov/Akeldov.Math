@@ -421,3 +421,10 @@ FodyWeavers.xsd
 .venv/
 site/
 .mkdocs-site-temp/
+
+# DocFX local artifacts
+docfx/_site/
+docfx/api/Spatial2D/
+docfx/api/Hexes/
+docfx/api/Graphs/
+docfx/api/Intervals/

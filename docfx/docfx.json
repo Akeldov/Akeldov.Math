@@ -1,0 +1,95 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../src",
+          "files": [
+            "Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj"
+          ]
+        }
+      ],
+      "dest": "api/Spatial2D",
+      "properties": {
+        "TargetFramework": "net6.0"
+      }
+    },
+    {
+      "src": [
+        {
+          "src": "../src",
+          "files": [
+            "Akeldov.Math.Hexes/Akeldov.Math.Hexes.csproj"
+          ]
+        }
+      ],
+      "dest": "api/Hexes",
+      "properties": {
+        "TargetFramework": "net6.0"
+      }
+    },
+    {
+      "src": [
+        {
+          "src": "../src",
+          "files": [
+            "Akeldov.Math.Graphs/Akeldov.Math.Graphs.csproj"
+          ]
+        }
+      ],
+      "dest": "api/Graphs",
+      "properties": {
+        "TargetFramework": "net6.0"
+      }
+    },
+    {
+      "src": [
+        {
+          "src": "../src",
+          "files": [
+            "Akeldov.Math.Intervals/Akeldov.Math.Intervals.csproj"
+          ]
+        }
+      ],
+      "dest": "api/Intervals",
+      "properties": {
+        "TargetFramework": "net6.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "assets/**"
+        ]
+      }
+    ],
+    "output": "_site/Akeldov.Math",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "Akeldov.Math",
+      "_appTitle": "Akeldov.Math Documentation",
+      "_appFaviconPath": "assets/favicon-akeldov.png",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/Akeldov/Akeldov.Math",
+        "branch": "main"
+      }
+    }
+  }
+}
