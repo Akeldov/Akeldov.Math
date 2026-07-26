@@ -8,6 +8,12 @@ body > header .navbar {
     background: transparent;
 }
 
+body > header .navbar-brand img {
+    height: 2.5rem;
+    object-fit: contain;
+    width: 2.5rem;
+}
+
 body > header .navbar-brand,
 body > header .navbar-brand:hover,
 body > header .navbar-nav .nav-link,

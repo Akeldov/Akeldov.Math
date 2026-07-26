@@ -192,6 +192,7 @@
     "globalMetadata": {
       "_appName": "Akeldov.Math",
       "_appTitle": "Akeldov.Math Documentation",
+      "_appLogoPath": "assets/logo-akeldov.png",
       "_appFaviconPath": "assets/favicon-akeldov.png",
       "_enableSearch": true,
       "_gitContribute": {
