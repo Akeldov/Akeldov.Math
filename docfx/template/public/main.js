@@ -177,7 +177,7 @@ async function addLanguageSelector() {
 
     const item = document.createElement('div');
     item.id = containerId;
-    item.classList.add('docs-language-selector');
+    item.classList.add('dropdown', 'docs-language-selector');
     iconBar.insertBefore(item, iconBar.lastElementChild);
 
     const context = await getLanguageContext();
@@ -186,44 +186,61 @@ async function addLanguageSelector() {
         return true;
     }
 
-    const select = document.createElement('select');
-    select.id = languageSelectorId;
-    select.classList.add('form-select', 'form-select-sm');
-    select.setAttribute('aria-label', 'Documentation language');
-    select.title = 'Documentation language';
+    const button = document.createElement('button');
+    button.id = languageSelectorId;
+    button.type = 'button';
+    button.classList.add('btn', 'border-0', 'docs-language-button');
+    button.dataset.bsToggle = 'dropdown';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-label', 'Change language');
+    button.title = 'Change language';
+    button.innerHTML = '<i class="bi bi-translate"></i>';
+
+    const menu = document.createElement('ul');
+    menu.classList.add('dropdown-menu', 'dropdown-menu-end');
 
     for (const language of context.languages) {
-        const option = document.createElement('option');
-        option.value = language.code;
-        option.textContent = language.name;
-        option.selected = language.code === context.currentLanguage.code;
-        select.appendChild(option);
-    }
+        const menuItem = document.createElement('li');
+        const link = document.createElement('a');
+        const isCurrentLanguage = language.code === context.currentLanguage.code;
+        const languagePrefix = language.path ? `${language.path}/` : '';
+        const targetUrl = new URL(`${languagePrefix}${context.pagePath}`, context.rootUrl);
 
-    select.addEventListener('change', async () => {
-        const targetLanguage = context.languages.find(language => language.code === select.value);
-        if (!targetLanguage || targetLanguage.code === context.currentLanguage.code) {
-            return;
-        }
-
-        const languagePrefix = targetLanguage.path ? `${targetLanguage.path}/` : '';
-        let targetUrl = new URL(`${languagePrefix}${context.pagePath}`, context.rootUrl);
         targetUrl.search = window.location.search;
         targetUrl.hash = window.location.hash;
 
-        try {
-            const response = await fetch(targetUrl, { method: 'HEAD' });
-            if (!response.ok) {
-                targetUrl = new URL(`${languagePrefix}index.html`, context.rootUrl);
-            }
-        } catch {
-            targetUrl = new URL(`${languagePrefix}index.html`, context.rootUrl);
+        link.classList.add('dropdown-item');
+        link.href = targetUrl;
+        link.hreflang = language.code;
+        link.lang = language.code;
+        link.textContent = language.name;
+
+        if (isCurrentLanguage) {
+            link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+        } else {
+            link.addEventListener('click', async event => {
+                event.preventDefault();
+                let resolvedUrl = targetUrl;
+
+                try {
+                    const response = await fetch(resolvedUrl, { method: 'HEAD' });
+                    if (!response.ok) {
+                        resolvedUrl = new URL(`${languagePrefix}index.html`, context.rootUrl);
+                    }
+                } catch {
+                    resolvedUrl = new URL(`${languagePrefix}index.html`, context.rootUrl);
+                }
+
+                window.location.assign(resolvedUrl);
+            });
         }
 
-        window.location.assign(targetUrl);
-    });
+        menuItem.appendChild(link);
+        menu.appendChild(menuItem);
+    }
 
-    item.appendChild(select);
+    item.append(button, menu);
 
     return true;
 }

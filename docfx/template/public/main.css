@@ -17,8 +17,15 @@
     margin-left: 0.5rem;
 }
 
-.docs-language-selector .form-select {
-    min-width: 7.5rem;
+.docs-language-button {
+    align-items: center;
+    display: inline-flex;
+    font-size: 1rem;
+    justify-content: center;
+}
+
+.docs-language-selector .dropdown-menu {
+    min-width: 8rem;
 }
 
 .docs-repository-link {
