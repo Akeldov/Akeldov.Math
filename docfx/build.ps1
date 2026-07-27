@@ -25,6 +25,36 @@ function Get-RelativeSitePath {
         '/')
 }
 
+function Get-RussianOutputRelativePath {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Root,
+
+        [Parameter(Mandatory)]
+        [string] $Path,
+
+        [string[]] $VersionedLibraries
+    )
+
+    $relativePath = $Path.Substring($Root.Length)
+    $relativePath = $relativePath.TrimStart(
+        [char][System.IO.Path]::DirectorySeparatorChar)
+    $separator = [System.IO.Path]::DirectorySeparatorChar
+
+    foreach ($library in $VersionedLibraries) {
+        $libraryPrefix = "$library$separator"
+        if ($relativePath.StartsWith(
+            $libraryPrefix,
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+            $libraryPath = Join-Path $library 'latest'
+            return Join-Path $libraryPath $relativePath.Substring(
+                $libraryPrefix.Length)
+        }
+    }
+
+    return $relativePath
+}
+
 function Set-PageSeoMetadata {
     param(
         [Parameter(Mandatory)]
@@ -111,7 +141,13 @@ $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'
 $russianNavigation = Get-Content -LiteralPath $russianNavigationFile -Raw -Encoding UTF8 |
     ConvertFrom-Json
+$russianVersionedLibraries = (
+    Get-Content -LiteralPath (Join-Path $PSScriptRoot 'versions.json') `
+        -Raw -Encoding UTF8 |
+        ConvertFrom-Json
+).libraries
 $russianOverrides = @{}
+$russianOutputOverrides = @{}
 
 if (Test-Path -LiteralPath $englishRoot) {
     Remove-Item -LiteralPath $englishRoot -Recurse -Force
@@ -160,15 +196,40 @@ foreach ($jsonFile in @($englishTocJson, $englishSearchIndex)) {
 if (Test-Path -LiteralPath $russianRoot) {
     Get-ChildItem -LiteralPath $russianSourceRoot -Recurse -Filter '*.md' -File |
         ForEach-Object {
-            $relativePath = $_.FullName.Substring($russianSourceRoot.Length)
-            $relativePath = $relativePath.TrimStart(
-                [char][System.IO.Path]::DirectorySeparatorChar)
+            $relativePath = Get-RussianOutputRelativePath `
+                -Root $russianSourceRoot `
+                -Path $_.FullName `
+                -VersionedLibraries $russianVersionedLibraries
             $relativePath = [System.IO.Path]::ChangeExtension($relativePath, '.html')
             $generatedPage = Join-Path $russianRoot $relativePath
 
             if (Test-Path -LiteralPath $generatedPage) {
-                $russianOverrides[$relativePath] =
-                    [System.IO.File]::ReadAllBytes($generatedPage)
+                $generatedBytes = [System.IO.File]::ReadAllBytes($generatedPage)
+                $russianOverrides[$relativePath] = $generatedBytes
+                $russianOutputOverrides[$relativePath] = $generatedBytes
+            }
+        }
+
+    Get-ChildItem -LiteralPath $russianSourceRoot -Recurse -Filter 'toc.yml' -File |
+        ForEach-Object {
+            $relativeTocPath = Get-RussianOutputRelativePath `
+                -Root $russianSourceRoot `
+                -Path $_.FullName `
+                -VersionedLibraries $russianVersionedLibraries
+            $relativeDirectory = Split-Path -Parent $relativeTocPath
+
+            foreach ($outputName in @('toc.html', 'toc.json')) {
+                $relativePath = if ($relativeDirectory) {
+                    Join-Path $relativeDirectory $outputName
+                } else {
+                    $outputName
+                }
+                $generatedToc = Join-Path $russianRoot $relativePath
+
+                if (Test-Path -LiteralPath $generatedToc) {
+                    $russianOutputOverrides[$relativePath] =
+                        [System.IO.File]::ReadAllBytes($generatedToc)
+                }
             }
         }
 
@@ -235,7 +296,7 @@ foreach ($jsonFile in @($russianTocJson, $russianSearchIndex)) {
 
 Use-SharedPublicAssets -LanguageRoot $russianRoot
 
-foreach ($override in $russianOverrides.GetEnumerator()) {
+foreach ($override in $russianOutputOverrides.GetEnumerator()) {
     $destination = Join-Path $russianRoot $override.Key
     $destinationDirectory = Split-Path -Parent $destination
 

@@ -51,7 +51,17 @@
         "files": [
           "**/*.{md,yml}"
         ],
+        "exclude": [
+          "Spatial2D/**"
+        ],
         "dest": "ru"
+      },
+      {
+        "src": "ru/Spatial2D",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Spatial2D/latest"
       },
       {
         "src": "api",

@@ -145,6 +145,12 @@ generated files under `_site/Akeldov.Math/en` or `_site/Akeldov.Math/ru`.
 
 Shared Russian navigation labels live in `docfx/ru/navigation.json`.
 
+For a versioned library, keep translated sources under `docfx/ru/<Library>` with the same
+hierarchy as the English library sources. Map that source directory to
+`ru/<Library>/latest` in `docfx.json`; do not add `latest` to the source directory itself.
+Translated local `toc.yml` files must be preserved when the build overlays Russian pages onto
+the English fallback branch.
+
 Keep the same page hierarchy across languages so the language selector can preserve the current
 page when switching languages.
 
