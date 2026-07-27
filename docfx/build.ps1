@@ -58,8 +58,32 @@ function Set-PageSeoMetadata {
         [System.Text.UTF8Encoding]::new($false))
 }
 
+function Use-SharedPublicAssets {
+    param(
+        [Parameter(Mandatory)]
+        [string] $LanguageRoot
+    )
+
+    Get-ChildItem -LiteralPath $LanguageRoot -Recurse -Filter '*.html' -File |
+        ForEach-Object {
+            $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+            $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+                $content,
+                '(?<attribute>(?:href|src)=")(?<prefix>(?:\./)?(?:\.\./)*)public/',
+                '${attribute}${prefix}../public/')
+
+            if ($updatedContent -ne $content) {
+                [System.IO.File]::WriteAllText(
+                    $_.FullName,
+                    $updatedContent,
+                    [System.Text.UTF8Encoding]::new($false))
+            }
+        }
+}
+
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $localDocfx = Join-Path $repositoryRoot '.tmp\docfx-tool\docfx.exe'
+$siteRoot = Join-Path $PSScriptRoot '_site\Akeldov.Math'
 
 if (Test-Path -LiteralPath $localDocfx) {
     $docfx = $localDocfx
@@ -72,12 +96,15 @@ if (Test-Path -LiteralPath $localDocfx) {
     $docfx = $docfxCommand.Source
 }
 
+if (Test-Path -LiteralPath $siteRoot) {
+    Remove-Item -LiteralPath $siteRoot -Recurse -Force
+}
+
 & $docfx (Join-Path $PSScriptRoot 'docfx.json')
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-$siteRoot = Join-Path $PSScriptRoot '_site\Akeldov.Math'
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
@@ -97,8 +124,11 @@ Get-ChildItem -LiteralPath $siteRoot |
         'en',
         'ru',
         'library-navigation.json',
+        'manifest.json',
+        'public',
         'robots.txt',
-        'sitemap.xml') |
+        'sitemap.xml',
+        'xrefmap.yml') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $englishRoot -Recurse -Force
     }
@@ -152,8 +182,11 @@ Get-ChildItem -LiteralPath $siteRoot |
         'en',
         'ru',
         'library-navigation.json',
+        'manifest.json',
+        'public',
         'robots.txt',
-        'sitemap.xml') |
+        'sitemap.xml',
+        'xrefmap.yml') |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $russianRoot -Recurse -Force
     }
@@ -200,6 +233,8 @@ foreach ($jsonFile in @($russianTocJson, $russianSearchIndex)) {
     }
 }
 
+Use-SharedPublicAssets -LanguageRoot $russianRoot
+
 foreach ($override in $russianOverrides.GetEnumerator()) {
     $destination = Join-Path $russianRoot $override.Key
     $destinationDirectory = Split-Path -Parent $destination
@@ -221,6 +256,33 @@ if (Test-Path -LiteralPath $russianIndex) {
         $content,
         [System.Text.UTF8Encoding]::new($false))
 }
+
+Use-SharedPublicAssets -LanguageRoot $englishRoot
+
+$publicRoot = Join-Path $siteRoot 'public'
+Get-ChildItem -LiteralPath $publicRoot -Recurse -Filter '*.map' -File |
+    Remove-Item -Force
+
+Get-ChildItem -LiteralPath $publicRoot -Recurse -File |
+    Where-Object Extension -in @('.css', '.js') |
+    ForEach-Object {
+        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+        $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+            $content,
+            '(?m)^\s*//# sourceMappingURL=.*\r?\n?',
+            '')
+        $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+            $updatedContent,
+            '(?m)^\s*/\*# sourceMappingURL=.*\*/\s*\r?\n?',
+            '')
+
+        if ($updatedContent -ne $content) {
+            [System.IO.File]::WriteAllText(
+                $_.FullName,
+                $updatedContent,
+                [System.Text.UTF8Encoding]::new($false))
+        }
+    }
 
 $docfxConfig = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'docfx.json') `
     -Raw -Encoding UTF8 |

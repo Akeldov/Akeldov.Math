@@ -7,9 +7,5 @@
       href: Spatial2D/index.md
     - name: Akeldov.Math.Hexes
       href: Hexes/index.md
-    - name: Akeldov.Math.Graphs
-      href: Graphs/index.md
-    - name: Akeldov.Math.Intervals
-      href: Intervals/index.md
 - name: About
   href: about.md

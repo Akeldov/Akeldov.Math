@@ -28,34 +28,6 @@
       "properties": {
         "TargetFramework": "net6.0"
       }
-    },
-    {
-      "src": [
-        {
-          "src": "../src",
-          "files": [
-            "Akeldov.Math.Graphs/Akeldov.Math.Graphs.csproj"
-          ]
-        }
-      ],
-      "dest": "api/Graphs/latest",
-      "properties": {
-        "TargetFramework": "net6.0"
-      }
-    },
-    {
-      "src": [
-        {
-          "src": "../src",
-          "files": [
-            "Akeldov.Math.Intervals/Akeldov.Math.Intervals.csproj"
-          ]
-        }
-      ],
-      "dest": "api/Intervals/latest",
-      "properties": {
-        "TargetFramework": "net6.0"
-      }
     }
   ],
   "build": {
@@ -110,26 +82,6 @@
         "dest": "Hexes/latest"
       },
       {
-        "src": "Graphs",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "exclude": [
-          "latest/api/**"
-        ],
-        "dest": "Graphs/latest"
-      },
-      {
-        "src": "Intervals",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "exclude": [
-          "latest/api/**"
-        ],
-        "dest": "Intervals"
-      },
-      {
         "src": "api/Spatial2D/latest",
         "files": [
           "**/*.yml"
@@ -142,20 +94,6 @@
           "**/*.yml"
         ],
         "dest": "api/Hexes/latest"
-      },
-      {
-        "src": "api/Graphs/latest",
-        "files": [
-          "**/*.yml"
-        ],
-        "dest": "api/Graphs/latest"
-      },
-      {
-        "src": "api/Intervals/latest",
-        "files": [
-          "**/*.yml"
-        ],
-        "dest": "api/Intervals"
       }
     ],
     "resource": [
@@ -183,13 +121,6 @@
           "index.html"
         ],
         "dest": "Hexes"
-      },
-      {
-        "src": "Graphs",
-        "files": [
-          "versions.json"
-        ],
-        "dest": "Graphs"
       }
     ],
     "output": "_site/Akeldov.Math",

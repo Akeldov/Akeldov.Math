@@ -1,7 +1,6 @@
 {
   "libraries": [
     "Spatial2D",
-    "Hexes",
-    "Graphs"
+    "Hexes"
   ]
 }
