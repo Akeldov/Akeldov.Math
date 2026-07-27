@@ -93,16 +93,19 @@ body > main::before {
 }
 
 .docs-version-selector {
-    margin-bottom: 0.75rem;
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    margin-left: 0.3rem;
+    padding: 0.45rem 0;
 }
 
-.docs-version-selector .form-label {
-    color: var(--bs-secondary-color);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-    margin-bottom: 0.25rem;
-    text-transform: uppercase;
+.docs-version-selector .form-select {
+    font-size: 0.875rem;
+    min-width: 6rem;
+    padding-bottom: 0.25rem;
+    padding-top: 0.25rem;
+    width: auto;
 }
 
 .docs-language-selector {
@@ -164,7 +167,7 @@ body > main::before {
 
 .docs-context-links {
     display: flex;
-    margin-left: 1.25rem;
+    margin-left: 0.75rem;
 }
 
 .docs-context-link {

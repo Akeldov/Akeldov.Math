@@ -65,6 +65,10 @@ Library pages use a contextual second navigation row with these Diátaxis sectio
 - How-to Guides
 - Reference
 
+Keep the package version selector in this contextual row immediately after the current library
+name. It is shared by Concepts, Tutorials, How-to Guides, and Reference, and should preserve the
+current section and language context when switching versions.
+
 The contextual navigation registry is `docfx/library-navigation.json`. Keep its library names,
 versioning mode, and API landing pages aligned with `docfx.json`. Reference links go directly
 to the selected library's independent generated API; do not restore API References as a global

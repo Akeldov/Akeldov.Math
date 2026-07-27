@@ -424,24 +424,23 @@ async function addVersionSelector() {
         return true;
     }
 
-    const toc = document.getElementById('toc');
-    if (!toc) {
+    const navigation = document.getElementById(contextNavigationId);
+    const libraryLink = navigation?.querySelector('.docs-context-library');
+    if (!libraryLink) {
         return false;
+    }
+
+    const context = await getVersionContext();
+    if (!context) {
+        return true;
     }
 
     const container = document.createElement('div');
     container.id = containerId;
     container.classList.add('docs-version-selector');
-    toc.prepend(container);
-
-    const context = await getVersionContext();
-    if (!context) {
-        container.remove();
-        return true;
-    }
 
     const label = document.createElement('label');
-    label.classList.add('form-label');
+    label.classList.add('visually-hidden');
     label.htmlFor = selectorId;
     label.textContent = 'Package version';
 
@@ -466,6 +465,8 @@ async function addVersionSelector() {
         let targetUrl = new URL(
             `${encodeURIComponent(select.value)}/${context.pagePath}`,
             context.versionRootUrl);
+        targetUrl.search = window.location.search;
+        targetUrl.hash = window.location.hash;
 
         try {
             const response = await fetch(targetUrl, { method: 'HEAD' });
@@ -473,17 +474,22 @@ async function addVersionSelector() {
                 targetUrl = new URL(
                     `${encodeURIComponent(select.value)}/index.html`,
                     context.versionRootUrl);
+                targetUrl.search = window.location.search;
+                targetUrl.hash = window.location.hash;
             }
         } catch {
             targetUrl = new URL(
                 `${encodeURIComponent(select.value)}/index.html`,
                 context.versionRootUrl);
+            targetUrl.search = window.location.search;
+            targetUrl.hash = window.location.hash;
         }
 
         window.location.assign(targetUrl);
     });
 
     container.append(label, select);
+    libraryLink.insertAdjacentElement('afterend', container);
 
     return true;
 }
