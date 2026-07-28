@@ -1,34 +1,31 @@
-- name: Концепции
-  href: index.md
+- name: Основы
+  href: fundamentals/index.md
   items:
-    - name: Основы
-      href: fundamentals/index.md
+    - name: Система координат
+      href: fundamentals/coordinate-system/index.md
       items:
-        - name: Система координат
-          href: fundamentals/coordinate-system/index.md
-          items:
-            - name: Точки
-              href: fundamentals/coordinate-system/points.md
-            - name: Векторы
-              href: fundamentals/coordinate-system/vectors.md
-            - name: Дискретные индексы
-              href: fundamentals/coordinate-system/discrete-indices.md
-        - name: Углы и единицы измерения
-          href: fundamentals/angles-and-units.md
-        - name: Владение коллекциями и неизменяемость
-          href: fundamentals/collection-ownership-and-immutability.md
-    - name: Геометрическая модель
-      href: geometry-model/index.md
-      items:
-        - name: Кривые
-          href: geometry-model/curves.md
-        - name: Контуры
-          href: geometry-model/contours.md
-        - name: Регионы
-          href: geometry-model/regions.md
-    - name: Поля
-      href: fields.md
-    - name: Пространственные алгоритмы
-      href: spatial-algorithms.md
-    - name: Растеризация
-      href: rasterization.md
+        - name: Точки
+          href: fundamentals/coordinate-system/points.md
+        - name: Векторы
+          href: fundamentals/coordinate-system/vectors.md
+        - name: Дискретные индексы
+          href: fundamentals/coordinate-system/discrete-indices.md
+    - name: Углы и единицы измерения
+      href: fundamentals/angles-and-units.md
+    - name: Владение коллекциями и неизменяемость
+      href: fundamentals/collection-ownership-and-immutability.md
+- name: Геометрическая модель
+  href: geometry-model/index.md
+  items:
+    - name: Кривые
+      href: geometry-model/curves.md
+    - name: Контуры
+      href: geometry-model/contours.md
+    - name: Регионы
+      href: geometry-model/regions.md
+- name: Поля
+  href: fields.md
+- name: Пространственные алгоритмы
+  href: spatial-algorithms.md
+- name: Растеризация
+  href: rasterization.md

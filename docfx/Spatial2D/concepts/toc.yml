@@ -1,34 +1,31 @@
-- name: Concepts
-  href: index.md
+- name: Fundamentals
+  href: fundamentals/index.md
   items:
-    - name: Fundamentals
-      href: fundamentals/index.md
+    - name: Coordinate System
+      href: fundamentals/coordinate-system/index.md
       items:
-        - name: Coordinate System
-          href: fundamentals/coordinate-system/index.md
-          items:
-            - name: Points
-              href: fundamentals/coordinate-system/points.md
-            - name: Vectors
-              href: fundamentals/coordinate-system/vectors.md
-            - name: Discrete Indices
-              href: fundamentals/coordinate-system/discrete-indices.md
-        - name: Angles and Units
-          href: fundamentals/angles-and-units.md
-        - name: Collection Ownership and Immutability
-          href: fundamentals/collection-ownership-and-immutability.md
-    - name: Geometry Model
-      href: geometry-model/index.md
-      items:
-        - name: Curves
-          href: geometry-model/curves.md
-        - name: Contours
-          href: geometry-model/contours.md
-        - name: Regions
-          href: geometry-model/regions.md
-    - name: Fields
-      href: fields.md
-    - name: Spatial Algorithms
-      href: spatial-algorithms.md
-    - name: Rasterization
-      href: rasterization.md
+        - name: Points
+          href: fundamentals/coordinate-system/points.md
+        - name: Vectors
+          href: fundamentals/coordinate-system/vectors.md
+        - name: Discrete Indices
+          href: fundamentals/coordinate-system/discrete-indices.md
+    - name: Angles and Units
+      href: fundamentals/angles-and-units.md
+    - name: Collection Ownership and Immutability
+      href: fundamentals/collection-ownership-and-immutability.md
+- name: Geometry Model
+  href: geometry-model/index.md
+  items:
+    - name: Curves
+      href: geometry-model/curves.md
+    - name: Contours
+      href: geometry-model/contours.md
+    - name: Regions
+      href: geometry-model/regions.md
+- name: Fields
+  href: fields.md
+- name: Spatial Algorithms
+  href: spatial-algorithms.md
+- name: Rasterization
+  href: rasterization.md

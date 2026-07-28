@@ -1,46 +1,43 @@
-- name: Учебники
-  href: index.md
+- name: Основы двумерной геометрии
+  href: 2d-geometry-fundamentals/index.md
   items:
-    - name: Основы двумерной геометрии
-      href: 2d-geometry-fundamentals/index.md
-      items:
-        - name: Создание проекта
-          href: 2d-geometry-fundamentals/creating-a-project.md
-        - name: Точки и векторы
-          href: 2d-geometry-fundamentals/points-and-vectors.md
-        - name: Кривые и преобразования
-          href: 2d-geometry-fundamentals/curves-and-transformations.md
-        - name: Построение замкнутого контура
-          href: 2d-geometry-fundamentals/building-a-closed-contour.md
-        - name: Создание региона
-          href: 2d-geometry-fundamentals/creating-a-region.md
-        - name: Проверка точек и пересечений
-          href: 2d-geometry-fundamentals/checking-points-and-intersections.md
-    - name: Создание карты влияния
-      href: building-an-influence-map/index.md
-      items:
-        - name: Источники влияния
-          href: building-an-influence-map/influence-sources.md
-        - name: Построение поля
-          href: building-an-influence-map/building-the-field.md
-        - name: Выбор стратегии интерполяции
-          href: building-an-influence-map/choosing-an-interpolation-strategy.md
-        - name: Отсечение удалённых источников
-          href: building-an-influence-map/culling-distant-sources.md
-        - name: Растеризация поля
-          href: building-an-influence-map/rasterizing-the-field.md
-        - name: Экспорт изображения
-          href: building-an-influence-map/exporting-the-image.md
-    - name: Процедурное разбиение пространства
-      href: procedural-space-partitioning/index.md
-      items:
-        - name: Генерация точек Пуассона
-          href: procedural-space-partitioning/generating-poisson-points.md
-        - name: Создание областей Вороного
-          href: procedural-space-partitioning/creating-voronoi-cells.md
-        - name: Добавление весов
-          href: procedural-space-partitioning/adding-weights.md
-        - name: Релаксация областей
-          href: procedural-space-partitioning/relaxing-the-cells.md
-        - name: Визуализация результата
-          href: procedural-space-partitioning/visualizing-the-result.md
+    - name: Создание проекта
+      href: 2d-geometry-fundamentals/creating-a-project.md
+    - name: Точки и векторы
+      href: 2d-geometry-fundamentals/points-and-vectors.md
+    - name: Кривые и преобразования
+      href: 2d-geometry-fundamentals/curves-and-transformations.md
+    - name: Построение замкнутого контура
+      href: 2d-geometry-fundamentals/building-a-closed-contour.md
+    - name: Создание региона
+      href: 2d-geometry-fundamentals/creating-a-region.md
+    - name: Проверка точек и пересечений
+      href: 2d-geometry-fundamentals/checking-points-and-intersections.md
+- name: Создание карты влияния
+  href: building-an-influence-map/index.md
+  items:
+    - name: Источники влияния
+      href: building-an-influence-map/influence-sources.md
+    - name: Построение поля
+      href: building-an-influence-map/building-the-field.md
+    - name: Выбор стратегии интерполяции
+      href: building-an-influence-map/choosing-an-interpolation-strategy.md
+    - name: Отсечение удалённых источников
+      href: building-an-influence-map/culling-distant-sources.md
+    - name: Растеризация поля
+      href: building-an-influence-map/rasterizing-the-field.md
+    - name: Экспорт изображения
+      href: building-an-influence-map/exporting-the-image.md
+- name: Процедурное разбиение пространства
+  href: procedural-space-partitioning/index.md
+  items:
+    - name: Генерация точек Пуассона
+      href: procedural-space-partitioning/generating-poisson-points.md
+    - name: Создание областей Вороного
+      href: procedural-space-partitioning/creating-voronoi-cells.md
+    - name: Добавление весов
+      href: procedural-space-partitioning/adding-weights.md
+    - name: Релаксация областей
+      href: procedural-space-partitioning/relaxing-the-cells.md
+    - name: Визуализация результата
+      href: procedural-space-partitioning/visualizing-the-result.md
