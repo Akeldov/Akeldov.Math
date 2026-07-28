@@ -1,0 +1,37 @@
+- name: Руководства
+  href: index.md
+  items:
+    - name: Кривые и контуры
+      href: curves-and-contours/index.md
+      items:
+        - name: Спроецировать точку на кривую
+          href: curves-and-contours/project-a-point-onto-a-curve.md
+        - name: Найти пересечения кривых
+          href: curves-and-contours/find-curve-intersections.md
+        - name: Построить замкнутый контур
+          href: curves-and-contours/build-a-closed-contour.md
+    - name: Регионы
+      href: regions/index.md
+      items:
+        - name: Создать регион с отверстиями
+          href: regions/create-a-region-with-holes.md
+    - name: Поля
+      href: fields/index.md
+      items:
+        - name: Построить карту влияния
+          href: fields/build-an-influence-map.md
+    - name: Выборка
+      href: sampling/index.md
+      items:
+        - name: Сгенерировать точки Пуассона
+          href: sampling/generate-poisson-disk-points.md
+    - name: Разбиение
+      href: partitioning/index.md
+      items:
+        - name: Разбить объекты с помощью взвешенного Вороного
+          href: partitioning/partition-items-with-weighted-voronoi.md
+    - name: Растеризация
+      href: rasterization/index.md
+      items:
+        - name: Растеризовать знаковое поле расстояний
+          href: rasterization/rasterize-a-signed-distance-field.md
