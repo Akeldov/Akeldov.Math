@@ -1,0 +1,46 @@
+- name: Tutorials
+  href: index.md
+  items:
+    - name: 2D Geometry Fundamentals
+      href: 2d-geometry-fundamentals/index.md
+      items:
+        - name: Creating a Project
+          href: 2d-geometry-fundamentals/creating-a-project.md
+        - name: Points and Vectors
+          href: 2d-geometry-fundamentals/points-and-vectors.md
+        - name: Curves and Transformations
+          href: 2d-geometry-fundamentals/curves-and-transformations.md
+        - name: Building a Closed Contour
+          href: 2d-geometry-fundamentals/building-a-closed-contour.md
+        - name: Creating a Region
+          href: 2d-geometry-fundamentals/creating-a-region.md
+        - name: Checking Points and Intersections
+          href: 2d-geometry-fundamentals/checking-points-and-intersections.md
+    - name: Building an Influence Map
+      href: building-an-influence-map/index.md
+      items:
+        - name: Influence Sources
+          href: building-an-influence-map/influence-sources.md
+        - name: Building the Field
+          href: building-an-influence-map/building-the-field.md
+        - name: Choosing an Interpolation Strategy
+          href: building-an-influence-map/choosing-an-interpolation-strategy.md
+        - name: Culling Distant Sources
+          href: building-an-influence-map/culling-distant-sources.md
+        - name: Rasterizing the Field
+          href: building-an-influence-map/rasterizing-the-field.md
+        - name: Exporting the Image
+          href: building-an-influence-map/exporting-the-image.md
+    - name: Procedural Space Partitioning
+      href: procedural-space-partitioning/index.md
+      items:
+        - name: Generating Poisson Points
+          href: procedural-space-partitioning/generating-poisson-points.md
+        - name: Creating Voronoi Cells
+          href: procedural-space-partitioning/creating-voronoi-cells.md
+        - name: Adding Weights
+          href: procedural-space-partitioning/adding-weights.md
+        - name: Relaxing the Cells
+          href: procedural-space-partitioning/relaxing-the-cells.md
+        - name: Visualizing the Result
+          href: procedural-space-partitioning/visualizing-the-result.md

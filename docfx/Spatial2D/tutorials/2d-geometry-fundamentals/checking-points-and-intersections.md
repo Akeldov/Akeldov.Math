@@ -1,0 +1,1 @@
+# Checking Points and Intersections
