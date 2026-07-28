@@ -1,0 +1,64 @@
+- name: Создание гексагональной карты
+  href: creating-a-hex-map/index.md
+  items:
+    - name: Создание проекта
+      href: creating-a-hex-map/creating-a-project.md
+    - name: Выбор раскладки
+      href: creating-a-hex-map/choosing-a-layout.md
+    - name: Работа с QRS-координатами
+      href: creating-a-hex-map/working-with-qrs-coordinates.md
+    - name: Создание топологии
+      href: creating-a-hex-map/creating-the-topology.md
+    - name: Хранение данных в карте
+      href: creating-a-hex-map/storing-map-data.md
+    - name: Поиск соседей и колец
+      href: creating-a-hex-map/finding-neighbors-and-rings.md
+    - name: Визуализация карты
+      href: creating-a-hex-map/visualizing-the-map.md
+- name: Поиск пути по карте
+  href: pathfinding-on-a-map/index.md
+  items:
+    - name: Создание карты местности
+      href: pathfinding-on-a-map/creating-a-terrain-map.md
+    - name: Назначение стоимости переходов
+      href: pathfinding-on-a-map/assigning-transfer-costs.md
+    - name: Добавление непроходимых гексов
+      href: pathfinding-on-a-map/adding-impassable-hexes.md
+    - name: Поиск пути
+      href: pathfinding-on-a-map/finding-a-path.md
+    - name: Обработка недоступной цели
+      href: pathfinding-on-a-map/handling-an-unreachable-target.md
+    - name: Визуализация маршрута
+      href: pathfinding-on-a-map/visualizing-the-route.md
+- name: Создание полигекса
+  href: creating-a-polyhex/index.md
+  items:
+    - name: Формирование маски
+      href: creating-a-polyhex/defining-the-mask.md
+    - name: Построение топологии полигекса
+      href: creating-a-polyhex/building-polyhex-topology.md
+    - name: Получение рёбер и вершин
+      href: creating-a-polyhex/obtaining-edges-and-vertices.md
+    - name: Преобразование в геометрию Spatial2D
+      href: creating-a-polyhex/converting-to-spatial2d-geometry.md
+    - name: Создание региона
+      href: creating-a-polyhex/creating-a-region.md
+    - name: Растеризация результата
+      href: creating-a-polyhex/rasterizing-the-result.md
+- name: Растеризация гексагональной карты
+  href: rasterizing-a-hex-map/index.md
+  items:
+    - name: Подготовка топологии и исходной карты
+      href: rasterizing-a-hex-map/preparing-topology-and-source-map.md
+    - name: Создание индексного растра
+      href: rasterizing-a-hex-map/creating-an-index-raster.md
+    - name: Обработка частичных окрестностей на границах
+      href: rasterizing-a-hex-map/handling-partial-boundary-neighborhoods.md
+    - name: Создание барицентрического растра
+      href: rasterizing-a-hex-map/creating-a-barycentric-raster.md
+    - name: Перенос значений карты в пиксели
+      href: rasterizing-a-hex-map/mapping-map-values-to-pixels.md
+    - name: Преобразование значений в цвета
+      href: rasterizing-a-hex-map/mapping-values-to-colors.md
+    - name: Экспорт изображения
+      href: rasterizing-a-hex-map/exporting-the-image.md

@@ -1,0 +1,64 @@
+- name: Creating a Hex Map
+  href: creating-a-hex-map/index.md
+  items:
+    - name: Creating a Project
+      href: creating-a-hex-map/creating-a-project.md
+    - name: Choosing a Layout
+      href: creating-a-hex-map/choosing-a-layout.md
+    - name: Working with QRS Coordinates
+      href: creating-a-hex-map/working-with-qrs-coordinates.md
+    - name: Creating the Topology
+      href: creating-a-hex-map/creating-the-topology.md
+    - name: Storing Map Data
+      href: creating-a-hex-map/storing-map-data.md
+    - name: Finding Neighbors and Rings
+      href: creating-a-hex-map/finding-neighbors-and-rings.md
+    - name: Visualizing the Map
+      href: creating-a-hex-map/visualizing-the-map.md
+- name: Pathfinding on a Map
+  href: pathfinding-on-a-map/index.md
+  items:
+    - name: Creating a Terrain Map
+      href: pathfinding-on-a-map/creating-a-terrain-map.md
+    - name: Assigning Transfer Costs
+      href: pathfinding-on-a-map/assigning-transfer-costs.md
+    - name: Adding Impassable Hexes
+      href: pathfinding-on-a-map/adding-impassable-hexes.md
+    - name: Finding a Path
+      href: pathfinding-on-a-map/finding-a-path.md
+    - name: Handling an Unreachable Target
+      href: pathfinding-on-a-map/handling-an-unreachable-target.md
+    - name: Visualizing the Route
+      href: pathfinding-on-a-map/visualizing-the-route.md
+- name: Creating a Polyhex
+  href: creating-a-polyhex/index.md
+  items:
+    - name: Defining the Mask
+      href: creating-a-polyhex/defining-the-mask.md
+    - name: Building Polyhex Topology
+      href: creating-a-polyhex/building-polyhex-topology.md
+    - name: Obtaining Edges and Vertices
+      href: creating-a-polyhex/obtaining-edges-and-vertices.md
+    - name: Converting to Spatial2D Geometry
+      href: creating-a-polyhex/converting-to-spatial2d-geometry.md
+    - name: Creating a Region
+      href: creating-a-polyhex/creating-a-region.md
+    - name: Rasterizing the Result
+      href: creating-a-polyhex/rasterizing-the-result.md
+- name: Rasterizing a Hex Map
+  href: rasterizing-a-hex-map/index.md
+  items:
+    - name: Preparing Topology and the Source Map
+      href: rasterizing-a-hex-map/preparing-topology-and-source-map.md
+    - name: Creating an Index Raster
+      href: rasterizing-a-hex-map/creating-an-index-raster.md
+    - name: Handling Partial Boundary Neighborhoods
+      href: rasterizing-a-hex-map/handling-partial-boundary-neighborhoods.md
+    - name: Creating a Barycentric Raster
+      href: rasterizing-a-hex-map/creating-a-barycentric-raster.md
+    - name: Mapping Map Values to Pixels
+      href: rasterizing-a-hex-map/mapping-map-values-to-pixels.md
+    - name: Mapping Values to Colors
+      href: rasterizing-a-hex-map/mapping-values-to-colors.md
+    - name: Exporting the Image
+      href: rasterizing-a-hex-map/exporting-the-image.md
