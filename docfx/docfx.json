@@ -52,7 +52,8 @@
           "**/*.{md,yml}"
         ],
         "exclude": [
-          "Spatial2D/**"
+          "Spatial2D/**",
+          "Hexes/**"
         ],
         "dest": "ru"
       },
@@ -62,6 +63,13 @@
           "**/*.{md,yml}"
         ],
         "dest": "ru/Spatial2D/latest"
+      },
+      {
+        "src": "ru/Hexes",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Hexes/latest"
       },
       {
         "src": "api",

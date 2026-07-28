@@ -1,0 +1,47 @@
+- name: Основы
+  href: fundamentals/index.md
+  items:
+    - name: Системы координат
+      href: fundamentals/coordinate-systems/index.md
+      items:
+        - name: QRS-координаты
+          href: fundamentals/coordinate-systems/qrs-coordinates.md
+        - name: Индексы строк и столбцов
+          href: fundamentals/coordinate-systems/row-and-column-indices.md
+        - name: Пространственные координаты
+          href: fundamentals/coordinate-systems/spatial-coordinates.md
+    - name: Раскладки
+      href: fundamentals/layouts.md
+    - name: Дискретизация координат
+      href: fundamentals/coordinate-discretization.md
+    - name: Повороты и преобразования
+      href: fundamentals/rotations-and-transformations.md
+- name: Модель гексагональной сетки
+  href: hex-grid-model/index.md
+  items:
+    - name: Топология
+      href: hex-grid-model/topology.md
+    - name: Геометрия
+      href: hex-grid-model/geometry.md
+    - name: Полигексы
+      href: hex-grid-model/polyhexes.md
+- name: Хранение данных
+  href: data-storage/index.md
+  items:
+    - name: Карты
+      href: data-storage/maps.md
+    - name: Растры
+      href: data-storage/rasters.md
+    - name: Полные и частичные окрестности
+      href: data-storage/complete-and-partial-neighborhoods.md
+- name: Пространственные алгоритмы
+  href: spatial-algorithms/index.md
+  items:
+    - name: Поиск пути
+      href: spatial-algorithms/pathfinding.md
+    - name: Разбиение пространства
+      href: spatial-algorithms/space-partitioning.md
+    - name: Хроматизация
+      href: spatial-algorithms/chromatization.md
+- name: Растеризация
+  href: rasterization.md

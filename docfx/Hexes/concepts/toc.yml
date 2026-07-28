@@ -1,0 +1,47 @@
+- name: Fundamentals
+  href: fundamentals/index.md
+  items:
+    - name: Coordinate Systems
+      href: fundamentals/coordinate-systems/index.md
+      items:
+        - name: QRS Coordinates
+          href: fundamentals/coordinate-systems/qrs-coordinates.md
+        - name: Row and Column Indices
+          href: fundamentals/coordinate-systems/row-and-column-indices.md
+        - name: Spatial Coordinates
+          href: fundamentals/coordinate-systems/spatial-coordinates.md
+    - name: Layouts
+      href: fundamentals/layouts.md
+    - name: Coordinate Discretization
+      href: fundamentals/coordinate-discretization.md
+    - name: Rotations and Transformations
+      href: fundamentals/rotations-and-transformations.md
+- name: Hex Grid Model
+  href: hex-grid-model/index.md
+  items:
+    - name: Topology
+      href: hex-grid-model/topology.md
+    - name: Geometry
+      href: hex-grid-model/geometry.md
+    - name: Polyhexes
+      href: hex-grid-model/polyhexes.md
+- name: Data Storage
+  href: data-storage/index.md
+  items:
+    - name: Maps
+      href: data-storage/maps.md
+    - name: Rasters
+      href: data-storage/rasters.md
+    - name: Complete and Partial Neighborhoods
+      href: data-storage/complete-and-partial-neighborhoods.md
+- name: Spatial Algorithms
+  href: spatial-algorithms/index.md
+  items:
+    - name: Pathfinding
+      href: spatial-algorithms/pathfinding.md
+    - name: Space Partitioning
+      href: spatial-algorithms/space-partitioning.md
+    - name: Chromatization
+      href: spatial-algorithms/chromatization.md
+- name: Rasterization
+  href: rasterization.md
