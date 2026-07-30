@@ -125,6 +125,19 @@ of links back to conceptual documentation. Preserve the selected interface langu
 browsing API pages: API content and its `/api/` URL stay English, while navigation returns users
 to the matching conceptual language branch.
 
+API URLs are language-neutral and must never include `/en/` or `/ru/`. Preserve the interface
+language with the `lang` query parameter instead. For example, use:
+
+```text
+/Akeldov.Math/api/Spatial2D/0.8.0/Akeldov.Math.Spatial2D.html?lang=ru
+```
+
+Do not generate:
+
+```text
+/Akeldov.Math/en/api/Spatial2D/0.8.0/Akeldov.Math.Spatial2D.html
+```
+
 When adding a library API:
 
 1. Add a separate `metadata` entry for its project.

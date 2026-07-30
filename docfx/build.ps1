@@ -88,7 +88,7 @@ function Set-PageSeoMetadata {
         [System.Text.UTF8Encoding]::new($false))
 }
 
-function Use-SharedPublicAssets {
+function Update-LanguageBranchRelativeLinks {
     param(
         [Parameter(Mandatory)]
         [string] $LanguageRoot
@@ -101,6 +101,10 @@ function Use-SharedPublicAssets {
                 $content,
                 '(?<attribute>(?:href|src)=")(?<prefix>(?:\./)?(?:\.\./)*)public/',
                 '${attribute}${prefix}../public/')
+            $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+                $updatedContent,
+                '(?<attribute>href=")(?<prefix>(?:\./)?(?:\.\./)*)api/',
+                '${attribute}${prefix}../api/')
 
             if ($updatedContent -ne $content) {
                 [System.IO.File]::WriteAllText(
@@ -169,18 +173,8 @@ Get-ChildItem -LiteralPath $siteRoot |
         Copy-Item -LiteralPath $_.FullName -Destination $englishRoot -Recurse -Force
     }
 
-$englishTocHtml = Join-Path $englishRoot 'toc.html'
 $englishTocJson = Join-Path $englishRoot 'toc.json'
 $englishSearchIndex = Join-Path $englishRoot 'index.json'
-
-if (Test-Path -LiteralPath $englishTocHtml) {
-    $content = Get-Content -LiteralPath $englishTocHtml -Raw -Encoding UTF8
-    $content = $content.Replace('href="api/', 'href="../api/')
-    [System.IO.File]::WriteAllText(
-        $englishTocHtml,
-        $content,
-        [System.Text.UTF8Encoding]::new($false))
-}
 
 foreach ($jsonFile in @($englishTocJson, $englishSearchIndex)) {
     if (Test-Path -LiteralPath $jsonFile) {
@@ -258,7 +252,6 @@ $russianSearchIndex = Join-Path $russianRoot 'index.json'
 
 if (Test-Path -LiteralPath $russianTocHtml) {
     $content = Get-Content -LiteralPath $russianTocHtml -Raw -Encoding UTF8
-    $content = $content.Replace('href="api/', 'href="../api/')
     $content = $content.Replace('>Home<', ">$($russianNavigation.home)<")
     $content = $content.Replace('>Libraries<', ">$($russianNavigation.libraries)<")
     $content = $content.Replace(
@@ -294,7 +287,7 @@ foreach ($jsonFile in @($russianTocJson, $russianSearchIndex)) {
     }
 }
 
-Use-SharedPublicAssets -LanguageRoot $russianRoot
+Update-LanguageBranchRelativeLinks -LanguageRoot $russianRoot
 
 foreach ($override in $russianOutputOverrides.GetEnumerator()) {
     $destination = Join-Path $russianRoot $override.Key
@@ -318,7 +311,7 @@ if (Test-Path -LiteralPath $russianIndex) {
         [System.Text.UTF8Encoding]::new($false))
 }
 
-Use-SharedPublicAssets -LanguageRoot $englishRoot
+Update-LanguageBranchRelativeLinks -LanguageRoot $englishRoot
 
 $publicRoot = Join-Path $siteRoot 'public'
 Get-ChildItem -LiteralPath $publicRoot -Recurse -Filter '*.map' -File |
