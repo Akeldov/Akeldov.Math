@@ -54,6 +54,31 @@ After changing raw HTML image paths, verify with:
 Then check the generated HTML image `src` values resolve to files under
 `.mkdocs-site-temp\assets\...`, and remove `.mkdocs-site-temp` after verification.
 
+## Local DocFX Wiki
+
+Before starting the DocFX wiki, check whether port `8081` is already listening and reuse the
+existing server when possible:
+
+```powershell
+Get-NetTCPConnection -LocalPort 8081 -State Listen -ErrorAction SilentlyContinue
+```
+
+Build and serve the wiki from the repository root:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\docfx\build.ps1 -Serve -Port 8081
+```
+
+The command intentionally keeps running. Open:
+
+```text
+http://localhost:8081/Akeldov.Math/
+```
+
+When sandboxing is active, request elevated access for the command because DocFX API metadata
+generation invokes the .NET build and needs the normal NuGet package cache as well as write
+access to `bin` and `obj`.
+
 ## Spatial2D README
 
 Keep `src\Akeldov.Math.Spatial2D\README.md` short and close to its current shape:
