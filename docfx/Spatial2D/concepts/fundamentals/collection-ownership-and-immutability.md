@@ -1,63 +1,44 @@
 # Collection Ownership and Immutability
 
-Akeldov.Math.Spatial2D uses collection types and XML documentation to communicate who may mutate
-a collection and whether the library keeps it as state. Value types such as `PointXY`,
-`VectorXY`, and most small geometry primitives are immutable, but collections and the objects
-stored in them can have separate mutability rules.
+Collection contracts in Akeldov.Math.Spatial2D answer two separate questions: what the library
+does with a collection passed into an API, and what ownership a caller receives when a
+collection is returned. Collection types and XML documentation describe both parts explicitly.
 
-## Two ownership types
+## Two groups of situations
 
-Computed collection results and read-only structural surfaces use two ownership contracts:
-
-| Ownership type | Public shape | Contract |
+| Direction | Main question | Possible contracts |
 |---|---|---|
-| Caller Ownership | A newly returned `List<T>` or array | The caller receives a new mutable collection that the library does not retain |
-| Library Ownership | A returned `IReadOnlyList<T>` | The library preserves structural state or semantic invariants; the caller receives read-only access |
+| Collection input | Does the library keep anything after the call? | Use only, retain a copy, or retain the original reference |
+| Collection output | What does the returned collection represent? | A new caller-owned result, a read-only library-owned surface, or direct mutable access to existing state |
 
-These contracts describe the collection returned through the API. Whether a constructor or
-method copies or retains an input collection is a separate question described later on this
-page. An API that explicitly exposes retained mutable storage, such as `Raster<TValue>.Values`,
-shares existing state rather than returning a new result or transferring ownership.
+The input and output contracts are independent. For example, an API can copy an input
+collection into its state and later expose that copy through `IReadOnlyList<T>`.
 
-## Caller Ownership
+## Collection input
 
-Spatial2D returns `List<T>` or arrays for newly computed transient results that it does not
-retain. Their XML documentation states that the collection is new, mutable, and owned by the
-caller.
+Passing a collection into a method or constructor does not by itself transfer ownership. The
+API documentation states which of the following three actions occurs.
 
-Ray intersections are one example:
+### Used only during the call
+
+The library reads or enumerates the collection to perform the operation and does not retain the
+collection after the call returns. The caller remains its only owner and may reuse or modify it
+afterward.
+
+Do not modify a borrowed input while the operation is still running unless the API explicitly
+supports concurrent mutation. The parameter documentation identifies this case as an input that
+is used only for the operation and is not retained.
+
+### Copied into library-owned state
+
+The library creates a structural copy and retains that copy as its own state. The original
+collection remains caller-owned, and later structural changes to it do not affect the library's
+copy.
+
+<xref:Akeldov.Math.Spatial2D.Curves.BezierCurve> follows this contract for control points:
 
 ```csharp
-using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Contours;
-using Akeldov.Math.Spatial2D.Curves;
-
-var circle = new Circle(new PointXY(0f, 0f), 5f);
-var ray = new Ray(new PointXY(-10f, 0f));
-
-List<PointXY> intersections = circle.GetRayIntersections(ray);
-
-intersections.RemoveAll(point => point.X < 0f);
-intersections.Add(new PointXY(20f, 0f));
-```
-
-Changing this list does not modify the circle or affect later intersection calls. The same
-caller-ownership pattern is used for values such as culling results, Poisson disk samples,
-flattened curve segments, scaled item copies, and derived Voronoi site arrays.
-
-Caller ownership applies to the collection structure. Unless an API explicitly promises a deep
-copy, reference-type elements can still refer to objects shared with the input or library state.
-
-## Library Ownership
-
-Library Ownership means that the library keeps control of structural mutation through its public
-contract. `IReadOnlyList<T>` is used when order, cardinality, adjacency, or another invariant
-forms part of retained state or of a semantic algorithm result. For example, the control-point
-sequence determines a Bezier curve:
-
-```csharp
-using System.Collections.Generic;
 using Akeldov.Math.Spatial2D.Curves;
 
 var input = new[]
@@ -68,57 +49,24 @@ var input = new[]
 };
 
 var curve = new BezierCurve(input);
-IReadOnlyList<PointXY> controlPoints = curve.ControlPoints;
+input[1] = new PointXY(100f, 100f);
 
-PointXY middle = controlPoints[1]; // (1, 2)
+PointXY retained = curve.ControlPoints[1]; // Still (1, 2)
 ```
 
-<xref:Akeldov.Math.Spatial2D.Curves.BezierCurve> copies the input points and exposes a read-only
-structural view of that copy. Replacing an element in `input` after construction does not alter
-the curve.
+This is ownership of the copy, not ownership of the original collection. Unless documented
+otherwise, a structural copy is shallow: reference-type elements can still be shared.
 
-Contour curve lists, region contours, partition items, influence sources, and distinct field
-values use similar read-only surfaces when their structure belongs to retained state or a
-semantic algorithm result.
+### Original reference retained: aggregation
 
-Library Ownership describes the returned API surface rather than who originally allocated the
-underlying collection. A validation operation may return its input as-is without granting
-structural mutation through the returned `IReadOnlyList<T>` contract.
+The library stores a reference to the collection supplied by the caller. No structural copy is
+made, so the caller and library share the same collection. Changes through either reference are
+visible through the other.
 
-Do not cast a returned `IReadOnlyList<T>` to a mutable implementation and modify it. The concrete
-runtime type is not part of the contract, and bypassing the read-only surface can break
-invariants even if a cast happens to succeed.
-
-### Read-only is not deeply immutable
-
-`IReadOnlyList<T>` prevents mutation through that interface. It does not by itself guarantee any
-of the following:
-
-- that the underlying collection is an immutable collection type;
-- that the library made a defensive copy;
-- that another reference cannot change the backing collection;
-- that reference-type elements are themselves immutable;
-- that a structural copy recursively clones its elements.
-
-Spatial2D documents the stronger guarantee when it exists. For example, `BezierCurve` describes
-its control points as copied state, while a validation helper can return its input list as-is
-because validation does not transfer ownership.
-
-Treat collection immutability and element immutability as separate questions. A stable
-read-only list of mutable objects can retain its order and count while an object's properties
-change.
-
-## Copied and retained inputs
-
-Input handling is separate from the two return ownership types. Some APIs, such as
-`BezierCurve`, copy an input collection before retaining state. The caller may then change the
-original collection without affecting the created object.
-
-Other APIs intentionally share mutable storage. `Raster<TValue>` retains the array supplied to
-its constructor and exposes it through `Values`. The array and raster indexers address the same
-cells:
+`Raster<TValue>` aggregates the value array passed to its constructor:
 
 ```csharp
+using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 var values = new[]
@@ -131,62 +79,118 @@ var raster = new Raster<int>(new VectorXYInt(2, 2), values);
 
 values[0] = 10;
 int throughRaster = raster[0, 0]; // 10
-
-raster[1, 1] = 40;
-int throughArray = values[3]; // 40
 ```
 
-This sharing avoids an extra full-raster copy and allows direct bulk access. It also means the
-caller must coordinate mutations. The raster does not synchronize access, and a reference
-obtained from `Values` is not a snapshot.
+Aggregation avoids a copy, but it couples lifetime and mutation. The caller must not make
+changes that violate the documented invariants and must coordinate concurrent access. The API
+documentation explicitly says that the input is retained as state.
 
-Copy the array before construction when the raster must be isolated from subsequent changes to
-the source:
+The parameter type alone does not distinguish these cases. An `IReadOnlyList<T>` input can be
+borrowed, copied, or retained as the same object.
+
+## Collection output
+
+A returned collection has one of three ownership contracts. Its public type is an important
+signal, but the XML documentation supplies details that the type cannot express.
+
+### New caller-owned result
+
+A new array or `List<T>` returned as a computation result is `CallerOwned`. The library does not
+retain that collection, and the caller may filter, append to, reorder, or reuse it. XML
+documentation states that the result is new, mutable, and owned by the caller.
+
+Ray intersections are one example:
 
 ```csharp
-var isolatedRaster = new Raster<int>(
-    new VectorXYInt(2, 2),
-    (int[])values.Clone());
+using System.Collections.Generic;
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Curves;
+
+var circle = new Circle(new PointXY(0f, 0f), 5f);
+var ray = new Ray(new PointXY(-10f, 0f));
+
+List<PointXY> intersections = circle.GetRayIntersections(ray);
+
+intersections.RemoveAll(point => point.X < 0f);
+intersections.Add(new PointXY(20f, 0f));
 ```
 
-An `IReadOnlyList<T>` parameter does not by itself say whether the input will be copied, retained,
-or used only during the call. Read the parameter and property documentation when later mutation
-matters.
+Changing this list does not modify the circle or later intersection results. Caller ownership
+applies to the collection structure; it does not imply a deep copy of reference-type elements.
 
-## Understand immutable value types
+### Read-only library-owned surface
 
-Core coordinate and geometry values are commonly declared as `readonly struct`. Their public
-state cannot change after construction, and assignments copy the value:
+`IReadOnlyCollection<T>` and `IReadOnlyList<T>` indicate a `LibraryOwned` output contract. The
+collection represents library state or a semantic result whose structure the caller should not
+change through the returned reference.
+
+There are two important underlying cases:
+
+- the library copied the original collection and returns a read-only surface over its copy, as
+  with `BezierCurve.ControlPoints`;
+- the library retained the original collection or returns an existing collection as-is through
+  a read-only interface, so another reference may still be able to change it.
+
+Both cases look read-only at the output boundary. The member documentation states whether the
+underlying collection is a copy or the original. `LibraryOwned` describes the public mutation
+contract, not who allocated the backing object or whether the library has exclusive access to
+it.
+
+Do not cast a read-only result to a mutable runtime type and modify it. The concrete type is not
+part of the contract, and bypassing the interface can violate result or state invariants.
+
+### Direct mutable access to existing state
+
+In rare performance-oriented APIs, a property returns an existing `List<T>` or array directly.
+This is not a new caller-owned result: it is shared mutable access to library state. The API
+explicitly documents that the returned collection is retained state and that changes are
+observable by the library.
+
+`Raster<TValue>.Values` returns the retained array itself:
 
 ```csharp
-var original = new VectorXY(2f, 3f);
-VectorXY translated = original + new VectorXY(1f, -1f);
-
-// original is still (2, 3); translated is (3, 2).
+raster.Values[3] = 40;
+int throughIndexer = raster[1, 1]; // 40
 ```
 
-Operations return new values instead of mutating the receiver. This is different from a
-read-only collection: a value such as `VectorXY` is itself immutable, while
-`IReadOnlyList<VectorXY>` additionally controls whether vectors can be added, removed, replaced,
-or reordered through that collection reference.
+This contract is appropriate when changing elements is intentional and does not invalidate the
+collection's structural invariants. A raster array cannot change its length, so callers can
+replace cell values without breaking the relationship between the resolution and cell count.
+The benefit is direct bulk access without another full-raster copy; the cost is shared mutable
+state and caller-managed synchronization.
 
-A `readonly struct` can still contain a reference to a mutable object, so `readonly` is not a
-general promise of deep immutability. Use the documented contract of the specific type.
+## Read-only is not immutable
 
-## Choose when to make your own copy
+`IReadOnlyCollection<T>` and `IReadOnlyList<T>` prevent mutation only through those interfaces.
+They do not guarantee:
 
-Make a copy at your boundary when:
+- an immutable backing collection;
+- a defensive copy;
+- the absence of another mutable reference;
+- immutable reference-type elements;
+- a deep copy of element state.
 
-- you need a snapshot that cannot reflect later changes elsewhere;
-- you want to mutate a read-only result without affecting its invariants;
-- you pass mutable storage to an API that documents retaining it but require isolation;
-- you need ownership that survives independently of another component's lifetime or policy.
+Treat collection structure and element state as separate concerns. A library-owned list can
+retain a stable count and order while properties of a mutable element change.
 
-For an `IReadOnlyList<T>`, a shallow mutable copy can be created with `new List<T>(source)`.
-For an array, use `Clone`, `Array.Copy`, or another explicit copy operation. If `T` is a mutable
-reference type and isolation must include element state, perform an appropriate deep copy as
-well.
+Core coordinate and geometry values such as `PointXY` and `VectorXY` are commonly immutable
+value types. Assigning them copies the value, but placing them in a read-only collection still
+adds a separate contract for adding, removing, replacing, or reordering elements.
 
-The API reference is the authority for each member. Look for phrases such as "new mutable list
-owned by the caller," "read-only structural view," "copied into retained state," "retained as
-state," and "returned as-is."
+## Make a copy when isolation is required
+
+Create a copy at your own boundary when:
+
+- a borrowed or aggregated input must not observe later changes;
+- a read-only output is needed as an independent snapshot;
+- direct mutable state must be edited without affecting the library;
+- element state also requires isolation from shared reference-type objects.
+
+For an `IReadOnlyCollection<T>`, use a suitable collection constructor or LINQ operation. For
+an array, use `Clone` or `Array.Copy`. These operations make shallow copies; copy the elements
+as well when deep isolation is required.
+
+The API reference is the authority for each member. Look for explicit phrases such as "used
+only during the call," "copied into retained state," "retained as state," "new mutable result
+owned by the caller," "read-only view of copied state," and "direct access to retained mutable
+state."
