@@ -16,13 +16,8 @@ VectorXY right = VectorXY.BasisX; // (1, 0)
 VectorXY up = VectorXY.BasisY;    // (0, 1)
 ```
 
-Positive signed angles rotate counterclockwise from one direction to another. Spatial2D angles
-are expressed in radians unless a member has an explicit unit suffix. See
-[Angles and Units](../angles-and-units.md) for the complete convention.
-
-The coordinate components themselves have no built-in physical unit. A model may interpret them
-as meters, pixels, tiles, or another unit, but all values participating in one geometric
-calculation must use a consistent scale.
+For rotation direction, angular measurement, and linear measurement conventions, see
+[Angles and Units](../angles-and-units.md).
 
 ## Choose the value by meaning
 
@@ -73,25 +68,11 @@ Keep a calculation continuous until an API actually requires a discrete value. C
 `VectorXY` to `VectorXYInt` can truncate or round components and therefore requires an explicit
 choice. The [Vectors](vectors.md) page explains those conversion rules.
 
-Raster grids demonstrate the boundary between the two spaces. A raster has an integral
-resolution and zero-based cell indices, while its bounds and sample positions may exist in
-continuous world space:
-
-```csharp
-using Akeldov.Math.Spatial2D.Rasterization;
-
-var geometry = new RasterGeometry(
-    origin: new PointXY(-2f, -1f),
-    size: new VectorXY(8f, 4f),
-    resolution: new VectorXYInt(4, 2));
-
-PointXY firstCellCenter = geometry.GetCellCenter(0, 0); // (-1, 0)
-```
-
-<xref:Akeldov.Math.Spatial2D.Rasterization.RasterGeometry> places the discrete grid in world
-space. Its origin is the lower-left boundary, and each cell is sampled at its center. Increasing
-the cell's `X` or `Y` index follows the corresponding positive world axis. See
-[Discrete Indices](discrete-indices.md) for bounds, iteration, and mapping conventions.
+Raster grids make the boundary explicit. <xref:Akeldov.Math.Spatial2D.Rasterization.RasterGeometry>
+combines a continuous `PointXY` origin and `VectorXY` size with a `VectorXYInt` resolution, then
+maps zero-based cell indices to `PointXY` sample positions. Keep the index and world position as
+separate values rather than treating one as the other. See [Discrete Indices](discrete-indices.md)
+for bounds, iteration, and mapping conventions.
 
 ## Preserve semantic distinctions
 
@@ -104,7 +85,7 @@ VectorXYInt cellIndex = new VectorXYInt(3, 2);
 ```
 
 Avoid treating these values as interchangeable coordinate pairs. Preserving their roles makes
-invalid operations harder to express and makes unit or discretization boundaries easier to
+invalid operations harder to express and makes continuous-to-discrete boundaries easier to
 review.
 
 ## Topics
@@ -113,3 +94,5 @@ review.
 - [Vectors](vectors.md) — continuous and integer vectors, direction operations, and conversion.
 - [Discrete Indices](discrete-indices.md) — raster addressing, resolutions, offsets, and
   world-space mapping.
+- [Angles and Units](../angles-and-units.md) — rotation, angular representation, and measurement
+  conventions.
