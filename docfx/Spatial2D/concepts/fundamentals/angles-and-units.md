@@ -9,6 +9,8 @@ Keeping these unit roles explicit prevents subtle errors at API boundaries.
 An angle parameter or property without a unit suffix is measured in radians. Numeric properties
 that expose degrees use an explicit `Deg` suffix, such as `Arc.StartAngleDeg` and
 `Arc.EndAngleDeg`; other degree-oriented members state `Degrees` in their name.
+The same rule applies to parameters: a parameter whose name ends in `Deg` already expects
+degrees and must not be converted to radians before the call.
 
 Common angles are:
 

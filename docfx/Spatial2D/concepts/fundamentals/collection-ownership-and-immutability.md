@@ -2,7 +2,8 @@
 
 Collection contracts in Akeldov.Math.Spatial2D answer two separate questions: what the library
 does with a collection passed into an API, and what ownership a caller receives when a
-collection is returned. Collection types and XML documentation describe both parts explicitly.
+collection is returned. The collection type provides an initial signal; conceptual and member
+documentation state stronger guarantees where they apply.
 
 ## Two groups of situations
 
@@ -16,18 +17,19 @@ collection into its state and later expose that copy through `IReadOnlyList<T>`.
 
 ## Collection input
 
-Passing a collection into a method or constructor does not by itself transfer ownership. The
-API documentation states which of the following three actions occurs.
+Passing a collection into a method or constructor does not by itself transfer ownership. An
+input follows one of the three patterns below, but its parameter type alone does not identify
+which pattern applies.
 
 ### Used only during the call
 
 The library reads or enumerates the collection to perform the operation and does not retain the
-collection after the call returns. The caller remains its only owner and may reuse or modify it
-afterward.
+collection after the call returns. The library does not acquire ownership, and the caller may
+reuse or modify the collection afterward.
 
 Do not modify a borrowed input while the operation is still running unless the API explicitly
-supports concurrent mutation. The parameter documentation identifies this case as an input that
-is used only for the operation and is not retained.
+supports concurrent mutation. When documentation states that an input is used only for the
+operation or is not retained, the caller can rely on that lifetime guarantee.
 
 ### Copied into library-owned state
 
@@ -91,7 +93,7 @@ borrowed, copied, or retained as the same object.
 ## Collection output
 
 A returned collection has one of three ownership contracts. Its public type is an important
-signal, but the XML documentation supplies details that the type cannot express.
+signal; consult the member documentation for details that the type cannot express.
 
 ### New caller-owned result
 
@@ -142,9 +144,8 @@ part of the contract, and bypassing the interface can violate result or state in
 ### Direct mutable access to existing state
 
 In rare performance-oriented APIs, a property returns an existing `List<T>` or array directly.
-This is not a new caller-owned result: it is shared mutable access to library state. The API
-explicitly documents that the returned collection is retained state and that changes are
-observable by the library.
+This is not a new caller-owned result: it is shared mutable access to library state. The member
+documentation should make the retained, shared nature of the collection clear.
 
 `Raster<TValue>.Values` returns the retained array itself:
 
@@ -190,7 +191,8 @@ For an `IReadOnlyCollection<T>`, use a suitable collection constructor or LINQ o
 an array, use `Clone` or `Array.Copy`. These operations make shallow copies; copy the elements
 as well when deep isolation is required.
 
-The API reference is the authority for each member. Look for explicit phrases such as "used
-only during the call," "copied into retained state," "retained as state," "new mutable result
-owned by the caller," "read-only view of copied state," and "direct access to retained mutable
-state."
+Use the guarantees explicitly stated for a member. Look for phrases such as "used only during
+the call," "copied into retained state," "retained as state," "new mutable result owned by the
+caller," "read-only view of copied state," and "direct access to retained mutable state." If
+the documentation does not say whether an input is copied or retained, do not infer that
+behavior from the collection type alone.
