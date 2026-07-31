@@ -4,8 +4,9 @@ Akeldov.Math.Spatial2D provides two Cartesian vector types:
 
 - <xref:Akeldov.Math.Spatial2D.VectorXY> stores single-precision floating-point components for
   directions, offsets, sizes, and other continuous quantities.
-- <xref:Akeldov.Math.Spatial2D.VectorXYInt> stores integer components for raster resolutions,
-  grid dimensions, discrete offsets, and other values that must remain integral.
+- <xref:Akeldov.Math.Spatial2D.VectorXYInt> is the integer-component counterpart of `VectorXY`.
+  It represents integer directions, offsets, sizes, and API-specific values such as raster
+  indices and resolutions.
 
 Both are immutable value types. Their `X` and `Y` components follow the same Cartesian axes as
 [points](points.md), but a vector describes a direction or displacement rather than a position.
@@ -19,7 +20,7 @@ incidental representation.
 | Property | `VectorXY` | `VectorXYInt` |
 |---|---|---|
 | Component type | `float` | `int` |
-| Typical meaning | Direction, displacement, world-space size | Resolution, dimensions, discrete offset |
+| Typical meaning | Direction, displacement, world-space size | Integer direction, displacement, size, index, or resolution |
 | Scalar division | Floating-point division | Integer division |
 | Rotation result | `VectorXY` | `VectorXY` |
 | Conversion from the other type | Implicit; very large integers may lose precision | Explicit and potentially lossy |

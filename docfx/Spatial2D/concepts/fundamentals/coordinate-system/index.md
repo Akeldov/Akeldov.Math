@@ -27,11 +27,11 @@ Use the type that describes the role of a value, not merely the numeric form of 
 |---|---|---|
 | <xref:Akeldov.Math.Spatial2D.PointXY> | A position in continuous space | Curve endpoints, region centers, samples, intersections |
 | <xref:Akeldov.Math.Spatial2D.VectorXY> | A continuous direction or displacement | Offsets, directions, world-space sizes, transformations |
-| <xref:Akeldov.Math.Spatial2D.VectorXYInt> | An integral pair interpreted by the receiving API | Raster indices, resolutions, dimensions, discrete offsets |
+| <xref:Akeldov.Math.Spatial2D.VectorXYInt> | A vector with integer components | Integer directions, offsets, sizes, raster indices, and resolutions |
 
 A point and a vector can contain the same numeric components while expressing different
-geometric ideas. A discrete index can likewise have components equal to a world-space point
-without referring to the same location.
+geometric ideas. When `VectorXYInt` is used as a discrete index, its components can likewise
+equal those of a world-space point without referring to the same location.
 
 ## Compose positions and displacements
 
@@ -63,6 +63,8 @@ components are preserved, but the role changes visibly at the call site.
 
 `PointXY` and `VectorXY` use `float` components for continuous geometric calculations.
 `VectorXYInt` uses `int` components when integral values are part of the contract.
+It is not limited to indices: it can serve as an integer vector in the same roles as `VectorXY`
+when fractional components are neither needed nor expected.
 
 Keep a calculation continuous until an API actually requires a discrete value. Conversion from
 `VectorXY` to `VectorXYInt` can truncate or round components and therefore requires an explicit

@@ -4,8 +4,9 @@ This section explains the basic conventions used throughout Akeldov.Math.Spatial
 
 ## Coordinate System
 
-Use `PointXY` for positions, `VectorXY` for directions and offsets, and `VectorXYInt` for integer
-values such as raster indices and resolutions.
+Use `PointXY` for positions, `VectorXY` for floating-point vectors, and `VectorXYInt` for
+integer vectors. Like `VectorXY`, `VectorXYInt` can represent directions, offsets, and sizes;
+APIs also use it for values such as raster indices and resolutions.
 
 See [Coordinate System](coordinate-system/index.md) for details about points, vectors, and
 discrete indices.
