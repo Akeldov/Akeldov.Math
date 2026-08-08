@@ -19,3 +19,20 @@ PointXY center = grid.GetCellCenter(0, 0);
 ```
 
 Use `VectorXYInt` for raster resolution and world-space `PointXY`/`VectorXY` values for bounds.
+
+## Perlin noise
+
+`CreatePerlinNoise` samples deterministic fractal Perlin noise at every raster cell center and
+returns a mutable `SpatialRaster<float>` with values in the `[0, 1]` range.
+
+```csharp
+SpatialRaster<float> heights = grid.CreatePerlinNoise(
+    seed: 12345,
+    scale: 16f,
+    octaves: 5,
+    persistence: 0.5f,
+    lacunarity: 2f);
+```
+
+`scale` and `offset` use world-coordinate units. Adjacent raster geometries therefore sample
+matching parts of the same noise field when their world-space bounds are aligned.
