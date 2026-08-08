@@ -36,3 +36,17 @@ SpatialRaster<float> heights = grid.CreatePerlinNoise(
 
 `scale` and `offset` use world-coordinate units. Adjacent raster geometries therefore sample
 matching parts of the same noise field when their world-space bounds are aligned.
+
+When spatial bounds are not needed, call the same extension on a resolution to create a
+non-spatial unit-cell raster:
+
+```csharp
+Raster<float> heights = new VectorXYInt(128, 96).CreatePerlinNoise(
+    seed: 12345,
+    scale: 16f,
+    octaves: 5);
+```
+
+This overload samples cell centers at `(x + 0.5, y + 0.5)`, and interprets `scale` and `offset`
+in cell units. Its values match a `RasterGeometry` with zero origin, unit cells, and the same
+resolution.

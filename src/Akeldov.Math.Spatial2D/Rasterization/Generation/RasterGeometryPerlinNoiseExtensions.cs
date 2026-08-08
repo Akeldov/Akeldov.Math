@@ -73,66 +73,24 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (!offset.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(offset), offset, "Noise offset components must be finite.");
 
-            var values = new float[(int)cellCount];
             VectorXY cellSize = grid.CellSize;
             double firstX = grid.Origin.X + cellSize.X * 0.5d;
             double firstY = grid.Origin.Y + cellSize.Y * 0.5d;
 
-            int valueIndex = 0;
-            for (int y = 0; y < grid.Resolution.Y; y++)
-            {
-                double pointY = firstY + y * (double)cellSize.Y;
-
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    double pointX = firstX + x * (double)cellSize.X;
-                    values[valueIndex++] = SampleFractalNoise(
-                        pointX,
-                        pointY,
-                        seed,
-                        scale,
-                        octaves,
-                        persistence,
-                        lacunarity,
-                        offset);
-                }
-            }
+            float[] values = PerlinNoiseRasterGenerator.CreateValues(
+                grid.Resolution,
+                firstX,
+                firstY,
+                cellSize.X,
+                cellSize.Y,
+                seed,
+                scale,
+                octaves,
+                persistence,
+                lacunarity,
+                offset);
 
             return new SpatialRaster<float>(grid, values);
-        }
-
-        private static float SampleFractalNoise(
-            double pointX,
-            double pointY,
-            int seed,
-            float scale,
-            int octaves,
-            float persistence,
-            float lacunarity,
-            VectorXY offset)
-        {
-            double frequency = 1d / scale;
-            double amplitude = 1d;
-            double value = 0d;
-            double amplitudeSum = 0d;
-
-            for (int octave = 0; octave < octaves; octave++)
-            {
-                double sampleX = (pointX + offset.X) * frequency;
-                double sampleY = (pointY + offset.Y) * frequency;
-
-                value += PerlinNoise2D.Sample(sampleX, sampleY, seed) * amplitude;
-                amplitudeSum += amplitude;
-                amplitude *= persistence;
-
-                if (amplitude == 0d)
-                    break;
-
-                frequency *= lacunarity;
-            }
-
-            double normalized = 0.5d + 0.5d * value / amplitudeSum;
-            return (float)System.Math.Min(System.Math.Max(normalized, 0d), 1d);
         }
     }
 }
