@@ -373,6 +373,57 @@ namespace Akeldov.Math.Hexes
             return new IntHexMap(condition.Topology, values);
         }
 
+        /// <summary>
+        /// Creates a Boolean hex map by selecting between two source maps cell by cell.
+        /// </summary>
+        /// <param name="condition">
+        /// The Boolean condition map. A <see langword="true"/> cell selects the corresponding value
+        /// from <paramref name="whenTrue"/>; a <see langword="false"/> cell selects it from
+        /// <paramref name="whenFalse"/>.
+        /// </param>
+        /// <param name="whenTrue">
+        /// The source map selected where <paramref name="condition"/> is <see langword="true"/>.
+        /// </param>
+        /// <param name="whenFalse">
+        /// The source map selected where <paramref name="condition"/> is <see langword="false"/>.
+        /// </param>
+        /// <returns>
+        /// A new mutable Boolean hex map owned by the caller. None of the source maps is modified.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="condition"/>, <paramref name="whenTrue"/>, or
+        /// <paramref name="whenFalse"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        public static BoolHexMap Select(
+            this BoolHexMap condition,
+            BoolHexMap whenTrue,
+            BoolHexMap whenFalse)
+        {
+            if (condition == null)
+                throw new ArgumentNullException(nameof(condition));
+
+            if (whenTrue == null)
+                throw new ArgumentNullException(nameof(whenTrue));
+
+            if (whenFalse == null)
+                throw new ArgumentNullException(nameof(whenFalse));
+
+            if (condition.Topology != whenTrue.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(whenTrue));
+
+            if (condition.Topology != whenFalse.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(whenFalse));
+
+            var values = new bool[condition.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = condition[index] ? whenTrue[index] : whenFalse[index];
+
+            return new BoolHexMap(condition.Topology, values);
+        }
+
         private static bool[] CreateConjunctionValues(IHexMap<bool> left, IHexMap<bool> right)
         {
             var values = new bool[left.Topology.Count];

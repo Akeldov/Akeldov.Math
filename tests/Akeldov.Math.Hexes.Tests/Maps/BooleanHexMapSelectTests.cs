@@ -173,4 +173,89 @@ public class BooleanHexMapSelectTests
             Assert.That(result.Topology.Count, Is.Zero);
         });
     }
+
+    [Test]
+    public void Select_WithBoolMaps_ReturnsIndependentCellwiseSelection()
+    {
+        var topology = new HexMapTopology(2, 2, Layout.EvenQ);
+        var condition = new BoolHexMap(topology, new[] { true, false, true, false });
+        var whenTrue = new BoolHexMap(topology, new[] { true, true, false, false });
+        var whenFalse = new BoolHexMap(topology, new[] { false, true, false, true });
+
+        BoolHexMap result = condition.Select(whenTrue, whenFalse);
+        condition[0] = false;
+        whenTrue[2] = true;
+        whenFalse[1] = false;
+        result[3] = false;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.True);
+            Assert.That(result[1], Is.True);
+            Assert.That(result[2], Is.False);
+            Assert.That(result[3], Is.False);
+            Assert.That(whenFalse[3], Is.True);
+        });
+    }
+
+    [Test]
+    public void Select_WithBoolMaps_WhenMapIsNull_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var condition = new BoolHexMap(topology);
+        var whenTrue = new BoolHexMap(topology);
+        var whenFalse = new BoolHexMap(topology);
+        BoolHexMap nullMap = null!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => nullMap.Select(whenTrue, whenFalse))!.ParamName,
+                Is.EqualTo("condition"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => condition.Select(nullMap, whenFalse))!.ParamName,
+                Is.EqualTo("whenTrue"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => condition.Select(whenTrue, nullMap))!.ParamName,
+                Is.EqualTo("whenFalse"));
+        });
+    }
+
+    [Test]
+    public void Select_WithBoolMaps_WhenTopologiesDiffer_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var otherTopology = new HexMapTopology(2, 1, Layout.OddR);
+        var condition = new BoolHexMap(topology);
+        var matchingMap = new BoolHexMap(topology);
+        var otherMap = new BoolHexMap(otherTopology);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => condition.Select(otherMap, matchingMap))!.ParamName,
+                Is.EqualTo("whenTrue"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => condition.Select(matchingMap, otherMap))!.ParamName,
+                Is.EqualTo("whenFalse"));
+        });
+    }
+
+    [Test]
+    public void Select_WithBoolMaps_WhenMapsAreEmpty_ReturnsEmptyMapWithSameTopology()
+    {
+        var topology = new HexMapTopology(0, 0, Layout.EvenR);
+        var condition = new BoolHexMap(topology);
+
+        BoolHexMap result = condition.Select(
+            new BoolHexMap(topology),
+            new BoolHexMap(topology));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result.Topology.Count, Is.Zero);
+        });
+    }
 }
