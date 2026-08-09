@@ -2,6 +2,7 @@
 Akeldov.Math.Hexes.BoolHexMap
 Akeldov.Math.Hexes.BoolHexMap.BoolHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
 Akeldov.Math.Hexes.BoolHexMap.BoolHexMap(Akeldov.Math.Hexes.HexMapTopology topology, bool[]! values) -> void
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.FloatHexMap! whenTrue, Akeldov.Math.Hexes.FloatHexMap! whenFalse) -> Akeldov.Math.Hexes.FloatHexMap!
 Akeldov.Math.Hexes.FloatHexMap
 Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
 Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology, float[]! values) -> void
