@@ -5,6 +5,7 @@ Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology top
 Akeldov.Math.Hexes.FloatHexMap.Max.get -> float
 Akeldov.Math.Hexes.FloatHexMap.Min.get -> float
 Akeldov.Math.Hexes.FloatHexMapBlurExtensions
+Akeldov.Math.Hexes.FloatHexMapExtensions
 static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator +(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
@@ -16,6 +17,7 @@ static Akeldov.Math.Hexes.FloatHexMap.operator *(float value, Akeldov.Math.Hexes
 static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.IHexMap<float>! map, float sigma) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.IHexMap<float>! map, float sigma, int radius) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.ToFloatHexMap(this Akeldov.Math.Hexes.IHexMap<float>! map) -> Akeldov.Math.Hexes.FloatHexMap!
 Akeldov.Math.Hexes.HexMapTopologyPerlinNoiseExtensions
 Akeldov.Math.Hexes.IFloatHexMap
 Akeldov.Math.Hexes.IFloatHexMap.Max.get -> float
