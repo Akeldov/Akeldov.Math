@@ -106,6 +106,38 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a map by adding the specified value to every cell in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value to add to every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator +(FloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] + value;
+
+            return new FloatHexMap(map.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a map by adding the specified value to every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value to add to every cell.</param>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator +(float value, FloatHexMap map) => map + value;
+
+        /// <summary>
         /// Creates a map whose cells contain the differences of the corresponding cells in two source maps.
         /// </summary>
         /// <param name="left">The source map whose cell values are the minuends.</param>
@@ -133,6 +165,48 @@ namespace Akeldov.Math.Hexes
                 values[index] = left[index] - right[index];
 
             return new FloatHexMap(left.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a map by subtracting the specified value from every cell in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value to subtract from every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator -(FloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] - value;
+
+            return new FloatHexMap(map.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a map by subtracting every source cell value from the specified value.
+        /// </summary>
+        /// <param name="value">The value used as the minuend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the subtrahends.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator -(float value, FloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = value - map[index];
+
+            return new FloatHexMap(map.Topology, values);
         }
     }
 }

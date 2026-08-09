@@ -5,7 +5,11 @@ Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology top
 Akeldov.Math.Hexes.FloatHexMap.Max.get -> float
 Akeldov.Math.Hexes.FloatHexMap.Min.get -> float
 static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 Akeldov.Math.Hexes.HexMapTopologyPerlinNoiseExtensions
 Akeldov.Math.Hexes.IFloatHexMap
 Akeldov.Math.Hexes.IFloatHexMap.Max.get -> float

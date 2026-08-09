@@ -109,6 +109,47 @@ public class FloatHexMapTests
     }
 
     [Test]
+    public void Addition_WithFloatValue_AddsValueToEveryCellWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new FloatHexMap(topology, new[] { 1.5f, -2f, 4f });
+
+        FloatHexMap rightValueResult = map + 2f;
+        FloatHexMap leftValueResult = 2f + map;
+        rightValueResult[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(rightValueResult.Topology, Is.EqualTo(topology));
+            Assert.That(rightValueResult[0], Is.EqualTo(100f));
+            Assert.That(rightValueResult[1], Is.EqualTo(0f));
+            Assert.That(rightValueResult[2], Is.EqualTo(6f));
+            Assert.That(leftValueResult[0], Is.EqualTo(3.5f));
+            Assert.That(leftValueResult[1], Is.EqualTo(0f));
+            Assert.That(leftValueResult[2], Is.EqualTo(6f));
+            Assert.That(map[0], Is.EqualTo(1.5f));
+        });
+    }
+
+    [Test]
+    public void Addition_WithFloatValueAndNullMap_Throws()
+    {
+        FloatHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing + 1f)!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = 1f + missing)!.ParamName,
+                Is.EqualTo("map"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
     public void Subtraction_ReturnsElementWiseDifferenceWithoutChangingOperands()
     {
         var topology = new HexMapTopology(3, 1, Layout.OddR);
@@ -181,6 +222,47 @@ public class FloatHexMapTests
             Assert.That(
                 Assert.Throws<ArgumentNullException>(() => _ = map - missing)!.ParamName,
                 Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithFloatValue_AppliesBothOperandOrdersWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new FloatHexMap(topology, new[] { 1.5f, -2f, 4f });
+
+        FloatHexMap mapMinusValue = map - 2f;
+        FloatHexMap valueMinusMap = 2f - map;
+        mapMinusValue[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mapMinusValue.Topology, Is.EqualTo(topology));
+            Assert.That(mapMinusValue[0], Is.EqualTo(100f));
+            Assert.That(mapMinusValue[1], Is.EqualTo(-4f));
+            Assert.That(mapMinusValue[2], Is.EqualTo(2f));
+            Assert.That(valueMinusMap[0], Is.EqualTo(0.5f));
+            Assert.That(valueMinusMap[1], Is.EqualTo(4f));
+            Assert.That(valueMinusMap[2], Is.EqualTo(-2f));
+            Assert.That(map[0], Is.EqualTo(1.5f));
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithFloatValueAndNullMap_Throws()
+    {
+        FloatHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing - 1f)!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = 1f - missing)!.ParamName,
+                Is.EqualTo("map"));
 #pragma warning restore CS8604
         });
     }
