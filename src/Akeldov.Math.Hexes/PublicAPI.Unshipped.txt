@@ -1,4 +1,7 @@
 #nullable enable
+Akeldov.Math.Hexes.BoolHexMap
+Akeldov.Math.Hexes.BoolHexMap.BoolHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.BoolHexMap.BoolHexMap(Akeldov.Math.Hexes.HexMapTopology topology, bool[]! values) -> void
 Akeldov.Math.Hexes.FloatHexMap
 Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
 Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology, float[]! values) -> void
