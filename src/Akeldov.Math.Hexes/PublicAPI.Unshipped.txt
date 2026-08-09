@@ -30,6 +30,7 @@ Akeldov.Math.Hexes.IntHexMap.IntHexMap(Akeldov.Math.Hexes.HexMapTopology topolog
 Akeldov.Math.Hexes.IntHexMap.IntHexMap(Akeldov.Math.Hexes.HexMapTopology topology, int[]! values) -> void
 Akeldov.Math.Hexes.IntHexMap.Max.get -> int
 Akeldov.Math.Hexes.IntHexMap.Min.get -> int
+Akeldov.Math.Hexes.IntHexMapExtensions
 static Akeldov.Math.Hexes.IntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator +(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
@@ -39,4 +40,5 @@ static Akeldov.Math.Hexes.IntHexMap.operator -(int value, Akeldov.Math.Hexes.Int
 static Akeldov.Math.Hexes.IntHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator *(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.ToIntHexMap(this Akeldov.Math.Hexes.IHexMap<int>! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.HexMapTopologyPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Hexes.HexMapTopology topology, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Hexes.FloatHexMap!
