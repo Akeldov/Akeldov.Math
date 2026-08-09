@@ -453,6 +453,22 @@ public class RectangleTests
         Assert.That(region.Contains(new PointXY(1f, 0.5f)), Is.True);
     }
 
+    [TestCase(2f, 0.5f)]
+    [TestCase(2f, 1f)]
+    public void ToRegion_PreservesContainsForBoundaryPoint(float x, float y)
+    {
+        var rectangle = new Rectangle(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 1f));
+        var boundaryPoint = new PointXY(x, y);
+
+        bool rectangleContains = rectangle.Contains(boundaryPoint);
+        bool regionContains = rectangle.ToRegion().Contains(boundaryPoint);
+
+        Assert.That(rectangleContains, Is.True);
+        Assert.That(regionContains, Is.EqualTo(rectangleContains));
+    }
+
     [Test]
     public void ToRegion_ReturnsReadOnlySingleContourView()
     {

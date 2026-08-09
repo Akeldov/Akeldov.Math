@@ -259,6 +259,31 @@ public class CompositeContourTests
         Assert.That(contour.Encloses(new PointXY(1f, 1f)), Is.True);
     }
 
+    [TestCase(0f, 0f)]
+    [TestCase(1f, 0f)]
+    [TestCase(2f, 0f)]
+    [TestCase(2f, 1f)]
+    [TestCase(2f, 2f)]
+    [TestCase(1f, 2f)]
+    [TestCase(0f, 2f)]
+    [TestCase(0f, 1f)]
+    public void Encloses_WhenPointIsOnSquareBoundary_ReturnsTrue(float x, float y)
+    {
+        IContour contour = CreateSquareContour();
+
+        Assert.That(contour.Encloses(new PointXY(x, y)), Is.True);
+    }
+
+    [Test]
+    public void Encloses_WhenPointIsLessThanGeometryEpsilonOutside_ReturnsFalse()
+    {
+        IContour contour = CreateSquareContour();
+        var point = new PointXY(2f + GeometryConstants.GeometryEpsilon / 2f, 1f);
+
+        Assert.That(contour.Distance(point), Is.GreaterThan(0f));
+        Assert.That(contour.Encloses(point), Is.False);
+    }
+
     [Test]
     public void Encloses_WhenPointIsOutsideContour_ReturnsFalse()
     {
@@ -273,14 +298,14 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void Encloses_WhenPointIsOnRightmostBoundary_UsesOpenRayCrossings()
+    public void Encloses_WhenPointIsOnRightmostBoundary_ReturnsTrue()
     {
         var contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
 
-        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.False);
+        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.True);
     }
 
     [Test]

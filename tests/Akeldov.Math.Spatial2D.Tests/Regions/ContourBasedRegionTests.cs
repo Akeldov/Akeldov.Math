@@ -107,7 +107,7 @@ public class ContourBasedRegionTests
     }
 
     [Test]
-    public void Contains_WhenPointIsOnHoleBoundary_ReturnsFalse()
+    public void Contains_WhenPointIsOnHoleBoundary_ReturnsTrue()
     {
         var region = new ContourBasedRegion(new IContour[]
         {
@@ -115,7 +115,20 @@ public class ContourBasedRegionTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
 
-        Assert.That(region.Contains(new PointXY(1f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(1f, 2f)), Is.True);
+    }
+
+    [Test]
+    public void Contains_WhenPointIsLessThanGeometryEpsilonOutside_ReturnsFalse()
+    {
+        IRegion region = new ContourBasedRegion(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 4f, 4f)
+        });
+        var point = new PointXY(4f + GeometryConstants.GeometryEpsilon / 2f, 2f);
+
+        Assert.That(region.Distance(point), Is.GreaterThan(0f));
+        Assert.That(region.Contains(point), Is.False);
     }
 
     [Test]
@@ -143,7 +156,7 @@ public class ContourBasedRegionTests
         Assert.That(region.Contains(new PointXY(0.5f, 0.5f)), Is.True);
         Assert.That(region.Contains(new PointXY(2f, 2f)), Is.False);
         Assert.That(region.Contains(new PointXY(0f, 2f)), Is.True);
-        Assert.That(region.Contains(new PointXY(1f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(1f, 2f)), Is.True);
     }
 
     [Test]

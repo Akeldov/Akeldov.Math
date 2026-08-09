@@ -92,12 +92,10 @@ namespace Akeldov.Math.Spatial2D.Contours
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            int crossingCount = 0;
+            if (HasOddRightwardCrossingCount(point))
+                return true;
 
-            for (int i = 0; i < _curves.Length; i++)
-                crossingCount += _curves[i].CountRightwardCrossings(point);
-
-            return crossingCount % 2 == 1;
+            return Distance(point) == 0f;
         }
 
         /// <inheritdoc/>
@@ -190,7 +188,18 @@ namespace Akeldov.Math.Spatial2D.Contours
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Encloses(point) ? -distance : distance;
+            bool isEnclosed = HasOddRightwardCrossingCount(point) || distance == 0f;
+            return isEnclosed ? -distance : distance;
+        }
+
+        private bool HasOddRightwardCrossingCount(PointXY point)
+        {
+            int crossingCount = 0;
+
+            for (int i = 0; i < _curves.Length; i++)
+                crossingCount += _curves[i].CountRightwardCrossings(point);
+
+            return crossingCount % 2 == 1;
         }
 
         private static IFinitePath[] CreateCurvesFromPoints(IReadOnlyList<PointXY> points, string parameterName)

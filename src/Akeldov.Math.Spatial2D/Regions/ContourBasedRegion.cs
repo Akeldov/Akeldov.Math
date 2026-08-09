@@ -56,12 +56,10 @@ namespace Akeldov.Math.Spatial2D.Regions
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            int crossingCount = 0;
+            if (HasOddRightwardCrossingCount(point))
+                return true;
 
-            for (int i = 0; i < _contours.Length; i++)
-                crossingCount += _contours[i].CountRightwardCrossings(point);
-
-            return crossingCount % 2 == 1;
+            return Distance(point) == 0f;
         }
 
         /// <inheritdoc/>
@@ -90,7 +88,18 @@ namespace Akeldov.Math.Spatial2D.Regions
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             float distance = Distance(point);
-            return Contains(point) ? -distance : distance;
+            bool isContained = HasOddRightwardCrossingCount(point) || distance == 0f;
+            return isContained ? -distance : distance;
+        }
+
+        private bool HasOddRightwardCrossingCount(PointXY point)
+        {
+            int crossingCount = 0;
+
+            for (int i = 0; i < _contours.Length; i++)
+                crossingCount += _contours[i].CountRightwardCrossings(point);
+
+            return crossingCount % 2 == 1;
         }
     }
 }
