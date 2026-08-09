@@ -133,14 +133,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this curve's approximation and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this curve.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
-            BezierPathApproximation.GetPointIntersections(GetPointAtUnchecked, ray, geometryEpsilon);
+        public List<PointXY> GetPointIntersections(Ray ray) =>
+            BezierPathApproximation.GetPointIntersections(GetPointAtUnchecked, ray);
 
-        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
+        /// <inheritdoc cref="ICurve.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

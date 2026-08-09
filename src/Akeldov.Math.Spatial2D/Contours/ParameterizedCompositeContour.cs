@@ -72,12 +72,10 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
-            _contour.GetPointIntersections(ray, geometryEpsilon);
+        public List<PointXY> GetPointIntersections(Ray ray) =>
+            _contour.GetPointIntersections(ray);
 
-        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
+        /// <inheritdoc cref="CompositeContour.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

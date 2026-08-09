@@ -34,19 +34,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this curve and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this curve.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         /// <remarks>
         /// Points that belong to a continuous set of intersections are not returned. For example, no points
         /// are returned when the ray lies on a line and their intersection is the entire ray.
         /// </remarks>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.</exception>
-#pragma warning disable CS0618
-        List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
-            GetRayIntersections(ray, geometryEpsilon);
-#pragma warning restore CS0618
+        List<PointXY> GetPointIntersections(Ray ray);
 
         /// <summary>
         /// Projects the specified point onto this curve.

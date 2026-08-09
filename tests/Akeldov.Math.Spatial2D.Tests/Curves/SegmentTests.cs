@@ -380,17 +380,18 @@ public class SegmentTests
     }
 
     [Test]
-    public void PointIntersections_WithCustomGeometryEpsilon_WhenSegmentIsNearlyCollinear_ReturnsEmpty()
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenSegmentIsNearlyCollinear_ReturnsFirstIntersection()
     {
         const float geometryEpsilon = 0.01f;
-        ICurve segment = new Segment(new PointXY(4f, 0.005f), new PointXY(10f, 0.005f));
+        var segment = new Segment(new PointXY(4f, 0.005f), new PointXY(10f, 0.005f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var defaultIntersections = segment.GetPointIntersections(ray);
-        var tolerantIntersections = segment.GetPointIntersections(ray, geometryEpsilon);
+        var defaultIntersections = segment.GetRayIntersections(ray);
+        var tolerantIntersections = segment.GetRayIntersections(ray, geometryEpsilon);
 
         Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 4f, 0.005f);
     }
 
     [TestCase(-1f)]
@@ -399,11 +400,11 @@ public class SegmentTests
     [TestCase(float.NegativeInfinity)]
     public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
-        ICurve segment = new Segment(new PointXY(1f, -1f), new PointXY(1f, 1f));
+        var segment = new Segment(new PointXY(1f, -1f), new PointXY(1f, 1f));
         var ray = new Ray(new PointXY(0f, 0f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            segment.GetPointIntersections(ray, geometryEpsilon));
+            segment.GetRayIntersections(ray, geometryEpsilon));
 
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }

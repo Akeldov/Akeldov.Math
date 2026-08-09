@@ -144,21 +144,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections with the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this chain.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public List<PointXY> GetPointIntersections(Ray ray)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             var intersections = new List<PointXY>();
 
             for (int i = 0; i < _segments.Length; i++)
             {
-                List<PointXY> segmentIntersections = _segments[i].GetPointIntersections(ray, geometryEpsilon);
+                List<PointXY> segmentIntersections = _segments[i].GetPointIntersections(ray);
                 for (int j = 0; j < segmentIntersections.Count; j++)
-                    intersections.AddDistinct(segmentIntersections[j], geometryEpsilon);
+                    intersections.AddDistinct(segmentIntersections[j], GeometryConstants.GeometryEpsilon);
             }
 
             intersections.Sort((left, right) =>
@@ -168,7 +163,12 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
-        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
+        /// <summary>
+        /// Returns point intersections with the specified ray.
+        /// </summary>
+        /// <param name="ray">The ray to intersect with this chain.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

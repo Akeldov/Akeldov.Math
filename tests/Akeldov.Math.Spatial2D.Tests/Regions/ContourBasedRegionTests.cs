@@ -267,6 +267,8 @@ public class ContourBasedRegionTests
             return new List<PointXY>();
         }
 
+        public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
+
         public CurveProjection Project(PointXY point)
         {
             return Curves[0].Project(point);
@@ -295,6 +297,8 @@ public class ContourBasedRegionTests
         {
             return new List<PointXY>();
         }
+
+        public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
 
         public float Distance(PointXY point) => 1f;
 

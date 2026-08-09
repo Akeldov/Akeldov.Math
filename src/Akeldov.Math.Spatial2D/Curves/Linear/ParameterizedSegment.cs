@@ -104,10 +104,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             ((Segment)this).CountRightwardCrossings(origin);
 
         /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
-            ((Segment)this).GetPointIntersections(ray, geometryEpsilon);
+        public List<PointXY> GetPointIntersections(Ray ray) =>
+            ((Segment)this).GetPointIntersections(ray);
 
         /// <inheritdoc cref="Segment.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(

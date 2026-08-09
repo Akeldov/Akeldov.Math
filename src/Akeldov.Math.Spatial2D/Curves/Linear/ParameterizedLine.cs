@@ -219,10 +219,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         public override int GetHashCode() => HashCode.Combine(_line, _origin, _isDirectionReversed);
 
         /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
-            _line.GetPointIntersections(ray, geometryEpsilon);
+        public List<PointXY> GetPointIntersections(Ray ray) =>
+            _line.GetPointIntersections(ray);
 
         /// <inheritdoc cref="Line.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(

@@ -140,11 +140,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public List<PointXY> GetPointIntersections(Ray ray)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+            const float geometryEpsilon = GeometryConstants.GeometryEpsilon;
 
             VectorXY direction = Direction;
             VectorXY otherDirection = ray.Direction;

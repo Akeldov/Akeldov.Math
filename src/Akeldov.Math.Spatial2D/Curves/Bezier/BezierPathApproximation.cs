@@ -180,11 +180,8 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         public static List<PointXY> GetPointIntersections(
             Func<float, PointXY> pointAt,
-            Ray ray,
-            float geometryEpsilon)
+            Ray ray)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             var intersections = new List<PointXY>();
             PointXY previous = pointAt(0f);
 
@@ -192,10 +189,10 @@ namespace Akeldov.Math.Spatial2D.Curves
             {
                 PointXY current = pointAt(i / (float)DefaultSegmentCount);
                 var segment = new ParameterizedSegment(previous, current);
-                List<PointXY> segmentIntersections = segment.GetPointIntersections(ray, geometryEpsilon);
+                List<PointXY> segmentIntersections = segment.GetPointIntersections(ray);
 
                 for (int intersectionIndex = 0; intersectionIndex < segmentIntersections.Count; intersectionIndex++)
-                    intersections.AddDistinct(segmentIntersections[intersectionIndex], geometryEpsilon);
+                    intersections.AddDistinct(segmentIntersections[intersectionIndex], GeometryConstants.GeometryEpsilon);
 
                 previous = current;
             }

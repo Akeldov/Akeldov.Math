@@ -206,12 +206,10 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
-            ((RectangleContour)this).GetPointIntersections(ray, geometryEpsilon);
+        public List<PointXY> GetPointIntersections(Ray ray) =>
+            ((RectangleContour)this).GetPointIntersections(ray);
 
-        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
+        /// <inheritdoc cref="RectangleContour.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

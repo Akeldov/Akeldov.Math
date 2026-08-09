@@ -176,11 +176,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         public override int GetHashCode() => HashCode.Combine(EquationA, EquationB, EquationC);
 
         /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public List<PointXY> GetPointIntersections(Ray ray)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+            const float geometryEpsilon = GeometryConstants.GeometryEpsilon;
 
             VectorXY direction = Direction;
             if (direction.SquaredLength > geometryEpsilon * geometryEpsilon &&
