@@ -424,6 +424,64 @@ namespace Akeldov.Math.Hexes
             return new BoolHexMap(condition.Topology, values);
         }
 
+        /// <summary>
+        /// Creates a hex map by selecting between two source maps cell by cell.
+        /// </summary>
+        /// <typeparam name="TValue">The type stored in each source and result cell.</typeparam>
+        /// <param name="condition">
+        /// The Boolean condition map. A <see langword="true"/> cell selects the corresponding value
+        /// from <paramref name="whenTrue"/>; a <see langword="false"/> cell selects it from
+        /// <paramref name="whenFalse"/>.
+        /// </param>
+        /// <param name="whenTrue">
+        /// The source map selected where <paramref name="condition"/> is <see langword="true"/>.
+        /// </param>
+        /// <param name="whenFalse">
+        /// The source map selected where <paramref name="condition"/> is <see langword="false"/>.
+        /// </param>
+        /// <returns>
+        /// A new mutable hex map owned by the caller. Its backing storage is independent, but
+        /// reference-type cell values are selected by reference and are not cloned. None of the
+        /// source maps is modified.
+        /// </returns>
+        /// <remarks>
+        /// The result is a non-spatial <see cref="HexMap{TValue}"/>. If a source map is a derived
+        /// spatial map, its geometry is not copied.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="condition"/>, <paramref name="whenTrue"/>, or
+        /// <paramref name="whenFalse"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        public static HexMap<TValue> Select<TValue>(
+            this BoolHexMap condition,
+            HexMap<TValue> whenTrue,
+            HexMap<TValue> whenFalse)
+        {
+            if (condition == null)
+                throw new ArgumentNullException(nameof(condition));
+
+            if (whenTrue == null)
+                throw new ArgumentNullException(nameof(whenTrue));
+
+            if (whenFalse == null)
+                throw new ArgumentNullException(nameof(whenFalse));
+
+            if (condition.Topology != whenTrue.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(whenTrue));
+
+            if (condition.Topology != whenFalse.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(whenFalse));
+
+            var values = new TValue[condition.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = condition[index] ? whenTrue[index] : whenFalse[index];
+
+            return new HexMap<TValue>(condition.Topology, values);
+        }
+
         private static bool[] CreateConjunctionValues(IHexMap<bool> left, IHexMap<bool> right)
         {
             var values = new bool[left.Topology.Count];

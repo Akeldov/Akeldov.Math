@@ -8,6 +8,7 @@ static Akeldov.Math.Hexes.BoolHexMap.operator ^(Akeldov.Math.Hexes.BoolHexMap! l
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.BoolHexMap! whenTrue, Akeldov.Math.Hexes.BoolHexMap! whenFalse) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.FloatHexMap! whenTrue, Akeldov.Math.Hexes.FloatHexMap! whenFalse) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.IntHexMap! whenTrue, Akeldov.Math.Hexes.IntHexMap! whenFalse) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select<TValue>(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.HexMap<TValue>! whenTrue, Akeldov.Math.Hexes.HexMap<TValue>! whenFalse) -> Akeldov.Math.Hexes.HexMap<TValue>!
 Akeldov.Math.Hexes.FloatHexMap
 Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
 Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology, float[]! values) -> void

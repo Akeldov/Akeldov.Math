@@ -258,4 +258,91 @@ public class BooleanHexMapSelectTests
             Assert.That(result.Topology.Count, Is.Zero);
         });
     }
+
+    [Test]
+    public void Select_WithGenericMaps_ReturnsIndependentCellwiseSelection()
+    {
+        var topology = new HexMapTopology(2, 2, Layout.EvenQ);
+        var condition = new BoolHexMap(topology, new[] { true, false, true, false });
+        var whenTrue = new HexMap<string>(topology, new[] { "a", "b", "c", "d" });
+        var whenFalse = new HexMap<string>(topology, new[] { "A", "B", "C", "D" });
+
+        HexMap<string> result = condition.Select(whenTrue, whenFalse);
+        condition[0] = false;
+        whenTrue[2] = "changed true";
+        whenFalse[1] = "changed false";
+        result[3] = "changed result";
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<HexMap<string>>());
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo("a"));
+            Assert.That(result[1], Is.EqualTo("B"));
+            Assert.That(result[2], Is.EqualTo("c"));
+            Assert.That(result[3], Is.EqualTo("changed result"));
+            Assert.That(whenFalse[3], Is.EqualTo("D"));
+        });
+    }
+
+    [Test]
+    public void Select_WithGenericMaps_WhenMapIsNull_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var condition = new BoolHexMap(topology);
+        var whenTrue = new HexMap<string>(topology);
+        var whenFalse = new HexMap<string>(topology);
+        BoolHexMap nullCondition = null!;
+        HexMap<string> nullMap = null!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => nullCondition.Select(whenTrue, whenFalse))!.ParamName,
+                Is.EqualTo("condition"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => condition.Select(nullMap, whenFalse))!.ParamName,
+                Is.EqualTo("whenTrue"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => condition.Select(whenTrue, nullMap))!.ParamName,
+                Is.EqualTo("whenFalse"));
+        });
+    }
+
+    [Test]
+    public void Select_WithGenericMaps_WhenTopologiesDiffer_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var otherTopology = new HexMapTopology(2, 1, Layout.OddR);
+        var condition = new BoolHexMap(topology);
+        var matchingMap = new HexMap<string>(topology);
+        var otherMap = new HexMap<string>(otherTopology);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => condition.Select(otherMap, matchingMap))!.ParamName,
+                Is.EqualTo("whenTrue"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => condition.Select(matchingMap, otherMap))!.ParamName,
+                Is.EqualTo("whenFalse"));
+        });
+    }
+
+    [Test]
+    public void Select_WithGenericMaps_WhenMapsAreEmpty_ReturnsEmptyMapWithSameTopology()
+    {
+        var topology = new HexMapTopology(0, 0, Layout.EvenR);
+        var condition = new BoolHexMap(topology);
+
+        HexMap<string> result = condition.Select(
+            new HexMap<string>(topology),
+            new HexMap<string>(topology));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result.Topology.Count, Is.Zero);
+        });
+    }
 }
