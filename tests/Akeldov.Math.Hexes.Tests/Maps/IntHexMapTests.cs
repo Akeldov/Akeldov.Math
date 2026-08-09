@@ -30,4 +30,259 @@ public class IntHexMapTests
             Assert.Throws<InvalidOperationException>(() => _ = map.Max);
         });
     }
+
+    [Test]
+    public void Addition_ReturnsElementWiseSumWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var left = new IntHexMap(topology, new[] { 1, -2, 4 });
+        var right = new IntHexMap(topology, new[] { 2, 3, -1 });
+
+        IntHexMap result = left + right;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(1));
+            Assert.That(result[2], Is.EqualTo(3));
+            Assert.That(left[0], Is.EqualTo(1));
+            Assert.That(right[0], Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Addition_WithEquivalentTopologies_ReturnsElementWiseSum()
+    {
+        var left = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 1, 2 });
+        var right = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 3, 4 });
+
+        IntHexMap result = left + right;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(4));
+            Assert.That(result[1], Is.EqualTo(6));
+        });
+    }
+
+    [Test]
+    public void Addition_WithDifferentTopologies_Throws()
+    {
+        var left = new IntHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var differentResolution = new IntHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var differentLayout = new IntHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left + differentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left + differentLayout)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void Addition_WithNullOperand_Throws()
+    {
+        var map = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR));
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing + map)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = map + missing)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Addition_WithIntValue_AddsValueToEveryCellWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new IntHexMap(topology, new[] { 1, -2, 4 });
+
+        IntHexMap rightValueResult = map + 2;
+        IntHexMap leftValueResult = 2 + map;
+        rightValueResult[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(rightValueResult.Topology, Is.EqualTo(topology));
+            Assert.That(rightValueResult[0], Is.EqualTo(100));
+            Assert.That(rightValueResult[1], Is.EqualTo(0));
+            Assert.That(rightValueResult[2], Is.EqualTo(6));
+            Assert.That(leftValueResult[0], Is.EqualTo(3));
+            Assert.That(leftValueResult[1], Is.EqualTo(0));
+            Assert.That(leftValueResult[2], Is.EqualTo(6));
+            Assert.That(map[0], Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void Addition_WithIntValueAndNullMap_Throws()
+    {
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing + 1)!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = 1 + missing)!.ParamName,
+                Is.EqualTo("map"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Subtraction_ReturnsElementWiseDifferenceWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var left = new IntHexMap(topology, new[] { 1, -2, 4 });
+        var right = new IntHexMap(topology, new[] { 2, 3, -1 });
+
+        IntHexMap result = left - right;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(-5));
+            Assert.That(result[2], Is.EqualTo(5));
+            Assert.That(left[0], Is.EqualTo(1));
+            Assert.That(right[0], Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithEquivalentTopologies_ReturnsElementWiseDifference()
+    {
+        var left = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 1, 2 });
+        var right = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 3, 4 });
+
+        IntHexMap result = left - right;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(-2));
+            Assert.That(result[1], Is.EqualTo(-2));
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithDifferentTopologies_Throws()
+    {
+        var left = new IntHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var differentResolution = new IntHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var differentLayout = new IntHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left - differentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left - differentLayout)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithNullOperand_Throws()
+    {
+        var map = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR));
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing - map)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = map - missing)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithIntValue_AppliesBothOperandOrdersWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new IntHexMap(topology, new[] { 1, -2, 4 });
+
+        IntHexMap mapMinusValue = map - 2;
+        IntHexMap valueMinusMap = 2 - map;
+        mapMinusValue[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mapMinusValue.Topology, Is.EqualTo(topology));
+            Assert.That(mapMinusValue[0], Is.EqualTo(100));
+            Assert.That(mapMinusValue[1], Is.EqualTo(-4));
+            Assert.That(mapMinusValue[2], Is.EqualTo(2));
+            Assert.That(valueMinusMap[0], Is.EqualTo(1));
+            Assert.That(valueMinusMap[1], Is.EqualTo(4));
+            Assert.That(valueMinusMap[2], Is.EqualTo(-2));
+            Assert.That(map[0], Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void Subtraction_WithIntValueAndNullMap_Throws()
+    {
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing - 1)!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = 1 - missing)!.ParamName,
+                Is.EqualTo("map"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Arithmetic_WhenCellValueOverflows_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var maximum = new IntHexMap(topology, new[] { int.MaxValue });
+        var minimum = new IntHexMap(topology, new[] { int.MinValue });
+        var one = new IntHexMap(topology, new[] { 1 });
+
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<OverflowException>(() => _ = maximum + one);
+            Assert.Throws<OverflowException>(() => _ = maximum + 1);
+            Assert.Throws<OverflowException>(() => _ = 1 + maximum);
+            Assert.Throws<OverflowException>(() => _ = minimum - one);
+            Assert.Throws<OverflowException>(() => _ = minimum - 1);
+            Assert.Throws<OverflowException>(() => _ = 1 - minimum);
+        });
+    }
 }
