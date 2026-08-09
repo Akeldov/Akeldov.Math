@@ -76,6 +76,56 @@ public class FloatRasterBlurExtensionsTests
     }
 
     [Test]
+    public void GaussianBlur_WithSpatialRaster_PreservesGeometryAndReturnsIndependentValues()
+    {
+        var geometry = new RasterGeometry(
+            new PointXY(-2f, 3f),
+            new VectorXY(6f, 4f),
+            new VectorXYInt(3, 2));
+        ISpatialRaster<float> raster = new SpatialRaster<float>(
+            geometry,
+            new[] { 1f, 2f, 3f, 4f, 5f, 6f });
+
+        SpatialRaster<float> result = raster.GaussianBlur(1f, 1);
+        Raster<float> expected = ((IRaster<float>)raster).GaussianBlur(1f, 1);
+        result[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(result[0], Is.EqualTo(100f));
+            Assert.That(result[1], Is.EqualTo(expected[1]).Within(1e-7f));
+            Assert.That(raster[0], Is.EqualTo(1f));
+        });
+    }
+
+    [Test]
+    public void GaussianBlur_WithInvalidSpatialArguments_Throws()
+    {
+        var geometry = new RasterGeometry(
+            new PointXY(0f, 0f),
+            new VectorXY(1f, 1f),
+            new VectorXYInt(1, 1));
+        ISpatialRaster<float> raster = new SpatialRaster<float>(geometry, new float[1]);
+        ISpatialRaster<float>? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => missing.GaussianBlur(1f))!.ParamName,
+                Is.EqualTo("raster"));
+#pragma warning restore CS8604
+            Assert.That(
+                Assert.Throws<ArgumentOutOfRangeException>(() => raster.GaussianBlur(0f))!.ParamName,
+                Is.EqualTo("sigma"));
+            Assert.That(
+                Assert.Throws<ArgumentOutOfRangeException>(() => raster.GaussianBlur(1f, -1))!.ParamName,
+                Is.EqualTo("radius"));
+        });
+    }
+
+    [Test]
     public void GaussianBlur_WithInvalidArguments_Throws()
     {
         var raster = new Raster<float>(new VectorXYInt(1, 1), new float[1]);
