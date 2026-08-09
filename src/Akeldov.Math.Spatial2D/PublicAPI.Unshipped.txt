@@ -20,8 +20,11 @@ Akeldov.Math.Spatial2D.Curves.QuadraticBezier.GetPointIntersections(Akeldov.Math
 Akeldov.Math.Spatial2D.Curves.Ray.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Segment.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions
 Akeldov.Math.Spatial2D.Rasterization.RasterGeometryPerlinNoiseExtensions
 Akeldov.Math.Spatial2D.Rasterization.VectorXYIntPerlinNoiseExtensions
+static Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions.GaussianBlur(this Akeldov.Math.Spatial2D.Rasterization.IRaster<float>! raster, float sigma) -> Akeldov.Math.Spatial2D.Rasterization.Raster<float>!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions.GaussianBlur(this Akeldov.Math.Spatial2D.Rasterization.IRaster<float>! raster, float sigma, int radius) -> Akeldov.Math.Spatial2D.Rasterization.Raster<float>!
 static Akeldov.Math.Spatial2D.Rasterization.RasterGeometryPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<float>!
 static Akeldov.Math.Spatial2D.Rasterization.VectorXYIntPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Spatial2D.VectorXYInt resolution, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Spatial2D.Rasterization.Raster<float>!
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! raster, string! path, System.IO.Compression.CompressionLevel compressionLevel) -> void
