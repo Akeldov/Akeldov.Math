@@ -274,6 +274,7 @@ public class IntHexMapTests
         var maximum = new IntHexMap(topology, new[] { int.MaxValue });
         var minimum = new IntHexMap(topology, new[] { int.MinValue });
         var one = new IntHexMap(topology, new[] { 1 });
+        var greaterThanHalfMaximum = new IntHexMap(topology, new[] { (int.MaxValue / 2) + 1 });
 
         Assert.Multiple(() =>
         {
@@ -283,6 +284,89 @@ public class IntHexMapTests
             Assert.Throws<OverflowException>(() => _ = minimum - one);
             Assert.Throws<OverflowException>(() => _ = minimum - 1);
             Assert.Throws<OverflowException>(() => _ = 1 - minimum);
+            Assert.Throws<OverflowException>(() => _ = greaterThanHalfMaximum * 2);
+            Assert.Throws<OverflowException>(() => _ = 2 * greaterThanHalfMaximum);
+            Assert.Throws<OverflowException>(() => _ = minimum / -1);
         });
+    }
+
+    [Test]
+    public void Multiplication_WithIntValue_MultipliesEveryCellWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new IntHexMap(topology, new[] { 3, -4, 8 });
+
+        IntHexMap rightValueResult = map * 2;
+        IntHexMap leftValueResult = 2 * map;
+        rightValueResult[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(rightValueResult.Topology, Is.EqualTo(topology));
+            Assert.That(rightValueResult[0], Is.EqualTo(100));
+            Assert.That(rightValueResult[1], Is.EqualTo(-8));
+            Assert.That(rightValueResult[2], Is.EqualTo(16));
+            Assert.That(leftValueResult[0], Is.EqualTo(6));
+            Assert.That(leftValueResult[1], Is.EqualTo(-8));
+            Assert.That(leftValueResult[2], Is.EqualTo(16));
+            Assert.That(map[0], Is.EqualTo(3));
+        });
+    }
+
+    [Test]
+    public void Multiplication_WithIntValueAndNullMap_Throws()
+    {
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing * 2)!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = 2 * missing)!.ParamName,
+                Is.EqualTo("map"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Division_WithIntValue_DividesEveryCellWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new IntHexMap(topology, new[] { 3, -4, 8 });
+
+        IntHexMap result = map / 2;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(-2));
+            Assert.That(result[2], Is.EqualTo(4));
+            Assert.That(map[0], Is.EqualTo(3));
+        });
+    }
+
+    [Test]
+    public void Division_ByZero_Throws()
+    {
+        var map = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR));
+
+        Assert.Throws<DivideByZeroException>(() => _ = map / 0);
+    }
+
+    [Test]
+    public void Division_WithIntValueAndNullMap_Throws()
+    {
+        IntHexMap? missing = null;
+
+#pragma warning disable CS8604
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = missing / 2);
+#pragma warning restore CS8604
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
     }
 }

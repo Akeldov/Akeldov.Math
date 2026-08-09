@@ -226,5 +226,70 @@ namespace Akeldov.Math.Hexes
 
             return new IntHexMap(map.Topology, values);
         }
+
+        /// <summary>
+        /// Creates a map by multiplying every cell in the source map by the specified value.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value by which to multiply every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when a cell product does not fit in <see cref="int"/>.
+        /// </exception>
+        public static IntHexMap operator *(IntHexMap map, int value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new int[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = checked(map[index] * value);
+
+            return new IntHexMap(map.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a map by multiplying every cell in the source map by the specified value.
+        /// </summary>
+        /// <param name="value">The value by which to multiply every cell.</param>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when a cell product does not fit in <see cref="int"/>.
+        /// </exception>
+        public static IntHexMap operator *(int value, IntHexMap map) => map * value;
+
+        /// <summary>
+        /// Creates a map by dividing every cell in the source map by the specified value.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value by which to divide every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="DivideByZeroException">
+        /// Thrown when <paramref name="value"/> is zero.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when dividing <see cref="int.MinValue"/> by <c>-1</c>.
+        /// </exception>
+        public static IntHexMap operator /(IntHexMap map, int value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new int[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = checked(map[index] / value);
+
+            return new IntHexMap(map.Topology, values);
+        }
     }
 }
