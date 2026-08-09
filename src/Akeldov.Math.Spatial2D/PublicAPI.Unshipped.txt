@@ -1,4 +1,25 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Contours.Circle.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.CompositeContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Contours.RectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.Arc.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.CubicBezier.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.ICurve.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.Line.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.ParameterizedArc.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.ParameterizedLine.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.QuadraticBezier.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.Ray.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.Segment.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Rasterization.RasterGeometryPerlinNoiseExtensions
 Akeldov.Math.Spatial2D.Rasterization.VectorXYIntPerlinNoiseExtensions
 static Akeldov.Math.Spatial2D.Rasterization.RasterGeometryPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<float>!

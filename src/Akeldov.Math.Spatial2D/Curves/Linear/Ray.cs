@@ -139,6 +139,29 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new ParameterizedCurveProjection(projected, t, point.Distance(projected));
         }
 
+        /// <inheritdoc/>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            VectorXY direction = Direction;
+            VectorXY otherDirection = ray.Direction;
+            VectorXY originDelta = ray.Origin - Origin;
+
+            if (VectorXY.Cross(direction, otherDirection).IsAlmostZero(geometryEpsilon) &&
+                VectorXY.Cross(originDelta, direction).IsAlmostZero(geometryEpsilon))
+            {
+                float directionDot = VectorXY.Dot(direction, otherDirection);
+                float otherOriginCoordinate = VectorXY.Dot(originDelta, direction);
+                if (directionDot >= 0f || otherOriginCoordinate > geometryEpsilon)
+                    return new List<PointXY>();
+            }
+
+            return GetRayIntersections(ray, geometryEpsilon);
+        }
+
         /// <summary>
         /// Returns point intersections with another ray. If the rays are collinear and overlap,
         /// returns the first point along this ray that belongs to the other ray.

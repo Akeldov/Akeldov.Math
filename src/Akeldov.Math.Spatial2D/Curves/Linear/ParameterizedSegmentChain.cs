@@ -146,6 +146,29 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this chain.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            var intersections = new List<PointXY>();
+
+            for (int i = 0; i < _segments.Length; i++)
+            {
+                List<PointXY> segmentIntersections = _segments[i].GetPointIntersections(ray, geometryEpsilon);
+                for (int j = 0; j < segmentIntersections.Count; j++)
+                    intersections.AddDistinct(segmentIntersections[j], geometryEpsilon);
+            }
+
+            intersections.Sort((left, right) =>
+                VectorXY.Dot(left - ray.Origin, ray.Direction).CompareTo(
+                    VectorXY.Dot(right - ray.Origin, ray.Direction)));
+
+            return intersections;
+        }
+
+        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

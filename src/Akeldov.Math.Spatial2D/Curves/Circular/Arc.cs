@@ -167,6 +167,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this arc.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
+            GetRayIntersections(ray, geometryEpsilon);
+
+        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(Ray ray, float geometryEpsilon = 1E-06F)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));

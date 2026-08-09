@@ -158,12 +158,12 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void GetRayIntersections_ReturnsBoundaryIntersections()
+    public void GetPointIntersections_ReturnsBoundaryIntersections()
     {
         IContour contour = CreateSquareContour();
         var ray = new Ray(new PointXY(-1f, 1f));
 
-        List<PointXY> intersections = contour.GetRayIntersections(ray);
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(2));
         Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(0f, 1f))), Is.True);

@@ -178,6 +178,35 @@ namespace Akeldov.Math.Spatial2D.Curves
                 MathF.Sqrt(closestSquaredDistance));
         }
 
+        public static List<PointXY> GetPointIntersections(
+            Func<float, PointXY> pointAt,
+            Ray ray,
+            float geometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            var intersections = new List<PointXY>();
+            PointXY previous = pointAt(0f);
+
+            for (int i = 1; i <= DefaultSegmentCount; i++)
+            {
+                PointXY current = pointAt(i / (float)DefaultSegmentCount);
+                var segment = new ParameterizedSegment(previous, current);
+                List<PointXY> segmentIntersections = segment.GetPointIntersections(ray, geometryEpsilon);
+
+                for (int intersectionIndex = 0; intersectionIndex < segmentIntersections.Count; intersectionIndex++)
+                    intersections.AddDistinct(segmentIntersections[intersectionIndex], geometryEpsilon);
+
+                previous = current;
+            }
+
+            intersections.Sort((left, right) =>
+                VectorXY.Dot(left - ray.Origin, ray.Direction).CompareTo(
+                    VectorXY.Dot(right - ray.Origin, ray.Direction)));
+
+            return intersections;
+        }
+
         public static List<PointXY> GetRayIntersections(
             Func<float, PointXY> pointAt,
             Ray ray,

@@ -103,14 +103,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         public int CountRightwardCrossings(PointXY origin) =>
             ((Segment)this).CountRightwardCrossings(origin);
 
-        /// <summary>
-        /// Returns point intersections with the specified ray. If the ray is collinear with the segment
-        /// and their overlap is not a single point, returns the first included point encountered along the ray.
-        /// If the overlap starts at an excluded endpoint, no first point exists and the result is empty.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this segment.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
+        /// <inheritdoc/>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
+            ((Segment)this).GetPointIntersections(ray, geometryEpsilon);
+
+        /// <inheritdoc cref="Segment.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

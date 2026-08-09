@@ -159,18 +159,16 @@ public class RectangleTests
     }
 
     [Test]
-    public void RectangleContour_RayIntersections_WhenRayOverlapsEdge_ReturnsBoundaryPointsOnRay()
+    public void RectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
         IContour contour = new RectangleContour(
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
         var ray = new Ray(new PointXY(1f, 0f));
 
-        List<PointXY> intersections = contour.GetRayIntersections(ray);
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
 
-        Assert.That(intersections, Has.Count.EqualTo(2));
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 0f))), Is.True);
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(2f, 0f))), Is.True);
+        Assert.That(intersections, Is.Empty);
     }
 
     [Test]
@@ -422,7 +420,7 @@ public class RectangleTests
             new PointXY(2f, 1f));
         var ray = new Ray(new PointXY(-1f, 0.5f));
 
-        List<PointXY> intersections = contour.GetRayIntersections(ray);
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(2));
         Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(0f, 0.5f))), Is.True);
@@ -430,18 +428,16 @@ public class RectangleTests
     }
 
     [Test]
-    public void ParameterizedRectangleContour_RayIntersections_WhenRayOverlapsEdge_ReturnsBoundaryPointsOnRay()
+    public void ParameterizedRectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
         IContour contour = new ParameterizedRectangleContour(
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
         var ray = new Ray(new PointXY(1f, 0f));
 
-        List<PointXY> intersections = contour.GetRayIntersections(ray);
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
 
-        Assert.That(intersections, Has.Count.EqualTo(2));
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 0f))), Is.True);
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(2f, 0f))), Is.True);
+        Assert.That(intersections, Is.Empty);
     }
 
     [Test]

@@ -125,6 +125,35 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            var edges = new[]
+            {
+                new Segment(BottomLeft, BottomRight),
+                new Segment(BottomRight, TopRight),
+                new Segment(TopRight, TopLeft),
+                new Segment(TopLeft, BottomLeft),
+            };
+            var intersections = new List<PointXY>();
+
+            for (int i = 0; i < edges.Length; i++)
+            {
+                List<PointXY> edgeIntersections = edges[i].GetPointIntersections(ray, geometryEpsilon);
+                if (edgeIntersections.Count == 0 && edges[i].GetRayIntersections(ray, geometryEpsilon).Count != 0)
+                    return new List<PointXY>();
+
+                for (int j = 0; j < edgeIntersections.Count; j++)
+                    intersections.AddDistinct(edgeIntersections[j], geometryEpsilon);
+            }
+
+            return intersections;
+        }
+
+        /// <inheritdoc cref="GetPointIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

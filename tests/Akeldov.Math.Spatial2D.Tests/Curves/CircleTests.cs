@@ -279,38 +279,38 @@ public class CircleTests
     }
 
     [Test]
-    public void RayIntersections_WhenRayStartsInsideCircle_ReturnsForwardExitPoint()
+    public void PointIntersections_WhenRayStartsInsideCircle_ReturnsForwardExitPoint()
     {
-        var circle = new Circle(new PointXY(0f, 0f), 2f);
+        ICurve circle = new Circle(new PointXY(0f, 0f), 2f);
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = circle.GetRayIntersections(ray);
+        var intersections = circle.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
     }
 
     [Test]
-    public void RayIntersections_WhenRayIsTangent_ReturnsSingleIntersection()
+    public void PointIntersections_WhenRayIsTangent_ReturnsSingleIntersection()
     {
         var circle = new Circle(new PointXY(0f, 0f), 1f);
         var ray = new Ray(new PointXY(-2f, 1f));
 
-        var intersections = circle.GetRayIntersections(ray);
+        var intersections = circle.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 0f, 1f);
     }
 
     [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayNearlyTouchesCircle_ReturnsSingleIntersection()
+    public void PointIntersections_WithCustomGeometryEpsilon_WhenRayNearlyTouchesCircle_ReturnsSingleIntersection()
     {
         const float geometryEpsilon = 0.001f;
         var circle = new Circle(new PointXY(0f, 0f), 1f);
         var ray = new Ray(new PointXY(-2f, 1.00005f));
 
-        var defaultIntersections = circle.GetRayIntersections(ray);
-        var tolerantIntersections = circle.GetRayIntersections(ray, geometryEpsilon);
+        var defaultIntersections = circle.GetPointIntersections(ray);
+        var tolerantIntersections = circle.GetPointIntersections(ray, geometryEpsilon);
 
         Assert.That(defaultIntersections, Is.Empty);
         Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
@@ -321,24 +321,24 @@ public class CircleTests
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
     [TestCase(float.NegativeInfinity)]
-    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    public void PointIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
         var circle = new Circle(new PointXY(0f, 0f), 1f);
         var ray = new Ray(new PointXY(0f, 0f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            circle.GetRayIntersections(ray, geometryEpsilon));
+            circle.GetPointIntersections(ray, geometryEpsilon));
 
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
     [Test]
-    public void RayIntersections_WhenCircleIsBehindRay_ReturnsEmpty()
+    public void PointIntersections_WhenCircleIsBehindRay_ReturnsEmpty()
     {
         var circle = new Circle(new PointXY(0f, 0f), 1f);
         var ray = new Ray(new PointXY(2f, 0f));
 
-        var intersections = circle.GetRayIntersections(ray);
+        var intersections = circle.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }

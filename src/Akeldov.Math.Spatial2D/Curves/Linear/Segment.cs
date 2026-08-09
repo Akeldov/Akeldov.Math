@@ -125,6 +125,30 @@ namespace Akeldov.Math.Spatial2D.Curves
             return x > origin.X ? 1 : 0;
         }
 
+        /// <inheritdoc/>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            VectorXY segmentDirection = EndpointB - EndpointA;
+            if (segmentDirection.SquaredLength > geometryEpsilon * geometryEpsilon &&
+                VectorXY.Cross(segmentDirection, ray.Direction).IsAlmostZero(geometryEpsilon) &&
+                VectorXY.Cross(EndpointA - ray.Origin, ray.Direction).IsAlmostZero(geometryEpsilon))
+            {
+                float endpointACoordinate = VectorXY.Dot(EndpointA - ray.Origin, ray.Direction);
+                float endpointBCoordinate = VectorXY.Dot(EndpointB - ray.Origin, ray.Direction);
+                float overlapStart = MathF.Max(0f, MathF.Min(endpointACoordinate, endpointBCoordinate));
+                float overlapEnd = MathF.Max(endpointACoordinate, endpointBCoordinate);
+
+                if (overlapEnd - overlapStart > geometryEpsilon)
+                    return new List<PointXY>();
+            }
+
+            return GetRayIntersections(ray, geometryEpsilon);
+        }
+
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray is collinear with the segment
         /// and their overlap is not a single point, returns the first included point encountered along the ray.

@@ -77,6 +77,29 @@ public class RayTests
     }
 
     [Test]
+    public void PointIntersections_WhenCollinearRaysOverlapContinuously_ReturnsEmpty()
+    {
+        var ray = new Ray(new PointXY(2f, 0f));
+        var other = new Ray(new PointXY(0f, 0f));
+
+        var intersections = ray.GetPointIntersections(other);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenOpposingRaysShareOrigin_ReturnsOrigin()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(0f, 0f), MathF.PI);
+
+        var intersections = ray.GetPointIntersections(other);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 0f, 0f);
+    }
+
+    [Test]
     public void RayIntersections_WhenOtherCollinearRayStartsAhead_ReturnsOtherOrigin()
     {
         var ray = new Ray(new PointXY(0f, 0f));

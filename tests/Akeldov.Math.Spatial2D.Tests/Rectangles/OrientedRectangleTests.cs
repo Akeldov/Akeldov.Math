@@ -165,7 +165,7 @@ public class OrientedRectangleTests
     }
 
     [Test]
-    public void OrientedRectangleContour_RayIntersections_WhenRayOverlapsEdge_ReturnsBoundaryPointsOnRay()
+    public void OrientedRectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
         IContour contour = new OrientedRectangleContour(
             new PointXY(0f, 0f),
@@ -173,11 +173,9 @@ public class OrientedRectangleTests
             MathF.PI * 0.5f);
         var ray = new Ray(new PointXY(1f, 0f), MathF.PI * 0.5f);
 
-        List<PointXY> intersections = contour.GetRayIntersections(ray);
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
 
-        Assert.That(intersections, Has.Count.EqualTo(2));
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 0f))), Is.True);
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 2f))), Is.True);
+        Assert.That(intersections, Is.Empty);
     }
 
     [Test]
@@ -441,7 +439,7 @@ public class OrientedRectangleTests
     }
 
     [Test]
-    public void ParameterizedOrientedRectangleContour_RayIntersections_WhenRayOverlapsEdge_ReturnsBoundaryPointsOnRay()
+    public void ParameterizedOrientedRectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
         IContour contour = new ParameterizedOrientedRectangleContour(
             new PointXY(0f, 0f),
@@ -449,11 +447,9 @@ public class OrientedRectangleTests
             MathF.PI * 0.5f);
         var ray = new Ray(new PointXY(1f, 0f), MathF.PI * 0.5f);
 
-        List<PointXY> intersections = contour.GetRayIntersections(ray);
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
 
-        Assert.That(intersections, Has.Count.EqualTo(2));
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 0f))), Is.True);
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(1f, 2f))), Is.True);
+        Assert.That(intersections, Is.Empty);
     }
 
     [Test]

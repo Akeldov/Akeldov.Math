@@ -218,13 +218,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(_line, _origin, _isDirectionReversed);
 
-        /// <summary>
-        /// Returns point intersections with the specified ray. If the ray lies on this line,
-        /// returns the ray origin as the first point encountered by the ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this line.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
+        /// <inheritdoc/>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon) =>
+            _line.GetPointIntersections(ray, geometryEpsilon);
+
+        /// <inheritdoc cref="Line.GetRayIntersections(Ray, float)"/>
         public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)

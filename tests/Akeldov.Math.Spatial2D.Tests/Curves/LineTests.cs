@@ -168,6 +168,17 @@ public class LineTests
     }
 
     [Test]
+    public void PointIntersections_WhenRayLiesOnLine_ReturnsEmpty()
+    {
+        var line = new Line(new PointXY(-5f, 0f), new PointXY(5f, 0f));
+        var ray = new Ray(new PointXY(2f, 0f));
+
+        var intersections = line.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void RayIntersections_WhenRayIsParallelButNotOnLine_ReturnsEmpty()
     {
         var line = new Line(new PointXY(-5f, 1f), new PointXY(5f, 1f));

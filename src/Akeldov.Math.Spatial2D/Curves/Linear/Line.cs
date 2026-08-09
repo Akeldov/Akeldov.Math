@@ -175,6 +175,24 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(EquationA, EquationB, EquationC);
 
+        /// <inheritdoc/>
+        public List<PointXY> GetPointIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            VectorXY direction = Direction;
+            if (direction.SquaredLength > geometryEpsilon * geometryEpsilon &&
+                VectorXY.Cross(ray.Direction, direction).IsAlmostZero(geometryEpsilon) &&
+                VectorXY.Cross(ClosestPointToOrigin - ray.Origin, direction).IsAlmostZero(geometryEpsilon))
+            {
+                return new List<PointXY>();
+            }
+
+            return GetRayIntersections(ray, geometryEpsilon);
+        }
+
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray lies on this line,
         /// returns the ray origin as the first point encountered by the ray.
