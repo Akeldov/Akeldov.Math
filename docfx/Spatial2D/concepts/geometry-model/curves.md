@@ -95,7 +95,8 @@ internal polyline approximation for length, projection, distance, and ray inters
 
 ## Intersect a curve with a ray
 
-`GetRayIntersections` returns points in the forward direction of the supplied ray:
+`GetPointIntersections` returns isolated intersection points in the forward direction of the
+supplied ray:
 
 ```csharp
 using System.Collections.Generic;
@@ -109,12 +110,12 @@ var ray = new Ray(
     origin: new PointXY(-10f, 0f),
     angle: 0f);
 
-List<PointXY> intersections = circle.GetRayIntersections(ray);
+List<PointXY> intersections = circle.GetPointIntersections(ray);
 ```
 
-The returned list is new, mutable, and owned by the caller. The optional `geometryEpsilon`
-argument is measured in world coordinate units and controls comparisons near tangencies,
-endpoints, collinear overlaps, and nearly parallel curves.
+The returned list is new, mutable, and owned by the caller. Points that belong to a continuous
+set of intersections are not returned. For example, a collinear overlap between a linear curve
+and the ray does not produce a representative point.
 
 `CountRightwardCrossings` is a specialized crossing query used by containment algorithms. It
 uses a half-open endpoint rule so shared vertices are not counted twice.

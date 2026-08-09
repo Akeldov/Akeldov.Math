@@ -14,7 +14,7 @@ float distance = circle.Distance(new PointXY(8f, 3f)); // 1
 CurveProjection projection = circle.Project(new PointXY(8f, 3f));
 ```
 
-`Center`, `Radius`, and `Length` describe the boundary. `Encloses` classifies a point against the enclosed disk, while `Distance` measures the unsigned distance to the circumference and `SignedDistance` is negative inside. `GetRayIntersections` returns a new caller-owned mutable list of intersections.
+`Center`, `Radius`, and `Length` describe the boundary. `Encloses` classifies a point against the enclosed disk, while `Distance` measures the unsigned distance to the circumference and `SignedDistance` is negative inside. `GetPointIntersections` returns a new caller-owned mutable list of intersections.
 
 When projecting the center of a nonzero circle, the positive X-axis point is used as a stable result. A zero-radius circle projects to its center.
 

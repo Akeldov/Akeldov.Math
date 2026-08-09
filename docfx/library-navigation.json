@@ -4,7 +4,29 @@
       "path": "Spatial2D",
       "name": "Akeldov.Math.Spatial2D",
       "versioned": true,
-      "referencePage": "Akeldov.Math.Spatial2D.html"
+      "referencePage": "Akeldov.Math.Spatial2D.html",
+      "navigationByVersion": {
+        "0.8.0": [
+          {
+            "key": "concepts",
+            "path": "concepts/index.html",
+            "label": "Concepts",
+            "labelRu": "Концепции"
+          },
+          {
+            "key": "getting-started",
+            "path": "getting-started.html",
+            "label": "Tutorials",
+            "labelRu": "Учебники"
+          },
+          {
+            "key": "recipes",
+            "path": "recipes/index.html",
+            "label": "How-to Guides",
+            "labelRu": "Руководства"
+          }
+        ]
+      }
     },
     {
       "path": "Hexes",

@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>0.8.0</Version>
+		<Version>0.9.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added covariant IRaster and ISpatialRaster abstractions, generic spatial field rasterization, and Boolean point influence fields. Breaking changes include renaming IGrid to IRaster and SpatialRasterGrid to RasterGeometry, deriving SpatialRaster from Raster, removing redundant raster dimension properties and ToRaster, and renaming raster value mapping to MapValues. Tightened contour, raster geometry, resolution, value-count, and index validation. Expanded raster, field, ownership-contract, package-compatibility, and documentation coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added deterministic Perlin-noise generation for spatial and non-spatial floating-point rasters, Gaussian blur with geometry-preserving spatial overloads, configurable PNG compression, and point-only ray intersection APIs. Custom ICurve implementations must now implement GetPointIntersections(Ray); GetRayIntersections remains available but is obsolete. Existing SaveAsPng overloads now use optimal compression by default. Fixed CompositeContour.Encloses and ContourBasedRegion.Contains/SignedDistance so points on outer and hole boundaries satisfy the documented boundary-inclusive contract. Expanded raster, PNG, curve-intersection, containment, public-API analysis, benchmark, test, and bilingual documentation coverage.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>

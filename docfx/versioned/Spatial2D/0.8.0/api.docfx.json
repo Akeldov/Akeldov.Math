@@ -1,0 +1,50 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "source",
+          "files": [
+            "Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj"
+          ]
+        }
+      ],
+      "dest": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/api",
+      "properties": {
+        "TargetFramework": "net6.0",
+        "BaseOutputPath": "../../../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/build/bin/",
+        "BaseIntermediateOutputPath": "../../../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/build/obj/",
+        "MSBuildProjectExtensionsPath": "../../../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/build/obj/"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "src": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/api",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Spatial2D/0.8.0"
+      }
+    ],
+    "output": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/site/Akeldov.Math",
+    "template": [
+      "default",
+      "modern",
+      "../../../template"
+    ],
+    "globalMetadata": {
+      "_appName": "Akeldov.Math",
+      "_appTitle": "Akeldov.Math Documentation",
+      "_appLogoPath": "assets/logo-akeldov.png",
+      "_appFaviconPath": "assets/favicon-akeldov.png",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/Akeldov/Akeldov.Math",
+        "branch": "main"
+      }
+    }
+  }
+}

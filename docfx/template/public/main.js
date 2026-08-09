@@ -193,12 +193,21 @@ async function getVersionContext() {
         `${segments.slice(0, libraryIndex + 1).join('/')}/`,
         rootUrl);
     const versionData = await fetchJson(new URL('versions.json', libraryRootUrl));
+    const navigationData = await fetchJson(
+        new URL('library-navigation.json', rootUrl));
 
     if (!Array.isArray(versionData?.versions) || versionData.versions.length === 0) {
         return null;
     }
 
+    const apiPage = segments[libraryIndex - 1] === 'api';
+    const libraryNavigation = navigationData?.libraries?.find(
+        item => item.path === library);
+
     return {
+        fallbackPagePath: apiPage
+            ? (libraryNavigation?.referencePage ?? 'index.html')
+            : 'index.html',
         versionRootUrl,
         versions: versionData.versions,
         versionPath,
@@ -312,12 +321,15 @@ async function getLibraryNavigationContext() {
         rootUrl);
 
     return {
-        activeSection: apiPage ? 'reference' : segments[0],
+        activeSection: apiPage
+            ? 'reference'
+            : segments[0]?.replace(/\.html$/, ''),
         conceptualRootUrl,
         library,
         referenceRootUrl,
         rootUrl,
-        russian: language === 'ru'
+        russian: language === 'ru',
+        versionPath
     };
 }
 
@@ -354,7 +366,7 @@ async function addLibraryNavigation() {
     const links = document.createElement('div');
     links.classList.add('docs-context-links');
 
-    const sections = [
+    const defaultConceptualSections = [
         {
             key: 'concepts',
             label: context.russian ? 'Концепции' : 'Concepts',
@@ -369,7 +381,21 @@ async function addLibraryNavigation() {
             key: 'how-to-guides',
             label: context.russian ? 'Руководства' : 'How-to Guides',
             url: new URL('how-to-guides/index.html', context.conceptualRootUrl)
-        },
+        }
+    ];
+    const configuredConceptualSections =
+        context.library.navigationByVersion?.[context.versionPath];
+    const conceptualSections = Array.isArray(configuredConceptualSections)
+        ? configuredConceptualSections.map(section => ({
+            key: section.key,
+            label: context.russian
+                ? (section.labelRu ?? section.label)
+                : section.label,
+            url: new URL(section.path, context.conceptualRootUrl)
+        }))
+        : defaultConceptualSections;
+    const sections = [
+        ...conceptualSections,
         {
             key: 'reference',
             label: context.russian ? 'Справочник' : 'References',
@@ -472,14 +498,14 @@ async function addVersionSelector() {
             const response = await fetch(targetUrl, { method: 'HEAD' });
             if (!response.ok) {
                 targetUrl = new URL(
-                    `${encodeURIComponent(select.value)}/index.html`,
+                    `${encodeURIComponent(select.value)}/${context.fallbackPagePath}`,
                     context.versionRootUrl);
                 targetUrl.search = window.location.search;
                 targetUrl.hash = window.location.hash;
             }
         } catch {
             targetUrl = new URL(
-                `${encodeURIComponent(select.value)}/index.html`,
+                `${encodeURIComponent(select.value)}/${context.fallbackPagePath}`,
                 context.versionRootUrl);
             targetUrl.search = window.location.search;
             targetUrl.hash = window.location.hash;

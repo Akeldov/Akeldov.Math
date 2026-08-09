@@ -18,7 +18,7 @@ using Akeldov.Math.Spatial2D.Curves;
 var circle = new Circle(new PointXY(0f, 0f), 5f);
 var ray = new Ray(new PointXY(-10f, 0f));
 
-List<PointXY> hits = circle.GetRayIntersections(ray);
+List<PointXY> hits = circle.GetPointIntersections(ray);
 hits.RemoveAll(point => point.X < 0f);
 ```
 

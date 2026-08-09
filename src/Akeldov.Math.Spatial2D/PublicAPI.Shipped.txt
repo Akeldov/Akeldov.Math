@@ -9,6 +9,7 @@ Akeldov.Math.Spatial2D.Contours.Circle.CountRightwardCrossings(Akeldov.Math.Spat
 Akeldov.Math.Spatial2D.Contours.Circle.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
 Akeldov.Math.Spatial2D.Contours.Circle.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Contours.Circle.Equals(Akeldov.Math.Spatial2D.Contours.Circle other) -> bool
+Akeldov.Math.Spatial2D.Contours.Circle.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.Circle.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.Circle.Length.get -> float
 Akeldov.Math.Spatial2D.Contours.Circle.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
@@ -22,6 +23,7 @@ Akeldov.Math.Spatial2D.Contours.CompositeContour.CountRightwardCrossings(Akeldov
 Akeldov.Math.Spatial2D.Contours.CompositeContour.Curves.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Curves.IFinitePath!>!
 Akeldov.Math.Spatial2D.Contours.CompositeContour.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
 Akeldov.Math.Spatial2D.Contours.CompositeContour.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
+Akeldov.Math.Spatial2D.Contours.CompositeContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.CompositeContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.CompositeContour.Length.get -> float
 Akeldov.Math.Spatial2D.Contours.CompositeContour.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
@@ -46,6 +48,7 @@ Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.CountRightwardCrossings
 Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
 Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.Equals(Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour other) -> bool
+Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.Height.get -> float
 Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.Length.get -> float
@@ -69,6 +72,7 @@ Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.Distance(Akeldov.Math.Spatia
 Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.Equals(Akeldov.Math.Spatial2D.Contours.ParameterizedCircle other) -> bool
 Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.Length.get -> float
 Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.ParameterizedCircle() -> void
@@ -89,6 +93,7 @@ Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.EndPoint.get -> Ak
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.Length.get -> float
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.ParameterizedCompositeContour(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Curves.IFinitePath!>! curves) -> void
@@ -108,6 +113,7 @@ Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.Distance(A
 Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.Equals(Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour other) -> bool
 Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.Height.get -> float
 Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.Length.get -> float
@@ -136,6 +142,7 @@ Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.Distance(Akeldov.M
 Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.Equals(Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour other) -> bool
 Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.Height.get -> float
 Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.Length.get -> float
@@ -163,6 +170,7 @@ Akeldov.Math.Spatial2D.Contours.RectangleContour.CountRightwardCrossings(Akeldov
 Akeldov.Math.Spatial2D.Contours.RectangleContour.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
 Akeldov.Math.Spatial2D.Contours.RectangleContour.Encloses(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Contours.RectangleContour.Equals(Akeldov.Math.Spatial2D.Contours.RectangleContour other) -> bool
+Akeldov.Math.Spatial2D.Contours.RectangleContour.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.RectangleContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Contours.RectangleContour.Height.get -> float
 Akeldov.Math.Spatial2D.Contours.RectangleContour.Length.get -> float
@@ -202,6 +210,7 @@ Akeldov.Math.Spatial2D.Curves.Arc.EndPoint.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Arc.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Arc.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Arc.Equals(Akeldov.Math.Spatial2D.Curves.Arc other) -> bool
+Akeldov.Math.Spatial2D.Curves.Arc.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Arc.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Arc.IsFullCircle.get -> bool
 Akeldov.Math.Spatial2D.Curves.Arc.IsWithinAngularRegion(Akeldov.Math.Spatial2D.PointXY point) -> bool
@@ -226,6 +235,7 @@ Akeldov.Math.Spatial2D.Curves.BezierCurve.Equals(Akeldov.Math.Spatial2D.Curves.B
 Akeldov.Math.Spatial2D.Curves.BezierCurve.Flatten(int segmentCount) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.ParameterizedSegment>!
 Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPointAt(float t) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.BezierCurve.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.BezierCurve.Length.get -> float
 Akeldov.Math.Spatial2D.Curves.BezierCurve.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
@@ -246,6 +256,7 @@ Akeldov.Math.Spatial2D.Curves.CubicBezier.Equals(Akeldov.Math.Spatial2D.Curves.C
 Akeldov.Math.Spatial2D.Curves.CubicBezier.Flatten(int segmentCount) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.ParameterizedSegment>!
 Akeldov.Math.Spatial2D.Curves.CubicBezier.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.CubicBezier.GetPointAt(float t) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.CubicBezier.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.CubicBezier.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.CubicBezier.Length.get -> float
 Akeldov.Math.Spatial2D.Curves.CubicBezier.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
@@ -263,6 +274,7 @@ Akeldov.Math.Spatial2D.Curves.HalfPlaneSide.OnTheLine = 0 -> Akeldov.Math.Spatia
 Akeldov.Math.Spatial2D.Curves.HalfPlaneSide.Right = -1 -> Akeldov.Math.Spatial2D.Curves.HalfPlaneSide
 Akeldov.Math.Spatial2D.Curves.ICurve
 Akeldov.Math.Spatial2D.Curves.ICurve.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int
+Akeldov.Math.Spatial2D.Curves.ICurve.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ICurve.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ICurve.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
 Akeldov.Math.Spatial2D.Curves.IFiniteCurve
@@ -292,6 +304,7 @@ Akeldov.Math.Spatial2D.Curves.Line.Equals(Akeldov.Math.Spatial2D.Curves.Line oth
 Akeldov.Math.Spatial2D.Curves.Line.EquationA.get -> float
 Akeldov.Math.Spatial2D.Curves.Line.EquationB.get -> float
 Akeldov.Math.Spatial2D.Curves.Line.EquationC.get -> float
+Akeldov.Math.Spatial2D.Curves.Line.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Line.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Line.Line() -> void
 Akeldov.Math.Spatial2D.Curves.Line.Line(Akeldov.Math.Spatial2D.PointXY a, Akeldov.Math.Spatial2D.PointXY b) -> void
@@ -317,6 +330,7 @@ Akeldov.Math.Spatial2D.Curves.ParameterizedArc.EndpointA.get -> Akeldov.Math.Spa
 Akeldov.Math.Spatial2D.Curves.ParameterizedArc.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.ParameterizedArc.Equals(Akeldov.Math.Spatial2D.Curves.ParameterizedArc other) -> bool
 Akeldov.Math.Spatial2D.Curves.ParameterizedArc.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.ParameterizedArc.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedArc.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedArc.IsFullCircle.get -> bool
 Akeldov.Math.Spatial2D.Curves.ParameterizedArc.IsWithinAngularRegion(Akeldov.Math.Spatial2D.PointXY point) -> bool
@@ -346,6 +360,7 @@ Akeldov.Math.Spatial2D.Curves.ParameterizedLine.EquationA.get -> float
 Akeldov.Math.Spatial2D.Curves.ParameterizedLine.EquationB.get -> float
 Akeldov.Math.Spatial2D.Curves.ParameterizedLine.EquationC.get -> float
 Akeldov.Math.Spatial2D.Curves.ParameterizedLine.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.ParameterizedLine.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedLine.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedLine.HasSameGeometry(Akeldov.Math.Spatial2D.Curves.Line line) -> bool
 Akeldov.Math.Spatial2D.Curves.ParameterizedLine.HasSameGeometry(Akeldov.Math.Spatial2D.Curves.ParameterizedLine other) -> bool
@@ -372,6 +387,7 @@ Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.EndpointA.get -> Akeldov.Math
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.Equals(Akeldov.Math.Spatial2D.Curves.ParameterizedSegment other) -> bool
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.IncludesEndPoint.get -> bool
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegment.IncludesStartPoint.get -> bool
@@ -389,6 +405,7 @@ Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.EndPoint.get -> Akeldov.
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.Length.get -> float
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain.ParameterizedSegmentChain(params Akeldov.Math.Spatial2D.PointXY[]! points) -> void
@@ -410,6 +427,7 @@ Akeldov.Math.Spatial2D.Curves.QuadraticBezier.Equals(Akeldov.Math.Spatial2D.Curv
 Akeldov.Math.Spatial2D.Curves.QuadraticBezier.Flatten(int segmentCount) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.ParameterizedSegment>!
 Akeldov.Math.Spatial2D.Curves.QuadraticBezier.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.QuadraticBezier.GetPointAt(float t) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.QuadraticBezier.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.QuadraticBezier.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.QuadraticBezier.Length.get -> float
 Akeldov.Math.Spatial2D.Curves.QuadraticBezier.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
@@ -426,6 +444,7 @@ Akeldov.Math.Spatial2D.Curves.Ray.Distance(Akeldov.Math.Spatial2D.PointXY point)
 Akeldov.Math.Spatial2D.Curves.Ray.Endpoint.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Ray.Equals(Akeldov.Math.Spatial2D.Curves.Ray other) -> bool
 Akeldov.Math.Spatial2D.Curves.Ray.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Ray.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Ray.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray other, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Ray.Origin.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Ray.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
@@ -440,6 +459,7 @@ Akeldov.Math.Spatial2D.Curves.Segment.Distance(Akeldov.Math.Spatial2D.PointXY po
 Akeldov.Math.Spatial2D.Curves.Segment.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Segment.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Segment.Equals(Akeldov.Math.Spatial2D.Curves.Segment other) -> bool
+Akeldov.Math.Spatial2D.Curves.Segment.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Segment.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Segment.IncludesEndpointA.get -> bool
 Akeldov.Math.Spatial2D.Curves.Segment.IncludesEndpointB.get -> bool
@@ -490,6 +510,7 @@ Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.FloatCurveInfluenceSourc
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.FloatCurveInfluenceSource(System.Func<float, float>! weightProvider, Akeldov.Math.Spatial2D.Curves.IParameterizedCurve! curve, System.Func<float, float>! valueProvider) -> void
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetInfluence(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Fields.InfluenceSample<float>
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
 Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.ProjectWithParameter(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.ParameterizedCurveProjection
@@ -667,6 +688,7 @@ Akeldov.Math.Spatial2D.Rasterization.CullingMapRGBA16BitRasterizer<TPointSource>
 Akeldov.Math.Spatial2D.Rasterization.FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer
 Akeldov.Math.Spatial2D.Rasterization.FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer() -> void
 Akeldov.Math.Spatial2D.Rasterization.FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer.Rasterize(Akeldov.Math.Spatial2D.Fields.FloatPointInfluenceField! source, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>!
+Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions
 Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>
 Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>.AddLayer(Akeldov.Math.Spatial2D.Rasterization.IGeometrySceneLayer<TColor>! layer) -> Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>!
 Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>.AddLayer(Akeldov.Math.Spatial2D.Rasterization.IGeometrySceneLayer<TColor>! layer, System.Func<TColor, TColor, TColor>! blend) -> Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>!
@@ -749,6 +771,7 @@ Akeldov.Math.Spatial2D.Rasterization.RasterGeometry.RasterGeometry(Akeldov.Math.
 Akeldov.Math.Spatial2D.Rasterization.RasterGeometry.RasterGeometry(Akeldov.Math.Spatial2D.PointXY origin, Akeldov.Math.Spatial2D.VectorXY size, int minimumPixelsPerUnit) -> void
 Akeldov.Math.Spatial2D.Rasterization.RasterGeometry.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
 Akeldov.Math.Spatial2D.Rasterization.RasterGeometry.Size.get -> Akeldov.Math.Spatial2D.VectorXY
+Akeldov.Math.Spatial2D.Rasterization.RasterGeometryPerlinNoiseExtensions
 Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions
 Akeldov.Math.Spatial2D.Rasterization.SignedPointDistanceProviderCollectionGray16BitRasterizer
 Akeldov.Math.Spatial2D.Rasterization.SignedPointDistanceProviderCollectionGray16BitRasterizer.Rasterize(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.ISignedPointDistanceProvider!>! source, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>!
@@ -803,6 +826,7 @@ Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont.GetLeftSideBearing(int glyphIn
 Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont.GlyphCount.get -> int
 Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont.LineGap.get -> int
 Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont.UnitsPerEm.get -> int
+Akeldov.Math.Spatial2D.Rasterization.VectorXYIntPerlinNoiseExtensions
 Akeldov.Math.Spatial2D.Regions.ContourBasedRegion
 Akeldov.Math.Spatial2D.Regions.ContourBasedRegion.Contains(Akeldov.Math.Spatial2D.PointXY point) -> bool
 Akeldov.Math.Spatial2D.Regions.ContourBasedRegion.ContourBasedRegion(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Contours.IContour!>! contours, Akeldov.Math.Spatial2D.Regions.FillRule fillRule = Akeldov.Math.Spatial2D.Regions.FillRule.EvenOdd) -> void
@@ -1102,13 +1126,21 @@ static Akeldov.Math.Spatial2D.Imaging.RasterBmpExtensions.SaveAsBmp(this Akeldov
 static Akeldov.Math.Spatial2D.Imaging.RasterBmpExtensions.SaveAsBmp(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, string! path) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterBmpExtensions.SaveAsBmp(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, System.IO.Stream! stream) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! raster, string! path) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! raster, string! path, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! raster, System.IO.Stream! stream) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! raster, System.IO.Stream! stream, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>! raster, string! path) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>! raster, string! path, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>! raster, System.IO.Stream! stream) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>! raster, System.IO.Stream! stream, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>! raster, string! path) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>! raster, string! path, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>! raster, System.IO.Stream! stream) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>! raster, System.IO.Stream! stream, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, string! path) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, string! path, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, System.IO.Stream! stream) -> void
+static Akeldov.Math.Spatial2D.Imaging.RasterPngExtensions.SaveAsPng(this Akeldov.Math.Spatial2D.Rasterization.IRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, System.IO.Stream! stream, System.IO.Compression.CompressionLevel compressionLevel) -> void
 static Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor.AlphaOver(Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor background, Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor foreground) -> Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor
 static Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor.Blend(Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor from, Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor to, float amount) -> Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor
 static Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor.FromNormalized(float red, float green, float blue, float alpha = 1) -> Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor
@@ -1151,6 +1183,10 @@ static Akeldov.Math.Spatial2D.PositionedCollectionExtensions.GetClosestTo<TItem>
 static Akeldov.Math.Spatial2D.PositionedCollectionExtensions.GetClosestTo<TItem>(this TItem[]! items, Akeldov.Math.Spatial2D.PointXY point) -> TItem
 static Akeldov.Math.Spatial2D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> TItem
 static Akeldov.Math.Spatial2D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this TItem[]! items) -> TItem
+static Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions.GaussianBlur(this Akeldov.Math.Spatial2D.Rasterization.IRaster<float>! raster, float sigma) -> Akeldov.Math.Spatial2D.Rasterization.Raster<float>!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions.GaussianBlur(this Akeldov.Math.Spatial2D.Rasterization.IRaster<float>! raster, float sigma, int radius) -> Akeldov.Math.Spatial2D.Rasterization.Raster<float>!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions.GaussianBlur(this Akeldov.Math.Spatial2D.Rasterization.ISpatialRaster<float>! raster, float sigma) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<float>!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRasterBlurExtensions.GaussianBlur(this Akeldov.Math.Spatial2D.Rasterization.ISpatialRaster<float>! raster, float sigma, int radius) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<float>!
 static Akeldov.Math.Spatial2D.Rasterization.GeometrySceneLayerExtensions.AddParameterizedProjectionBasedLayer<TColor, TSource>(this Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>! scene, System.Collections.Generic.IReadOnlyList<TSource>! sources, System.Func<Akeldov.Math.Spatial2D.PointXY, Akeldov.Math.Spatial2D.Curves.ParameterizedCurveProjection, TColor>! projectionToColor) -> Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>!
 static Akeldov.Math.Spatial2D.Rasterization.GeometrySceneLayerExtensions.AddParameterizedProjectionBasedLayer<TColor, TSource>(this Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>! scene, TSource source, System.Func<Akeldov.Math.Spatial2D.PointXY, Akeldov.Math.Spatial2D.Curves.ParameterizedCurveProjection, TColor>! projectionToColor) -> Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>!
 static Akeldov.Math.Spatial2D.Rasterization.GeometrySceneLayerExtensions.AddPointDistanceBasedLayer<TColor, TSource>(this Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>! scene, TSource source, System.Func<float, TColor>! distanceToColor) -> Akeldov.Math.Spatial2D.Rasterization.GeometryScene<TColor>!
@@ -1170,6 +1206,7 @@ static Akeldov.Math.Spatial2D.Rasterization.IRasterExtensions.MapValues<TSource,
 static Akeldov.Math.Spatial2D.Rasterization.ISpatialRasterExtensions.MapValues<TSource, TResult>(this Akeldov.Math.Spatial2D.Rasterization.ISpatialRaster<TSource>! raster, System.Func<TSource, TResult>! selector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TResult>!
 static Akeldov.Math.Spatial2D.Rasterization.RasterGeometry.operator !=(Akeldov.Math.Spatial2D.Rasterization.RasterGeometry left, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry right) -> bool
 static Akeldov.Math.Spatial2D.Rasterization.RasterGeometry.operator ==(Akeldov.Math.Spatial2D.Rasterization.RasterGeometry left, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry right) -> bool
+static Akeldov.Math.Spatial2D.Rasterization.RasterGeometryPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<float>!
 static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.Rasterize(this Akeldov.Math.Spatial2D.Curves.IParameterizedCurve! curve, System.Func<float, float, Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! projectionToGrayLevel, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>!
 static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.Rasterize(this Akeldov.Math.Spatial2D.Curves.IParameterizedCurve! curve, System.Func<float, float, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>! projectionToGrayLevel, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
 static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.Rasterize(this Akeldov.Math.Spatial2D.ISignedPointDistanceProvider! signedPointDistanceProvider, System.Func<float, Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>! signedDistanceToGrayLevel, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>!
@@ -1199,6 +1236,7 @@ static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.RasterizeHea
 static Akeldov.Math.Spatial2D.Rasterization.TextSignedDistanceProvider.Create(Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont! font, string! text, Akeldov.Math.Spatial2D.PointXY origin, float fontSize, Akeldov.Math.Spatial2D.Rasterization.TextLayoutOptions? layout = null) -> Akeldov.Math.Spatial2D.Rasterization.TextSignedDistanceProvider!
 static Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont.Load(string! path) -> Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont!
 static Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont.Load(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont!
+static Akeldov.Math.Spatial2D.Rasterization.VectorXYIntPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Spatial2D.VectorXYInt resolution, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Spatial2D.Rasterization.Raster<float>!
 static Akeldov.Math.Spatial2D.Regions.Disk.operator !=(Akeldov.Math.Spatial2D.Regions.Disk left, Akeldov.Math.Spatial2D.Regions.Disk right) -> bool
 static Akeldov.Math.Spatial2D.Regions.Disk.operator ==(Akeldov.Math.Spatial2D.Regions.Disk left, Akeldov.Math.Spatial2D.Regions.Disk right) -> bool
 static Akeldov.Math.Spatial2D.Regions.OrientedRectangle.FromBottomLeft(Akeldov.Math.Spatial2D.PointXY bottomLeft, Akeldov.Math.Spatial2D.VectorXY size, float rotation) -> Akeldov.Math.Spatial2D.Regions.OrientedRectangle

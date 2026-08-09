@@ -113,7 +113,7 @@ using Akeldov.Math.Spatial2D.Curves;
 var circle = new Circle(new PointXY(0f, 0f), 5f);
 var ray = new Ray(new PointXY(-10f, 0f));
 
-List<PointXY> intersections = circle.GetRayIntersections(ray);
+List<PointXY> intersections = circle.GetPointIntersections(ray);
 
 intersections.RemoveAll(point => point.X < 0f);
 intersections.Add(new PointXY(20f, 0f));

@@ -88,6 +88,147 @@ function Set-PageSeoMetadata {
         [System.Text.UTF8Encoding]::new($false))
 }
 
+function Merge-SearchIndexEntries {
+    param(
+        [Parameter(Mandatory)]
+        [string] $CurrentPath,
+
+        [Parameter(Mandatory)]
+        [string] $FragmentPath,
+
+        [Parameter(Mandatory)]
+        [string] $PathPrefix
+    )
+
+    if (-not (Test-Path -LiteralPath $CurrentPath) -or
+        -not (Test-Path -LiteralPath $FragmentPath)) {
+        throw 'A search index required for version merging is missing.'
+    }
+
+    $currentIndex = Get-Content -LiteralPath $CurrentPath -Raw -Encoding UTF8 |
+        ConvertFrom-Json
+    $fragmentIndex = Get-Content -LiteralPath $FragmentPath -Raw -Encoding UTF8 |
+        ConvertFrom-Json
+    $mergedIndex = [ordered]@{}
+
+    foreach ($property in $currentIndex.PSObject.Properties) {
+        $mergedIndex[$property.Name] = $property.Value
+    }
+
+    foreach ($property in $fragmentIndex.PSObject.Properties) {
+        if ($property.Name.StartsWith(
+            $PathPrefix,
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+            $mergedIndex[$property.Name] = $property.Value
+        }
+    }
+
+    $content = $mergedIndex | ConvertTo-Json -Depth 10
+    [System.IO.File]::WriteAllText(
+        $CurrentPath,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
+function Add-Spatial2D08ApiReference {
+    param(
+        [Parameter(Mandatory)]
+        [string] $RepositoryRoot,
+
+        [Parameter(Mandatory)]
+        [string] $Docfx,
+
+        [Parameter(Mandatory)]
+        [string] $SiteRoot,
+
+        [Parameter(Mandatory)]
+        [string] $VersionAdapterRoot
+    )
+
+    # API versions have overlapping UIDs, so 0.8.0 must be rendered in an
+    # independent DocFX graph before its static output joins the current site.
+    $library = 'Spatial2D'
+    $targetVersionPath = '0.8.0'
+    $temporaryParent = [System.IO.Path]::GetFullPath(
+        (Join-Path $RepositoryRoot '.tmp\docfx-versioned'))
+    $fragmentRoot = [System.IO.Path]::GetFullPath(
+        (Join-Path $temporaryParent "$library-$targetVersionPath"))
+    $versionedProjectRoot = [System.IO.Path]::GetFullPath(
+        (Join-Path $VersionAdapterRoot `
+            'source\Akeldov.Math.Spatial2D'))
+    $versionedObjRoot = [System.IO.Path]::GetFullPath(
+        (Join-Path $versionedProjectRoot 'obj'))
+    $temporaryPrefix = $temporaryParent.TrimEnd(
+        [System.IO.Path]::DirectorySeparatorChar) +
+        [System.IO.Path]::DirectorySeparatorChar
+    $versionedProjectPrefix = $versionedProjectRoot.TrimEnd(
+        [System.IO.Path]::DirectorySeparatorChar) +
+        [System.IO.Path]::DirectorySeparatorChar
+
+    if (-not $fragmentRoot.StartsWith(
+        $temporaryPrefix,
+        [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Invalid versioned API output path: $fragmentRoot"
+    }
+
+    if (-not $versionedObjRoot.StartsWith(
+        $versionedProjectPrefix,
+        [System.StringComparison]::OrdinalIgnoreCase) -or
+        [System.IO.Path]::GetFileName($versionedObjRoot) -ne 'obj') {
+        throw "Invalid versioned API intermediate path: $versionedObjRoot"
+    }
+
+    New-Item -ItemType Directory -Path $temporaryParent -Force | Out-Null
+
+    try {
+        if (Test-Path -LiteralPath $fragmentRoot) {
+            Remove-Item -LiteralPath $fragmentRoot -Recurse -Force
+        }
+
+        if (Test-Path -LiteralPath $versionedObjRoot) {
+            Remove-Item -LiteralPath $versionedObjRoot -Recurse -Force
+        }
+
+        & $Docfx (Join-Path $VersionAdapterRoot 'api.docfx.json')
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to build the $library $targetVersionPath API."
+        }
+
+        $fragmentSiteRoot = Join-Path $fragmentRoot 'site\Akeldov.Math'
+        $sourceApiRoot = Join-Path `
+            $fragmentSiteRoot "api\$library\$targetVersionPath"
+        $destinationApiRoot = Join-Path `
+            $SiteRoot "api\$library\$targetVersionPath"
+
+        if (-not (Test-Path -LiteralPath $sourceApiRoot)) {
+            throw "The $library $targetVersionPath API output is missing."
+        }
+
+        if (Test-Path -LiteralPath $destinationApiRoot) {
+            throw "The $library $targetVersionPath API already exists."
+        }
+
+        $destinationApiParent = Split-Path -Parent $destinationApiRoot
+        New-Item -ItemType Directory -Path $destinationApiParent -Force |
+            Out-Null
+        Copy-Item -LiteralPath $sourceApiRoot `
+            -Destination $destinationApiRoot -Recurse
+
+        Merge-SearchIndexEntries `
+            -CurrentPath (Join-Path $SiteRoot 'index.json') `
+            -FragmentPath (Join-Path $fragmentSiteRoot 'index.json') `
+            -PathPrefix "api/$library/$targetVersionPath/"
+    } finally {
+        if (Test-Path -LiteralPath $fragmentRoot) {
+            Remove-Item -LiteralPath $fragmentRoot -Recurse -Force
+        }
+
+        if (Test-Path -LiteralPath $versionedObjRoot) {
+            Remove-Item -LiteralPath $versionedObjRoot -Recurse -Force
+        }
+    }
+}
+
 function Update-LanguageBranchRelativeLinks {
     param(
         [Parameter(Mandatory)]
@@ -139,6 +280,13 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
+Add-Spatial2D08ApiReference `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Spatial2D\0.8.0')
+
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
@@ -179,7 +327,10 @@ $englishSearchIndex = Join-Path $englishRoot 'index.json'
 foreach ($jsonFile in @($englishTocJson, $englishSearchIndex)) {
     if (Test-Path -LiteralPath $jsonFile) {
         $content = Get-Content -LiteralPath $jsonFile -Raw -Encoding UTF8
-        $content = $content.Replace('"href":"api/', '"href":"../api/')
+        $content = [System.Text.RegularExpressions.Regex]::Replace(
+            $content,
+            '("href"\s*:\s*")api/',
+            '${1}../api/')
         [System.IO.File]::WriteAllText(
             $jsonFile,
             $content,
@@ -267,7 +418,10 @@ if (Test-Path -LiteralPath $russianTocHtml) {
 foreach ($jsonFile in @($russianTocJson, $russianSearchIndex)) {
     if (Test-Path -LiteralPath $jsonFile) {
         $content = Get-Content -LiteralPath $jsonFile -Raw -Encoding UTF8
-        $content = $content.Replace('"href":"api/', '"href":"../api/')
+        $content = [System.Text.RegularExpressions.Regex]::Replace(
+            $content,
+            '("href"\s*:\s*")api/',
+            '${1}../api/')
         $content = $content.Replace(
             '"name":"Home"',
             "`"name`":`"$($russianNavigation.home)`"")

@@ -16,7 +16,7 @@ VectorXY size = contour.Size;    // (4, 3)
 float perimeter = contour.Length; // 14
 ```
 
-The type exposes `Width`, `Height`, `Size`, `Center`, and all four named corners. `Encloses` tests exact membership in the bounded rectangle. `Distance`, `SignedDistance`, `Project`, and `GetRayIntersections` operate on its boundary.
+The type exposes `Width`, `Height`, `Size`, `Center`, and all four named corners. `Encloses` tests exact membership in the bounded rectangle. `Distance`, `SignedDistance`, `Project`, and `GetPointIntersections` operate on its boundary.
 
 `Rectangle` and `ToRegion` return the corresponding filled region. Explicit conversions are available to `Rectangle` and [`ParameterizedRectangleContour`](parameterized-rectangle-contour.md). Value equality compares the normalized bounds.
 

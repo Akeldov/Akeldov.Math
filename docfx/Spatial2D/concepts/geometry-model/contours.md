@@ -147,13 +147,12 @@ float signedDistance = circle.SignedDistance(sample); // -2
 CurveProjection projection = circle.Project(sample);
 ```
 
-The optional `geometryEpsilon` accepted by signed-distance and intersection operations is
-measured in world coordinate units. It controls comparisons close to the boundary and shared
-vertices.
+The optional `geometryEpsilon` accepted by signed-distance operations is measured in world
+coordinate units. It controls comparisons close to the boundary.
 
-Contours inherit `GetRayIntersections` from `ICurve`. Composite contours merge results from
-their constituent paths and remove duplicate hits at shared endpoints within the supplied
-tolerance.
+Contours inherit `GetPointIntersections` from `ICurve`. Composite contours merge results from
+their constituent paths and remove duplicate hits at shared endpoints using the library's
+standard geometry tolerance.
 
 ## Smooth polygonal corners
 

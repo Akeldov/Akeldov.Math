@@ -10,7 +10,7 @@ Run these commands in a terminal:
 ```powershell
 dotnet new console --name Spatial2D.Fundamentals
 Set-Location Spatial2D.Fundamentals
-dotnet add package Akeldov.Math.Spatial2D --version 0.8.0
+dotnet add package Akeldov.Math.Spatial2D --version 0.9.0
 ```
 
 The package supports .NET 6 and .NET Standard 2.1, so it can also be used from other compatible

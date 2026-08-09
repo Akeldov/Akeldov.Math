@@ -1,0 +1,228 @@
+- name: Overview
+  href: index.md
+- name: Getting Started
+  href: getting-started.md
+- name: Concepts
+  items:
+    - name: Overview
+      href: concepts/index.md
+    - name: Angles and Units
+      href: concepts/angles-and-units.md
+    - name: Floating-Point Tolerances
+      href: concepts/floating-point-tolerances.md
+    - name: Collection Ownership
+      href: concepts/collection-ownership.md
+- name: Points
+  items:
+    - name: Overview
+      href: points/index.md
+    - name: PointXY
+      href: points/pointxy.md
+- name: Vectors
+  items:
+    - name: Overview
+      href: vectors/index.md
+    - name: VectorXY
+      href: vectors/vectorxy.md
+    - name: VectorXYInt
+      href: vectors/vectorxyint.md
+- name: Curves
+  items:
+    - name: Overview
+      href: curves/index.md
+    - name: Curve Interfaces
+      href: curves/curve-interfaces.md
+    - name: Projections and Distances
+      href: curves/projections-and-distances.md
+    - name: Intersections
+      href: curves/intersections.md
+    - name: Linear
+      items:
+        - name: Overview
+          href: curves/linear/index.md
+        - name: Line
+          href: curves/linear/line.md
+        - name: Ray
+          href: curves/linear/ray.md
+        - name: Segment
+          href: curves/linear/segment.md
+        - name: ParameterizedLine
+          href: curves/linear/parameterized-line.md
+        - name: ParameterizedSegment
+          href: curves/linear/parameterized-segment.md
+        - name: ParameterizedSegmentChain
+          href: curves/linear/parameterized-segment-chain.md
+    - name: Circular
+      items:
+        - name: Overview
+          href: curves/circular/index.md
+        - name: Circle
+          href: curves/circular/circle.md
+        - name: Arc
+          href: curves/circular/arc.md
+        - name: ParameterizedArc
+          href: curves/circular/parameterized-arc.md
+    - name: Bezier
+      items:
+        - name: Overview
+          href: curves/bezier/index.md
+        - name: QuadraticBezier
+          href: curves/bezier/quadratic-bezier.md
+        - name: CubicBezier
+          href: curves/bezier/cubic-bezier.md
+        - name: BezierCurve
+          href: curves/bezier/bezier-curve.md
+- name: Contours
+  items:
+    - name: Overview
+      href: contours/index.md
+    - name: Circular
+      items:
+        - name: Overview
+          href: contours/circular/index.md
+        - name: Circle
+          href: contours/circle.md
+        - name: ParameterizedCircle
+          href: contours/parameterized-circle.md
+    - name: Rectangular
+      items:
+        - name: Overview
+          href: contours/rectangular/index.md
+        - name: RectangleContour
+          href: contours/rectangle-contour.md
+        - name: ParameterizedRectangleContour
+          href: contours/parameterized-rectangle-contour.md
+        - name: OrientedRectangleContour
+          href: contours/oriented-rectangle-contour.md
+        - name: ParameterizedOrientedRectangleContour
+          href: contours/parameterized-oriented-rectangle-contour.md
+    - name: Composite
+      items:
+        - name: Overview
+          href: contours/composite/index.md
+        - name: CompositeContour
+          href: contours/composite-contour.md
+        - name: ParameterizedCompositeContour
+          href: contours/parameterized-composite-contour.md
+- name: Regions
+  items:
+    - name: Overview
+      href: regions/index.md
+    - name: Circular
+      items:
+        - name: Overview
+          href: regions/circular/index.md
+        - name: Disk
+          href: regions/disk.md
+    - name: Rectangular
+      items:
+        - name: Overview
+          href: regions/rectangular/index.md
+        - name: Rectangle
+          href: regions/rectangle.md
+        - name: OrientedRectangle
+          href: regions/oriented-rectangle.md
+    - name: Contour Based
+      items:
+        - name: Overview
+          href: regions/contour-based/index.md
+        - name: ContourBasedRegion
+          href: regions/contour-based-regions.md
+- name: Fields
+  items:
+    - name: Overview
+      href: fields/index.md
+    - name: Field Interfaces
+      href: fields/field-interfaces.md
+    - name: Point Influence Fields
+      href: fields/point-influence-fields.md
+    - name: Curve Influence Fields
+      href: fields/curve-influence-fields.md
+    - name: Sampling Strategies
+      href: fields/sampling-strategies.md
+    - name: Source Culling
+      href: fields/source-culling.md
+- name: Sampling
+  items:
+    - name: Overview
+      href: sampling/index.md
+    - name: Poisson Disk Sampling
+      href: sampling/poisson-disk-sampling.md
+- name: Partitioning
+  items:
+    - name: Overview
+      href: partitioning/index.md
+    - name: Weighted Voronoi Partitioning
+      href: partitioning/weighted-voronoi-partitioning.md
+- name: Rasterization and Imaging
+  items:
+    - name: Overview
+      href: rasterization/index.md
+    - name: RasterGeometry
+      href: rasterization/raster-geometry.md
+    - name: Gray Rasters
+      href: rasterization/gray-rasters.md
+    - name: RGBA Rasters
+      href: rasterization/rgba-rasters.md
+    - name: GeometryScene
+      href: rasterization/geometry-scenes.md
+    - name: Text Layers
+      href: rasterization/text-layers.md
+    - name: Curve Distance Rasterization
+      href: rasterization/curve-distance-rasterization.md
+    - name: Contour Signed Distance
+      href: rasterization/contour-signed-distance.md
+    - name: Region Signed Distance
+      href: rasterization/region-signed-distance.md
+    - name: Influence Field Heatmaps
+      href: rasterization/influence-field-heatmaps.md
+- name: Recipes
+  items:
+    - name: Overview
+      href: recipes/index.md
+    - name: Project a Point onto a Curve
+      href: recipes/project-a-point-onto-a-curve.md
+    - name: Find Curve Intersections
+      href: recipes/find-curve-intersections.md
+    - name: Build a Closed Contour
+      href: recipes/build-a-closed-contour.md
+    - name: Create a Region with Holes
+      href: recipes/create-a-region-with-holes.md
+    - name: Rasterize a Signed-Distance Field
+      href: recipes/rasterize-a-signed-distance-field.md
+    - name: Generate Poisson Disk Points
+      href: recipes/generate-poisson-disk-points.md
+    - name: Partition Items with Weighted Voronoi
+      href: recipes/partition-items-with-weighted-voronoi.md
+    - name: Build an Influence Heatmap
+      href: recipes/build-an-influence-heatmap.md
+- name: Performance
+  items:
+    - name: Overview
+      href: performance/index.md
+    - name: Benchmark Coverage
+      href: performance/benchmark-coverage.md
+    - name: Curves and Contours
+      href: performance/curves-and-contours.md
+    - name: Regions
+      href: performance/regions.md
+    - name: Poisson Disk Sampling
+      href: performance/poisson-disk-sampling.md
+    - name: Voronoi Partitioning
+      href: performance/voronoi-partitioning.md
+    - name: Influence Field Culling
+      href: performance/influence-field-culling.md
+    - name: Rasterization
+      href: performance/rasterization.md
+- name: Testing and Robustness
+  items:
+    - name: Overview
+      href: testing/index.md
+    - name: Edge Cases
+      href: testing/edge-cases.md
+    - name: Seeded Fuzz Tests
+      href: testing/seeded-fuzz-tests.md
+    - name: Snapshot Tests
+      href: testing/snapshot-tests.md
+    - name: Stress Tests
+      href: testing/stress-tests.md

@@ -90,6 +90,13 @@
         "dest": "Spatial2D/latest"
       },
       {
+        "src": "versioned/Spatial2D/0.8.0/conceptual",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Spatial2D/0.8.0"
+      },
+      {
         "src": "Hexes",
         "files": [
           "**/*.{md,yml}"
@@ -131,6 +138,13 @@
           "index.html"
         ],
         "dest": "Spatial2D"
+      },
+      {
+        "src": "versioned/Spatial2D/0.8.0/assets",
+        "files": [
+          "**/*"
+        ],
+        "dest": "Spatial2D/assets"
       },
       {
         "src": "Hexes",
