@@ -33,13 +33,19 @@ function Get-RussianOutputRelativePath {
         [Parameter(Mandatory)]
         [string] $Path,
 
-        [string[]] $VersionedLibraries
+        [string[]] $VersionedLibraries,
+
+        [string] $OutputPrefix
     )
 
     $relativePath = $Path.Substring($Root.Length)
     $relativePath = $relativePath.TrimStart(
         [char][System.IO.Path]::DirectorySeparatorChar)
     $separator = [System.IO.Path]::DirectorySeparatorChar
+
+    if (-not [string]::IsNullOrWhiteSpace($OutputPrefix)) {
+        return Join-Path $OutputPrefix $relativePath
+    }
 
     foreach ($library in $VersionedLibraries) {
         $libraryPrefix = "$library$separator"
@@ -130,7 +136,7 @@ function Merge-SearchIndexEntries {
         [System.Text.UTF8Encoding]::new($false))
 }
 
-function Add-Spatial2D08ApiReference {
+function Add-Spatial2D08Documentation {
     param(
         [Parameter(Mandatory)]
         [string] $RepositoryRoot,
@@ -145,23 +151,31 @@ function Add-Spatial2D08ApiReference {
         [string] $VersionAdapterRoot
     )
 
-    # API versions have overlapping UIDs, so 0.8.0 must be rendered in an
-    # independent DocFX graph before its static output joins the current site.
+    # API versions have overlapping UIDs, so the 0.8.0 articles and API must
+    # be rendered together in an independent graph before their static output
+    # joins the current site.
     $library = 'Spatial2D'
     $targetVersionPath = '0.8.0'
     $temporaryParent = [System.IO.Path]::GetFullPath(
         (Join-Path $RepositoryRoot '.tmp\docfx-versioned'))
     $fragmentRoot = [System.IO.Path]::GetFullPath(
         (Join-Path $temporaryParent "$library-$targetVersionPath"))
-    $versionedProjectRoot = [System.IO.Path]::GetFullPath(
+    $versionedSourceRoot = [System.IO.Path]::GetFullPath(
+        (Join-Path $VersionAdapterRoot 'source'))
+    $packagePath = [System.IO.Path]::GetFullPath(
         (Join-Path $VersionAdapterRoot `
-            'source\Akeldov.Math.Spatial2D'))
-    $versionedObjRoot = [System.IO.Path]::GetFullPath(
-        (Join-Path $versionedProjectRoot 'obj'))
+            'source\Akeldov.Math.Spatial2D.0.8.0.nupkg'))
+    $packageExtractRoot = Join-Path $fragmentRoot 'package'
+    $packageAssembly = Join-Path `
+        $packageExtractRoot 'lib\net6.0\Akeldov.Math.Spatial2D.dll'
+    $packageDocumentation = Join-Path `
+        $packageExtractRoot 'lib\net6.0\Akeldov.Math.Spatial2D.xml'
+    $expectedPackageHash =
+        '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E'
     $temporaryPrefix = $temporaryParent.TrimEnd(
         [System.IO.Path]::DirectorySeparatorChar) +
         [System.IO.Path]::DirectorySeparatorChar
-    $versionedProjectPrefix = $versionedProjectRoot.TrimEnd(
+    $versionedSourcePrefix = $versionedSourceRoot.TrimEnd(
         [System.IO.Path]::DirectorySeparatorChar) +
         [System.IO.Path]::DirectorySeparatorChar
 
@@ -171,11 +185,21 @@ function Add-Spatial2D08ApiReference {
         throw "Invalid versioned API output path: $fragmentRoot"
     }
 
-    if (-not $versionedObjRoot.StartsWith(
-        $versionedProjectPrefix,
+    if (-not $packagePath.StartsWith(
+        $versionedSourcePrefix,
         [System.StringComparison]::OrdinalIgnoreCase) -or
-        [System.IO.Path]::GetFileName($versionedObjRoot) -ne 'obj') {
-        throw "Invalid versioned API intermediate path: $versionedObjRoot"
+        [System.IO.Path]::GetFileName($packagePath) -ne
+            'Akeldov.Math.Spatial2D.0.8.0.nupkg') {
+        throw "Invalid versioned package path: $packagePath"
+    }
+
+    if (-not (Test-Path -LiteralPath $packagePath)) {
+        throw "The $library $targetVersionPath package is missing."
+    }
+
+    $packageHash = (Get-FileHash -LiteralPath $packagePath -Algorithm SHA256).Hash
+    if ($packageHash -ne $expectedPackageHash) {
+        throw "The $library $targetVersionPath package hash is invalid."
     }
 
     New-Item -ItemType Directory -Path $temporaryParent -Force | Out-Null
@@ -185,47 +209,58 @@ function Add-Spatial2D08ApiReference {
             Remove-Item -LiteralPath $fragmentRoot -Recurse -Force
         }
 
-        if (Test-Path -LiteralPath $versionedObjRoot) {
-            Remove-Item -LiteralPath $versionedObjRoot -Recurse -Force
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory(
+            $packagePath,
+            $packageExtractRoot)
+
+        if (-not (Test-Path -LiteralPath $packageAssembly) -or
+            -not (Test-Path -LiteralPath $packageDocumentation)) {
+            throw "The $library $targetVersionPath package API files are missing."
         }
 
         & $Docfx (Join-Path $VersionAdapterRoot 'api.docfx.json')
         if ($LASTEXITCODE -ne 0) {
-            throw "Failed to build the $library $targetVersionPath API."
+            throw "Failed to build the $library $targetVersionPath documentation."
         }
 
         $fragmentSiteRoot = Join-Path $fragmentRoot 'site\Akeldov.Math'
-        $sourceApiRoot = Join-Path `
-            $fragmentSiteRoot "api\$library\$targetVersionPath"
-        $destinationApiRoot = Join-Path `
-            $SiteRoot "api\$library\$targetVersionPath"
+        $outputPaths = @(
+            "$library\$targetVersionPath",
+            "ru\$library\$targetVersionPath",
+            "api\$library\$targetVersionPath"
+        )
 
-        if (-not (Test-Path -LiteralPath $sourceApiRoot)) {
-            throw "The $library $targetVersionPath API output is missing."
+        foreach ($outputPath in $outputPaths) {
+            $sourceRoot = Join-Path $fragmentSiteRoot $outputPath
+            $destinationRoot = Join-Path $SiteRoot $outputPath
+
+            if (-not (Test-Path -LiteralPath $sourceRoot)) {
+                throw "The $library $targetVersionPath output is missing: $outputPath"
+            }
+
+            if (Test-Path -LiteralPath $destinationRoot) {
+                throw "The $library $targetVersionPath output already exists: $outputPath"
+            }
+
+            $destinationParent = Split-Path -Parent $destinationRoot
+            New-Item -ItemType Directory -Path $destinationParent -Force |
+                Out-Null
+            Copy-Item -LiteralPath $sourceRoot `
+                -Destination $destinationRoot -Recurse
+
+            Merge-SearchIndexEntries `
+                -CurrentPath (Join-Path $SiteRoot 'index.json') `
+                -FragmentPath (Join-Path $fragmentSiteRoot 'index.json') `
+                -PathPrefix ($outputPath.Replace(
+                    [System.IO.Path]::DirectorySeparatorChar,
+                    '/') + '/')
         }
-
-        if (Test-Path -LiteralPath $destinationApiRoot) {
-            throw "The $library $targetVersionPath API already exists."
-        }
-
-        $destinationApiParent = Split-Path -Parent $destinationApiRoot
-        New-Item -ItemType Directory -Path $destinationApiParent -Force |
-            Out-Null
-        Copy-Item -LiteralPath $sourceApiRoot `
-            -Destination $destinationApiRoot -Recurse
-
-        Merge-SearchIndexEntries `
-            -CurrentPath (Join-Path $SiteRoot 'index.json') `
-            -FragmentPath (Join-Path $fragmentSiteRoot 'index.json') `
-            -PathPrefix "api/$library/$targetVersionPath/"
     } finally {
         if (Test-Path -LiteralPath $fragmentRoot) {
             Remove-Item -LiteralPath $fragmentRoot -Recurse -Force
         }
 
-        if (Test-Path -LiteralPath $versionedObjRoot) {
-            Remove-Item -LiteralPath $versionedObjRoot -Recurse -Force
-        }
     }
 }
 
@@ -246,6 +281,10 @@ function Update-LanguageBranchRelativeLinks {
                 $updatedContent,
                 '(?<attribute>href=")(?<prefix>(?:\./)?(?:\.\./)*)api/',
                 '${attribute}${prefix}../api/')
+            $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+                $updatedContent,
+                '(?<attribute><meta name="docfx:rel" content=")(?<relative>[^"]*)"',
+                '${attribute}../${relative}"')
 
             if ($updatedContent -ne $content) {
                 [System.IO.File]::WriteAllText(
@@ -276,11 +315,13 @@ if (Test-Path -LiteralPath $siteRoot) {
 }
 
 & $docfx (Join-Path $PSScriptRoot 'docfx.json')
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
+$docfxExitCode = $LASTEXITCODE
+
+if ($docfxExitCode -ne 0) {
+    exit $docfxExitCode
 }
 
-Add-Spatial2D08ApiReference `
+Add-Spatial2D08Documentation `
     -RepositoryRoot $repositoryRoot `
     -Docfx $docfx `
     -SiteRoot $siteRoot `
@@ -290,6 +331,18 @@ Add-Spatial2D08ApiReference `
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
+$spatial2D08RussianSourceRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\0.8.0\ru'
+$russianSourceMappings = @(
+    [pscustomobject]@{
+        Root = $russianSourceRoot
+        OutputPrefix = $null
+    },
+    [pscustomobject]@{
+        Root = $spatial2D08RussianSourceRoot
+        OutputPrefix = Join-Path 'Spatial2D' '0.8.0'
+    }
+)
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'
 $russianNavigation = Get-Content -LiteralPath $russianNavigationFile -Raw -Encoding UTF8 |
     ConvertFrom-Json
@@ -339,44 +392,54 @@ foreach ($jsonFile in @($englishTocJson, $englishSearchIndex)) {
 }
 
 if (Test-Path -LiteralPath $russianRoot) {
-    Get-ChildItem -LiteralPath $russianSourceRoot -Recurse -Filter '*.md' -File |
-        ForEach-Object {
-            $relativePath = Get-RussianOutputRelativePath `
-                -Root $russianSourceRoot `
-                -Path $_.FullName `
-                -VersionedLibraries $russianVersionedLibraries
-            $relativePath = [System.IO.Path]::ChangeExtension($relativePath, '.html')
-            $generatedPage = Join-Path $russianRoot $relativePath
-
-            if (Test-Path -LiteralPath $generatedPage) {
-                $generatedBytes = [System.IO.File]::ReadAllBytes($generatedPage)
-                $russianOverrides[$relativePath] = $generatedBytes
-                $russianOutputOverrides[$relativePath] = $generatedBytes
-            }
+    foreach ($sourceMapping in $russianSourceMappings) {
+        if (-not (Test-Path -LiteralPath $sourceMapping.Root)) {
+            continue
         }
 
-    Get-ChildItem -LiteralPath $russianSourceRoot -Recurse -Filter 'toc.yml' -File |
-        ForEach-Object {
-            $relativeTocPath = Get-RussianOutputRelativePath `
-                -Root $russianSourceRoot `
-                -Path $_.FullName `
-                -VersionedLibraries $russianVersionedLibraries
-            $relativeDirectory = Split-Path -Parent $relativeTocPath
+        Get-ChildItem -LiteralPath $sourceMapping.Root -Recurse -Filter '*.md' -File |
+            ForEach-Object {
+                $relativePath = Get-RussianOutputRelativePath `
+                    -Root $sourceMapping.Root `
+                    -Path $_.FullName `
+                    -VersionedLibraries $russianVersionedLibraries `
+                    -OutputPrefix $sourceMapping.OutputPrefix
+                $relativePath = [System.IO.Path]::ChangeExtension(
+                    $relativePath,
+                    '.html')
+                $generatedPage = Join-Path $russianRoot $relativePath
 
-            foreach ($outputName in @('toc.html', 'toc.json')) {
-                $relativePath = if ($relativeDirectory) {
-                    Join-Path $relativeDirectory $outputName
-                } else {
-                    $outputName
-                }
-                $generatedToc = Join-Path $russianRoot $relativePath
-
-                if (Test-Path -LiteralPath $generatedToc) {
-                    $russianOutputOverrides[$relativePath] =
-                        [System.IO.File]::ReadAllBytes($generatedToc)
+                if (Test-Path -LiteralPath $generatedPage) {
+                    $generatedBytes = [System.IO.File]::ReadAllBytes($generatedPage)
+                    $russianOverrides[$relativePath] = $generatedBytes
+                    $russianOutputOverrides[$relativePath] = $generatedBytes
                 }
             }
-        }
+
+        Get-ChildItem -LiteralPath $sourceMapping.Root -Recurse -Filter 'toc.yml' -File |
+            ForEach-Object {
+                $relativeTocPath = Get-RussianOutputRelativePath `
+                    -Root $sourceMapping.Root `
+                    -Path $_.FullName `
+                    -VersionedLibraries $russianVersionedLibraries `
+                    -OutputPrefix $sourceMapping.OutputPrefix
+                $relativeDirectory = Split-Path -Parent $relativeTocPath
+
+                foreach ($outputName in @('toc.html', 'toc.json')) {
+                    $relativePath = if ($relativeDirectory) {
+                        Join-Path $relativeDirectory $outputName
+                    } else {
+                        $outputName
+                    }
+                    $generatedToc = Join-Path $russianRoot $relativePath
+
+                    if (Test-Path -LiteralPath $generatedToc) {
+                        $russianOutputOverrides[$relativePath] =
+                            [System.IO.File]::ReadAllBytes($generatedToc)
+                    }
+                }
+            }
+    }
 
     Remove-Item -LiteralPath $russianRoot -Recurse -Force
 }

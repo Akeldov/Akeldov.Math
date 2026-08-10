@@ -32,10 +32,19 @@ Shared pages live directly under `docfx` or in a shared directory:
 - `docfx/about.md` is the shared About page.
 - `docfx/api/index.md` is the API References landing page.
 
-Library documentation lives under the directory named after the short library name:
+Library routing metadata lives under the directory named after the short library name:
 
 - `docfx/Spatial2D`
 - `docfx/Hexes`
+
+Version-specific source adapters live under `docfx/versioned/<Library>/<version>`. Put English
+articles in `en`, Russian translations in `ru`, and an immutable published NuGet package in
+`source` when API documentation must be retained for the version. Do not copy a project source
+tree into the adapter. Do not create an article or translation tree by
+copying articles from another release. A library that has not adopted the explicit versioned
+source layout yet may still keep its current authoring sources in `docfx/<Library>`. Keep only
+routing resources and `versions.json` in a library routing directory once its authoring sources
+have moved to `docfx/versioned`.
 
 Only Spatial2D and Hexes are currently published in the DocFX site. Do not add another library
 until the user explicitly asks to include it.
@@ -104,6 +113,10 @@ redirect to its latest version, for example:
 /Akeldov.Math/Spatial2D/ -> /Akeldov.Math/Spatial2D/latest/
 ```
 
+An explicit source version may map to `latest` while it is the current release. An API-only
+release must use a routing landing page and set `referenceOnly` in its version registry entry;
+do not publish an earlier release's conceptual articles under the new version.
+
 The root `docfx/versions.json` lists libraries that participate in version selection. Each
 versioned library owns a separate `<Library>/versions.json`. Update only the library whose
 package versions changed.
@@ -113,8 +126,10 @@ When adding another versioned library, add its independent metadata and content 
 
 ## API References
 
-API pages are generated from the library project and its XML documentation through the
-`metadata` entries in `docfx/docfx.json`.
+API pages are generated from the library project and its XML documentation. The current version
+may use a `metadata` entry in `docfx/docfx.json`; archived versions with overlapping UIDs must be
+rendered in an independent DocFX graph from the DLL and XML documentation inside their versioned
+NuGet package.
 
 Do not write or maintain generated API YAML by hand. Improve API descriptions in the C# XML
 comments and regenerate the site.
@@ -140,7 +155,7 @@ Do not generate:
 
 When adding a library API:
 
-1. Add a separate `metadata` entry for its project.
+1. Add a separate `metadata` entry or isolated version adapter for its project.
 2. Give it a library-specific metadata destination.
 3. Add a matching content mapping.
 4. Link it from `docfx/api/index.md`.
@@ -151,18 +166,19 @@ When adding a library API:
 Supported languages are registered in `docfx/languages.json`.
 
 English uses the `/Akeldov.Math/en/` prefix and Russian uses `/Akeldov.Math/ru/`. Unprefixed
-English URLs remain available as compatibility aliases. Russian Markdown sources live under
-`docfx/ru` and mirror the English page hierarchy. The build creates an English fallback for pages
-that have not been translated yet, then overlays the generated Russian pages. Do not edit
-generated files under `_site/Akeldov.Math/en` or `_site/Akeldov.Math/ru`.
+English URLs remain available as compatibility aliases. Shared and non-versioned Russian
+Markdown sources live under `docfx/ru`. Version-specific translations live under
+`docfx/versioned/<Library>/<version>/ru` and mirror the corresponding `en` hierarchy.
+The build creates an English fallback for pages that have not been translated yet, then overlays
+the generated Russian pages. Do not edit generated files under `_site/Akeldov.Math/en` or
+`_site/Akeldov.Math/ru`.
 
 Shared Russian navigation labels live in `docfx/ru/navigation.json`.
 
-For a versioned library, keep translated sources under `docfx/ru/<Library>` with the same
-hierarchy as the English library sources. Map that source directory to
-`ru/<Library>/latest` in `docfx.json`; do not add `latest` to the source directory itself.
-Translated local `toc.yml` files must be preserved when the build overlays Russian pages onto
-the English fallback branch.
+For a versioned library, map its explicit translation source directory to the matching published
+version under `ru/<Library>`. The current explicit source version may use a `latest` destination;
+do not add `latest` to the source directory itself. Translated local `toc.yml` files must be
+preserved when the build overlays Russian pages onto the English fallback branch.
 
 Keep the same page hierarchy across languages so the language selector can preserve the current
 page when switching languages.

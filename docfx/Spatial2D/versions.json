@@ -2,7 +2,8 @@
   "versions": [
     {
       "name": "0.9.0",
-      "path": "latest"
+      "path": "latest",
+      "referenceOnly": true
     },
     {
       "name": "0.8.0",

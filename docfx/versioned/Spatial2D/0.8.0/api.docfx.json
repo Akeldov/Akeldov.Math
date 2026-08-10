@@ -4,23 +4,31 @@
     {
       "src": [
         {
-          "src": "source",
+          "src": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/package/lib/net6.0",
           "files": [
-            "Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj"
+            "Akeldov.Math.Spatial2D.dll"
           ]
         }
       ],
-      "dest": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/api",
-      "properties": {
-        "TargetFramework": "net6.0",
-        "BaseOutputPath": "../../../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/build/bin/",
-        "BaseIntermediateOutputPath": "../../../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/build/obj/",
-        "MSBuildProjectExtensionsPath": "../../../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/build/obj/"
-      }
+      "dest": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/api"
     }
   ],
   "build": {
     "content": [
+      {
+        "src": "en",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Spatial2D/0.8.0"
+      },
+      {
+        "src": "ru",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Spatial2D/0.8.0"
+      },
       {
         "src": "../../../../.tmp/docfx-versioned/Spatial2D-0.8.0/api",
         "files": [

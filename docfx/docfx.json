@@ -58,13 +58,6 @@
         "dest": "ru"
       },
       {
-        "src": "ru/Spatial2D",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "dest": "ru/Spatial2D/latest"
-      },
-      {
         "src": "ru/Hexes",
         "files": [
           "**/*.{md,yml}"
@@ -78,23 +71,6 @@
           "toc.yml"
         ],
         "dest": "api"
-      },
-      {
-        "src": "Spatial2D",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "exclude": [
-          "latest/api/**"
-        ],
-        "dest": "Spatial2D/latest"
-      },
-      {
-        "src": "versioned/Spatial2D/0.8.0/conceptual",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "dest": "Spatial2D/0.8.0"
       },
       {
         "src": "Hexes",
@@ -140,11 +116,11 @@
         "dest": "Spatial2D"
       },
       {
-        "src": "versioned/Spatial2D/0.8.0/assets",
+        "src": "versioned/Spatial2D/0.9.0/landing",
         "files": [
-          "**/*"
+          "index.html"
         ],
-        "dest": "Spatial2D/assets"
+        "dest": "Spatial2D/latest"
       },
       {
         "src": "Hexes",

@@ -205,9 +205,16 @@ async function getVersionContext() {
         item => item.path === library);
 
     return {
+        apiPage,
+        apiVersionRootUrl: new URL(`api/${library}/`, rootUrl),
         fallbackPagePath: apiPage
             ? (libraryNavigation?.referencePage ?? 'index.html')
             : 'index.html',
+        language: segments[0] === 'ru' ||
+            new URLSearchParams(window.location.search).get('lang') === 'ru'
+            ? 'ru'
+            : 'en',
+        referencePage: libraryNavigation?.referencePage ?? 'index.html',
         versionRootUrl,
         versions: versionData.versions,
         versionPath,
@@ -488,25 +495,49 @@ async function addVersionSelector() {
             return;
         }
 
+        const selectedVersion = context.versions.find(
+            version => version.path === select.value);
+        const referenceOnlyTarget = selectedVersion?.referenceOnly && !context.apiPage;
         let targetUrl = new URL(
-            `${encodeURIComponent(select.value)}/${context.pagePath}`,
-            context.versionRootUrl);
+            referenceOnlyTarget
+                ? `${encodeURIComponent(select.value)}/${context.referencePage}`
+                : `${encodeURIComponent(select.value)}/${context.pagePath}`,
+            referenceOnlyTarget
+                ? context.apiVersionRootUrl
+                : context.versionRootUrl);
         targetUrl.search = window.location.search;
         targetUrl.hash = window.location.hash;
+
+        if (referenceOnlyTarget && context.language === 'ru' &&
+            !targetUrl.searchParams.has('lang')) {
+            targetUrl.searchParams.set('lang', 'ru');
+        }
+
+        if (referenceOnlyTarget) {
+            window.location.assign(targetUrl);
+            return;
+        }
+
+        const fallbackRootUrl = selectedVersion?.referenceOnly
+            ? context.apiVersionRootUrl
+            : context.versionRootUrl;
+        const fallbackPagePath = selectedVersion?.referenceOnly
+            ? context.referencePage
+            : context.fallbackPagePath;
 
         try {
             const response = await fetch(targetUrl, { method: 'HEAD' });
             if (!response.ok) {
                 targetUrl = new URL(
-                    `${encodeURIComponent(select.value)}/${context.fallbackPagePath}`,
-                    context.versionRootUrl);
+                    `${encodeURIComponent(select.value)}/${fallbackPagePath}`,
+                    fallbackRootUrl);
                 targetUrl.search = window.location.search;
                 targetUrl.hash = window.location.hash;
             }
         } catch {
             targetUrl = new URL(
-                `${encodeURIComponent(select.value)}/${context.fallbackPagePath}`,
-                context.versionRootUrl);
+                `${encodeURIComponent(select.value)}/${fallbackPagePath}`,
+                fallbackRootUrl);
             targetUrl.search = window.location.search;
             targetUrl.hash = window.location.hash;
         }
