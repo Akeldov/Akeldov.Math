@@ -13,7 +13,10 @@
       "path": "Hexes",
       "name": "Akeldov.Math.Hexes",
       "versioned": true,
-      "referencePage": "Akeldov.Math.Hexes.html"
+      "referencePage": "Akeldov.Math.Hexes.html",
+      "navigationByVersion": {
+        "upcoming": []
+      }
     }
   ]
 }

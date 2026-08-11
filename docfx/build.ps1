@@ -136,8 +136,11 @@ function Merge-SearchIndexEntries {
         [System.Text.UTF8Encoding]::new($false))
 }
 
-function Add-Spatial2DVersionDocumentation {
+function Add-VersionedLibraryDocumentation {
     param(
+        [Parameter(Mandatory)]
+        [string] $Library,
+
         [Parameter(Mandatory)]
         [string] $RepositoryRoot,
 
@@ -159,13 +162,19 @@ function Add-Spatial2DVersionDocumentation {
         [Parameter(Mandatory)]
         [string] $ExpectedPackageHash,
 
-        [string] $ArticleSourceRoot
+        [string] $ArticleSourceRoot,
+
+        [string] $ReferencePackagePath,
+
+        [string] $ExpectedReferencePackageHash,
+
+        [string] $ReferenceAssemblyName
     )
 
     # API versions have overlapping UIDs, so each version's articles and API
     # must be rendered together in an independent graph before their static
     # output joins the current site.
-    $library = 'Spatial2D'
+    $packageId = "Akeldov.Math.$Library"
 
     if ([string]::IsNullOrWhiteSpace($TargetVersionPath) -or
         $TargetVersionPath -in @('.', '..') -or
@@ -180,14 +189,15 @@ function Add-Spatial2DVersionDocumentation {
         (Join-Path $temporaryParent "$library-$PackageVersion"))
     $versionedSourceRoot = [System.IO.Path]::GetFullPath(
         (Join-Path $VersionAdapterRoot 'source'))
-    $packageFileName = "Akeldov.Math.Spatial2D.$PackageVersion.nupkg"
+    $packageFileName = "$packageId.$PackageVersion.nupkg"
     $packagePath = [System.IO.Path]::GetFullPath(
         (Join-Path $versionedSourceRoot $packageFileName))
     $packageExtractRoot = Join-Path $fragmentRoot 'package'
     $packageAssembly = Join-Path `
-        $packageExtractRoot 'lib\net6.0\Akeldov.Math.Spatial2D.dll'
+        $packageExtractRoot "lib\net6.0\$packageId.dll"
     $packageDocumentation = Join-Path `
-        $packageExtractRoot 'lib\net6.0\Akeldov.Math.Spatial2D.xml'
+        $packageExtractRoot "lib\net6.0\$packageId.xml"
+    $referencePackageExtractRoot = Join-Path $fragmentRoot 'reference-package'
     $temporaryPrefix = $temporaryParent.TrimEnd(
         [System.IO.Path]::DirectorySeparatorChar) +
         [System.IO.Path]::DirectorySeparatorChar
@@ -216,6 +226,21 @@ function Add-Spatial2DVersionDocumentation {
     $packageHash = (Get-FileHash -LiteralPath $packagePath -Algorithm SHA256).Hash
     if ($packageHash -ne $ExpectedPackageHash) {
         throw "The $library $PackageVersion package hash is invalid."
+    }
+
+    $referenceArguments = @(
+        $ReferencePackagePath,
+        $ExpectedReferencePackageHash,
+        $ReferenceAssemblyName
+    )
+    $referenceArgumentCount = @(
+        $referenceArguments | Where-Object {
+            -not [string]::IsNullOrWhiteSpace($_)
+        }
+    ).Count
+
+    if ($referenceArgumentCount -notin @(0, $referenceArguments.Count)) {
+        throw 'Reference package path, hash, and assembly name must be specified together.'
     }
 
     New-Item -ItemType Directory -Path $temporaryParent -Force | Out-Null
@@ -265,6 +290,29 @@ function Add-Spatial2DVersionDocumentation {
         [System.IO.Compression.ZipFile]::ExtractToDirectory(
             $packagePath,
             $packageExtractRoot)
+
+        if ($referenceArgumentCount -gt 0) {
+            $referencePackageHash = (
+                Get-FileHash -LiteralPath $ReferencePackagePath -Algorithm SHA256
+            ).Hash
+            if ($referencePackageHash -ne $ExpectedReferencePackageHash) {
+                throw "The $ReferenceAssemblyName reference package hash is invalid."
+            }
+
+            [System.IO.Compression.ZipFile]::ExtractToDirectory(
+                $ReferencePackagePath,
+                $referencePackageExtractRoot)
+            $referenceAssembly = Join-Path `
+                $referencePackageExtractRoot `
+                "lib\net6.0\$ReferenceAssemblyName.dll"
+
+            if (-not (Test-Path -LiteralPath $referenceAssembly)) {
+                throw "The $ReferenceAssemblyName reference assembly is missing."
+            }
+
+            Copy-Item -LiteralPath $referenceAssembly `
+                -Destination (Split-Path -Parent $packageAssembly)
+        }
 
         if (-not (Test-Path -LiteralPath $packageAssembly) -or
             -not (Test-Path -LiteralPath $packageDocumentation)) {
@@ -437,7 +485,8 @@ if ($docfxExitCode -ne 0) {
     exit $docfxExitCode
 }
 
-Add-Spatial2DVersionDocumentation `
+Add-VersionedLibraryDocumentation `
+    -Library 'Spatial2D' `
     -RepositoryRoot $repositoryRoot `
     -Docfx $docfx `
     -SiteRoot $siteRoot `
@@ -448,7 +497,8 @@ Add-Spatial2DVersionDocumentation `
     -ExpectedPackageHash `
         '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E'
 
-Add-Spatial2DVersionDocumentation `
+Add-VersionedLibraryDocumentation `
+    -Library 'Spatial2D' `
     -RepositoryRoot $repositoryRoot `
     -Docfx $docfx `
     -SiteRoot $siteRoot `
@@ -461,6 +511,24 @@ Add-Spatial2DVersionDocumentation `
     -ArticleSourceRoot (
         Join-Path $PSScriptRoot 'versioned\Spatial2D\0.8.0')
 
+Add-VersionedLibraryDocumentation `
+    -Library 'Hexes' `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Hexes\0.1.0') `
+    -PackageVersion '0.1.0' `
+    -TargetVersionPath 'latest' `
+    -ExpectedPackageHash `
+        'E36514F70F6A145D60DA353A20E391C996516301CC5B5CF57DB27D3E0DD01A2A' `
+    -ReferencePackagePath (
+        Join-Path $PSScriptRoot `
+            'versioned\Spatial2D\0.8.0\source\Akeldov.Math.Spatial2D.0.8.0.nupkg') `
+    -ExpectedReferencePackageHash `
+        '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E' `
+    -ReferenceAssemblyName 'Akeldov.Math.Spatial2D'
+
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
@@ -468,6 +536,8 @@ $spatial2DVersionedRussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.8.0\ru'
 $spatial2D09RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.9.0\ru'
+$hexes01RussianSourceRoot = Join-Path `
+    $PSScriptRoot 'versioned\Hexes\0.1.0\ru'
 $russianSourceMappings = @(
     [pscustomobject]@{
         Root = $russianSourceRoot
@@ -484,6 +554,10 @@ $russianSourceMappings = @(
     [pscustomobject]@{
         Root = $spatial2D09RussianOverrideRoot
         OutputPrefix = Join-Path 'Spatial2D' 'latest'
+    },
+    [pscustomobject]@{
+        Root = $hexes01RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' 'latest'
     }
 )
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'

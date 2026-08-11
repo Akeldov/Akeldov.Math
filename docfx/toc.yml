@@ -6,6 +6,6 @@
     - name: Akeldov.Math.Spatial2D
       href: Spatial2D/index.html
     - name: Akeldov.Math.Hexes
-      href: Hexes/index.md
+      href: Hexes/index.html
 - name: About
   href: about.md

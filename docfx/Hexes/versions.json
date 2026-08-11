@@ -1,6 +1,11 @@
 {
   "versions": [
     {
+      "name": "Upcoming Release",
+      "path": "upcoming",
+      "referenceOnly": true
+    },
+    {
       "name": "0.1.0",
       "path": "latest"
     }

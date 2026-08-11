@@ -24,7 +24,7 @@
           ]
         }
       ],
-      "dest": "api/Hexes/latest",
+      "dest": "api/Hexes/upcoming",
       "properties": {
         "TargetFramework": "net6.0"
       }
@@ -58,29 +58,12 @@
         "dest": "ru"
       },
       {
-        "src": "ru/Hexes",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "dest": "ru/Hexes/latest"
-      },
-      {
         "src": "api",
         "files": [
           "index.md",
           "toc.yml"
         ],
         "dest": "api"
-      },
-      {
-        "src": "Hexes",
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "exclude": [
-          "latest/api/**"
-        ],
-        "dest": "Hexes/latest"
       },
       {
         "src": "api/Spatial2D/upcoming",
@@ -90,11 +73,11 @@
         "dest": "api/Spatial2D/upcoming"
       },
       {
-        "src": "api/Hexes/latest",
+        "src": "api/Hexes/upcoming",
         "files": [
           "**/*.yml"
         ],
-        "dest": "api/Hexes/latest"
+        "dest": "api/Hexes/upcoming"
       }
     ],
     "resource": [
@@ -136,6 +119,20 @@
           "index.html"
         ],
         "dest": "Hexes"
+      },
+      {
+        "src": "versioned/Hexes/upcoming/landing",
+        "files": [
+          "index.html"
+        ],
+        "dest": "Hexes/upcoming"
+      },
+      {
+        "src": "api",
+        "files": [
+          "Hexes.html"
+        ],
+        "dest": "api"
       }
     ],
     "output": "_site/Akeldov.Math",
