@@ -136,7 +136,7 @@ function Merge-SearchIndexEntries {
         [System.Text.UTF8Encoding]::new($false))
 }
 
-function Add-Spatial2D08Documentation {
+function Add-Spatial2DVersionDocumentation {
     param(
         [Parameter(Mandatory)]
         [string] $RepositoryRoot,
@@ -148,30 +148,46 @@ function Add-Spatial2D08Documentation {
         [string] $SiteRoot,
 
         [Parameter(Mandatory)]
-        [string] $VersionAdapterRoot
+        [string] $VersionAdapterRoot,
+
+        [Parameter(Mandatory)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory)]
+        [string] $TargetVersionPath,
+
+        [Parameter(Mandatory)]
+        [string] $ExpectedPackageHash,
+
+        [string] $ArticleSourceRoot
     )
 
-    # API versions have overlapping UIDs, so the 0.8.0 articles and API must
-    # be rendered together in an independent graph before their static output
-    # joins the current site.
+    # API versions have overlapping UIDs, so each version's articles and API
+    # must be rendered together in an independent graph before their static
+    # output joins the current site.
     $library = 'Spatial2D'
-    $targetVersionPath = '0.8.0'
+
+    if ([string]::IsNullOrWhiteSpace($TargetVersionPath) -or
+        $TargetVersionPath -in @('.', '..') -or
+        $TargetVersionPath.IndexOfAny(
+            [System.IO.Path]::GetInvalidFileNameChars()) -ge 0) {
+        throw "Invalid versioned output segment: $TargetVersionPath"
+    }
+
     $temporaryParent = [System.IO.Path]::GetFullPath(
         (Join-Path $RepositoryRoot '.tmp\docfx-versioned'))
     $fragmentRoot = [System.IO.Path]::GetFullPath(
-        (Join-Path $temporaryParent "$library-$targetVersionPath"))
+        (Join-Path $temporaryParent "$library-$PackageVersion"))
     $versionedSourceRoot = [System.IO.Path]::GetFullPath(
         (Join-Path $VersionAdapterRoot 'source'))
+    $packageFileName = "Akeldov.Math.Spatial2D.$PackageVersion.nupkg"
     $packagePath = [System.IO.Path]::GetFullPath(
-        (Join-Path $VersionAdapterRoot `
-            'source\Akeldov.Math.Spatial2D.0.8.0.nupkg'))
+        (Join-Path $versionedSourceRoot $packageFileName))
     $packageExtractRoot = Join-Path $fragmentRoot 'package'
     $packageAssembly = Join-Path `
         $packageExtractRoot 'lib\net6.0\Akeldov.Math.Spatial2D.dll'
     $packageDocumentation = Join-Path `
         $packageExtractRoot 'lib\net6.0\Akeldov.Math.Spatial2D.xml'
-    $expectedPackageHash =
-        '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E'
     $temporaryPrefix = $temporaryParent.TrimEnd(
         [System.IO.Path]::DirectorySeparatorChar) +
         [System.IO.Path]::DirectorySeparatorChar
@@ -189,17 +205,17 @@ function Add-Spatial2D08Documentation {
         $versionedSourcePrefix,
         [System.StringComparison]::OrdinalIgnoreCase) -or
         [System.IO.Path]::GetFileName($packagePath) -ne
-            'Akeldov.Math.Spatial2D.0.8.0.nupkg') {
+            $packageFileName) {
         throw "Invalid versioned package path: $packagePath"
     }
 
     if (-not (Test-Path -LiteralPath $packagePath)) {
-        throw "The $library $targetVersionPath package is missing."
+        throw "The $library $PackageVersion package is missing."
     }
 
     $packageHash = (Get-FileHash -LiteralPath $packagePath -Algorithm SHA256).Hash
-    if ($packageHash -ne $expectedPackageHash) {
-        throw "The $library $targetVersionPath package hash is invalid."
+    if ($packageHash -ne $ExpectedPackageHash) {
+        throw "The $library $PackageVersion package hash is invalid."
     }
 
     New-Item -ItemType Directory -Path $temporaryParent -Force | Out-Null
@@ -209,6 +225,42 @@ function Add-Spatial2D08Documentation {
             Remove-Item -LiteralPath $fragmentRoot -Recurse -Force
         }
 
+        if (-not [string]::IsNullOrWhiteSpace($ArticleSourceRoot)) {
+            $articleStageRoot = Join-Path $fragmentRoot 'articles'
+            New-Item -ItemType Directory -Path $articleStageRoot -Force |
+                Out-Null
+
+            foreach ($language in @('en', 'ru')) {
+                $languageSourceRoot = Join-Path $ArticleSourceRoot $language
+
+                if (-not (Test-Path -LiteralPath $languageSourceRoot)) {
+                    throw "The $library article source is missing: $languageSourceRoot"
+                }
+
+                Copy-Item -LiteralPath $languageSourceRoot `
+                    -Destination $articleStageRoot -Recurse
+
+                $languageOverrideRoot = Join-Path $VersionAdapterRoot $language
+                if (-not (Test-Path -LiteralPath $languageOverrideRoot)) {
+                    continue
+                }
+
+                $languageStageRoot = Join-Path $articleStageRoot $language
+                Get-ChildItem -LiteralPath $languageOverrideRoot -Recurse -File |
+                    ForEach-Object {
+                        $relativePath = $_.FullName.Substring(
+                            $languageOverrideRoot.Length).TrimStart(
+                                [char][System.IO.Path]::DirectorySeparatorChar)
+                        $destination = Join-Path $languageStageRoot $relativePath
+                        $destinationDirectory = Split-Path -Parent $destination
+                        New-Item -ItemType Directory `
+                            -Path $destinationDirectory -Force | Out-Null
+                        Copy-Item -LiteralPath $_.FullName `
+                            -Destination $destination -Force
+                    }
+            }
+        }
+
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         [System.IO.Compression.ZipFile]::ExtractToDirectory(
             $packagePath,
@@ -216,19 +268,83 @@ function Add-Spatial2D08Documentation {
 
         if (-not (Test-Path -LiteralPath $packageAssembly) -or
             -not (Test-Path -LiteralPath $packageDocumentation)) {
-            throw "The $library $targetVersionPath package API files are missing."
+            throw "The $library $PackageVersion package API files are missing."
         }
 
         & $Docfx (Join-Path $VersionAdapterRoot 'api.docfx.json')
         if ($LASTEXITCODE -ne 0) {
-            throw "Failed to build the $library $targetVersionPath documentation."
+            throw "Failed to build the $library $PackageVersion documentation."
         }
 
         $fragmentSiteRoot = Join-Path $fragmentRoot 'site\Akeldov.Math'
+
+        if (-not [string]::IsNullOrWhiteSpace($ArticleSourceRoot)) {
+            $articleOutputs = @(
+                [pscustomobject]@{
+                    Language = 'en'
+                    Root = Join-Path `
+                        $fragmentSiteRoot "$library\$TargetVersionPath"
+                },
+                [pscustomobject]@{
+                    Language = 'ru'
+                    Root = Join-Path `
+                        $fragmentSiteRoot "ru\$library\$TargetVersionPath"
+                }
+            )
+
+            foreach ($articleOutput in $articleOutputs) {
+                $languageSourceRoot = Join-Path `
+                    $ArticleSourceRoot $articleOutput.Language
+                $languageOverrideRoot = Join-Path `
+                    $VersionAdapterRoot $articleOutput.Language
+                $languageStageRoot = Join-Path `
+                    $articleStageRoot $articleOutput.Language
+
+                Get-ChildItem -LiteralPath $articleOutput.Root `
+                    -Recurse -Filter '*.html' -File |
+                    ForEach-Object {
+                        $relativeArticlePath = [System.IO.Path]::ChangeExtension(
+                            (Get-RelativeSitePath `
+                                -Root $articleOutput.Root `
+                                -Path $_.FullName),
+                            '.md')
+                        $overridePath = Join-Path `
+                            $languageOverrideRoot $relativeArticlePath
+                        $sourcePath = if (Test-Path -LiteralPath $overridePath) {
+                            $overridePath
+                        } else {
+                            Join-Path $languageSourceRoot $relativeArticlePath
+                        }
+
+                        if (-not (Test-Path -LiteralPath $sourcePath)) {
+                            return
+                        }
+
+                        $stagedPath = Join-Path `
+                            $languageStageRoot $relativeArticlePath
+                        $stagedRepositoryPath = Get-RelativeSitePath `
+                            -Root $RepositoryRoot `
+                            -Path $stagedPath
+                        $sourceRepositoryPath = Get-RelativeSitePath `
+                            -Root $RepositoryRoot `
+                            -Path $sourcePath
+                        $content = Get-Content `
+                            -LiteralPath $_.FullName -Raw -Encoding UTF8
+                        $content = $content.Replace(
+                            $stagedRepositoryPath,
+                            $sourceRepositoryPath)
+                        [System.IO.File]::WriteAllText(
+                            $_.FullName,
+                            $content,
+                            [System.Text.UTF8Encoding]::new($false))
+                    }
+            }
+        }
+
         $outputPaths = @(
-            "$library\$targetVersionPath",
-            "ru\$library\$targetVersionPath",
-            "api\$library\$targetVersionPath"
+            "$library\$TargetVersionPath",
+            "ru\$library\$TargetVersionPath",
+            "api\$library\$TargetVersionPath"
         )
 
         foreach ($outputPath in $outputPaths) {
@@ -236,11 +352,11 @@ function Add-Spatial2D08Documentation {
             $destinationRoot = Join-Path $SiteRoot $outputPath
 
             if (-not (Test-Path -LiteralPath $sourceRoot)) {
-                throw "The $library $targetVersionPath output is missing: $outputPath"
+                throw "The $library $PackageVersion output is missing: $outputPath"
             }
 
             if (Test-Path -LiteralPath $destinationRoot) {
-                throw "The $library $targetVersionPath output already exists: $outputPath"
+                throw "The $library $PackageVersion output already exists: $outputPath"
             }
 
             $destinationParent = Split-Path -Parent $destinationRoot
@@ -321,26 +437,53 @@ if ($docfxExitCode -ne 0) {
     exit $docfxExitCode
 }
 
-Add-Spatial2D08Documentation `
+Add-Spatial2DVersionDocumentation `
     -RepositoryRoot $repositoryRoot `
     -Docfx $docfx `
     -SiteRoot $siteRoot `
     -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Spatial2D\0.8.0') `
+    -PackageVersion '0.8.0' `
+    -TargetVersionPath '0.8.0' `
+    -ExpectedPackageHash `
+        '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E'
+
+Add-Spatial2DVersionDocumentation `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Spatial2D\0.9.0') `
+    -PackageVersion '0.9.0' `
+    -TargetVersionPath 'latest' `
+    -ExpectedPackageHash `
+        '5F03676949B71F79CCCF1A5D35015B3B6BE4C1D7380C03981CEF3E358C483345' `
+    -ArticleSourceRoot (
         Join-Path $PSScriptRoot 'versioned\Spatial2D\0.8.0')
 
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
-$spatial2D08RussianSourceRoot = Join-Path `
+$spatial2DVersionedRussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.8.0\ru'
+$spatial2D09RussianOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\0.9.0\ru'
 $russianSourceMappings = @(
     [pscustomobject]@{
         Root = $russianSourceRoot
         OutputPrefix = $null
     },
     [pscustomobject]@{
-        Root = $spatial2D08RussianSourceRoot
+        Root = $spatial2DVersionedRussianSourceRoot
         OutputPrefix = Join-Path 'Spatial2D' '0.8.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2DVersionedRussianSourceRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'latest'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D09RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'latest'
     }
 )
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'

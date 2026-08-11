@@ -10,7 +10,7 @@
           ]
         }
       ],
-      "dest": "api/Spatial2D/latest",
+      "dest": "api/Spatial2D/upcoming",
       "properties": {
         "TargetFramework": "net6.0"
       }
@@ -83,11 +83,11 @@
         "dest": "Hexes/latest"
       },
       {
-        "src": "api/Spatial2D/latest",
+        "src": "api/Spatial2D/upcoming",
         "files": [
           "**/*.yml"
         ],
-        "dest": "api/Spatial2D/latest"
+        "dest": "api/Spatial2D/upcoming"
       },
       {
         "src": "api/Hexes/latest",
@@ -116,11 +116,18 @@
         "dest": "Spatial2D"
       },
       {
-        "src": "versioned/Spatial2D/0.9.0/landing",
+        "src": "versioned/Spatial2D/upcoming/landing",
         "files": [
           "index.html"
         ],
-        "dest": "Spatial2D/latest"
+        "dest": "Spatial2D/upcoming"
+      },
+      {
+        "src": "api",
+        "files": [
+          "Spatial2D.html"
+        ],
+        "dest": "api"
       },
       {
         "src": "Hexes",

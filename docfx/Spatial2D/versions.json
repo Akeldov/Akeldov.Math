@@ -1,9 +1,13 @@
 {
   "versions": [
     {
-      "name": "0.9.0",
-      "path": "latest",
+      "name": "Upcoming Release",
+      "path": "upcoming",
       "referenceOnly": true
+    },
+    {
+      "name": "0.9.0",
+      "path": "latest"
     },
     {
       "name": "0.8.0",

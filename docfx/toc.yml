@@ -4,7 +4,7 @@
   href: Libraries/index.md
   items:
     - name: Akeldov.Math.Spatial2D
-      href: api/Spatial2D/latest/Akeldov.Math.Spatial2D.yml
+      href: Spatial2D/index.html
     - name: Akeldov.Math.Hexes
       href: Hexes/index.md
 - name: About
