@@ -16,6 +16,12 @@
   "build": {
     "content": [
       {
+        "src": "../../..",
+        "files": [
+          "toc.yml"
+        ]
+      },
+      {
         "src": "../../../../.tmp/docfx-versioned/Spatial2D-0.9.0/articles/en",
         "files": [
           "**/*.{md,yml}"

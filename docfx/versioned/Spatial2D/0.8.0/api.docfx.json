@@ -16,6 +16,12 @@
   "build": {
     "content": [
       {
+        "src": "../../..",
+        "files": [
+          "toc.yml"
+        ]
+      },
+      {
         "src": "en",
         "files": [
           "**/*.{md,yml}"
