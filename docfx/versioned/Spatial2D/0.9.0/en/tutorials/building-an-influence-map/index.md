@@ -27,7 +27,7 @@ Install the .NET 6 SDK or later, then run:
 ```powershell
 dotnet new console --name Spatial2D.InfluenceMap
 Set-Location Spatial2D.InfluenceMap
-dotnet add package Akeldov.Math.Spatial2D --version 0.8.0
+dotnet add package Akeldov.Math.Spatial2D --version 0.9.0
 ```
 
 Start with an empty `Program.cs`, then continue with [Influence Sources](influence-sources.md).
