@@ -76,6 +76,43 @@ function hasRussianLanguageContext() {
         || (isApiPage() && getLanguagePreference() === 'ru');
 }
 
+function localizeReferenceOverview() {
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    const apiIndex = pathSegments.indexOf('api');
+    const isSpatial2DReferenceOverview = apiIndex >= 0
+        && pathSegments[apiIndex + 1] === 'Spatial2D'
+        && pathSegments[pathSegments.length - 1] === 'index.html';
+
+    if (!isSpatial2DReferenceOverview) {
+        return;
+    }
+
+    const russian = hasRussianLanguageContext();
+    for (const section of document.querySelectorAll('[data-reference-language]')) {
+        section.hidden = section.dataset.referenceLanguage !== (russian ? 'ru' : 'en');
+    }
+
+    if (!russian) {
+        return;
+    }
+
+    const heading = document.querySelector('article h1');
+    if (heading) {
+        heading.textContent = 'Справочник API Spatial2D';
+    }
+
+    document.title = document.title.replace(
+        'Spatial2D API Reference',
+        'Справочник API Spatial2D');
+
+    const titleMetadata = document.querySelector('meta[name="title"]');
+    if (titleMetadata) {
+        titleMetadata.content = titleMetadata.content.replace(
+            'Spatial2D API Reference',
+            'Справочник API Spatial2D');
+    }
+}
+
 function preserveRussianLanguageContext() {
     const pathname = window.location.pathname;
     const languageMarker = '/ru/';
@@ -688,6 +725,7 @@ async function initializeSelectors() {
 
 function start() {
     synchronizeLanguagePreference();
+    localizeReferenceOverview();
     startRussianLocalization();
 
     let initializationRunning = false;
