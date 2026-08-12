@@ -106,16 +106,29 @@ Versioned API documentation uses:
 /Akeldov.Math/api/<Library>/<version>/
 ```
 
-`latest` is the development documentation version. The root URL of a versioned library should
-redirect to its latest version, for example:
+Numbered version URLs are canonical. `latest` is a stable redirect alias for the library version
+currently marked as the latest published release. The root URL of a versioned library should
+redirect to its `latest` alias, for example:
 
 ```text
 /Akeldov.Math/Spatial2D/ -> /Akeldov.Math/Spatial2D/latest/
 ```
 
-An explicit source version may map to `latest` while it is the current release. An API-only
-release must use a routing landing page and set `referenceOnly` in its version registry entry;
-do not publish an earlier release's conceptual articles under the new version.
+Publish the current-version documentation under its canonical numbered path and generate redirects
+from matching paths below the `latest` alias, for example:
+
+```text
+/Akeldov.Math/en/Spatial2D/0.9.0/index.html  (canonical)
+/Akeldov.Math/en/Spatial2D/latest/index.html (redirect alias)
+```
+
+Canonical metadata and sitemap entries must use the numbered path. The numbered source directory
+remains the authoring/version adapter location; generate the `latest` redirects during the build
+instead of duplicating the current version's article tree. Preserve query parameters and URL
+fragments when redirecting.
+
+An API-only release must use a routing landing page and set `referenceOnly` in its version registry
+entry; do not publish an earlier release's conceptual articles under the new version.
 
 The root `docfx/versions.json` lists libraries that participate in version selection. Each
 versioned library owns a separate `<Library>/versions.json`. Update only the library whose

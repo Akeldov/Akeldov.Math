@@ -7,7 +7,10 @@
     },
     {
       "name": "0.1.0",
-      "path": "latest"
+      "path": "0.1.0",
+      "aliases": [
+        "latest"
+      ]
     }
   ]
 }

@@ -26,21 +26,21 @@
         "files": [
           "**/*.{md,yml}"
         ],
-        "dest": "Hexes/latest"
+        "dest": "Hexes/0.1.0"
       },
       {
         "src": "ru",
         "files": [
           "**/*.{md,yml}"
         ],
-        "dest": "ru/Hexes/latest"
+        "dest": "ru/Hexes/0.1.0"
       },
       {
         "src": "../../../../.tmp/docfx-versioned/Hexes-0.1.0/api",
         "files": [
           "**/*.yml"
         ],
-        "dest": "api/Hexes/latest"
+        "dest": "api/Hexes/0.1.0"
       }
     ],
     "output": "../../../../.tmp/docfx-versioned/Hexes-0.1.0/site/Akeldov.Math",

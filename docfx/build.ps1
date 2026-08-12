@@ -459,6 +459,94 @@ function Update-LanguageBranchRelativeLinks {
         }
 }
 
+function Add-VersionAliasRedirects {
+    param(
+        [Parameter(Mandatory)]
+        [string] $SiteRoot,
+
+        [Parameter(Mandatory)]
+        [string] $Library,
+
+        [Parameter(Mandatory)]
+        [string] $CanonicalVersion,
+
+        [Parameter(Mandatory)]
+        [string] $Alias,
+
+        [Parameter(Mandatory)]
+        [string] $SiteBaseUrl
+    )
+
+    $siteRootFullPath = [System.IO.Path]::GetFullPath($SiteRoot)
+    $siteRootPrefix = $siteRootFullPath.TrimEnd([System.IO.Path]::DirectorySeparatorChar) +
+        [System.IO.Path]::DirectorySeparatorChar
+
+    foreach ($prefix in @('', 'en', 'ru', 'api')) {
+        $libraryRoot = if ($prefix) {
+            Join-Path (Join-Path $SiteRoot $prefix) $Library
+        }
+        else {
+            Join-Path $SiteRoot $Library
+        }
+        $source = Join-Path $libraryRoot $CanonicalVersion
+        $destination = Join-Path $libraryRoot $Alias
+        $destinationFullPath = [System.IO.Path]::GetFullPath($destination)
+
+        if (-not (Test-Path -LiteralPath $source)) {
+            throw "The canonical version output is missing: $source"
+        }
+
+        if (-not $destinationFullPath.StartsWith(
+                $siteRootPrefix,
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "The version alias output is outside the site root: $destinationFullPath"
+        }
+
+        if (Test-Path -LiteralPath $destination) {
+            Remove-Item -LiteralPath $destination -Recurse -Force
+        }
+
+        $sourceFullPath = [System.IO.Path]::GetFullPath($source)
+        $publishedPrefix = if ($prefix) { "$prefix/" } else { '' }
+
+        Get-ChildItem -LiteralPath $source -Filter '*.html' -File -Recurse | ForEach-Object {
+            $relativePath = Get-RelativeSitePath `
+                -Root $sourceFullPath `
+                -Path $_.FullName
+            $redirectFile = Join-Path $destination $relativePath
+            $redirectDirectory = Split-Path -Parent $redirectFile
+            New-Item -ItemType Directory -Path $redirectDirectory -Force | Out-Null
+
+            $publishedRelativePath = $relativePath
+            $targetPath = "/Akeldov.Math/$publishedPrefix$Library/$CanonicalVersion/$publishedRelativePath"
+            $targetHtml = [System.Net.WebUtility]::HtmlEncode($targetPath)
+            $canonicalUrl = [System.Net.WebUtility]::HtmlEncode(
+                "$($SiteBaseUrl.TrimEnd('/'))/$publishedPrefix$Library/$CanonicalVersion/$publishedRelativePath")
+            $targetJson = $targetPath | ConvertTo-Json -Compress
+            $redirectHtml = @"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="$canonicalUrl">
+  <meta http-equiv="refresh" content="0; url=$targetHtml">
+  <title>Redirecting...</title>
+</head>
+<body>
+  <p><a href="$targetHtml">Continue to the current version</a></p>
+  <script>location.replace($targetJson + location.search + location.hash);</script>
+</body>
+</html>
+"@
+            [System.IO.File]::WriteAllText(
+                $redirectFile,
+                $redirectHtml,
+                [System.Text.UTF8Encoding]::new($false))
+        }
+    }
+}
+
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $localDocfx = Join-Path $repositoryRoot '.tmp\docfx-tool\docfx.exe'
 $siteRoot = Join-Path $PSScriptRoot '_site\Akeldov.Math'
@@ -505,7 +593,7 @@ Add-VersionedLibraryDocumentation `
     -VersionAdapterRoot (
         Join-Path $PSScriptRoot 'versioned\Spatial2D\0.9.0') `
     -PackageVersion '0.9.0' `
-    -TargetVersionPath 'latest' `
+    -TargetVersionPath '0.9.0' `
     -ExpectedPackageHash `
         '5F03676949B71F79CCCF1A5D35015B3B6BE4C1D7380C03981CEF3E358C483345' `
     -ArticleSourceRoot (
@@ -519,7 +607,7 @@ Add-VersionedLibraryDocumentation `
     -VersionAdapterRoot (
         Join-Path $PSScriptRoot 'versioned\Hexes\0.1.0') `
     -PackageVersion '0.1.0' `
-    -TargetVersionPath 'latest' `
+    -TargetVersionPath '0.1.0' `
     -ExpectedPackageHash `
         'E36514F70F6A145D60DA353A20E391C996516301CC5B5CF57DB27D3E0DD01A2A' `
     -ReferencePackagePath (
@@ -549,15 +637,15 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $spatial2DVersionedRussianSourceRoot
-        OutputPrefix = Join-Path 'Spatial2D' 'latest'
+        OutputPrefix = Join-Path 'Spatial2D' '0.9.0'
     },
     [pscustomobject]@{
         Root = $spatial2D09RussianOverrideRoot
-        OutputPrefix = Join-Path 'Spatial2D' 'latest'
+        OutputPrefix = Join-Path 'Spatial2D' '0.9.0'
     },
     [pscustomobject]@{
         Root = $hexes01RussianSourceRoot
-        OutputPrefix = Join-Path 'Hexes' 'latest'
+        OutputPrefix = Join-Path 'Hexes' '0.1.0'
     }
 )
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'
@@ -902,6 +990,20 @@ $sitemapLines += '</urlset>'
     (Join-Path $siteRoot 'sitemap.xml'),
     $sitemapLines,
     [System.Text.UTF8Encoding]::new($false))
+
+Add-VersionAliasRedirects `
+    -SiteRoot $siteRoot `
+    -Library 'Spatial2D' `
+    -CanonicalVersion '0.9.0' `
+    -Alias 'latest' `
+    -SiteBaseUrl $siteBaseUrl
+
+Add-VersionAliasRedirects `
+    -SiteRoot $siteRoot `
+    -Library 'Hexes' `
+    -CanonicalVersion '0.1.0' `
+    -Alias 'latest' `
+    -SiteBaseUrl $siteBaseUrl
 
 if ($Serve) {
     & $docfx serve (Join-Path $PSScriptRoot '_site') --port $Port

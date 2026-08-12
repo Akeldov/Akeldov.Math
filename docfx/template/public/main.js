@@ -523,12 +523,16 @@ async function addVersionSelector() {
         const option = document.createElement('option');
         option.value = version.path;
         option.textContent = version.name;
-        option.selected = version.path === context.versionPath;
+        option.selected = version.path === context.versionPath
+            || version.aliases?.includes(context.versionPath);
         select.appendChild(option);
     }
 
     select.addEventListener('change', async () => {
-        if (select.value === context.versionPath) {
+        const currentVersion = context.versions.find(version =>
+            version.path === context.versionPath
+            || version.aliases?.includes(context.versionPath));
+        if (select.value === currentVersion?.path) {
             return;
         }
 
