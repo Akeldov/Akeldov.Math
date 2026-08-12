@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=../en/Spatial2D/latest/index.html">
   <meta name="robots" content="noindex">
   <title>Akeldov.Math.Spatial2D Documentation</title>
   <script>
-    window.location.replace(`../en/Spatial2D/latest/index.html${window.location.search}${window.location.hash}`);
+    const marker = '/Spatial2D/';
+    const markerIndex = window.location.pathname.indexOf(marker);
+    const currentRoot = window.location.pathname.substring(0, markerIndex + 1);
+    const languageRoot = currentRoot.endsWith('/en/') || currentRoot.endsWith('/ru/')
+      ? currentRoot
+      : `${currentRoot}en/`;
+    const target = new URL(
+      `${languageRoot}Spatial2D/latest/index.html`,
+      window.location.origin);
+    target.search = window.location.search;
+    target.hash = window.location.hash;
+    window.location.replace(target);
   </script>
 </head>
 <body>
-  <p><a href="../en/Spatial2D/latest/index.html">Open the latest Spatial2D documentation</a>.</p>
+  <p>Opening the latest Spatial2D documentation.</p>
 </body>
 </html>
