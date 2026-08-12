@@ -41,6 +41,13 @@
           "**/*.yml"
         ],
         "dest": "api/Spatial2D/latest"
+      },
+      {
+        "src": "../reference",
+        "files": [
+          "index.md"
+        ],
+        "dest": "api/Spatial2D/latest"
       }
     ],
     "output": "../../../../.tmp/docfx-versioned/Spatial2D-0.9.0/site/Akeldov.Math",

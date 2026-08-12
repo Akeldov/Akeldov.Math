@@ -73,6 +73,13 @@
         "dest": "api/Spatial2D/upcoming"
       },
       {
+        "src": "versioned/Spatial2D/reference",
+        "files": [
+          "index.md"
+        ],
+        "dest": "api/Spatial2D/upcoming"
+      },
+      {
         "src": "api/Hexes/upcoming",
         "files": [
           "**/*.yml"
