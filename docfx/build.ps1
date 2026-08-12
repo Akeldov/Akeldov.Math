@@ -61,6 +61,143 @@ function Get-RussianOutputRelativePath {
     return $relativePath
 }
 
+function New-MergedArticleSource {
+    param(
+        [Parameter(Mandatory)]
+        [string] $RepositoryRoot,
+
+        [Parameter(Mandatory)]
+        [string] $BaseRoot,
+
+        [Parameter(Mandatory)]
+        [string] $OverrideRoot,
+
+        [Parameter(Mandatory)]
+        [string] $StageRoot
+    )
+
+    $temporaryRoot = [System.IO.Path]::GetFullPath(
+        (Join-Path $RepositoryRoot '.tmp'))
+    $temporaryPrefix = $temporaryRoot.TrimEnd(
+        [System.IO.Path]::DirectorySeparatorChar) +
+        [System.IO.Path]::DirectorySeparatorChar
+    $stageFullPath = [System.IO.Path]::GetFullPath($StageRoot)
+
+    if (-not $stageFullPath.StartsWith(
+            $temporaryPrefix,
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "The article staging directory is outside .tmp: $stageFullPath"
+    }
+
+    if (Test-Path -LiteralPath $stageFullPath) {
+        Remove-Item -LiteralPath $stageFullPath -Recurse -Force
+    }
+
+    New-Item -ItemType Directory -Path $stageFullPath -Force | Out-Null
+
+    foreach ($language in @('en', 'ru')) {
+        $languageBaseRoot = Join-Path $BaseRoot $language
+        $languageOverrideRoot = Join-Path $OverrideRoot $language
+
+        if (-not (Test-Path -LiteralPath $languageBaseRoot)) {
+            throw "The article source is missing: $languageBaseRoot"
+        }
+
+        Copy-Item -LiteralPath $languageBaseRoot `
+            -Destination $stageFullPath -Recurse
+
+        if (-not (Test-Path -LiteralPath $languageOverrideRoot)) {
+            continue
+        }
+
+        $languageStageRoot = Join-Path $stageFullPath $language
+        Get-ChildItem -LiteralPath $languageOverrideRoot -Recurse -File |
+            ForEach-Object {
+                $relativePath = $_.FullName.Substring(
+                    $languageOverrideRoot.Length).TrimStart(
+                        [char][System.IO.Path]::DirectorySeparatorChar)
+                $destination = Join-Path $languageStageRoot $relativePath
+                $destinationDirectory = Split-Path -Parent $destination
+                New-Item -ItemType Directory `
+                    -Path $destinationDirectory -Force | Out-Null
+                Copy-Item -LiteralPath $_.FullName `
+                    -Destination $destination -Force
+            }
+    }
+}
+
+function Update-MergedArticleContributionLinks {
+    param(
+        [Parameter(Mandatory)]
+        [string] $RepositoryRoot,
+
+        [Parameter(Mandatory)]
+        [string] $SiteRoot,
+
+        [Parameter(Mandatory)]
+        [string] $BaseRoot,
+
+        [Parameter(Mandatory)]
+        [string] $OverrideRoot,
+
+        [Parameter(Mandatory)]
+        [string] $StageRoot,
+
+        [Parameter(Mandatory)]
+        [string] $Library,
+
+        [Parameter(Mandatory)]
+        [string] $VersionPath
+    )
+
+    foreach ($language in @('en', 'ru')) {
+        $outputRoot = if ($language -eq 'ru') {
+            Join-Path $SiteRoot "ru\$Library\$VersionPath"
+        } else {
+            Join-Path $SiteRoot "$Library\$VersionPath"
+        }
+        $languageBaseRoot = Join-Path $BaseRoot $language
+        $languageOverrideRoot = Join-Path $OverrideRoot $language
+        $languageStageRoot = Join-Path $StageRoot $language
+
+        Get-ChildItem -LiteralPath $outputRoot -Recurse -Filter '*.html' -File |
+            ForEach-Object {
+                $relativeArticlePath = [System.IO.Path]::ChangeExtension(
+                    (Get-RelativeSitePath -Root $outputRoot -Path $_.FullName),
+                    '.md')
+                $overridePath = Join-Path `
+                    $languageOverrideRoot $relativeArticlePath
+                $sourcePath = if (Test-Path -LiteralPath $overridePath) {
+                    $overridePath
+                } else {
+                    Join-Path $languageBaseRoot $relativeArticlePath
+                }
+
+                if (-not (Test-Path -LiteralPath $sourcePath)) {
+                    return
+                }
+
+                $stagedPath = Join-Path $languageStageRoot $relativeArticlePath
+                $stagedRepositoryPath = Get-RelativeSitePath `
+                    -Root $RepositoryRoot -Path $stagedPath
+                $sourceRepositoryPath = Get-RelativeSitePath `
+                    -Root $RepositoryRoot -Path $sourcePath
+                $content = Get-Content `
+                    -LiteralPath $_.FullName -Raw -Encoding UTF8
+                $updatedContent = $content.Replace(
+                    $stagedRepositoryPath,
+                    $sourceRepositoryPath)
+
+                if ($updatedContent -ne $content) {
+                    [System.IO.File]::WriteAllText(
+                        $_.FullName,
+                        $updatedContent,
+                        [System.Text.UTF8Encoding]::new($false))
+                }
+            }
+    }
+}
+
 function Set-PageSeoMetadata {
     param(
         [Parameter(Mandatory)]
@@ -550,6 +687,12 @@ function Add-VersionAliasRedirects {
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $localDocfx = Join-Path $repositoryRoot '.tmp\docfx-tool\docfx.exe'
 $siteRoot = Join-Path $PSScriptRoot '_site\Akeldov.Math'
+$spatial2DArticleBaseRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\0.8.0'
+$spatial2DArticleOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\0.9.0'
+$spatial2DUpcomingArticleStageRoot = Join-Path `
+    $repositoryRoot '.tmp\docfx-upcoming\Spatial2D'
 
 if (Test-Path -LiteralPath $localDocfx) {
     $docfx = $localDocfx
@@ -566,12 +709,29 @@ if (Test-Path -LiteralPath $siteRoot) {
     Remove-Item -LiteralPath $siteRoot -Recurse -Force
 }
 
+New-MergedArticleSource `
+    -RepositoryRoot $repositoryRoot `
+    -BaseRoot $spatial2DArticleBaseRoot `
+    -OverrideRoot $spatial2DArticleOverrideRoot `
+    -StageRoot $spatial2DUpcomingArticleStageRoot
+
 & $docfx (Join-Path $PSScriptRoot 'docfx.json')
 $docfxExitCode = $LASTEXITCODE
 
 if ($docfxExitCode -ne 0) {
     exit $docfxExitCode
 }
+
+Update-MergedArticleContributionLinks `
+    -RepositoryRoot $repositoryRoot `
+    -SiteRoot $siteRoot `
+    -BaseRoot $spatial2DArticleBaseRoot `
+    -OverrideRoot $spatial2DArticleOverrideRoot `
+    -StageRoot $spatial2DUpcomingArticleStageRoot `
+    -Library 'Spatial2D' `
+    -VersionPath 'upcoming'
+
+Remove-Item -LiteralPath $spatial2DUpcomingArticleStageRoot -Recurse -Force
 
 Add-VersionedLibraryDocumentation `
     -Library 'Spatial2D' `
@@ -596,8 +756,7 @@ Add-VersionedLibraryDocumentation `
     -TargetVersionPath '0.9.0' `
     -ExpectedPackageHash `
         '5F03676949B71F79CCCF1A5D35015B3B6BE4C1D7380C03981CEF3E358C483345' `
-    -ArticleSourceRoot (
-        Join-Path $PSScriptRoot 'versioned\Spatial2D\0.8.0')
+    -ArticleSourceRoot $spatial2DArticleBaseRoot
 
 Add-VersionedLibraryDocumentation `
     -Library 'Hexes' `
@@ -642,6 +801,14 @@ $russianSourceMappings = @(
     [pscustomobject]@{
         Root = $spatial2D09RussianOverrideRoot
         OutputPrefix = Join-Path 'Spatial2D' '0.9.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2DVersionedRussianSourceRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D09RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
     },
     [pscustomobject]@{
         Root = $hexes01RussianSourceRoot

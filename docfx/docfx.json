@@ -73,6 +73,20 @@
         "dest": "api/Spatial2D/upcoming"
       },
       {
+        "src": "../.tmp/docfx-upcoming/Spatial2D/en",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Spatial2D/upcoming"
+      },
+      {
+        "src": "../.tmp/docfx-upcoming/Spatial2D/ru",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Spatial2D/upcoming"
+      },
+      {
         "src": "versioned/Spatial2D/reference",
         "files": [
           "index.md"
@@ -104,13 +118,6 @@
           "index.html"
         ],
         "dest": "Spatial2D"
-      },
-      {
-        "src": "versioned/Spatial2D/upcoming/landing",
-        "files": [
-          "index.html"
-        ],
-        "dest": "Spatial2D/upcoming"
       },
       {
         "src": "api",

@@ -4,10 +4,7 @@
       "path": "Spatial2D",
       "name": "Akeldov.Math.Spatial2D",
       "versioned": true,
-      "referencePage": "index.html",
-      "navigationByVersion": {
-        "upcoming": []
-      }
+      "referencePage": "index.html"
     },
     {
       "path": "Hexes",

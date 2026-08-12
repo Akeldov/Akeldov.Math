@@ -2,8 +2,7 @@
   "versions": [
     {
       "name": "Upcoming Release",
-      "path": "upcoming",
-      "referenceOnly": true
+      "path": "upcoming"
     },
     {
       "name": "0.9.0",
