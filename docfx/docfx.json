@@ -99,6 +99,20 @@
           "**/*.yml"
         ],
         "dest": "api/Hexes/upcoming"
+      },
+      {
+        "src": "versioned/Hexes/0.1.0/en",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Hexes/upcoming"
+      },
+      {
+        "src": "versioned/Hexes/0.1.0/ru",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Hexes/upcoming"
       }
     ],
     "resource": [
@@ -133,13 +147,6 @@
           "index.html"
         ],
         "dest": "Hexes"
-      },
-      {
-        "src": "versioned/Hexes/upcoming/landing",
-        "files": [
-          "index.html"
-        ],
-        "dest": "Hexes/upcoming"
       },
       {
         "src": "api",

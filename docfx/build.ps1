@@ -813,6 +813,10 @@ $russianSourceMappings = @(
     [pscustomobject]@{
         Root = $hexes01RussianSourceRoot
         OutputPrefix = Join-Path 'Hexes' '0.1.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes01RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' 'upcoming'
     }
 )
 $russianNavigationFile = Join-Path $russianSourceRoot 'navigation.json'
