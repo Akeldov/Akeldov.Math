@@ -62,7 +62,7 @@ public class ChromaticIndexMapRasterizationSnapshotTests
 
         byte[] approved = File.ReadAllBytes(approvedPath);
 
-        if (!BytesEqual(actual, approved))
+        if (!PngSnapshotComparer.AreEquivalent(actual, approved))
         {
             string actualPath = GetActualPath(approvedFileName);
             TestContext.AddTestAttachment(actualPath, "Actual chromatic index map raster snapshot");
@@ -77,17 +77,4 @@ public class ChromaticIndexMapRasterizationSnapshotTests
             approvedFileName.Replace(".png", ".actual.png"));
     }
 
-    private static bool BytesEqual(byte[] left, byte[] right)
-    {
-        if (left.Length != right.Length)
-            return false;
-
-        for (int i = 0; i < left.Length; i++)
-        {
-            if (left[i] != right[i])
-                return false;
-        }
-
-        return true;
-    }
 }

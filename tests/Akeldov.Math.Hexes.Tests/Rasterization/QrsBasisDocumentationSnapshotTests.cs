@@ -72,7 +72,8 @@ public class QrsBasisDocumentationSnapshotTests
         string approvedPath = Path.Combine(
             TestContext.CurrentContext.TestDirectory, "Rasterization", "Approved", fileName);
 
-        if (!File.Exists(approvedPath) || !File.ReadAllBytes(actualPath).SequenceEqual(File.ReadAllBytes(approvedPath)))
+        if (!File.Exists(approvedPath) ||
+            !PngSnapshotComparer.AreEquivalent(File.ReadAllBytes(actualPath), File.ReadAllBytes(approvedPath)))
         {
             TestContext.AddTestAttachment(actualPath, "Actual QRS basis documentation snapshot");
             Assert.Fail($"QRS basis documentation snapshot changed. Actual image: {actualPath}");

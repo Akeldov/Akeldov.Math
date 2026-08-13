@@ -34,7 +34,8 @@ public class VoronoiHexPartitionSnapshotTests
             "Voronoi",
             "Approved",
             ApprovedFileName);
-        if (!File.Exists(approvedPath) || !File.ReadAllBytes(actualPath).SequenceEqual(File.ReadAllBytes(approvedPath)))
+        if (!File.Exists(approvedPath) ||
+            !PngSnapshotComparer.AreEquivalent(File.ReadAllBytes(actualPath), File.ReadAllBytes(approvedPath)))
         {
             TestContext.AddTestAttachment(actualPath, "Actual Voronoi hex partition snapshot");
             Assert.Fail($"Voronoi hex partition snapshot changed or is missing. Actual image: {actualPath}");
