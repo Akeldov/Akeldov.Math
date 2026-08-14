@@ -382,6 +382,248 @@ function Set-PageLanguage {
         [System.Text.UTF8Encoding]::new($false))
 }
 
+function Get-PageArticleHeading {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Content
+    )
+
+    $headingMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $Content,
+        '<h1\b[^>]*>(?<content>.*?)</h1>',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+            [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+    if (-not $headingMatch.Success) {
+        return $null
+    }
+
+    $heading = [System.Text.RegularExpressions.Regex]::Replace(
+        $headingMatch.Groups['content'].Value,
+        '<[^>]+>',
+        ' ')
+    $heading = [System.Net.WebUtility]::HtmlDecode($heading)
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $heading,
+        '\s+',
+        ' ').Trim()
+}
+
+function ConvertTo-SearchSnippetText {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Text,
+
+        [ValidateRange(20, 1000)]
+        [int] $MaximumLength = 240
+    )
+
+    $textValue = [System.Net.WebUtility]::HtmlDecode($Text)
+    $textValue = [System.Text.RegularExpressions.Regex]::Replace(
+        $textValue,
+        '\s+',
+        ' ').Trim()
+    $textValue = [System.Text.RegularExpressions.Regex]::Replace(
+        $textValue,
+        '\s+([,.;:!?])',
+        '$1')
+
+    if ($textValue.Length -le $MaximumLength) {
+        return $textValue
+    }
+
+    $truncated = $textValue.Substring(0, $MaximumLength - 3)
+    $lastSpace = $truncated.LastIndexOf(' ')
+    if ($lastSpace -ge [Math]::Floor($MaximumLength * 0.7)) {
+        $truncated = $truncated.Substring(0, $lastSpace)
+    }
+
+    return $truncated.TrimEnd() + '...'
+}
+
+function Get-PageSearchTitle {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Url,
+
+        [Parameter(Mandatory)]
+        [string] $SiteBaseUrl,
+
+        [Parameter(Mandatory)]
+        [string] $Heading
+    )
+
+    $relativeUrl = $Url.Substring($SiteBaseUrl.Length)
+    $segments = $relativeUrl.Split('/')
+
+    if ($segments[0] -eq 'api' -and $segments.Count -ge 4) {
+        $library = $segments[1]
+        $version = $segments[2]
+        $displayName = [System.Text.RegularExpressions.Regex]::Replace(
+            $Heading,
+            '^(Class|Delegate|Enum|Interface|Namespace|Struct)\s+',
+            '')
+        $fileName = [System.IO.Path]::GetFileNameWithoutExtension(
+            [System.Uri]::UnescapeDataString($segments[-1]))
+
+        if ($Heading -notmatch '^Namespace\s+' -and $fileName -ne 'index') {
+            $rootNamespace = "Akeldov.Math.$library"
+            $relativeUid = if ($fileName.StartsWith(
+                    "$rootNamespace.",
+                    [System.StringComparison]::Ordinal)) {
+                $fileName.Substring($rootNamespace.Length + 1)
+            } else {
+                $fileName
+            }
+            $lastSeparator = $relativeUid.LastIndexOf('.')
+            if ($lastSeparator -gt 0) {
+                $parentNamespace = $relativeUid.Substring(0, $lastSeparator)
+                $displayName = "$displayName ($parentNamespace)"
+            }
+        }
+
+        return "$displayName - $library API $version | Akeldov.Math"
+    }
+
+    if ($segments[0] -in @('en', 'ru') -and $segments.Count -ge 4 -and
+        $segments[2] -match '^\d+\.\d+\.\d+') {
+        $language = $segments[0]
+        $library = $segments[1]
+        $version = $segments[2]
+        $sectionLabels = @{
+            'concepts' = 'Concepts'
+            'tutorials' = 'Tutorials'
+            'how-to-guides' = 'How-to Guides'
+        }
+        $section = $segments[3]
+        $languageSuffix = if ($language -eq 'ru') { ' (RU)' } else { '' }
+
+        if ($sectionLabels.ContainsKey($section)) {
+            return "$Heading - $($sectionLabels[$section]) - $library $version$languageSuffix | Akeldov.Math"
+        }
+
+        return "$Heading - $library $version$languageSuffix | Akeldov.Math"
+    }
+
+    if ($relativeUrl -eq 'en/index.html') {
+        return 'Akeldov.Math - .NET Math Libraries'
+    }
+
+    if ($relativeUrl -eq 'ru/index.html') {
+        return 'Akeldov.Math - .NET Math Libraries (RU)'
+    }
+
+    return "$Heading | Akeldov.Math"
+}
+
+function Set-PageSearchMetadata {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path,
+
+        [Parameter(Mandatory)]
+        [string] $Url,
+
+        [Parameter(Mandatory)]
+        [string] $SiteBaseUrl
+    )
+
+    $content = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    $heading = Get-PageArticleHeading -Content $content
+    if ([string]::IsNullOrWhiteSpace($heading)) {
+        throw "The page has no H1 for search metadata: $Path"
+    }
+
+    $title = Get-PageSearchTitle `
+        -Url $Url `
+        -SiteBaseUrl $SiteBaseUrl `
+        -Heading $heading
+    $encodedTitle = [System.Net.WebUtility]::HtmlEncode($title)
+    $content = [System.Text.RegularExpressions.Regex]::Replace(
+        $content,
+        '<title>.*?</title>',
+        "<title>$encodedTitle</title>",
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+            [System.Text.RegularExpressions.RegexOptions]::Singleline)
+    $content = [System.Text.RegularExpressions.Regex]::Replace(
+        $content,
+        '<meta\b(?=[^>]*\bname=["'']title["''])[^>]*>',
+        "<meta name=`"title`" content=`"$encodedTitle`">",
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+
+    $descriptionMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $content,
+        '<meta\b(?=[^>]*\bname=["'']description["''])[^>]*\bcontent=["''](?<content>[^"'']*)["''][^>]*>',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    $namespaceMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $heading,
+        '^Namespace\s+(?<namespace>.+)$')
+    $apiUrlMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $Url,
+        '/api/(?<library>[^/]+)/(?<version>[^/]+)/')
+    $description = if ($descriptionMatch.Success -and
+        -not [string]::IsNullOrWhiteSpace(
+            $descriptionMatch.Groups['content'].Value)) {
+        $descriptionMatch.Groups['content'].Value
+    } elseif ($namespaceMatch.Success -and $apiUrlMatch.Success) {
+        "API reference for the $($namespaceMatch.Groups['namespace'].Value) " +
+            "namespace in $($apiUrlMatch.Groups['library'].Value) " +
+            "$($apiUrlMatch.Groups['version'].Value)."
+    } else {
+        $articleMatch = [System.Text.RegularExpressions.Regex]::Match(
+            $content,
+            '<article\b[^>]*>(?<content>.*?)</article>',
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+                [System.Text.RegularExpressions.RegexOptions]::Singleline)
+        $paragraphMatches = [System.Text.RegularExpressions.Regex]::Matches(
+            $articleMatch.Groups['content'].Value,
+            '<p(?:\s[^>]*)?>(?<content>.*?)</p>',
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+                [System.Text.RegularExpressions.RegexOptions]::Singleline)
+        $paragraph = $paragraphMatches |
+            ForEach-Object {
+                [System.Text.RegularExpressions.Regex]::Replace(
+                    $_.Groups['content'].Value,
+                    '<[^>]+>',
+                    ' ')
+            } |
+            Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_) -and $_.Length -ge 20
+            } |
+            Select-Object -First 1
+        $paragraph
+    }
+
+    if ([string]::IsNullOrWhiteSpace($description)) {
+        throw "The page has no description source: $Path"
+    }
+
+    $description = ConvertTo-SearchSnippetText -Text $description
+    $encodedDescription = [System.Net.WebUtility]::HtmlEncode($description)
+    $descriptionTag = "<meta name=`"description`" content=`"$encodedDescription`">"
+    if ($descriptionMatch.Success) {
+        $content = $content.Remove(
+            $descriptionMatch.Index,
+            $descriptionMatch.Length).Insert(
+                $descriptionMatch.Index,
+                $descriptionTag)
+    } else {
+        $content = $content.Replace(
+            '  </head>',
+            "      $descriptionTag$([Environment]::NewLine)  </head>")
+    }
+
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+
+    return [pscustomobject]@{
+        Title = $title
+        Description = $description
+    }
+}
+
 function Merge-SearchIndexEntries {
     param(
         [Parameter(Mandatory)]
@@ -1359,6 +1601,26 @@ if ($uniqueSitemapEntries.Count -ne $sitemapEntries.Count) {
 }
 
 foreach ($entry in $uniqueSitemapEntries) {
+    $searchMetadata = Set-PageSearchMetadata `
+        -Path $entry.SourcePath `
+        -Url $entry.Url `
+        -SiteBaseUrl $siteBaseUrl
+    $entry | Add-Member -NotePropertyName SearchTitle `
+        -NotePropertyValue $searchMetadata.Title
+    $entry | Add-Member -NotePropertyName SearchDescription `
+        -NotePropertyValue $searchMetadata.Description
+}
+
+$duplicateSearchTitles = @(
+    $uniqueSitemapEntries |
+        Group-Object SearchTitle |
+        Where-Object Count -gt 1)
+if ($duplicateSearchTitles.Count -gt 0) {
+    $duplicateTitleList = $duplicateSearchTitles.Name -join '; '
+    throw "The sitemap contains duplicate search titles: $duplicateTitleList"
+}
+
+foreach ($entry in $uniqueSitemapEntries) {
     $sitemapLines += '  <url>'
     $sitemapLines += "    <loc>$([System.Security.SecurityElement]::Escape($entry.Url))</loc>"
 
@@ -1473,12 +1735,42 @@ foreach ($fallbackPage in $russianFallbackPages) {
     }
 }
 
+foreach ($entry in $uniqueSitemapEntries) {
+    $content = Get-Content -LiteralPath $entry.SourcePath -Raw -Encoding UTF8
+    $encodedTitle = [System.Net.WebUtility]::HtmlEncode($entry.SearchTitle)
+    $encodedDescription = [System.Net.WebUtility]::HtmlEncode(
+        $entry.SearchDescription)
+    $titleMatches = [System.Text.RegularExpressions.Regex]::Matches(
+        $content,
+        "<title>$([System.Text.RegularExpressions.Regex]::Escape($encodedTitle))</title>",
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    $metaTitleMatches = [System.Text.RegularExpressions.Regex]::Matches(
+        $content,
+        "<meta name=`"title`" content=`"$([System.Text.RegularExpressions.Regex]::Escape($encodedTitle))`">",
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    $descriptionMatches = [System.Text.RegularExpressions.Regex]::Matches(
+        $content,
+        "<meta name=`"description`" content=`"$([System.Text.RegularExpressions.Regex]::Escape($encodedDescription))`">",
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+
+    if ($titleMatches.Count -ne 1 -or
+        $metaTitleMatches.Count -ne 1 -or
+        $descriptionMatches.Count -ne 1 -or
+        $entry.SearchDescription.Length -lt 20 -or
+        $entry.SearchDescription.Length -gt 240) {
+        throw "The search snippet metadata is invalid for $($entry.Url)."
+    }
+}
+
 Write-Host (
     "SEO P0: marked $p0NoIndexPageCount pages as noindex; " +
     "excluded $p0TocFragmentCount TOC fragments from the sitemap.")
 Write-Host (
     "SEO P1: validated $($uniqueSitemapEntries.Count) canonical pages and " +
     "$($russianFallbackPages.Count) Russian fallback pages.")
+Write-Host (
+    "SEO P2: validated unique titles and descriptions for " +
+    "$($uniqueSitemapEntries.Count) indexable pages.")
 
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
