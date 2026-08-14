@@ -231,6 +231,107 @@ function Set-PageSeoMetadata {
         [System.Text.UTF8Encoding]::new($false))
 }
 
+function Test-PageHasNoIndex {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $content = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    return [System.Text.RegularExpressions.Regex]::IsMatch(
+        $content,
+        '<meta\b(?=[^>]*\bname=["'']robots["''])(?=[^>]*\bcontent=["''][^"'']*\bnoindex\b)[^>]*>',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+}
+
+function Test-IsP0NonIndexableSitePath {
+    param(
+        [Parameter(Mandatory)]
+        [string] $RelativePath
+    )
+
+    $pathSegments = $RelativePath.Split('/')
+    return $pathSegments -contains 'upcoming' -or
+        $pathSegments[-1].Equals(
+            'toc.html',
+            [System.StringComparison]::OrdinalIgnoreCase)
+}
+
+function Test-PageHasHeadingOnlyArticle {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $content = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    $articleMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $content,
+        '<article\b[^>]*>(?<body>.*?)</article>',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+            [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+    if (-not $articleMatch.Success) {
+        return $false
+    }
+
+    $articleBody = [System.Text.RegularExpressions.Regex]::Replace(
+        $articleMatch.Groups['body'].Value,
+        '<h1\b[^>]*>.*?</h1>',
+        '',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+            [System.Text.RegularExpressions.RegexOptions]::Singleline)
+    $articleBody = [System.Text.RegularExpressions.Regex]::Replace(
+        $articleBody,
+        '<!--.*?-->',
+        '',
+        [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+    if ([System.Text.RegularExpressions.Regex]::IsMatch(
+            $articleBody,
+            '<(audio|blockquote|canvas|dl|iframe|img|ol|pre|svg|table|ul|video)\b',
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+        return $false
+    }
+
+    $plainText = [System.Text.RegularExpressions.Regex]::Replace(
+        $articleBody,
+        '<[^>]+>',
+        '')
+    $plainText = [System.Net.WebUtility]::HtmlDecode($plainText).Trim()
+    return [string]::IsNullOrWhiteSpace($plainText)
+}
+
+function Set-PageNoIndexMetadata {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $content = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    $robotsPattern = '<meta\b(?=[^>]*\bname=["'']robots["''])[^>]*>'
+    $robotsTag = '<meta name="robots" content="noindex, follow">'
+
+    if ([System.Text.RegularExpressions.Regex]::IsMatch(
+            $content,
+            $robotsPattern,
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+        $content = [System.Text.RegularExpressions.Regex]::Replace(
+            $content,
+            $robotsPattern,
+            $robotsTag,
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    } else {
+        $content = $content.Replace(
+            '  </head>',
+            "      $robotsTag$([Environment]::NewLine)  </head>")
+    }
+
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
 function Merge-SearchIndexEntries {
     param(
         [Parameter(Mandatory)]
@@ -1037,19 +1138,47 @@ $docfxConfig = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'docfx.json') `
 $siteBaseUrl = $docfxConfig.build.sitemap.baseUrl.TrimEnd('/') + '/'
 $apiRoot = Join-Path $siteRoot 'api'
 $sitemapEntries = @()
+$p0NoIndexPageCount = 0
+$p0TocFragmentCount = 0
+
+Get-ChildItem -LiteralPath $siteRoot -Recurse -Filter '*.html' -File |
+    ForEach-Object {
+        $relativePath = Get-RelativeSitePath `
+            -Root $siteRoot -Path $_.FullName
+        $pathSegments = $relativePath.Split('/')
+        $isUpcoming = $pathSegments -contains 'upcoming'
+        $isTableOfContents = $pathSegments[-1].Equals(
+            'toc.html',
+            [System.StringComparison]::OrdinalIgnoreCase)
+        $isHeadingOnly = Test-PageHasHeadingOnlyArticle -Path $_.FullName
+
+        if ($isUpcoming -or $isHeadingOnly) {
+            Set-PageNoIndexMetadata -Path $_.FullName
+            $p0NoIndexPageCount++
+        }
+
+        if ($isTableOfContents) {
+            $p0TocFragmentCount++
+        }
+    }
 
 Get-ChildItem -LiteralPath $englishRoot -Recurse -Filter '*.html' -File |
     ForEach-Object {
         $relativePath = Get-RelativeSitePath -Root $englishRoot -Path $_.FullName
-        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
 
-        if ($content.Contains('<meta name="robots" content="noindex">')) {
+        if ((Test-IsP0NonIndexableSitePath -RelativePath $relativePath) -or
+            (Test-PageHasNoIndex -Path $_.FullName)) {
             return
         }
 
         $englishUrl = "$siteBaseUrl" + "en/$relativePath"
-        $russianUrl = if ($russianOverrides.ContainsKey(
-            $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))) {
+        $overrideKey = $relativePath.Replace(
+            '/',
+            [System.IO.Path]::DirectorySeparatorChar)
+        $russianPagePath = Join-Path $russianRoot $overrideKey
+        $russianUrl = if ($russianOverrides.ContainsKey($overrideKey) -and
+            (Test-Path -LiteralPath $russianPagePath) -and
+            -not (Test-PageHasNoIndex -Path $russianPagePath)) {
             "$siteBaseUrl" + "ru/$relativePath"
         } else {
             $null
@@ -1064,16 +1193,29 @@ Get-ChildItem -LiteralPath $englishRoot -Recurse -Filter '*.html' -File |
             Url = $englishUrl
             EnglishUrl = $englishUrl
             RussianUrl = $russianUrl
+            SourcePath = $_.FullName
         }
     }
 
 Get-ChildItem -LiteralPath $russianRoot -Recurse -Filter '*.html' -File |
     ForEach-Object {
         $relativePath = Get-RelativeSitePath -Root $russianRoot -Path $_.FullName
+
+        if ((Test-IsP0NonIndexableSitePath -RelativePath $relativePath) -or
+            (Test-PageHasNoIndex -Path $_.FullName)) {
+            return
+        }
+
         $overrideKey = $relativePath.Replace(
             '/',
             [System.IO.Path]::DirectorySeparatorChar)
-        $englishUrl = "$siteBaseUrl" + "en/$relativePath"
+        $englishPagePath = Join-Path $englishRoot $overrideKey
+        $englishUrl = if ((Test-Path -LiteralPath $englishPagePath) -and
+            -not (Test-PageHasNoIndex -Path $englishPagePath)) {
+            "$siteBaseUrl" + "en/$relativePath"
+        } else {
+            $null
+        }
 
         if ($russianOverrides.ContainsKey($overrideKey)) {
             $russianUrl = "$siteBaseUrl" + "ru/$relativePath"
@@ -1086,6 +1228,7 @@ Get-ChildItem -LiteralPath $russianRoot -Recurse -Filter '*.html' -File |
                 Url = $russianUrl
                 EnglishUrl = $englishUrl
                 RussianUrl = $russianUrl
+                SourcePath = $_.FullName
             }
         } else {
             Set-PageSeoMetadata -Path $_.FullName -CanonicalUrl $englishUrl
@@ -1095,9 +1238,9 @@ Get-ChildItem -LiteralPath $russianRoot -Recurse -Filter '*.html' -File |
 Get-ChildItem -LiteralPath $apiRoot -Recurse -Filter '*.html' -File |
     ForEach-Object {
         $relativePath = Get-RelativeSitePath -Root $apiRoot -Path $_.FullName
-        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
 
-        if ($content.Contains('<meta name="robots" content="noindex">')) {
+        if ((Test-IsP0NonIndexableSitePath -RelativePath $relativePath) -or
+            (Test-PageHasNoIndex -Path $_.FullName)) {
             return
         }
 
@@ -1107,6 +1250,7 @@ Get-ChildItem -LiteralPath $apiRoot -Recurse -Filter '*.html' -File |
             Url = $canonicalUrl
             EnglishUrl = $null
             RussianUrl = $null
+            SourcePath = $_.FullName
         }
     }
 
@@ -1120,10 +1264,10 @@ Get-ChildItem -LiteralPath $siteRoot -Recurse -Filter '*.html' -File |
             "$apiRoot$([System.IO.Path]::DirectorySeparatorChar)")
     } |
     ForEach-Object {
-        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+        $relativePath = Get-RelativeSitePath -Root $siteRoot -Path $_.FullName
 
-        if (-not $content.Contains('<meta name="robots" content="noindex">')) {
-            $relativePath = Get-RelativeSitePath -Root $siteRoot -Path $_.FullName
+        if (-not (Test-IsP0NonIndexableSitePath -RelativePath $relativePath) -and
+            -not (Test-PageHasNoIndex -Path $_.FullName)) {
             Set-PageSeoMetadata `
                 -Path $_.FullName `
                 -CanonicalUrl ("$siteBaseUrl" + "en/$relativePath")
@@ -1161,6 +1305,26 @@ $sitemapLines += '</urlset>'
     (Join-Path $siteRoot 'sitemap.xml'),
     $sitemapLines,
     [System.Text.UTF8Encoding]::new($false))
+
+if ($sitemapEntries.Url -match '/upcoming/' -or
+    $sitemapEntries.Url -match '/toc\.html$') {
+    throw 'The sitemap contains a P0 non-indexable URL.'
+}
+
+$nonIndexableSitemapEntries = @(
+    $sitemapEntries |
+        Where-Object {
+            (Test-PageHasNoIndex -Path $_.SourcePath) -or
+            (Test-PageHasHeadingOnlyArticle -Path $_.SourcePath)
+        })
+
+if ($nonIndexableSitemapEntries.Count -gt 0) {
+    throw 'The sitemap contains a noindex or heading-only page.'
+}
+
+Write-Host (
+    "SEO P0: marked $p0NoIndexPageCount pages as noindex; " +
+    "excluded $p0TocFragmentCount TOC fragments from the sitemap.")
 
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
