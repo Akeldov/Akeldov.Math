@@ -158,9 +158,7 @@
     ],
     "output": "_site/Akeldov.Math",
     "sitemap": {
-      "baseUrl": "https://akeldov.github.io/Akeldov.Math/",
-      "changefreq": "weekly",
-      "priority": 0.5
+      "baseUrl": "https://akeldov.github.io/Akeldov.Math/"
     },
     "template": [
       "default",

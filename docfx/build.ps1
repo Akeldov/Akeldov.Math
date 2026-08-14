@@ -332,6 +332,56 @@ function Set-PageNoIndexMetadata {
         [System.Text.UTF8Encoding]::new($false))
 }
 
+function Set-PageLanguage {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path,
+
+        [Parameter(Mandatory)]
+        [ValidateSet('en', 'ru')]
+        [string] $Language
+    )
+
+    $content = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    $htmlTagPattern = '<html\b(?<attributes>[^>]*)>'
+    $htmlTagMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $content,
+        $htmlTagPattern,
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+
+    if (-not $htmlTagMatch.Success) {
+        return
+    }
+
+    $htmlTag = $htmlTagMatch.Value
+    if ([System.Text.RegularExpressions.Regex]::IsMatch(
+            $htmlTag,
+            '\blang=["''][^"'']*["'']',
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+        $updatedHtmlTag = [System.Text.RegularExpressions.Regex]::Replace(
+            $htmlTag,
+            '\blang=["''][^"'']*["'']',
+            "lang=`"$Language`"",
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    } else {
+        $updatedHtmlTag = "<html lang=`"$Language`"$($htmlTagMatch.Groups['attributes'].Value)>"
+    }
+
+    if ($updatedHtmlTag -eq $htmlTag) {
+        return
+    }
+
+    $content = $content.Remove(
+        $htmlTagMatch.Index,
+        $htmlTagMatch.Length).Insert(
+            $htmlTagMatch.Index,
+            $updatedHtmlTag)
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
 function Merge-SearchIndexEntries {
     param(
         [Parameter(Mandatory)]
@@ -1138,8 +1188,27 @@ $docfxConfig = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'docfx.json') `
 $siteBaseUrl = $docfxConfig.build.sitemap.baseUrl.TrimEnd('/') + '/'
 $apiRoot = Join-Path $siteRoot 'api'
 $sitemapEntries = @()
+$russianFallbackPages = @()
 $p0NoIndexPageCount = 0
 $p0TocFragmentCount = 0
+
+$russianRootPrefix = [System.IO.Path]::GetFullPath($russianRoot).TrimEnd(
+    [System.IO.Path]::DirectorySeparatorChar) +
+    [System.IO.Path]::DirectorySeparatorChar
+Get-ChildItem -LiteralPath $siteRoot -Recurse -Filter '*.html' -File |
+    ForEach-Object {
+        $language = 'en'
+        if ($_.FullName.StartsWith(
+                $russianRootPrefix,
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            $relativePath = $_.FullName.Substring($russianRootPrefix.Length)
+            if ($russianOverrides.ContainsKey($relativePath)) {
+                $language = 'ru'
+            }
+        }
+
+        Set-PageLanguage -Path $_.FullName -Language $language
+    }
 
 Get-ChildItem -LiteralPath $siteRoot -Recurse -Filter '*.html' -File |
     ForEach-Object {
@@ -1232,6 +1301,10 @@ Get-ChildItem -LiteralPath $russianRoot -Recurse -Filter '*.html' -File |
             }
         } else {
             Set-PageSeoMetadata -Path $_.FullName -CanonicalUrl $englishUrl
+            $russianFallbackPages += [pscustomobject]@{
+                Path = $_.FullName
+                CanonicalUrl = $englishUrl
+            }
         }
     }
 
@@ -1280,7 +1353,12 @@ $sitemapLines = @(
     '        xmlns:xhtml="http://www.w3.org/1999/xhtml">'
 )
 
-foreach ($entry in $sitemapEntries | Sort-Object Url -Unique) {
+$uniqueSitemapEntries = @($sitemapEntries | Sort-Object Url -Unique)
+if ($uniqueSitemapEntries.Count -ne $sitemapEntries.Count) {
+    throw 'The sitemap source contains duplicate canonical URLs.'
+}
+
+foreach ($entry in $uniqueSitemapEntries) {
     $sitemapLines += '  <url>'
     $sitemapLines += "    <loc>$([System.Security.SecurityElement]::Escape($entry.Url))</loc>"
 
@@ -1322,9 +1400,85 @@ if ($nonIndexableSitemapEntries.Count -gt 0) {
     throw 'The sitemap contains a noindex or heading-only page.'
 }
 
+$sitemapUrlSet = @{}
+foreach ($entry in $uniqueSitemapEntries) {
+    $sitemapUrlSet[$entry.Url] = $true
+}
+
+foreach ($entry in $uniqueSitemapEntries) {
+    $content = Get-Content -LiteralPath $entry.SourcePath -Raw -Encoding UTF8
+    $expectedLanguage = if ($entry.Url.StartsWith(
+            "$siteBaseUrl" + 'ru/',
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+        'ru'
+    } else {
+        'en'
+    }
+    $languageMatch = [System.Text.RegularExpressions.Regex]::Match(
+        $content,
+        '<html\b[^>]*\blang=["''](?<language>[^"'']+)["'']',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+
+    if (-not $languageMatch.Success -or
+        $languageMatch.Groups['language'].Value -ne $expectedLanguage) {
+        throw "The page language is invalid for $($entry.Url)."
+    }
+
+    $canonicalMatches = [System.Text.RegularExpressions.Regex]::Matches(
+        $content,
+        '<link\s+rel=["'']canonical["'']\s+href=["''](?<url>[^"'']+)["'']',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+
+    if ($canonicalMatches.Count -ne 1 -or
+        $canonicalMatches[0].Groups['url'].Value -ne $entry.Url) {
+        throw "The canonical URL is invalid for $($entry.Url)."
+    }
+
+    $alternateMatches = [System.Text.RegularExpressions.Regex]::Matches(
+        $content,
+        '<link\s+rel=["'']alternate["'']\s+hreflang=["''](?<language>[^"'']+)["'']\s+href=["''](?<url>[^"'']+)["'']',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    $expectedAlternates = if ($entry.EnglishUrl -and $entry.RussianUrl) {
+        @{
+            'en' = $entry.EnglishUrl
+            'ru' = $entry.RussianUrl
+            'x-default' = $entry.EnglishUrl
+        }
+    } else {
+        @{}
+    }
+
+    if ($alternateMatches.Count -ne $expectedAlternates.Count) {
+        throw "The hreflang set is invalid for $($entry.Url)."
+    }
+
+    foreach ($alternateMatch in $alternateMatches) {
+        $alternateLanguage = $alternateMatch.Groups['language'].Value
+        $alternateUrl = $alternateMatch.Groups['url'].Value
+        if (-not $expectedAlternates.ContainsKey($alternateLanguage) -or
+            $expectedAlternates[$alternateLanguage] -ne $alternateUrl -or
+            -not $sitemapUrlSet.ContainsKey($alternateUrl)) {
+            throw "The hreflang target is invalid for $($entry.Url)."
+        }
+    }
+}
+
+foreach ($fallbackPage in $russianFallbackPages) {
+    $content = Get-Content -LiteralPath $fallbackPage.Path -Raw -Encoding UTF8
+    if ($content -notmatch '<html\b[^>]*\blang=["'']en["'']' -or
+        $content -notmatch [System.Text.RegularExpressions.Regex]::Escape(
+            "<link rel=`"canonical`" href=`"$($fallbackPage.CanonicalUrl)`">") -or
+        $content -match '<link\s+rel=["'']alternate["'']\s+hreflang=') {
+        throw "The Russian fallback metadata is invalid: $($fallbackPage.Path)"
+    }
+}
+
 Write-Host (
     "SEO P0: marked $p0NoIndexPageCount pages as noindex; " +
     "excluded $p0TocFragmentCount TOC fragments from the sitemap.")
+Write-Host (
+    "SEO P1: validated $($uniqueSitemapEntries.Count) canonical pages and " +
+    "$($russianFallbackPages.Count) Russian fallback pages.")
 
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
