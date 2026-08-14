@@ -1,7 +1,7 @@
 # Fundamentals
 
 This section explains the coordinate conventions behind Akeldov.Math.Hexes. The key distinction
-is between logical hex coordinates, rectangular storage indexes, and continuous world-space
+is between logical hex coordinates, rectangular storage indices, and continuous world-space
 coordinates.
 
 ## Coordinate Systems
@@ -11,7 +11,7 @@ and <xref:Akeldov.Math.Hexes.Vectors.QRS.VectorQRS> for fractional coordinates u
 calculations. QRS coordinates satisfy `Q + R + S = 0`, so only two components are independent.
 The types expose all three components, and their constructors derive or validate `S`.
 
-Use `VectorXYInt` for row-and-column indexes in rectangular maps. Its correspondence with a QRS
+Use `VectorXYInt` for row-and-column indices in rectangular maps. Its correspondence with a QRS
 coordinate depends on <xref:Akeldov.Math.Hexes.Layout>. `PointXY` and `VectorXY` represent
 positions and offsets in continuous space; conversions involving geometry also require a hex
 radius and a world-space origin.
@@ -22,11 +22,11 @@ coordinates.
 ## Layouts
 
 <xref:Akeldov.Math.Hexes.Layout> combines hex orientation with the offset rule used by rectangular
-storage. `OddR` and `EvenR` use pointy-top hexes and shift odd or even rows to the right.
-`OddQ` and `EvenQ` use flat-top hexes and shift odd or even columns down.
+storage. `OddR` and `EvenR` use pointy-top hexes and stagger odd or even rows. `OddQ` and `EvenQ`
+use flat-top hexes and stagger odd or even columns.
 
 The odd and even variants of one orientation share the same continuous QRS axes but produce
-different row-and-column indexes. Use one layout consistently when converting coordinates and
+different row-and-column indices. Use one layout consistently when converting coordinates and
 when creating topology, maps, or geometry.
 
 See [Layouts](layouts.md) for the orientation and offset conventions.
