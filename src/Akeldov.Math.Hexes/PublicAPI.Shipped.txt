@@ -1,5 +1,8 @@
 #nullable enable
 Akeldov.Math.Hexes.BooleanHexMapExtensions
+Akeldov.Math.Hexes.BoolHexMap
+Akeldov.Math.Hexes.BoolHexMap.BoolHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.BoolHexMap.BoolHexMap(Akeldov.Math.Hexes.HexMapTopology topology, bool[]! values) -> void
 Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap
 Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.ChromaticIndexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
 Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.ChromaticIndexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
@@ -9,6 +12,13 @@ Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.this[int index].get -> byte
 Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
 Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions
 Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions
+Akeldov.Math.Hexes.FloatHexMap
+Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.FloatHexMap.FloatHexMap(Akeldov.Math.Hexes.HexMapTopology topology, float[]! values) -> void
+Akeldov.Math.Hexes.FloatHexMap.Max.get -> float
+Akeldov.Math.Hexes.FloatHexMap.Min.get -> float
+Akeldov.Math.Hexes.FloatHexMapBlurExtensions
+Akeldov.Math.Hexes.FloatHexMapExtensions
 Akeldov.Math.Hexes.Geometry.Constants
 Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions
 Akeldov.Math.Hexes.Geometry.FloatExtensions
@@ -74,6 +84,7 @@ Akeldov.Math.Hexes.HexMapTopology.HexMapTopology(int width, int height, Akeldov.
 Akeldov.Math.Hexes.HexMapTopology.Layout.get -> Akeldov.Math.Hexes.Layout
 Akeldov.Math.Hexes.HexMapTopology.Resolution.get -> Akeldov.Math.Spatial2D.VectorXYInt
 Akeldov.Math.Hexes.HexMapTopologyExtensions
+Akeldov.Math.Hexes.HexMapTopologyPerlinNoiseExtensions
 Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions
 Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.Color.get -> Akeldov.Math.Spatial2D.Imaging.Gray8BitColor
 Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions.EdgeFalloff.get -> float
@@ -102,11 +113,23 @@ Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions.Offset.get -> Akel
 Akeldov.Math.Hexes.HexOrientation
 Akeldov.Math.Hexes.HexOrientation.FlatTop = 1 -> Akeldov.Math.Hexes.HexOrientation
 Akeldov.Math.Hexes.HexOrientation.PointyTop = 0 -> Akeldov.Math.Hexes.HexOrientation
+Akeldov.Math.Hexes.IFloatHexMap
+Akeldov.Math.Hexes.IFloatHexMap.Max.get -> float
+Akeldov.Math.Hexes.IFloatHexMap.Min.get -> float
 Akeldov.Math.Hexes.IHexMap<TValue>
 Akeldov.Math.Hexes.IHexMap<TValue>.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> TValue
 Akeldov.Math.Hexes.IHexMap<TValue>.this[int index].get -> TValue
 Akeldov.Math.Hexes.IHexMap<TValue>.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
 Akeldov.Math.Hexes.IHexMapExtensions
+Akeldov.Math.Hexes.IIntHexMap
+Akeldov.Math.Hexes.IIntHexMap.Max.get -> int
+Akeldov.Math.Hexes.IIntHexMap.Min.get -> int
+Akeldov.Math.Hexes.IntHexMap
+Akeldov.Math.Hexes.IntHexMap.IntHexMap(Akeldov.Math.Hexes.HexMapTopology topology) -> void
+Akeldov.Math.Hexes.IntHexMap.IntHexMap(Akeldov.Math.Hexes.HexMapTopology topology, int[]! values) -> void
+Akeldov.Math.Hexes.IntHexMap.Max.get -> int
+Akeldov.Math.Hexes.IntHexMap.Min.get -> int
+Akeldov.Math.Hexes.IntHexMapExtensions
 Akeldov.Math.Hexes.ISpatialHexMap<TValue>
 Akeldov.Math.Hexes.ISpatialHexMap<TValue>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
 Akeldov.Math.Hexes.ISpatialHexMapExtensions
@@ -540,12 +563,31 @@ static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.IHe
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.BoolHexMap! whenTrue, Akeldov.Math.Hexes.BoolHexMap! whenFalse) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.FloatHexMap! whenTrue, Akeldov.Math.Hexes.FloatHexMap! whenFalse) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.IntHexMap! whenTrue, Akeldov.Math.Hexes.IntHexMap! whenFalse) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select<TValue>(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.HexMap<TValue>! whenTrue, Akeldov.Math.Hexes.HexMap<TValue>! whenFalse) -> Akeldov.Math.Hexes.HexMap<TValue>!
+static Akeldov.Math.Hexes.BoolHexMap.operator &(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BoolHexMap.operator ^(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BoolHexMap.operator |(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Layout layout) -> int
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetEvenQChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetEvenRChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetOddQChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetOddRChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
 static Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions.GetChromaticTriplet(this Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> vertexHexIndexTriplet, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator *(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.IHexMap<float>! map, float sigma) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.IHexMap<float>! map, float sigma, int radius) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.ToFloatHexMap(this Akeldov.Math.Hexes.IHexMap<float>! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
 static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
 static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
@@ -588,7 +630,18 @@ static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.H
 static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions labels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
 static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions labels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
 static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions xyLabels, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions qrsLabels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapTopologyPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Hexes.HexMapTopology topology, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.IHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt resolution, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TColor>!
+static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator -(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator *(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator +(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.ToIntHexMap(this Akeldov.Math.Hexes.IHexMap<int>! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
 static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, float margin, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
 static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
