@@ -425,7 +425,7 @@ function ConvertTo-SearchSnippetText {
         ' ').Trim()
     $textValue = [System.Text.RegularExpressions.Regex]::Replace(
         $textValue,
-        '\s+([,.;:!?])',
+        '\s+([,;:!?]|\.(?![A-Za-z0-9]))',
         '$1')
 
     if ($textValue.Length -le $MaximumLength) {
@@ -438,7 +438,11 @@ function ConvertTo-SearchSnippetText {
         $truncated = $truncated.Substring(0, $lastSpace)
     }
 
-    return $truncated.TrimEnd() + '...'
+    $truncated = [System.Text.RegularExpressions.Regex]::Replace(
+        $truncated.TrimEnd(),
+        '[,;:]+$',
+        '')
+    return $truncated + '...'
 }
 
 function Get-PageSearchTitle {
