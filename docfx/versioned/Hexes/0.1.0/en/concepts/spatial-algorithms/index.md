@@ -1,85 +1,65 @@
 # Spatial Algorithms
 
-Akeldov.Math.Hexes provides algorithms that use the structure of a hex grid to find routes,
-partition a map, and classify cells consistently. They share the same index and layout model,
-but solve different problems and require different inputs.
+The spatial algorithms in Akeldov.Math.Hexes solve problems over an existing hex grid. They do
+not mutate their source maps: an algorithm reads topology, geometry, or cell values and returns a
+separate result.
 
-| Task | What determines the result | Primary result |
-|---|---|---|
-| Find a minimum-cost route | Topology and entry and exit costs | <xref:Akeldov.Math.Hexes.Pathfinding.HexPath> |
-| Assign hexes to the nearest weighted sites | Spatial hex centers and Voronoi sites | <xref:Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap> |
-| Separate adjacent hexes into stable classes | Hex index and layout | Class `0`, `1`, or `2` |
+The main distinction is which properties of the grid affect that result:
 
-Pathfinding follows logical adjacency within <xref:Akeldov.Math.Hexes.HexMapTopology>, while
-chromatization only needs an index and layout. Voronoi partitioning compares center positions in
-continuous space, so it also requires map geometry.
+| Task | Required data | What determines the result | Result |
+|---|---|---|---|
+| Find a route | Topology and entry- and exit-cost maps | Adjacency and accumulated transition cost | <xref:Akeldov.Math.Hexes.Pathfinding.HexPath> or `null` |
+| Partition a map among sites | Map geometry and weighted Spatial2D sites | World-space hex centers, site positions, and site weights | <xref:Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap> |
+| Obtain stable hex classes | Index and layout | Position in the logical hex lattice | Class `0`, `1`, or `2` |
+
+## Topology and Geometry
+
+<xref:Akeldov.Math.Hexes.HexMapTopology> defines the finite set of cells and their adjacency. That
+is enough for pathfinding: hex radius and world-space origin do not change the available
+transitions. The chromatic class of one index needs even less information—the index itself and
+<xref:Akeldov.Math.Hexes.Layout>.
+
+Voronoi partitioning answers a spatial question, so it uses
+<xref:Akeldov.Math.Hexes.Geometry.HexMapGeometry>.
+<xref:Akeldov.Math.Hexes.Geometry.HexCenterMap> derives the world-space position of every cell
+from that geometry. Changing the origin, scale, or layout can change assignments even when the
+map resolution stays the same.
 
 ## Pathfinding
 
-Pathfinding treats the map as a directed, weighted graph. Each hex is a vertex, and transitions
-are allowed between the six edge-adjacent neighbors. The topology layout determines which indices
-are adjacent in each row or column.
+The map is treated as a directed graph: hexes become vertices and shared edges become allowed
+transitions. <xref:Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap> defines one step as the exit
+cost of the source hex plus the entry cost of the next hex. `FindShortestPath` uses Dijkstra's
+algorithm and returns a route with the minimum total cost.
 
-<xref:Akeldov.Math.Hexes.Pathfinding.HexTransferCostMap> combines two maps with matching
-topologies. The cost of one step from `from` to `to` is the exit cost of `from` plus the entry
-cost of `to`. A reverse transition can therefore have a different cost even though the same two
-cells remain adjacent.
-
-`FindShortestPath` uses Dijkstra's algorithm and returns the path with the lowest total cost. All
-finite costs must be non-negative, and `float.PositiveInfinity` marks an impassable entry or
-exit. The resulting <xref:Akeldov.Math.Hexes.Pathfinding.HexPath> contains the indices from the
-source hex through the destination and the sum of every step cost. The method returns `null` when
-the destination is unreachable.
-
-See [Pathfinding](pathfinding.md) for the cost model, constraints, and search result.
+Continue to [Pathfinding](pathfinding.md) to configure directed costs, obstacles, and unreachable
+destinations.
 
 ## Space Partitioning
 
-Voronoi partitioning assigns the center of each hex to one weighted Spatial2D site. Unlike
-pathfinding, it does not traverse grid edges: the algorithm compares positions from
-<xref:Akeldov.Math.Hexes.Geometry.HexCenterMap> with site positions and weights in continuous
-space. Increasing a site's weight lets it attract centers from farther away.
+Weighted Voronoi partitioning assigns every hex center to one Spatial2D site. This is a discrete
+partition: the algorithm classifies whole hexes by their centers and does not construct vector
+boundaries inside cells. The result is available both as a per-index assignment and as the list
+of hexes belonging to each Voronoi cell.
 
-<xref:Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitioner> performs the assignment, and
-<xref:Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap> stores the consistent,
-read-only result. Its indexer returns the Voronoi cell assigned to a specific hex, while `Cells`
-contains one <xref:Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell> for every source site,
-including sites with no assigned hexes.
-
-The result retains the topology and geometry of the source center map. If assignments must be
-changed independently, `ToMutableHexMap()` creates a new mutable map without affecting the
-consistency of the original result.
-
-See [Space Partitioning](space-partitioning.md) for weight behavior, cell contents, and the result
-model.
+Continue to [Space Partitioning](space-partitioning.md) to learn how weights affect assignment and
+how to work with the immutable result.
 
 ## Chromatization
 
-Chromatization defines a proper three-coloring of the infinite hex lattice. Each index receives
-class `0`, `1`, or `2`, and any two hexes that share an edge belong to different classes. The
-class is derived deterministically from the index and layout; map values, radius, and origin do
-not affect it.
+Chromatization defines a proper three-coloring of the hex lattice: cells that share an edge always
+belong to different classes. Classes are derived without inspecting map values and can be used
+directly, stored in <xref:Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap>, or used to give
+raster weights a stable order.
 
-Use `GetChromaticClass(layout)` for one index, or
-<xref:Akeldov.Math.Hexes.Chromatization.ChromaticIndexMap> to precompute classes for a whole map
-while retaining its geometry for later spatial sampling. For each sample point, chromatic rasters
-find the nearest grid vertex and store either the class numbers or the class-ordered barycentric
-weights of the three hexes incident to it. Partial variants also mark hexes that are absent at the
-boundary of a finite map.
-
-This classification is useful for independent passes over nonadjacent cells and for stable value
-ordering during interpolation and rasterization. See [Chromatization](chromatization.md) for the
-details.
+Continue to [Chromatization](chromatization.md) to distinguish `Main`, `Left`, `Right` order from
+chromatic `Index0`, `Index1`, `Index2` order.
 
 ## Choosing an Algorithm
 
-- Use pathfinding when the result must account for map connectivity, obstacles, and the
-  accumulated cost of consecutive transitions.
-- Use Voronoi partitioning when each cell must be assigned to a spatial site according to its
-  position and weight.
-- Use chromatization when each cell needs a repeatable class that differs from every edge-adjacent
-  neighbor.
+- Use pathfinding when the answer depends on a chain of adjacent transitions.
+- Use Voronoi partitioning when the answer depends on world-space distance.
+- Use chromatization when you need a repeatable class shared by the entire infinite lattice.
 
-These algorithms read topology, geometry, or maps introduced in [Data Storage](../data-storage/index.md).
-Continue to [Rasterization](../rasterization.md) for regularly spaced spatial sampling of hex maps
-and map-like results.
+The maps, rasters, and complete or partial neighborhoods used as inputs and results are introduced
+in [Data Storage](../data-storage/index.md).
