@@ -41,6 +41,13 @@
           "**/*.yml"
         ],
         "dest": "api/Hexes/0.1.0"
+      },
+      {
+        "src": "../reference",
+        "files": [
+          "index.md"
+        ],
+        "dest": "api/Hexes/0.1.0"
       }
     ],
     "output": "../../../../.tmp/docfx-versioned/Hexes-0.1.0/site/Akeldov.Math",

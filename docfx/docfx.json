@@ -101,6 +101,13 @@
         "dest": "api/Hexes/upcoming"
       },
       {
+        "src": "versioned/Hexes/reference",
+        "files": [
+          "index.md"
+        ],
+        "dest": "api/Hexes/upcoming"
+      },
+      {
         "src": "versioned/Hexes/0.1.0/en",
         "files": [
           "**/*.{md,yml}"

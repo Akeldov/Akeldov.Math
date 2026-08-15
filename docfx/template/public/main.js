@@ -79,11 +79,12 @@ function hasRussianLanguageContext() {
 function localizeReferenceOverview() {
     const pathSegments = window.location.pathname.split('/').filter(Boolean);
     const apiIndex = pathSegments.indexOf('api');
-    const isSpatial2DReferenceOverview = apiIndex >= 0
-        && pathSegments[apiIndex + 1] === 'Spatial2D'
+    const library = apiIndex >= 0 ? pathSegments[apiIndex + 1] : null;
+    const isReferenceOverview = apiIndex >= 0
+        && (library === 'Spatial2D' || library === 'Hexes')
         && pathSegments[pathSegments.length - 1] === 'index.html';
 
-    if (!isSpatial2DReferenceOverview) {
+    if (!isReferenceOverview) {
         return;
     }
 
@@ -96,20 +97,22 @@ function localizeReferenceOverview() {
         return;
     }
 
+    const englishTitle = `${library} API Reference`;
+    const russianTitle = `Справочник API ${library}`;
     const heading = document.querySelector('article h1');
     if (heading) {
-        heading.textContent = 'Справочник API Spatial2D';
+        heading.textContent = russianTitle;
     }
 
     document.title = document.title.replace(
-        'Spatial2D API Reference',
-        'Справочник API Spatial2D');
+        englishTitle,
+        russianTitle);
 
     const titleMetadata = document.querySelector('meta[name="title"]');
     if (titleMetadata) {
         titleMetadata.content = titleMetadata.content.replace(
-            'Spatial2D API Reference',
-            'Справочник API Spatial2D');
+            englishTitle,
+            russianTitle);
     }
 }
 
