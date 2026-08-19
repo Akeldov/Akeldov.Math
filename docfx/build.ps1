@@ -977,6 +977,10 @@ function Update-LanguageBranchRelativeLinks {
                 '${attribute}${prefix}../public/')
             $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
                 $updatedContent,
+                '(?<attribute>(?:href|src)=")(?<prefix>(?:\./)?(?:\.\./)*)assets/',
+                '${attribute}${prefix}../assets/')
+            $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+                $updatedContent,
                 '(?<attribute>href=")(?<prefix>(?:\./)?(?:\.\./)*)api/',
                 '${attribute}${prefix}../api/')
             $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
