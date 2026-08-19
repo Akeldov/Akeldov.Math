@@ -977,16 +977,46 @@ function Update-LanguageBranchRelativeLinks {
                 '${attribute}${prefix}../public/')
             $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
                 $updatedContent,
-                '(?<attribute>(?:href|src)=")(?<prefix>(?:\./)?(?:\.\./)*)assets/',
-                '${attribute}${prefix}../assets/')
-            $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
-                $updatedContent,
                 '(?<attribute>href=")(?<prefix>(?:\./)?(?:\.\./)*)api/',
                 '${attribute}${prefix}../api/')
             $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
                 $updatedContent,
                 '(?<attribute><meta name="docfx:rel" content=")(?<relative>[^"]*)"',
                 '${attribute}../${relative}"')
+
+            if ($updatedContent -ne $content) {
+                [System.IO.File]::WriteAllText(
+                    $_.FullName,
+                    $updatedContent,
+                    [System.Text.UTF8Encoding]::new($false))
+            }
+        }
+}
+
+function Update-SiteAssetRelativeLinks {
+    param(
+        [Parameter(Mandatory)]
+        [string] $SiteRoot
+    )
+
+    Get-ChildItem -LiteralPath $SiteRoot -Recurse -Filter '*.html' -File |
+        ForEach-Object {
+            $relativePath = Get-RelativeSitePath -Root $SiteRoot -Path $_.FullName
+            $relativeDirectory = Split-Path -Parent $relativePath
+            $depth = if ($relativeDirectory) {
+                ($relativeDirectory -split '[\\/]').Count
+            } else {
+                0
+            }
+            $assetPrefix = ('../' * $depth) + 'assets/'
+            $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+            $updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
+                $content,
+                '(?<attribute>(?:href|src)=")(?:\./)?(?:\.\./)*assets/',
+                [System.Text.RegularExpressions.MatchEvaluator] {
+                    param($match)
+                    return $match.Groups['attribute'].Value + $assetPrefix
+                })
 
             if ($updatedContent -ne $content) {
                 [System.IO.File]::WriteAllText(
@@ -1406,6 +1436,7 @@ if (Test-Path -LiteralPath $russianIndex) {
 }
 
 Update-LanguageBranchRelativeLinks -LanguageRoot $englishRoot
+Update-SiteAssetRelativeLinks -SiteRoot $siteRoot
 
 $publicRoot = Join-Path $siteRoot 'public'
 Get-ChildItem -LiteralPath $publicRoot -Recurse -Filter '*.map' -File |
