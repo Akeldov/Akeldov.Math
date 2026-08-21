@@ -767,6 +767,25 @@ function start() {
     void initializeDynamicNavigation();
 }
 
+function getSearchIndexPath() {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const versionIndex = segments.findIndex(
+        segment => /^\d+\.\d+\.\d+$/.test(segment));
+    const language = hasRussianLanguageContext() ? 'ru' : 'en';
+
+    if (versionIndex > 0) {
+        const library = segments[versionIndex - 1];
+        if (library === 'Hexes' || library === 'Spatial2D') {
+            const version = segments[versionIndex];
+            return `../search/${language}/${library}/${version}.json`;
+        }
+    }
+
+    return `../${language}/index.json`;
+}
+
 export default {
+    lunrLanguages: hasRussianLanguageContext() ? ['ru'] : [],
+    searchIndexPath: getSearchIndexPath(),
     start
 };

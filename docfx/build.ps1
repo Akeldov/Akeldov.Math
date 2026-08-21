@@ -628,6 +628,289 @@ function Set-PageSearchMetadata {
     }
 }
 
+function ConvertTo-SearchIndexKeywords {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Text,
+
+        [ValidateRange(100, 10000)]
+        [int] $MaximumLength = 2000
+    )
+
+    $decodedText = [System.Net.WebUtility]::HtmlDecode($Text)
+    $matches = [System.Text.RegularExpressions.Regex]::Matches(
+        $decodedText,
+        '[\p{L}_][\p{L}\p{Nd}_]{2,}')
+    $seen = [System.Collections.Generic.HashSet[string]]::new(
+        [System.StringComparer]::OrdinalIgnoreCase)
+    $keywords = [System.Collections.Generic.List[string]]::new()
+    $currentLength = 0
+
+    foreach ($match in $matches) {
+        $keyword = $match.Value
+        if (-not $seen.Add($keyword)) {
+            continue
+        }
+
+        $additionalLength = $keyword.Length
+        if ($keywords.Count -gt 0) {
+            $additionalLength++
+        }
+        if ($currentLength + $additionalLength -gt $MaximumLength) {
+            break
+        }
+
+        $keywords.Add($keyword)
+        $currentLength += $additionalLength
+    }
+
+    return $keywords -join ' '
+}
+
+function Write-SearchIndex {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path,
+
+        [Parameter(Mandatory)]
+        [System.Collections.IDictionary] $Index
+    )
+
+    $content = $Index | ConvertTo-Json -Depth 5 -Compress
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
+function Set-SiteSearchIndexes {
+    param(
+        [Parameter(Mandatory)]
+        [string] $SiteRoot,
+
+        [Parameter(Mandatory)]
+        [string] $SiteBaseUrl,
+
+        [Parameter(Mandatory)]
+        [object[]] $SitemapEntries
+    )
+
+    $sourceIndexPath = Join-Path $SiteRoot 'index.json'
+    $sourceIndex = Get-Content -LiteralPath $sourceIndexPath -Raw -Encoding UTF8 |
+        ConvertFrom-Json
+    $englishIndex = [ordered]@{}
+    $russianIndex = [ordered]@{}
+    $scopedIndexes = [ordered]@{}
+    $sitemapUrls = [System.Collections.Generic.HashSet[string]]::new(
+        [System.StringComparer]::OrdinalIgnoreCase)
+
+    foreach ($entry in $SitemapEntries) {
+        [void] $sitemapUrls.Add($entry.Url)
+        $relativeUrl = $entry.Url.Substring($SiteBaseUrl.Length)
+        $sourceKey = if ($relativeUrl.StartsWith(
+                'en/',
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            $relativeUrl.Substring(3)
+        } else {
+            $relativeUrl
+        }
+        $sourceProperty = $sourceIndex.PSObject.Properties[$sourceKey]
+        if ($null -eq $sourceProperty) {
+            throw "The canonical page has no source search entry: $($entry.Url)"
+        }
+
+        $sourceSummary = [string] $sourceProperty.Value.summary
+        $summarySource = if ([string]::IsNullOrWhiteSpace($sourceSummary)) {
+            $entry.SearchDescription
+        } else {
+            $sourceSummary
+        }
+        $summary = ConvertTo-SearchSnippetText `
+            -Text $summarySource `
+            -MaximumLength 1000
+        $keywords = ConvertTo-SearchIndexKeywords -Text (
+            "$($entry.SearchTitle) $relativeUrl $sourceSummary")
+        if ([string]::IsNullOrWhiteSpace($keywords)) {
+            throw "The page has no search keywords: $($entry.Url)"
+        }
+
+        $searchEntry = [ordered]@{
+            href = $relativeUrl
+            title = $entry.SearchTitle
+            summary = $summary
+            keywords = $keywords
+        }
+
+        if ($relativeUrl.StartsWith(
+                'en/',
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            $englishIndex[$relativeUrl] = $searchEntry
+        } elseif ($relativeUrl.StartsWith(
+                'ru/',
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            $russianIndex[$relativeUrl] = $searchEntry
+        } elseif ($relativeUrl.StartsWith(
+                'api/',
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            $englishIndex[$relativeUrl] = $searchEntry
+            $russianIndex[$relativeUrl] = $searchEntry
+        } else {
+            throw "The canonical page has no search language: $($entry.Url)"
+        }
+
+        $pathSegments = $relativeUrl.Split('/')
+        $scopeLanguages = @()
+        $library = $null
+        $version = $null
+        if ($pathSegments[0] -in @('en', 'ru') -and
+            $pathSegments.Count -ge 4) {
+            $scopeLanguages = @($pathSegments[0])
+            $library = $pathSegments[1]
+            $version = $pathSegments[2]
+        } elseif ($pathSegments[0] -eq 'api' -and
+            $pathSegments.Count -ge 4) {
+            $scopeLanguages = @('en', 'ru')
+            $library = $pathSegments[1]
+            $version = $pathSegments[2]
+        }
+
+        if ($library -in @('Hexes', 'Spatial2D') -and
+            $version -match '^\d+\.\d+\.\d+$') {
+            foreach ($language in $scopeLanguages) {
+                $scopeKey = "$language/$library/$version"
+                if (-not $scopedIndexes.Contains($scopeKey)) {
+                    $scopedIndexes[$scopeKey] = [ordered]@{}
+                }
+                $scopedIndexes[$scopeKey][$relativeUrl] = $searchEntry
+            }
+        }
+    }
+
+    $indexesToValidate = [ordered]@{
+        'en' = $englishIndex
+        'ru' = $russianIndex
+    }
+    foreach ($scope in $scopedIndexes.GetEnumerator()) {
+        $indexesToValidate[$scope.Key] = $scope.Value
+    }
+
+    foreach ($indexToValidate in $indexesToValidate.GetEnumerator()) {
+        $index = $indexToValidate.Value
+        $duplicateTitles = @(
+            $index.Values |
+                Group-Object { $_['title'] } |
+                Where-Object Count -gt 1)
+        $invalidEntries = @(
+            $index.Values |
+                Where-Object {
+                    $_['href'] -match '(^|/)(upcoming|latest)/' -or
+                    $_['href'] -match '(^|/)toc\.html$' -or
+                    -not $sitemapUrls.Contains(
+                        "$SiteBaseUrl$($_['href'])") -or
+                    [string]::IsNullOrWhiteSpace($_['keywords']) -or
+                    $_['summary'].Length -gt 1000
+                })
+        if ($duplicateTitles.Count -gt 0 -or $invalidEntries.Count -gt 0) {
+            $duplicateTitleList = $duplicateTitles.Name -join '; '
+            $invalidEntryList = @(
+                $invalidEntries | ForEach-Object { $_['href'] }) -join '; '
+            throw (
+                "The $($indexToValidate.Key) search index is invalid: " +
+                "$($duplicateTitles.Count) duplicate title groups and " +
+                "$($invalidEntries.Count) invalid entries. " +
+                "Duplicate titles: $duplicateTitleList. " +
+                "Invalid entries: $invalidEntryList.")
+        }
+    }
+
+    Write-SearchIndex -Path $sourceIndexPath -Index $englishIndex
+    Write-SearchIndex `
+        -Path (Join-Path $SiteRoot 'en\index.json') `
+        -Index $englishIndex
+    Write-SearchIndex `
+        -Path (Join-Path $SiteRoot 'ru\index.json') `
+        -Index $russianIndex
+
+    $searchRoot = Join-Path $SiteRoot 'search'
+    foreach ($scope in $scopedIndexes.GetEnumerator()) {
+        $relativePath = "$($scope.Key).json".Replace(
+            '/',
+            [System.IO.Path]::DirectorySeparatorChar)
+        $scopePath = Join-Path $searchRoot $relativePath
+        [void] [System.IO.Directory]::CreateDirectory(
+            [System.IO.Path]::GetDirectoryName($scopePath))
+        Write-SearchIndex -Path $scopePath -Index $scope.Value
+    }
+
+    return [pscustomobject]@{
+        EnglishCount = $englishIndex.Count
+        RussianCount = $russianIndex.Count
+        ScopedCount = $scopedIndexes.Count
+    }
+}
+
+function Set-SearchRuntimeIndexes {
+    param(
+        [Parameter(Mandatory)]
+        [string] $SiteRoot
+    )
+
+    $workerPath = Join-Path $SiteRoot 'public\search-worker.min.js'
+    $content = Get-Content -LiteralPath $workerPath -Raw -Encoding UTF8
+    $sourceSignature = 'async function ve({lunrLanguages:t})'
+    $replacementSignature =
+        'async function ve({lunrLanguages:t,searchIndexPath:p})'
+    $sourceFetch = 'fetch("../index.json")'
+    $replacementFetch = 'fetch(p||"../index.json")'
+
+    foreach ($replacement in @(
+            [pscustomobject]@{
+                Source = $sourceSignature
+                Target = $replacementSignature
+            },
+            [pscustomobject]@{
+                Source = $sourceFetch
+                Target = $replacementFetch
+            })) {
+        $sourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
+                $content,
+                [System.Text.RegularExpressions.Regex]::Escape(
+                    $replacement.Source))).Count
+        if ($sourceCount -ne 1) {
+            throw 'The DocFX search worker could not be patched safely.'
+        }
+        $content = $content.Replace($replacement.Source, $replacement.Target)
+    }
+
+    [System.IO.File]::WriteAllText(
+        $workerPath,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+
+    $clientPath = Join-Path $SiteRoot 'public\docfx.min.js'
+    $content = Get-Content -LiteralPath $clientPath -Raw -Encoding UTF8
+    $sourceInitialization =
+        'let{lunrLanguages:b}=await D();i.postMessage({init:{lunrLanguages:b}});'
+    $replacementInitialization =
+        'let{lunrLanguages:b,searchIndexPath:v}=await D();' +
+        'i.postMessage({init:{lunrLanguages:b,searchIndexPath:v}});'
+    $sourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
+            $content,
+            [System.Text.RegularExpressions.Regex]::Escape(
+                $sourceInitialization))).Count
+    if ($sourceCount -ne 1) {
+        throw 'The DocFX search client could not be patched safely.'
+    }
+
+    $content = $content.Replace(
+        $sourceInitialization,
+        $replacementInitialization)
+    [System.IO.File]::WriteAllText(
+        $clientPath,
+        $content,
+        [System.Text.UTF8Encoding]::new($false))
+}
+
 function Merge-SearchIndexEntries {
     param(
         [Parameter(Mandatory)]
@@ -1857,6 +2140,12 @@ foreach ($entry in $uniqueSitemapEntries) {
     }
 }
 
+$searchIndexResult = Set-SiteSearchIndexes `
+    -SiteRoot $siteRoot `
+    -SiteBaseUrl $siteBaseUrl `
+    -SitemapEntries $uniqueSitemapEntries
+Set-SearchRuntimeIndexes -SiteRoot $siteRoot
+
 Write-Host (
     "SEO P0: marked $p0NoIndexPageCount pages as noindex; " +
     "excluded $p0TocFragmentCount TOC fragments from the sitemap.")
@@ -1866,6 +2155,10 @@ Write-Host (
 Write-Host (
     "SEO P2: validated unique titles and valid descriptions for " +
     "$($uniqueSitemapEntries.Count) indexable pages.")
+Write-Host (
+    "Search: generated $($searchIndexResult.EnglishCount) English/API and " +
+    "$($searchIndexResult.RussianCount) Russian/API entries across " +
+    "$($searchIndexResult.ScopedCount) version scopes.")
 
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
