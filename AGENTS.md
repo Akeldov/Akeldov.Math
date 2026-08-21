@@ -79,6 +79,63 @@ When sandboxing is active, request elevated access for the command because DocFX
 generation invokes the .NET build and needs the normal NuGet package cache as well as write
 access to `bin` and `obj`.
 
+## Versioned DocFX Library Upgrades
+
+Versioned documentation lives under `docfx\versioned\<Library>\<Version>`. Treat the first
+documented version as the complete article base. A later version must contain only its package,
+DocFX adapter, and article overrides that are genuinely new or different from the base. Follow
+the `Spatial2D\0.8.0` and `Spatial2D\0.9.0` base-plus-overrides pattern; do not copy a complete
+EN/RU article tree into every new version.
+
+Before keeping an override, compare it semantically with the inherited article. A byte or hash
+comparison is insufficient because files that differ only by a version number are otherwise
+duplicates. Classify every candidate override as one of:
+
+- new content that has no base article;
+- a substantive change required by the new library API or behavior;
+- a version-pinned instruction, such as `dotnet add package ... --version X.Y.Z`.
+
+Make shared prose version-neutral in the base when it remains accurate for every inheriting
+version, then omit that file from the newer version. This includes statements such as "the
+package has no dedicated method" when the statement is true in both versions. Do not neutralize
+behavior that is specific to the old API, and do not inherit an old package-install command into
+a new stable version. Version-pinned installation pages should remain small overrides. Preserve
+the meaning of already published older documentation when making shared wording neutral.
+
+Use the repository's merge helpers for both stable and upcoming documentation:
+
+- define the article base, override, and `.tmp\docfx-upcoming\<Library>` staging roots in
+  `docfx\build.ps1`;
+- call `New-MergedArticleSource` before the main DocFX build;
+- point the upcoming article entries in `docfx\docfx.json` at the staged EN/RU trees;
+- pass `-ArticleSourceRoot` to `Add-VersionedLibraryDocumentation` for the new stable version;
+- point the stable version's `api.docfx.json` article inputs at
+  `.tmp\docfx-versioned\<Library>-<Version>\articles\en` and `ru`;
+- call `Update-MergedArticleContributionLinks` before deleting each upcoming staging tree, so an
+  inherited page links to its base source and an overridden page links to the new version source.
+
+The API reference for a stable version must be generated from an immutable NuGet package, not
+from the current project. Store the exact package at
+`docfx\versioned\<Library>\<Version>\source`, add the narrow `.gitignore` exception, record its
+SHA-256 hash in `Add-VersionedLibraryDocumentation`, and provide the matching reference package,
+hash, and assembly name when metadata generation needs another Akeldov.Math library.
+
+Complete all version wiring when promoting a release:
+
+- add the version to `docfx\<Library>\versions.json`, move the `latest` alias, and update the
+  canonical version used by `Add-VersionAliasRedirects`;
+- map both the base and override Russian source roots to the new stable output and to `upcoming`,
+  matching the existing Spatial2D source-mapping pattern;
+- keep the previous stable output and package intact.
+
+After the change, verify that no unnecessary overrides remain by normalizing the old and new
+version strings during comparison and reviewing every remaining difference. Build the complete
+wiki with `docfx\build.ps1`; if port `8081` already has the local server, build without `-Serve`
+and reuse that server. Require zero build errors, then check HTTP 200 responses for representative
+EN, RU, API, inherited, overridden, `latest`, and `upcoming` URLs. Inspect generated edit links for
+one inherited and one overridden page, verify `latest` targets the new version, and confirm the
+temporary merged article directories were removed.
+
 ## Spatial2D README
 
 Keep `src\Akeldov.Math.Spatial2D\README.md` short and close to its current shape:
