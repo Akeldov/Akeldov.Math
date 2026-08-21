@@ -1864,7 +1864,7 @@ Write-Host (
     "SEO P1: validated $($uniqueSitemapEntries.Count) canonical pages and " +
     "$($russianFallbackPages.Count) Russian fallback pages.")
 Write-Host (
-    "SEO P2: validated unique titles and descriptions for " +
+    "SEO P2: validated unique titles and valid descriptions for " +
     "$($uniqueSitemapEntries.Count) indexable pages.")
 
 Add-VersionAliasRedirects `
