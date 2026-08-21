@@ -1,0 +1,71 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../../../../.tmp/docfx-versioned/Hexes-0.2.0/package/lib/net6.0",
+          "files": [
+            "Akeldov.Math.Hexes.dll"
+          ]
+        }
+      ],
+      "dest": "../../../../.tmp/docfx-versioned/Hexes-0.2.0/api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "src": "../../..",
+        "files": [
+          "toc.yml"
+        ]
+      },
+      {
+        "src": "../../../../.tmp/docfx-versioned/Hexes-0.2.0/articles/en",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Hexes/0.2.0"
+      },
+      {
+        "src": "../../../../.tmp/docfx-versioned/Hexes-0.2.0/articles/ru",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Hexes/0.2.0"
+      },
+      {
+        "src": "../../../../.tmp/docfx-versioned/Hexes-0.2.0/api",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Hexes/0.2.0"
+      },
+      {
+        "src": "../reference",
+        "files": [
+          "index.md"
+        ],
+        "dest": "api/Hexes/0.2.0"
+      }
+    ],
+    "output": "../../../../.tmp/docfx-versioned/Hexes-0.2.0/site/Akeldov.Math",
+    "template": [
+      "default",
+      "modern",
+      "../../../template"
+    ],
+    "globalMetadata": {
+      "_appName": "Akeldov.Math",
+      "_appTitle": "Akeldov.Math Documentation",
+      "_appLogoPath": "assets/logo-akeldov.png",
+      "_appFaviconPath": "assets/favicon-akeldov.png",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/Akeldov/Akeldov.Math",
+        "branch": "main"
+      }
+    }
+  }
+}

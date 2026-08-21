@@ -124,7 +124,7 @@ if (partialWeights.HasIndex2)
 Отсутствующие веса не нормализуются повторно; при смешивании значений ограниченной карты делите
 результат на сумму присутствующих весов.
 
-В версии `0.1.0` у `ChromaticIndexPartialTripletRaster` нет `TryGetValue`: заранее проверяйте
+У `ChromaticIndexPartialTripletRaster` нет `TryGetValue`: заранее проверяйте
 координату или используйте проверяемый индексатор `[VectorXYInt]`.
 `ChromaticBarycentricPartialTripletRaster.TryGetValue` возвращает `false` только для координаты за
 пределами прямоугольного растра. Успешный вызов всё ещё может вернуть значение, у которого сняты все

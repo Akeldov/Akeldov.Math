@@ -64,8 +64,8 @@ Console.WriteLine($"Adjacent5: {neighborhood.Adjacent5}");
 `Adjacent5` are its six edge neighbors and correspond to `HexEdge.Edge0` through `HexEdge.Edge5`.
 Their physical directions depend on the map layout, but the edge-number order remains stable.
 
-The same value can be read with `[x, y]` or a row-major flat integer index. In version `0.1.0`,
-the septuplet raster has no `TryGetValue` method. Prefer the `[VectorXYInt]` indexer when indices
+The same value can be read with `[x, y]` or a row-major flat integer index. The septuplet raster
+has no `TryGetValue` method. Prefer the `[VectorXYInt]` indexer when indices
 are not compile-time constants: it checks both coordinates and throws `IndexOutOfRangeException`
 when they lie outside `Resolution`.
 

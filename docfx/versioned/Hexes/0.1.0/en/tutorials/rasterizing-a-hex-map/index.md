@@ -6,7 +6,7 @@ weights, handle the finite map boundary, and map the result to color.
 
 This tutorial uses a 9×7 `OddR` map and the 8-bit RGBA image types from Akeldov.Math.Spatial2D.
 Complete [Creating a Hex Map](../creating-a-hex-map/index.md) first, or start with a .NET 6 or
-later console project that references `Akeldov.Math.Hexes` 0.1.0.
+later console project that references `Akeldov.Math.Hexes`.
 
 The steps build on one another and should be completed in order:
 

@@ -16,8 +16,22 @@
 
 ## Specialization
 
-- Higher-level APIs can build domain-specific maps on top of the same shape.
-- The map type is not tied to topology, geometry, or chromatization values.
+- `BoolHexMap` adds cell-wise `&`, `|`, `^`, and conditional `Select` operations.
+- `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
+- `ToIntHexMap` and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
+
+All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,
+and return new maps from their operators without modifying the inputs.
+
+```csharp
+var topology = new HexMapTopology(4, 3, Layout.OddR);
+var land = new BoolHexMap(topology, new bool[topology.Count]);
+var landCost = new IntHexMap(topology, new int[topology.Count]);
+var waterCost = new IntHexMap(topology, new int[topology.Count]);
+
+IntHexMap movementCost = land.Select(landCost, waterCost);
+IntHexMap adjustedCost = (movementCost + 2) * 3;
+```
 
 ## Perlin noise generation
 
@@ -38,3 +52,12 @@ FloatHexMap heights = topology.CreatePerlinNoise(
 
 Larger `scale` values produce broader features. Use `offset` to sample another part of the same
 deterministic noise field, for example when generating adjacent map chunks.
+
+Apply `GaussianBlur` when the generated or supplied floating-point field needs smoothing:
+
+```csharp
+FloatHexMap smoothHeights = heights.GaussianBlur(sigma: 1.25f);
+```
+
+The operation returns a new map, normalizes its kernel at map boundaries, and leaves the source
+map unchanged. An overload with `radius` allows explicit kernel truncation in hex steps.

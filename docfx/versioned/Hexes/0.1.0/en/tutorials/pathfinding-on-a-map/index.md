@@ -1,7 +1,7 @@
 # Pathfinding on a Map
 
 Build a .NET console application that finds a minimum-cost route across a small terrain map with
-Akeldov.Math.Hexes 0.1.0. You will assign different movement costs to plains and forests, make
+Akeldov.Math.Hexes. You will assign different movement costs to plains and forests, make
 water impassable, handle a missing route, and render the result in the terminal.
 
 Install the .NET 6 SDK or later. The steps extend the same `Program.cs` file and should be

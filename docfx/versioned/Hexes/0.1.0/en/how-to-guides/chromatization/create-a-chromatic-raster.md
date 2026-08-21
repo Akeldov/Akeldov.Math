@@ -123,7 +123,7 @@ barycentric raster reorders both values and presence into `HasIndex0`, `HasIndex
 Absent weights are not renormalized; divide by the sum of present weights when blending bounded-map
 values.
 
-`ChromaticIndexPartialTripletRaster` has no `TryGetValue` in version `0.1.0`; validate the coordinate
+`ChromaticIndexPartialTripletRaster` has no `TryGetValue`; validate the coordinate
 or use its checked `[VectorXYInt]` indexer. `ChromaticBarycentricPartialTripletRaster.TryGetValue`
 returns `false` only for a coordinate outside the rectangular raster. A successful call can still
 return a value whose three presence flags are clear.

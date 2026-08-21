@@ -25,7 +25,7 @@ foreach (VectorXYInt index in path.HexIndexes)
 }
 ```
 
-Expected output for Akeldov.Math.Hexes 0.1.0:
+Expected output:
 
 ```text
 Total cost: 8

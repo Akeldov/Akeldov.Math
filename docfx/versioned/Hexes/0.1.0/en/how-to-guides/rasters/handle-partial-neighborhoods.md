@@ -126,7 +126,7 @@ Console.WriteLine($"Present-neighborhood total: {neighborhoodTotal}");
 
 For a partial septuplet, `HasMain == false` implies that all seven flags are clear. When `Main` is
 present, each `HasAdjacentN` independently reports whether the corresponding edge neighbor is
-inside the topology. Version `0.1.0` has no `TryGetValue` for septuplet rasters, so validate the
+inside the topology. Septuplet rasters have no `TryGetValue`, so validate the
 raster coordinate or use the checked `[VectorXYInt]` indexer as above.
 
 ## Do not infer presence from stored values

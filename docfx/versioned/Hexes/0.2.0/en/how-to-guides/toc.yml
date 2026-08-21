@@ -1,0 +1,84 @@
+- name: Coordinates and Layouts
+  href: coordinates-and-layouts/index.md
+  items:
+    - name: Convert QRS to Row and Column Indices
+      href: coordinates-and-layouts/convert-qrs-to-row-and-column-indices.md
+    - name: Convert Row and Column Indices to QRS
+      href: coordinates-and-layouts/convert-row-and-column-indices-to-qrs.md
+    - name: Convert QRS to Spatial2D Coordinates
+      href: coordinates-and-layouts/convert-qrs-to-spatial2d-coordinates.md
+    - name: Find the Nearest Hex to a Point
+      href: coordinates-and-layouts/find-the-nearest-hex-to-a-point.md
+    - name: Round Fractional QRS Coordinates
+      href: coordinates-and-layouts/round-fractional-qrs-coordinates.md
+    - name: Rotate Hex Coordinates
+      href: coordinates-and-layouts/rotate-hex-coordinates.md
+- name: Maps and Topology
+  href: maps-and-topology/index.md
+  items:
+    - name: Create and Populate a HexMap
+      href: maps-and-topology/create-and-populate-a-hex-map.md
+    - name: Use Specialized Hex Maps
+      href: maps-and-topology/use-specialized-hex-maps.md
+    - name: Combine and Select Hex-Map Values
+      href: maps-and-topology/combine-and-select-hex-map-values.md
+    - name: Generate and Smooth Noise
+      href: maps-and-topology/generate-and-smooth-noise.md
+    - name: Find Hex Neighbors
+      href: maps-and-topology/find-hex-neighbors.md
+    - name: Get a Ring of a Given Radius
+      href: maps-and-topology/get-a-ring-of-a-given-radius.md
+    - name: Get Edges and Vertices
+      href: maps-and-topology/get-edges-and-vertices.md
+    - name: Build Polyhex Topology from a Mask
+      href: maps-and-topology/build-polyhex-topology-from-a-mask.md
+- name: Geometry and Polyhexes
+  href: geometry-and-polyhexes/index.md
+  items:
+    - name: Get a Hex Center and Vertices
+      href: geometry-and-polyhexes/get-a-hex-center-and-vertices.md
+    - name: Get Map Geometry Bounds
+      href: geometry-and-polyhexes/get-map-geometry-bounds.md
+    - name: Convert a Polyhex to a Spatial2D Contour
+      href: geometry-and-polyhexes/convert-a-polyhex-to-a-spatial2d-contour.md
+    - name: Convert a Polyhex to a Spatial2D Region
+      href: geometry-and-polyhexes/convert-a-polyhex-to-a-spatial2d-region.md
+    - name: Partition a Map by Nearest Sites
+      href: geometry-and-polyhexes/partition-a-map-by-nearest-sites.md
+- name: Pathfinding
+  href: pathfinding/index.md
+  items:
+    - name: Set Transfer Costs
+      href: pathfinding/set-transfer-costs.md
+    - name: Exclude Impassable Hexes
+      href: pathfinding/exclude-impassable-hexes.md
+    - name: Find a Path Between Two Hexes
+      href: pathfinding/find-a-path-between-two-hexes.md
+    - name: Handle No Available Path
+      href: pathfinding/handle-no-available-path.md
+- name: Rasters
+  href: rasters/index.md
+  items:
+    - name: Create an Index Triplet Raster
+      href: rasters/create-an-index-triplet-raster.md
+    - name: Create an Index Septuplet Raster
+      href: rasters/create-an-index-septuplet-raster.md
+    - name: Handle Partial Neighborhoods
+      href: rasters/handle-partial-neighborhoods.md
+    - name: Create a Barycentric Raster
+      href: rasters/create-a-barycentric-raster.md
+    - name: Rasterize HexMap Values
+      href: rasters/rasterize-hex-map-values.md
+    - name: Convert a Raster to an Image
+      href: rasters/convert-a-raster-to-an-image.md
+- name: Chromatization
+  href: chromatization/index.md
+  items:
+    - name: Get a Hex Chromatic Index
+      href: chromatization/get-a-hex-chromatic-index.md
+    - name: Create a Chromatic Map
+      href: chromatization/create-a-chromatic-map.md
+    - name: Create a Chromatic Raster
+      href: chromatization/create-a-chromatic-raster.md
+    - name: Visualize Chromatization
+      href: chromatization/visualize-chromatization.md

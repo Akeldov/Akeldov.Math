@@ -1,8 +1,7 @@
 # Coordinates and Layouts
 
 Use these recipes to convert coordinates between the logical QRS grid, rectangular storage,
-and Akeldov.Math.Spatial2D space. The examples target Akeldov.Math.Hexes 0.1.0 and can be run
-independently.
+and Akeldov.Math.Spatial2D space. The examples can be run independently.
 
 | Task | Recipe |
 | --- | --- |

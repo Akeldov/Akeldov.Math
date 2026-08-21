@@ -1124,6 +1124,12 @@ $spatial2DArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.9.0'
 $spatial2DUpcomingArticleStageRoot = Join-Path `
     $repositoryRoot '.tmp\docfx-upcoming\Spatial2D'
+$hexesArticleBaseRoot = Join-Path `
+    $PSScriptRoot 'versioned\Hexes\0.1.0'
+$hexesArticleOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Hexes\0.2.0'
+$hexesUpcomingArticleStageRoot = Join-Path `
+    $repositoryRoot '.tmp\docfx-upcoming\Hexes'
 
 if (Test-Path -LiteralPath $localDocfx) {
     $docfx = $localDocfx
@@ -1146,6 +1152,12 @@ New-MergedArticleSource `
     -OverrideRoot $spatial2DArticleOverrideRoot `
     -StageRoot $spatial2DUpcomingArticleStageRoot
 
+New-MergedArticleSource `
+    -RepositoryRoot $repositoryRoot `
+    -BaseRoot $hexesArticleBaseRoot `
+    -OverrideRoot $hexesArticleOverrideRoot `
+    -StageRoot $hexesUpcomingArticleStageRoot
+
 & $docfx (Join-Path $PSScriptRoot 'docfx.json')
 $docfxExitCode = $LASTEXITCODE
 
@@ -1163,6 +1175,17 @@ Update-MergedArticleContributionLinks `
     -VersionPath 'upcoming'
 
 Remove-Item -LiteralPath $spatial2DUpcomingArticleStageRoot -Recurse -Force
+
+Update-MergedArticleContributionLinks `
+    -RepositoryRoot $repositoryRoot `
+    -SiteRoot $siteRoot `
+    -BaseRoot $hexesArticleBaseRoot `
+    -OverrideRoot $hexesArticleOverrideRoot `
+    -StageRoot $hexesUpcomingArticleStageRoot `
+    -Library 'Hexes' `
+    -VersionPath 'upcoming'
+
+Remove-Item -LiteralPath $hexesUpcomingArticleStageRoot -Recurse -Force
 
 Add-VersionedLibraryDocumentation `
     -Library 'Spatial2D' `
@@ -1207,6 +1230,25 @@ Add-VersionedLibraryDocumentation `
         '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E' `
     -ReferenceAssemblyName 'Akeldov.Math.Spatial2D'
 
+Add-VersionedLibraryDocumentation `
+    -Library 'Hexes' `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Hexes\0.2.0') `
+    -PackageVersion '0.2.0' `
+    -TargetVersionPath '0.2.0' `
+    -ExpectedPackageHash `
+        'ADD2A1BDB4D36059744FEDA328B6F7BD687BED0CC59C5538518B886CF2A236EC' `
+    -ReferencePackagePath (
+        Join-Path $PSScriptRoot `
+            'versioned\Spatial2D\0.9.0\source\Akeldov.Math.Spatial2D.0.9.0.nupkg') `
+    -ExpectedReferencePackageHash `
+        '5F03676949B71F79CCCF1A5D35015B3B6BE4C1D7380C03981CEF3E358C483345' `
+    -ReferenceAssemblyName 'Akeldov.Math.Spatial2D' `
+    -ArticleSourceRoot $hexesArticleBaseRoot
+
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
@@ -1216,6 +1258,8 @@ $spatial2D09RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.9.0\ru'
 $hexes01RussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.1.0\ru'
+$hexes02RussianSourceRoot = Join-Path `
+    $PSScriptRoot 'versioned\Hexes\0.2.0\ru'
 $russianSourceMappings = @(
     [pscustomobject]@{
         Root = $russianSourceRoot
@@ -1247,6 +1291,18 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $hexes01RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.2.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes02RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.2.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes01RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' 'upcoming'
+    },
+    [pscustomobject]@{
+        Root = $hexes02RussianSourceRoot
         OutputPrefix = Join-Path 'Hexes' 'upcoming'
     }
 )
@@ -1821,7 +1877,7 @@ Add-VersionAliasRedirects `
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
     -Library 'Hexes' `
-    -CanonicalVersion '0.1.0' `
+    -CanonicalVersion '0.2.0' `
     -Alias 'latest' `
     -SiteBaseUrl $siteBaseUrl
 

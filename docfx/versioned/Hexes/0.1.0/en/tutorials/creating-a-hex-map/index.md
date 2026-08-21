@@ -1,6 +1,6 @@
 # Creating a Hex Map
 
-Build a .NET console application with a rectangular hex map using Akeldov.Math.Hexes 0.1.0. You
+Build a .NET console application with a rectangular hex map using Akeldov.Math.Hexes. You
 will configure its layout and QRS coordinates, store values, find neighbors and rings, and render
 the result in the terminal.
 

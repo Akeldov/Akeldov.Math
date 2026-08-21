@@ -37,7 +37,7 @@ static bool IsInside(VectorXYInt index, HexMapTopology topology) =>
 
 ## The second ring
 
-Hexes 0.1.0 has no dedicated ring method. Iterate over the finite map and select indexes whose QRS
+The package has no dedicated ring method. Iterate over the finite map and select indexes whose QRS
 distance from the center is two:
 
 ```csharp

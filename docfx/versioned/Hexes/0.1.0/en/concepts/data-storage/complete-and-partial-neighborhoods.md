@@ -253,7 +253,7 @@ The `VectorXYInt` raster indexer validates both raster coordinates and throws
 `[x, y]` overload calculates that flat index without validating each component; an invalid pair
 can therefore alias another row or throw. Check both coordinates before using it.
 
-Only the triplet index rasters expose `TryGetValue` in version 0.1.0:
+Only the triplet index rasters expose `TryGetValue`:
 
 - `IndexTripletRaster.TryGetValue` returns `false` only when the requested raster coordinate is
   outside the raster; produced hex indices may still be outside the source map.

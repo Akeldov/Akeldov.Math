@@ -1,6 +1,6 @@
 # Get a Ring of a Given Radius
 
-Hexes 0.1.0 has no dedicated ring method. For a finite topology, enumerate its valid indices and
+The package has no dedicated ring method. For a finite topology, enumerate its valid indices and
 keep the cells whose QRS grid distance from the center is exactly the requested radius.
 
 ```csharp

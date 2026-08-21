@@ -1,0 +1,84 @@
+- name: Координаты и раскладки
+  href: coordinates-and-layouts/index.md
+  items:
+    - name: Преобразовать QRS в индекс строки и столбца
+      href: coordinates-and-layouts/convert-qrs-to-row-and-column-indices.md
+    - name: Преобразовать индекс строки и столбца в QRS
+      href: coordinates-and-layouts/convert-row-and-column-indices-to-qrs.md
+    - name: Преобразовать QRS в координаты Spatial2D
+      href: coordinates-and-layouts/convert-qrs-to-spatial2d-coordinates.md
+    - name: Найти ближайший гекс для точки
+      href: coordinates-and-layouts/find-the-nearest-hex-to-a-point.md
+    - name: Округлить дробные QRS-координаты
+      href: coordinates-and-layouts/round-fractional-qrs-coordinates.md
+    - name: Повернуть гексагональные координаты
+      href: coordinates-and-layouts/rotate-hex-coordinates.md
+- name: Карты и топология
+  href: maps-and-topology/index.md
+  items:
+    - name: Создать и заполнить HexMap
+      href: maps-and-topology/create-and-populate-a-hex-map.md
+    - name: Использовать специализированные карты
+      href: maps-and-topology/use-specialized-hex-maps.md
+    - name: Объединить карты и выбрать значения
+      href: maps-and-topology/combine-and-select-hex-map-values.md
+    - name: Создать и сгладить шум
+      href: maps-and-topology/generate-and-smooth-noise.md
+    - name: Найти соседей гекса
+      href: maps-and-topology/find-hex-neighbors.md
+    - name: Получить кольцо заданного радиуса
+      href: maps-and-topology/get-a-ring-of-a-given-radius.md
+    - name: Получить рёбра и вершины
+      href: maps-and-topology/get-edges-and-vertices.md
+    - name: Построить топологию полигекса из маски
+      href: maps-and-topology/build-polyhex-topology-from-a-mask.md
+- name: Геометрия и полигексы
+  href: geometry-and-polyhexes/index.md
+  items:
+    - name: Получить центр и вершины гекса
+      href: geometry-and-polyhexes/get-a-hex-center-and-vertices.md
+    - name: Получить геометрические границы карты
+      href: geometry-and-polyhexes/get-map-geometry-bounds.md
+    - name: Преобразовать полигекс в контур Spatial2D
+      href: geometry-and-polyhexes/convert-a-polyhex-to-a-spatial2d-contour.md
+    - name: Преобразовать полигекс в регион Spatial2D
+      href: geometry-and-polyhexes/convert-a-polyhex-to-a-spatial2d-region.md
+    - name: Разделить карту по ближайшим центрам
+      href: geometry-and-polyhexes/partition-a-map-by-nearest-sites.md
+- name: Поиск пути
+  href: pathfinding/index.md
+  items:
+    - name: Задать стоимость переходов
+      href: pathfinding/set-transfer-costs.md
+    - name: Исключить непроходимые гексы
+      href: pathfinding/exclude-impassable-hexes.md
+    - name: Найти путь между двумя гексами
+      href: pathfinding/find-a-path-between-two-hexes.md
+    - name: Обработать отсутствие доступного пути
+      href: pathfinding/handle-no-available-path.md
+- name: Растры
+  href: rasters/index.md
+  items:
+    - name: Создать индексный Triplet-растр
+      href: rasters/create-an-index-triplet-raster.md
+    - name: Создать индексный Septuplet-растр
+      href: rasters/create-an-index-septuplet-raster.md
+    - name: Обработать частичные окрестности
+      href: rasters/handle-partial-neighborhoods.md
+    - name: Создать барицентрический растр
+      href: rasters/create-a-barycentric-raster.md
+    - name: Растеризовать значения HexMap
+      href: rasters/rasterize-hex-map-values.md
+    - name: Преобразовать растр в изображение
+      href: rasters/convert-a-raster-to-an-image.md
+- name: Хроматизация
+  href: chromatization/index.md
+  items:
+    - name: Получить хроматический индекс гекса
+      href: chromatization/get-a-hex-chromatic-index.md
+    - name: Создать хроматическую карту
+      href: chromatization/create-a-chromatic-map.md
+    - name: Создать хроматический растр
+      href: chromatization/create-a-chromatic-raster.md
+    - name: Визуализировать хроматизацию
+      href: chromatization/visualize-chromatization.md

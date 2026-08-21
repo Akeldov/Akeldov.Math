@@ -213,6 +213,7 @@ PublishScripts/
 !docfx/versioned/Spatial2D/0.8.0/source/Akeldov.Math.Spatial2D.0.8.0.nupkg
 !docfx/versioned/Spatial2D/0.9.0/source/Akeldov.Math.Spatial2D.0.9.0.nupkg
 !docfx/versioned/Hexes/0.1.0/source/Akeldov.Math.Hexes.0.1.0.nupkg
+!docfx/versioned/Hexes/0.2.0/source/Akeldov.Math.Hexes.0.2.0.nupkg
 # NuGet Symbol Packages
 *.snupkg
 # The packages folder can be ignored because of Package Restore

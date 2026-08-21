@@ -139,7 +139,7 @@ long distance = Math.Max(
 
 The equivalent expression is `(abs(deltaQ) + abs(deltaR) + abs(deltaS)) / 2`. Calculate the
 differences in `long`, as above, so that subtraction and `Math.Abs` remain valid for every
-`VectorQRSInt` component. Version 0.1.0 does not provide a dedicated QRS distance method, so keep
+`VectorQRSInt` component. The package does not provide a dedicated QRS distance method, so keep
 this calculation in application code when it is needed.
 
 The six unit offsets to edge-adjacent hexes are `(1, 0, -1)`, `(1, -1, 0)`,

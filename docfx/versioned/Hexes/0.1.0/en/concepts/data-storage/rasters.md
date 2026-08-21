@@ -58,7 +58,7 @@ only their resolutions is insufficient: their origins and sizes must match as we
 
 ## Choose the Stored Sample
 
-Version 0.1.0 provides ten raster types in the `Akeldov.Math.Hexes.Topology` namespace. All support
+The package provides ten raster types in the `Akeldov.Math.Hexes.Topology` namespace. All support
 the four <xref:Akeldov.Math.Hexes.Layout> values.
 
 | Raster | Sample value | Meaning | `TryGetValue` |
@@ -105,7 +105,7 @@ An index-septuplet raster stores the classified `Main` hex followed by its six e
 therefore depend on the layout when expressed as row-and-column indices.
 
 Use septuplets for fixed seven-cell kernels, cellular rules, or neighborhood filters. They do not
-represent the three-center triangle used for interpolation, and version 0.1.0 does not provide
+represent the three-center triangle used for interpolation, and the package does not provide
 barycentric or chromatic septuplet variants.
 
 ### Barycentric Triplets
@@ -211,8 +211,8 @@ or an available `TryGetValue` method for untrusted indices.
   least one source-map position is present;
 - `ChromaticBarycentricPartialTripletRaster` checks raster bounds but can return `true` with
   `Presence == None`;
-- septuplet rasters and `ChromaticIndexPartialTripletRaster` have no `TryGetValue` in version
-  0.1.0, so bounds-check first and inspect their presence flags after indexing.
+- septuplet rasters and `ChromaticIndexPartialTripletRaster` have no `TryGetValue`, so bounds-check
+  first and inspect their presence flags after indexing.
 
 These rules distinguish two different questions: whether a raster cell exists and whether that
 cell refers to at least one hex inside the finite source map.
