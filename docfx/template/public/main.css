@@ -1,3 +1,7 @@
+html {
+    scrollbar-gutter: stable;
+}
+
 body > header {
     background: linear-gradient(110deg, #263b59 0%, #315f89 100%);
     border-bottom: 0;
@@ -100,6 +104,11 @@ body > main::before {
     padding: 0.45rem 0;
 }
 
+.docs-version-selector-placeholder {
+    flex: 0 0 6rem;
+    margin-left: 0.3rem;
+}
+
 .docs-version-selector .form-select {
     font-size: 0.875rem;
     min-width: 6rem;
@@ -134,6 +143,10 @@ body > main::before {
 .docs-context-navigation {
     background: #345b80;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.docs-context-navigation-placeholder {
+    min-height: 3rem;
 }
 
 [data-bs-theme="dark"] .docs-context-navigation {

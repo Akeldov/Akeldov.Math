@@ -3,6 +3,8 @@ const languageSelectorId = 'akeldov-docs-language';
 const languagePreferenceKey = 'akeldov-docs-language-preference';
 const repositoryLinkId = 'akeldov-repository-link';
 const contextNavigationId = 'akeldov-library-navigation';
+const contextNavigationPlaceholderId = `${contextNavigationId}-placeholder`;
+const versionSelectorPlaceholderId = `${selectorId}-placeholder`;
 
 const russianUiTranslations = new Map([
     ['About', 'О проекте'],
@@ -382,6 +384,40 @@ async function getLibraryNavigationContext() {
     };
 }
 
+function reserveLibraryNavigationSpace() {
+    if (document.getElementById(contextNavigationId)
+        || document.getElementById(contextNavigationPlaceholderId)) {
+        return;
+    }
+
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const libraryIndex = segments.findIndex(
+        segment => segment === 'Spatial2D' || segment === 'Hexes');
+    const versionPath = libraryIndex >= 0 ? segments[libraryIndex + 1] : null;
+
+    if (!versionPath || versionPath === 'index.html') {
+        return;
+    }
+
+    const header = document.querySelector('body > header');
+    if (!header) {
+        return;
+    }
+
+    const placeholder = document.createElement('div');
+    placeholder.id = contextNavigationPlaceholderId;
+    placeholder.classList.add(
+        'docs-context-navigation',
+        'docs-context-navigation-placeholder');
+    placeholder.setAttribute('aria-hidden', 'true');
+
+    header.appendChild(placeholder);
+    document.body.classList.add('docs-has-context-navigation');
+    document.body.style.setProperty(
+        '--docs-header-height',
+        `${header.offsetHeight}px`);
+}
+
 async function addLibraryNavigation() {
     if (document.getElementById(contextNavigationId)) {
         return true;
@@ -394,6 +430,9 @@ async function addLibraryNavigation() {
 
     const context = await getLibraryNavigationContext();
     if (!context) {
+        document.getElementById(contextNavigationPlaceholderId)?.remove();
+        document.body.classList.remove('docs-has-context-navigation');
+        document.body.style.removeProperty('--docs-header-height');
         return true;
     }
 
@@ -411,6 +450,12 @@ async function addLibraryNavigation() {
     libraryLink.classList.add('docs-context-library');
     libraryLink.href = new URL('index.html', context.conceptualRootUrl);
     libraryLink.textContent = context.library.name;
+
+    const versionSelectorPlaceholder = document.createElement('div');
+    versionSelectorPlaceholder.id = versionSelectorPlaceholderId;
+    versionSelectorPlaceholder.classList.add(
+        'docs-version-selector-placeholder');
+    versionSelectorPlaceholder.setAttribute('aria-hidden', 'true');
 
     const links = document.createElement('div');
     links.classList.add('docs-context-links');
@@ -472,9 +517,15 @@ async function addLibraryNavigation() {
         links.appendChild(link);
     }
 
-    container.append(libraryLink, links);
+    container.append(libraryLink, versionSelectorPlaceholder, links);
     navigation.appendChild(container);
-    header.appendChild(navigation);
+    const navigationPlaceholder = document.getElementById(
+        contextNavigationPlaceholderId);
+    if (navigationPlaceholder) {
+        navigationPlaceholder.replaceWith(navigation);
+    } else {
+        header.appendChild(navigation);
+    }
     document.body.classList.add('docs-has-context-navigation');
 
     const synchronizeHeaderHeight = () => {
@@ -507,6 +558,7 @@ async function addVersionSelector() {
 
     const context = await getVersionContext();
     if (!context) {
+        document.getElementById(versionSelectorPlaceholderId)?.remove();
         return true;
     }
 
@@ -592,7 +644,12 @@ async function addVersionSelector() {
     });
 
     container.append(label, select);
-    libraryLink.insertAdjacentElement('afterend', container);
+    const placeholder = document.getElementById(versionSelectorPlaceholderId);
+    if (placeholder) {
+        placeholder.replaceWith(container);
+    } else {
+        libraryLink.insertAdjacentElement('afterend', container);
+    }
 
     return true;
 }
@@ -733,6 +790,7 @@ async function initializeSelectors() {
 }
 
 function start() {
+    reserveLibraryNavigationSpace();
     synchronizeLanguagePreference();
     localizeReferenceOverview();
     startRussianLocalization();
