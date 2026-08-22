@@ -862,6 +862,13 @@ function Set-SearchRuntimeIndexes {
         'async function ve({lunrLanguages:t,searchIndexPath:p})'
     $sourceFetch = 'fetch("../index.json")'
     $replacementFetch = 'fetch(p||"../index.json")'
+    $sourceQuery = 'G=i=>e.search(i).map(({ref:s})=>r[s])'
+    $replacementQuery =
+        'G=i=>{let s=e.search(i),o=i.split(/\s+/).map(u=>' +
+        'u.replace(/^[+-]/,"").length>=3&&e.search(u).length===0?' +
+        'u+"*":u).join(" ");if(o!==i){let a=new Set(s.map(u=>u.ref));' +
+        'for(let u of e.search(o))a.has(u.ref)||(a.add(u.ref),s.push(u))}' +
+        'return s.map(({ref:u})=>r[u])}'
 
     foreach ($replacement in @(
             [pscustomobject]@{
@@ -871,6 +878,10 @@ function Set-SearchRuntimeIndexes {
             [pscustomobject]@{
                 Source = $sourceFetch
                 Target = $replacementFetch
+            },
+            [pscustomobject]@{
+                Source = $sourceQuery
+                Target = $replacementQuery
             })) {
         $sourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
                 $content,
@@ -887,13 +898,48 @@ function Set-SearchRuntimeIndexes {
         $content,
         [System.Text.UTF8Encoding]::new($false))
 
+    $workerVersion = (Get-FileHash -LiteralPath $workerPath -Algorithm SHA256).
+        Hash.Substring(0, 12).ToLowerInvariant()
+    $extensionPath = Join-Path $SiteRoot 'public\main.js'
+    $extensionVersion = (
+        Get-FileHash -LiteralPath $extensionPath -Algorithm SHA256
+    ).Hash.Substring(0, 12).ToLowerInvariant()
     $clientPath = Join-Path $SiteRoot 'public\docfx.min.js'
     $content = Get-Content -LiteralPath $clientPath -Raw -Encoding UTF8
+    $sourceWorker =
+        'new Worker(t+"public/search-worker.min.js",{type:"module"})'
+    $replacementWorker =
+        'new Worker(t+"public/search-worker.min.js?v=' + $workerVersion +
+        '",{type:"module"})'
+    $sourceExtension = 'import("./main.js")'
+    $replacementExtension =
+        'import("./main.js?v=' + $extensionVersion + '")'
     $sourceInitialization =
         'let{lunrLanguages:b}=await D();i.postMessage({init:{lunrLanguages:b}});'
     $replacementInitialization =
         'let{lunrLanguages:b,searchIndexPath:v}=await D();' +
         'i.postMessage({init:{lunrLanguages:b,searchIndexPath:v}});'
+
+    $workerSourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
+            $content,
+            [System.Text.RegularExpressions.Regex]::Escape(
+                $sourceWorker))).Count
+    if ($workerSourceCount -ne 1) {
+        throw 'The DocFX search worker URL could not be patched safely.'
+    }
+    $content = $content.Replace($sourceWorker, $replacementWorker)
+
+    $extensionSourceCount = (
+        [System.Text.RegularExpressions.Regex]::Matches(
+            $content,
+            [System.Text.RegularExpressions.Regex]::Escape(
+                $sourceExtension))
+    ).Count
+    if ($extensionSourceCount -ne 1) {
+        throw 'The DocFX extension URL could not be patched safely.'
+    }
+    $content = $content.Replace($sourceExtension, $replacementExtension)
+
     $sourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
             $content,
             [System.Text.RegularExpressions.Regex]::Escape(
@@ -909,6 +955,35 @@ function Set-SearchRuntimeIndexes {
         $clientPath,
         $content,
         [System.Text.UTF8Encoding]::new($false))
+
+    $clientVersion = (Get-FileHash -LiteralPath $clientPath -Algorithm SHA256).
+        Hash.Substring(0, 12).ToLowerInvariant()
+    $sourceClientUrl = 'public/docfx.min.js"'
+    $replacementClientUrl =
+        'public/docfx.min.js?v=' + $clientVersion + '"'
+    $patchedPageCount = 0
+
+    Get-ChildItem -LiteralPath $SiteRoot -Filter '*.html' -File -Recurse |
+        ForEach-Object {
+            $pageContent = Get-Content `
+                -LiteralPath $_.FullName `
+                -Raw `
+                -Encoding UTF8
+            if ($pageContent.Contains($sourceClientUrl)) {
+                $pageContent = $pageContent.Replace(
+                    $sourceClientUrl,
+                    $replacementClientUrl)
+                [System.IO.File]::WriteAllText(
+                    $_.FullName,
+                    $pageContent,
+                    [System.Text.UTF8Encoding]::new($false))
+                $patchedPageCount++
+            }
+        }
+
+    if ($patchedPageCount -eq 0) {
+        throw 'No DocFX client URLs were patched for cache invalidation.'
+    }
 }
 
 function Merge-SearchIndexEntries {
