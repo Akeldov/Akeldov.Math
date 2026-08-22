@@ -863,7 +863,11 @@ function Set-SiteSearchIndexes {
 function Set-SearchRuntimeIndexes {
     param(
         [Parameter(Mandatory)]
-        [string] $SiteRoot
+        [string] $SiteRoot,
+
+        [Parameter(Mandatory)]
+        [ValidatePattern('^[0-9a-f]{12}$')]
+        [string] $SearchIndexVersion
     )
 
     $workerPath = Join-Path $SiteRoot 'public\search-worker.min.js'
@@ -939,6 +943,55 @@ function Set-SearchRuntimeIndexes {
         $content = $content.Replace($replacement.Source, $replacement.Target)
     }
 
+    $sourceCacheFlow =
+        'async function n(){let i=await fetch(p||"../index.json"),' +
+        's=i.headers.get("etag"),o=await i.json(),u=X("docfx","lunr"),' +
+        '_searchCacheKey="v2|"+(p||"../index.json")+"|"+' +
+        '(t||[]).join(",");if(t&&t.length>0&&' +
+        '((0,ce.default)(w.default),(0,le.default)(w.default),' +
+        't.includes("ja")&&(0,fe.default)(w.default),' +
+        'await Promise.all(t.map(me))),s){let a=JSON.parse(' +
+        'await ae(_searchCacheKey,u)||"{}");if(a&&a.etag===s)' +
+        'return{index:w.default.Index.load(a),data:o}}'
+    $replacementCacheFlow =
+        'async function n(){let u=X("docfx","lunr"),' +
+        '_searchPath=p||"../index.json",_searchCacheKey="v3|"+' +
+        '_searchPath.split("?")[0]+"|"+(t||[]).join(","),' +
+        '_searchCache=await ae(_searchCacheKey,u).catch(()=>null);' +
+        'if(t&&t.length>0){(0,ce.default)(w.default),' +
+        '(0,le.default)(w.default),t.includes("ja")&&' +
+        '(0,fe.default)(w.default),await Promise.all(t.map(me))}' +
+        'if(_searchCache&&_searchCache.version===_searchPath&&' +
+        '_searchCache.index&&_searchCache.data){try{return{' +
+        'index:w.default.Index.load(_searchCache.index),' +
+        'data:_searchCache.data}}catch{}}let i=await fetch(_searchPath),' +
+        'o=await i.json();'
+    $sourceCacheResult =
+        's&&await he(_searchCacheKey,JSON.stringify(' +
+        'Object.assign(l.toJSON(),{etag:s})),u),{index:l,data:o}'
+    $replacementCacheResult =
+        'await he(_searchCacheKey,{version:_searchPath,' +
+        'index:l.toJSON(),data:o},u).catch(()=>{}),{index:l,data:o}'
+
+    foreach ($replacement in @(
+            [pscustomobject]@{
+                Source = $sourceCacheFlow
+                Target = $replacementCacheFlow
+            },
+            [pscustomobject]@{
+                Source = $sourceCacheResult
+                Target = $replacementCacheResult
+            })) {
+        $sourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
+                $content,
+                [System.Text.RegularExpressions.Regex]::Escape(
+                    $replacement.Source))).Count
+        if ($sourceCount -ne 1) {
+            throw 'The DocFX search cache could not be patched safely.'
+        }
+        $content = $content.Replace($replacement.Source, $replacement.Target)
+    }
+
     [System.IO.File]::WriteAllText(
         $workerPath,
         $content,
@@ -947,6 +1000,29 @@ function Set-SearchRuntimeIndexes {
     $workerVersion = (Get-FileHash -LiteralPath $workerPath -Algorithm SHA256).
         Hash.Substring(0, 12).ToLowerInvariant()
     $extensionPath = Join-Path $SiteRoot 'public\main.js'
+    $extensionContent = Get-Content `
+        -LiteralPath $extensionPath `
+        -Raw `
+        -Encoding UTF8
+    $sourceIndexPath = "searchIndexPath: '../search/all.json',"
+    $replacementIndexPath =
+        "searchIndexPath: '../search/all.json?v=$SearchIndexVersion',"
+    $sourceIndexPathCount = (
+        [System.Text.RegularExpressions.Regex]::Matches(
+            $extensionContent,
+            [System.Text.RegularExpressions.Regex]::Escape(
+                $sourceIndexPath))
+    ).Count
+    if ($sourceIndexPathCount -ne 1) {
+        throw 'The DocFX search index version could not be patched safely.'
+    }
+    $extensionContent = $extensionContent.Replace(
+        $sourceIndexPath,
+        $replacementIndexPath)
+    [System.IO.File]::WriteAllText(
+        $extensionPath,
+        $extensionContent,
+        [System.Text.UTF8Encoding]::new($false))
     $extensionVersion = (
         Get-FileHash -LiteralPath $extensionPath -Algorithm SHA256
     ).Hash.Substring(0, 12).ToLowerInvariant()
@@ -1031,6 +1107,287 @@ function Set-SearchRuntimeIndexes {
 
     if ($patchedPageCount -eq 0) {
         throw 'No DocFX client URLs were patched for cache invalidation.'
+    }
+}
+
+function Set-PageUiShells {
+    param(
+        [Parameter(Mandatory)]
+        [string] $SiteRoot
+    )
+
+    $navigationRegistry = Get-Content `
+        -LiteralPath (Join-Path $PSScriptRoot 'library-navigation.json') `
+        -Raw `
+        -Encoding UTF8 |
+        ConvertFrom-Json
+    $versionRegistries = @{}
+
+    foreach ($library in $navigationRegistry.libraries) {
+        $versionRegistryPath = Join-Path `
+            (Join-Path $PSScriptRoot $library.path) `
+            'versions.json'
+        $versionRegistries[$library.path] = Get-Content `
+            -LiteralPath $versionRegistryPath `
+            -Raw `
+            -Encoding UTF8 |
+            ConvertFrom-Json
+    }
+
+    $fallbackScript = @'
+      <script>window.setTimeout(() => document.documentElement.classList.remove('docs-ui-pending'), 3000)</script>
+'@
+    $patchedPageCount = 0
+    $contextShellCount = 0
+
+    Get-ChildItem -LiteralPath $SiteRoot -Filter '*.html' -File -Recurse |
+        ForEach-Object {
+            $content = Get-Content `
+                -LiteralPath $_.FullName `
+                -Raw `
+                -Encoding UTF8
+            if (-not $content.Contains('<header')) {
+                return
+            }
+
+            $htmlTag = [System.Text.RegularExpressions.Regex]::Match(
+                $content,
+                '<html\b[^>]*>',
+                [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            $headEnd = $content.IndexOf(
+                '</head>',
+                [System.StringComparison]::OrdinalIgnoreCase)
+            if (-not $htmlTag.Success -or $headEnd -lt 0) {
+                throw "The generated page shell is invalid: $($_.FullName)"
+            }
+
+            $htmlClass = [System.Text.RegularExpressions.Regex]::Match(
+                $htmlTag.Value,
+                'class="([^"]*)"',
+                [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            if ($htmlClass.Success) {
+                $classValue = $htmlClass.Groups[1]
+                $updatedHtmlTag = $htmlTag.Value.Remove(
+                    $classValue.Index,
+                    $classValue.Length).Insert(
+                    $classValue.Index,
+                    "$($classValue.Value) docs-ui-pending")
+            } else {
+                $updatedHtmlTag = $htmlTag.Value.Insert(
+                    $htmlTag.Value.Length - 1,
+                    ' class="docs-ui-pending"')
+            }
+
+            $content = $content.Remove(
+                $htmlTag.Index,
+                $htmlTag.Length).Insert(
+                $htmlTag.Index,
+                $updatedHtmlTag)
+            $headEnd = $content.IndexOf(
+                '</head>',
+                [System.StringComparison]::OrdinalIgnoreCase)
+            $content = $content.Insert(
+                $headEnd,
+                "$fallbackScript`r`n")
+
+            $relativePath = Get-RelativeSitePath `
+                -Root $SiteRoot `
+                -Path $_.FullName
+            $segments = @($relativePath.Split('/') | Where-Object { $_ })
+            $language = 'en'
+            $apiPage = $false
+            $contextOffset = 0
+
+            if ($segments.Count -gt 0 -and $segments[0] -in @('en', 'ru')) {
+                $language = $segments[0]
+                $contextOffset = 1
+            } elseif ($segments.Count -gt 0 -and $segments[0] -eq 'api') {
+                $apiPage = $true
+                $contextOffset = 1
+            }
+
+            $library = if ($segments.Count -gt $contextOffset) {
+                $libraryPath = $segments[$contextOffset]
+                $navigationRegistry.libraries |
+                    Where-Object path -eq $libraryPath |
+                    Select-Object -First 1
+            } else {
+                $null
+            }
+            $versionPath = if ($library -and
+                $segments.Count -gt ($contextOffset + 1)) {
+                $segments[$contextOffset + 1]
+            } else {
+                $null
+            }
+            $version = if ($library -and $versionPath) {
+                $versionRegistries[$library.path].versions |
+                    Where-Object {
+                        $_.path -eq $versionPath -or
+                        @($_.aliases) -contains $versionPath
+                    } |
+                    Select-Object -First 1
+            } else {
+                $null
+            }
+
+            if ($library -and $version) {
+                $bodyTag = [System.Text.RegularExpressions.Regex]::Match(
+                    $content,
+                    '<body\b[^>]*>',
+                    [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+                if (-not $bodyTag.Success) {
+                    throw "The generated page body is invalid: $($_.FullName)"
+                }
+
+                $bodyClass = [System.Text.RegularExpressions.Regex]::Match(
+                    $bodyTag.Value,
+                    'class="([^"]*)"',
+                    [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+                if ($bodyClass.Success) {
+                    $classValue = $bodyClass.Groups[1]
+                    $updatedBodyTag = $bodyTag.Value.Remove(
+                        $classValue.Index,
+                        $classValue.Length).Insert(
+                        $classValue.Index,
+                        "$($classValue.Value) docs-has-context-navigation")
+                } else {
+                    $updatedBodyTag = $bodyTag.Value.Insert(
+                        $bodyTag.Value.Length - 1,
+                        ' class="docs-has-context-navigation"')
+                }
+                $content = $content.Remove(
+                    $bodyTag.Index,
+                    $bodyTag.Length).Insert(
+                    $bodyTag.Index,
+                    $updatedBodyTag)
+
+                $sections = @(
+                    [pscustomobject]@{
+                        Key = 'concepts'
+                        Label = if ($language -eq 'ru') {
+                            '&#1050;&#1086;&#1085;&#1094;&#1077;&#1087;&#1094;&#1080;&#1080;'
+                        } else {
+                            'Concepts'
+                        }
+                        LabelEncoded = $language -eq 'ru'
+                    },
+                    [pscustomobject]@{
+                        Key = 'tutorials'
+                        Label = if ($language -eq 'ru') {
+                            '&#1059;&#1095;&#1077;&#1073;&#1085;&#1080;&#1082;&#1080;'
+                        } else {
+                            'Tutorials'
+                        }
+                        LabelEncoded = $language -eq 'ru'
+                    },
+                    [pscustomobject]@{
+                        Key = 'how-to-guides'
+                        Label = if ($language -eq 'ru') {
+                            '&#1056;&#1091;&#1082;&#1086;&#1074;&#1086;&#1076;&#1089;&#1090;&#1074;&#1072;'
+                        } else {
+                            'How-to Guides'
+                        }
+                        LabelEncoded = $language -eq 'ru'
+                    }
+                )
+                if ($library.PSObject.Properties.Name -contains
+                    'navigationByVersion') {
+                    $configuredNavigation =
+                        $library.navigationByVersion.PSObject.Properties[
+                            $versionPath]
+                    if ($configuredNavigation) {
+                        $sections = @($configuredNavigation.Value | ForEach-Object {
+                                [pscustomobject]@{
+                                    Key = $_.key
+                                    LabelEncoded = $false
+                                    Label = if ($language -eq 'ru') {
+                                        if ($_.labelRu) {
+                                            $_.labelRu
+                                        } else {
+                                            $_.label
+                                        }
+                                    } else {
+                                        $_.label
+                                    }
+                                }
+                            })
+                    }
+                }
+                $sections += [pscustomobject]@{
+                    Key = 'reference'
+                    Label = if ($language -eq 'ru') {
+                        '&#1057;&#1087;&#1088;&#1072;&#1074;&#1086;&#1095;&#1085;&#1080;&#1082;'
+                    } else {
+                        'References'
+                    }
+                    LabelEncoded = $language -eq 'ru'
+                }
+
+                $activeSection = if ($apiPage) {
+                    'reference'
+                } elseif ($segments.Count -gt ($contextOffset + 2)) {
+                    $segments[$contextOffset + 2].Replace('.html', '')
+                } else {
+                    $null
+                }
+                $sectionShells = @($sections | ForEach-Object {
+                        $activeClass = if ($_.Key -eq $activeSection) {
+                            ' active'
+                        } else {
+                            ''
+                        }
+                        $label = if ($_.LabelEncoded) {
+                            [string] $_.Label
+                        } else {
+                            [System.Net.WebUtility]::HtmlEncode(
+                                [string] $_.Label)
+                        }
+                        "          <span class=`"docs-context-link$activeClass`">$label</span>"
+                    }) -join "`r`n"
+                $libraryName = [System.Net.WebUtility]::HtmlEncode(
+                    [string] $library.name)
+                $versionName = [System.Net.WebUtility]::HtmlEncode(
+                    [string] $version.name)
+                $navigationShell = @"
+      <nav id="akeldov-library-navigation-placeholder" class="docs-context-navigation docs-context-navigation-placeholder" aria-hidden="true">
+        <div class="container-xxl docs-context-navigation-inner">
+          <span class="docs-context-library">$libraryName</span>
+          <div id="akeldov-docs-version-placeholder" class="docs-version-selector docs-version-selector-placeholder">
+            <select class="form-select form-select-sm" disabled tabindex="-1"><option>$versionName</option></select>
+          </div>
+          <div class="docs-context-links">
+$sectionShells
+          </div>
+        </div>
+      </nav>
+"@
+                $headerEnd = $content.IndexOf(
+                    '</header>',
+                    [System.StringComparison]::OrdinalIgnoreCase)
+                if ($headerEnd -lt 0) {
+                    throw "The generated page header is invalid: $($_.FullName)"
+                }
+                $content = $content.Insert(
+                    $headerEnd,
+                    "$navigationShell`r`n    ")
+                $contextShellCount++
+            }
+
+            [System.IO.File]::WriteAllText(
+                $_.FullName,
+                $content,
+                [System.Text.UTF8Encoding]::new($false))
+            $patchedPageCount++
+        }
+
+    if ($patchedPageCount -eq 0 -or $contextShellCount -eq 0) {
+        throw 'No generated pages were patched with stable UI shells.'
+    }
+
+    return [pscustomobject]@{
+        ContextShellCount = $contextShellCount
+        PageCount = $patchedPageCount
     }
 }
 
@@ -2267,7 +2624,15 @@ $searchIndexResult = Set-SiteSearchIndexes `
     -SiteRoot $siteRoot `
     -SiteBaseUrl $siteBaseUrl `
     -SitemapEntries $uniqueSitemapEntries
-Set-SearchRuntimeIndexes -SiteRoot $siteRoot
+$searchIndexVersion = (
+    Get-FileHash `
+        -LiteralPath (Join-Path $siteRoot 'search\all.json') `
+        -Algorithm SHA256
+).Hash.Substring(0, 12).ToLowerInvariant()
+Set-SearchRuntimeIndexes `
+    -SiteRoot $siteRoot `
+    -SearchIndexVersion $searchIndexVersion
+$pageUiShellResult = Set-PageUiShells -SiteRoot $siteRoot
 
 Write-Host (
     "SEO P0: marked $p0NoIndexPageCount pages as noindex; " +
@@ -2283,6 +2648,10 @@ Write-Host (
     "$($searchIndexResult.EnglishCount) English/API, and " +
     "$($searchIndexResult.RussianCount) Russian/API entries across " +
     "$($searchIndexResult.ScopedCount) version scopes.")
+Write-Host (
+    "UI: added stable controls to $($pageUiShellResult.PageCount) pages " +
+    "and context navigation shells to " +
+    "$($pageUiShellResult.ContextShellCount) versioned pages.")
 
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `

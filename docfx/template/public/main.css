@@ -105,16 +105,22 @@ body > main::before {
 }
 
 .docs-version-selector-placeholder {
-    flex: 0 0 6rem;
-    margin-left: 0.3rem;
+    flex: 0 0 auto;
 }
 
 .docs-version-selector .form-select {
     font-size: 0.875rem;
-    min-width: 6rem;
+    min-width: 10rem;
     padding-bottom: 0.25rem;
     padding-top: 0.25rem;
-    width: auto;
+    width: 10rem;
+}
+
+.docs-version-selector-placeholder .form-select:disabled,
+body > header #search-query:disabled {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    opacity: 1;
 }
 
 .docs-language-selector {
@@ -136,8 +142,16 @@ body > main::before {
 
 .docs-repository-link {
     align-self: center;
+    display: inline-flex;
+    justify-content: center;
     margin-left: 0.25rem;
     order: 60;
+    width: 2.5rem;
+}
+
+html.docs-ui-pending body > header form.icons,
+html.docs-ui-pending body > header .docs-repository-link {
+    visibility: hidden;
 }
 
 .docs-context-navigation {
@@ -227,7 +241,7 @@ body > main::before {
         column-gap: 0.5rem;
         display: grid;
         grid-template-areas: "navigation icons search repository";
-        grid-template-columns: minmax(0, 1fr) max-content minmax(12rem, 18rem) max-content;
+        grid-template-columns: minmax(0, 1fr) 5.5rem minmax(12rem, 18rem) 2.5rem;
     }
 
     .navbar #navbar > .navbar-nav {
@@ -236,7 +250,9 @@ body > main::before {
 
     .navbar #navbar > form.icons {
         grid-area: icons;
+        justify-content: flex-end;
         margin-left: 0;
+        min-width: 5.5rem;
     }
 
     .navbar #navbar > form.search {
@@ -264,7 +280,7 @@ body > main::before {
         grid-template-areas:
             "navigation navigation navigation"
             "icons search repository";
-        grid-template-columns: max-content minmax(12rem, 18rem) max-content;
+        grid-template-columns: 5.5rem minmax(12rem, 18rem) 2.5rem;
         justify-content: end;
         row-gap: 0.5rem;
     }

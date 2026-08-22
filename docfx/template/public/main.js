@@ -418,6 +418,29 @@ function reserveLibraryNavigationSpace() {
         `${header.offsetHeight}px`);
 }
 
+function createVersionSelectorPlaceholder(versionPath) {
+    const container = document.createElement('div');
+    container.id = versionSelectorPlaceholderId;
+    container.classList.add(
+        'docs-version-selector',
+        'docs-version-selector-placeholder');
+    container.setAttribute('aria-hidden', 'true');
+
+    const select = document.createElement('select');
+    select.classList.add('form-select', 'form-select-sm');
+    select.disabled = true;
+    select.tabIndex = -1;
+
+    const option = document.createElement('option');
+    option.textContent = versionPath === 'upcoming'
+        ? 'Upcoming Release'
+        : versionPath;
+    select.appendChild(option);
+    container.appendChild(select);
+
+    return container;
+}
+
 async function addLibraryNavigation() {
     if (document.getElementById(contextNavigationId)) {
         return true;
@@ -451,11 +474,8 @@ async function addLibraryNavigation() {
     libraryLink.href = new URL('index.html', context.conceptualRootUrl);
     libraryLink.textContent = context.library.name;
 
-    const versionSelectorPlaceholder = document.createElement('div');
-    versionSelectorPlaceholder.id = versionSelectorPlaceholderId;
-    versionSelectorPlaceholder.classList.add(
-        'docs-version-selector-placeholder');
-    versionSelectorPlaceholder.setAttribute('aria-hidden', 'true');
+    const versionSelectorPlaceholder = createVersionSelectorPlaceholder(
+        context.versionPath);
 
     const links = document.createElement('div');
     links.classList.add('docs-context-links');
@@ -814,6 +834,7 @@ function start() {
             initializationPending = false;
 
             if (await initializeSelectors()) {
+                document.documentElement.classList.remove('docs-ui-pending');
                 observer.disconnect();
                 initializationRunning = false;
                 return;

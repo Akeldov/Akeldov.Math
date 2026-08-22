@@ -1,7 +1,7 @@
 # 2D Geometry Fundamentals
 
 Build a small .NET console application that creates and transforms two-dimensional geometry with
-Akeldov.Math.Spatial2D 0.8.0. By the end, you will have a mixed straight-and-Bezier contour, a
+the Akeldov.Math.Spatial2D package. By the end, you will have a mixed straight-and-Bezier contour, a
 filled region, and point, distance, projection, and ray-intersection queries.
 
 Install the .NET 6 SDK or later. The steps build on one another and should be completed in order:
