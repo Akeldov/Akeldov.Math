@@ -698,6 +698,7 @@ function Set-SiteSearchIndexes {
     $sourceIndexPath = Join-Path $SiteRoot 'index.json'
     $sourceIndex = Get-Content -LiteralPath $sourceIndexPath -Raw -Encoding UTF8 |
         ConvertFrom-Json
+    $allIndex = [ordered]@{}
     $englishIndex = [ordered]@{}
     $russianIndex = [ordered]@{}
     $scopedIndexes = [ordered]@{}
@@ -745,15 +746,18 @@ function Set-SiteSearchIndexes {
                 'en/',
                 [System.StringComparison]::OrdinalIgnoreCase)) {
             $englishIndex[$relativeUrl] = $searchEntry
+            $allIndex[$relativeUrl] = $searchEntry
         } elseif ($relativeUrl.StartsWith(
                 'ru/',
                 [System.StringComparison]::OrdinalIgnoreCase)) {
             $russianIndex[$relativeUrl] = $searchEntry
+            $allIndex[$relativeUrl] = $searchEntry
         } elseif ($relativeUrl.StartsWith(
                 'api/',
                 [System.StringComparison]::OrdinalIgnoreCase)) {
             $englishIndex[$relativeUrl] = $searchEntry
             $russianIndex[$relativeUrl] = $searchEntry
+            $allIndex[$relativeUrl] = $searchEntry
         } else {
             throw "The canonical page has no search language: $($entry.Url)"
         }
@@ -787,6 +791,7 @@ function Set-SiteSearchIndexes {
     }
 
     $indexesToValidate = [ordered]@{
+        'all' = $allIndex
         'en' = $englishIndex
         'ru' = $russianIndex
     }
@@ -823,6 +828,9 @@ function Set-SiteSearchIndexes {
         }
     }
 
+    $searchRoot = Join-Path $SiteRoot 'search'
+    [void] [System.IO.Directory]::CreateDirectory($searchRoot)
+
     Write-SearchIndex -Path $sourceIndexPath -Index $englishIndex
     Write-SearchIndex `
         -Path (Join-Path $SiteRoot 'en\index.json') `
@@ -830,8 +838,10 @@ function Set-SiteSearchIndexes {
     Write-SearchIndex `
         -Path (Join-Path $SiteRoot 'ru\index.json') `
         -Index $russianIndex
+    Write-SearchIndex `
+        -Path (Join-Path $SiteRoot 'search\all.json') `
+        -Index $allIndex
 
-    $searchRoot = Join-Path $SiteRoot 'search'
     foreach ($scope in $scopedIndexes.GetEnumerator()) {
         $relativePath = "$($scope.Key).json".Replace(
             '/',
@@ -843,6 +853,7 @@ function Set-SiteSearchIndexes {
     }
 
     return [pscustomobject]@{
+        AllCount = $allIndex.Count
         EnglishCount = $englishIndex.Count
         RussianCount = $russianIndex.Count
         ScopedCount = $scopedIndexes.Count
@@ -859,16 +870,39 @@ function Set-SearchRuntimeIndexes {
     $content = Get-Content -LiteralPath $workerPath -Raw -Encoding UTF8
     $sourceSignature = 'async function ve({lunrLanguages:t})'
     $replacementSignature =
-        'async function ve({lunrLanguages:t,searchIndexPath:p})'
+        'async function ve({lunrLanguages:t,searchIndexPath:p,' +
+        'searchPriorityPrefixes:_searchPriorityPrefixes})'
     $sourceFetch = 'fetch("../index.json")'
     $replacementFetch = 'fetch(p||"../index.json")'
+    $sourceCacheStore = 'u=X("docfx","lunr");if(t&&t.length>0'
+    $replacementCacheStore =
+        'u=X("docfx","lunr"),_searchCacheKey="v2|"+' +
+        '(p||"../index.json")+"|"+(t||[]).join(",");' +
+        'if(t&&t.length>0'
+    $sourceCacheRead = 'ae("index",u)'
+    $replacementCacheRead = 'ae(_searchCacheKey,u)'
+    $sourceCacheWrite = 'he("index",JSON.stringify'
+    $replacementCacheWrite = 'he(_searchCacheKey,JSON.stringify'
     $sourceQuery = 'G=i=>e.search(i).map(({ref:s})=>r[s])'
     $replacementQuery =
         'G=i=>{let s=e.search(i),o=i.split(/\s+/).map(u=>' +
         'u.replace(/^[+-]/,"").length>=3&&e.search(u).length===0?' +
         'u+"*":u).join(" ");if(o!==i){let a=new Set(s.map(u=>u.ref));' +
         'for(let u of e.search(o))a.has(u.ref)||(a.add(u.ref),s.push(u))}' +
-        'return s.map(({ref:u})=>r[u])}'
+        'let a=s.map(({ref:u})=>r[u]),l=u=>{let f=' +
+        '(_searchPriorityPrefixes||[]).findIndex(d=>d.some(h=>' +
+        'u.href.startsWith(h)));return f<0?' +
+        '(_searchPriorityPrefixes||[]).length:f},c=u=>{let f=' +
+        'u.href.match(/^(en|ru|api)\/(Hexes|Spatial2D)\/' +
+        '(\d+)\.(\d+)\.(\d+)\/(.*)$/);return f?' +
+        '{k:f[1]+"/"+f[2]+"/"+f[6]+"\\0"+u.summary,' +
+        'v:[+f[3],+f[4],+f[5]]}:{k:u.href,v:[0,0,0]}},' +
+        'd=(u,f)=>u[0]-f[0]||u[1]-f[1]||u[2]-f[2];' +
+        'a.sort((u,f)=>l(u)-l(f));let h=new Map;' +
+        'for(let u of a){let f=c(u),v=h.get(f.k),m=l(u);' +
+        'v?m===v.r&&d(f.v,v.v)>0&&(v.e=u,v.v=f.v):' +
+        'h.set(f.k,{e:u,r:m,v:f.v})}' +
+        'return[...h.values()].map(u=>u.e)}'
 
     foreach ($replacement in @(
             [pscustomobject]@{
@@ -878,6 +912,18 @@ function Set-SearchRuntimeIndexes {
             [pscustomobject]@{
                 Source = $sourceFetch
                 Target = $replacementFetch
+            },
+            [pscustomobject]@{
+                Source = $sourceCacheStore
+                Target = $replacementCacheStore
+            },
+            [pscustomobject]@{
+                Source = $sourceCacheRead
+                Target = $replacementCacheRead
+            },
+            [pscustomobject]@{
+                Source = $sourceCacheWrite
+                Target = $replacementCacheWrite
             },
             [pscustomobject]@{
                 Source = $sourceQuery
@@ -917,8 +963,10 @@ function Set-SearchRuntimeIndexes {
     $sourceInitialization =
         'let{lunrLanguages:b}=await D();i.postMessage({init:{lunrLanguages:b}});'
     $replacementInitialization =
-        'let{lunrLanguages:b,searchIndexPath:v}=await D();' +
-        'i.postMessage({init:{lunrLanguages:b,searchIndexPath:v}});'
+        'let{lunrLanguages:b,searchIndexPath:v,' +
+        'searchPriorityPrefixes:_searchPriorityPrefixes}=await D();' +
+        'i.postMessage({init:{lunrLanguages:b,searchIndexPath:v,' +
+        'searchPriorityPrefixes:_searchPriorityPrefixes}});'
 
     $workerSourceCount = ([System.Text.RegularExpressions.Regex]::Matches(
             $content,
@@ -2231,7 +2279,8 @@ Write-Host (
     "SEO P2: validated unique titles and valid descriptions for " +
     "$($uniqueSitemapEntries.Count) indexable pages.")
 Write-Host (
-    "Search: generated $($searchIndexResult.EnglishCount) English/API and " +
+    "Search: generated $($searchIndexResult.AllCount) global, " +
+    "$($searchIndexResult.EnglishCount) English/API, and " +
     "$($searchIndexResult.RussianCount) Russian/API entries across " +
     "$($searchIndexResult.ScopedCount) version scopes.")
 
