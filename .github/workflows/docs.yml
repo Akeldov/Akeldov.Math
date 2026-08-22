@@ -20,28 +20,34 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
         with:
-          python-version: "3.x"
-          cache: pip
+          dotnet-version: |
+            6.0.x
+            9.0.x
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install DocFX
+        shell: pwsh
+        run: >
+          dotnet tool install docfx
+          --tool-path .tmp/docfx-tool
+          --version 2.78.5
 
       - name: Build documentation
-        run: mkdocs build --strict
+        shell: pwsh
+        run: ./docfx/build.ps1
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: docfx/_site
 
   deploy:
     environment:
