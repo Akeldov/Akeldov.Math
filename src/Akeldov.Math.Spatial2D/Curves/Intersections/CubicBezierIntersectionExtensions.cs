@@ -108,6 +108,121 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a cubic Bezier curve and an arc by numerically isolating the roots of the original curve-circle polynomial above float precision.
+        /// </summary>
+        /// <param name="source">The source cubic Bezier curve.</param>
+        /// <param name="arc">The arc to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered counterclockwise from the arc's start angle.</returns>
+        public static List<PointXY> GetPointIntersections(this CubicBezier source, Arc arc)
+        {
+            double[] polynomial = CreateCirclePolynomial(source, arc);
+            List<PointXY> intersections = new List<PointXY>();
+
+            if (PolynomialRootIsolation.IsZero(polynomial))
+            {
+                if (source.StartPoint.Equals(source.ControlPointA) &&
+                    source.StartPoint.Equals(source.ControlPointB) &&
+                    source.StartPoint.Equals(source.EndPoint) &&
+                    (arc.Radius == 0f || ArcIntersectionExtensions.IsWithinAngularRegion(arc, source.StartPoint)))
+                {
+                    intersections.Add(source.StartPoint);
+                }
+
+                return intersections;
+            }
+
+            List<double> stationaryCoordinates = PolynomialRootIsolation.FindStationaryCoordinatesInUnitInterval(polynomial);
+            List<float> tangentCoordinates = new List<float>();
+            for (int i = 0; i < stationaryCoordinates.Count; i++)
+            {
+                PointXY point = Evaluate(source, stationaryCoordinates[i]);
+                if (IsOnCircleAfterFloatRounding(point, arc))
+                {
+                    tangentCoordinates.Add((float)stationaryCoordinates[i]);
+                    AddIfOnArc(point, arc, intersections);
+                }
+            }
+
+            List<double> roots = PolynomialRootIsolation.FindRootsInUnitInterval(polynomial);
+            for (int i = 0; i < roots.Count; i++)
+            {
+                if (!tangentCoordinates.Contains((float)roots[i]))
+                    AddIfOnArc(Evaluate(source, roots[i]), arc, intersections);
+            }
+
+            ArcIntersectionExtensions.OrderPointIntersections(arc, intersections);
+            return intersections;
+        }
+
+        /// <summary>
+        /// Adds a distinct candidate when it belongs to the arc's angular region.
+        /// </summary>
+        private static void AddIfOnArc(PointXY point, Arc arc, List<PointXY> intersections)
+        {
+            if ((arc.Radius == 0f || ArcIntersectionExtensions.IsWithinAngularRegion(arc, point)) &&
+                !intersections.Contains(point))
+            {
+                intersections.Add(point);
+            }
+        }
+
+        /// <summary>
+        /// Determines whether a stationary candidate rounds exactly onto the source circle in the public point precision.
+        /// </summary>
+        private static bool IsOnCircleAfterFloatRounding(PointXY point, Arc arc)
+        {
+            double deltaX = (double)point.X - arc.Center.X;
+            double deltaY = (double)point.Y - arc.Center.Y;
+            return deltaX * deltaX + deltaY * deltaY == (double)arc.Radius * arc.Radius;
+        }
+
+        /// <summary>
+        /// Creates the sextic squared-distance polynomial between a cubic Bezier curve and a circle.
+        /// </summary>
+        private static double[] CreateCirclePolynomial(CubicBezier source, Arc arc)
+        {
+            double[] x =
+            {
+                (double)source.StartPoint.X - arc.Center.X,
+                3d * ((double)source.ControlPointA.X - source.StartPoint.X),
+                3d * ((double)source.StartPoint.X - 2d * source.ControlPointA.X + source.ControlPointB.X),
+                -(double)source.StartPoint.X + 3d * source.ControlPointA.X - 3d * source.ControlPointB.X + source.EndPoint.X
+            };
+            double[] y =
+            {
+                (double)source.StartPoint.Y - arc.Center.Y,
+                3d * ((double)source.ControlPointA.Y - source.StartPoint.Y),
+                3d * ((double)source.StartPoint.Y - 2d * source.ControlPointA.Y + source.ControlPointB.Y),
+                -(double)source.StartPoint.Y + 3d * source.ControlPointA.Y - 3d * source.ControlPointB.Y + source.EndPoint.Y
+            };
+
+            double[] polynomial = new double[7];
+            for (int i = 0; i < x.Length; i++)
+            {
+                for (int j = 0; j < x.Length; j++)
+                    polynomial[i + j] += x[i] * x[j] + y[i] * y[j];
+            }
+
+            polynomial[0] -= (double)arc.Radius * arc.Radius;
+            return polynomial;
+        }
+
+        /// <summary>
+        /// Evaluates a cubic Bezier curve in double precision and rounds the result to the public point type.
+        /// </summary>
+        private static PointXY Evaluate(CubicBezier source, double parameter)
+        {
+            double inverse = 1d - parameter;
+            double startWeight = inverse * inverse * inverse;
+            double controlAWeight = 3d * inverse * inverse * parameter;
+            double controlBWeight = 3d * inverse * parameter * parameter;
+            double endWeight = parameter * parameter * parameter;
+            return new PointXY(
+                (float)(startWeight * source.StartPoint.X + controlAWeight * source.ControlPointA.X + controlBWeight * source.ControlPointB.X + endWeight * source.EndPoint.X),
+                (float)(startWeight * source.StartPoint.Y + controlAWeight * source.ControlPointA.Y + controlBWeight * source.ControlPointB.Y + endWeight * source.EndPoint.Y));
+        }
+
+        /// <summary>
         /// Returns a degenerate segment point when it belongs to the curve and is included by the segment.
         /// </summary>
         /// <param name="source">The source cubic Bezier curve.</param>

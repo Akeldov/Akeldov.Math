@@ -349,7 +349,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="source">The source arc.</param>
         /// <param name="point">The point to classify.</param>
         /// <returns><see langword="true"/> when the point lies within the angular region; otherwise, <see langword="false"/>.</returns>
-        private static bool IsWithinAngularRegion(Arc source, PointXY point)
+        internal static bool IsWithinAngularRegion(Arc source, PointXY point)
         {
             if (source.IsFullCircle)
                 return true;

@@ -220,6 +220,70 @@ public class BezierTests
     }
 
     [Test]
+    public void QuadraticBezierArcIntersections_WhenCurveCrossesCircle_ReturnsPointsInArcOrder()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(-2f, 0f),
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f));
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+
+        List<PointXY> intersections = curve.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 1f, 0f);
+        AssertPoint(intersections[1], -1f, 0f);
+    }
+
+    [Test]
+    public void QuadraticBezierArcIntersections_WhenCurveIsTangent_ReturnsRepeatedRootOnce()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(-2f, 1f),
+            new PointXY(0f, 1f),
+            new PointXY(2f, 1f));
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+
+        List<PointXY> intersections = curve.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertPoint(intersections[0], 0f, 1f);
+    }
+
+    [Test]
+    public void CubicBezierArcIntersections_WhenCurveCrossesCircle_ReturnsPointsInArcOrder()
+    {
+        var curve = new CubicBezier(
+            new PointXY(-2f, 0f),
+            new PointXY(-2f / 3f, 0f),
+            new PointXY(2f / 3f, 0f),
+            new PointXY(2f, 0f));
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+
+        List<PointXY> intersections = curve.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 1f, 0f);
+        AssertPoint(intersections[1], -1f, 0f);
+    }
+
+    [Test]
+    public void CubicBezierArcIntersections_WhenCurveIsTangent_ReturnsRepeatedRootOnce()
+    {
+        var curve = new CubicBezier(
+            new PointXY(-2f, 1f),
+            new PointXY(-2f / 3f, 1f),
+            new PointXY(2f / 3f, 1f),
+            new PointXY(2f, 1f));
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+
+        List<PointXY> intersections = curve.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertPoint(intersections[0], 0f, 1f);
+    }
+
+    [Test]
     public void QuadraticBezier_CountRightwardCrossings_CountsRootsAndExcludesTangent()
     {
         var curve = new QuadraticBezier(

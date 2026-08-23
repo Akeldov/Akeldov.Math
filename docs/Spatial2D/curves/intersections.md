@@ -1,7 +1,7 @@
 # Intersections
 
 `ICurve.GetPointIntersections(Ray)` returns isolated intersection points in the forward direction of a ray.
-Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads, but not circular targets because curve-circle intersection cannot be solved exactly in the general cubic case.
+Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads and a numerical `Arc` overload; they do not yet provide `ParameterizedArc`.
 
 The returned collection is a new mutable list owned by the caller.
 
@@ -45,4 +45,5 @@ collinear overlap between a linear curve and the ray does not produce a represen
 `GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Intersections with
 `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, or `ParameterizedArc` use exact comparisons;
 `QuadraticBezier` and `CubicBezier` solve the polynomial of the original curve rather than
-intersecting a polyline approximation.
+intersecting a polyline approximation. Their `Arc` overload isolates quartic or sextic roots in
+`double` and rounds the resulting coordinates to `float`, without a geometry-epsilon parameter.
