@@ -464,6 +464,24 @@ public class ArcTests
     }
 
     [Test]
+    public void PointIntersections_WithClockwiseParameterizedArc_ReturnsPointsInAngularDirection()
+    {
+        var line = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
+        var arc = new ParameterizedArc(
+            new PointXY(0f, 0f),
+            1f,
+            0f,
+            2f * MathF.PI,
+            AngularDirection.Clockwise);
+
+        List<PointXY> intersections = line.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertVector(intersections[0], 0f, -1f);
+        AssertVector(intersections[1], 0f, 1f);
+    }
+
+    [Test]
     public void PointIntersections_WhenTwoCirclesIntersect_ReturnsPointsInTargetArcOrder()
     {
         var source = new Arc(new PointXY(1f, 0f), 1f, 0f, 2f * MathF.PI);

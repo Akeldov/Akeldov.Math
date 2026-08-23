@@ -1,7 +1,7 @@
 # Intersections
 
 `ICurve.GetPointIntersections(Ray)` returns isolated intersection points in the forward direction of a ray.
-Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, and `Arc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads, but not `Arc` because curve-circle intersection cannot be solved exactly in the general cubic case.
+Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads, but not circular targets because curve-circle intersection cannot be solved exactly in the general cubic case.
 
 The returned collection is a new mutable list owned by the caller.
 
@@ -36,12 +36,13 @@ parameterized direction. A `Line` orders them along its canonical direction, whi
 orders them from `EndpointA` to `EndpointB`. A `ParameterizedSegment` orders them from
 `StartPoint` to `EndPoint`. A `ParameterizedSegmentChain` orders distinct intersections from
 the chain's `StartPoint` to its `EndPoint`. An `Arc` orders intersections counterclockwise from
-its `StartAngle`. Both segment types respect endpoint inclusion.
+its `StartAngle`, while a `ParameterizedArc` uses its `AngularDirection` from `StartPoint` to
+`EndPoint`. Both segment types respect endpoint inclusion.
 
 Points that belong to a continuous set of intersections are not returned. For example, a
 collinear overlap between a linear curve and the ray does not produce a representative point.
 
 `GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Intersections with
-`Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, or `Arc` use exact comparisons;
+`Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, or `ParameterizedArc` use exact comparisons;
 `QuadraticBezier` and `CubicBezier` solve the polynomial of the original curve rather than
 intersecting a polyline approximation.

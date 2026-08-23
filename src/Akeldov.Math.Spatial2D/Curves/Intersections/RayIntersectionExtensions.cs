@@ -146,5 +146,18 @@ namespace Akeldov.Math.Spatial2D.Curves
             ArcIntersectionExtensions.OrderPointIntersections(arc, intersections);
             return intersections;
         }
+
+        /// <summary>
+        /// Returns the isolated point intersections between a ray and a parameterized arc using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="arc">The parameterized arc to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the arc's start point to its end point in its angular direction. Intersections behind the ray are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, ParameterizedArc arc)
+        {
+            List<PointXY> intersections = GetPointIntersections(source, (Arc)arc);
+            ParameterizedArcIntersectionExtensions.OrderPointIntersections(arc, intersections);
+            return intersections;
+        }
     }
 }
