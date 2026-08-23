@@ -211,6 +211,52 @@ public class ParameterizedSegmentChainTests
         Assert.That(intersections, Is.Empty);
     }
 
+    [Test]
+    public void PointIntersections_WithParameterizedSegmentChain_ReturnsDistinctPointsInTargetTraversalOrder()
+    {
+        var line = new Line(new PointXY(-1f, 1f), new PointXY(3f, 1f));
+        var segmentChain = new ParameterizedSegmentChain(
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f),
+            new PointXY(0f, 0f));
+
+        List<PointXY> intersections = line.GetPointIntersections(segmentChain);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 2f, 1f);
+        AssertPoint(intersections[1], 0f, 1f);
+    }
+
+    [Test]
+    public void PointIntersections_WithParameterizedSegmentChainHitAtSharedVertex_ReturnsDistinctPoint()
+    {
+        var line = new Line(new PointXY(-1f, 1f), new PointXY(3f, 1f));
+        var segmentChain = new ParameterizedSegmentChain(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 1f),
+            new PointXY(2f, 0f));
+
+        List<PointXY> intersections = line.GetPointIntersections(segmentChain);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertPoint(intersections[0], 1f, 1f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenTargetVertexBelongsToContinuousLineOverlap_OmitsVertex()
+    {
+        var line = new Line(new PointXY(-1f, 0f), new PointXY(3f, 0f));
+        var segmentChain = new ParameterizedSegmentChain(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f));
+
+        List<PointXY> intersections = line.GetPointIntersections(segmentChain);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
     private static void AssertPoint(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
