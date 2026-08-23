@@ -75,9 +75,14 @@ public class RegionRasterizationTests
     public void Constructor_WhenSignedDistanceCollectionMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new SignedPointDistanceProviderCollectionGray8BitRasterizer(null!));
+            new SignedPointDistanceProviderCollectionRasterizer<int>(null!));
+    }
+
+    [Test]
+    public void Constructor_WhenSignedDistanceMapperIsNull_Throws()
+    {
         Assert.Throws<ArgumentNullException>(() =>
-            new SignedPointDistanceProviderCollectionGray16BitRasterizer(null!));
+            new SignedPointDistanceProviderRasterizer<int>(null!));
     }
 
     [Test]

@@ -25,7 +25,7 @@ var grid = new RasterGeometry(
     size: new VectorXY(6f, 6f),
     resolution: new VectorXYInt(192, 192));
 
-var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
+var rasterizer = new ParameterizedCurveDistanceRasterizer<Gray8BitColor>(
     (distance, curveCoordinate) =>
     {
         const float baseThickness = 0.05f;

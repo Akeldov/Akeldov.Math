@@ -21,7 +21,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, Gray8BitColor> signedDistanceToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new SignedPointDistanceProviderCollectionGray8BitRasterizer(signedDistanceToGrayLevel);
+            var rasterizer = new SignedPointDistanceProviderCollectionRasterizer<Gray8BitColor>(signedDistanceToGrayLevel);
             var raster = rasterizer.Rasterize(signedPointDistanceProviders, rasterGeometry);
             return raster;
         }
@@ -41,7 +41,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, Gray8BitColor> signedDistanceToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(signedDistanceToGrayLevel);
+            var rasterizer = new SignedPointDistanceProviderRasterizer<Gray8BitColor>(signedDistanceToGrayLevel);
             var raster = rasterizer.Rasterize(signedPointDistanceProvider, rasterGeometry);
             return raster;
         }
@@ -61,7 +61,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, Gray16BitColor> signedDistanceToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new SignedPointDistanceProviderCollectionGray16BitRasterizer(signedDistanceToGrayLevel);
+            var rasterizer = new SignedPointDistanceProviderCollectionRasterizer<Gray16BitColor>(signedDistanceToGrayLevel);
             var raster = rasterizer.Rasterize(signedPointDistanceProviders, rasterGeometry);
             return raster;
         }
@@ -81,7 +81,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, Gray16BitColor> signedDistanceToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(signedDistanceToGrayLevel);
+            var rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(signedDistanceToGrayLevel);
             var raster = rasterizer.Rasterize(signedPointDistanceProvider, rasterGeometry);
             return raster;
         }

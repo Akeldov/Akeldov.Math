@@ -73,7 +73,7 @@ var grid = new RasterGeometry(
 Более далёкие значения ограничьте концами этого интервала:
 
 ```csharp
-var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(
+var rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(
     signedDistance =>
     {
         float normalized = Math.Clamp(
@@ -124,7 +124,7 @@ var grid = new RasterGeometry(
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(320, 320));
 
-var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(
+var rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(
     signedDistance =>
     {
         float normalized = Math.Clamp(

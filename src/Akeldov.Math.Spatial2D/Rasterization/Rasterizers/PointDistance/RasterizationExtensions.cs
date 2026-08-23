@@ -25,11 +25,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProviders is IReadOnlyList<ISignedPointDistanceProvider> signedPointDistanceProviders)
             {
-                var signedRasterizer = new SignedPointDistanceProviderCollectionGray8BitRasterizer(distanceToGrayLevel);
+                var signedRasterizer = new SignedPointDistanceProviderCollectionRasterizer<Gray8BitColor>(distanceToGrayLevel);
                 return signedRasterizer.Rasterize(signedPointDistanceProviders, rasterGeometry);
             }
 
-            var rasterizer = new PointDistanceProviderCollectionGray8BitRasterizer(distanceToGrayLevel);
+            var rasterizer = new PointDistanceProviderCollectionRasterizer<Gray8BitColor>(distanceToGrayLevel);
             var raster = rasterizer.Rasterize(pointDistanceProviders, rasterGeometry);
             return raster;
         }
@@ -53,11 +53,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProvider is ISignedPointDistanceProvider signedPointDistanceProvider)
             {
-                var signedRasterizer = new SignedPointDistanceProviderGray8BitRasterizer(distanceToGrayLevel);
+                var signedRasterizer = new SignedPointDistanceProviderRasterizer<Gray8BitColor>(distanceToGrayLevel);
                 return signedRasterizer.Rasterize(signedPointDistanceProvider, rasterGeometry);
             }
 
-            var rasterizer = new PointDistanceProviderGray8BitRasterizer(distanceToGrayLevel);
+            var rasterizer = new PointDistanceProviderRasterizer<Gray8BitColor>(distanceToGrayLevel);
             var raster = rasterizer.Rasterize(pointDistanceProvider, rasterGeometry);
             return raster;
         }
@@ -81,11 +81,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProviders is IReadOnlyList<ISignedPointDistanceProvider> signedPointDistanceProviders)
             {
-                var signedRasterizer = new SignedPointDistanceProviderCollectionGray16BitRasterizer(distanceToGrayLevel);
+                var signedRasterizer = new SignedPointDistanceProviderCollectionRasterizer<Gray16BitColor>(distanceToGrayLevel);
                 return signedRasterizer.Rasterize(signedPointDistanceProviders, rasterGeometry);
             }
 
-            var rasterizer = new PointDistanceProviderCollectionGray16BitRasterizer(distanceToGrayLevel);
+            var rasterizer = new PointDistanceProviderCollectionRasterizer<Gray16BitColor>(distanceToGrayLevel);
             var raster = rasterizer.Rasterize(pointDistanceProviders, rasterGeometry);
             return raster;
         }
@@ -109,11 +109,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (typeof(ISignedPointDistanceProvider).IsAssignableFrom(typeof(T)) &&
                 pointDistanceProvider is ISignedPointDistanceProvider signedPointDistanceProvider)
             {
-                var signedRasterizer = new SignedPointDistanceProviderGray16BitRasterizer(distanceToGrayLevel);
+                var signedRasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(distanceToGrayLevel);
                 return signedRasterizer.Rasterize(signedPointDistanceProvider, rasterGeometry);
             }
 
-            var rasterizer = new PointDistanceProviderGray16BitRasterizer(distanceToGrayLevel);
+            var rasterizer = new PointDistanceProviderRasterizer<Gray16BitColor>(distanceToGrayLevel);
             var raster = rasterizer.Rasterize(pointDistanceProvider, rasterGeometry);
             return raster;
         }

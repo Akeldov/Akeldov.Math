@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, float, Gray8BitColor> projectionToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new ParameterizedCurveCollectionDistanceGray8BitRasterizer(projectionToGrayLevel);
+            var rasterizer = new ParameterizedCurveCollectionDistanceRasterizer<Gray8BitColor>(projectionToGrayLevel);
             var raster = rasterizer.Rasterize(curves, rasterGeometry);
             return raster;
         }
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, float, Gray8BitColor> projectionToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(projectionToGrayLevel);
+            var rasterizer = new ParameterizedCurveDistanceRasterizer<Gray8BitColor>(projectionToGrayLevel);
             var raster = rasterizer.Rasterize(curve, rasterGeometry);
             return raster;
         }
@@ -62,7 +62,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, float, Gray16BitColor> projectionToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new ParameterizedCurveCollectionDistanceGray16BitRasterizer(projectionToGrayLevel);
+            var rasterizer = new ParameterizedCurveCollectionDistanceRasterizer<Gray16BitColor>(projectionToGrayLevel);
             var raster = rasterizer.Rasterize(curves, rasterGeometry);
             return raster;
         }
@@ -82,7 +82,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             Func<float, float, Gray16BitColor> projectionToGrayLevel,
             RasterGeometry rasterGeometry)
         {
-            var rasterizer = new ParameterizedCurveDistanceGray16BitRasterizer(projectionToGrayLevel);
+            var rasterizer = new ParameterizedCurveDistanceRasterizer<Gray16BitColor>(projectionToGrayLevel);
             var raster = rasterizer.Rasterize(curve, rasterGeometry);
             return raster;
         }

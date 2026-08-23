@@ -190,6 +190,20 @@ public class CurveRasterizationTests
     }
 
     [Test]
+    public void PointDistanceProviderRasterizer_WhenMapperProducesInt_ReturnsIntRaster()
+    {
+        var source = new PointXY(0f, 0f);
+        RasterGeometry grid = CreateThreeByThreeGrid();
+        var rasterizer = new PointDistanceProviderRasterizer<int>(distance => (int)MathF.Round(distance * 10f));
+
+        SpatialRaster<int> raster = rasterizer.Rasterize(source, grid);
+
+        Assert.That(raster[1, 0], Is.EqualTo(10));
+        Assert.That(raster[1, 1], Is.EqualTo(0));
+        Assert.That(raster[1, 2], Is.EqualTo(10));
+    }
+
+    [Test]
     public void Rasterize_WhenPointDistanceProviderCollectionIsConcreteValueTypeList_MapsNearestDistanceToGray8()
     {
         IReadOnlyList<PointXY> sources = new[]
@@ -269,31 +283,31 @@ public class CurveRasterizationTests
     }
 
     [Test]
-    public void Constructor_WhenParameterizedCurveCollectionGray16MapperIsNull_Throws()
+    public void Constructor_WhenParameterizedCurveCollectionMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new ParameterizedCurveCollectionDistanceGray16BitRasterizer(null!));
+            new ParameterizedCurveCollectionDistanceRasterizer<int>(null!));
     }
 
     [Test]
-    public void Constructor_WhenParameterizedCurveGray16MapperIsNull_Throws()
+    public void Constructor_WhenParameterizedCurveMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new ParameterizedCurveDistanceGray16BitRasterizer(null!));
+            new ParameterizedCurveDistanceRasterizer<int>(null!));
     }
 
     [Test]
-    public void Constructor_WhenPointDistanceProviderCollectionGray16MapperIsNull_Throws()
+    public void Constructor_WhenPointDistanceProviderCollectionMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new PointDistanceProviderCollectionGray16BitRasterizer(null!));
+            new PointDistanceProviderCollectionRasterizer<int>(null!));
     }
 
     [Test]
-    public void Constructor_WhenPointDistanceProviderGray16MapperIsNull_Throws()
+    public void Constructor_WhenPointDistanceProviderMapperIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new PointDistanceProviderGray16BitRasterizer(null!));
+            new PointDistanceProviderRasterizer<int>(null!));
     }
 
     [Test]

@@ -72,7 +72,7 @@ Map `-1` to black, the boundary value `0` to middle gray, and `1` to white. Clam
 to the ends of that interval:
 
 ```csharp
-var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(
+var rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(
     signedDistance =>
     {
         float normalized = Math.Clamp(
@@ -123,7 +123,7 @@ var grid = new RasterGeometry(
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(320, 320));
 
-var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(
+var rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(
     signedDistance =>
     {
         float normalized = Math.Clamp(

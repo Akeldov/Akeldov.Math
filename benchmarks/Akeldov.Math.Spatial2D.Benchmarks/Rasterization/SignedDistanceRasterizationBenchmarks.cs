@@ -14,10 +14,10 @@ public class SignedDistanceRasterizationBenchmarks
     private CompositeContour _contour = null!;
     private ContourBasedRegion _region = null!;
     private RasterGeometry _grid;
-    private SignedPointDistanceProviderGray8BitRasterizer _contourGray8Rasterizer = null!;
-    private SignedPointDistanceProviderGray16BitRasterizer _contourGray16Rasterizer = null!;
-    private SignedPointDistanceProviderGray8BitRasterizer _regionGray8Rasterizer = null!;
-    private SignedPointDistanceProviderGray16BitRasterizer _regionGray16Rasterizer = null!;
+    private SignedPointDistanceProviderRasterizer<Gray8BitColor> _contourGray8Rasterizer = null!;
+    private SignedPointDistanceProviderRasterizer<Gray16BitColor> _contourGray16Rasterizer = null!;
+    private SignedPointDistanceProviderRasterizer<Gray8BitColor> _regionGray8Rasterizer = null!;
+    private SignedPointDistanceProviderRasterizer<Gray16BitColor> _regionGray16Rasterizer = null!;
 
     [Params(128, 256)]
     public int Resolution { get; set; }
@@ -35,10 +35,10 @@ public class SignedDistanceRasterizationBenchmarks
             origin: new PointXY(-10f, -10f),
             size: new VectorXY(120f, 120f),
             resolution: new VectorXYInt(Resolution, Resolution));
-        _contourGray8Rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(ToGray8);
-        _contourGray16Rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(ToGray16);
-        _regionGray8Rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(ToGray8);
-        _regionGray16Rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(ToGray16);
+        _contourGray8Rasterizer = new SignedPointDistanceProviderRasterizer<Gray8BitColor>(ToGray8);
+        _contourGray16Rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(ToGray16);
+        _regionGray8Rasterizer = new SignedPointDistanceProviderRasterizer<Gray8BitColor>(ToGray8);
+        _regionGray16Rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(ToGray16);
     }
 
     [Benchmark]

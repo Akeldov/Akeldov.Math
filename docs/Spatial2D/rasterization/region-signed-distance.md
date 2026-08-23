@@ -22,8 +22,8 @@ var grid = new RasterGeometry(
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(160, 160));
 
-var rasterizer = new SignedPointDistanceProviderGray8BitRasterizer(distance =>
-    distance <= 0f ? byte.MaxValue : byte.MinValue);
+var rasterizer = new SignedPointDistanceProviderRasterizer<Gray8BitColor>(distance =>
+    distance <= 0f ? Gray8BitColor.White : Gray8BitColor.Black);
 
 SpatialRaster<Gray8BitColor> raster = region.Rasterize(grid, rasterizer);
 raster.SaveAsBmp("region-mask.bmp");
@@ -40,4 +40,4 @@ static IContour CreateSquareContour(float left, float bottom, float right, float
 }
 ```
 
-Use `SignedPointDistanceProviderGray16BitRasterizer` with `SaveAsPng` when 16-bit grayscale output is needed.
+Use `SignedPointDistanceProviderRasterizer<Gray16BitColor>` with `SaveAsPng` when 16-bit grayscale output is needed.

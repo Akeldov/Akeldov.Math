@@ -19,7 +19,7 @@ var grid = new RasterGeometry(
     size: new VectorXY(5f, 5f),
     resolution: new VectorXYInt(160, 160));
 
-var rasterizer = new SignedPointDistanceProviderGray16BitRasterizer(distance =>
+var rasterizer = new SignedPointDistanceProviderRasterizer<Gray16BitColor>(distance =>
 {
     float normalized = System.Math.Clamp((distance + 1f) / 2f, 0f, 1f);
     return new Gray16BitColor((ushort)(normalized * ushort.MaxValue));

@@ -18,7 +18,7 @@ var grid = new RasterGeometry(
     size: new VectorXY(5f, 2f),
     resolution: new VectorXYInt(160, 64));
 
-var rasterizer = new ParameterizedCurveDistanceGray8BitRasterizer(
+var rasterizer = new ParameterizedCurveDistanceRasterizer<Gray8BitColor>(
     (distance, curveCoordinate) =>
     {
         float normalized = 1f - Math.Clamp(distance / 0.25f, 0f, 1f);
