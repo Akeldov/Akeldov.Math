@@ -2,7 +2,6 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Contours
@@ -204,9 +203,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             return point.X >= Min.X && point.X <= Max.X &&
                 point.Y >= Min.Y && point.Y <= Max.Y;
         }
-
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
-            ParameterizedRectangleContourIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)

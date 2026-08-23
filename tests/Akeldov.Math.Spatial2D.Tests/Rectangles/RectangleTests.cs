@@ -161,7 +161,7 @@ public class RectangleTests
     [Test]
     public void RectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
-        IContour contour = new RectangleContour(
+        var contour = new RectangleContour(
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
         var ray = new Ray(new PointXY(1f, 0f));
@@ -415,7 +415,7 @@ public class RectangleTests
     [Test]
     public void ParameterizedRectangleContour_RayIntersections_ReturnBoundaryIntersections()
     {
-        IContour contour = new ParameterizedRectangleContour(
+        var contour = new ParameterizedRectangleContour(
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
         var ray = new Ray(new PointXY(-1f, 0.5f));
@@ -430,7 +430,7 @@ public class RectangleTests
     [Test]
     public void ParameterizedRectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
-        IContour contour = new ParameterizedRectangleContour(
+        var contour = new ParameterizedRectangleContour(
             new PointXY(0f, 0f),
             new PointXY(2f, 1f));
         var ray = new Ray(new PointXY(1f, 0f));

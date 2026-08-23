@@ -1,8 +1,8 @@
 # Build a Closed Contour
 
 Use `CompositeContour` to turn ordered vertices or a chain of contour paths into one closed
-boundary. The contour can then answer enclosure, distance, projection, and ray-intersection
-queries.
+boundary. The contour can then answer enclosure, distance, and projection queries; its concrete
+type also has a ray-intersection extension method.
 
 ## Create a polygon from vertices
 
@@ -62,8 +62,8 @@ var curvedContour = new CompositeContour(paths);
 
 Arc angles are expressed in radians. `ParameterizedSegment`, `ParameterizedArc`,
 `ParameterizedSegmentChain`, and the Bezier path types all implement `IContourPath`. That
-interface combines the finite directed path contract with the rightward-crossing and
-ray-intersection queries required by composite contours.
+interface combines the finite directed path contract with fill-rule crossings and directly
+declares the ray-intersection query required by composite contours.
 
 The constructor validates connections using the default geometry tolerance, but it does not
 reorder paths or move endpoints to close small gaps. Build the paths in traversal order and use

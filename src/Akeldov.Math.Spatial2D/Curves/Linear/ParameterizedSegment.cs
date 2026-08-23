@@ -103,7 +103,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         public int CountRightwardCrossings(PointXY origin) =>
             ((Segment)this).CountRightwardCrossings(origin);
 
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+        List<PointXY> IContourPath.GetPointIntersections(Ray ray) =>
             ParameterizedSegmentIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>

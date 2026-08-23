@@ -2,7 +2,6 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Contours
@@ -123,9 +122,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             return local.X >= -Width * 0.5f && local.X <= Width * 0.5f &&
                 local.Y >= -Height * 0.5f && local.Y <= Height * 0.5f;
         }
-
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
-            OrientedRectangleContourIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)

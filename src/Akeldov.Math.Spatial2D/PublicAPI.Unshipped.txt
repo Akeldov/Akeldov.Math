@@ -248,8 +248,7 @@ Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.ParameterizedCompo
 Akeldov.Math.Spatial2D.Curves.CircleIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.CompositeContourIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.IContourPath
-Akeldov.Math.Spatial2D.Curves.IRayIntersectionProvider
-Akeldov.Math.Spatial2D.Curves.IRayIntersectionProvider.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.IContourPath.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider
 Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int
 Akeldov.Math.Spatial2D.Curves.OrientedRectangleContourIntersectionExtensions

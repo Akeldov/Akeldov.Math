@@ -229,7 +229,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 AngularDirection,
                 IsFullCircle);
 
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+        List<PointXY> IContourPath.GetPointIntersections(Ray ray) =>
             ParameterizedArcIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <summary>

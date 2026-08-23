@@ -22,8 +22,7 @@ The curve interfaces add capabilities instead of imposing one representation:
 | <xref:Akeldov.Math.Spatial2D.Curves.IPath> | Adds ordered `StartPoint` and `EndPoint` properties to a parameterized curve. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IFinitePath> | Combines a finite length, ordered endpoints, and parameterization. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider> | Counts fill-rule crossings of a horizontal rightward ray. |
-| <xref:Akeldov.Math.Spatial2D.Curves.IRayIntersectionProvider> | Reports isolated point intersections with an arbitrary ray. |
-| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | Combines `IFinitePath` with both spatial-query capabilities required by composite contours. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | Combines `IFinitePath` and fill-rule crossings with a direct polymorphic ray-intersection query required by composite contours. |
 
 Use the narrowest interface that expresses the operation. For example, an algorithm that only
 needs proximity can accept `ICurve`, an algorithm that walks from one endpoint to another can
@@ -99,8 +98,9 @@ the original curve polynomial.
 ## Intersect a curve with a ray
 
 Concrete `GetPointIntersections` extension methods return isolated intersection points in the
-forward direction of the supplied ray. Use `IRayIntersectionProvider` where polymorphic dispatch
-is required:
+forward direction of the supplied ray. `IContourPath` declares the ray overload directly where
+composite contours require polymorphic dispatch. `IContour` does not declare this operation;
+concrete contour types expose it through extension methods:
 
 ```csharp
 using System.Collections.Generic;

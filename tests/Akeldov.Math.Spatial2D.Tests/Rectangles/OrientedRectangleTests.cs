@@ -167,7 +167,7 @@ public class OrientedRectangleTests
     [Test]
     public void OrientedRectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
-        IContour contour = new OrientedRectangleContour(
+        var contour = new OrientedRectangleContour(
             new PointXY(0f, 0f),
             new VectorXY(4f, 2f),
             MathF.PI * 0.5f);
@@ -484,7 +484,7 @@ public class OrientedRectangleTests
     [Test]
     public void ParameterizedOrientedRectangleContour_PointIntersections_WhenRayOverlapsEdge_ReturnsEmpty()
     {
-        IContour contour = new ParameterizedOrientedRectangleContour(
+        var contour = new ParameterizedOrientedRectangleContour(
             new PointXY(0f, 0f),
             new VectorXY(4f, 2f),
             MathF.PI * 0.5f);

@@ -1,6 +1,6 @@
 # Intersections
 
-Binary intersection operations are extension methods on concrete geometry types. Ray overloads return isolated intersection points in the forward direction of the ray. Code that needs polymorphic ray queries can use `IRayIntersectionProvider`; contour segments expose the combined `IContourPath` capability. The base `ICurve` contract is limited to point distance and projection.
+Binary intersection operations are extension methods on concrete geometry types. Ray overloads return isolated intersection points in the forward direction of the ray. `IContourPath` declares its ray overload directly so composite contours can query heterogeneous paths polymorphically. `IContour` does not declare ray intersections; keep a concrete contour type when calling its intersection extension. The base `ICurve` contract is limited to point distance and projection.
 
 Linear and circular curves provide overloads for intersections with `Ray`, `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the ray and linear target overloads and numerical `Arc` and `ParameterizedArc` overloads. All of these source types also provide overloads for target `QuadraticBezier` and `CubicBezier` curves.
 

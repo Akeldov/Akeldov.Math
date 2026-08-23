@@ -28,14 +28,15 @@ The contour interfaces add closed-boundary capabilities to the curve model:
 |---|---|
 | <xref:Akeldov.Math.Spatial2D.Contours.IContour> | A finite closed curve with `Length`, `Encloses`, unsigned `Distance`, and `SignedDistance`. |
 | <xref:Akeldov.Math.Spatial2D.Contours.IParameterizedContour> | Adds a length-based curve coordinate and parameterized projection. |
-| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | A finite directed path with the rightward-crossing and ray-intersection capabilities required by a composite contour. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | A finite directed path with fill-rule crossings and a directly declared ray-intersection query required by a composite contour. |
 | <xref:Akeldov.Math.Spatial2D.Contours.ICompositeContour> | Exposes the contour paths forming a contour as a read-only structural view. |
 | <xref:Akeldov.Math.Spatial2D.Contours.IParameterizedCompositeContour> | Combines a composite boundary with one continuous coordinate around it. |
 
 All contours implement <xref:Akeldov.Math.Spatial2D.Curves.ICurve> for point distance and
 projection. They separately implement
-<xref:Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider> for fill-rule queries and
-<xref:Akeldov.Math.Spatial2D.Curves.IRayIntersectionProvider> for polymorphic ray intersections.
+<xref:Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider> for fill-rule queries. `IContour`
+does not expose polymorphic ray intersections; concrete contour types provide those operations
+through extension methods.
 
 ## Choose a concrete contour
 
@@ -154,7 +155,8 @@ CurveProjection projection = circle.Project(sample);
 boundary and enclosure calculations.
 
 Concrete contour types expose `GetPointIntersections` through intersection extension methods;
-use `IRayIntersectionProvider` when polymorphic dispatch is required. Composite contours merge
+`IContour` itself does not declare the operation. `IContourPath` directly declares the ray
+overload needed for polymorphic dispatch inside a composite contour. Composite contours merge
 results from their constituent paths and remove duplicate hits at shared endpoints using exact
 point equality.
 

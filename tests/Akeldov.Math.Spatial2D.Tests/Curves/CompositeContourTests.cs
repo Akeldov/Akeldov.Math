@@ -160,7 +160,7 @@ public class CompositeContourTests
     [Test]
     public void GetPointIntersections_ReturnsBoundaryIntersections()
     {
-        IContour contour = CreateSquareContour();
+        CompositeContour contour = CreateSquareContour();
         var ray = new Ray(new PointXY(-1f, 1f));
 
         List<PointXY> intersections = contour.GetPointIntersections(ray);

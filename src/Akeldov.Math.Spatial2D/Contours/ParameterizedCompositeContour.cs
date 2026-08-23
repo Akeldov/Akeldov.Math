@@ -71,9 +71,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             return _contour.Encloses(point);
         }
 
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
-            ParameterizedCompositeContourIntersectionExtensions.GetPointIntersections(this, ray);
-
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
         {

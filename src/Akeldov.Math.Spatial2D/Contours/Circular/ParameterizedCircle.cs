@@ -1,7 +1,6 @@
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Contours
@@ -92,9 +91,6 @@ namespace Akeldov.Math.Spatial2D.Contours
         {
             return _circle.Encloses(point);
         }
-
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
-            ParameterizedCircleIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)

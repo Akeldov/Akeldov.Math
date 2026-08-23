@@ -4,8 +4,9 @@ Curves describe one-dimensional geometry in 2D space: infinite lines, half-lines
 They live in the `Akeldov.Math.Spatial2D.Curves` namespace and are used by contours, regions, fields, and rasterizers.
 
 Every `ICurve` can measure point distance and project a point onto itself. Supported concrete curve types
-report binary intersections through extension methods, while contour paths and contours expose
-polymorphic ray intersections through `IRayIntersectionProvider`.
+report binary intersections through extension methods. `IContourPath` additionally declares a ray
+overload directly so composite contours can dispatch the operation across heterogeneous paths;
+`IContour` does not expose a polymorphic ray-intersection contract.
 Parameterized curves additionally expose a length-based curve coordinate through `GetPoint` and `ProjectWithParameter`.
 For open polylines, [`ParameterizedSegmentChain`](linear/parameterized-segment-chain.md) composes consecutive directed segments behind one finite-path API.
 
@@ -24,7 +25,7 @@ Non-parameterized thumbnails show distance rasters; parameterized thumbnails sho
 | - | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Cubic Bezier growing-thickness raster" src="../../assets/spatial2d/curves/cubic-bezier-growing-thickness.png"><br><span class="curve-overview-link">[`CubicBezier`](bezier/cubic-bezier.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Four-point Bezier segment commonly used by vector drawing formats. |
 
 `Line` and `ParameterizedLine` can also be constructed from a point and direction angle in radians.
-Bezier curve types implement `IFinitePath`, so they can be used anywhere a directed bounded curve is expected.
+Bezier curve types implement `IContourPath`, so they can be used as directed bounded paths in composite contours.
 Their `GetPointAt` methods use the normalized Bezier parameter `t` in the `[0, 1]` range, while `GetPoint`
 uses the library's length-based curve coordinate.
 

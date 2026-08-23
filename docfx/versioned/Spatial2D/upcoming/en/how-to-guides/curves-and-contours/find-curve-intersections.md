@@ -2,8 +2,8 @@
 
 Use the concrete `GetPointIntersections` extension methods to find isolated points where two
 supported geometries meet. The ray overloads return only intersections at the ray origin or in
-front of it. Use `IRayIntersectionProvider` when a contour or contour path must be queried
-polymorphically; the base `ICurve` contract contains only distance and projection operations.
+front of it. `IContourPath` declares the ray overload directly for polymorphic queries across
+contour paths. `IContour` and the base `ICurve` contract do not declare ray intersections.
 
 ## Cast a ray through a curve
 
@@ -39,17 +39,20 @@ Ray results are ordered in the forward direction of the ray.
 The returned `List<PointXY>` is new, mutable, and owned by the caller. It can be sorted, filtered,
 or reused without changing the curve.
 
-## Use the ray-intersection capability
+## Query a contour path polymorphically
 
-Contours and `IContourPath` implementations implement `IRayIntersectionProvider`.
-Accept that capability when an algorithm needs polymorphic ray intersections:
+Accept `IContourPath` when an algorithm needs polymorphic ray intersections across the paths
+that can form a composite contour:
 
 ```csharp
-static List<PointXY> FindIntersections(IRayIntersectionProvider geometry, Ray ray)
+static List<PointXY> FindIntersections(IContourPath path, Ray ray)
 {
-    return geometry.GetPointIntersections(ray);
+    return path.GetPointIntersections(ray);
 }
 ```
+
+For a contour, keep its concrete type and call the corresponding extension method. `IContour`
+does not provide a polymorphic ray-intersection operation.
 
 Linear and circular curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
 `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`), plus

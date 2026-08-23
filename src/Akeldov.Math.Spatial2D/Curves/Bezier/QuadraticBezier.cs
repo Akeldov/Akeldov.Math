@@ -129,7 +129,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             return BezierPathApproximation.ProjectWithParameter(GetPointAtUnchecked, point);
         }
 
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+        List<PointXY> IContourPath.GetPointIntersections(Ray ray) =>
             QuadraticBezierIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>

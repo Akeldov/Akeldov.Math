@@ -273,8 +273,6 @@ public class ContourBasedRegionTests
             return Encloses(point) ? -distance : distance;
         }
 
-        public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
-
         public CurveProjection Project(PointXY point)
         {
             return Curves[0].Project(point);

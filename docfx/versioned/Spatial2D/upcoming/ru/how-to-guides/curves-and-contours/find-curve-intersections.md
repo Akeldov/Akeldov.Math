@@ -2,8 +2,9 @@
 
 Используйте методы расширения `GetPointIntersections` конкретных типов, чтобы найти изолированные
 точки пересечения поддерживаемых геометрий. Перегрузки для луча возвращают только пересечения в
-начале луча или дальше по его направлению. Для полиморфных запросов к контурам и путям контура
-используйте `IRayIntersectionProvider`; базовый `ICurve` содержит только расстояние и проекцию.
+начале луча или дальше по его направлению. `IContourPath` объявляет перегрузку для луча напрямую,
+чтобы полиморфно обрабатывать пути контура. `IContour` и базовый `ICurve` пересечения с лучом не
+объявляют.
 
 ## Провести луч через кривую
 
@@ -39,18 +40,20 @@ List<PointXY> intersections = boundary.GetPointIntersections(ray);
 Метод возвращает новый изменяемый `List<PointXY>`, принадлежащий вызывающему коду. Список можно
 сортировать, фильтровать и переиспользовать, не изменяя кривую.
 
-## Использовать capability пересечения с лучом
+## Полиморфно запросить путь контура
 
-Контуры и реализации `IContourPath` поддерживают `IRayIntersectionProvider`. Принимайте этот
-capability-интерфейс, когда алгоритму нужны
-полиморфные пересечения с лучом:
+Принимайте `IContourPath`, когда алгоритму нужны полиморфные пересечения с лучом для путей,
+из которых можно построить составной контур:
 
 ```csharp
-static List<PointXY> FindIntersections(IRayIntersectionProvider geometry, Ray ray)
+static List<PointXY> FindIntersections(IContourPath path, Ray ray)
 {
-    return geometry.GetPointIntersections(ray);
+    return path.GetPointIntersections(ray);
 }
 ```
+
+Для контура сохраните его конкретный тип и вызовите соответствующий метод расширения. `IContour`
+не предоставляет полиморфную операцию пересечения с лучом.
 
 Линейные и круговые кривые (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
 `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc` и `ParameterizedArc`), а также

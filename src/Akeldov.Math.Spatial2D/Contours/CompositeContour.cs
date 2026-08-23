@@ -98,9 +98,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             return Distance(point) == 0f;
         }
 
-        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
-            CompositeContourIntersectionExtensions.GetPointIntersections(this, ray);
-
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
         {
