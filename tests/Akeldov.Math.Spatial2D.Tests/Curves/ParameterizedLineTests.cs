@@ -110,36 +110,6 @@ public class ParameterizedLineTests
     }
 
     [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayIsNearlyOnLine_ReturnsRayOrigin()
-    {
-        const float geometryEpsilon = 0.01f;
-        var line = new ParameterizedLine(new PointXY(-5f, 0f), new VectorXY(5f, 0f));
-        var ray = new Ray(new PointXY(2f, 0.005f));
-
-        var defaultIntersections = line.GetRayIntersections(ray);
-        var tolerantIntersections = line.GetRayIntersections(ray, geometryEpsilon);
-
-        Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
-        AssertVector(tolerantIntersections[0], 2f, 0.005f);
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        var line = default(ParameterizedLine);
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            line.GetRayIntersections(ray, geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
-    }
-
-    [Test]
     public void Constructor_WhenReferencePointModeIsGlobalZero_UsesClosestPointToGlobalOrigin()
     {
         var line = new ParameterizedLine(new PointXY(2f, 3f), new PointXY(4f, 3f), LineReferencePointMode.GlobalZero);

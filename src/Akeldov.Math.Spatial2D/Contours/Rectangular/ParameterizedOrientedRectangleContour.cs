@@ -222,29 +222,6 @@ namespace Akeldov.Math.Spatial2D.Contours
         public List<PointXY> GetPointIntersections(Ray ray) =>
             ((OrientedRectangleContour)this).GetPointIntersections(ray);
 
-        /// <inheritdoc cref="OrientedRectangleContour.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            var intersections = new List<PointXY>();
-            PointXY localOrigin = ToLocalPoint(ray.Origin);
-            VectorXY localDirection = ToLocalVector(ray.Direction);
-            float minX = -Width * 0.5f;
-            float maxX = Width * 0.5f;
-            float minY = -Height * 0.5f;
-            float maxY = Height * 0.5f;
-
-            AddLocalVerticalEdgeIntersections(intersections, localOrigin, localDirection, minX, minY, maxY, geometryEpsilon);
-            AddLocalVerticalEdgeIntersections(intersections, localOrigin, localDirection, maxX, minY, maxY, geometryEpsilon);
-            AddLocalHorizontalEdgeIntersections(intersections, localOrigin, localDirection, minY, minX, maxX, geometryEpsilon);
-            AddLocalHorizontalEdgeIntersections(intersections, localOrigin, localDirection, maxY, minX, maxX, geometryEpsilon);
-
-            return intersections;
-        }
-
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
         {

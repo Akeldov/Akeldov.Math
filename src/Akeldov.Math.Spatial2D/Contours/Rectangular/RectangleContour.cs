@@ -139,7 +139,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             for (int i = 0; i < edges.Length; i++)
             {
                 List<PointXY> edgeIntersections = edges[i].GetPointIntersections(ray);
-                if (edgeIntersections.Count == 0 && edges[i].GetRayIntersections(ray).Count != 0)
+                if (edgeIntersections.Count == 0 && edges[i].HasContinuousIntersection(ray))
                     return new List<PointXY>();
 
                 for (int j = 0; j < edgeIntersections.Count; j++)
@@ -149,10 +149,16 @@ namespace Akeldov.Math.Spatial2D.Contours
             return intersections;
         }
 
-        /// <inheritdoc cref="ICurve.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
+        /// <summary>
+        /// Returns point intersections between this contour and the specified ray.
+        /// </summary>
+        /// <param name="ray">The ray to intersect with this contour.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.</exception>
+        private List<PointXY> GetIntersectionsWithTolerance(
             Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+            float geometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 

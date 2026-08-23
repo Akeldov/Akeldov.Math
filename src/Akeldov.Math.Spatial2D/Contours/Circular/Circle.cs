@@ -109,7 +109,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="ray">The ray to intersect with the circle.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<PointXY> GetPointIntersections(Ray ray) =>
-            GetRayIntersections(ray);
+            GetIntersectionsWithTolerance(ray, GeometryConstants.GeometryEpsilon);
 
         /// <summary>
         /// Returns point intersections between this circle and the specified ray.
@@ -117,9 +117,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="ray">The ray to intersect with the circle.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetRayIntersections(
+        private List<PointXY> GetIntersectionsWithTolerance(
             Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+            float geometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 

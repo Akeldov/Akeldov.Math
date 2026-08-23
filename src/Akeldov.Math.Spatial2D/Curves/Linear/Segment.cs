@@ -130,21 +130,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             const float geometryEpsilon = GeometryConstants.GeometryEpsilon;
 
-            VectorXY segmentDirection = EndpointB - EndpointA;
-            if (segmentDirection.SquaredLength > geometryEpsilon * geometryEpsilon &&
-                VectorXY.Cross(segmentDirection, ray.Direction).IsAlmostZero(geometryEpsilon) &&
-                VectorXY.Cross(EndpointA - ray.Origin, ray.Direction).IsAlmostZero(geometryEpsilon))
-            {
-                float endpointACoordinate = VectorXY.Dot(EndpointA - ray.Origin, ray.Direction);
-                float endpointBCoordinate = VectorXY.Dot(EndpointB - ray.Origin, ray.Direction);
-                float overlapStart = MathF.Max(0f, MathF.Min(endpointACoordinate, endpointBCoordinate));
-                float overlapEnd = MathF.Max(endpointACoordinate, endpointBCoordinate);
+            if (HasContinuousIntersection(ray))
+                return new List<PointXY>();
 
-                if (overlapEnd - overlapStart > geometryEpsilon)
-                    return new List<PointXY>();
-            }
-
-            return GetRayIntersections(ray, geometryEpsilon);
+            return GetIntersectionsWithTolerance(ray, geometryEpsilon);
         }
 
         /// <summary>
@@ -155,9 +144,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this segment.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetRayIntersections(
+        private List<PointXY> GetIntersectionsWithTolerance(
             Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+            float geometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
@@ -199,6 +188,24 @@ namespace Akeldov.Math.Spatial2D.Curves
             }
 
             return intersections;
+        }
+
+        internal bool HasContinuousIntersection(Ray ray)
+        {
+            const float geometryEpsilon = GeometryConstants.GeometryEpsilon;
+            VectorXY segmentDirection = EndpointB - EndpointA;
+            if (segmentDirection.SquaredLength <= geometryEpsilon * geometryEpsilon ||
+                !VectorXY.Cross(segmentDirection, ray.Direction).IsAlmostZero(geometryEpsilon) ||
+                !VectorXY.Cross(EndpointA - ray.Origin, ray.Direction).IsAlmostZero(geometryEpsilon))
+            {
+                return false;
+            }
+
+            float endpointACoordinate = VectorXY.Dot(EndpointA - ray.Origin, ray.Direction);
+            float endpointBCoordinate = VectorXY.Dot(EndpointB - ray.Origin, ray.Direction);
+            float overlapStart = MathF.Max(0f, MathF.Min(endpointACoordinate, endpointBCoordinate));
+            float overlapEnd = MathF.Max(endpointACoordinate, endpointBCoordinate);
+            return overlapEnd - overlapStart > geometryEpsilon;
         }
 
         private void AddFirstCollinearIntersection(Ray ray, List<PointXY> intersections, float geometryEpsilon)

@@ -100,7 +100,7 @@ public class ParameterizedSegmentChainTests
     }
 
     [Test]
-    public void GetRayIntersections_WhenRayCrossesChain_ReturnsDistinctPointsInRayOrder()
+    public void GetPointIntersections_WhenRayCrossesChain_ReturnsDistinctPointsInRayOrder()
     {
         var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 1f),
@@ -109,7 +109,7 @@ public class ParameterizedSegmentChainTests
             new PointXY(0f, 3f));
         var ray = new Ray(new PointXY(1f, 0f), MathF.PI / 2f);
 
-        List<PointXY> intersections = chain.GetRayIntersections(ray);
+        List<PointXY> intersections = chain.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(2));
         AssertPoint(intersections[0], 1f, 1f);
@@ -117,7 +117,7 @@ public class ParameterizedSegmentChainTests
     }
 
     [Test]
-    public void GetRayIntersections_WhenRayHitsSharedVertex_ReturnsDistinctPoint()
+    public void GetPointIntersections_WhenRayHitsSharedVertex_ReturnsDistinctPoint()
     {
         var chain = new ParameterizedSegmentChain(
             new PointXY(0f, 0f),
@@ -125,21 +125,10 @@ public class ParameterizedSegmentChainTests
             new PointXY(2f, 0f));
         var ray = new Ray(new PointXY(1f, -1f), MathF.PI / 2f);
 
-        List<PointXY> intersections = chain.GetRayIntersections(ray);
+        List<PointXY> intersections = chain.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertPoint(intersections[0], 1f, 1f);
-    }
-
-    [Test]
-    public void GetRayIntersections_WhenGeometryEpsilonIsInvalid_Throws()
-    {
-        var chain = new ParameterizedSegmentChain(
-            new PointXY(0f, 0f),
-            new PointXY(1f, 0f));
-
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            chain.GetRayIntersections(default(Ray), float.NaN));
     }
 
     private static void AssertPoint(PointXY actual, float expectedX, float expectedY)

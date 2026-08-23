@@ -85,18 +85,6 @@ namespace Akeldov.Math.Spatial2D.Fields
         public List<PointXY> GetPointIntersections(Ray ray) =>
             _curve.GetPointIntersections(ray);
 
-        /// <inheritdoc cref="ICurve.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-#pragma warning disable CS0618
-            return _curve.GetRayIntersections(ray, geometryEpsilon);
-#pragma warning restore CS0618
-        }
-
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) => _curve.CountRightwardCrossings(origin);
 

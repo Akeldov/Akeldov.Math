@@ -298,50 +298,38 @@ public class SegmentTests
     }
 
     [Test]
-    public void RayIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
+    public void PointIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
     {
         var segment = new Segment(new PointXY(1f, -1f), new PointXY(1f, 1f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
     }
 
     [Test]
-    public void RayIntersections_WhenEndpointIsExcluded_DoesNotReturnThatEndpoint()
+    public void PointIntersections_WhenEndpointIsExcluded_DoesNotReturnThatEndpoint()
     {
         var segment = new Segment(new PointXY(1f, 0f), new PointXY(1f, 1f), includesEndpointA: false, includesEndpointB: true);
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
 
     [Test]
-    public void RayIntersections_WhenEndpointIsIncluded_ReturnsThatEndpoint()
+    public void PointIntersections_WhenEndpointIsIncluded_ReturnsThatEndpoint()
     {
         var segment = new Segment(new PointXY(1f, 0f), new PointXY(1f, 1f), includesEndpointA: true, includesEndpointB: true);
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
-    }
-
-    [Test]
-    public void RayIntersections_WhenRayStartsInsideCollinearSegment_ReturnsRayOrigin()
-    {
-        var segment = new Segment(new PointXY(0f, 0f), new PointXY(10f, 0f));
-        var ray = new Ray(new PointXY(4f, 0f));
-
-        var intersections = segment.GetRayIntersections(ray);
-
-        Assert.That(intersections, Has.Count.EqualTo(1));
-        AssertVector(intersections[0], 4f, 0f);
     }
 
     [Test]
@@ -368,59 +356,6 @@ public class SegmentTests
     }
 
     [Test]
-    public void RayIntersections_WhenCollinearSegmentIsAhead_ReturnsFirstIncludedEndpoint()
-    {
-        var segment = new Segment(new PointXY(4f, 0f), new PointXY(10f, 0f));
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var intersections = segment.GetRayIntersections(ray);
-
-        Assert.That(intersections, Has.Count.EqualTo(1));
-        AssertVector(intersections[0], 4f, 0f);
-    }
-
-    [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenSegmentIsNearlyCollinear_ReturnsFirstIntersection()
-    {
-        const float geometryEpsilon = 0.01f;
-        var segment = new Segment(new PointXY(4f, 0.005f), new PointXY(10f, 0.005f));
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var defaultIntersections = segment.GetRayIntersections(ray);
-        var tolerantIntersections = segment.GetRayIntersections(ray, geometryEpsilon);
-
-        Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
-        AssertVector(tolerantIntersections[0], 4f, 0.005f);
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        var segment = new Segment(new PointXY(1f, -1f), new PointXY(1f, 1f));
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            segment.GetRayIntersections(ray, geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
-    }
-
-    [Test]
-    public void RayIntersections_WhenCollinearSegmentStartsAtExcludedRayOrigin_ReturnsEmpty()
-    {
-        var segment = new Segment(new PointXY(0f, 0f), new PointXY(10f, 0f), includesEndpointA: false, includesEndpointB: true);
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var intersections = segment.GetRayIntersections(ray);
-
-        Assert.That(intersections, Is.Empty);
-    }
-
-    [Test]
     public void ProjectWithParameter_WhenPointProjectsOutsideSegment_ClampsToNearestEndpoint()
     {
         var segment = new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(4f, 0f));
@@ -433,18 +368,18 @@ public class SegmentTests
     }
 
     [Test]
-    public void RayIntersections_WhenSegmentIsBehindRay_ReturnsEmpty()
+    public void PointIntersections_WhenSegmentIsBehindRay_ReturnsEmpty()
     {
         var segment = new Segment(new PointXY(-4f, 0f), new PointXY(-2f, 0f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
 
     [Test]
-    public void RayIntersections_WhenSegmentCrossesJustAheadOfRayOrigin_ReturnsIntersection()
+    public void PointIntersections_WhenSegmentCrossesJustAheadOfRayOrigin_ReturnsIntersection()
     {
         float tiny = GeometryConstants.GeometryEpsilon * 0.5f;
         var segment = new Segment(
@@ -452,31 +387,31 @@ public class SegmentTests
             new PointXY(tiny, 1f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], tiny, 0f);
     }
 
     [Test]
-    public void RayIntersections_WhenDegenerateSegmentPointIsOnRay_ReturnsPoint()
+    public void PointIntersections_WhenDegenerateSegmentPointIsOnRay_ReturnsPoint()
     {
         var segment = new Segment(new PointXY(2f, 0f), new PointXY(2f, 0f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
     }
 
     [Test]
-    public void RayIntersections_WhenDegenerateSegmentPointIsExcluded_ReturnsEmpty()
+    public void PointIntersections_WhenDegenerateSegmentPointIsExcluded_ReturnsEmpty()
     {
         var segment = new Segment(new PointXY(2f, 0f), new PointXY(2f, 0f), includesEndpointA: false, includesEndpointB: false);
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = segment.GetRayIntersections(ray);
+        var intersections = segment.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }

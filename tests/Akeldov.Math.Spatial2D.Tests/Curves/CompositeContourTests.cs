@@ -478,13 +478,6 @@ public class CompositeContourTests
             return 1;
         }
 
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return new List<PointXY>();
-        }
-
         public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
 
         public float Distance(PointXY point) => 1f;

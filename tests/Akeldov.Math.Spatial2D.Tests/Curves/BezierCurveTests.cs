@@ -123,7 +123,7 @@ public class BezierCurveTests
             new PointXY(3f, 0f));
         var ray = new Ray(new PointXY(-1f, 2.25f));
 
-        List<PointXY> intersections = curve.GetRayIntersections(ray);
+        List<PointXY> intersections = curve.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertPoint(intersections[0], 1.5f, 2.25f);

@@ -154,14 +154,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         public List<PointXY> GetPointIntersections(Ray ray) =>
             BezierPathApproximation.GetPointIntersections(GetPointAtUnchecked, ray);
 
-        /// <inheritdoc cref="ICurve.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return BezierPathApproximation.GetRayIntersections(GetPointAtUnchecked, ray, geometryEpsilon);
-        }
-
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) =>
             BezierPathApproximation.CountRightwardCrossings(

@@ -114,7 +114,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
 
-            List<PointXY> intersections = GetRayIntersections(new Ray(origin), 0f);
+            List<PointXY> intersections = GetIntersectionsWithTolerance(new Ray(origin), 0f);
             int count = 0;
 
             for (int i = 0; i < intersections.Count; i++)
@@ -167,10 +167,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this arc.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<PointXY> GetPointIntersections(Ray ray) =>
-            GetRayIntersections(ray);
+            GetIntersectionsWithTolerance(ray, GeometryConstants.GeometryEpsilon);
 
-        /// <inheritdoc cref="ICurve.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(Ray ray, float geometryEpsilon = 1E-06F)
+        /// <summary>
+        /// Returns point intersections between this arc and the specified ray.
+        /// </summary>
+        /// <param name="ray">The ray to intersect with this arc.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.</exception>
+        private List<PointXY> GetIntersectionsWithTolerance(Ray ray, float geometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 

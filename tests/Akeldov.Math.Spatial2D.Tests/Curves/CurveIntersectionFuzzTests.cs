@@ -6,7 +6,6 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 public class CurveIntersectionFuzzTests
 {
     private const int IterationCount = 200;
-    private const float IntersectionEpsilon = 1e-3f;
     private const float AssertionEpsilon = 2e-3f;
 
     [TestCase(15277)]
@@ -20,7 +19,7 @@ public class CurveIntersectionFuzzTests
             var segment = CreateSegment(random);
             var ray = CreateRay(random);
 
-            var intersections = segment.GetRayIntersections(ray, IntersectionEpsilon);
+            var intersections = segment.GetPointIntersections(ray);
 
             Assert.That(
                 intersections,
@@ -59,14 +58,14 @@ public class CurveIntersectionFuzzTests
             var ray = CreateRay(random);
 
             AssertIntersectionsLieOnCurveAndRay(
-                circle.GetRayIntersections(ray, IntersectionEpsilon),
+                circle.GetPointIntersections(ray),
                 circle.Distance,
                 ray,
                 seed,
                 iteration);
 
             AssertIntersectionsLieOnCurveAndRay(
-                arc.GetRayIntersections(ray, IntersectionEpsilon),
+                arc.GetPointIntersections(ray),
                 arc.Distance,
                 ray,
                 seed,

@@ -95,15 +95,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
         /// <inheritdoc/>
         public List<PointXY> GetPointIntersections(Ray ray) =>
-            GetRayIntersections(ray);
-
-        /// <inheritdoc cref="Circle.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return _circle.GetRayIntersections(ray, geometryEpsilon);
-        }
+            _circle.GetPointIntersections(ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)

@@ -273,13 +273,6 @@ public class ContourBasedRegionTests
             return Encloses(point) ? -distance : distance;
         }
 
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return new List<PointXY>();
-        }
-
         public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
 
         public CurveProjection Project(PointXY point)
@@ -303,13 +296,6 @@ public class ContourBasedRegionTests
         public PointXY GetPoint(float curveCoordinate) => new PointXY(0f, 0f);
 
         public int CountRightwardCrossings(PointXY origin) => 0;
-
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return new List<PointXY>();
-        }
 
         public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
 

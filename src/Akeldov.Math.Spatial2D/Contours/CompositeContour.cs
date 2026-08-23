@@ -116,32 +116,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             return intersections;
         }
 
-        /// <inheritdoc cref="ICurve.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            var intersections = new List<PointXY>();
-
-            for (int i = 0; i < _curves.Length; i++)
-            {
-#pragma warning disable CS0618
-                List<PointXY> curveIntersections = _curves[i].GetRayIntersections(ray, geometryEpsilon);
-#pragma warning restore CS0618
-                if (curveIntersections == null)
-                    continue;
-
-                for (int j = 0; j < curveIntersections.Count; j++)
-                {
-                    AddDistinct(intersections, curveIntersections[j], geometryEpsilon);
-                }
-            }
-
-            return intersections;
-        }
-
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
         {

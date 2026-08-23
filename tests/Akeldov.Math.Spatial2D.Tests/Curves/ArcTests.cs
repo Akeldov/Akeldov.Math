@@ -67,12 +67,12 @@ public class ArcTests
     }
 
     [Test]
-    public void RayIntersections_WhenRayHitsArc_ReturnsIntersectionOnArc()
+    public void PointIntersections_WhenRayHitsArc_ReturnsIntersectionOnArc()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);
         var ray = new Ray(new PointXY(-1f, 0f));
 
-        var intersections = arc.GetRayIntersections(ray);
+        var intersections = arc.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
@@ -121,64 +121,14 @@ public class ArcTests
     }
 
     [Test]
-    public void RayIntersections_WhenRayHitsCircleOutsideArc_ReturnsEmpty()
+    public void PointIntersections_WhenRayHitsCircleOutsideArc_ReturnsEmpty()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);
         var ray = new Ray(new PointXY(-2f, -1f));
 
-        var intersections = arc.GetRayIntersections(ray);
+        var intersections = arc.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
-    }
-
-    [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayNearlyTouchesArc_ReturnsSingleIntersection()
-    {
-        const float geometryEpsilon = 0.001f;
-        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI);
-        var ray = new Ray(new PointXY(-2f, 1.00005f));
-
-        var defaultIntersections = arc.GetRayIntersections(ray);
-        var tolerantIntersections = arc.GetRayIntersections(ray, geometryEpsilon);
-
-        Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
-        AssertVector(tolerantIntersections[0], 0f, 1.00005f);
-    }
-
-    [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenParameterizedArcIntersectionIsJustBehindRayOrigin_ReturnsIntersection()
-    {
-        const float geometryEpsilon = 0.001f;
-        var arc = new ParameterizedArc(
-            new PointXY(0f, 0f),
-            1f,
-            0f,
-            2f * MathF.PI,
-            AngularDirection.Counterclockwise);
-        var ray = new Ray(new PointXY(1.0005f, 0f));
-
-        var defaultIntersections = arc.GetRayIntersections(ray);
-        var tolerantIntersections = arc.GetRayIntersections(ray, geometryEpsilon);
-
-        Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
-        AssertVector(tolerantIntersections[0], 1f, 0f);
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI);
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            arc.GetRayIntersections(ray, geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
     [Test]
@@ -272,24 +222,24 @@ public class ArcTests
     }
 
     [Test]
-    public void RayIntersections_WhenStartAndEndAnglesAreEqual_ReturnsOnlyZeroArcPoint()
+    public void PointIntersections_WhenStartAndEndAnglesAreEqual_ReturnsOnlyZeroArcPoint()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 0f);
         var ray = new Ray(new PointXY(-2f, 0f));
 
-        var intersections = arc.GetRayIntersections(ray);
+        var intersections = arc.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
     }
 
     [Test]
-    public void RayIntersections_WhenStartAndEndAnglesAreEqualAndRayMissesZeroArcPoint_ReturnsEmpty()
+    public void PointIntersections_WhenStartAndEndAnglesAreEqualAndRayMissesZeroArcPoint_ReturnsEmpty()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 0f);
         var ray = new Ray(new PointXY(0f, -2f), MathF.PI / 2f);
 
-        var intersections = arc.GetRayIntersections(ray);
+        var intersections = arc.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -359,24 +309,24 @@ public class ArcTests
     }
 
     [Test]
-    public void RayIntersections_WhenRadiusIsZeroAndRayPassesThroughCenter_ReturnsCenter()
+    public void PointIntersections_WhenRadiusIsZeroAndRayPassesThroughCenter_ReturnsCenter()
     {
         var arc = new Arc(new PointXY(1f, 1f), 0f, MathF.PI / 2f, MathF.PI);
         var ray = new Ray(new PointXY(1f, -1f), MathF.PI / 2f);
 
-        var intersections = arc.GetRayIntersections(ray);
+        var intersections = arc.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 1f);
     }
 
     [Test]
-    public void RayIntersections_WhenStopAngleIsOneFullTurnAfterStart_ReturnsCircleIntersections()
+    public void PointIntersections_WhenStopAngleIsOneFullTurnAfterStart_ReturnsCircleIntersections()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
         var ray = new Ray(new PointXY(-2f, 0f));
 
-        var intersections = arc.GetRayIntersections(ray);
+        var intersections = arc.GetPointIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(2));
         AssertVector(intersections[0], -1f, 0f);

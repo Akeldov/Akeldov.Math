@@ -65,18 +65,6 @@ public class RayTests
     }
 
     [Test]
-    public void RayIntersections_WhenThisRayOriginBelongsToOtherCollinearRay_ReturnsThisOrigin()
-    {
-        var ray = new Ray(new PointXY(2f, 0f));
-        var other = new Ray(new PointXY(0f, 0f));
-
-        var intersections = ray.GetRayIntersections(other);
-
-        Assert.That(intersections, Has.Count.EqualTo(1));
-        AssertVector(intersections[0], 2f, 0f);
-    }
-
-    [Test]
     public void PointIntersections_WhenCollinearRaysOverlapContinuously_ReturnsEmpty()
     {
         var ray = new Ray(new PointXY(2f, 0f));
@@ -100,89 +88,35 @@ public class RayTests
     }
 
     [Test]
-    public void RayIntersections_WhenOtherCollinearRayStartsAhead_ReturnsOtherOrigin()
-    {
-        var ray = new Ray(new PointXY(0f, 0f));
-        var other = new Ray(new PointXY(2f, 0f));
-
-        var intersections = ray.GetRayIntersections(other);
-
-        Assert.That(intersections, Has.Count.EqualTo(1));
-        AssertVector(intersections[0], 2f, 0f);
-    }
-
-    [Test]
-    public void RayIntersections_WhenCollinearRaysFaceEachOther_ReturnsThisOrigin()
-    {
-        var ray = new Ray(new PointXY(0f, 0f));
-        var other = new Ray(new PointXY(2f, 0f), MathF.PI);
-
-        var intersections = ray.GetRayIntersections(other);
-
-        Assert.That(intersections, Has.Count.EqualTo(1));
-        AssertVector(intersections[0], 0f, 0f);
-    }
-
-    [Test]
-    public void RayIntersections_WhenRaysAreParallelButNotCollinear_ReturnsEmpty()
+    public void PointIntersections_WhenRaysAreParallelButNotCollinear_ReturnsEmpty()
     {
         var ray = new Ray(new PointXY(0f, 0f));
         var other = new Ray(new PointXY(0f, 1f));
 
-        var intersections = ray.GetRayIntersections(other);
+        var intersections = ray.GetPointIntersections(other);
 
         Assert.That(intersections, Is.Empty);
     }
 
     [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenRaysAreNearlyCollinear_ReturnsOtherOrigin()
-    {
-        const float geometryEpsilon = 0.01f;
-        var ray = new Ray(new PointXY(0f, 0f));
-        var other = new Ray(new PointXY(2f, 0.005f));
-
-        var defaultIntersections = ray.GetRayIntersections(other);
-        var tolerantIntersections = ray.GetRayIntersections(other, geometryEpsilon);
-
-        Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
-        AssertVector(tolerantIntersections[0], 2f, 0.005f);
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        var ray = new Ray(new PointXY(0f, 0f));
-        var other = new Ray(new PointXY(2f, 0f));
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            ray.GetRayIntersections(other, geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
-    }
-
-    [Test]
-    public void RayIntersections_WhenNonParallelRaysCrossAhead_ReturnsIntersection()
+    public void PointIntersections_WhenNonParallelRaysCrossAhead_ReturnsIntersection()
     {
         var ray = new Ray(new PointXY(0f, 0f));
         var other = new Ray(new PointXY(2f, -1f), MathF.PI / 2f);
 
-        var intersections = ray.GetRayIntersections(other);
+        var intersections = ray.GetPointIntersections(other);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
     }
 
     [Test]
-    public void RayIntersections_WhenIntersectionIsBehindOneRay_ReturnsEmpty()
+    public void PointIntersections_WhenIntersectionIsBehindOneRay_ReturnsEmpty()
     {
         var ray = new Ray(new PointXY(0f, 0f));
         var other = new Ray(new PointXY(-2f, -1f), MathF.PI / 2f);
 
-        var intersections = ray.GetRayIntersections(other);
+        var intersections = ray.GetPointIntersections(other);
 
         Assert.That(intersections, Is.Empty);
     }

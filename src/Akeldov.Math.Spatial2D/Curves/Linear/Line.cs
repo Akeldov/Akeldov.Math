@@ -188,7 +188,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return new List<PointXY>();
             }
 
-            return GetRayIntersections(ray, geometryEpsilon);
+            return GetIntersectionsWithTolerance(ray, geometryEpsilon);
         }
 
         /// <summary>
@@ -198,9 +198,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this line.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetRayIntersections(
+        private List<PointXY> GetIntersectionsWithTolerance(
             Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+            float geometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 

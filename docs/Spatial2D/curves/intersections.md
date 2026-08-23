@@ -21,9 +21,4 @@ List<PointXY> hits = circle.GetPointIntersections(rayCaster);
 Points that belong to a continuous set of intersections are not returned. For example, a
 collinear overlap between a linear curve and the ray does not produce a representative point.
 
-## Custom Comparison Tolerance
-
-`GetPointIntersections` uses the library's standard geometry tolerance. The obsolete
-`GetRayIntersections(Ray, float)` overload remains for legacy callers that must supply a custom
-comparison tolerance; prefer `GetPointIntersections` for new code. Its `geometryEpsilon`
-argument is measured in world coordinate units.
+`GetPointIntersections` uses the library's standard geometry tolerance.

@@ -156,18 +156,6 @@ public class LineTests
     }
 
     [Test]
-    public void RayIntersections_WhenRayLiesOnLine_ReturnsRayOrigin()
-    {
-        var line = new Line(new PointXY(-5f, 0f), new PointXY(5f, 0f));
-        var ray = new Ray(new PointXY(2f, 0f));
-
-        var intersections = line.GetRayIntersections(ray);
-
-        Assert.That(intersections, Has.Count.EqualTo(1));
-        AssertVector(intersections[0], 2f, 0f);
-    }
-
-    [Test]
     public void PointIntersections_WhenRayLiesOnLine_ReturnsEmpty()
     {
         var line = new Line(new PointXY(-5f, 0f), new PointXY(5f, 0f));
@@ -179,53 +167,23 @@ public class LineTests
     }
 
     [Test]
-    public void RayIntersections_WhenRayIsParallelButNotOnLine_ReturnsEmpty()
+    public void PointIntersections_WhenRayIsParallelButNotOnLine_ReturnsEmpty()
     {
         var line = new Line(new PointXY(-5f, 1f), new PointXY(5f, 1f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = line.GetRayIntersections(ray);
+        var intersections = line.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
 
     [Test]
-    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayIsNearlyOnLine_ReturnsRayOrigin()
-    {
-        const float geometryEpsilon = 0.01f;
-        var line = new Line(new PointXY(-5f, 0f), new PointXY(5f, 0f));
-        var ray = new Ray(new PointXY(2f, 0.005f));
-
-        var defaultIntersections = line.GetRayIntersections(ray);
-        var tolerantIntersections = line.GetRayIntersections(ray, geometryEpsilon);
-
-        Assert.That(defaultIntersections, Is.Empty);
-        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
-        AssertVector(tolerantIntersections[0], 2f, 0.005f);
-    }
-
-    [TestCase(-1f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
-    {
-        var line = default(Line);
-        var ray = new Ray(new PointXY(0f, 0f));
-
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            line.GetRayIntersections(ray, geometryEpsilon));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
-    }
-
-    [Test]
-    public void RayIntersections_WhenIntersectionIsBehindRay_ReturnsEmpty()
+    public void PointIntersections_WhenIntersectionIsBehindRay_ReturnsEmpty()
     {
         var line = new Line(new PointXY(-1f, -1f), new PointXY(-1f, 1f));
         var ray = new Ray(new PointXY(0f, 0f));
 
-        var intersections = line.GetRayIntersections(ray);
+        var intersections = line.GetPointIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }

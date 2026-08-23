@@ -46,7 +46,7 @@ regions.
 Closed curves that unambiguously define an inside/outside area are represented
 by `IContour`, not by adding enclosing behavior to curve abstractions.
 
-`ICurve.GetRayIntersections` returns a new mutable `List<PointXY>` owned by the
+`ICurve.GetPointIntersections` returns a new mutable `List<PointXY>` owned by the
 caller. Preserve that ownership contract in XML comments and implementations.
 
 For circular curves, angles are expressed in radians by default. Angle

@@ -222,16 +222,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         public List<PointXY> GetPointIntersections(Ray ray) =>
             _line.GetPointIntersections(ray);
 
-        /// <inheritdoc cref="Line.GetRayIntersections(Ray, float)"/>
-        public List<PointXY> GetRayIntersections(
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            return _line.GetRayIntersections(ray, geometryEpsilon);
-        }
-
         /// <summary>
         /// Projects the specified point onto this parameterized line.
         /// </summary>
