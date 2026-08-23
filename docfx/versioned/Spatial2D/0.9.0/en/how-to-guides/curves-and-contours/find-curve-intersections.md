@@ -53,7 +53,8 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 Linear and circular curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
 `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`), plus
 `QuadraticBezier` and `CubicBezier`, also provide `GetPointIntersections` overloads for `Line`,
-`ParameterizedLine`, `Segment`, `ParameterizedSegment`, and `ParameterizedSegmentChain`:
+`ParameterizedLine`, `Segment`, `ParameterizedSegment`, and `ParameterizedSegmentChain`.
+Linear and circular curves additionally provide an exact overload for `Arc`:
 
 ```csharp
 var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
@@ -66,7 +67,8 @@ Multiple intersections are ordered along the canonical direction of a `Line` or 
 parameterized direction of a `ParameterizedLine`. A `Segment` orders them from `EndpointA` to
 `EndpointB`, while a `ParameterizedSegment` orders them from `StartPoint` to `EndPoint`. A
 `ParameterizedSegmentChain` orders distinct intersections from its `StartPoint` to its
-`EndPoint`. Both segment types restrict results according to endpoint inclusion.
+`EndPoint`. An `Arc` orders intersections counterclockwise from its `StartAngle`. Both segment
+types restrict results according to endpoint inclusion.
 
 Spatial2D does not define one general curve-versus-curve intersection method.
 
@@ -76,7 +78,8 @@ polynomial of the original curve. General `BezierCurve` does not provide these o
 
 `GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Intersections with
 `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, or
-`ParameterizedSegmentChain` use exact comparisons.
+`ParameterizedSegmentChain` or `Arc` use exact comparisons. Bezier curves do not provide the
+`Arc` overload because a general cubic curve-circle intersection has no exact algebraic solution.
 
 ## Account for overlaps and endpoints
 

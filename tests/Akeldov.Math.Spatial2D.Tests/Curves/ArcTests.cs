@@ -451,6 +451,55 @@ public class ArcTests
     }
 
     [Test]
+    public void PointIntersections_WithArc_ReturnsPointsCounterclockwiseFromTargetStartAngle()
+    {
+        var line = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+
+        List<PointXY> intersections = line.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertVector(intersections[0], 0f, 1f);
+        AssertVector(intersections[1], 0f, -1f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenTwoCirclesIntersect_ReturnsPointsInTargetArcOrder()
+    {
+        var source = new Arc(new PointXY(1f, 0f), 1f, 0f, 2f * MathF.PI);
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+
+        List<PointXY> intersections = source.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertVector(intersections[0], 0.5f, MathF.Sqrt(3f) / 2f);
+        AssertVector(intersections[1], 0.5f, -MathF.Sqrt(3f) / 2f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenConcentricArcsTouchAtEndpoint_ReturnsIsolatedPoint()
+    {
+        var source = new Arc(new PointXY(0f, 0f), 1f, MathF.PI / 2f, MathF.PI);
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);
+
+        List<PointXY> intersections = source.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 0f, 1f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenConcentricArcsContinuouslyOverlap_ReturnsEmpty()
+    {
+        var source = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI);
+        var arc = new Arc(new PointXY(0f, 0f), 1f, MathF.PI / 2f, 3f * MathF.PI / 2f);
+
+        List<PointXY> intersections = source.GetPointIntersections(arc);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void Equals_WhenOneArcIsZeroLengthAndOtherIsFullCircle_ReturnsFalse()
     {
         var zeroArc = new Arc(new PointXY(0f, 0f), 1f, 0f, 0f);

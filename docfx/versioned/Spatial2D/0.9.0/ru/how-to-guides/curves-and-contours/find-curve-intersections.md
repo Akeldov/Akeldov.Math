@@ -54,7 +54,8 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 Линейные и круговые кривые (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
 `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc` и `ParameterizedArc`), а также
 `QuadraticBezier` и `CubicBezier` предоставляют перегрузки `GetPointIntersections` для `Line`,
-`ParameterizedLine`, `Segment`, `ParameterizedSegment` и `ParameterizedSegmentChain`:
+`ParameterizedLine`, `Segment`, `ParameterizedSegment` и `ParameterizedSegmentChain`.
+Линейные и круговые кривые дополнительно предоставляют точную перегрузку для `Arc`:
 
 ```csharp
 var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
@@ -67,7 +68,8 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 параметризованному направлению `ParameterizedLine`. Для `Segment` они идут от `EndpointA` к
 `EndpointB`, а для `ParameterizedSegment` — от `StartPoint` к `EndPoint`. Для
 `ParameterizedSegmentChain` уникальные пересечения упорядочиваются от `StartPoint` цепочки к её
-`EndPoint`. Оба типа отрезков ограничивают результаты с учётом включения концов.
+`EndPoint`. Для `Arc` пересечения упорядочиваются против часовой стрелки от `StartAngle`. Оба
+типа отрезков ограничивают результаты с учётом включения концов.
 
 В Spatial2D нет единого метода для пересечения двух произвольных кривых.
 
@@ -77,7 +79,9 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 
 `GetPointIntersections(Ray)` использует стандартный геометрический допуск библиотеки. Пересечения
 с `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment` или
-`ParameterizedSegmentChain` используют точные сравнения.
+`ParameterizedSegmentChain` или `Arc` используют точные сравнения. Для кривых Безье перегрузка
+с `Arc` отсутствует, потому что пересечение общей кубической кривой с окружностью не имеет точного
+алгебраического решения.
 
 ## Учесть наложения и концы
 

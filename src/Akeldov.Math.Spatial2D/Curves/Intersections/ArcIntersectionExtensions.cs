@@ -113,6 +113,212 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns the isolated point intersections between two arcs using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="arc">The arc to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered counterclockwise from the second arc's start angle. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, Arc arc)
+        {
+            if (source.Center.Equals(arc.Center))
+            {
+                if (source.Radius != arc.Radius)
+                    return new List<PointXY>();
+
+                return GetConcentricPointIntersections(source, arc);
+            }
+
+            if (source.Radius == 0f)
+            {
+                return IncludesPoint(arc, source.Center)
+                    ? new List<PointXY> { source.Center }
+                    : new List<PointXY>();
+            }
+
+            if (arc.Radius == 0f)
+            {
+                return IncludesPoint(source, arc.Center)
+                    ? new List<PointXY> { arc.Center }
+                    : new List<PointXY>();
+            }
+
+            VectorXY centerDelta = arc.Center - source.Center;
+            float squaredCenterDistance = centerDelta.SquaredLength;
+            float radiusSum = source.Radius + arc.Radius;
+            float radiusDifference = source.Radius - arc.Radius;
+
+            if (squaredCenterDistance > radiusSum * radiusSum ||
+                squaredCenterDistance < radiusDifference * radiusDifference)
+            {
+                return new List<PointXY>();
+            }
+
+            float centerDistance = MathF.Sqrt(squaredCenterDistance);
+            float sourceCoordinate =
+                (source.Radius * source.Radius - arc.Radius * arc.Radius + squaredCenterDistance) /
+                (2f * centerDistance);
+            float perpendicularSquared = source.Radius * source.Radius - sourceCoordinate * sourceCoordinate;
+
+            if (perpendicularSquared < 0f)
+                return new List<PointXY>();
+
+            PointXY midpoint = source.Center + centerDelta * (sourceCoordinate / centerDistance);
+            VectorXY perpendicular = new VectorXY(-centerDelta.Y, centerDelta.X) / centerDistance;
+            float perpendicularDistance = MathF.Sqrt(perpendicularSquared);
+            List<PointXY> intersections = new List<PointXY>();
+
+            AddIfOnBothArcs(source, arc, midpoint + perpendicular * perpendicularDistance, intersections);
+            if (perpendicularDistance != 0f)
+                AddIfOnBothArcs(source, arc, midpoint - perpendicular * perpendicularDistance, intersections);
+
+            OrderPointIntersections(arc, intersections);
+            return intersections;
+        }
+
+        /// <summary>
+        /// Orders distinct known intersections counterclockwise along an arc from its start angle.
+        /// </summary>
+        /// <param name="arc">The target arc.</param>
+        /// <param name="intersections">The caller-owned intersection list to update.</param>
+        internal static void OrderPointIntersections(Arc arc, List<PointXY> intersections)
+        {
+            for (int i = intersections.Count - 1; i >= 0; i--)
+            {
+                if (intersections.IndexOf(intersections[i]) != i)
+                    intersections.RemoveAt(i);
+            }
+
+            intersections.Sort((left, right) =>
+                GetCounterclockwiseCoordinate(arc, left).CompareTo(
+                    GetCounterclockwiseCoordinate(arc, right)));
+        }
+
+        /// <summary>
+        /// Returns isolated intersections between concentric arcs on the same circle.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="arc">The target arc.</param>
+        /// <returns>A new mutable list ordered counterclockwise from the target arc's start angle.</returns>
+        private static List<PointXY> GetConcentricPointIntersections(Arc source, Arc arc)
+        {
+            if (source.Radius == 0f)
+                return new List<PointXY> { source.Center };
+
+            List<float> candidateAngles = new List<float>
+            {
+                source.StartAngle,
+                source.EndAngle,
+                arc.StartAngle,
+                arc.EndAngle
+            };
+            List<PointXY> intersections = new List<PointXY>();
+
+            for (int i = 0; i < candidateAngles.Count; i++)
+            {
+                float angle = candidateAngles[i];
+                if (!ContainsAngle(source, angle) ||
+                    !ContainsAngle(arc, angle) ||
+                    BelongsToContinuousAngularOverlap(source, arc, angle))
+                {
+                    continue;
+                }
+
+                PointXY point = new PointXY(
+                    source.Center.X + source.Radius * MathF.Cos(angle),
+                    source.Center.Y + source.Radius * MathF.Sin(angle));
+
+                if (!intersections.Contains(point))
+                    intersections.Add(point);
+            }
+
+            OrderPointIntersections(arc, intersections);
+            return intersections;
+        }
+
+        /// <summary>
+        /// Adds a circle intersection when it belongs to both angular regions.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="arc">The target arc.</param>
+        /// <param name="point">The candidate circle intersection.</param>
+        /// <param name="intersections">The caller-owned result list.</param>
+        private static void AddIfOnBothArcs(Arc source, Arc arc, PointXY point, List<PointXY> intersections)
+        {
+            if (IsWithinAngularRegion(source, point) &&
+                IsWithinAngularRegion(arc, point) &&
+                !intersections.Contains(point))
+            {
+                intersections.Add(point);
+            }
+        }
+
+        /// <summary>
+        /// Determines whether an angle belongs to a continuous common portion of two concentric arcs.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="arc">The target arc.</param>
+        /// <param name="angle">The normalized angle in radians.</param>
+        /// <returns><see langword="true"/> when a common angular interval continues from the angle; otherwise, <see langword="false"/>.</returns>
+        private static bool BelongsToContinuousAngularOverlap(Arc source, Arc arc, float angle)
+        {
+            bool continuesCounterclockwise =
+                ContinuesCounterclockwise(source, angle) && ContinuesCounterclockwise(arc, angle);
+            bool continuesClockwise = ContinuesClockwise(source, angle) && ContinuesClockwise(arc, angle);
+            return continuesCounterclockwise || continuesClockwise;
+        }
+
+        /// <summary>
+        /// Determines whether an arc continues immediately counterclockwise from an included angle.
+        /// </summary>
+        /// <param name="arc">The arc to inspect.</param>
+        /// <param name="angle">The normalized angle in radians.</param>
+        /// <returns><see langword="true"/> when the arc continues counterclockwise; otherwise, <see langword="false"/>.</returns>
+        private static bool ContinuesCounterclockwise(Arc arc, float angle) =>
+            arc.IsFullCircle || (arc.StartAngle != arc.EndAngle && ContainsAngle(arc, angle) && angle != arc.EndAngle);
+
+        /// <summary>
+        /// Determines whether an arc continues immediately clockwise from an included angle.
+        /// </summary>
+        /// <param name="arc">The arc to inspect.</param>
+        /// <param name="angle">The normalized angle in radians.</param>
+        /// <returns><see langword="true"/> when the arc continues clockwise; otherwise, <see langword="false"/>.</returns>
+        private static bool ContinuesClockwise(Arc arc, float angle) =>
+            arc.IsFullCircle || (arc.StartAngle != arc.EndAngle && ContainsAngle(arc, angle) && angle != arc.StartAngle);
+
+        /// <summary>
+        /// Determines whether a normalized angle belongs to an arc using exact comparisons.
+        /// </summary>
+        /// <param name="arc">The arc to inspect.</param>
+        /// <param name="angle">The normalized angle in radians.</param>
+        /// <returns><see langword="true"/> when the angle belongs to the arc; otherwise, <see langword="false"/>.</returns>
+        private static bool ContainsAngle(Arc arc, float angle)
+        {
+            if (arc.IsFullCircle)
+                return true;
+
+            if (arc.StartAngle == arc.EndAngle)
+                return angle == arc.StartAngle;
+
+            if (arc.StartAngle < arc.EndAngle)
+                return angle >= arc.StartAngle && angle <= arc.EndAngle;
+
+            return angle >= arc.StartAngle || angle <= arc.EndAngle;
+        }
+
+        /// <summary>
+        /// Returns the counterclockwise angular coordinate of a point from an arc's start angle.
+        /// </summary>
+        /// <param name="arc">The target arc.</param>
+        /// <param name="point">The point on the arc.</param>
+        /// <returns>The angular coordinate in radians.</returns>
+        private static float GetCounterclockwiseCoordinate(Arc arc, PointXY point)
+        {
+            float angle = MathF.Atan2(point.Y - arc.Center.Y, point.X - arc.Center.X).NormalizeAngleRad();
+            float coordinate = angle - arc.StartAngle;
+            return coordinate < 0f ? coordinate + 2f * MathF.PI : coordinate;
+        }
+
+        /// <summary>
         /// Adds a circle intersection when it lies within the arc's closed angular region.
         /// </summary>
         /// <param name="source">The source arc.</param>
