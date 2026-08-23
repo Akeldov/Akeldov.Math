@@ -229,9 +229,6 @@ namespace Akeldov.Math.Spatial2D.Curves
                 AngularDirection,
                 IsFullCircle);
 
-        List<PointXY> IContourPath.GetPointIntersections(Ray ray) =>
-            ParameterizedArcIntersectionExtensions.GetPointIntersections(this, ray);
-
         /// <summary>
         /// Returns the shortest distance from the specified point to this arc.
         /// </summary>

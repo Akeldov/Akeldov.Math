@@ -25,7 +25,7 @@ float perimeter = contour.Length;                         // 14
 bool enclosesCenter = contour.Encloses(new PointXY(2f, 1f)); // true
 ```
 
-Constructors copy the curve or point collection. `Curves` exposes the retained structure through `IReadOnlyList<IContourPath>`, preserving the order, closure, fill-rule crossings, and direct ray query required from each path.
+Constructors copy the curve or point collection. `Curves` exposes the retained structure through `IReadOnlyList<IContourPath>`, preserving the order, closure, and fill-rule crossings required from each path. Composite contours do not expose ray intersections because `IContourPath` has no common binary-intersection operation.
 
 `ParameterizedCompositeContour` accumulates the lengths of its component paths. `GetPoint`, `ProjectWithParameter`, and other parameterized operations therefore use one coordinate across the entire closed chain rather than restarting at each component.
 

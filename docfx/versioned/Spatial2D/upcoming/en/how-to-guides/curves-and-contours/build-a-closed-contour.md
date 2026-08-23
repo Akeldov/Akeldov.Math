@@ -62,8 +62,8 @@ var curvedContour = new CompositeContour(paths);
 
 Arc angles are expressed in radians. `ParameterizedSegment`, `ParameterizedArc`,
 `ParameterizedSegmentChain`, and the Bezier path types all implement `IContourPath`. That
-interface combines the finite directed path contract with fill-rule crossings and directly
-declares the ray-intersection query required by composite contours.
+interface combines the finite directed path contract with fill-rule crossings; it does not
+declare binary intersections.
 
 The constructor validates connections using the default geometry tolerance, but it does not
 reorder paths or move endpoints to close small gaps. Build the paths in traversal order and use
@@ -121,6 +121,6 @@ The method returns a new contour and leaves the original unchanged. Corners invo
 path types are preserved. Use a finite positive radius appropriate for the neighboring segment
 lengths.
 
-For more background, see [Contours](../../concepts/geometry-model/contours.md). You can also
-[find ray intersections](find-curve-intersections.md) or use the boundary to
-[create a region with holes](../regions/create-a-region-with-holes.md).
+For more background, see [Contours](../../concepts/geometry-model/contours.md). For supported
+concrete geometries, you can also [find ray intersections](find-curve-intersections.md), or use
+the composite boundary to [create a region with holes](../regions/create-a-region-with-holes.md).

@@ -28,15 +28,15 @@ The contour interfaces add closed-boundary capabilities to the curve model:
 |---|---|
 | <xref:Akeldov.Math.Spatial2D.Contours.IContour> | A finite closed curve with `Length`, `Encloses`, unsigned `Distance`, and `SignedDistance`. |
 | <xref:Akeldov.Math.Spatial2D.Contours.IParameterizedContour> | Adds a length-based curve coordinate and parameterized projection. |
-| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | A finite directed path with fill-rule crossings and a directly declared ray-intersection query required by a composite contour. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | A finite directed path with the fill-rule crossing query required by a composite contour. |
 | <xref:Akeldov.Math.Spatial2D.Contours.ICompositeContour> | Exposes the contour paths forming a contour as a read-only structural view. |
 | <xref:Akeldov.Math.Spatial2D.Contours.IParameterizedCompositeContour> | Combines a composite boundary with one continuous coordinate around it. |
 
 All contours implement <xref:Akeldov.Math.Spatial2D.Curves.ICurve> for point distance and
 projection. They separately implement
 <xref:Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider> for fill-rule queries. `IContour`
-does not expose polymorphic ray intersections; concrete contour types provide those operations
-through extension methods.
+does not expose polymorphic ray intersections; supported non-composite contour types provide
+those operations through extension methods. Composite contour types do not provide them.
 
 ## Choose a concrete contour
 
@@ -154,11 +154,10 @@ CurveProjection projection = circle.Project(sample);
 `SignedDistance` has no tolerance parameter. Its sign is determined directly from the contour's
 boundary and enclosure calculations.
 
-Concrete contour types expose `GetPointIntersections` through intersection extension methods;
-`IContour` itself does not declare the operation. `IContourPath` directly declares the ray
-overload needed for polymorphic dispatch inside a composite contour. Composite contours merge
-results from their constituent paths and remove duplicate hits at shared endpoints using exact
-point equality.
+Supported non-composite contour types expose `GetPointIntersections` through intersection
+extension methods; neither `IContour` nor `IContourPath` declares the operation.
+`CompositeContour` and `ParameterizedCompositeContour` do not provide ray-intersection overloads
+because their heterogeneous paths have no common binary-intersection contract.
 
 ## Smooth polygonal corners
 

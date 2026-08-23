@@ -1,6 +1,6 @@
 # CompositeContour
 
-`CompositeContour` joins contour paths into one closed boundary. It implements `ICompositeContour` and retains its own array of path references behind a read-only structural view. Every `IContourPath` is finite and directed, supports fill-rule crossings, and directly provides the ray-intersection query needed by the composite contour.
+`CompositeContour` joins contour paths into one closed boundary. It implements `ICompositeContour` and retains its own array of path references behind a read-only structural view. Every `IContourPath` is finite and directed and supports the fill-rule crossings needed by the composite contour.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
@@ -26,7 +26,7 @@ var polygon = new CompositeContour(
     new PointXY(2f, 3f));
 ```
 
-`Curves` exposes the read-only structural view and `Length` returns their total length. The contour supports enclosure, crossings, projection, and signed or unsigned distance. Ray intersections for the concrete `CompositeContour` type are available through its extension method. Use [`ParameterizedCompositeContour`](parameterized-composite-contour.md) when a continuous length coordinate is required across the constituent paths.
+`Curves` exposes the read-only structural view and `Length` returns their total length. The contour supports enclosure, crossings, projection, and signed or unsigned distance. It does not expose ray intersections because `IContourPath` has no common binary-intersection operation. Use [`ParameterizedCompositeContour`](parameterized-composite-contour.md) when a continuous length coordinate is required across the constituent paths.
 
 ## Rasterization example
 

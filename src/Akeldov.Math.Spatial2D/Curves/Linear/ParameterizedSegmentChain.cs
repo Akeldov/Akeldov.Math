@@ -140,9 +140,6 @@ namespace Akeldov.Math.Spatial2D.Curves
             return Project(point).Distance;
         }
 
-        List<PointXY> IContourPath.GetPointIntersections(Ray ray) =>
-            ParameterizedSegmentChainIntersectionExtensions.GetPointIntersections(this, ray);
-
         /// <summary>
         /// Projects the specified point onto this chain.
         /// </summary>

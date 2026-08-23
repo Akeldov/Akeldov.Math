@@ -2,8 +2,8 @@
 
 Use the concrete `GetPointIntersections` extension methods to find isolated points where two
 supported geometries meet. The ray overloads return only intersections at the ray origin or in
-front of it. `IContourPath` declares the ray overload directly for polymorphic queries across
-contour paths. `IContour` and the base `ICurve` contract do not declare ray intersections.
+front of it. Curve interfaces, including `ICurve`, `IContourPath`, and `IContour`, do not declare
+ray intersections.
 
 ## Cast a ray through a curve
 
@@ -39,20 +39,13 @@ Ray results are ordered in the forward direction of the ray.
 The returned `List<PointXY>` is new, mutable, and owned by the caller. It can be sorted, filtered,
 or reused without changing the curve.
 
-## Query a contour path polymorphically
+## Keep a supported concrete type
 
-Accept `IContourPath` when an algorithm needs polymorphic ray intersections across the paths
-that can form a composite contour:
-
-```csharp
-static List<PointXY> FindIntersections(IContourPath path, Ray ray)
-{
-    return path.GetPointIntersections(ray);
-}
-```
-
-For a contour, keep its concrete type and call the corresponding extension method. `IContour`
-does not provide a polymorphic ray-intersection operation.
+Ray intersection is a binary operation exposed by extension methods, not a curve-interface
+capability. Keep a supported concrete geometry type so the compiler can bind its overload.
+Supported non-composite contour types also provide concrete overloads. `CompositeContour` and
+`ParameterizedCompositeContour` do not: their heterogeneous components are retained through
+`IContourPath`, which has no common binary-intersection operation.
 
 Linear and circular curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
 `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`), plus
@@ -87,9 +80,9 @@ coordinates.
 points, so points that belong to that continuous set are omitted. An isolated meeting at an
 included segment endpoint is returned; an excluded endpoint is not.
 
-Composite curves and contours combine the results from their component paths and remove exactly
-equal shared points. This prevents a ray through a contour vertex from reporting the same
-location once for each adjacent path.
+`ParameterizedSegmentChain` combines the results from its segments and removes exactly equal
+shared points. This prevents a ray through a chain vertex from reporting the same location once
+for each adjacent segment.
 
 For the underlying geometry model, see [Curves](../../concepts/geometry-model/curves.md). Next,
 learn how to [build a closed contour](build-a-closed-contour.md).

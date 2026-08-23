@@ -4,9 +4,9 @@ Curves describe one-dimensional geometry in 2D space: infinite lines, half-lines
 They live in the `Akeldov.Math.Spatial2D.Curves` namespace and are used by contours, regions, fields, and rasterizers.
 
 Every `ICurve` can measure point distance and project a point onto itself. Supported concrete curve types
-report binary intersections through extension methods. `IContourPath` additionally declares a ray
-overload directly so composite contours can dispatch the operation across heterogeneous paths;
-`IContour` does not expose a polymorphic ray-intersection contract.
+report binary intersections through extension methods. Curve contracts do not expose polymorphic
+binary intersections: `IContourPath` adds finite directed traversal and fill-rule crossings, while
+`IContour` describes a closed boundary.
 Parameterized curves additionally expose a length-based curve coordinate through `GetPoint` and `ProjectWithParameter`.
 For open polylines, [`ParameterizedSegmentChain`](linear/parameterized-segment-chain.md) composes consecutive directed segments behind one finite-path API.
 

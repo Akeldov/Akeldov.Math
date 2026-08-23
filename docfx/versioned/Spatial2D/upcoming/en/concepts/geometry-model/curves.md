@@ -22,7 +22,7 @@ The curve interfaces add capabilities instead of imposing one representation:
 | <xref:Akeldov.Math.Spatial2D.Curves.IPath> | Adds ordered `StartPoint` and `EndPoint` properties to a parameterized curve. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IFinitePath> | Combines a finite length, ordered endpoints, and parameterization. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider> | Counts fill-rule crossings of a horizontal rightward ray. |
-| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | Combines `IFinitePath` and fill-rule crossings with a direct polymorphic ray-intersection query required by composite contours. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | Combines `IFinitePath` with fill-rule crossings for contour construction and enclosure. |
 
 Use the narrowest interface that expresses the operation. For example, an algorithm that only
 needs proximity can accept `ICurve`, an algorithm that walks from one endpoint to another can
@@ -98,9 +98,9 @@ the original curve polynomial.
 ## Intersect a curve with a ray
 
 Concrete `GetPointIntersections` extension methods return isolated intersection points in the
-forward direction of the supplied ray. `IContourPath` declares the ray overload directly where
-composite contours require polymorphic dispatch. `IContour` does not declare this operation;
-concrete contour types expose it through extension methods:
+forward direction of the supplied ray. Curve interfaces do not declare this binary operation.
+Supported non-composite contour types expose it through extension methods; `CompositeContour`
+and `ParameterizedCompositeContour` do not provide ray-intersection overloads:
 
 ```csharp
 using System.Collections.Generic;
@@ -127,10 +127,10 @@ twice.
 
 ## Build larger geometry
 
-An `IContourPath` has the ordered endpoints and spatial queries required to join curves into a
-contour. Consecutive paths must meet end-to-start, and a closed contour must connect its final
-endpoint back to its first endpoint. The contour can then define the outer boundary or a hole of a
-[region](regions.md).
+An `IContourPath` has the ordered endpoints and fill-rule crossing query required to join curves
+into a contour. Consecutive paths must meet end-to-start, and a closed contour must connect its
+final endpoint back to its first endpoint. The contour can then define the outer boundary or a
+hole of a [region](regions.md).
 
 For practical examples, see:
 

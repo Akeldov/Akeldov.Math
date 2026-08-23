@@ -29,11 +29,10 @@ Use these contracts when changing curve abstractions or implementations in
   when only geometric traversal is required.
 - `IRightwardCrossingProvider` adds the fill-rule crossing query used by contours
   and regions.
-- `IContourPath` combines `IFinitePath` and `IRightwardCrossingProvider` with a
-  direct polymorphic ray-intersection query. Composite contours accept this
-  contract so every retained path can participate in enclosure and
-  ray-intersection algorithms. Ray-intersection results are new mutable lists
-  owned by the caller and ordered along the ray.
+- `IContourPath` combines `IFinitePath` and `IRightwardCrossingProvider`.
+  Composite contours accept this contract so every retained path is finite,
+  directed, and can participate in enclosure algorithms. It does not add a
+  binary-intersection capability.
 - `IRayPath` is a parameterized one-endpoint curve with traversal starting at
   `Origin`. Its coordinate should increase away from `Origin`.
 
@@ -54,11 +53,13 @@ Closed curves that unambiguously define an inside/outside area are represented
 by `IContour`, not by adding enclosing behavior to curve abstractions.
 
 Keep concrete binary intersection operations in extension classes under
-`Curves/Intersections`. Only `IContourPath` exposes polymorphic ray-intersection
-dispatch because composite contours require it for their retained paths.
-Concrete contours expose ray intersections only through extension methods.
-Preserve the caller-owned mutable `List<PointXY>` contract in XML comments and
-implementations.
+`Curves/Intersections`; curve interfaces do not expose polymorphic
+ray-intersection dispatch. Supported concrete curves and contours expose ray
+intersections only through extension methods. `CompositeContour` and
+`ParameterizedCompositeContour` intentionally do not expose ray intersections,
+because their heterogeneous `IContourPath` components have no common binary-
+intersection contract. Preserve the caller-owned mutable `List<PointXY>`
+contract in XML comments and implementations.
 
 For circular curves, angles are expressed in radians by default. Angle
 parameters and properties must state their units in XML comments. Non-radian

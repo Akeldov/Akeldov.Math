@@ -158,19 +158,6 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void GetPointIntersections_ReturnsBoundaryIntersections()
-    {
-        CompositeContour contour = CreateSquareContour();
-        var ray = new Ray(new PointXY(-1f, 1f));
-
-        List<PointXY> intersections = contour.GetPointIntersections(ray);
-
-        Assert.That(intersections, Has.Count.EqualTo(2));
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(0f, 1f))), Is.True);
-        Assert.That(intersections.Exists(point => point.AlmostEquals(new PointXY(2f, 1f))), Is.True);
-    }
-
-    [Test]
     public void Project_ReturnsClosestBoundaryProjection()
     {
         IContour contour = CreateSquareContour();
@@ -474,8 +461,6 @@ public class CompositeContourTests
             CountRightwardCrossingsCallCount++;
             return 1;
         }
-
-        public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
 
         public float Distance(PointXY point) => 1f;
 

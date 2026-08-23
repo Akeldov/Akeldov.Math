@@ -50,7 +50,7 @@ static IContour CreateSquareContour(
 
 The paths are ordered head to tail, and the last path ends at the first path's start. This is the
 closed-chain contract required by `CompositeContour`. Each `IContourPath` supports fill-rule
-crossings and directly declares the ray-intersection query used by the composite.
+crossings used by the composite; it does not declare binary intersections.
 
 ## Define the Sampling Grid
 

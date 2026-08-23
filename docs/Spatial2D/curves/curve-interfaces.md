@@ -13,6 +13,6 @@ Curve interfaces describe which operations and invariants a type exposes.
 | `IFinitePath` | A finite directed path. |
 | `IRayPath` | A half-infinite parameterized path. |
 | `IRightwardCrossingProvider` | Can count horizontal rightward crossings for fill rules. |
-| `IContourPath` | A finite path that can count fill-rule crossings and report isolated ray intersections polymorphically. |
+| `IContourPath` | A finite directed path that can count fill-rule crossings. |
 
-Composite contours require `IContourPath` curves because every boundary segment must be finite, directed, and able to participate in enclosure and ray-intersection queries. The ray overload is declared directly by `IContourPath` because composite contours dispatch it across heterogeneous paths. Binary intersections on concrete geometry types, including concrete contour types, are otherwise exposed as extension methods; `IContour` itself does not declare ray intersections.
+Composite contours require `IContourPath` curves because every boundary segment must be finite, directed, and able to participate in enclosure queries. Binary intersections are exposed as extension methods on supported concrete geometry types; neither `IContourPath` nor `IContour` declares them. Because a composite contour retains heterogeneous paths through `IContourPath`, `CompositeContour` and `ParameterizedCompositeContour` do not provide ray-intersection overloads.

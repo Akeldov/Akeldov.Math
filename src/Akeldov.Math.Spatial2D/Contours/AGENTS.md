@@ -8,8 +8,8 @@ Use these contracts when changing contour abstractions or implementations in
 - `IContour` is a closed finite one-dimensional boundary that unambiguously
   defines an inside/outside area. It extends `IFiniteCurve`,
   `ISignedPointDistanceProvider`, and `IRightwardCrossingProvider`. It does not
-  expose polymorphic ray intersections; concrete contour types provide those
-  operations through extension methods.
+  expose polymorphic ray intersections; supported concrete contour types
+  provide those operations through extension methods.
 - `IContour.Encloses` tests whether a point lies inside or on the closed
   boundary. Boundary-inclusive behavior is part of the contour contract.
 - `IContour.SignedDistance` is expected to be negative for points enclosed by
@@ -17,7 +17,9 @@ Use these contracts when changing contour abstractions or implementations in
 - `ICompositeContour` is a contour built from a structural read-only list of
   `IContourPath` curves. The paths must form a closed chain where each path
   starts at the previous path's end and the final path closes back to the first
-  path.
+  path. `IContourPath` supplies fill-rule crossings, but no binary-intersection
+  capability; consequently composite contours do not expose ray-intersection
+  extension methods.
 - `IParameterizedContour` is a contour with a length-based curve coordinate. It
   inherits `IParameterizedCurve`; coordinates are measured in world coordinate
   units along the contour and are not normalized to `[0, 1]`.

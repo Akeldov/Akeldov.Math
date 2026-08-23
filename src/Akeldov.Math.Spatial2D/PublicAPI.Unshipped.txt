@@ -246,26 +246,21 @@ Akeldov.Math.Spatial2D.Contours.ICompositeContour.Curves.get -> System.Collectio
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.Curves.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Curves.IContourPath!>!
 Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.ParameterizedCompositeContour(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Curves.IContourPath!>! curves) -> void
 Akeldov.Math.Spatial2D.Curves.CircleIntersectionExtensions
-Akeldov.Math.Spatial2D.Curves.CompositeContourIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.IContourPath
-Akeldov.Math.Spatial2D.Curves.IContourPath.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider
 Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int
 Akeldov.Math.Spatial2D.Curves.OrientedRectangleContourIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.ParameterizedCircleIntersectionExtensions
-Akeldov.Math.Spatial2D.Curves.ParameterizedCompositeContourIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.ParameterizedOrientedRectangleContourIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.ParameterizedRectangleContourIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.RectangleContourIntersectionExtensions
 static Akeldov.Math.Spatial2D.Curves.ArcIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.Arc source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.CircleIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.Circle source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
-static Akeldov.Math.Spatial2D.Curves.CompositeContourIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.CompositeContour! source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.CubicBezierIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.CubicBezier source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.LineIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.Line source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.OrientedRectangleContourIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedArcIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.ParameterizedArc source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedCircleIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.ParameterizedCircle source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
-static Akeldov.Math.Spatial2D.Curves.ParameterizedCompositeContourIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour! source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedLineIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.ParameterizedLine source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedOrientedRectangleContourIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedRectangleContourIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour source, Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!

@@ -295,8 +295,6 @@ public class ContourBasedRegionTests
 
         public int CountRightwardCrossings(PointXY origin) => 0;
 
-        public List<PointXY> GetPointIntersections(Ray ray) => new List<PointXY>();
-
         public float Distance(PointXY point) => 1f;
 
         public CurveProjection Project(PointXY point) => new(new PointXY(0f, 0f), Distance(point));

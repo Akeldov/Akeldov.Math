@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
@@ -102,9 +101,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) =>
             ((Segment)this).CountRightwardCrossings(origin);
-
-        List<PointXY> IContourPath.GetPointIntersections(Ray ray) =>
-            ParameterizedSegmentIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is ParameterizedSegment other && Equals(other);
