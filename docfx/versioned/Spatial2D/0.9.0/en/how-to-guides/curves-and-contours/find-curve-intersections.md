@@ -52,8 +52,8 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 
 Linear and circular curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
 `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`), plus
-`QuadraticBezier` and `CubicBezier`, also provide `GetPointIntersections(Line)` and
-`GetPointIntersections(ParameterizedLine)` for a full infinite probe line:
+`QuadraticBezier` and `CubicBezier`, also provide `GetPointIntersections` overloads for `Line`,
+`ParameterizedLine`, and `Segment`:
 
 ```csharp
 var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
@@ -63,16 +63,17 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 ```
 
 Multiple intersections are ordered along the canonical direction of a `Line` or the
-parameterized direction of a `ParameterizedLine`.
+parameterized direction of a `ParameterizedLine`. A `Segment` orders them from `EndpointA` to
+`EndpointB` and restricts results according to endpoint inclusion.
 
 Spatial2D does not define one general curve-versus-curve intersection method.
 
 Bezier intersections with a ray are calculated against the curve's internal polyline
 approximation. Line intersections for `QuadraticBezier` and `CubicBezier` instead solve the
-polynomial of the original curve. General `BezierCurve` does not provide either line overload.
+polynomial of the original curve. General `BezierCurve` does not provide these overloads.
 
 `GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Intersections with
-`Line` or `ParameterizedLine` use exact comparisons.
+`Line`, `ParameterizedLine`, or `Segment` use exact comparisons.
 
 ## Account for overlaps and endpoints
 

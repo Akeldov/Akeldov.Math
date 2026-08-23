@@ -159,6 +159,19 @@ public class ArcTests
     }
 
     [Test]
+    public void PointIntersections_WhenSegmentDirectionIsReversed_ReturnsPointsFromEndpointAToEndpointB()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI);
+        var segment = new Segment(new PointXY(2f, 0f), new PointXY(-2f, 0f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertVector(intersections[0], 1f, 0f);
+        AssertVector(intersections[1], -1f, 0f);
+    }
+
+    [Test]
     public void PointIntersections_WhenLineCrossesCircleOutsideArc_ReturnsEmpty()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);

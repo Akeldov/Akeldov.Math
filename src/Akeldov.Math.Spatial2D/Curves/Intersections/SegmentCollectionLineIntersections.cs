@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact line-intersection calculations shared by curves represented as segment collections.
+    /// Provides exact line and segment intersection calculations shared by curves represented as segment collections.
     /// </summary>
     internal static class SegmentCollectionLineIntersections
     {
@@ -57,6 +57,36 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns distinct isolated point intersections between a segment collection and a segment using exact comparisons.
+        /// </summary>
+        /// <param name="segments">The source segments to intersect.</param>
+        /// <param name="segment">The segment to intersect with the source collection.</param>
+        /// <returns>A new mutable list ordered from the second segment's first endpoint to its second endpoint.</returns>
+        public static List<PointXY> GetPointIntersections(IReadOnlyList<ParameterizedSegment> segments, Segment segment)
+        {
+            List<PointXY> intersections = new List<PointXY>();
+
+            for (int i = 0; i < segments.Count; i++)
+            {
+                List<PointXY> segmentIntersections =
+                    ParameterizedSegmentIntersectionExtensions.GetPointIntersections(segments[i], segment);
+
+                for (int j = 0; j < segmentIntersections.Count; j++)
+                {
+                    PointXY intersection = segmentIntersections[j];
+                    if (!BelongsToContinuousOverlap(segments, intersection, segment) &&
+                        !intersections.Contains(intersection))
+                    {
+                        intersections.Add(intersection);
+                    }
+                }
+            }
+
+            SegmentIntersectionExtensions.RestrictToSegment(intersections, segment);
+            return intersections;
+        }
+
+        /// <summary>
         /// Determines whether a point belongs to a segment that continuously overlaps the line.
         /// </summary>
         /// <param name="segments">The segments to inspect.</param>
@@ -81,6 +111,29 @@ namespace Akeldov.Math.Spatial2D.Curves
                 if (VectorXY.Cross(segmentDirection, startToPoint) == 0f &&
                     pointCoordinate >= 0f &&
                     pointCoordinate <= segmentDirection.SquaredLength)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether a point belongs to a source segment that continuously overlaps the intersecting segment.
+        /// </summary>
+        /// <param name="segments">The source segments to inspect.</param>
+        /// <param name="point">The point to classify.</param>
+        /// <param name="segment">The intersecting segment.</param>
+        /// <returns><see langword="true"/> when the point belongs to a continuous overlap; otherwise, <see langword="false"/>.</returns>
+        private static bool BelongsToContinuousOverlap(IReadOnlyList<ParameterizedSegment> segments, PointXY point, Segment segment)
+        {
+            for (int i = 0; i < segments.Count; i++)
+            {
+                Segment sourceSegment = (Segment)segments[i];
+                if (SegmentIntersectionExtensions.HasContinuousOverlap(sourceSegment, segment) &&
+                    SegmentIntersectionExtensions.IncludesPoint(sourceSegment, point) &&
+                    SegmentIntersectionExtensions.IncludesPoint(segment, point))
                 {
                     return true;
                 }

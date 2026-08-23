@@ -156,6 +156,41 @@ public class RayTests
     }
 
     [Test]
+    public void PointIntersections_WhenSegmentCrossesRayAhead_ReturnsIntersection()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var segment = new Segment(new PointXY(2f, -1f), new PointXY(2f, 1f));
+
+        List<PointXY> intersections = ray.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenCollinearSegmentTouchesRayOrigin_ReturnsOrigin()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var segment = new Segment(new PointXY(-2f, 0f), new PointXY(0f, 0f));
+
+        List<PointXY> intersections = ray.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 0f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenSegmentOverlapsRayContinuously_ReturnsEmpty()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var segment = new Segment(new PointXY(-1f, 0f), new PointXY(2f, 0f));
+
+        List<PointXY> intersections = ray.GetPointIntersections(segment);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void ProjectWithParameter_WhenPointIsBehindRay_ClampsToOrigin()
     {
         var ray = new Ray(new PointXY(1f, 0f));

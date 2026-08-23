@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact line-intersection calculations for <see cref="QuadraticBezier"/>.
+    /// Provides exact intersection calculations for <see cref="QuadraticBezier"/>.
     /// </summary>
     public static class QuadraticBezierIntersectionExtensions
     {
@@ -61,6 +61,50 @@ namespace Akeldov.Math.Spatial2D.Curves
                 intersections.Reverse();
 
             return intersections;
+        }
+
+        /// <summary>
+        /// Returns isolated point intersections between a quadratic Bezier curve and a segment by solving the curve polynomial.
+        /// </summary>
+        /// <param name="source">The source quadratic Bezier curve.</param>
+        /// <param name="segment">The segment to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the segment's first endpoint to its second endpoint. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this QuadraticBezier source, Segment segment)
+        {
+            VectorXY segmentDirection = segment.EndpointB - segment.EndpointA;
+            if (segmentDirection.SquaredLength == 0f)
+                return GetPointIntersection(source, segment);
+
+            var supportingLine = new Line(segment.EndpointA, segment.EndpointB);
+            List<PointXY> intersections = GetPointIntersections(source, supportingLine);
+            SegmentIntersectionExtensions.RestrictSupportingLineIntersectionsToSegment(intersections, segment);
+            return intersections;
+        }
+
+        /// <summary>
+        /// Returns a degenerate segment point when it belongs to the curve and is included by the segment.
+        /// </summary>
+        /// <param name="source">The source quadratic Bezier curve.</param>
+        /// <param name="segment">The degenerate segment to intersect.</param>
+        /// <returns>A new mutable list containing the isolated point intersection, or an empty list.</returns>
+        private static List<PointXY> GetPointIntersection(QuadraticBezier source, Segment segment)
+        {
+            if (!(segment.IncludesEndpointA || segment.IncludesEndpointB))
+                return new List<PointXY>();
+
+            PointXY point = segment.EndpointA;
+            var horizontalProbe = new Line(point, point + VectorXY.BasisX);
+            List<PointXY> intersections = GetPointIntersections(source, horizontalProbe);
+
+            if (!intersections.Contains(point))
+            {
+                var verticalProbe = new Line(point, point + VectorXY.BasisY);
+                intersections = GetPointIntersections(source, verticalProbe);
+            }
+
+            return intersections.Contains(point)
+                ? new List<PointXY> { point }
+                : new List<PointXY>();
         }
 
         /// <summary>

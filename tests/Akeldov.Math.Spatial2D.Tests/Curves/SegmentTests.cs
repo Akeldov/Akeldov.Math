@@ -628,6 +628,68 @@ public class SegmentTests
     }
 
     [Test]
+    public void PointIntersections_WhenSegmentsCross_ReturnsIntersection()
+    {
+        var source = new Segment(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var segment = new Segment(new PointXY(2f, 1f), new PointXY(2f, -1f));
+
+        List<PointXY> intersections = source.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenCollinearSegmentsTouchAtIncludedEndpoints_ReturnsEndpoint()
+    {
+        var source = new Segment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+        var segment = new Segment(new PointXY(2f, 0f), new PointXY(4f, 0f));
+
+        List<PointXY> intersections = source.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenCollinearSegmentsOverlapContinuously_ReturnsEmpty()
+    {
+        var source = new Segment(new PointXY(0f, 0f), new PointXY(3f, 0f));
+        var segment = new Segment(new PointXY(2f, 0f), new PointXY(4f, 0f));
+
+        List<PointXY> intersections = source.GetPointIntersections(segment);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenSegmentsTouchAtExcludedEndpoint_ReturnsEmpty()
+    {
+        var source = new Segment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+        var segment = new Segment(
+            new PointXY(2f, 0f),
+            new PointXY(4f, 0f),
+            includesEndpointA: false,
+            includesEndpointB: true);
+
+        List<PointXY> intersections = source.GetPointIntersections(segment);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenSecondSegmentIsIncludedPointOnSource_ReturnsPoint()
+    {
+        var source = new Segment(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var segment = new Segment(new PointXY(2f, 0f), new PointXY(2f, 0f));
+
+        List<PointXY> intersections = source.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
     public void ParameterizedSegment_PointIntersections_WhenLineCrossesSegment_ReturnsIntersection()
     {
         var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f));

@@ -5,7 +5,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact line-intersection calculations for <see cref="Arc"/>.
+    /// Provides exact intersection calculations for <see cref="Arc"/>.
     /// </summary>
     public static class ArcIntersectionExtensions
     {
@@ -68,6 +68,29 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between an arc and a segment using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="segment">The segment to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the segment's first endpoint to its second endpoint.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, Segment segment)
+        {
+            VectorXY segmentDirection = segment.EndpointB - segment.EndpointA;
+            if (segmentDirection.SquaredLength == 0f)
+            {
+                if (!(segment.IncludesEndpointA || segment.IncludesEndpointB) || !IncludesPoint(source, segment.EndpointA))
+                    return new List<PointXY>();
+
+                return new List<PointXY> { segment.EndpointA };
+            }
+
+            var supportingLine = new Line(segment.EndpointA, segment.EndpointB);
+            List<PointXY> intersections = GetPointIntersections(source, supportingLine);
+            SegmentIntersectionExtensions.RestrictSupportingLineIntersectionsToSegment(intersections, segment);
+            return intersections;
+        }
+
+        /// <summary>
         /// Adds a circle intersection when it lies within the arc's closed angular region.
         /// </summary>
         /// <param name="source">The source arc.</param>
@@ -100,6 +123,21 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return angle >= source.StartAngle && angle <= source.EndAngle;
 
             return angle >= source.StartAngle || angle <= source.EndAngle;
+        }
+
+        /// <summary>
+        /// Determines whether an arc contains a point using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="point">The point to classify.</param>
+        /// <returns><see langword="true"/> when the point belongs to the arc; otherwise, <see langword="false"/>.</returns>
+        private static bool IncludesPoint(Arc source, PointXY point)
+        {
+            VectorXY centerToPoint = point - source.Center;
+            if (centerToPoint.SquaredLength != source.Radius * source.Radius)
+                return false;
+
+            return source.Radius == 0f || IsWithinAngularRegion(source, point);
         }
 
         /// <summary>

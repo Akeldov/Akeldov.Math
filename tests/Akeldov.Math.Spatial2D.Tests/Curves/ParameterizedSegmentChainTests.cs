@@ -167,6 +167,37 @@ public class ParameterizedSegmentChainTests
     }
 
     [Test]
+    public void GetPointIntersections_WhenSegmentCrossesChain_ReturnsPointsFromEndpointAToEndpointB()
+    {
+        var chain = new ParameterizedSegmentChain(
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f),
+            new PointXY(0f, 0f));
+        var segment = new Segment(new PointXY(3f, 1f), new PointXY(-1f, 1f));
+
+        List<PointXY> intersections = chain.GetPointIntersections(segment);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 2f, 1f);
+        AssertPoint(intersections[1], 0f, 1f);
+    }
+
+    [Test]
+    public void GetPointIntersections_WhenVertexBelongsToContinuousSegmentOverlap_OmitsVertex()
+    {
+        var chain = new ParameterizedSegmentChain(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f));
+        var segment = new Segment(new PointXY(-1f, 0f), new PointXY(3f, 0f));
+
+        List<PointXY> intersections = chain.GetPointIntersections(segment);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void GetPointIntersections_WhenVertexBelongsToContinuousLineOverlap_OmitsVertex()
     {
         var chain = new ParameterizedSegmentChain(

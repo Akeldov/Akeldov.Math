@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact line-intersection calculations for <see cref="Ray"/>.
+    /// Provides exact intersection calculations for <see cref="Ray"/>.
     /// </summary>
     public static class RayIntersectionExtensions
     {
@@ -42,6 +42,65 @@ namespace Akeldov.Math.Spatial2D.Curves
         public static List<PointXY> GetPointIntersections(this Ray source, ParameterizedLine line)
         {
             return GetPointIntersections(source, line.Line);
+        }
+
+        /// <summary>
+        /// Returns isolated point intersections between a ray and a segment using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="segment">The segment to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller. A continuous overlap and intersections behind the ray return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, Segment segment)
+        {
+            List<PointXY> intersections = new List<PointXY>();
+            VectorXY segmentDirection = segment.EndpointB - segment.EndpointA;
+
+            if (segmentDirection.SquaredLength == 0f)
+            {
+                VectorXY originToPoint = segment.EndpointA - source.Origin;
+                if ((segment.IncludesEndpointA || segment.IncludesEndpointB) &&
+                    VectorXY.Cross(originToPoint, source.Direction) == 0f &&
+                    VectorXY.Dot(originToPoint, source.Direction) >= 0f)
+                {
+                    intersections.Add(segment.EndpointA);
+                }
+
+                return intersections;
+            }
+
+            VectorXY originDelta = segment.EndpointA - source.Origin;
+            float cross = VectorXY.Cross(source.Direction, segmentDirection);
+
+            if (cross != 0f)
+            {
+                float rayCoordinate = VectorXY.Cross(originDelta, segmentDirection) / cross;
+                float segmentCoordinate = VectorXY.Cross(originDelta, source.Direction) / cross;
+
+                if (rayCoordinate < 0f || segmentCoordinate < 0f || segmentCoordinate > 1f ||
+                    (segmentCoordinate == 0f && !segment.IncludesEndpointA) ||
+                    (segmentCoordinate == 1f && !segment.IncludesEndpointB))
+                {
+                    return intersections;
+                }
+
+                intersections.Add(source.Origin + rayCoordinate * source.Direction);
+                return intersections;
+            }
+
+            if (VectorXY.Cross(originDelta, source.Direction) != 0f)
+                return intersections;
+
+            float endpointACoordinate = VectorXY.Dot(segment.EndpointA - source.Origin, source.Direction);
+            float endpointBCoordinate = VectorXY.Dot(segment.EndpointB - source.Origin, source.Direction);
+            float overlapEnd = endpointACoordinate > endpointBCoordinate ? endpointACoordinate : endpointBCoordinate;
+
+            if (overlapEnd < 0f)
+                return intersections;
+
+            if (overlapEnd == 0f && SegmentIntersectionExtensions.IncludesPoint(segment, source.Origin))
+                intersections.Add(source.Origin);
+
+            return intersections;
         }
     }
 }

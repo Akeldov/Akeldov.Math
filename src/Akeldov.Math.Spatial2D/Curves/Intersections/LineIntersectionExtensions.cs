@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact line-intersection calculations for <see cref="Line"/>.
+    /// Provides exact intersection calculations for <see cref="Line"/>.
     /// </summary>
     public static class LineIntersectionExtensions
     {
@@ -39,6 +39,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         public static List<PointXY> GetPointIntersections(this Line source, ParameterizedLine line)
         {
             return GetPointIntersections(source, line.Line);
+        }
+
+        /// <summary>
+        /// Returns isolated point intersections between a line and a segment using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source line.</param>
+        /// <param name="segment">The segment to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller. A continuous overlap returns an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Line source, Segment segment)
+        {
+            return SegmentIntersectionExtensions.GetPointIntersections(segment, source);
         }
     }
 }

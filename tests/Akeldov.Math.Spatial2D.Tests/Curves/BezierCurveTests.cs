@@ -165,6 +165,22 @@ public class BezierCurveTests
     }
 
     [Test]
+    public void QuadraticBezier_SegmentIntersections_RestrictsAndOrdersIntersections()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+        var segment = new Segment(new PointXY(3f, 0.5f), new PointXY(1f, 0.5f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(segment);
+
+        float rootOffset = MathF.Sqrt(0.5f);
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertPoint(intersections[0], 1f + rootOffset, 0.5f);
+    }
+
+    [Test]
     public void CubicBezier_LineIntersections_SolvesCurvePolynomial()
     {
         var curve = new CubicBezier(

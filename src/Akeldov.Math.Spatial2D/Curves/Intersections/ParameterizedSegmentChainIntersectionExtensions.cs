@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact line-intersection calculations for <see cref="ParameterizedSegmentChain"/>.
+    /// Provides exact intersection calculations for <see cref="ParameterizedSegmentChain"/>.
     /// </summary>
     public static class ParameterizedSegmentChainIntersectionExtensions
     {
@@ -28,6 +28,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         public static List<PointXY> GetPointIntersections(this ParameterizedSegmentChain source, ParameterizedLine line)
         {
             return SegmentCollectionLineIntersections.GetPointIntersections(source.Segments, line);
+        }
+
+        /// <summary>
+        /// Returns the distinct isolated point intersections between a segment chain and a segment using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source segment chain.</param>
+        /// <param name="segment">The segment to intersect with the source chain.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the second segment's first endpoint to its second endpoint. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedSegmentChain source, Segment segment)
+        {
+            return SegmentCollectionLineIntersections.GetPointIntersections(source.Segments, segment);
         }
     }
 }
