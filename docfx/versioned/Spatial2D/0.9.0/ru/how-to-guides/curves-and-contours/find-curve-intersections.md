@@ -64,6 +64,9 @@ var probeLine = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
 List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 ```
 
+Каждый из перечисленных линейных, круговых, квадратичных и кубических исходных типов также
+предоставляет перегрузку для целевой `QuadraticBezier`.
+
 Несколько пересечений упорядочиваются по каноническому направлению `Line` или по
 параметризованному направлению `ParameterizedLine`. Для `Segment` они идут от `EndpointA` к
 `EndpointB`, а для `ParameterizedSegment` — от `StartPoint` к `EndPoint`. Для
@@ -84,6 +87,10 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 и круговых исходных кривых. `QuadraticBezier` и `CubicBezier` дополнительно предоставляют численные
 перегрузки для `Arc` и `ParameterizedArc`: исходный полином четвёртой или шестой степени изолируется
 в `double`, после чего координаты округляются до `float` без параметра геометрического допуска.
+
+Пересечения кривых Безье с целевой `QuadraticBezier` аналогично изолируют исходный результант
+четвёртой или шестой степени без линеаризации кривых. Результат упорядочивается от `StartPoint`
+к `EndPoint` целевой квадратичной кривой.
 
 ## Учесть наложения и концы
 

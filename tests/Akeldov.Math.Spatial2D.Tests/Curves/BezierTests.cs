@@ -327,6 +327,96 @@ public class BezierTests
     }
 
     [Test]
+    public void LineQuadraticBezierIntersections_ReturnsPointsInBezierOrder()
+    {
+        var line = new Line(new PointXY(-2f, 0.5f), new PointXY(2f, 0.5f));
+        var curve = new QuadraticBezier(
+            new PointXY(2f, 1f),
+            new PointXY(0f, -1f),
+            new PointXY(-2f, 1f));
+
+        List<PointXY> intersections = line.GetPointIntersections(curve);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        Assert.That(intersections[0].X, Is.GreaterThan(0f));
+        Assert.That(intersections[1].X, Is.LessThan(0f));
+    }
+
+    [Test]
+    public void ArcQuadraticBezierIntersections_ReturnsPointsInBezierOrder()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+        var curve = new QuadraticBezier(
+            new PointXY(2f, 0f),
+            new PointXY(0f, 0f),
+            new PointXY(-2f, 0f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(curve);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 1f, 0f);
+        AssertPoint(intersections[1], -1f, 0f);
+    }
+
+    [Test]
+    public void QuadraticBezierQuadraticBezierIntersections_IsolatesQuarticAndOrdersAlongTarget()
+    {
+        var source = new QuadraticBezier(
+            new PointXY(-2f, 1f),
+            new PointXY(0f, -1f),
+            new PointXY(2f, 1f));
+        var target = new QuadraticBezier(
+            new PointXY(-2f, -0.5f),
+            new PointXY(0f, 1.5f),
+            new PointXY(2f, -0.5f));
+
+        List<PointXY> intersections = source.GetPointIntersections(target);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], -1f, 0.25f);
+        AssertPoint(intersections[1], 1f, 0.25f);
+    }
+
+    [Test]
+    public void QuadraticBezierQuadraticBezierIntersections_WhenTargetIsLinear_ReturnsPointsInTargetOrder()
+    {
+        var source = new QuadraticBezier(
+            new PointXY(-2f, 1f),
+            new PointXY(0f, -1f),
+            new PointXY(2f, 1f));
+        var target = new QuadraticBezier(
+            new PointXY(2f, 0.5f),
+            new PointXY(0f, 0.5f),
+            new PointXY(-2f, 0.5f));
+
+        List<PointXY> intersections = source.GetPointIntersections(target);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        Assert.That(intersections[0].X, Is.GreaterThan(0f));
+        Assert.That(intersections[1].X, Is.LessThan(0f));
+    }
+
+    [Test]
+    public void CubicBezierQuadraticBezierIntersections_IsolatesSexticAndOrdersAlongTarget()
+    {
+        var source = new CubicBezier(
+            new PointXY(2f, 0.25f),
+            new PointXY(2f / 3f, 0.25f),
+            new PointXY(-2f / 3f, 0.25f),
+            new PointXY(-2f, 0.25f));
+        var target = new QuadraticBezier(
+            new PointXY(-2f, -0.5f),
+            new PointXY(0f, 1.5f),
+            new PointXY(2f, -0.5f));
+
+        List<PointXY> intersections = source.GetPointIntersections(target);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], -1f, 0.25f);
+        AssertPoint(intersections[1], 1f, 0.25f);
+    }
+
+    [Test]
     public void QuadraticBezier_CountRightwardCrossings_CountsRootsAndExcludesTangent()
     {
         var curve = new QuadraticBezier(

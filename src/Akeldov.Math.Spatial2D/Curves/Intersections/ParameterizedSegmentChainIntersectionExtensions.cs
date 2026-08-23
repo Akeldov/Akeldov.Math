@@ -91,6 +91,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns distinct isolated point intersections between a parameterized segment chain and a quadratic Bezier curve by solving the original curve polynomial.
+        /// </summary>
+        /// <param name="source">The source parameterized segment chain.</param>
+        /// <param name="curve">The quadratic Bezier curve to intersect with the source chain.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the curve's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedSegmentChain source, QuadraticBezier curve)
+        {
+            List<PointXY> intersections = QuadraticBezierIntersectionExtensions.GetPointIntersections(curve, source);
+            QuadraticBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>
         /// Returns distinct isolated point intersections between a segment collection and a line using exact comparisons.
         /// </summary>
         /// <param name="segments">The segments to intersect.</param>

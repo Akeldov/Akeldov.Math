@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Provides exact intersection calculations for <see cref="ParameterizedArc"/>.
+    /// Provides intersection calculations for <see cref="ParameterizedArc"/>.
     /// </summary>
     public static class ParameterizedArcIntersectionExtensions
     {
@@ -85,6 +85,17 @@ namespace Akeldov.Math.Spatial2D.Curves
             List<PointXY> intersections = ArcIntersectionExtensions.GetPointIntersections((Arc)source, (Arc)arc);
             OrderPointIntersections(arc, intersections);
             return intersections;
+        }
+
+        /// <summary>
+        /// Returns isolated point intersections between a parameterized arc and a quadratic Bezier curve by numerically isolating the roots of the original curve-circle polynomial above float precision.
+        /// </summary>
+        /// <param name="source">The source parameterized arc.</param>
+        /// <param name="curve">The quadratic Bezier curve to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the curve's start point to its end point.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedArc source, QuadraticBezier curve)
+        {
+            return ArcIntersectionExtensions.GetPointIntersections((Arc)source, curve);
         }
 
         /// <summary>

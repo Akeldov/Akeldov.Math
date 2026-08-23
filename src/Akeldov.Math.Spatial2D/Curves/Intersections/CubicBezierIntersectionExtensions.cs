@@ -168,6 +168,35 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a cubic and a quadratic Bezier curve by numerically isolating the roots of the original sextic resultant above float precision.
+        /// </summary>
+        /// <param name="source">The source cubic Bezier curve.</param>
+        /// <param name="curve">The quadratic Bezier curve to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the quadratic curve's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this CubicBezier source, QuadraticBezier curve)
+        {
+            double[] x =
+            {
+                source.StartPoint.X,
+                3d * ((double)source.ControlPointA.X - source.StartPoint.X),
+                3d * ((double)source.StartPoint.X - 2d * source.ControlPointA.X + source.ControlPointB.X),
+                -(double)source.StartPoint.X + 3d * source.ControlPointA.X - 3d * source.ControlPointB.X + source.EndPoint.X
+            };
+            double[] y =
+            {
+                source.StartPoint.Y,
+                3d * ((double)source.ControlPointA.Y - source.StartPoint.Y),
+                3d * ((double)source.StartPoint.Y - 2d * source.ControlPointA.Y + source.ControlPointB.Y),
+                -(double)source.StartPoint.Y + 3d * source.ControlPointA.Y - 3d * source.ControlPointB.Y + source.EndPoint.Y
+            };
+            double[] polynomial = QuadraticBezierIntersectionExtensions.CreateImplicitPolynomial(curve, x, y);
+            bool sourceIsPoint = source.StartPoint.Equals(source.ControlPointA) &&
+                source.StartPoint.Equals(source.ControlPointB) &&
+                source.StartPoint.Equals(source.EndPoint);
+            return QuadraticBezierIntersectionExtensions.GetPointIntersections(curve, polynomial, parameter => Evaluate(source, parameter), sourceIsPoint);
+        }
+
+        /// <summary>
         /// Adds a distinct candidate when it belongs to the arc's angular region.
         /// </summary>
         private static void AddIfOnArc(PointXY point, Arc arc, List<PointXY> intersections)

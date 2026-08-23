@@ -63,13 +63,17 @@ var probeLine = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
 List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 ```
 
+Every listed linear, circular, quadratic, and cubic source type also provides an overload for a
+target `QuadraticBezier`.
+
 Multiple intersections are ordered along the canonical direction of a `Line` or the
 parameterized direction of a `ParameterizedLine`. A `Segment` orders them from `EndpointA` to
 `EndpointB`, while a `ParameterizedSegment` orders them from `StartPoint` to `EndPoint`. A
 `ParameterizedSegmentChain` orders distinct intersections from its `StartPoint` to its
 `EndPoint`. An `Arc` orders intersections counterclockwise from its `StartAngle`, while a
 `ParameterizedArc` uses its `AngularDirection` from `StartPoint` to `EndPoint`. Both segment types
-restrict results according to endpoint inclusion.
+restrict results according to endpoint inclusion. A target `QuadraticBezier` orders intersections
+from its `StartPoint` to its `EndPoint`.
 
 Spatial2D does not define one general curve-versus-curve intersection method.
 
@@ -82,7 +86,9 @@ polynomial of the original curve. General `BezierCurve` does not provide these o
 `ParameterizedSegmentChain`, `Arc`, or `ParameterizedArc` use exact comparisons for linear and
 circular source curves. `QuadraticBezier` and `CubicBezier` additionally provide numerical `Arc`
 and `ParameterizedArc` overloads that isolate the original quartic or sextic polynomial in `double`
-and round coordinates to `float` without a geometry-epsilon parameter.
+and round coordinates to `float` without a geometry-epsilon parameter. Bezier intersections with
+a target `QuadraticBezier` similarly isolate the original quartic or sextic resultant without
+flattening either curve.
 
 ## Account for overlaps and endpoints
 

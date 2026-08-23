@@ -85,5 +85,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             return LineIntersectionExtensions.GetPointIntersections(source.Line, arc);
         }
+
+        /// <summary>
+        /// Returns isolated point intersections between a parameterized line and a quadratic Bezier curve by solving the original curve polynomial.
+        /// </summary>
+        /// <param name="source">The source parameterized line.</param>
+        /// <param name="curve">The quadratic Bezier curve to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the curve's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedLine source, QuadraticBezier curve)
+        {
+            return LineIntersectionExtensions.GetPointIntersections(source.Line, curve);
+        }
     }
 }
