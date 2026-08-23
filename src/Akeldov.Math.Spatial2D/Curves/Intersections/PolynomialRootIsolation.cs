@@ -27,8 +27,8 @@ namespace Akeldov.Math.Spatial2D.Curves
                 roots.Add(0d);
 
             List<double[]> sturmSequence = BuildSturmSequence(polynomial);
-            double interiorStart = System.Math.BitIncrement(0d);
-            double interiorEnd = System.Math.BitDecrement(1d);
+            double interiorStart = double.Epsilon;
+            double interiorEnd = BitConverter.Int64BitsToDouble(BitConverter.DoubleToInt64Bits(1d) - 1L);
             int interiorRootCount = CountRoots(sturmSequence, interiorStart, interiorEnd);
 
             IsolateRoots(polynomial, sturmSequence, interiorStart, interiorEnd, interiorRootCount, roots);
