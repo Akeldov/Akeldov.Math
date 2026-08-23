@@ -102,5 +102,16 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             return intersections;
         }
+
+        /// <summary>
+        /// Returns isolated point intersections between a ray and a parameterized segment using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="segment">The parameterized segment to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller. A continuous overlap and intersections behind the ray return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, ParameterizedSegment segment)
+        {
+            return GetPointIntersections(source, (Segment)segment);
+        }
     }
 }

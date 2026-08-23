@@ -86,6 +86,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a cubic Bezier curve and a parameterized segment by solving the curve polynomial.
+        /// </summary>
+        /// <param name="source">The source cubic Bezier curve.</param>
+        /// <param name="segment">The parameterized segment to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the parameterized segment's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this CubicBezier source, ParameterizedSegment segment)
+        {
+            return GetPointIntersections(source, (Segment)segment);
+        }
+
+        /// <summary>
         /// Returns a degenerate segment point when it belongs to the curve and is included by the segment.
         /// </summary>
         /// <param name="source">The source cubic Bezier curve.</param>

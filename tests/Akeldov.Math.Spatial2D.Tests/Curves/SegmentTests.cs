@@ -690,6 +690,21 @@ public class SegmentTests
     }
 
     [Test]
+    public void PointIntersections_WhenParameterizedSegmentsTouchAtExcludedStart_ReturnsEmpty()
+    {
+        var source = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f));
+        var segment = new ParameterizedSegment(
+            new PointXY(2f, 0f),
+            new PointXY(4f, 0f),
+            includesStartPoint: false,
+            includesEndPoint: true);
+
+        List<PointXY> intersections = source.GetPointIntersections(segment);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void ParameterizedSegment_PointIntersections_WhenLineCrossesSegment_ReturnsIntersection()
     {
         var segment = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f));

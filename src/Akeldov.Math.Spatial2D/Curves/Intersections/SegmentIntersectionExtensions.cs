@@ -127,6 +127,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a segment and a parameterized segment using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source segment.</param>
+        /// <param name="segment">The parameterized segment to intersect with the source segment.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the parameterized segment's start point to its end point. A continuous overlap returns an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Segment source, ParameterizedSegment segment)
+        {
+            return GetPointIntersections(source, (Segment)segment);
+        }
+
+        /// <summary>
         /// Removes points outside a segment or at its excluded endpoints and orders the remaining points from its first endpoint to its second endpoint.
         /// </summary>
         /// <param name="intersections">The caller-owned intersection list to update.</param>
