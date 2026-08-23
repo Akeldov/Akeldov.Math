@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
 
@@ -8,6 +9,40 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public static class RayIntersectionExtensions
     {
+        /// <summary>
+        /// Returns the isolated point intersection between two rays using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="ray">The ray to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller. Continuous overlaps return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, Ray ray)
+        {
+            VectorXY sourceDirection = source.Direction;
+            VectorXY rayDirection = ray.Direction;
+            VectorXY originDelta = ray.Origin - source.Origin;
+            float cross = VectorXY.Cross(sourceDirection, rayDirection);
+
+            if (cross == 0f)
+            {
+                if (VectorXY.Cross(originDelta, sourceDirection) != 0f)
+                    return new List<PointXY>();
+
+                float directionDot = VectorXY.Dot(sourceDirection, rayDirection);
+                float rayOriginCoordinate = VectorXY.Dot(originDelta, sourceDirection);
+                if (directionDot < 0f && rayOriginCoordinate == 0f)
+                    return new List<PointXY> { source.Origin };
+
+                return new List<PointXY>();
+            }
+
+            float sourceCoordinate = VectorXY.Cross(originDelta, rayDirection) / cross;
+            float rayCoordinate = VectorXY.Cross(originDelta, sourceDirection) / cross;
+            if (sourceCoordinate < 0f || rayCoordinate < 0f)
+                return new List<PointXY>();
+
+            return new List<PointXY> { source.Origin + sourceCoordinate * sourceDirection };
+        }
+
         /// <summary>
         /// Returns the isolated point intersection between a ray and a line using exact comparisons.
         /// </summary>
@@ -134,14 +169,43 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>A new mutable list owned by the caller, ordered counterclockwise from the arc's start angle. Intersections behind the ray are omitted.</returns>
         public static List<PointXY> GetPointIntersections(this Ray source, Arc arc)
         {
-            var supportingLine = new Line(source.Origin, source.Origin + source.Direction);
-            List<PointXY> intersections = ArcIntersectionExtensions.GetPointIntersections(arc, supportingLine);
-
-            for (int i = intersections.Count - 1; i >= 0; i--)
+            if (arc.Radius == 0f)
             {
-                if (VectorXY.Dot(intersections[i] - source.Origin, source.Direction) < 0f)
-                    intersections.RemoveAt(i);
+                VectorXY originToCenter = arc.Center - source.Origin;
+                if (originToCenter.SquaredLength == 0f)
+                    return new List<PointXY> { arc.Center };
+
+                float centerAngle = MathF.Atan2(originToCenter.Y, originToCenter.X).NormalizeAngleRad();
+                float rayAngle = source.Angle.NormalizeAngleRad();
+                if (centerAngle == rayAngle)
+                    return new List<PointXY> { arc.Center };
+
+                return new List<PointXY>();
             }
+
+            VectorXY direction = source.Direction;
+            double directionX = direction.X;
+            double directionY = direction.Y;
+            double originToCenterX = source.Origin.X - arc.Center.X;
+            double originToCenterY = source.Origin.Y - arc.Center.Y;
+            double radius = arc.Radius;
+            double a = directionX * directionX + directionY * directionY;
+            double b = 2d * (originToCenterX * directionX + originToCenterY * directionY);
+            double c = originToCenterX * originToCenterX + originToCenterY * originToCenterY - radius * radius;
+            double discriminant = b * b - 4d * a * c;
+
+            if (discriminant < 0d)
+                return new List<PointXY>();
+
+            double denominator = 2d * a;
+            double sqrtDiscriminant = System.Math.Sqrt(discriminant);
+            double firstCoordinate = (-b - sqrtDiscriminant) / denominator;
+            double secondCoordinate = (-b + sqrtDiscriminant) / denominator;
+            var intersections = new List<PointXY>();
+
+            AddRayArcIntersection(source, arc, firstCoordinate, intersections);
+            if (secondCoordinate != firstCoordinate)
+                AddRayArcIntersection(source, arc, secondCoordinate, intersections);
 
             ArcIntersectionExtensions.OrderPointIntersections(arc, intersections);
             return intersections;
@@ -200,6 +264,49 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             CubicBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
             return intersections;
+        }
+
+        internal static List<PointXY> OrderPointIntersections(Ray ray, List<PointXY> intersections)
+        {
+            intersections.Sort((left, right) =>
+                VectorXY.Dot(left - ray.Origin, ray.Direction).CompareTo(
+                    VectorXY.Dot(right - ray.Origin, ray.Direction)));
+            return intersections;
+        }
+
+        private static void AddRayArcIntersection(
+            Ray ray,
+            Arc arc,
+            double rayCoordinate,
+            List<PointXY> intersections)
+        {
+            if (rayCoordinate < 0d)
+                return;
+
+            VectorXY direction = ray.Direction;
+            PointXY point = new PointXY(
+                (float)(ray.Origin.X + rayCoordinate * direction.X),
+                (float)(ray.Origin.Y + rayCoordinate * direction.Y));
+
+            if (ArcIntersectionExtensions.IsWithinAngularRegion(arc, point) && !intersections.Contains(point))
+                intersections.Add(point);
+        }
+
+        internal static bool HasContinuousIntersection(Ray ray, Segment segment)
+        {
+            VectorXY segmentDirection = segment.EndpointB - segment.EndpointA;
+            if (segmentDirection.SquaredLength == 0f ||
+                VectorXY.Cross(segment.EndpointA - ray.Origin, ray.Direction) != 0f ||
+                VectorXY.Cross(segmentDirection, ray.Direction) != 0f)
+            {
+                return false;
+            }
+
+            float endpointACoordinate = VectorXY.Dot(segment.EndpointA - ray.Origin, ray.Direction);
+            float endpointBCoordinate = VectorXY.Dot(segment.EndpointB - ray.Origin, ray.Direction);
+            float overlapStart = MathF.Max(0f, MathF.Min(endpointACoordinate, endpointBCoordinate));
+            float overlapEnd = MathF.Max(endpointACoordinate, endpointBCoordinate);
+            return overlapEnd > overlapStart;
         }
     }
 }

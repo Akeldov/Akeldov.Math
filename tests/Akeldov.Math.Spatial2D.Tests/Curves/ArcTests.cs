@@ -438,6 +438,28 @@ public class ArcTests
     }
 
     [Test]
+    public void PointIntersections_WhenRadiusIsZeroAndCenterIsBehindRay_ReturnsEmpty()
+    {
+        var arc = new Arc(new PointXY(1f, 1f), 0f, 0f, MathF.PI);
+        var ray = new Ray(new PointXY(2f, 1f));
+
+        var intersections = arc.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenRadiusIsZeroAndCenterIsOutsideRay_ReturnsEmpty()
+    {
+        var arc = new Arc(new PointXY(1f, 1f), 0f, 0f, MathF.PI);
+        var ray = new Ray(new PointXY(0f, 0f));
+
+        var intersections = arc.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void PointIntersections_WhenStopAngleIsOneFullTurnAfterStart_ReturnsCircleIntersections()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);

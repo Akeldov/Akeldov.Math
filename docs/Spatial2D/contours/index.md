@@ -13,7 +13,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var contour = new CompositeContour(new IFinitePath[]
+var contour = new CompositeContour(new IContourPath[]
 {
     new ParameterizedSegment(
         new PointXY(-2f, -1.5f),
@@ -51,7 +51,7 @@ The thumbnails use the same curve rasterizers as the curve overview. Non-paramet
 
 | <span class="curve-overview-heading">Non-Parameterized</span> | Parameterized | <span class="curve-coordinate-domain">Coordinate Domain</span> | Notes |
 |---|---|---|---|
-| <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Composite contour distance raster" src="../../assets/spatial2d/contours/composite-contour-distance.png"><br><span class="curve-overview-link">[`CompositeContour`](composite-contour.md)</span> | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Parameterized composite contour growing-thickness raster" src="../../assets/spatial2d/contours/parameterized-composite-contour-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedCompositeContour`](parameterized-composite-contour.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Closed chain composed from finite paths. |
+| <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Composite contour distance raster" src="../../assets/spatial2d/contours/composite-contour-distance.png"><br><span class="curve-overview-link">[`CompositeContour`](composite-contour.md)</span> | <img class="curve-overview-thumbnail" style="width: 160px; height: 160px; max-width: none; object-fit: contain;" alt="Parameterized composite contour growing-thickness raster" src="../../assets/spatial2d/contours/parameterized-composite-contour-growing-thickness.png"><br><span class="curve-overview-link">[`ParameterizedCompositeContour`](parameterized-composite-contour.md)</span> | <span class="curve-coordinate-domain">`[0, Length]`</span> | Closed chain composed from contour paths. |
 
 Use contours for boundaries. Use [regions](../regions/index.md) when you need filled area membership.
 

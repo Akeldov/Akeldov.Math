@@ -190,8 +190,8 @@ public class CurveSnapshotTests
 
     private static CompositeContour CreateCompositeContour() => new CompositeContour(CreateCompositePaths());
 
-    private static IFinitePath[] CreateCompositePaths() =>
-        new IFinitePath[]
+    private static IContourPath[] CreateCompositePaths() =>
+        new IContourPath[]
     {
         new ParameterizedSegment(new PointXY(-2f, -1.5f), new PointXY(1f, -1.7320508f)),
         new ParameterizedArc(

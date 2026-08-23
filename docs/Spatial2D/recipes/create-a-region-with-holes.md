@@ -19,7 +19,7 @@ bool insideHole = region.Contains(new PointXY(2f, 2f));
 
 static IContour CreateSquareContour(float left, float bottom, float right, float top)
 {
-    return new CompositeContour(new IFinitePath[]
+    return new CompositeContour(new IContourPath[]
     {
         new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
         new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),

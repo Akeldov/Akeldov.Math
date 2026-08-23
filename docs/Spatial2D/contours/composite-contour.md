@@ -1,13 +1,13 @@
 # CompositeContour
 
-`CompositeContour` joins finite paths into one closed boundary. It implements `ICompositeContour` and retains its own array of path references behind a read-only structural view.
+`CompositeContour` joins contour paths into one closed boundary. It implements `ICompositeContour` and retains its own array of path references behind a read-only structural view. Every `IContourPath` is finite and directed and provides the crossing and ray-intersection queries needed by the composite contour.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var contour = new CompositeContour(new IFinitePath[]
+var contour = new CompositeContour(new IContourPath[]
 {
     new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
     new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(2f, 3f)),
@@ -15,7 +15,7 @@ var contour = new CompositeContour(new IFinitePath[]
 });
 ```
 
-Adjacent paths must connect and the final endpoint must meet the first start point. At least one finite path is required, all paths must have finite non-negative lengths, and the accumulated contour length must remain finite.
+Adjacent paths must connect and the final endpoint must meet the first start point. At least one contour path is required, all paths must have finite non-negative lengths, and the accumulated contour length must remain finite.
 
 For polygonal contours, pass at least three vertices instead. Consecutive vertices are connected with `ParameterizedSegment` edges and the last vertex is connected back to the first:
 

@@ -12,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Length and length-coordinate operations use a fixed internal polyline approximation
     /// of the curve. Ray intersections are found by solving the original curve polynomial.
     /// </remarks>
-    public readonly struct CubicBezier : IFinitePath, IEquatable<CubicBezier>
+    public readonly struct CubicBezier : IContourPath, IEquatable<CubicBezier>
     {
         private readonly PointXY _startPoint;
         private readonly PointXY _controlPointA;
@@ -146,19 +146,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             return BezierPathApproximation.ProjectWithParameter(GetPointAtUnchecked, point);
         }
 
-        /// <summary>
-        /// Returns point intersections between this curve and the specified ray by solving the original curve polynomial.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this curve.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(Ray ray)
-        {
-            List<PointXY> intersections = RayIntersectionExtensions.GetPointIntersections(ray, this);
-            intersections.Sort((left, right) =>
-                VectorXY.Dot(left - ray.Origin, ray.Direction).CompareTo(
-                    VectorXY.Dot(right - ray.Origin, ray.Direction)));
-            return intersections;
-        }
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            CubicBezierIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) =>

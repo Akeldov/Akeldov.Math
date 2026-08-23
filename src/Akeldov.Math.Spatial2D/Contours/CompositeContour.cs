@@ -5,19 +5,19 @@ using Akeldov.Math.Spatial2D.Curves;
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a closed two-dimensional contour made from finite paths.
+    /// Represents a closed two-dimensional contour made from contour paths.
     /// </summary>
     public sealed class CompositeContour : ICompositeContour
     {
-        private readonly IFinitePath[] _curves;
-        private readonly IReadOnlyList<IFinitePath> _readOnlyCurves;
+        private readonly IContourPath[] _curves;
+        private readonly IReadOnlyList<IContourPath> _readOnlyCurves;
         private readonly float _length;
 
         /// <summary>
-        /// Initializes a new composite contour from the specified finite paths.
+        /// Initializes a new composite contour from the specified contour paths.
         /// </summary>
-        /// <param name="curves">The finite paths that form the contour.</param>
-        public CompositeContour(IReadOnlyList<IFinitePath> curves)
+        /// <param name="curves">The contour paths that form the contour.</param>
+        public CompositeContour(IReadOnlyList<IContourPath> curves)
         {
             if (curves == null)
                 throw new ArgumentNullException(nameof(curves));
@@ -25,7 +25,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (curves.Count == 0)
                 throw new ArgumentException("A contour must contain at least one curve.", nameof(curves));
 
-            _curves = new IFinitePath[curves.Count];
+            _curves = new IContourPath[curves.Count];
 
             for (int i = 0; i < curves.Count; i++)
             {
@@ -63,9 +63,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <summary>
-        /// Gets the read-only structural view of the finite paths that form this contour.
+        /// Gets the read-only structural view of the contour paths that form this contour.
         /// </summary>
-        public IReadOnlyList<IFinitePath> Curves => _readOnlyCurves;
+        public IReadOnlyList<IContourPath> Curves => _readOnlyCurves;
 
         /// <summary>
         /// Gets the finite non-negative contour boundary length in world coordinate units.
@@ -98,23 +98,8 @@ namespace Akeldov.Math.Spatial2D.Contours
             return Distance(point) == 0f;
         }
 
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray)
-        {
-            var intersections = new List<PointXY>();
-
-            for (int i = 0; i < _curves.Length; i++)
-            {
-                List<PointXY> curveIntersections = _curves[i].GetPointIntersections(ray);
-                if (curveIntersections == null)
-                    continue;
-
-                for (int j = 0; j < curveIntersections.Count; j++)
-                    AddDistinct(intersections, curveIntersections[j], GeometryConstants.GeometryEpsilon);
-            }
-
-            return intersections;
-        }
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            CompositeContourIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
@@ -174,7 +159,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             return crossingCount % 2 == 1;
         }
 
-        private static IFinitePath[] CreateCurvesFromPoints(IReadOnlyList<PointXY> points, string parameterName)
+        private static IContourPath[] CreateCurvesFromPoints(IReadOnlyList<PointXY> points, string parameterName)
         {
             if (points == null)
                 throw new ArgumentNullException(parameterName);
@@ -196,7 +181,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (vertexCount < 3)
                 throw new ArgumentException("CompositeContour point contour must contain at least three distinct vertices.", parameterName);
 
-            var curves = new IFinitePath[vertexCount];
+            var curves = new IContourPath[vertexCount];
 
             for (int i = 0; i < vertexCount; i++)
             {
@@ -212,19 +197,19 @@ namespace Akeldov.Math.Spatial2D.Contours
             return curves;
         }
 
-        private static void ValidateCurvesFormClosedChain(IReadOnlyList<IFinitePath> curves, string parameterName)
+        private static void ValidateCurvesFormClosedChain(IReadOnlyList<IContourPath> curves, string parameterName)
         {
             for (int i = 0; i < curves.Count; i++)
             {
-                IFinitePath currentCurve = curves[i];
-                IFinitePath nextCurve = curves[(i + 1) % curves.Count];
+                IContourPath currentCurve = curves[i];
+                IContourPath nextCurve = curves[(i + 1) % curves.Count];
 
                 if (!currentCurve.EndPoint.AlmostEquals(nextCurve.StartPoint))
                     throw new ArgumentException("CompositeContour curves must form a closed continuous chain.", parameterName);
             }
         }
 
-        private static float GetLength(IReadOnlyList<IFinitePath> curves, string parameterName)
+        private static float GetLength(IReadOnlyList<IContourPath> curves, string parameterName)
         {
             float length = 0f;
 
@@ -240,17 +225,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             }
 
             return length;
-        }
-
-        private static void AddDistinct(List<PointXY> intersections, PointXY point, float geometryEpsilon)
-        {
-            for (int i = 0; i < intersections.Count; i++)
-            {
-                if (intersections[i].AlmostEquals(point, geometryEpsilon))
-                    return;
-            }
-
-            intersections.Add(point);
         }
 
     }

@@ -39,8 +39,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             GeometryConstants.ValidateFiniteAngle(startAngle, nameof(startAngle));
             GeometryConstants.ValidateFiniteAngle(endAngle, nameof(endAngle));
 
-            if (startAngle.AlmostEquals(endAngle))
-                return angle.AlmostEquals(startAngle);
+            if (startAngle == endAngle)
+                return angle == startAngle;
 
             if (startAngle < endAngle)
                 return angle >= startAngle && angle <= endAngle;

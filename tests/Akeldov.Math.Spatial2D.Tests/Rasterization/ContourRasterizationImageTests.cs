@@ -106,7 +106,7 @@ public class ContourRasterizationImageTests
 
     private static CompositeContour CreateTriangleContour()
     {
-        return new CompositeContour(new IFinitePath[]
+        return new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
             new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(2f, 3.5f)),
@@ -116,7 +116,7 @@ public class ContourRasterizationImageTests
 
     private static CompositeContour CreateSquareContour()
     {
-        return new CompositeContour(new IFinitePath[]
+        return new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
             new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(4f, 4f)),

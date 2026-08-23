@@ -1,7 +1,8 @@
 # Intersections
 
-`ICurve.GetPointIntersections(Ray)` returns isolated intersection points in the forward direction of a ray.
-Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads and numerical `Arc` and `ParameterizedArc` overloads. All of these source types also provide overloads for target `QuadraticBezier` and `CubicBezier` curves.
+Binary intersection operations are extension methods on concrete geometry types. Ray overloads return isolated intersection points in the forward direction of the ray. Code that needs polymorphic ray queries can use `IRayIntersectionProvider`; contour segments expose the combined `IContourPath` capability. The base `ICurve` contract is limited to point distance and projection.
+
+Linear and circular curves provide overloads for intersections with `Ray`, `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the ray and linear target overloads and numerical `Arc` and `ParameterizedArc` overloads. All of these source types also provide overloads for target `QuadraticBezier` and `CubicBezier` curves.
 
 The returned collection is a new mutable list owned by the caller.
 
@@ -43,8 +44,7 @@ to its `EndPoint`. Both segment types respect endpoint inclusion.
 Points that belong to a continuous set of intersections are not returned. For example, a
 collinear overlap between a linear curve and the ray does not produce a representative point.
 
-`GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Intersections with
-`Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, or `ParameterizedArc` use exact comparisons;
+Ray intersections and intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, or `ParameterizedArc` do not accept or apply a geometry-epsilon parameter. Linear cases use exact comparisons;
 `QuadraticBezier` and `CubicBezier` solve the polynomial of the original curve rather than
 intersecting a polyline approximation. Their `Arc` and `ParameterizedArc` overloads isolate quartic
 or sextic roots in `double` and round the resulting coordinates to `float`, without a

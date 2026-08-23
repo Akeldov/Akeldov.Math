@@ -294,7 +294,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             public CompositeContour? ToCompositeContour(VectorXY offset)
             {
-                var paths = new List<IFinitePath>(_segments.Count);
+                var paths = new List<IContourPath>(_segments.Count);
                 for (int i = 0; i < _segments.Count; i++)
                 {
                     TextSegment segment = _segments[i].Translate(offset);

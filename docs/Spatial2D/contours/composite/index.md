@@ -1,6 +1,6 @@
 # Composite Contours
 
-Composite contours form a closed boundary from consecutive `IFinitePath` instances. They support mixed line, arc, Bezier, and other finite-path segments as long as every path continues from the previous endpoint and the final path closes the chain.
+Composite contours form a closed boundary from consecutive `IContourPath` instances. They support mixed line, arc, Bezier, and other contour-path segments as long as every path continues from the previous endpoint and the final path closes the chain.
 
 ## Choosing a Type
 
@@ -25,7 +25,7 @@ float perimeter = contour.Length;                         // 14
 bool enclosesCenter = contour.Encloses(new PointXY(2f, 1f)); // true
 ```
 
-Constructors copy the curve or point collection. `Curves` exposes the retained structure through `IReadOnlyList<IFinitePath>`, preserving the order and closure invariant.
+Constructors copy the curve or point collection. `Curves` exposes the retained structure through `IReadOnlyList<IContourPath>`, preserving the order, closure, and required spatial-query capabilities.
 
 `ParameterizedCompositeContour` accumulates the lengths of its component paths. `GetPoint`, `ProjectWithParameter`, and other parameterized operations therefore use one coordinate across the entire closed chain rather than restarting at each component.
 

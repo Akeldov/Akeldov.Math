@@ -35,14 +35,14 @@ using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 var contour = new CompositeContour(
-    new IFinitePath[]
+    new IContourPath[]
     {
         new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
         new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(0f, 2f)),
         new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
     });
 
-IReadOnlyList<IFinitePath> curves = contour.Curves;
+IReadOnlyList<IContourPath> curves = contour.Curves;
 ```
 
 Library Ownership describes the returned API surface rather than necessarily identifying who allocated the underlying collection. For example, a validated input may be returned as-is without granting mutation through the returned contract.

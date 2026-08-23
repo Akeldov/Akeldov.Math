@@ -6,8 +6,8 @@ Use these contracts when changing curve abstractions or implementations in
 `Akeldov.Math.Spatial2D.Curves`.
 
 - `ICurve` is the base one-dimensional geometry contract. It can measure point
-  distance through `IPointDistanceProvider`, project a finite point, and report
-  ray intersections. It does not imply finite length, endpoints, traversal
+  distance through `IPointDistanceProvider` and project a finite point. It does
+  not imply intersection or fill-boundary capabilities, finite length, endpoints, traversal
   direction, parameterization, closure, or inside/outside semantics.
 - `IFiniteCurve` adds a finite non-negative `Length` in world coordinate units.
   It does not imply endpoints or traversal direction.
@@ -26,7 +26,14 @@ Use these contracts when changing curve abstractions or implementations in
   direction. `StartPoint` and `EndPoint` are directional and must be consistent
   with increasing curve coordinates.
 - `IFinitePath` is a finite directed path. It is suitable for contour segments,
-  because contours require finite curves with start and end points.
+  when only geometric traversal is required.
+- `IRightwardCrossingProvider` adds the fill-rule crossing query used by contours
+  and regions.
+- `IRayIntersectionProvider` adds polymorphic ray-intersection queries. Its
+  results are new mutable lists owned by the caller and ordered along the ray.
+- `IContourPath` combines `IFinitePath` with both spatial-query capabilities.
+  Composite contours accept this contract so every retained path can participate
+  in enclosure and ray-intersection algorithms.
 - `IRayPath` is a parameterized one-endpoint curve with traversal starting at
   `Origin`. Its coordinate should increase away from `Origin`.
 
@@ -36,7 +43,7 @@ Current examples:
 - `ParameterizedLine` implements `IParameterizedCurve`.
 - `Ray` implements `IRayPath`.
 - `Segment` and `Arc` implement `IFiniteTwoEndpointCurve`.
-- `ParameterizedSegment` and `ParameterizedArc` implement `IFinitePath`.
+- `ParameterizedSegment` and `ParameterizedArc` implement `IContourPath`.
 
 Keep curve interfaces free of filled-area semantics. Do not add `Contains`,
 `Encloses`, fill rules, or region-like behavior to curve abstractions. Closed
@@ -46,8 +53,10 @@ regions.
 Closed curves that unambiguously define an inside/outside area are represented
 by `IContour`, not by adding enclosing behavior to curve abstractions.
 
-`ICurve.GetPointIntersections` returns a new mutable `List<PointXY>` owned by the
-caller. Preserve that ownership contract in XML comments and implementations.
+Keep concrete binary intersection operations in extension classes under
+`Curves/Intersections`. Use `IRayIntersectionProvider` only where polymorphic
+dispatch is required, such as contour paths and contours. Preserve its
+caller-owned mutable `List<PointXY>` contract in XML comments and implementations.
 
 For circular curves, angles are expressed in radians by default. Angle
 parameters and properties must state their units in XML comments. Non-radian

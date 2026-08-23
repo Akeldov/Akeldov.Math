@@ -14,17 +14,20 @@ The curve interfaces add capabilities instead of imposing one representation:
 
 | Interface | Capability |
 |---|---|
-| <xref:Akeldov.Math.Spatial2D.Curves.ICurve> | Measures point distance, projects points, counts rightward crossings, and intersects rays. |
+| <xref:Akeldov.Math.Spatial2D.Curves.ICurve> | Measures point distance and projects points. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IFiniteCurve> | Exposes a finite `Length` in world coordinate units. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IOneEndpointCurve> | Has one endpoint, as a ray does. |
 | <xref:Akeldov.Math.Spatial2D.Curves.ITwoEndpointCurve> | Has two endpoints without defining a traversal order. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IParameterizedCurve> | Maps a curve coordinate to a point and reports that coordinate during projection. |
 | <xref:Akeldov.Math.Spatial2D.Curves.IPath> | Adds ordered `StartPoint` and `EndPoint` properties to a parameterized curve. |
-| <xref:Akeldov.Math.Spatial2D.Curves.IFinitePath> | Combines a finite length, ordered endpoints, and parameterization; this is the curve type used to build contours. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IFinitePath> | Combines a finite length, ordered endpoints, and parameterization. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IRightwardCrossingProvider> | Counts fill-rule crossings of a horizontal rightward ray. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IRayIntersectionProvider> | Reports isolated point intersections with an arbitrary ray. |
+| <xref:Akeldov.Math.Spatial2D.Curves.IContourPath> | Combines `IFinitePath` with both spatial-query capabilities required by composite contours. |
 
 Use the narrowest interface that expresses the operation. For example, an algorithm that only
-needs proximity can accept `ICurve`, while an algorithm that walks from one endpoint to another
-should accept `IFinitePath`.
+needs proximity can accept `ICurve`, an algorithm that walks from one endpoint to another can
+accept `IFinitePath`, and a composite-contour builder should accept `IContourPath`.
 
 ## Choose a concrete curve
 
@@ -90,12 +93,14 @@ float distance = projection.Distance;          // 3
 
 `Distance(point)` is the shorter choice when the closest position and curve coordinate are not
 needed. Linear and circular types calculate these operations analytically. Bezier types use an
-internal polyline approximation for length, projection, distance, and ray intersections.
+internal polyline approximation for length, projection, and distance; their intersections solve
+the original curve polynomial.
 
 ## Intersect a curve with a ray
 
-`GetPointIntersections` returns isolated intersection points in the forward direction of the
-supplied ray:
+Concrete `GetPointIntersections` extension methods return isolated intersection points in the
+forward direction of the supplied ray. Use `IRayIntersectionProvider` where polymorphic dispatch
+is required:
 
 ```csharp
 using System.Collections.Generic;
@@ -116,14 +121,15 @@ The returned list is new, mutable, and owned by the caller. Points that belong t
 set of intersections are not returned. For example, a collinear overlap between a linear curve
 and the ray does not produce a representative point.
 
-`CountRightwardCrossings` is a specialized crossing query used by containment algorithms. It
-uses a half-open endpoint rule so shared vertices are not counted twice.
+`IRightwardCrossingProvider.CountRightwardCrossings` is a specialized crossing query used by
+containment algorithms. It uses a half-open endpoint rule so shared vertices are not counted
+twice.
 
 ## Build larger geometry
 
-An `IFinitePath` has the ordered endpoints required to join curves into a contour. Consecutive
-paths must meet end-to-start, and a closed contour must connect its final endpoint back to its
-first endpoint. The contour can then define the outer boundary or a hole of a
+An `IContourPath` has the ordered endpoints and spatial queries required to join curves into a
+contour. Consecutive paths must meet end-to-start, and a closed contour must connect its final
+endpoint back to its first endpoint. The contour can then define the outer boundary or a hole of a
 [region](regions.md).
 
 For practical examples, see:

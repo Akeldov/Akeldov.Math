@@ -6,15 +6,15 @@ Use these contracts when changing contour abstractions or implementations in
 `Akeldov.Math.Spatial2D.Contours`.
 
 - `IContour` is a closed finite one-dimensional boundary that unambiguously
-  defines an inside/outside area. It extends `IFiniteCurve` and
-  `ISignedPointDistanceProvider`.
+  defines an inside/outside area. It extends `IFiniteCurve`,
+  `ISignedPointDistanceProvider`, `IRightwardCrossingProvider`, and
+  `IRayIntersectionProvider`.
 - `IContour.Encloses` tests whether a point lies inside or on the closed
   boundary. Boundary-inclusive behavior is part of the contour contract.
 - `IContour.SignedDistance` is expected to be negative for points enclosed by
-  the contour, positive outside, and zero on the boundary within geometry
-  tolerance.
+  the contour, positive outside, and zero on the boundary.
 - `ICompositeContour` is a contour built from a structural read-only list of
-  `IFinitePath` curves. The paths must form a closed chain where each path
+  `IContourPath` curves. The paths must form a closed chain where each path
   starts at the previous path's end and the final path closes back to the first
   path.
 - `IParameterizedContour` is a contour with a length-based curve coordinate. It

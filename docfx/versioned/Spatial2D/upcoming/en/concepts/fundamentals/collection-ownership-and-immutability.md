@@ -37,14 +37,14 @@ The library creates a structural copy and retains that copy as its own state. Th
 collection remains caller-owned, and later structural changes to it do not affect the library's
 copy.
 
-<xref:Akeldov.Math.Spatial2D.Contours.CompositeContour> follows this contract for finite paths:
+<xref:Akeldov.Math.Spatial2D.Contours.CompositeContour> follows this contract for contour paths:
 
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var input = new IFinitePath[]
+var input = new IContourPath[]
 {
     new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
     new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(0f, 2f)),
@@ -54,7 +54,7 @@ var input = new IFinitePath[]
 var contour = new CompositeContour(input);
 input[0] = new ParameterizedSegment(new PointXY(10f, 10f), new PointXY(20f, 20f));
 
-IFinitePath retained = contour.Curves[0]; // Still the path from (0, 0) to (2, 0)
+IContourPath retained = contour.Curves[0]; // Still the path from (0, 0) to (2, 0)
 ```
 
 This is ownership of the copy, not ownership of the original collection. Unless documented

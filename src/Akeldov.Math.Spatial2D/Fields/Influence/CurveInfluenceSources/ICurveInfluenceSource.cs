@@ -6,8 +6,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// Represents an influence source backed by a parameterized projectable curve.
     /// </summary>
     /// <remarks>
-    /// Curve influence sources can measure distance, intersect rays, and project sampled points onto
-    /// the underlying curve.
+    /// Curve influence sources can measure distance and project sampled points onto the underlying curve.
     /// </remarks>
     public interface ICurveInfluenceSource : IInfluenceSource, IParameterizedCurve
     {

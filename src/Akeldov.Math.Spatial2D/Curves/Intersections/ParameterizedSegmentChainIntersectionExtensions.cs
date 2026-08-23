@@ -10,6 +10,18 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class ParameterizedSegmentChainIntersectionExtensions
     {
         /// <summary>
+        /// Returns isolated point intersections between a parameterized segment chain and a ray using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source parameterized segment chain.</param>
+        /// <param name="ray">The ray to intersect with the source chain.</param>
+        /// <returns>A new mutable list owned by the caller, ordered in the forward direction of the ray. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedSegmentChain source, Ray ray)
+        {
+            List<PointXY> intersections = RayIntersectionExtensions.GetPointIntersections(ray, source);
+            return RayIntersectionExtensions.OrderPointIntersections(ray, intersections);
+        }
+
+        /// <summary>
         /// Returns the distinct isolated point intersections between a segment chain and a line using exact comparisons.
         /// </summary>
         /// <param name="source">The source segment chain.</param>

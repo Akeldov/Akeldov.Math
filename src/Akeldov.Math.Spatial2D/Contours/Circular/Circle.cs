@@ -103,62 +103,8 @@ namespace Akeldov.Math.Spatial2D.Contours
             return new CurveProjection(projected, point.Distance(projected));
         }
 
-        /// <summary>
-        /// Returns point intersections between this circle and the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with the circle.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            GetIntersectionsWithTolerance(ray, GeometryConstants.GeometryEpsilon);
-
-        /// <summary>
-        /// Returns point intersections between this circle and the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with the circle.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        private List<PointXY> GetIntersectionsWithTolerance(
-            Ray ray,
-            float geometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            List<PointXY> intersections = new List<PointXY>();
-
-            VectorXY d = ray.Direction;
-            VectorXY f = ray.Origin - _center;
-
-            float a = 1f;
-            float b = 2 * VectorXY.Dot(f, d);
-            float c = f.SquaredLength - _radius * _radius;
-
-            float discriminant = b * b - 4 * a * c;
-
-            if (discriminant < -geometryEpsilon)
-            {
-                return intersections;
-            }
-
-            if (discriminant < 0f)
-                discriminant = 0f;
-
-            discriminant = MathF.Sqrt(discriminant);
-
-            float t1 = (-b - discriminant) / (2 * a);
-            float t2 = (-b + discriminant) / (2 * a);
-
-            if (t1 >= 0)
-            {
-                intersections.AddDistinct(ray.Origin + d * t1, geometryEpsilon);
-            }
-
-            if (t2 >= 0 && !t2.AlmostEquals(t1, geometryEpsilon))
-            {
-                intersections.AddDistinct(ray.Origin + d * t2, geometryEpsilon);
-            }
-
-            return intersections;
-        }
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            CircleIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Circle other && Equals(other);

@@ -12,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// The default value represents the horizontal line <c>y = 0</c>, with origin at the coordinate origin
     /// and direction along the positive X axis.
     /// </remarks>
-    public readonly struct ParameterizedLine : IParameterizedCurve, IEquatable<ParameterizedLine>
+    public readonly struct ParameterizedLine : IParameterizedCurve, IRightwardCrossingProvider, IEquatable<ParameterizedLine>
     {
         private readonly Line _line;
         private readonly PointXY _origin;
@@ -217,10 +217,6 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(_line, _origin, _isDirectionReversed);
-
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            _line.GetPointIntersections(ray);
 
         /// <summary>
         /// Projects the specified point onto this parameterized line.

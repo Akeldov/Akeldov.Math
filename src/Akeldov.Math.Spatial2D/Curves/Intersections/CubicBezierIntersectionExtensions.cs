@@ -8,6 +8,18 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public static class CubicBezierIntersectionExtensions
     {
+        /// <summary>
+        /// Returns isolated point intersections between a cubic Bezier curve and a ray by solving the original curve polynomial.
+        /// </summary>
+        /// <param name="source">The source cubic Bezier curve.</param>
+        /// <param name="ray">The ray to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered in the forward direction of the ray.</returns>
+        public static List<PointXY> GetPointIntersections(this CubicBezier source, Ray ray)
+        {
+            List<PointXY> intersections = RayIntersectionExtensions.GetPointIntersections(ray, source);
+            return RayIntersectionExtensions.OrderPointIntersections(ray, intersections);
+        }
+
         private static readonly double[] PolynomialOne = { 1d };
 
         /// <summary>

@@ -28,4 +28,13 @@ public class AngleFloatExtensionsTests
 
         Assert.That(exception!.ParamName, Is.EqualTo(expectedParamName));
     }
+
+    [Test]
+    public void IsAngleWithinArc_WhenEndpointsDifferBelowGeometryEpsilon_UsesExactWrappedInterval()
+    {
+        float startAngle = 1f;
+        float endAngle = startAngle - GeometryConstants.GeometryEpsilon * 0.5f;
+
+        Assert.That(0f.IsAngleWithinArc(startAngle, endAngle), Is.True);
+    }
 }

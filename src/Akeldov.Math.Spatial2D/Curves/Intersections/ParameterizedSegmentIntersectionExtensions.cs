@@ -9,6 +9,15 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class ParameterizedSegmentIntersectionExtensions
     {
         /// <summary>
+        /// Returns isolated point intersections between a parameterized segment and a ray using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source parameterized segment.</param>
+        /// <param name="ray">The ray to intersect with the source segment.</param>
+        /// <returns>A new mutable list owned by the caller. A continuous overlap and intersections behind the ray return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedSegment source, Ray ray) =>
+            RayIntersectionExtensions.GetPointIntersections(ray, source);
+
+        /// <summary>
         /// Returns isolated point intersections between a parameterized segment and a line using exact comparisons.
         /// </summary>
         /// <param name="source">The source parameterized segment.</param>

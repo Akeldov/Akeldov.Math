@@ -600,7 +600,7 @@ public class BezierTests
             new PointXY(1f, 2f),
             new PointXY(2f, 0f));
         var baseLine = new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(0f, 0f));
-        var contour = new CompositeContour(new IFinitePath[] { arch, baseLine });
+        var contour = new CompositeContour(new IContourPath[] { arch, baseLine });
 
         Assert.That(contour.Encloses(new PointXY(1f, 0.25f)), Is.True);
         Assert.That(contour.Encloses(new PointXY(1f, 1.5f)), Is.False);

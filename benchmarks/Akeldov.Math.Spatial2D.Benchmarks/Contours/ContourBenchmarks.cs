@@ -47,7 +47,7 @@ public class ContourBenchmarks
 
     private static CompositeContour CreateRegularPolygonContour(int segmentCount, float radius)
     {
-        var curves = new IFinitePath[segmentCount];
+        var curves = new IContourPath[segmentCount];
 
         for (int i = 0; i < curves.Length; i++)
         {

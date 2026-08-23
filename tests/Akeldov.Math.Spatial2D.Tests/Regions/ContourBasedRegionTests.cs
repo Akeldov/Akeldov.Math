@@ -220,7 +220,7 @@ public class ContourBasedRegionTests
 
     private static CompositeContour CreateSquareContour(float left, float bottom, float right, float top)
     {
-        return new CompositeContour(new IFinitePath[]
+        return new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
             new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
@@ -231,14 +231,14 @@ public class ContourBasedRegionTests
 
     private sealed class CrossingAwareContour : IContour
     {
-        private static readonly IFinitePath[] ContourCurves =
+        private static readonly IContourPath[] ContourCurves =
         {
             new DistantBoundaryCurve()
         };
 
         public int CountRightwardCrossingsCallCount { get; private set; }
 
-        public IReadOnlyList<IFinitePath> Curves => ContourCurves;
+        public IReadOnlyList<IContourPath> Curves => ContourCurves;
 
         public float Length => Curves[0].Length;
 
@@ -281,7 +281,7 @@ public class ContourBasedRegionTests
         }
     }
 
-    private sealed class DistantBoundaryCurve : IFinitePath
+    private sealed class DistantBoundaryCurve : IContourPath
     {
         public PointXY StartPoint => new PointXY(0f, 0f);
 

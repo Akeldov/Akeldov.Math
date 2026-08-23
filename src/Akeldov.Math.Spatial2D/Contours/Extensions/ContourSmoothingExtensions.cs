@@ -23,16 +23,16 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (radius <= 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be finite and positive.");
 
-            IReadOnlyList<IFinitePath> curves = contour.Curves;
+            IReadOnlyList<IContourPath> curves = contour.Curves;
             if (curves == null || curves.Count == 0)
-                throw new InvalidOperationException("CompositeContour must expose at least one finite path.");
+                throw new InvalidOperationException("CompositeContour must expose at least one contour path.");
 
             ParameterizedArc?[] cornerArcs = CreateCornerArcs(curves, radius);
-            var smoothedCurves = new List<IFinitePath>(curves.Count + cornerArcs.Length);
+            var smoothedCurves = new List<IContourPath>(curves.Count + cornerArcs.Length);
 
             for (int i = 0; i < curves.Count; i++)
             {
-                IFinitePath curve = curves[i];
+                IContourPath curve = curves[i];
                 ParameterizedArc? startArc = cornerArcs[GetPreviousIndex(i, curves.Count)];
                 ParameterizedArc? endArc = cornerArcs[i];
 
@@ -52,7 +52,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             return new CompositeContour(smoothedCurves);
         }
 
-        private static ParameterizedArc?[] CreateCornerArcs(IReadOnlyList<IFinitePath> curves, float radius)
+        private static ParameterizedArc?[] CreateCornerArcs(IReadOnlyList<IContourPath> curves, float radius)
         {
             var cornerArcs = new ParameterizedArc?[curves.Count];
 

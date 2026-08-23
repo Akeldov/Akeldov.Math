@@ -9,6 +9,15 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class LineIntersectionExtensions
     {
         /// <summary>
+        /// Returns the isolated point intersection between a line and a ray using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source line.</param>
+        /// <param name="ray">The ray to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller. A continuous overlap and intersections behind the ray return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Line source, Ray ray) =>
+            RayIntersectionExtensions.GetPointIntersections(ray, source);
+
+        /// <summary>
         /// Returns the isolated point intersection between two lines using exact comparisons.
         /// </summary>
         /// <param name="source">The source line.</param>

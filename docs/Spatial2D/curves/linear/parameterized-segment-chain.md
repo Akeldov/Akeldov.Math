@@ -60,6 +60,6 @@ PointXY retainedPoint = copiedChain.Points[1]; // (2, 0)
 
 At least two finite points are required. Adjacent points must be distinct, and every generated segment must have a finite positive length.
 
-`GetPointIntersections` returns a new mutable caller-owned list. Ray intersections deduplicate shared vertices using the library's standard geometry tolerance and are ordered in the forward direction of the ray. Line intersections use exact comparisons for deduplication and are ordered in the line's canonical direction.
+`GetPointIntersections` returns a new mutable caller-owned list. Ray and line intersections use exact comparisons to deduplicate shared vertices. Ray results are ordered in the forward direction of the ray, while line results follow the line's canonical direction.
 
 Use [`ParameterizedSegment`](parameterized-segment.md) when the path contains only one directed segment.

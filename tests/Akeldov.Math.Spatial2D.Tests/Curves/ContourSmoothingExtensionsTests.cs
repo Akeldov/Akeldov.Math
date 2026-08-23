@@ -8,7 +8,7 @@ public class ContourSmoothingExtensionsTests
     [Test]
     public void FilletCorners_WhenContourIsSegmentSquare_InsertsArcAtEachCorner()
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
@@ -38,7 +38,7 @@ public class ContourSmoothingExtensionsTests
             0.5f * MathF.PI,
             AngularDirection.Counterclockwise);
 
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             originalArc,
@@ -60,7 +60,7 @@ public class ContourSmoothingExtensionsTests
     [TestCase(float.PositiveInfinity)]
     public void FilletCorners_WhenRadiusIsInvalid_Throws(float radius)
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(0f, 1f)),

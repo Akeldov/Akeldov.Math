@@ -124,59 +124,8 @@ namespace Akeldov.Math.Spatial2D.Contours
                 local.Y >= -Height * 0.5f && local.Y <= Height * 0.5f;
         }
 
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray)
-        {
-            var edges = new[]
-            {
-                new Segment(BottomLeft, BottomRight),
-                new Segment(BottomRight, TopRight),
-                new Segment(TopRight, TopLeft),
-                new Segment(TopLeft, BottomLeft),
-            };
-            var intersections = new List<PointXY>();
-
-            for (int i = 0; i < edges.Length; i++)
-            {
-                List<PointXY> edgeIntersections = edges[i].GetPointIntersections(ray);
-                if (edgeIntersections.Count == 0 && edges[i].HasContinuousIntersection(ray))
-                    return new List<PointXY>();
-
-                for (int j = 0; j < edgeIntersections.Count; j++)
-                    intersections.AddDistinct(edgeIntersections[j], GeometryConstants.GeometryEpsilon);
-            }
-
-            return intersections;
-        }
-
-        /// <summary>
-        /// Returns point intersections between this contour and the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this contour.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.</exception>
-        private List<PointXY> GetIntersectionsWithTolerance(
-            Ray ray,
-            float geometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            var intersections = new List<PointXY>();
-            PointXY localOrigin = ToLocalPoint(ray.Origin);
-            VectorXY localDirection = ToLocalVector(ray.Direction);
-            float minX = -Width * 0.5f;
-            float maxX = Width * 0.5f;
-            float minY = -Height * 0.5f;
-            float maxY = Height * 0.5f;
-
-            AddLocalVerticalEdgeIntersections(intersections, localOrigin, localDirection, minX, minY, maxY, geometryEpsilon);
-            AddLocalVerticalEdgeIntersections(intersections, localOrigin, localDirection, maxX, minY, maxY, geometryEpsilon);
-            AddLocalHorizontalEdgeIntersections(intersections, localOrigin, localDirection, minY, minX, maxX, geometryEpsilon);
-            AddLocalHorizontalEdgeIntersections(intersections, localOrigin, localDirection, maxY, minX, maxX, geometryEpsilon);
-
-            return intersections;
-        }
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            OrientedRectangleContourIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
@@ -346,126 +295,9 @@ namespace Akeldov.Math.Spatial2D.Contours
                 VectorXY.Dot(centered, AxisY));
         }
 
-        private VectorXY ToLocalVector(VectorXY vector)
-        {
-            return new VectorXY(
-                VectorXY.Dot(vector, AxisX),
-                VectorXY.Dot(vector, AxisY));
-        }
-
         private PointXY ToWorldPoint(PointXY localPoint)
         {
             return Center + AxisX * localPoint.X + AxisY * localPoint.Y;
-        }
-
-        private void AddLocalVerticalEdgeIntersections(
-            List<PointXY> intersections,
-            PointXY localOrigin,
-            VectorXY localDirection,
-            float edgeX,
-            float minY,
-            float maxY,
-            float geometryEpsilon)
-        {
-            if (localDirection.X.IsAlmostZero(geometryEpsilon))
-            {
-                if (localOrigin.X.AlmostEquals(edgeX, geometryEpsilon))
-                {
-                    AddLocalCollinearEdgeIntersections(
-                        intersections,
-                        localOrigin,
-                        localDirection,
-                        new PointXY(edgeX, minY),
-                        new PointXY(edgeX, maxY),
-                        geometryEpsilon);
-                }
-
-                return;
-            }
-
-            float rayCoordinate = (edgeX - localOrigin.X) / localDirection.X;
-            if (rayCoordinate < -geometryEpsilon)
-                return;
-
-            float y = localOrigin.Y + rayCoordinate * localDirection.Y;
-            if (y < minY - geometryEpsilon || y > maxY + geometryEpsilon)
-                return;
-
-            AddLocalDistinct(intersections, new PointXY(edgeX, Clamp(y, minY, maxY)), geometryEpsilon);
-        }
-
-        private void AddLocalHorizontalEdgeIntersections(
-            List<PointXY> intersections,
-            PointXY localOrigin,
-            VectorXY localDirection,
-            float edgeY,
-            float minX,
-            float maxX,
-            float geometryEpsilon)
-        {
-            if (localDirection.Y.IsAlmostZero(geometryEpsilon))
-            {
-                if (localOrigin.Y.AlmostEquals(edgeY, geometryEpsilon))
-                {
-                    AddLocalCollinearEdgeIntersections(
-                        intersections,
-                        localOrigin,
-                        localDirection,
-                        new PointXY(minX, edgeY),
-                        new PointXY(maxX, edgeY),
-                        geometryEpsilon);
-                }
-
-                return;
-            }
-
-            float rayCoordinate = (edgeY - localOrigin.Y) / localDirection.Y;
-            if (rayCoordinate < -geometryEpsilon)
-                return;
-
-            float x = localOrigin.X + rayCoordinate * localDirection.X;
-            if (x < minX - geometryEpsilon || x > maxX + geometryEpsilon)
-                return;
-
-            AddLocalDistinct(intersections, new PointXY(Clamp(x, minX, maxX), edgeY), geometryEpsilon);
-        }
-
-        private void AddLocalCollinearEdgeIntersections(
-            List<PointXY> intersections,
-            PointXY localOrigin,
-            VectorXY localDirection,
-            PointXY endpointA,
-            PointXY endpointB,
-            float geometryEpsilon)
-        {
-            if (PointIsOnSegment(localOrigin, endpointA, endpointB, geometryEpsilon))
-                AddLocalDistinct(intersections, localOrigin, geometryEpsilon);
-
-            AddLocalIfOnRay(intersections, localOrigin, localDirection, endpointA, geometryEpsilon);
-            AddLocalIfOnRay(intersections, localOrigin, localDirection, endpointB, geometryEpsilon);
-        }
-
-        private void AddLocalIfOnRay(
-            List<PointXY> intersections,
-            PointXY localOrigin,
-            VectorXY localDirection,
-            PointXY localPoint,
-            float geometryEpsilon)
-        {
-            VectorXY toPoint = localPoint - localOrigin;
-
-            if (VectorXY.Dot(toPoint, localDirection) < -geometryEpsilon)
-                return;
-
-            if (!VectorXY.Cross(toPoint, localDirection).IsAlmostZero(geometryEpsilon))
-                return;
-
-            AddLocalDistinct(intersections, localPoint, geometryEpsilon);
-        }
-
-        private void AddLocalDistinct(List<PointXY> intersections, PointXY localPoint, float geometryEpsilon)
-        {
-            intersections.AddDistinct(ToWorldPoint(localPoint), geometryEpsilon);
         }
 
         private static void AddProjectionCandidate(
@@ -480,18 +312,6 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             closestPoint = projectedPoint;
             closestDistanceSquared = distanceSquared;
-        }
-
-        private static bool PointIsOnSegment(PointXY point, PointXY endpointA, PointXY endpointB, float geometryEpsilon)
-        {
-            VectorXY segment = endpointB - endpointA;
-            VectorXY toPoint = point - endpointA;
-
-            if (!VectorXY.Cross(segment, toPoint).IsAlmostZero(geometryEpsilon))
-                return false;
-
-            float dot = VectorXY.Dot(toPoint, segment);
-            return dot >= -geometryEpsilon && dot <= segment.SquaredLength + geometryEpsilon;
         }
 
         private static float Clamp(float value, float min, float max)

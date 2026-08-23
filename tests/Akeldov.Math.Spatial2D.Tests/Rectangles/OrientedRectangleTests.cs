@@ -179,6 +179,49 @@ public class OrientedRectangleTests
     }
 
     [Test]
+    public void OrientedRectangleContour_PointIntersections_WhenArbitrarilyRotatedRayOverlapsEdge_ReturnsEmpty()
+    {
+        var contour = new OrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            0.7f);
+        var ray = new Ray(contour.BottomLeft, contour.Rotation);
+
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void OrientedRectangleContour_PointIntersections_WhenArbitrarilyRotatedRayCrossesFromCorner_ReturnsCornerAndExit()
+    {
+        var contour = new OrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            0.7f);
+        var ray = new Ray(contour.BottomLeft, contour.Rotation + MathF.PI * 0.25f);
+
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        Assert.That(intersections[0], Is.EqualTo(ray.Origin));
+    }
+
+    [Test]
+    public void OrientedRectangleContour_PointIntersections_WhenBackwardRayOverlapsArbitrarilyRotatedEdge_ReturnsEmpty()
+    {
+        var contour = new OrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            1.2345f);
+        var ray = new Ray(contour.BottomRight, contour.Rotation + MathF.PI);
+
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void ParameterizedOrientedRectangleContour_GetPoint_UsesDefaultRightEdgeParameterOrigin()
     {
         var contour = new ParameterizedOrientedRectangleContour(
@@ -446,6 +489,20 @@ public class OrientedRectangleTests
             new VectorXY(4f, 2f),
             MathF.PI * 0.5f);
         var ray = new Ray(new PointXY(1f, 0f), MathF.PI * 0.5f);
+
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_PointIntersections_WhenArbitrarilyRotatedRayOverlapsEdge_ReturnsEmpty()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(0f, 0f),
+            new VectorXY(4f, 2f),
+            0.7f);
+        var ray = new Ray(contour.BottomLeft, contour.Rotation);
 
         List<PointXY> intersections = contour.GetPointIntersections(ray);
 

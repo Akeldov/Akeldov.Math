@@ -205,9 +205,8 @@ namespace Akeldov.Math.Spatial2D.Contours
                 point.Y >= Min.Y && point.Y <= Max.Y;
         }
 
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            ((RectangleContour)this).GetPointIntersections(ray);
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            ParameterizedRectangleContourIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
@@ -421,92 +420,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             return new PointXY(Min.X, Max.Y - canonicalCoordinate);
         }
 
-        private void AddVerticalEdgeIntersections(
-            List<PointXY> intersections,
-            Ray ray,
-            float edgeX,
-            float geometryEpsilon)
-        {
-            VectorXY direction = ray.Direction;
-
-            if (direction.X.IsAlmostZero(geometryEpsilon))
-            {
-                if (ray.Origin.X.AlmostEquals(edgeX, geometryEpsilon))
-                    AddCollinearEdgeIntersections(intersections, ray, new PointXY(edgeX, Min.Y), new PointXY(edgeX, Max.Y), geometryEpsilon);
-
-                return;
-            }
-
-            float rayCoordinate = (edgeX - ray.Origin.X) / direction.X;
-            if (rayCoordinate < -geometryEpsilon)
-                return;
-
-            float y = ray.Origin.Y + rayCoordinate * direction.Y;
-            if (y < Min.Y - geometryEpsilon || y > Max.Y + geometryEpsilon)
-                return;
-
-            intersections.AddDistinct(new PointXY(edgeX, Clamp(y, Min.Y, Max.Y)), geometryEpsilon);
-        }
-
-        private void AddHorizontalEdgeIntersections(
-            List<PointXY> intersections,
-            Ray ray,
-            float edgeY,
-            float geometryEpsilon)
-        {
-            VectorXY direction = ray.Direction;
-
-            if (direction.Y.IsAlmostZero(geometryEpsilon))
-            {
-                if (ray.Origin.Y.AlmostEquals(edgeY, geometryEpsilon))
-                    AddCollinearEdgeIntersections(intersections, ray, new PointXY(Min.X, edgeY), new PointXY(Max.X, edgeY), geometryEpsilon);
-
-                return;
-            }
-
-            float rayCoordinate = (edgeY - ray.Origin.Y) / direction.Y;
-            if (rayCoordinate < -geometryEpsilon)
-                return;
-
-            float x = ray.Origin.X + rayCoordinate * direction.X;
-            if (x < Min.X - geometryEpsilon || x > Max.X + geometryEpsilon)
-                return;
-
-            intersections.AddDistinct(new PointXY(Clamp(x, Min.X, Max.X), edgeY), geometryEpsilon);
-        }
-
-        private static void AddCollinearEdgeIntersections(
-            List<PointXY> intersections,
-            Ray ray,
-            PointXY endpointA,
-            PointXY endpointB,
-            float geometryEpsilon)
-        {
-            if (PointIsOnSegment(ray.Origin, endpointA, endpointB, geometryEpsilon))
-                intersections.AddDistinct(ray.Origin, geometryEpsilon);
-
-            AddIfOnRay(intersections, ray, endpointA, geometryEpsilon);
-            AddIfOnRay(intersections, ray, endpointB, geometryEpsilon);
-        }
-
-        private static void AddIfOnRay(
-            List<PointXY> intersections,
-            Ray ray,
-            PointXY point,
-            float geometryEpsilon)
-        {
-            VectorXY toPoint = point - ray.Origin;
-            VectorXY direction = ray.Direction;
-
-            if (VectorXY.Dot(toPoint, direction) < -geometryEpsilon)
-                return;
-
-            if (!VectorXY.Cross(toPoint, direction).IsAlmostZero(geometryEpsilon))
-                return;
-
-            intersections.AddDistinct(point, geometryEpsilon);
-        }
-
         private float GetBoundaryCoordinateUnchecked(PointXY boundaryPoint)
         {
             return GetBoundaryCoordinateUnchecked(boundaryPoint, Min, Max);
@@ -588,18 +501,6 @@ namespace Akeldov.Math.Spatial2D.Contours
             closestPoint = projectedPoint;
             closestCoordinate = ToCurveCoordinate(boundaryCoordinate);
             closestDistanceSquared = distanceSquared;
-        }
-
-        private static bool PointIsOnSegment(PointXY point, PointXY endpointA, PointXY endpointB, float geometryEpsilon)
-        {
-            VectorXY segment = endpointB - endpointA;
-            VectorXY toPoint = point - endpointA;
-
-            if (!VectorXY.Cross(segment, toPoint).IsAlmostZero(geometryEpsilon))
-                return false;
-
-            float dot = VectorXY.Dot(toPoint, segment);
-            return dot >= -geometryEpsilon && dot <= segment.SquaredLength + geometryEpsilon;
         }
 
         private static float Clamp(float value, float min, float max)

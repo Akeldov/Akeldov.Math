@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D.Curves;
 using System;
-using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Fields
 {
@@ -80,13 +79,6 @@ namespace Akeldov.Math.Spatial2D.Fields
             _curve = curve ?? throw new ArgumentNullException(nameof(curve));
             _valueProvider = valueProvider ?? throw new ArgumentNullException(nameof(valueProvider));
         }
-
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            _curve.GetPointIntersections(ray);
-
-        /// <inheritdoc/>
-        public int CountRightwardCrossings(PointXY origin) => _curve.CountRightwardCrossings(origin);
 
         /// <inheritdoc/>
         public float Distance(PointXY point)

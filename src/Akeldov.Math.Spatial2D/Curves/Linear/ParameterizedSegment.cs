@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a finite line segment in two-dimensional space.
     /// </summary>
-    public readonly struct ParameterizedSegment : IFinitePath, IEquatable<ParameterizedSegment>
+    public readonly struct ParameterizedSegment : IContourPath, IEquatable<ParameterizedSegment>
     {
         private readonly PointXY _startPoint;
         private readonly PointXY _endPoint;
@@ -103,9 +103,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         public int CountRightwardCrossings(PointXY origin) =>
             ((Segment)this).CountRightwardCrossings(origin);
 
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            ((Segment)this).GetPointIntersections(ray);
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            ParameterizedSegmentIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is ParameterizedSegment other && Equals(other);

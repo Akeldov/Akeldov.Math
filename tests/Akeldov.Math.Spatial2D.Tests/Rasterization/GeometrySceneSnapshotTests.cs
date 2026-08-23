@@ -89,7 +89,7 @@ public class GeometrySceneSnapshotTests
         var prismLeft = new PointXY(prismCenterX - prismSide / 2f, prismBaseY);
         var prismTop = new PointXY(prismCenterX, prismBaseY + prismHeight);
         var prismRight = new PointXY(prismCenterX + prismSide / 2f, prismBaseY);
-        var prism = new CompositeContour(new IFinitePath[]
+        var prism = new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(prismLeft, prismTop),
             new ParameterizedSegment(prismTop, prismRight),

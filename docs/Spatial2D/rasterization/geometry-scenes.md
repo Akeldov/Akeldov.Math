@@ -126,7 +126,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-var prism = new CompositeContour(new IFinitePath[]
+var prism = new CompositeContour(new IContourPath[]
 {
     new ParameterizedSegment(new PointXY(34f, 18f), new PointXY(52f, 49.177f)),
     new ParameterizedSegment(new PointXY(52f, 49.177f), new PointXY(70f, 18f)),

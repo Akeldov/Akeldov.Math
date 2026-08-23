@@ -38,14 +38,14 @@
 коллекция остаётся во владении вызывающего кода, а её последующие структурные изменения не
 влияют на копию библиотеки.
 
-<xref:Akeldov.Math.Spatial2D.Contours.CompositeContour> применяет этот контракт к конечным путям:
+<xref:Akeldov.Math.Spatial2D.Contours.CompositeContour> применяет этот контракт к путям контура:
 
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var input = new IFinitePath[]
+var input = new IContourPath[]
 {
     new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
     new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(0f, 2f)),
@@ -55,7 +55,7 @@ var input = new IFinitePath[]
 var contour = new CompositeContour(input);
 input[0] = new ParameterizedSegment(new PointXY(10f, 10f), new PointXY(20f, 20f));
 
-IFinitePath retained = contour.Curves[0]; // По-прежнему путь от (0, 0) до (2, 0)
+IContourPath retained = contour.Curves[0]; // По-прежнему путь от (0, 0) до (2, 0)
 ```
 
 Это владение копией, а не исходной коллекцией. Если явно не указано иное, структурная копия

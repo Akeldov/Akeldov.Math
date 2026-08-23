@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
@@ -11,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value starts at the coordinate origin and points along the positive X axis.
     /// </remarks>
-    public readonly struct Ray : IRayPath, IEquatable<Ray>
+    public readonly struct Ray : IRayPath, IRightwardCrossingProvider, IEquatable<Ray>
     {
         private readonly PointXY _origin;
         private readonly float _angle;
@@ -137,101 +136,6 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             PointXY projected = _origin + direction * t;
             return new ParameterizedCurveProjection(projected, t, point.Distance(projected));
-        }
-
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray)
-        {
-            const float geometryEpsilon = GeometryConstants.GeometryEpsilon;
-
-            VectorXY direction = Direction;
-            VectorXY otherDirection = ray.Direction;
-            VectorXY originDelta = ray.Origin - Origin;
-
-            if (VectorXY.Cross(direction, otherDirection).IsAlmostZero(geometryEpsilon) &&
-                VectorXY.Cross(originDelta, direction).IsAlmostZero(geometryEpsilon))
-            {
-                float directionDot = VectorXY.Dot(direction, otherDirection);
-                float otherOriginCoordinate = VectorXY.Dot(originDelta, direction);
-                if (directionDot >= 0f || otherOriginCoordinate > geometryEpsilon)
-                    return new List<PointXY>();
-            }
-
-            return GetIntersectionsWithTolerance(ray, geometryEpsilon);
-        }
-
-        /// <summary>
-        /// Returns point intersections with another ray. If the rays are collinear and overlap,
-        /// returns the first point along this ray that belongs to the other ray.
-        /// </summary>
-        /// <param name="other">The other ray to intersect with this ray.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of this ray, owned by the caller.</returns>
-        private List<PointXY> GetIntersectionsWithTolerance(
-            Ray other,
-            float geometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            List<PointXY> intersections = new List<PointXY>();
-
-            PointXY p = _origin;
-            VectorXY r = Direction;
-            PointXY q = other._origin;
-            VectorXY s = other.Direction;
-
-            float cross = VectorXY.Cross(r, s);
-
-            if (cross.IsAlmostZero(geometryEpsilon))
-            {
-                AddFirstCollinearIntersection(other, intersections, geometryEpsilon);
-                return intersections;
-            }
-
-            VectorXY qMinusP = q - p;
-
-            float t = VectorXY.Cross(qMinusP, s) / cross;
-            float u = VectorXY.Cross(qMinusP, r) / cross;
-
-            if (t >= 0 && u >= 0)
-            {
-                PointXY intersectionPoint = p + r * t;
-                intersections.AddDistinct(intersectionPoint, geometryEpsilon);
-            }
-
-            return intersections;
-        }
-
-        private void AddFirstCollinearIntersection(Ray other, List<PointXY> intersections, float geometryEpsilon)
-        {
-            VectorXY originDelta = other._origin - _origin;
-            VectorXY direction = Direction;
-
-            if (!VectorXY.Cross(originDelta, direction).IsAlmostZero(geometryEpsilon))
-                return;
-
-            if (IsPointOnRay(_origin, other, geometryEpsilon))
-            {
-                intersections.AddDistinct(_origin, geometryEpsilon);
-                return;
-            }
-
-            if (IsPointOnRay(other._origin, this, geometryEpsilon))
-                intersections.AddDistinct(other._origin, geometryEpsilon);
-        }
-
-        private static bool IsPointOnRay(
-            PointXY point,
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            VectorXY toPoint = point - ray._origin;
-            VectorXY direction = ray.Direction;
-
-            if (VectorXY.Dot(toPoint, direction) < -geometryEpsilon)
-                return false;
-
-            return VectorXY.Cross(toPoint, direction).IsAlmostZero(geometryEpsilon);
         }
 
         /// <inheritdoc/>

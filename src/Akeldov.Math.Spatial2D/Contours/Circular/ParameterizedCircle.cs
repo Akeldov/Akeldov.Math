@@ -93,9 +93,8 @@ namespace Akeldov.Math.Spatial2D.Contours
             return _circle.Encloses(point);
         }
 
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            _circle.GetPointIntersections(ray);
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            ParameterizedCircleIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)

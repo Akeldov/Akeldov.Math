@@ -9,6 +9,18 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class QuadraticBezierIntersectionExtensions
     {
         /// <summary>
+        /// Returns isolated point intersections between a quadratic Bezier curve and a ray by solving the original curve polynomial.
+        /// </summary>
+        /// <param name="source">The source quadratic Bezier curve.</param>
+        /// <param name="ray">The ray to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered in the forward direction of the ray.</returns>
+        public static List<PointXY> GetPointIntersections(this QuadraticBezier source, Ray ray)
+        {
+            List<PointXY> intersections = RayIntersectionExtensions.GetPointIntersections(ray, source);
+            return RayIntersectionExtensions.OrderPointIntersections(ray, intersections);
+        }
+
+        /// <summary>
         /// Returns isolated point intersections between a quadratic Bezier curve and a line by solving the curve polynomial.
         /// </summary>
         /// <param name="source">The source quadratic Bezier curve.</param>

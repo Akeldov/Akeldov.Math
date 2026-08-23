@@ -5,7 +5,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// <summary>
     /// Represents a closed two-dimensional contour.
     /// </summary>
-    public interface IContour : IFiniteCurve, ISignedPointDistanceProvider
+    public interface IContour : IFiniteCurve, ISignedPointDistanceProvider, IRightwardCrossingProvider, IRayIntersectionProvider
     {
         /// <summary>
         /// Determines whether the specified point lies inside or on this closed contour.

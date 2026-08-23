@@ -8,25 +8,25 @@ public class CompositeContourTests
     [Test]
     public void Constructor_WhenCurvesIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new CompositeContour((IReadOnlyList<IFinitePath>)null!));
+        Assert.Throws<ArgumentNullException>(() => new CompositeContour((IReadOnlyList<IContourPath>)null!));
     }
 
     [Test]
     public void Constructor_WhenCurvesIsEmpty_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new CompositeContour(Array.Empty<IFinitePath>()));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(Array.Empty<IContourPath>()));
     }
 
     [Test]
     public void Constructor_WhenCurvesContainsNull_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new CompositeContour(new IFinitePath[] { null! }));
+        Assert.Throws<ArgumentException>(() => new CompositeContour(new IContourPath[] { null! }));
     }
 
     [Test]
     public void Constructor_WhenCurvesAreDisconnected_Throws()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new CompositeContour(new IFinitePath[]
+        var exception = Assert.Throws<ArgumentException>(() => new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 1f)),
@@ -39,7 +39,7 @@ public class CompositeContourTests
     [Test]
     public void Constructor_WhenCurvesDoNotClose_Throws()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new CompositeContour(new IFinitePath[]
+        var exception = Assert.Throws<ArgumentException>(() => new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(1f, 1f)),
@@ -124,14 +124,14 @@ public class CompositeContourTests
     [Test]
     public void Curves_WhenAccessed_ReturnsReadOnlyView()
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             CreateUnitCirclePath()
         });
 
-        Assert.That(contour.Curves, Is.Not.InstanceOf<IFinitePath[]>());
+        Assert.That(contour.Curves, Is.Not.InstanceOf<IContourPath[]>());
         Assert.Throws<NotSupportedException>(() =>
-            ((IList<IFinitePath>)contour.Curves)[0] = new ParameterizedSegment(
+            ((IList<IContourPath>)contour.Curves)[0] = new ParameterizedSegment(
                 new PointXY(0f, 0f),
                 new PointXY(1f, 1f)));
     }
@@ -248,7 +248,7 @@ public class CompositeContourTests
     [Test]
     public void Encloses_WhenPointIsInsideSegmentContour_ReturnsTrue()
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
@@ -287,7 +287,7 @@ public class CompositeContourTests
     [Test]
     public void Encloses_WhenPointIsOutsideContour_ReturnsFalse()
     {
-        IContour contour = new CompositeContour(new IFinitePath[]
+        IContour contour = new CompositeContour(new IContourPath[]
         {
             CreateUnitCirclePath()
         });
@@ -300,7 +300,7 @@ public class CompositeContourTests
     [Test]
     public void Encloses_WhenPointIsOnRightmostBoundary_ReturnsTrue()
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             CreateUnitCirclePath()
         });
@@ -311,7 +311,7 @@ public class CompositeContourTests
     [Test]
     public void Encloses_WhenRayPassesThroughSharedVertex_UsesHalfOpenCrossingRule()
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 1f), new PointXY(1f, 0f)),
             new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(2f, 1f)),
@@ -369,7 +369,7 @@ public class CompositeContourTests
     [Test]
     public void SignedDistance_WhenPointIsImmediatelyOutside_ReturnsPositiveDistance()
     {
-        IContour contour = new CompositeContour(new IFinitePath[]
+        IContour contour = new CompositeContour(new IContourPath[]
         {
             CreateUnitCirclePath()
         });
@@ -383,7 +383,7 @@ public class CompositeContourTests
     public void Encloses_UsesCurveRightwardCrossings()
     {
         var curve = new CrossingAwareCurve();
-        IContour contour = new CompositeContour(new IFinitePath[] { curve });
+        IContour contour = new CompositeContour(new IContourPath[] { curve });
 
         bool encloses = contour.Encloses(new PointXY(0f, 0f));
 
@@ -394,7 +394,7 @@ public class CompositeContourTests
     [Test]
     public void Encloses_WhenPointCoordinateIsInvalid_Throws()
     {
-        var contour = new CompositeContour(new IFinitePath[]
+        var contour = new CompositeContour(new IContourPath[]
         {
             CreateUnitCirclePath()
         });
@@ -432,9 +432,9 @@ public class CompositeContourTests
         return new CompositeContour(CreateSquareCurves());
     }
 
-    private static IFinitePath[] CreateSquareCurves()
+    private static IContourPath[] CreateSquareCurves()
     {
-        return new IFinitePath[]
+        return new IContourPath[]
         {
             new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
@@ -453,7 +453,7 @@ public class CompositeContourTests
             AngularDirection.Counterclockwise);
     }
 
-    private sealed class CrossingAwareCurve : IFinitePath
+    private sealed class CrossingAwareCurve : IContourPath
     {
         public int CountRightwardCrossingsCallCount { get; private set; }
 

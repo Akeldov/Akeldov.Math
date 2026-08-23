@@ -10,14 +10,14 @@ namespace Akeldov.Math.Spatial2D.Contours
     public sealed class ParameterizedCompositeContour : IParameterizedCompositeContour
     {
         private readonly CompositeContour _contour;
-        private readonly IReadOnlyList<IFinitePath> _curves;
+        private readonly IReadOnlyList<IContourPath> _curves;
         private readonly float[] _curveStartCoordinates;
 
         /// <summary>
-        /// Initializes a new parameterized composite contour from the specified finite paths.
+        /// Initializes a new parameterized composite contour from the specified contour paths.
         /// </summary>
-        /// <param name="curves">The finite paths that form the contour.</param>
-        public ParameterizedCompositeContour(IReadOnlyList<IFinitePath> curves)
+        /// <param name="curves">The contour paths that form the contour.</param>
+        public ParameterizedCompositeContour(IReadOnlyList<IContourPath> curves)
         {
             _contour = new CompositeContour(curves);
             _curves = _contour.Curves;
@@ -33,9 +33,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <summary>
-        /// Gets the read-only structural view of the finite paths that form this contour.
+        /// Gets the read-only structural view of the contour paths that form this contour.
         /// </summary>
-        public IReadOnlyList<IFinitePath> Curves => _curves;
+        public IReadOnlyList<IContourPath> Curves => _curves;
 
         /// <summary>
         /// Gets the finite non-negative contour boundary length in world coordinate units.
@@ -71,9 +71,8 @@ namespace Akeldov.Math.Spatial2D.Contours
             return _contour.Encloses(point);
         }
 
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            _contour.GetPointIntersections(ray);
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            ParameterizedCompositeContourIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <inheritdoc/>
         public CurveProjection Project(PointXY point)
@@ -114,7 +113,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             for (int i = 0; i < _curves.Count; i++)
             {
-                IFinitePath curve = _curves[i];
+                IContourPath curve = _curves[i];
                 float curveLength = curve.Length;
 
                 if (remainingCoordinate <= curveLength || i == _curves.Count - 1)

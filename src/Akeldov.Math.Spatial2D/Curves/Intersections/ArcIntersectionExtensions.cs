@@ -10,6 +10,18 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class ArcIntersectionExtensions
     {
         /// <summary>
+        /// Returns isolated point intersections between an arc and a ray using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="ray">The ray to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered in the forward direction of the ray.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, Ray ray)
+        {
+            List<PointXY> intersections = RayIntersectionExtensions.GetPointIntersections(ray, source);
+            return RayIntersectionExtensions.OrderPointIntersections(ray, intersections);
+        }
+
+        /// <summary>
         /// Returns isolated point intersections between an arc and a line using exact comparisons.
         /// </summary>
         /// <param name="source">The source arc.</param>

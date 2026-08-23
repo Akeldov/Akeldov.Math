@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
@@ -11,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value represents the horizontal line <c>y = 0</c>.
     /// </remarks>
-    public readonly struct Line : ICurve, IEquatable<Line>
+    public readonly struct Line : ICurve, IRightwardCrossingProvider, IEquatable<Line>
     {
         private readonly float _equationA;
         // Store B shifted so default(Line) represents y = 0 instead of an invalid zero-coefficient equation.
@@ -174,84 +173,6 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(EquationA, EquationB, EquationC);
-
-        /// <inheritdoc/>
-        public List<PointXY> GetPointIntersections(Ray ray)
-        {
-            const float geometryEpsilon = GeometryConstants.GeometryEpsilon;
-
-            VectorXY direction = Direction;
-            if (direction.SquaredLength > geometryEpsilon * geometryEpsilon &&
-                VectorXY.Cross(ray.Direction, direction).IsAlmostZero(geometryEpsilon) &&
-                VectorXY.Cross(ClosestPointToOrigin - ray.Origin, direction).IsAlmostZero(geometryEpsilon))
-            {
-                return new List<PointXY>();
-            }
-
-            return GetIntersectionsWithTolerance(ray, geometryEpsilon);
-        }
-
-        /// <summary>
-        /// Returns point intersections with the specified ray. If the ray lies on this line,
-        /// returns the ray origin as the first point encountered by the ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this line.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        private List<PointXY> GetIntersectionsWithTolerance(
-            Ray ray,
-            float geometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            List<PointXY> intersections = new List<PointXY>();
-
-            PointXY p = ray.Origin;
-            VectorXY r = ray.Direction;
-            PointXY q = ClosestPointToOrigin;
-            VectorXY s = Direction;
-
-            float cross = VectorXY.Cross(r, s);
-
-            if (cross.IsAlmostZero(geometryEpsilon))
-            {
-                if (s.SquaredLength <= geometryEpsilon * geometryEpsilon)
-                {
-                    if (IsPointOnRay(q, ray, geometryEpsilon))
-                        intersections.AddDistinct(q, geometryEpsilon);
-                }
-                else if (VectorXY.Cross(q - p, s).IsAlmostZero(geometryEpsilon))
-                {
-                    intersections.AddDistinct(p, geometryEpsilon);
-                }
-
-                return intersections;
-            }
-
-            VectorXY qMinusP = q - p;
-            float t = VectorXY.Cross(qMinusP, s) / cross;
-
-            if (t >= 0)
-            {
-                PointXY intersection = p + r * t;
-                intersections.AddDistinct(intersection, geometryEpsilon);
-            }
-
-            return intersections;
-        }
-
-        private static bool IsPointOnRay(
-            PointXY point,
-            Ray ray,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
-        {
-            VectorXY toPoint = point - ray.Origin;
-
-            if (VectorXY.Dot(toPoint, ray.Direction) < -geometryEpsilon)
-                return false;
-
-            return VectorXY.Cross(toPoint, ray.Direction).IsAlmostZero(geometryEpsilon);
-        }
 
         /// <summary>
         /// Projects the specified point onto this line.

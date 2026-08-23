@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a parameterized circular arc in two-dimensional space.
     /// </summary>
     [Serializable]
-    public readonly struct ParameterizedArc : IFinitePath, IEquatable<ParameterizedArc>
+    public readonly struct ParameterizedArc : IContourPath, IEquatable<ParameterizedArc>
     {
         private readonly PointXY _center;
         private readonly float _radius;
@@ -122,7 +122,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
 
-            List<PointXY> intersections = GetIntersectionsWithTolerance(new Ray(origin), 0f);
+            List<PointXY> intersections = ParameterizedArcIntersectionExtensions.GetPointIntersections(this, new Ray(origin));
             float directionSign = AngularDirection == AngularDirection.Counterclockwise ? 1f : -1f;
             int count = 0;
 
@@ -229,68 +229,8 @@ namespace Akeldov.Math.Spatial2D.Curves
                 AngularDirection,
                 IsFullCircle);
 
-        /// <summary>
-        /// Returns point intersections between this arc and the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this arc.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            GetIntersectionsWithTolerance(ray, GeometryConstants.GeometryEpsilon);
-
-        /// <summary>
-        /// Returns point intersections between this arc and the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this arc.</param>
-        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.</exception>
-        private List<PointXY> GetIntersectionsWithTolerance(
-            Ray ray,
-            float geometryEpsilon)
-        {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
-            var intersections = new List<PointXY>();
-
-            if (_radius <= geometryEpsilon)
-            {
-                VectorXY toCenter = _center - ray.Origin;
-                if (VectorXY.Dot(toCenter, ray.Direction) >= -geometryEpsilon &&
-                    VectorXY.Cross(toCenter, ray.Direction).IsAlmostZero(geometryEpsilon))
-                {
-                    intersections.AddDistinct(_center, geometryEpsilon);
-                }
-
-                return intersections;
-            }
-
-            VectorXY dir = ray.Direction;
-            VectorXY f = ray.Origin - _center;
-
-            float a = 1f;
-            float b = 2f * VectorXY.Dot(f, dir);
-            float c = f.SquaredLength - _radius * _radius;
-
-            float discriminant = b * b - 4f * a * c;
-
-            if (discriminant < -geometryEpsilon)
-                return intersections;
-
-            if (discriminant < 0f)
-                discriminant = 0f;
-
-            float sqrtD = MathF.Sqrt(discriminant);
-
-            float t1 = (-b - sqrtD) / (2f * a);
-            float t2 = (-b + sqrtD) / (2f * a);
-
-            AddRayCircleIntersectionIfOnArc(ray, t1, intersections, geometryEpsilon);
-
-            if (!t2.AlmostEquals(t1, geometryEpsilon))
-                AddRayCircleIntersectionIfOnArc(ray, t2, intersections, geometryEpsilon);
-
-            return intersections;
-        }
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            ParameterizedArcIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this arc.
@@ -382,20 +322,6 @@ namespace Akeldov.Math.Spatial2D.Curves
             return arc.AngularDirection == AngularDirection.Counterclockwise
                 ? new Arc(arc.Center, arc.Radius, arc.StartAngle, arc.EndAngle)
                 : new Arc(arc.Center, arc.Radius, arc.EndAngle, arc.StartAngle);
-        }
-
-        private void AddRayCircleIntersectionIfOnArc(
-            Ray ray,
-            float rayCoordinate,
-            List<PointXY> intersections,
-            float geometryEpsilon)
-        {
-            if (rayCoordinate < -geometryEpsilon)
-                return;
-
-            PointXY point = ray.Origin + ray.Direction * rayCoordinate;
-            if (IsWithinAngularRegion(point))
-                intersections.AddDistinct(point, geometryEpsilon);
         }
 
         private float GetCurveCoordinate(float angle)

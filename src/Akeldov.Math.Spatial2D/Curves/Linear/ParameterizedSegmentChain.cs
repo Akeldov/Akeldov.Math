@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents an open finite path made from consecutive directed line segments.
     /// </summary>
-    public sealed class ParameterizedSegmentChain : IFinitePath
+    public sealed class ParameterizedSegmentChain : IContourPath
     {
         private readonly PointXY[] _points;
         private readonly ParameterizedSegment[] _segments;
@@ -140,28 +140,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             return Project(point).Distance;
         }
 
-        /// <summary>
-        /// Returns point intersections with the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray to intersect with this chain.</param>
-        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(Ray ray)
-        {
-            var intersections = new List<PointXY>();
-
-            for (int i = 0; i < _segments.Length; i++)
-            {
-                List<PointXY> segmentIntersections = _segments[i].GetPointIntersections(ray);
-                for (int j = 0; j < segmentIntersections.Count; j++)
-                    intersections.AddDistinct(segmentIntersections[j], GeometryConstants.GeometryEpsilon);
-            }
-
-            intersections.Sort((left, right) =>
-                VectorXY.Dot(left - ray.Origin, ray.Direction).CompareTo(
-                    VectorXY.Dot(right - ray.Origin, ray.Direction)));
-
-            return intersections;
-        }
+        List<PointXY> IRayIntersectionProvider.GetPointIntersections(Ray ray) =>
+            ParameterizedSegmentChainIntersectionExtensions.GetPointIntersections(this, ray);
 
         /// <summary>
         /// Projects the specified point onto this chain.

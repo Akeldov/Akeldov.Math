@@ -281,7 +281,7 @@ public class CircleTests
     [Test]
     public void PointIntersections_WhenRayStartsInsideCircle_ReturnsForwardExitPoint()
     {
-        ICurve circle = new Circle(new PointXY(0f, 0f), 2f);
+        IRayIntersectionProvider circle = new Circle(new PointXY(0f, 0f), 2f);
         var ray = new Ray(new PointXY(0f, 0f));
 
         var intersections = circle.GetPointIntersections(ray);

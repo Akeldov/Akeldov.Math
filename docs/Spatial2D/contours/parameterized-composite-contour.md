@@ -1,13 +1,13 @@
 # ParameterizedCompositeContour
 
-`ParameterizedCompositeContour` gives a closed chain of finite paths one continuous length coordinate. Coordinate `0` begins at the first path's start point and advances through the paths in list order.
+`ParameterizedCompositeContour` gives a closed chain of `IContourPath` instances one continuous length coordinate. Coordinate `0` begins at the first path's start point and advances through the paths in list order.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var contour = new ParameterizedCompositeContour(new IFinitePath[]
+var contour = new ParameterizedCompositeContour(new IContourPath[]
 {
     new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
     new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(2f, 3f)),
@@ -30,7 +30,7 @@ using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-IContour contour = new ParameterizedCompositeContour(new IFinitePath[]
+IContour contour = new ParameterizedCompositeContour(new IContourPath[]
 {
     new ParameterizedSegment(new PointXY(-2f, -1.5f), new PointXY(2f, -1.5f)),
     new ParameterizedSegment(new PointXY(2f, -1.5f), new PointXY(0f, 2f)),
