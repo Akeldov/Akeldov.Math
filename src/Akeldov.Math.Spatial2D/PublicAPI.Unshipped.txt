@@ -1,4 +1,18 @@
 #nullable enable
+*REMOVED*Akeldov.Math.Spatial2D.Contours.Circle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.CompositeContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Contours.RectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.ISignedPointDistanceProvider.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Rasterization.TextSignedDistanceProvider.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Regions.ContourBasedRegion.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Regions.Disk.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Regions.OrientedRectangle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Regions.Rectangle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point, float geometryEpsilon = 1E-06) -> float
 *REMOVED*Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceField.BoolPointInfluenceField(Akeldov.Math.Spatial2D.Fields.IInfluenceSampler<Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceSource!, bool>! sampler, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceSource!>! influenceSources, Akeldov.Math.Spatial2D.Fields.IInfluenceSourceCuller<Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceSource!>! influenceSourceCuller) -> void
 *REMOVED*Akeldov.Math.Spatial2D.Fields.CurveInfluenceField<TCurveSource, TValue>.CurveInfluenceField(Akeldov.Math.Spatial2D.Fields.IInfluenceSampler<TCurveSource, TValue>! sampler, System.Collections.Generic.IReadOnlyList<TCurveSource>! influenceSources, Akeldov.Math.Spatial2D.Fields.IInfluenceSourceCuller<TCurveSource>! influenceSourceCuller) -> void
 *REMOVED*Akeldov.Math.Spatial2D.Fields.DelaunayCuller<TPointSource>
@@ -17,6 +31,20 @@
 *REMOVED*Akeldov.Math.Spatial2D.Rasterization.CullingMapRGBA16BitRasterizer<TPointSource>.CullingMapRGBA16BitRasterizer(Akeldov.Math.Spatial2D.Fields.IInfluenceSourceCuller<TPointSource>! culler, System.Func<Akeldov.Math.Spatial2D.PointXY, Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>! sourcePositionToColor) -> void
 *REMOVED*Akeldov.Math.Spatial2D.Rasterization.CullingMapRGBA16BitRasterizer<TPointSource>.Rasterize(System.Collections.Generic.IReadOnlyList<TPointSource>! source, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>!
 *REMOVED*static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.RasterizeCullingMap<TPointSource>(this System.Collections.Generic.IReadOnlyList<TPointSource>! sources, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid, Akeldov.Math.Spatial2D.Fields.IInfluenceSourceCuller<TPointSource>! culler, System.Func<Akeldov.Math.Spatial2D.PointXY, Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>! sourcePositionToColor) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>!
+Akeldov.Math.Spatial2D.Contours.Circle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.CompositeContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.OrientedRectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.ParameterizedCircle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.ParameterizedCompositeContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.ParameterizedOrientedRectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Contours.RectangleContour.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.ISignedPointDistanceProvider.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Rasterization.TextSignedDistanceProvider.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Regions.ContourBasedRegion.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Regions.Disk.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Regions.OrientedRectangle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Regions.Rectangle.SignedDistance(Akeldov.Math.Spatial2D.PointXY point) -> float
 Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceField.BoolPointInfluenceField(Akeldov.Math.Spatial2D.Fields.IInfluenceSampler<Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceSource!, bool>! sampler, Akeldov.Math.Spatial2D.Fields.IInfluenceSourceIndex<Akeldov.Math.Spatial2D.Fields.BoolPointInfluenceSource!>! influenceSourceIndex) -> void
 Akeldov.Math.Spatial2D.Fields.CurveInfluenceField<TCurveSource, TValue>.CurveInfluenceField(Akeldov.Math.Spatial2D.Fields.IInfluenceSampler<TCurveSource, TValue>! sampler, Akeldov.Math.Spatial2D.Fields.IInfluenceSourceIndex<TCurveSource>! influenceSourceIndex) -> void
 Akeldov.Math.Spatial2D.Fields.DelaunayInfluenceSourceIndex<TPointSource>

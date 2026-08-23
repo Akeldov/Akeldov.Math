@@ -25,7 +25,7 @@ public class RegionStressTests
                 continue;
 
             bool contains = rectangle.Contains(point);
-            float signedDistance = contour.SignedDistance(point, geometryEpsilon: 0f);
+            float signedDistance = contour.SignedDistance(point);
 
             Assert.That(float.IsNaN(signedDistance), Is.False, $"Seed: {seed}, iteration: {i}.");
             Assert.That(float.IsInfinity(signedDistance), Is.False, $"Seed: {seed}, iteration: {i}.");

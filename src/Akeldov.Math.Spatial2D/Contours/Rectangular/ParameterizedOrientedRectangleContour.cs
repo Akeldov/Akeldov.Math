@@ -309,16 +309,12 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             float distance = Distance(point);
             VectorXY local = GetCenteredLocalCoordinates(point);
-            return local.X >= -Width * 0.5f - geometryEpsilon &&
-                local.X <= Width * 0.5f + geometryEpsilon &&
-                local.Y >= -Height * 0.5f - geometryEpsilon &&
-                local.Y <= Height * 0.5f + geometryEpsilon ? -distance : distance;
+            return local.X >= -Width * 0.5f && local.X <= Width * 0.5f &&
+                local.Y >= -Height * 0.5f && local.Y <= Height * 0.5f ? -distance : distance;
         }
 
         /// <summary>

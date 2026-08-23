@@ -133,9 +133,9 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
-            return _contour.SignedDistance(point, geometryEpsilon);
+            return _contour.SignedDistance(point);
         }
 
         private ParameterizedCurveProjection ProjectOnCurve(int curveIndex, PointXY point)

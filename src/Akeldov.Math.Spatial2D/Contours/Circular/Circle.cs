@@ -189,14 +189,10 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             float distance = Distance(point);
-            return point.Distance(_center) <= _radius + geometryEpsilon ? -distance : distance;
+            return point.Distance(_center) <= _radius ? -distance : distance;
         }
 
         /// <summary>

@@ -367,14 +367,14 @@ public class CompositeContourTests
     }
 
     [Test]
-    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsOutside_ReturnsPositiveDistance()
+    public void SignedDistance_WhenPointIsImmediatelyOutside_ReturnsPositiveDistance()
     {
         IContour contour = new CompositeContour(new IFinitePath[]
         {
             CreateUnitCirclePath()
         });
 
-        float signedDistance = contour.SignedDistance(new PointXY(1.0005f, 0f), 0.001f);
+        float signedDistance = contour.SignedDistance(new PointXY(1.0005f, 0f));
 
         Assert.That(signedDistance, Is.EqualTo(0.0005f).Within(GeometryConstants.GeometryEpsilon));
     }
@@ -416,18 +416,15 @@ public class CompositeContourTests
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
-    [TestCase(-1e-6f)]
-    [TestCase(float.NaN)]
-    [TestCase(float.PositiveInfinity)]
-    [TestCase(float.NegativeInfinity)]
-    public void SignedDistance_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    [Test]
+    public void SignedDistance_WhenPointCoordinateIsInvalid_Throws()
     {
         IContour contour = CreateSquareContour();
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.SignedDistance(new PointXY(0f, 0f), geometryEpsilon));
+            contour.SignedDistance(new PointXY(float.PositiveInfinity, 0f)));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     private static CompositeContour CreateSquareContour()

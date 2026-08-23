@@ -83,10 +83,8 @@ namespace Akeldov.Math.Spatial2D.Regions
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(PointXY point, float geometryEpsilon = 1E-06F)
+        public float SignedDistance(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             float distance = Distance(point);
             bool isContained = HasOddRightwardCrossingCount(point) || distance == 0f;
             return isContained ? -distance : distance;

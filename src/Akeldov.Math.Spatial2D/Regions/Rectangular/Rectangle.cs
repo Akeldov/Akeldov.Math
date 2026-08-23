@@ -118,17 +118,10 @@ namespace Akeldov.Math.Spatial2D.Regions
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             float distance = Distance(point);
-            return point.X >= Min.X - geometryEpsilon &&
-                point.X <= Max.X + geometryEpsilon &&
-                point.Y >= Min.Y - geometryEpsilon &&
-                point.Y <= Max.Y + geometryEpsilon ? -distance : distance;
+            return point.X >= Min.X && point.X <= Max.X && point.Y >= Min.Y && point.Y <= Max.Y ? -distance : distance;
         }
 
         /// <summary>

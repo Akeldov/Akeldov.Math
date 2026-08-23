@@ -82,11 +82,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
             if (_region == null)
             {
-                GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
                 PointXYValidation.ThrowIfNotFinite(
                     point,
                     nameof(point),
@@ -95,7 +94,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 return float.PositiveInfinity;
             }
 
-            return _region.SignedDistance(point, geometryEpsilon);
+            return _region.SignedDistance(point);
         }
     }
 }

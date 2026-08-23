@@ -267,7 +267,7 @@ public class ContourBasedRegionTests
             return minDistance;
         }
 
-        public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
             float distance = Distance(point);
             return Encloses(point) ? -distance : distance;

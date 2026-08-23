@@ -57,7 +57,7 @@ public class RectanglePropertyFuzzTests
                 continue;
 
             bool contains = rectangle.Contains(point);
-            float signedDistance = region.Contours[0].SignedDistance(point, geometryEpsilon: 0f);
+            float signedDistance = region.Contours[0].SignedDistance(point);
 
             Assert.That(
                 signedDistance <= 0f,

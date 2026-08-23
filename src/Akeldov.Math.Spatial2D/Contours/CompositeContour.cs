@@ -157,10 +157,8 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(PointXY point, float geometryEpsilon = 1E-06F)
+        public float SignedDistance(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             float distance = Distance(point);
             bool isEnclosed = HasOddRightwardCrossingCount(point) || distance == 0f;
             return isEnclosed ? -distance : distance;

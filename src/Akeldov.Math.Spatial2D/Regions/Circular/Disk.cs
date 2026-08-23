@@ -74,14 +74,10 @@ namespace Akeldov.Math.Spatial2D.Regions
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(
-            PointXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point)
         {
-            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
-
             float distance = Distance(point);
-            return point.Distance(Center) <= Radius + geometryEpsilon ? -distance : distance;
+            return point.Distance(Center) <= Radius ? -distance : distance;
         }
 
         /// <summary>

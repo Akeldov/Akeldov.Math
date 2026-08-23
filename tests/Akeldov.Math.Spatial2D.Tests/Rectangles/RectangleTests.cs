@@ -85,15 +85,15 @@ public class RectangleTests
     }
 
     [Test]
-    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsWithinTolerance_ReturnsNegativeDistance()
+    public void SignedDistance_WhenPointIsImmediatelyOutside_ReturnsPositiveDistance()
     {
         IRegion rectangle = new Rectangle(
             new PointXY(0f, 0f),
             new PointXY(4f, 2f));
 
-        float signedDistance = rectangle.SignedDistance(new PointXY(-0.0005f, 1f), 0.001f);
+        float signedDistance = rectangle.SignedDistance(new PointXY(-0.0005f, 1f));
 
-        Assert.That(signedDistance, Is.EqualTo(-0.0005f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(signedDistance, Is.EqualTo(0.0005f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]

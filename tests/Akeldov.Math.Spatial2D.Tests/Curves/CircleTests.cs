@@ -236,13 +236,13 @@ public class CircleTests
     }
 
     [Test]
-    public void SignedDistance_WithCustomGeometryEpsilon_WhenPointIsWithinTolerance_ReturnsNegativeDistance()
+    public void SignedDistance_WhenPointIsImmediatelyOutside_ReturnsPositiveDistance()
     {
         var circle = new Circle(new PointXY(0f, 0f), 5f);
 
-        float signedDistance = circle.SignedDistance(new PointXY(5.0005f, 0f), 0.001f);
+        float signedDistance = circle.SignedDistance(new PointXY(5.0005f, 0f));
 
-        Assert.That(signedDistance, Is.EqualTo(-0.0005f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(signedDistance, Is.EqualTo(0.0005f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
