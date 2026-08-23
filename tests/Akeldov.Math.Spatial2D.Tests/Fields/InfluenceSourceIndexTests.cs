@@ -99,6 +99,27 @@ public class InfluenceSourceIndexTests
     }
 
     [Test]
+    public void DelaunayIndex_WhenSelectedSourcesMutated_ReturnsIndependentCallerOwnedLists()
+    {
+        var sources = new[]
+        {
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 1f),
+            new FloatPointInfluenceSource(1f, new PointXY(10f, 0f), 2f),
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 10f), 3f)
+        };
+        var index = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+
+        List<FloatPointInfluenceSource> firstSelection = index.SelectSources(new PointXY(2f, 3f));
+        firstSelection.Clear();
+        List<FloatPointInfluenceSource> secondSelection = index.SelectSources(new PointXY(2f, 3f));
+
+        Assert.That(firstSelection, Is.Empty);
+        Assert.That(secondSelection, Is.EquivalentTo(sources));
+        Assert.That(secondSelection, Is.Not.SameAs(firstSelection));
+        Assert.That(index.Sources, Is.EquivalentTo(sources));
+    }
+
+    [Test]
     public void DelaunayIndex_WhenSourceListChangesAfterConstruction_UsesOriginalSnapshot()
     {
         var sources = new List<FloatPointInfluenceSource>

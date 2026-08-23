@@ -249,6 +249,61 @@ public class ArcTests
     }
 
     [Test]
+    public void CountRightwardCrossings_ForArc_MatchesIntersectionBasedReference()
+    {
+        var arcs = new[]
+        {
+            new Arc(new PointXY(0f, 0f), 2f, 0f, 2f * MathF.PI),
+            new Arc(new PointXY(0f, 0f), 2f, 0f, MathF.PI),
+            new Arc(new PointXY(0f, 0f), 2f, MathF.PI, 0f),
+            new Arc(new PointXY(0f, 0f), 2f, 3f * MathF.PI / 2f, MathF.PI / 2f),
+            new Arc(new PointXY(0f, 0f), 2f, MathF.PI / 4f, 5f * MathF.PI / 4f),
+            new Arc(new PointXY(0f, 0f), 2f, 0f, 0f),
+            new Arc(new PointXY(0f, 0f), 0f, 0f, MathF.PI)
+        };
+        PointXY[] origins = CreateRightwardCrossingOrigins();
+
+        foreach (Arc arc in arcs)
+        {
+            foreach (PointXY origin in origins)
+            {
+                Assert.That(
+                    arc.CountRightwardCrossings(origin),
+                    Is.EqualTo(CountRightwardCrossingsFromIntersections(arc, origin)),
+                    $"Arc {arc} at origin {origin}");
+            }
+        }
+    }
+
+    [Test]
+    public void CountRightwardCrossings_ForParameterizedArc_MatchesIntersectionBasedReference()
+    {
+        var arcs = new[]
+        {
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, 0f, 2f * MathF.PI, AngularDirection.Counterclockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, 0f, 2f * MathF.PI, AngularDirection.Clockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, 0f, MathF.PI, AngularDirection.Counterclockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, MathF.PI, 0f, AngularDirection.Clockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, 3f * MathF.PI / 2f, MathF.PI / 2f, AngularDirection.Counterclockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, MathF.PI / 2f, 3f * MathF.PI / 2f, AngularDirection.Clockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 2f, 0f, 0f, AngularDirection.Counterclockwise),
+            new ParameterizedArc(new PointXY(0f, 0f), 0f, 0f, MathF.PI, AngularDirection.Counterclockwise)
+        };
+        PointXY[] origins = CreateRightwardCrossingOrigins();
+
+        foreach (ParameterizedArc arc in arcs)
+        {
+            foreach (PointXY origin in origins)
+            {
+                Assert.That(
+                    arc.CountRightwardCrossings(origin),
+                    Is.EqualTo(CountRightwardCrossingsFromIntersections(arc, origin)),
+                    $"Parameterized arc {arc} at origin {origin}");
+            }
+        }
+    }
+
+    [Test]
     public void Distance_WhenPointIsNearArcEndpoint_UsesNearestEndpoint()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);
@@ -611,5 +666,85 @@ public class ArcTests
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    private static PointXY[] CreateRightwardCrossingOrigins()
+    {
+        float diagonal = MathF.Sqrt(2f);
+        return new[]
+        {
+            new PointXY(-3f, 0f),
+            new PointXY(0f, 0f),
+            new PointXY(3f, 0f),
+            new PointXY(-3f, 2f),
+            new PointXY(-3f, -2f),
+            new PointXY(-3f, 1f),
+            new PointXY(-3f, -1f),
+            new PointXY(-3f, diagonal),
+            new PointXY(-3f, -diagonal),
+            new PointXY(diagonal, diagonal),
+            new PointXY(diagonal, -diagonal)
+        };
+    }
+
+    private static int CountRightwardCrossingsFromIntersections(Arc arc, PointXY origin)
+    {
+        List<PointXY> intersections = arc.GetPointIntersections(new Ray(origin));
+        int count = 0;
+
+        for (int i = 0; i < intersections.Count; i++)
+        {
+            PointXY intersection = intersections[i];
+            if (intersection.X <= origin.X)
+                continue;
+
+            if (intersection.Y == arc.Center.Y - arc.Radius ||
+                intersection.Y == arc.Center.Y + arc.Radius)
+            {
+                continue;
+            }
+
+            if (!arc.IsFullCircle && intersection.Equals(arc.StartPoint) && MathF.Cos(arc.StartAngle) <= 0f)
+                continue;
+
+            if (!arc.IsFullCircle && intersection.Equals(arc.EndPoint) && MathF.Cos(arc.EndAngle) >= 0f)
+                continue;
+
+            count++;
+        }
+
+        return count;
+    }
+
+    private static int CountRightwardCrossingsFromIntersections(ParameterizedArc arc, PointXY origin)
+    {
+        List<PointXY> intersections = arc.GetPointIntersections(new Ray(origin));
+        float directionSign = arc.AngularDirection == AngularDirection.Counterclockwise ? 1f : -1f;
+        int count = 0;
+
+        for (int i = 0; i < intersections.Count; i++)
+        {
+            PointXY intersection = intersections[i];
+            if (intersection.X <= origin.X)
+                continue;
+
+            if (intersection.Y == arc.Center.Y - arc.Radius ||
+                intersection.Y == arc.Center.Y + arc.Radius)
+            {
+                continue;
+            }
+
+            float startDerivativeY = directionSign * MathF.Cos(arc.StartAngle);
+            float endDerivativeY = directionSign * MathF.Cos(arc.EndAngle);
+            if (!arc.IsFullCircle && intersection.Equals(arc.StartPoint) && startDerivativeY <= 0f)
+                continue;
+
+            if (!arc.IsFullCircle && intersection.Equals(arc.EndPoint) && endDerivativeY >= 0f)
+                continue;
+
+            count++;
+        }
+
+        return count;
     }
 }

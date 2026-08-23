@@ -1,6 +1,9 @@
 name: Publish Spatial2D to NuGet
 
 on:
+  push:
+    tags:
+      - spatial2d/v*
   workflow_dispatch:
 
 permissions:
@@ -22,6 +25,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
@@ -70,6 +75,23 @@ jobs:
             throw "Package version '$packageVersion' does not look like a valid NuGet SemVer version."
           }
 
+          $expectedTag = "spatial2d/v$packageVersion"
+
+          if ($env:GITHUB_REF_TYPE -ne 'tag' -or $env:GITHUB_REF_NAME -cne $expectedTag) {
+            throw "Publish from the '$expectedTag' tag, not '$($env:GITHUB_REF)'."
+          }
+
+          $tagType = git cat-file -t $env:GITHUB_REF
+          if ($LASTEXITCODE -ne 0 -or $tagType.Trim() -ne 'tag') {
+            throw "The '$expectedTag' release tag must be annotated."
+          }
+
+          $tagCommit = (git rev-list -n 1 $env:GITHUB_REF).Trim()
+          $checkedOutCommit = (git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $tagCommit -cne $checkedOutCommit) {
+            throw "The '$expectedTag' tag does not identify the checked-out commit."
+          }
+
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
           "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
 
@@ -82,6 +104,7 @@ jobs:
           --disable-build-servers
           /p:PackageVersion=$env:PACKAGE_VERSION
           /p:ContinuousIntegrationBuild=true
+          /p:IncludeSourceRevisionInInformationalVersion=false
           /maxcpucount:1
 
       - name: Pack
@@ -93,6 +116,76 @@ jobs:
           --output $env:PACKAGE_OUTPUT_PATH
           /p:PackageVersion=$env:PACKAGE_VERSION
           /p:ContinuousIntegrationBuild=true
+          /p:IncludeSourceRevisionInInformationalVersion=false
+
+      - name: Verify release candidate
+        shell: pwsh
+        run: |
+          $packages = @(Get-ChildItem $env:PACKAGE_OUTPUT_PATH -Filter "*.nupkg")
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly one generated NuGet package, but found $($packages.Count)."
+          }
+
+          $packageName = "Akeldov.Math.Spatial2D.$($env:PACKAGE_VERSION).nupkg"
+          if ($packages[0].Name -cne $packageName) {
+            throw "Expected package '$packageName', but found '$($packages[0].Name)'."
+          }
+
+          $candidatePath = Join-Path `
+            "docfx/versioned/Spatial2D/$($env:PACKAGE_VERSION)/source" `
+            $packageName
+          if (-not (Test-Path -LiteralPath $candidatePath -PathType Leaf)) {
+            throw "The immutable release candidate is missing: $candidatePath"
+          }
+
+          $candidateHash = (Get-FileHash $candidatePath -Algorithm SHA256).Hash
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $generatedArchive = [System.IO.Compression.ZipFile]::OpenRead($packages[0].FullName)
+          $candidateArchive = [System.IO.Compression.ZipFile]::OpenRead(
+            (Resolve-Path $candidatePath))
+
+          try {
+            $payloadPaths = @(
+              'Akeldov.Math.Spatial2D.nuspec',
+              'lib/net6.0/Akeldov.Math.Spatial2D.dll',
+              'lib/net6.0/Akeldov.Math.Spatial2D.xml',
+              'lib/netstandard2.1/Akeldov.Math.Spatial2D.dll',
+              'lib/netstandard2.1/Akeldov.Math.Spatial2D.xml',
+              'README.md')
+
+            foreach ($payloadPath in $payloadPaths) {
+              $generatedEntry = $generatedArchive.GetEntry($payloadPath)
+              $candidateEntry = $candidateArchive.GetEntry($payloadPath)
+              if ($null -eq $generatedEntry -or $null -eq $candidateEntry) {
+                throw "Required package payload is missing: $payloadPath"
+              }
+
+              $generatedStream = $generatedEntry.Open()
+              $candidateStream = $candidateEntry.Open()
+              $sha256 = [System.Security.Cryptography.SHA256]::Create()
+              try {
+                $generatedHash = ([BitConverter]::ToString(
+                  $sha256.ComputeHash($generatedStream))).Replace('-', '')
+                $candidateHashForEntry = ([BitConverter]::ToString(
+                  $sha256.ComputeHash($candidateStream))).Replace('-', '')
+              } finally {
+                $sha256.Dispose()
+                $generatedStream.Dispose()
+                $candidateStream.Dispose()
+              }
+
+              if ($generatedHash -cne $candidateHashForEntry) {
+                throw "Generated payload does not match the release candidate: $payloadPath"
+              }
+            }
+          } finally {
+            $generatedArchive.Dispose()
+            $candidateArchive.Dispose()
+          }
+
+          "CANDIDATE_PACKAGE_PATH=$((Resolve-Path $candidatePath).Path)" >> $env:GITHUB_ENV
+          "Spatial2D $($env:PACKAGE_VERSION) SHA-256: $candidateHash" >> $env:GITHUB_STEP_SUMMARY
 
       - name: Publish to NuGet
         shell: pwsh
@@ -103,13 +196,6 @@ jobs:
             throw "Repository or environment secret NUGET_API_KEY is required."
           }
 
-          $packages = @(Get-ChildItem $env:PACKAGE_OUTPUT_PATH -Filter "*.nupkg")
-
-          if ($packages.Count -ne 1) {
-            throw "Expected exactly one NuGet package, but found $($packages.Count)."
-          }
-
-          dotnet nuget push $packages[0].FullName `
+          dotnet nuget push $env:CANDIDATE_PACKAGE_PATH `
             --api-key $env:NUGET_API_KEY `
-            --source $env:NUGET_SOURCE `
-            --skip-duplicate
+            --source $env:NUGET_SOURCE

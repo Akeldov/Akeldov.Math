@@ -1473,6 +1473,8 @@ function Add-VersionedLibraryDocumentation {
 
         [string] $ArticleSourceRoot,
 
+        [string[]] $InheritedArticleOverrideRoots,
+
         [string] $ReferencePackagePath,
 
         [string] $ExpectedReferencePackageHash,
@@ -1574,24 +1576,32 @@ function Add-VersionedLibraryDocumentation {
                 Copy-Item -LiteralPath $languageSourceRoot `
                     -Destination $articleStageRoot -Recurse
 
-                $languageOverrideRoot = Join-Path $VersionAdapterRoot $language
-                if (-not (Test-Path -LiteralPath $languageOverrideRoot)) {
-                    continue
-                }
-
                 $languageStageRoot = Join-Path $articleStageRoot $language
-                Get-ChildItem -LiteralPath $languageOverrideRoot -Recurse -File |
-                    ForEach-Object {
-                        $relativePath = $_.FullName.Substring(
-                            $languageOverrideRoot.Length).TrimStart(
-                                [char][System.IO.Path]::DirectorySeparatorChar)
-                        $destination = Join-Path $languageStageRoot $relativePath
-                        $destinationDirectory = Split-Path -Parent $destination
-                        New-Item -ItemType Directory `
-                            -Path $destinationDirectory -Force | Out-Null
-                        Copy-Item -LiteralPath $_.FullName `
-                            -Destination $destination -Force
+                $articleOverrideRoots = @($InheritedArticleOverrideRoots) +
+                    @($VersionAdapterRoot)
+
+                foreach ($articleOverrideRoot in $articleOverrideRoots) {
+                    $languageOverrideRoot = Join-Path `
+                        $articleOverrideRoot $language
+                    if (-not (Test-Path -LiteralPath $languageOverrideRoot)) {
+                        continue
                     }
+
+                    Get-ChildItem -LiteralPath $languageOverrideRoot `
+                        -Recurse -File |
+                        ForEach-Object {
+                            $relativePath = $_.FullName.Substring(
+                                $languageOverrideRoot.Length).TrimStart(
+                                    [char][System.IO.Path]::DirectorySeparatorChar)
+                            $destination = Join-Path `
+                                $languageStageRoot $relativePath
+                            $destinationDirectory = Split-Path -Parent $destination
+                            New-Item -ItemType Directory `
+                                -Path $destinationDirectory -Force | Out-Null
+                            Copy-Item -LiteralPath $_.FullName `
+                                -Destination $destination -Force
+                        }
+                }
             }
         }
 
@@ -1665,12 +1675,25 @@ function Add-VersionedLibraryDocumentation {
                                 -Root $articleOutput.Root `
                                 -Path $_.FullName),
                             '.md')
+                        $sourcePath = Join-Path `
+                            $languageSourceRoot $relativeArticlePath
+
+                        foreach ($inheritedArticleOverrideRoot in
+                            $InheritedArticleOverrideRoots) {
+                            $inheritedOverridePath = Join-Path `
+                                (Join-Path `
+                                    $inheritedArticleOverrideRoot `
+                                    $articleOutput.Language) `
+                                $relativeArticlePath
+                            if (Test-Path -LiteralPath $inheritedOverridePath) {
+                                $sourcePath = $inheritedOverridePath
+                            }
+                        }
+
                         $overridePath = Join-Path `
                             $languageOverrideRoot $relativeArticlePath
-                        $sourcePath = if (Test-Path -LiteralPath $overridePath) {
-                            $overridePath
-                        } else {
-                            Join-Path $languageSourceRoot $relativeArticlePath
+                        if (Test-Path -LiteralPath $overridePath) {
+                            $sourcePath = $overridePath
                         }
 
                         if (-not (Test-Path -LiteralPath $sourcePath)) {
@@ -1899,10 +1922,14 @@ $hexesUpcomingApiRoot = Join-Path `
     $PSScriptRoot 'api\Hexes\upcoming'
 $spatial2DArticleBaseRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.8.0'
-$spatial2DArticleOverrideRoot = Join-Path `
+$spatial2D09ArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.9.0'
+$spatial2D10ArticleOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\1.0.0'
 $spatial2DUpcomingArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\upcoming'
+$spatial2D09ArticleStageRoot = Join-Path `
+    $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-0.9.0'
 $spatial2DStableArticleStageRoot = Join-Path `
     $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-stable'
 $spatial2DUpcomingArticleStageRoot = Join-Path `
@@ -1940,7 +1967,13 @@ foreach ($upcomingApiRoot in @(
 New-MergedArticleSource `
     -RepositoryRoot $repositoryRoot `
     -BaseRoot $spatial2DArticleBaseRoot `
-    -OverrideRoot $spatial2DArticleOverrideRoot `
+    -OverrideRoot $spatial2D09ArticleOverrideRoot `
+    -StageRoot $spatial2D09ArticleStageRoot
+
+New-MergedArticleSource `
+    -RepositoryRoot $repositoryRoot `
+    -BaseRoot $spatial2D09ArticleStageRoot `
+    -OverrideRoot $spatial2D10ArticleOverrideRoot `
     -StageRoot $spatial2DStableArticleStageRoot
 
 New-MergedArticleSource `
@@ -1967,13 +2000,16 @@ Update-MergedArticleContributionLinks `
     -SiteRoot $siteRoot `
     -BaseRoot $spatial2DArticleBaseRoot `
     -OverrideRoot $spatial2DUpcomingArticleOverrideRoot `
-    -InheritedOverrideRoots @($spatial2DArticleOverrideRoot) `
+    -InheritedOverrideRoots @(
+        $spatial2D09ArticleOverrideRoot,
+        $spatial2D10ArticleOverrideRoot) `
     -StageRoot $spatial2DUpcomingArticleStageRoot `
     -Library 'Spatial2D' `
     -VersionPath 'upcoming'
 
 Remove-Item -LiteralPath $spatial2DUpcomingArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $spatial2DStableArticleStageRoot -Recurse -Force
+Remove-Item -LiteralPath $spatial2D09ArticleStageRoot -Recurse -Force
 
 Update-MergedArticleContributionLinks `
     -RepositoryRoot $repositoryRoot `
@@ -2010,6 +2046,20 @@ Add-VersionedLibraryDocumentation `
     -ExpectedPackageHash `
         '5F03676949B71F79CCCF1A5D35015B3B6BE4C1D7380C03981CEF3E358C483345' `
     -ArticleSourceRoot $spatial2DArticleBaseRoot
+
+Add-VersionedLibraryDocumentation `
+    -Library 'Spatial2D' `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Spatial2D\1.0.0') `
+    -PackageVersion '1.0.0' `
+    -TargetVersionPath '1.0.0' `
+    -ExpectedPackageHash `
+        'C34460C0DD248AAA93CF036D009774DA850068B384C4FC689F4D0EFC1238CB6F' `
+    -ArticleSourceRoot $spatial2DArticleBaseRoot `
+    -InheritedArticleOverrideRoots @($spatial2D09ArticleOverrideRoot)
 
 Add-VersionedLibraryDocumentation `
     -Library 'Hexes' `
@@ -2055,6 +2105,8 @@ $spatial2DVersionedRussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.8.0\ru'
 $spatial2D09RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.9.0\ru'
+$spatial2D10RussianOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\1.0.0\ru'
 $hexes01RussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.1.0\ru'
 $hexes02RussianSourceRoot = Join-Path `
@@ -2078,10 +2130,26 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $spatial2DVersionedRussianSourceRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.0.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D09RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.0.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D10RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.0.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2DVersionedRussianSourceRoot
         OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
     },
     [pscustomobject]@{
         Root = $spatial2D09RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D10RussianOverrideRoot
         OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
     },
     [pscustomobject]@{
@@ -2692,7 +2760,7 @@ Write-Host (
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
     -Library 'Spatial2D' `
-    -CanonicalVersion '0.9.0' `
+    -CanonicalVersion '1.0.0' `
     -Alias 'latest' `
     -SiteBaseUrl $siteBaseUrl
 

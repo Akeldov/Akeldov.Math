@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Akeldov.Math.Spatial2D.Curves
@@ -114,24 +113,25 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             PointXYValidation.ThrowIfNotFinite(origin, nameof(origin), "Ray origin coordinates must be finite.");
 
-            List<PointXY> intersections = ArcIntersectionExtensions.GetPointIntersections(this, new Ray(origin));
+            double radius = Radius;
+            double verticalOffset = (double)origin.Y - Center.Y;
+            double horizontalOffsetSquared = radius * radius - verticalOffset * verticalOffset;
+            if (horizontalOffsetSquared <= 0d)
+                return 0;
+
+            double horizontalOffset = System.Math.Sqrt(horizontalOffsetSquared);
+            PointXY firstIntersection = new PointXY((float)(Center.X - horizontalOffset), origin.Y);
+            PointXY secondIntersection = new PointXY((float)(Center.X + horizontalOffset), origin.Y);
+            float startDerivativeY = MathF.Cos(StartAngle);
+            float endDerivativeY = MathF.Cos(EndAngle);
             int count = 0;
 
-            for (int i = 0; i < intersections.Count; i++)
+            if (IsRightwardCrossing(firstIntersection, origin, startDerivativeY, endDerivativeY))
+                count++;
+
+            if (!secondIntersection.Equals(firstIntersection) &&
+                IsRightwardCrossing(secondIntersection, origin, startDerivativeY, endDerivativeY))
             {
-                PointXY intersection = intersections[i];
-                if (intersection.X <= origin.X)
-                    continue;
-
-                if (intersection.Y == Center.Y - Radius || intersection.Y == Center.Y + Radius)
-                    continue;
-
-                if (!IsFullCircle && intersection.Equals(StartPoint) && MathF.Cos(StartAngle) <= 0f)
-                    continue;
-
-                if (!IsFullCircle && intersection.Equals(EndPoint) && MathF.Cos(EndAngle) >= 0f)
-                    continue;
-
                 count++;
             }
 
@@ -294,6 +294,33 @@ namespace Akeldov.Math.Spatial2D.Curves
         private bool ContainsAngle(float angle)
         {
             return IsFullCircle || angle.IsAngleWithinArc(_startAngle, _endAngle);
+        }
+
+        private bool IsRightwardCrossing(
+            PointXY intersection,
+            PointXY origin,
+            float startDerivativeY,
+            float endDerivativeY)
+        {
+            if (intersection.X <= origin.X)
+                return false;
+
+            if (!IsFullCircle)
+            {
+                float angle = MathF.Atan2(
+                    intersection.Y - Center.Y,
+                    intersection.X - Center.X).NormalizeAngleRad();
+                if (!ContainsAngle(angle))
+                    return false;
+
+                if (intersection.Equals(StartPoint) && startDerivativeY <= 0f)
+                    return false;
+
+                if (intersection.Equals(EndPoint) && endDerivativeY >= 0f)
+                    return false;
+            }
+
+            return true;
         }
 
         private PointXY GetPointAtAngle(float angle)

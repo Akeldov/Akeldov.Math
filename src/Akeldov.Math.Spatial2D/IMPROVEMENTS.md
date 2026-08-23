@@ -82,8 +82,11 @@ documentation work. Check an item only after its tests and documentation have be
 
 - [ ] Run focused edge-case tests, all seeded fuzz/property tests, the normal suite, and explicit
   stress fixtures before a release candidate.
-- [ ] Compare BenchmarkDotNet results with the last recorded baseline and investigate meaningful
-  regressions in time or allocations.
+- [x] Compare BenchmarkDotNet results with the last recorded baseline and investigate meaningful
+  regressions in time or allocations. See the
+  [1.0.0 benchmark comparison](../../benchmarks/Akeldov.Math.Spatial2D.Benchmarks/BENCHMARK-1.0.0.md).
+- [x] Resolve or explicitly accept the confirmed Delaunay query and contour signed-distance
+  rasterization regressions before tagging 1.0.0.
 - [ ] Pack the NuGet package and verify XML documentation, README rendering, both target
   frameworks, and a clean consumer build before publishing.
 - [ ] Bind NuGet publication to an annotated `spatial2d/v<Version>` tag whose commit and version
