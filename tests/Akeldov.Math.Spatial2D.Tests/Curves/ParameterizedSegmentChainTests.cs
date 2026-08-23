@@ -131,6 +131,37 @@ public class ParameterizedSegmentChainTests
         AssertPoint(intersections[0], 1f, 1f);
     }
 
+    [Test]
+    public void GetPointIntersections_WhenLineCrossesChain_ReturnsDistinctPointsInLineDirection()
+    {
+        var chain = new ParameterizedSegmentChain(
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f),
+            new PointXY(0f, 0f));
+        var line = new Line(new PointXY(-1f, 1f), new PointXY(3f, 1f));
+
+        List<PointXY> intersections = chain.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 0f, 1f);
+        AssertPoint(intersections[1], 2f, 1f);
+    }
+
+    [Test]
+    public void GetPointIntersections_WhenVertexBelongsToContinuousLineOverlap_OmitsVertex()
+    {
+        var chain = new ParameterizedSegmentChain(
+            new PointXY(0f, 0f),
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f));
+        var line = new Line(new PointXY(-1f, 0f), new PointXY(3f, 0f));
+
+        List<PointXY> intersections = chain.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
     private static void AssertPoint(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));

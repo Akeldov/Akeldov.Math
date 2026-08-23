@@ -50,14 +50,24 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 }
 ```
 
-`GetPointIntersections` is a curve-versus-ray query. Spatial2D does not define one general
-curve-versus-curve intersection method. When a full infinite probe line is required, cast two
-opposite rays from the same origin and remove a duplicate at their shared origin.
+Linear curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`, `ParameterizedSegment`, and
+`ParameterizedSegmentChain`) also provide `GetPointIntersections(Line)` for a full infinite
+probe line:
+
+```csharp
+var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
+var probeLine = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
+
+List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
+```
+
+Spatial2D does not define one general curve-versus-curve intersection method.
 
 Bezier intersections are calculated against the curve's internal polyline approximation. Use
 the result at the same precision as other Bezier length, projection, and distance operations.
 
-`GetPointIntersections(Ray)` uses the library's standard geometry tolerance.
+`GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Linear-curve
+intersections with `Line` use exact comparisons.
 
 ## Account for overlaps and endpoints
 

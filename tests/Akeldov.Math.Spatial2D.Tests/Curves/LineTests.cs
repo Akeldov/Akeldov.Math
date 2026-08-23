@@ -189,6 +189,29 @@ public class LineTests
     }
 
     [Test]
+    public void PointIntersections_WhenLinesCross_ReturnsIntersection()
+    {
+        var source = new Line(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var line = new Line(new PointXY(2f, -1f), new PointXY(2f, 1f));
+
+        List<PointXY> intersections = source.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenLinesCoincide_ReturnsEmpty()
+    {
+        var source = new Line(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var line = new Line(new PointXY(-2f, 0f), new PointXY(2f, 0f));
+
+        List<PointXY> intersections = source.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void Project_WhenLineDoesNotPassThroughGlobalOrigin_ReturnsClosestPoint()
     {
         var line = new Line(new PointXY(2f, 3f), new PointXY(4f, 3f));

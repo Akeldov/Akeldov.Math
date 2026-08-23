@@ -203,6 +203,18 @@ public class ParameterizedLineTests
     }
 
     [Test]
+    public void PointIntersections_WhenLineCrossesParameterizedLine_ReturnsIntersection()
+    {
+        var source = new ParameterizedLine(new PointXY(0f, 0f), new VectorXY(1f, 0f));
+        var line = new Line(new PointXY(2f, -1f), new PointXY(2f, 1f));
+
+        List<PointXY> intersections = source.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
     public void GetHalfPlaneSide_WhenPointIsLeftOfIncreasingDirection_ReturnsLeft()
     {
         var line = new ParameterizedLine(new PointXY(0f, 0f), new VectorXY(1f, 0f));

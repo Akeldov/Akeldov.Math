@@ -51,14 +51,24 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 }
 ```
 
-`GetPointIntersections` ищет пересечения кривой именно с лучом. В Spatial2D нет единого метода для
-пересечения двух произвольных кривых. Если нужна бесконечная секущая прямая, проведите из одной
-точки два противоположно направленных луча и удалите возможный дубликат в их общем начале.
+Линейные кривые (`Line`, `Ray`, `Segment`, `ParameterizedLine`, `ParameterizedSegment` и
+`ParameterizedSegmentChain`) также предоставляют `GetPointIntersections(Line)` для пересечения
+с бесконечной прямой:
+
+```csharp
+var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
+var probeLine = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
+
+List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
+```
+
+В Spatial2D нет единого метода для пересечения двух произвольных кривых.
 
 Пересечения кривых Безье вычисляются по внутренней полилинейной аппроксимации. Используйте
 результат с той же точностью, что и длину, проекцию и расстояние для кривых Безье.
 
-`GetPointIntersections(Ray)` использует стандартный геометрический допуск библиотеки.
+`GetPointIntersections(Ray)` использует стандартный геометрический допуск библиотеки. Пересечения
+линейных кривых с `Line` используют точные сравнения.
 
 ## Учесть наложения и концы
 

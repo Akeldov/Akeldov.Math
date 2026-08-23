@@ -122,6 +122,40 @@ public class RayTests
     }
 
     [Test]
+    public void PointIntersections_WhenLineCrossesRayAhead_ReturnsIntersection()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var line = new Line(new PointXY(2f, -1f), new PointXY(2f, 1f));
+
+        List<PointXY> intersections = ray.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenLineCrossesBehindRay_ReturnsEmpty()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var line = new Line(new PointXY(-2f, -1f), new PointXY(-2f, 1f));
+
+        List<PointXY> intersections = ray.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenLineContainsRay_ReturnsEmpty()
+    {
+        var ray = new Ray(new PointXY(0f, 0f));
+        var line = new Line(new PointXY(-2f, 0f), new PointXY(2f, 0f));
+
+        List<PointXY> intersections = ray.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void ProjectWithParameter_WhenPointIsBehindRay_ClampsToOrigin()
     {
         var ray = new Ray(new PointXY(1f, 0f));

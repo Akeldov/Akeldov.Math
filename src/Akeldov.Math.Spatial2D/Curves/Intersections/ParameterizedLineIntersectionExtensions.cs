@@ -1,0 +1,22 @@
+using System.Collections.Generic;
+using Akeldov.Math.Spatial2D;
+
+namespace Akeldov.Math.Spatial2D.Curves
+{
+    /// <summary>
+    /// Provides exact line-intersection calculations for <see cref="ParameterizedLine"/>.
+    /// </summary>
+    public static class ParameterizedLineIntersectionExtensions
+    {
+        /// <summary>
+        /// Returns the isolated point intersection between a parameterized line and a geometric line using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source parameterized line.</param>
+        /// <param name="line">The line to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller. Parallel or coincident lines return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedLine source, Line line)
+        {
+            return LineIntersectionExtensions.GetPointIntersections(source.Line, line);
+        }
+    }
+}

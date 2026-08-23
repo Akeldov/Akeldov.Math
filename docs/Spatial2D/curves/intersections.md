@@ -1,6 +1,7 @@
 # Intersections
 
-`GetPointIntersections` returns isolated intersection points in the forward direction of a ray.
+`ICurve.GetPointIntersections(Ray)` returns isolated intersection points in the forward direction of a ray.
+Linear curves also provide `GetPointIntersections(Line)` for intersections with an infinite line.
 
 The returned collection is a new mutable list owned by the caller.
 
@@ -18,7 +19,20 @@ var rayCaster = new Ray(new PointXY(-10f, 0f), angle: 0f);
 List<PointXY> hits = circle.GetPointIntersections(rayCaster);
 ```
 
+```csharp
+var segment = new Segment(
+    new PointXY(-2f, 1f),
+    new PointXY(2f, 1f));
+
+var probeLine = new Line(
+    new PointXY(0f, -2f),
+    new PointXY(0f, 2f));
+
+List<PointXY> lineHits = segment.GetPointIntersections(probeLine);
+```
+
 Points that belong to a continuous set of intersections are not returned. For example, a
 collinear overlap between a linear curve and the ray does not produce a representative point.
 
-`GetPointIntersections` uses the library's standard geometry tolerance.
+`GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Linear-curve
+intersections with `Line` use exact comparisons.
