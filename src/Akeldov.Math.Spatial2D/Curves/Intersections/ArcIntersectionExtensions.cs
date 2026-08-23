@@ -202,6 +202,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between an arc and a cubic Bezier curve by numerically isolating the roots of the original curve-circle polynomial above float precision.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="curve">The cubic Bezier curve to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the curve's start point to its end point.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, CubicBezier curve)
+        {
+            List<PointXY> intersections = CubicBezierIntersectionExtensions.GetPointIntersections(curve, source);
+            CubicBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>
         /// Orders distinct known intersections counterclockwise along an arc from its start angle.
         /// </summary>
         /// <param name="arc">The target arc.</param>

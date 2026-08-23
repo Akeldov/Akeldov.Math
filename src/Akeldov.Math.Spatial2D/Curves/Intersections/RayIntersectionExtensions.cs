@@ -180,5 +180,26 @@ namespace Akeldov.Math.Spatial2D.Curves
             QuadraticBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
             return intersections;
         }
+
+        /// <summary>
+        /// Returns isolated point intersections between a ray and a cubic Bezier curve by solving the original curve polynomial.
+        /// </summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="curve">The cubic Bezier curve to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the curve's start point to its end point. Points belonging to continuous overlaps and intersections behind the ray are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, CubicBezier curve)
+        {
+            var supportingLine = new Line(source.Origin, source.Origin + source.Direction);
+            List<PointXY> intersections = CubicBezierIntersectionExtensions.GetPointIntersections(curve, supportingLine);
+
+            for (int i = intersections.Count - 1; i >= 0; i--)
+            {
+                if (VectorXY.Dot(intersections[i] - source.Origin, source.Direction) < 0f)
+                    intersections.RemoveAt(i);
+            }
+
+            CubicBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
     }
 }

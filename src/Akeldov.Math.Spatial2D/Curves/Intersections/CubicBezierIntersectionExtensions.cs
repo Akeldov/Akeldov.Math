@@ -8,6 +8,8 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public static class CubicBezierIntersectionExtensions
     {
+        private static readonly double[] PolynomialOne = { 1d };
+
         /// <summary>
         /// Returns isolated point intersections between a cubic Bezier curve and a line by solving the curve polynomial.
         /// </summary>
@@ -194,6 +196,312 @@ namespace Akeldov.Math.Spatial2D.Curves
                 source.StartPoint.Equals(source.ControlPointB) &&
                 source.StartPoint.Equals(source.EndPoint);
             return QuadraticBezierIntersectionExtensions.GetPointIntersections(curve, polynomial, parameter => Evaluate(source, parameter), sourceIsPoint);
+        }
+
+        /// <summary>
+        /// Returns isolated point intersections between two cubic Bezier curves by numerically isolating the roots of the original resultant of degree up to nine above float precision.
+        /// </summary>
+        /// <param name="source">The source cubic Bezier curve.</param>
+        /// <param name="curve">The cubic Bezier curve to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the second curve's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this CubicBezier source, CubicBezier curve)
+        {
+            CreatePowerCoordinates(source, out double[] sourceX, out double[] sourceY);
+            CreatePowerCoordinates(curve, out double[] targetX, out double[] targetY);
+            double[] polynomial = CreateResultantPolynomial(sourceX, sourceY, targetX, targetY);
+            bool sourceIsPoint = source.StartPoint.Equals(source.ControlPointA) &&
+                source.StartPoint.Equals(source.ControlPointB) &&
+                source.StartPoint.Equals(source.EndPoint);
+            return GetPointIntersections(curve, polynomial, parameter => Evaluate(source, parameter), sourceIsPoint);
+        }
+
+        /// <summary>
+        /// Extracts, validates, and orders cubic-target intersections represented by a resultant polynomial.
+        /// </summary>
+        private static List<PointXY> GetPointIntersections(CubicBezier curve, double[] polynomial, System.Func<double, PointXY> evaluateSource, bool sourceIsPoint)
+        {
+            List<PointXY> intersections = new List<PointXY>();
+
+            if (PolynomialRootIsolation.IsZero(polynomial))
+            {
+                PointXY point = evaluateSource(0d);
+                if (sourceIsPoint &&
+                    TryGetCurveCoordinate(curve, point, out double coordinate) &&
+                    Evaluate(curve, coordinate).Equals(point))
+                {
+                    intersections.Add(point);
+                }
+
+                return intersections;
+            }
+
+            List<double> stationaryCoordinates = PolynomialRootIsolation.FindStationaryCoordinatesInUnitInterval(polynomial);
+            List<float> tangentCoordinates = new List<float>();
+            for (int i = 0; i < stationaryCoordinates.Count; i++)
+            {
+                PointXY point = evaluateSource(stationaryCoordinates[i]);
+                if (TryGetCurveCoordinate(curve, point, out double coordinate) &&
+                    Evaluate(curve, coordinate).Equals(point))
+                {
+                    tangentCoordinates.Add((float)stationaryCoordinates[i]);
+                    AddDistinct(intersections, point);
+                }
+            }
+
+            List<double> roots = PolynomialRootIsolation.FindRootsInUnitInterval(polynomial);
+            for (int i = 0; i < roots.Count; i++)
+            {
+                if (tangentCoordinates.Contains((float)roots[i]))
+                    continue;
+
+                PointXY point = evaluateSource(roots[i]);
+                if (TryGetCurveCoordinate(curve, point, out _))
+                    AddDistinct(intersections, point);
+            }
+
+            OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>
+        /// Orders distinct known intersections from a cubic Bezier curve's start point to its end point.
+        /// </summary>
+        /// <param name="curve">The target cubic Bezier curve.</param>
+        /// <param name="intersections">The caller-owned intersection list to update.</param>
+        internal static void OrderPointIntersections(CubicBezier curve, List<PointXY> intersections)
+        {
+            for (int i = intersections.Count - 1; i >= 0; i--)
+            {
+                if (intersections.IndexOf(intersections[i]) != i)
+                    intersections.RemoveAt(i);
+            }
+
+            intersections.Sort((left, right) =>
+            {
+                bool hasLeftCoordinate = TryGetCurveCoordinate(curve, left, out double leftCoordinate);
+                bool hasRightCoordinate = TryGetCurveCoordinate(curve, right, out double rightCoordinate);
+
+                if (!hasLeftCoordinate)
+                    leftCoordinate = double.PositiveInfinity;
+                if (!hasRightCoordinate)
+                    rightCoordinate = double.PositiveInfinity;
+
+                return leftCoordinate.CompareTo(rightCoordinate);
+            });
+        }
+
+        /// <summary>
+        /// Creates the resultant of the source coordinate polynomials and the target cubic parameter.
+        /// </summary>
+        private static double[] CreateResultantPolynomial(double[] sourceX, double[] sourceY, double[] targetX, double[] targetY)
+        {
+            targetX = Trim(targetX);
+            targetY = Trim(targetY);
+            int xDegree = targetX.Length - 1;
+            int yDegree = targetY.Length - 1;
+
+            if (xDegree == 0 && yDegree == 0)
+            {
+                double[] pointPolynomial = SubtractSourceCoordinate(targetX[0], sourceX);
+                return PolynomialRootIsolation.IsZero(pointPolynomial)
+                    ? SubtractSourceCoordinate(targetY[0], sourceY)
+                    : pointPolynomial;
+            }
+
+            if (xDegree == 0)
+                return SubtractSourceCoordinate(targetX[0], sourceX);
+
+            if (yDegree == 0)
+                return SubtractSourceCoordinate(targetY[0], sourceY);
+
+            double[][] xCoefficients = CreateParameterCoefficients(targetX, sourceX);
+            double[][] yCoefficients = CreateParameterCoefficients(targetY, sourceY);
+            int size = xDegree + yDegree;
+            double[][][] matrix = new double[size][][];
+            for (int row = 0; row < size; row++)
+                matrix[row] = new double[size][];
+
+            for (int row = 0; row < yDegree; row++)
+            {
+                for (int coefficient = 0; coefficient <= xDegree; coefficient++)
+                    matrix[row][row + coefficient] = xCoefficients[xDegree - coefficient];
+            }
+
+            for (int row = 0; row < xDegree; row++)
+            {
+                for (int coefficient = 0; coefficient <= yDegree; coefficient++)
+                    matrix[yDegree + row][row + coefficient] = yCoefficients[yDegree - coefficient];
+            }
+
+            double[] determinant = new[] { 0d };
+            AddDeterminantTerms(matrix, 0, new bool[size], PolynomialOne, false, ref determinant);
+            return Trim(determinant);
+        }
+
+        /// <summary>
+        /// Recursively adds the nonzero terms of a polynomial matrix determinant.
+        /// </summary>
+        private static void AddDeterminantTerms(double[][][] matrix, int row, bool[] usedColumns, double[] product, bool isNegative, ref double[] determinant)
+        {
+            int size = usedColumns.Length;
+            if (row == size)
+            {
+                AddPolynomial(ref determinant, product, isNegative ? -1d : 1d);
+                return;
+            }
+
+            for (int column = 0; column < size; column++)
+            {
+                double[]? entry = matrix[row][column];
+                if (usedColumns[column] || entry == null || PolynomialRootIsolation.IsZero(entry))
+                    continue;
+
+                int largerUsedColumnCount = 0;
+                for (int previous = column + 1; previous < size; previous++)
+                {
+                    if (usedColumns[previous])
+                        largerUsedColumnCount++;
+                }
+
+                usedColumns[column] = true;
+                AddDeterminantTerms(
+                    matrix,
+                    row + 1,
+                    usedColumns,
+                    Multiply(product, entry),
+                    isNegative ^ (largerUsedColumnCount % 2 != 0),
+                    ref determinant);
+                usedColumns[column] = false;
+            }
+        }
+
+        /// <summary>
+        /// Creates the target-parameter coefficient polynomials for one coordinate equation.
+        /// </summary>
+        private static double[][] CreateParameterCoefficients(double[] target, double[] source)
+        {
+            double[][] coefficients = new double[target.Length][];
+            coefficients[0] = SubtractSourceCoordinate(target[0], source);
+            for (int i = 1; i < target.Length; i++)
+                coefficients[i] = new[] { target[i] };
+
+            return coefficients;
+        }
+
+        /// <summary>
+        /// Returns a target constant minus a source coordinate polynomial.
+        /// </summary>
+        private static double[] SubtractSourceCoordinate(double targetConstant, double[] source)
+        {
+            double[] result = new double[source.Length];
+            result[0] = targetConstant - source[0];
+            for (int i = 1; i < source.Length; i++)
+                result[i] = -source[i];
+
+            return Trim(result);
+        }
+
+        /// <summary>
+        /// Multiplies two polynomials in ascending power order.
+        /// </summary>
+        private static double[] Multiply(double[] left, double[] right)
+        {
+            double[] product = new double[left.Length + right.Length - 1];
+            for (int i = 0; i < left.Length; i++)
+            {
+                for (int j = 0; j < right.Length; j++)
+                    product[i + j] += left[i] * right[j];
+            }
+
+            return Trim(product);
+        }
+
+        /// <summary>
+        /// Adds a scaled polynomial to an accumulator.
+        /// </summary>
+        private static void AddPolynomial(ref double[] accumulator, double[] polynomial, double scale)
+        {
+            if (accumulator.Length < polynomial.Length)
+                System.Array.Resize(ref accumulator, polynomial.Length);
+
+            for (int i = 0; i < polynomial.Length; i++)
+                accumulator[i] += scale * polynomial[i];
+        }
+
+        /// <summary>
+        /// Removes exactly zero leading polynomial coefficients.
+        /// </summary>
+        private static double[] Trim(double[] polynomial)
+        {
+            int length = polynomial.Length;
+            while (length > 1 && polynomial[length - 1] == 0d)
+                length--;
+
+            if (length == polynomial.Length)
+                return polynomial;
+
+            double[] result = new double[length];
+            System.Array.Copy(polynomial, result, length);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates the X- and Y-coordinate power polynomials of a cubic Bezier curve.
+        /// </summary>
+        private static void CreatePowerCoordinates(CubicBezier curve, out double[] x, out double[] y)
+        {
+            x = new[]
+            {
+                (double)curve.StartPoint.X,
+                3d * ((double)curve.ControlPointA.X - curve.StartPoint.X),
+                3d * ((double)curve.StartPoint.X - 2d * curve.ControlPointA.X + curve.ControlPointB.X),
+                -(double)curve.StartPoint.X + 3d * curve.ControlPointA.X - 3d * curve.ControlPointB.X + curve.EndPoint.X
+            };
+            y = new[]
+            {
+                (double)curve.StartPoint.Y,
+                3d * ((double)curve.ControlPointA.Y - curve.StartPoint.Y),
+                3d * ((double)curve.StartPoint.Y - 2d * curve.ControlPointA.Y + curve.ControlPointB.Y),
+                -(double)curve.StartPoint.Y + 3d * curve.ControlPointA.Y - 3d * curve.ControlPointB.Y + curve.EndPoint.Y
+            };
+        }
+
+        /// <summary>
+        /// Finds the first normalized parameter at which a cubic Bezier curve produces a point in public float precision.
+        /// </summary>
+        private static bool TryGetCurveCoordinate(CubicBezier curve, PointXY point, out double coordinate)
+        {
+            CreatePowerCoordinates(curve, out double[] x, out double[] y);
+            x[0] -= point.X;
+            y[0] -= point.Y;
+
+            if (PolynomialRootIsolation.IsZero(x) && PolynomialRootIsolation.IsZero(y))
+            {
+                coordinate = 0d;
+                return true;
+            }
+
+            List<double> candidates = PolynomialRootIsolation.IsZero(x)
+                ? PolynomialRootIsolation.FindRootsInUnitInterval(y)
+                : PolynomialRootIsolation.FindRootsInUnitInterval(x);
+
+            coordinate = double.PositiveInfinity;
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                if (candidates[i] < coordinate)
+                    coordinate = candidates[i];
+            }
+
+            return !double.IsPositiveInfinity(coordinate);
+        }
+
+        /// <summary>
+        /// Adds a point when it is not already present in the caller-owned list.
+        /// </summary>
+        private static void AddDistinct(List<PointXY> intersections, PointXY point)
+        {
+            if (!intersections.Contains(point))
+                intersections.Add(point);
         }
 
         /// <summary>

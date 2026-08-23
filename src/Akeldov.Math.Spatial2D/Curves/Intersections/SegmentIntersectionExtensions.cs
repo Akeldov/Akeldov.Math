@@ -189,6 +189,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a segment and a cubic Bezier curve by solving the original curve polynomial.
+        /// </summary>
+        /// <param name="source">The source segment.</param>
+        /// <param name="curve">The cubic Bezier curve to intersect with the source segment.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the curve's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Segment source, CubicBezier curve)
+        {
+            List<PointXY> intersections = CubicBezierIntersectionExtensions.GetPointIntersections(curve, source);
+            CubicBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>
         /// Removes points outside a segment or at its excluded endpoints and orders the remaining points from its first endpoint to its second endpoint.
         /// </summary>
         /// <param name="intersections">The caller-owned intersection list to update.</param>

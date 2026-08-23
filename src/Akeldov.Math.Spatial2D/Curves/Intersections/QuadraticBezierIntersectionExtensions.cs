@@ -188,6 +188,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a quadratic and a cubic Bezier curve by numerically isolating the roots of the original sextic resultant above float precision.
+        /// </summary>
+        /// <param name="source">The source quadratic Bezier curve.</param>
+        /// <param name="curve">The cubic Bezier curve to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the cubic curve's start point to its end point. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this QuadraticBezier source, CubicBezier curve)
+        {
+            List<PointXY> intersections = CubicBezierIntersectionExtensions.GetPointIntersections(curve, source);
+            CubicBezierIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>
         /// Creates the polynomial obtained by substituting a parameterized source curve into a quadratic Bezier curve's implicit equation.
         /// </summary>
         /// <param name="curve">The quadratic Bezier curve that defines the implicit equation.</param>

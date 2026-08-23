@@ -1,7 +1,7 @@
 # Intersections
 
 `ICurve.GetPointIntersections(Ray)` returns isolated intersection points in the forward direction of a ray.
-Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads and numerical `Arc` and `ParameterizedArc` overloads. All of these source types also provide an overload for a target `QuadraticBezier`.
+Linear and circular curves provide overloads for intersections with `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the linear target overloads and numerical `Arc` and `ParameterizedArc` overloads. All of these source types also provide overloads for target `QuadraticBezier` and `CubicBezier` curves.
 
 The returned collection is a new mutable list owned by the caller.
 
@@ -37,8 +37,8 @@ orders them from `EndpointA` to `EndpointB`. A `ParameterizedSegment` orders the
 `StartPoint` to `EndPoint`. A `ParameterizedSegmentChain` orders distinct intersections from
 the chain's `StartPoint` to its `EndPoint`. An `Arc` orders intersections counterclockwise from
 its `StartAngle`, while a `ParameterizedArc` uses its `AngularDirection` from `StartPoint` to
-`EndPoint`. A target `QuadraticBezier` orders intersections from its `StartPoint` to its
-`EndPoint`. Both segment types respect endpoint inclusion.
+`EndPoint`. A target `QuadraticBezier` or `CubicBezier` orders intersections from its `StartPoint`
+to its `EndPoint`. Both segment types respect endpoint inclusion.
 
 Points that belong to a continuous set of intersections are not returned. For example, a
 collinear overlap between a linear curve and the ray does not produce a representative point.
@@ -48,5 +48,5 @@ collinear overlap between a linear curve and the ray does not produce a represen
 `QuadraticBezier` and `CubicBezier` solve the polynomial of the original curve rather than
 intersecting a polyline approximation. Their `Arc` and `ParameterizedArc` overloads isolate quartic
 or sextic roots in `double` and round the resulting coordinates to `float`, without a
-geometry-epsilon parameter. Quadratic-target intersections between Bezier curves similarly
-isolate the original quartic or sextic resultant without flattening either curve.
+geometry-epsilon parameter. Bezier-target intersections similarly isolate the original resultant
+of degree up to nine without flattening either curve.
