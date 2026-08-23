@@ -1,5 +1,7 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Curves.ArcIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.LineIntersectionExtensions
+Akeldov.Math.Spatial2D.Curves.ParameterizedArcIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.ParameterizedLineIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChainIntersectionExtensions
 Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentIntersectionExtensions
@@ -26,7 +28,9 @@ Akeldov.Math.Spatial2D.Curves.SegmentIntersectionExtensions
 *REMOVED*Akeldov.Math.Spatial2D.Curves.Ray.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray other, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Curves.Segment.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Fields.FloatCurveInfluenceSource.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+static Akeldov.Math.Spatial2D.Curves.ArcIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.Arc source, Akeldov.Math.Spatial2D.Curves.Line line) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.LineIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.Line source, Akeldov.Math.Spatial2D.Curves.Line line) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+static Akeldov.Math.Spatial2D.Curves.ParameterizedArcIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.ParameterizedArc source, Akeldov.Math.Spatial2D.Curves.Line line) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedLineIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.ParameterizedLine source, Akeldov.Math.Spatial2D.Curves.Line line) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChainIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain! source, Akeldov.Math.Spatial2D.Curves.Line line) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 static Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentIntersectionExtensions.GetPointIntersections(this Akeldov.Math.Spatial2D.Curves.ParameterizedSegment source, Akeldov.Math.Spatial2D.Curves.Line line) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!

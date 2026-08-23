@@ -132,6 +132,83 @@ public class ArcTests
     }
 
     [Test]
+    public void PointIntersections_WhenLineCrossesArc_ReturnsPointsInLineDirection()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI);
+        var line = new Line(new PointXY(-2f, 0f), new PointXY(2f, 0f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertVector(intersections[0], -1f, 0f);
+        AssertVector(intersections[1], 1f, 0f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenLineCrossesCircleOutsideArc_ReturnsEmpty()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);
+        var line = new Line(new PointXY(-0.5f, -2f), new PointXY(-0.5f, 2f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenLineIsTangentToFullCircle_ReturnsOnePoint()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+        var line = new Line(new PointXY(-2f, 1f), new PointXY(2f, 1f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 0f, 1f);
+    }
+
+    [Test]
+    public void PointIntersections_WhenLineIsOutsideFullCircleWithinGeometryEpsilon_ReturnsEmpty()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, 2f * MathF.PI);
+        float lineY = 1f + GeometryConstants.GeometryEpsilon * 0.5f;
+        var line = new Line(new PointXY(-2f, lineY), new PointXY(2f, lineY));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void PointIntersections_WhenZeroRadiusArcLiesOnLine_ReturnsCenter()
+    {
+        var arc = new Arc(new PointXY(1f, 2f), 0f, 0f, MathF.PI);
+        var line = new Line(new PointXY(1f, -1f), new PointXY(1f, 3f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 1f, 2f);
+    }
+
+    [Test]
+    public void ParameterizedArc_PointIntersections_WhenLineCrossesArc_ReturnsIntersection()
+    {
+        var arc = new ParameterizedArc(
+            new PointXY(0f, 0f),
+            1f,
+            MathF.PI / 2f,
+            0f,
+            AngularDirection.Clockwise);
+        var line = new Line(new PointXY(0f, -2f), new PointXY(0f, 2f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 0f, 1f);
+    }
+
+    [Test]
     public void Distance_WhenPointIsNearArcEndpoint_UsesNearestEndpoint()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);

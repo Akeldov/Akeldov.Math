@@ -51,9 +51,9 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 }
 ```
 
-Линейные кривые (`Line`, `Ray`, `Segment`, `ParameterizedLine`, `ParameterizedSegment` и
-`ParameterizedSegmentChain`) также предоставляют `GetPointIntersections(Line)` для пересечения
-с бесконечной прямой:
+Линейные и круговые кривые (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
+`ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc` и `ParameterizedArc`) также
+предоставляют `GetPointIntersections(Line)` для пересечения с бесконечной прямой:
 
 ```csharp
 var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
@@ -68,7 +68,7 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 результат с той же точностью, что и длину, проекцию и расстояние для кривых Безье.
 
 `GetPointIntersections(Ray)` использует стандартный геометрический допуск библиотеки. Пересечения
-линейных кривых с `Line` используют точные сравнения.
+линейных и круговых кривых с `Line` используют точные сравнения.
 
 ## Учесть наложения и концы
 

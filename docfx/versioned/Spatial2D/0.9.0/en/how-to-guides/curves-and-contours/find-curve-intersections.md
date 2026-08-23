@@ -50,9 +50,9 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 }
 ```
 
-Linear curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`, `ParameterizedSegment`, and
-`ParameterizedSegmentChain`) also provide `GetPointIntersections(Line)` for a full infinite
-probe line:
+Linear and circular curves (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
+`ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`) also
+provide `GetPointIntersections(Line)` for a full infinite probe line:
 
 ```csharp
 var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
@@ -66,8 +66,8 @@ Spatial2D does not define one general curve-versus-curve intersection method.
 Bezier intersections are calculated against the curve's internal polyline approximation. Use
 the result at the same precision as other Bezier length, projection, and distance operations.
 
-`GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Linear-curve
-intersections with `Line` use exact comparisons.
+`GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Linear- and
+circular-curve intersections with `Line` use exact comparisons.
 
 ## Account for overlaps and endpoints
 
