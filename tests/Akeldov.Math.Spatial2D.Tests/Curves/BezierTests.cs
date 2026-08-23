@@ -84,7 +84,7 @@ public class BezierTests
     }
 
     [Test]
-    public void CubicBezier_RayIntersections_UsesCurveApproximation()
+    public void CubicBezier_RayIntersections_SolvesCurvePolynomial()
     {
         var curve = new CubicBezier(
             new PointXY(0f, 0f),
@@ -97,6 +97,41 @@ public class BezierTests
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertPoint(intersections[0], 1.5f, 2.25f);
+    }
+
+    [Test]
+    public void QuadraticBezier_RayIntersections_SolvesCurvePolynomialAndOrdersAlongRay()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+        var ray = new Ray(new PointXY(3f, 0.5f), MathF.PI);
+
+        List<PointXY> intersections = curve.GetPointIntersections(ray);
+
+        float rootOffset = MathF.Sqrt(0.5f);
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 1f + rootOffset, 0.5f);
+        AssertPoint(intersections[1], 1f - rootOffset, 0.5f);
+    }
+
+    [Test]
+    public void CubicBezier_RayIntersections_FiltersPolynomialRootsBehindRay()
+    {
+        var curve = new CubicBezier(
+            new PointXY(0f, 0f),
+            new PointXY(0f, 3f),
+            new PointXY(3f, 3f),
+            new PointXY(3f, 0f));
+        var ray = new Ray(new PointXY(1.5f, 1f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(ray);
+
+        float parameter = (3f + MathF.Sqrt(5f)) / 6f;
+        PointXY expected = curve.GetPointAt(parameter);
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertPoint(intersections[0], expected.X, expected.Y);
     }
 
     [Test]

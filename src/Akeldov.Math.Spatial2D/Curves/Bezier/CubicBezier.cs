@@ -9,8 +9,8 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a finite directed cubic Bezier curve segment.
     /// </summary>
     /// <remarks>
-    /// Length, projection, distance, and ray-intersection operations use a fixed internal
-    /// polyline approximation of the curve.
+    /// Length and length-coordinate operations use a fixed internal polyline approximation
+    /// of the curve. Ray intersections are found by solving the original curve polynomial.
     /// </remarks>
     public readonly struct CubicBezier : IFinitePath, IEquatable<CubicBezier>
     {
@@ -147,12 +147,18 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Returns point intersections between this curve's approximation and the specified ray.
+        /// Returns point intersections between this curve and the specified ray by solving the original curve polynomial.
         /// </summary>
         /// <param name="ray">The ray to intersect with this curve.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<PointXY> GetPointIntersections(Ray ray) =>
-            BezierPathApproximation.GetPointIntersections(GetPointAtUnchecked, ray);
+        public List<PointXY> GetPointIntersections(Ray ray)
+        {
+            List<PointXY> intersections = RayIntersectionExtensions.GetPointIntersections(ray, this);
+            intersections.Sort((left, right) =>
+                VectorXY.Dot(left - ray.Origin, ray.Direction).CompareTo(
+                    VectorXY.Dot(right - ray.Origin, ray.Direction)));
+            return intersections;
+        }
 
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) =>
