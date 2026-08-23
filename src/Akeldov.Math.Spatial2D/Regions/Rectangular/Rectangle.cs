@@ -7,7 +7,10 @@ namespace Akeldov.Math.Spatial2D.Regions
 {
     /// <summary>
     /// Represents an axis-aligned rectangular region in two-dimensional space.
+    /// A rectangle with one zero-sized dimension represents a line segment, and a rectangle
+    /// with both dimensions equal to zero represents a point.
     /// </summary>
+    /// <remarks>The default value represents the point at the coordinate origin.</remarks>
     public readonly struct Rectangle : IRegion, IEquatable<Rectangle>
     {
         /// <summary>
@@ -16,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <param name="cornerA">The first rectangle corner.</param>
         /// <param name="cornerB">The opposite rectangle corner.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when any corner coordinate is not finite, or when the rectangle width or height is zero.
+        /// Thrown when any corner coordinate or resulting size component is not finite.
         /// </exception>
         public Rectangle(PointXY cornerA, PointXY cornerB)
         {
@@ -33,8 +36,13 @@ namespace Akeldov.Math.Spatial2D.Regions
             PointXY min = new PointXY(MathF.Min(cornerA.X, cornerB.X), MathF.Min(cornerA.Y, cornerB.Y));
             PointXY max = new PointXY(MathF.Max(cornerA.X, cornerB.X), MathF.Max(cornerA.Y, cornerB.Y));
 
-            if (max.X - min.X <= 0f || max.Y - min.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle width and height must be positive.");
+            float width = max.X - min.X;
+            float height = max.Y - min.Y;
+            if (float.IsNaN(width) || float.IsInfinity(width) ||
+                float.IsNaN(height) || float.IsInfinity(height))
+            {
+                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle width and height must be finite.");
+            }
 
             Min = min;
             Max = max;
@@ -51,12 +59,12 @@ namespace Akeldov.Math.Spatial2D.Regions
         public PointXY Max { get; }
 
         /// <summary>
-        /// Gets the rectangle width.
+        /// Gets the nonnegative rectangle width.
         /// </summary>
         public float Width => Max.X - Min.X;
 
         /// <summary>
-        /// Gets the rectangle height.
+        /// Gets the nonnegative rectangle height.
         /// </summary>
         public float Height => Max.Y - Min.Y;
 
@@ -121,6 +129,10 @@ namespace Akeldov.Math.Spatial2D.Regions
         public float SignedDistance(PointXY point)
         {
             float distance = Distance(point);
+
+            if (Width == 0f || Height == 0f)
+                return distance;
+
             return point.X >= Min.X && point.X <= Max.X && point.Y >= Min.Y && point.Y <= Max.Y ? -distance : distance;
         }
 

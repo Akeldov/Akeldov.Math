@@ -8,7 +8,10 @@ namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
     /// Represents the closed boundary contour of an axis-aligned rectangle.
+    /// A contour with one zero-sized dimension traverses the same line segment in both directions,
+    /// and a contour with both dimensions equal to zero represents a point.
     /// </summary>
+    /// <remarks>The default value represents the point at the coordinate origin.</remarks>
     public readonly struct RectangleContour : IContour, IEquatable<RectangleContour>
     {
         private readonly PointXY _min;
@@ -20,7 +23,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="cornerA">The first rectangle corner.</param>
         /// <param name="cornerB">The opposite rectangle corner.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when any corner coordinate is not finite, or when the rectangle width or height is zero.
+        /// Thrown when any corner coordinate or resulting size component is not finite.
         /// </exception>
         public RectangleContour(PointXY cornerA, PointXY cornerB)
         {
@@ -46,12 +49,12 @@ namespace Akeldov.Math.Spatial2D.Contours
         public PointXY Max => _max;
 
         /// <summary>
-        /// Gets the rectangle width.
+        /// Gets the nonnegative rectangle width.
         /// </summary>
         public float Width => Max.X - Min.X;
 
         /// <summary>
-        /// Gets the rectangle height.
+        /// Gets the nonnegative rectangle height.
         /// </summary>
         public float Height => Max.Y - Min.Y;
 
@@ -90,7 +93,8 @@ namespace Akeldov.Math.Spatial2D.Contours
         public PointXY TopRight => Max;
 
         /// <summary>
-        /// Gets the rectangle perimeter length.
+        /// Gets the rectangle boundary traversal length.
+        /// A degenerate segment is traversed in both directions and therefore has twice the segment length.
         /// </summary>
         public float Length => 2f * (Width + Height);
 
@@ -180,6 +184,10 @@ namespace Akeldov.Math.Spatial2D.Contours
         public float SignedDistance(PointXY point)
         {
             float distance = Distance(point);
+
+            if (Width == 0f || Height == 0f)
+                return distance;
+
             return point.X >= Min.X && point.X <= Max.X && point.Y >= Min.Y && point.Y <= Max.Y ? -distance : distance;
         }
 
@@ -299,8 +307,13 @@ namespace Akeldov.Math.Spatial2D.Contours
             PointXY min = new PointXY(MathF.Min(cornerA.X, cornerB.X), MathF.Min(cornerA.Y, cornerB.Y));
             PointXY max = new PointXY(MathF.Max(cornerA.X, cornerB.X), MathF.Max(cornerA.Y, cornerB.Y));
 
-            if (max.X - min.X <= 0f || max.Y - min.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle contour width and height must be positive.");
+            float width = max.X - min.X;
+            float height = max.Y - min.Y;
+            if (float.IsNaN(width) || float.IsInfinity(width) ||
+                float.IsNaN(height) || float.IsInfinity(height))
+            {
+                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle contour width and height must be finite.");
+            }
 
             return (min, max);
         }

@@ -18,6 +18,12 @@ float perimeter = contour.Length; // 14
 
 The type exposes `Width`, `Height`, `Size`, `Center`, and all four named corners. `Encloses` tests exact membership in the bounded rectangle. `Distance`, `SignedDistance`, `Project`, and `GetPointIntersections` operate on its boundary.
 
+Equal corner coordinates are valid. One zero dimension makes the contour a closed traversal along
+a segment and back, so `Length` is twice the segment length. Two zero dimensions make it a point
+contour with `Length` equal to zero. Such contours have no interior: `SignedDistance` is zero on the
+represented segment or point and positive outside it. `default(RectangleContour)` is therefore a
+valid point contour at the origin.
+
 `Rectangle` and `ToRegion` return the corresponding filled region. Explicit conversions are available to `Rectangle` and [`ParameterizedRectangleContour`](parameterized-rectangle-contour.md). Value equality compares the normalized bounds.
 
 ## Rasterization example

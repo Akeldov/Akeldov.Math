@@ -29,4 +29,10 @@ PointXY next = contour.GetPoint(1f);     // (4, 2)
 
 Oriented variants use a center, size, and rotation. Rotation is counterclockwise in radians. Parameter origins may be selected with a named rectangular boundary point or an explicit perimeter coordinate.
 
+Rectangle dimensions may be zero but never negative. One zero dimension produces a closed segment
+contour whose traversal goes out and back and whose `Length` is twice the segment length. Two zero
+dimensions produce a point contour with `Length` equal to zero. All four rectangular contour
+structures therefore have valid `default` values representing the origin point. On a degenerate
+contour, `SignedDistance` is zero on the represented set and positive outside it.
+
 Use the corresponding types in [Regions](../../regions/index.md) when filled-area behavior is the primary abstraction.

@@ -18,7 +18,17 @@ PointXY origin = contour.ParameterOrigin;
 PointXY point = contour.GetPoint(2f);
 ```
 
-Rotation is expressed in radians. By default, coordinate `0` is the right-edge midpoint and traversal is counterclockwise. Other constructors accept a named rectangular boundary point or a counterclockwise boundary coordinate measured from the default origin.
+Rotation is expressed in radians. Both size components must be non-negative. By default,
+coordinate `0` is the right-edge midpoint and traversal is counterclockwise. Other constructors
+accept a named rectangular boundary point or a counterclockwise boundary coordinate measured from
+the default origin.
+
+With one zero size component, the length coordinate traverses the remaining rotated segment in one
+direction and then back, and `Length` is twice the segment length. With both components zero, the
+contour represents a point, has `Length` equal to zero, and accepts only curve coordinate `0`.
+Degenerate contours have `SignedDistance` equal to zero on their represented set and positive
+outside it. `default(ParameterizedOrientedRectangleContour)` is a valid point contour at the origin
+with zero rotation.
 
 The type exposes the center, size, rotation, local axes, corners, parameter origin, direction, and perimeter. In addition to regular contour queries, it provides `GetPoint` and `ProjectWithParameter`.
 

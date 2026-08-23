@@ -8,6 +8,10 @@ namespace Akeldov.Math.Spatial2D.Regions
     /// <summary>
     /// Represents a rectangular region with arbitrary orientation in two-dimensional space.
     /// </summary>
+    /// <remarks>
+    /// A zero size component collapses the rectangle to a line segment. When both components are zero,
+    /// the rectangle represents its center point. Consequently, the default value represents the coordinate origin.
+    /// </remarks>
     public readonly struct OrientedRectangle : IRegion, IEquatable<OrientedRectangle>
     {
         private readonly VectorXY _axisX;
@@ -17,11 +21,11 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// Initializes a new oriented rectangle.
         /// </summary>
         /// <param name="center">The rectangle center.</param>
-        /// <param name="size">The rectangle size along its local X and Y axes.</param>
+        /// <param name="size">The non-negative rectangle size along its local X and Y axes.</param>
         /// <param name="rotation">The counterclockwise rotation of the local X axis, in radians.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="center"/>, <paramref name="size"/>, or <paramref name="rotation"/>
-        /// contains a non-finite value, or when any size component is not positive.
+        /// contains a non-finite value, or when any size component is negative.
         /// </exception>
         public OrientedRectangle(PointXY center, VectorXY size, float rotation)
         {
@@ -30,8 +34,8 @@ namespace Akeldov.Math.Spatial2D.Regions
                 nameof(center),
                 "Rectangle center coordinates must be finite.");
 
-            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and positive.");
+            if (!size.IsFinite || size.X < 0f || size.Y < 0f)
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and non-negative.");
 
             GeometryConstants.ValidateFiniteAngle(rotation, nameof(rotation));
 
@@ -75,12 +79,12 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <summary>
         /// Gets the unit vector of the rectangle local X axis.
         /// </summary>
-        public VectorXY AxisX => _axisX;
+        public VectorXY AxisX => _axisX.SquaredLength == 0f ? VectorXY.BasisX : _axisX;
 
         /// <summary>
         /// Gets the unit vector of the rectangle local Y axis.
         /// </summary>
-        public VectorXY AxisY => _axisY;
+        public VectorXY AxisY => _axisY.SquaredLength == 0f ? VectorXY.BasisY : _axisY;
 
         /// <summary>
         /// Gets the bottom-left corner in the rectangle local coordinate system.
@@ -114,6 +118,9 @@ namespace Akeldov.Math.Spatial2D.Regions
             float localX = VectorXY.Dot(centered, AxisX);
             float localY = VectorXY.Dot(centered, AxisY);
 
+            if (Width == 0f || Height == 0f)
+                return GetDegenerateDistance(point, new VectorXY(localX, localY)) == 0f;
+
             return localX >= -Width * 0.5f && localX <= Width * 0.5f &&
                 localY >= -Height * 0.5f && localY <= Height * 0.5f;
         }
@@ -123,6 +130,9 @@ namespace Akeldov.Math.Spatial2D.Regions
         {
             VectorXY local = GetCenteredLocalCoordinates(point);
 
+            if (Width == 0f || Height == 0f)
+                return GetDegenerateDistance(point, local);
+
             return GetLocalDistanceToBoundary(local);
         }
 
@@ -130,6 +140,10 @@ namespace Akeldov.Math.Spatial2D.Regions
         public float SignedDistance(PointXY point)
         {
             float distance = Distance(point);
+
+            if (Width == 0f || Height == 0f)
+                return distance;
+
             VectorXY local = GetCenteredLocalCoordinates(point);
             return local.X >= -Width * 0.5f && local.X <= Width * 0.5f &&
                 local.Y >= -Height * 0.5f && local.Y <= Height * 0.5f ? -distance : distance;
@@ -186,11 +200,27 @@ namespace Akeldov.Math.Spatial2D.Regions
             return MathF.Min(halfWidth - absoluteX, halfHeight - absoluteY);
         }
 
+        private float GetDegenerateDistance(PointXY point, VectorXY local)
+        {
+            float axisSquaredLength = AxisX.SquaredLength;
+            float halfWidth = Width * 0.5f;
+            float halfHeight = Height * 0.5f;
+            float localX = Width == 0f
+                ? 0f
+                : MathF.Max(-halfWidth, MathF.Min(local.X / axisSquaredLength, halfWidth));
+            float localY = Height == 0f
+                ? 0f
+                : MathF.Max(-halfHeight, MathF.Min(local.Y / axisSquaredLength, halfHeight));
+            PointXY projectedPoint = Center + AxisX * localX + AxisY * localY;
+
+            return point.Distance(projectedPoint);
+        }
+
         /// <summary>
         /// Creates an oriented rectangle from its bottom-left corner, size, and rotation.
         /// </summary>
         /// <param name="bottomLeft">The bottom-left corner in the rectangle local coordinate system.</param>
-        /// <param name="size">The rectangle size along its local X and Y axes.</param>
+        /// <param name="size">The non-negative rectangle size along its local X and Y axes.</param>
         /// <param name="rotation">The counterclockwise rotation of the local X axis, in radians.</param>
         /// <returns>The oriented rectangle.</returns>
         public static OrientedRectangle FromBottomLeft(PointXY bottomLeft, VectorXY size, float rotation)
@@ -200,8 +230,8 @@ namespace Akeldov.Math.Spatial2D.Regions
                 nameof(bottomLeft),
                 "Rectangle corner coordinates must be finite.");
 
-            if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and positive.");
+            if (!size.IsFinite || size.X < 0f || size.Y < 0f)
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Rectangle size components must be finite and non-negative.");
 
             GeometryConstants.ValidateFiniteAngle(rotation, nameof(rotation));
 

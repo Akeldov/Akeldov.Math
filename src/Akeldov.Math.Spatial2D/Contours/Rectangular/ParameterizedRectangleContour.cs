@@ -8,7 +8,12 @@ namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
     /// Represents the closed boundary contour of an axis-aligned rectangle.
+    /// A contour with one zero-sized dimension traverses the same line segment in both directions,
+    /// and a contour with both dimensions equal to zero represents a point.
     /// </summary>
+    /// <remarks>
+    /// The default value represents the point at the coordinate origin with counterclockwise traversal.
+    /// </remarks>
     public readonly struct ParameterizedRectangleContour : IParameterizedContour, IEquatable<ParameterizedRectangleContour>
     {
         private readonly PointXY _min;
@@ -25,8 +30,8 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="cornerB">The opposite rectangle corner.</param>
         /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when any corner coordinate is not finite, when the rectangle width or height is zero,
-        /// or when <paramref name="contourDirection"/> is unsupported.
+        /// Thrown when any corner coordinate or resulting size component is not finite, or when
+        /// <paramref name="contourDirection"/> is unsupported.
         /// </exception>
         public ParameterizedRectangleContour(
             PointXY cornerA,
@@ -50,7 +55,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="parameterOrigin">The named boundary point where curve coordinate zero lies.</param>
         /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when any coordinate is not finite, when the rectangle width or height is zero,
+        /// Thrown when any coordinate or resulting size component is not finite,
         /// when <paramref name="parameterOrigin"/> is unsupported, or when
         /// <paramref name="contourDirection"/> is unsupported.
         /// </exception>
@@ -65,7 +70,9 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             _min = min;
             _max = max;
-            _parameterOriginCoordinate = GetBoundaryCoordinateUnchecked(parameterOrigin, min, max);
+            _parameterOriginCoordinate = WrapBoundaryCoordinate(
+                GetBoundaryCoordinateUnchecked(parameterOrigin, min, max),
+                GetBoundaryLength(min, max));
             _contourDirection = contourDirection;
         }
 
@@ -80,8 +87,8 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// </param>
         /// <param name="contourDirection">The direction in which curve coordinates increase along the contour.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when any coordinate is not finite, when the rectangle width or height is zero,
-        /// when <paramref name="parameterOrigin"/> does not lie within the rectangle perimeter length,
+        /// Thrown when any coordinate or resulting size component is not finite,
+        /// when <paramref name="parameterOrigin"/> does not lie within the rectangle boundary traversal length,
         /// or when <paramref name="contourDirection"/> is unsupported.
         /// </exception>
         public ParameterizedRectangleContour(
@@ -117,12 +124,12 @@ namespace Akeldov.Math.Spatial2D.Contours
         public PointXY Max => _max;
 
         /// <summary>
-        /// Gets the rectangle width.
+        /// Gets the nonnegative rectangle width.
         /// </summary>
         public float Width => Max.X - Min.X;
 
         /// <summary>
-        /// Gets the rectangle height.
+        /// Gets the nonnegative rectangle height.
         /// </summary>
         public float Height => Max.Y - Min.Y;
 
@@ -171,7 +178,8 @@ namespace Akeldov.Math.Spatial2D.Contours
         public PointXY TopRight => Max;
 
         /// <summary>
-        /// Gets the rectangle perimeter length.
+        /// Gets the rectangle boundary traversal length.
+        /// A degenerate segment is traversed in both directions and therefore has twice the segment length.
         /// </summary>
         public float Length => 2f * (Width + Height);
 
@@ -270,7 +278,7 @@ namespace Akeldov.Math.Spatial2D.Contours
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
 
             if (curveCoordinate < 0f || curveCoordinate > Length)
-                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must lie within the rectangle perimeter length.");
+                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must lie within the rectangle boundary traversal length.");
 
             return GetBoundaryPointUnchecked(ToBoundaryCoordinate(curveCoordinate));
         }
@@ -290,6 +298,10 @@ namespace Akeldov.Math.Spatial2D.Contours
         public float SignedDistance(PointXY point)
         {
             float distance = Distance(point);
+
+            if (Width == 0f || Height == 0f)
+                return distance;
+
             return point.X >= Min.X && point.X <= Max.X && point.Y >= Min.Y && point.Y <= Max.Y ? -distance : distance;
         }
 
@@ -525,8 +537,13 @@ namespace Akeldov.Math.Spatial2D.Contours
             PointXY min = new PointXY(MathF.Min(cornerA.X, cornerB.X), MathF.Min(cornerA.Y, cornerB.Y));
             PointXY max = new PointXY(MathF.Max(cornerA.X, cornerB.X), MathF.Max(cornerA.Y, cornerB.Y));
 
-            if (max.X - min.X <= 0f || max.Y - min.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle contour width and height must be positive.");
+            float width = max.X - min.X;
+            float height = max.Y - min.Y;
+            if (float.IsNaN(width) || float.IsInfinity(width) ||
+                float.IsNaN(height) || float.IsInfinity(height))
+            {
+                throw new ArgumentOutOfRangeException(nameof(cornerB), cornerB, "Rectangle contour width and height must be finite.");
+            }
 
             return (min, max);
         }
@@ -537,7 +554,7 @@ namespace Akeldov.Math.Spatial2D.Contours
                 throw new ArgumentOutOfRangeException(nameof(parameterOrigin), "Parameter origin coordinate must be finite.");
 
             if (parameterOrigin < 0f || parameterOrigin > length)
-                throw new ArgumentOutOfRangeException(nameof(parameterOrigin), "Parameter origin coordinate must lie within the rectangle perimeter length.");
+                throw new ArgumentOutOfRangeException(nameof(parameterOrigin), "Parameter origin coordinate must lie within the rectangle boundary traversal length.");
         }
 
         private static void ValidateContourDirection(ContourDirection contourDirection)

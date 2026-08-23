@@ -77,6 +77,17 @@ order does not matter. `OrientedRectangleContour` instead accepts a center, a si
 rotation in radians. See [Angles and Units](../fundamentals/angles-and-units.md) for the rotation
 convention.
 
+Rectangular dimensions may be zero but never negative. Positive width and height produce the
+usual area and boundary; one zero dimension produces a segment; two zero dimensions produce a
+point. All six rectangular region and contour structures have valid `default` values representing
+the origin point.
+
+A degenerate rectangular contour is a closed out-and-back traversal of its segment, so its
+`Length` is twice the segment length. A point contour has `Length` equal to zero. Degenerate
+rectangles have no interior: their `SignedDistance` is zero on the represented segment or point
+and positive outside it. These geometry rules do not change the separate validation performed by
+`RasterGeometry`.
+
 ## Build a composite contour
 
 For a polygon, pass at least three vertices in boundary order. The constructor joins consecutive

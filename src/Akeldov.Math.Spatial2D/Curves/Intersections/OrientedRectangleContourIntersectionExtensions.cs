@@ -17,6 +17,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>A new mutable list owned by the caller, ordered in the forward direction of the ray. A continuous overlap returns an empty list.</returns>
         public static List<PointXY> GetPointIntersections(this OrientedRectangleContour source, Ray ray)
         {
+            if (source.Width == 0f && source.Height == 0f)
+            {
+                var point = new Segment(source.Center, source.Center);
+                return SegmentIntersectionExtensions.GetPointIntersections(point, ray);
+            }
+
             float localHalfWidth = source.Width * 0.5f;
             float localHalfHeight = source.Height * 0.5f;
             (float localOriginX, float localOriginY, bool isOnVerticalEdge, bool isOnHorizontalEdge) = GetLocalOrigin(source, ray.Origin, localHalfWidth, localHalfHeight);

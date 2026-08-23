@@ -23,6 +23,13 @@ By default, coordinate `0` is the right-edge midpoint and coordinates increase c
 
 The contour exposes its normalized bounds, dimensions, center, corners, parameter origin, direction, and perimeter length. It supports all regular contour queries plus `GetPoint` and `ProjectWithParameter`.
 
+Equal corner coordinates are valid. With one zero dimension, the length coordinate follows the
+remaining segment in one direction and then back, and `Length` is twice the segment length. With
+both dimensions zero, the contour represents a point, has `Length` equal to zero, and accepts only
+curve coordinate `0`. Degenerate contours have `SignedDistance` equal to zero on their represented
+set and positive outside it. `default(ParameterizedRectangleContour)` is a valid point contour at
+the origin.
+
 `Rectangle` and `ToRegion` return the filled rectangle. Explicit conversion to `RectangleContour` removes the parameterization; conversion to `Rectangle` returns the region.
 
 ## Rasterization example

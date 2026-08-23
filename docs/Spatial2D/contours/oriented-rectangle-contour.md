@@ -16,7 +16,13 @@ VectorXY localY = contour.AxisY;
 bool enclosed = contour.Encloses(new PointXY(1f, 2f));
 ```
 
-`Rotation` is the counterclockwise angle of the local X axis in radians. Both size components must be positive. The type exposes `Center`, `Size`, `Width`, `Height`, local axes, four world-space corners, and perimeter `Length`.
+`Rotation` is the counterclockwise angle of the local X axis in radians. Both size components must
+be non-negative. One zero component makes the contour a closed traversal along a rotated segment
+and back, so `Length` is twice the segment length. Two zero components make it a point contour with
+`Length` equal to zero. Degenerate contours have no interior: `SignedDistance` is zero on the
+represented segment or point and positive outside it. `default(OrientedRectangleContour)` is a
+valid point contour at the origin with zero rotation. The type exposes `Center`, `Size`, `Width`,
+`Height`, local axes, four world-space corners, and perimeter `Length`.
 
 Boundary operations include ray intersections, projection, unsigned distance, and signed distance. `Rectangle` and `ToRegion` return an `OrientedRectangle`. Explicit conversion to [`ParameterizedOrientedRectangleContour`](parameterized-oriented-rectangle-contour.md) uses its default parameter origin and direction.
 

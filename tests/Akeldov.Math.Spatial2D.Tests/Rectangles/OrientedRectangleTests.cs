@@ -23,6 +23,39 @@ public class OrientedRectangleTests
         AssertPoint(rectangle.TopRight, new PointXY(-1f, 2f));
     }
 
+    [Test]
+    public void DefaultOrientedRectangle_RepresentsOriginPoint()
+    {
+        OrientedRectangle rectangle = default;
+        var explicitOriginPoint = new OrientedRectangle(default, default, 0f);
+
+        Assert.That(rectangle, Is.EqualTo(explicitOriginPoint));
+        Assert.That(rectangle.AxisX, Is.EqualTo(VectorXY.BasisX));
+        Assert.That(rectangle.AxisY, Is.EqualTo(VectorXY.BasisY));
+        Assert.That(rectangle.Contains(default), Is.True);
+        Assert.That(rectangle.Contains(new PointXY(1f, 0f)), Is.False);
+        Assert.That(rectangle.Distance(new PointXY(3f, 4f)), Is.EqualTo(5f));
+        Assert.That(rectangle.SignedDistance(default), Is.EqualTo(0f));
+        Assert.That(rectangle.SignedDistance(new PointXY(3f, 4f)), Is.EqualTo(5f));
+        Assert.That(rectangle.ToContour(), Is.EqualTo(default(OrientedRectangleContour)));
+        Assert.That(rectangle.ToRegion().Contains(default), Is.True);
+    }
+
+    [Test]
+    public void OrientedRectangle_WithZeroHeight_RepresentsLineSegment()
+    {
+        var rectangle = new OrientedRectangle(new PointXY(1f, 2f), new VectorXY(4f, 0f), 0.37f);
+        PointXY segmentPoint = rectangle.Center + rectangle.AxisX;
+        PointXY outsidePoint = rectangle.Center + rectangle.AxisY;
+
+        Assert.That(rectangle.Contains(segmentPoint), Is.True);
+        Assert.That(rectangle.Contains(outsidePoint), Is.False);
+        Assert.That(rectangle.Distance(outsidePoint), Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(rectangle.SignedDistance(segmentPoint), Is.EqualTo(0f));
+        Assert.That(rectangle.ToContour().Length, Is.EqualTo(8f));
+        Assert.That(rectangle.ToRegion().Contains(segmentPoint), Is.True);
+    }
+
     [TestCase(0f, 0f, true)]
     [TestCase(0.9f, 1.9f, true)]
     [TestCase(1.1f, 0f, false)]
@@ -222,6 +255,58 @@ public class OrientedRectangleTests
     }
 
     [Test]
+    public void DefaultOrientedRectangleContour_RepresentsOriginPoint()
+    {
+        OrientedRectangleContour contour = default;
+        var explicitOriginPoint = new OrientedRectangleContour(default, default, 0f);
+
+        Assert.That(contour, Is.EqualTo(explicitOriginPoint));
+        Assert.That(contour.AxisX, Is.EqualTo(VectorXY.BasisX));
+        Assert.That(contour.AxisY, Is.EqualTo(VectorXY.BasisY));
+        Assert.That(contour.Length, Is.EqualTo(0f));
+        Assert.That(contour.Encloses(default), Is.True);
+        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.False);
+
+        CurveProjection projection = contour.Project(new PointXY(3f, 4f));
+        Assert.That(projection.ProjectedPoint, Is.EqualTo(default(PointXY)));
+        Assert.That(projection.Distance, Is.EqualTo(5f));
+        Assert.That(contour.ToRegion(), Is.EqualTo(default(OrientedRectangle)));
+
+        List<PointXY> intersections = contour.GetPointIntersections(new Ray(new PointXY(-1f, 0f)));
+        Assert.That(intersections, Is.EqualTo(new[] { default(PointXY) }));
+        Assert.That(contour.GetPointIntersections(new Ray(new PointXY(-1f, 1f))), Is.Empty);
+    }
+
+    [Test]
+    public void OrientedRectangleContour_PointIntersections_WhenRotatedPointLiesOnArbitraryRay_ReturnsPoint()
+    {
+        var contour = new OrientedRectangleContour(default, default, 0.37f);
+        var directionSource = new Ray(default, 0.11f);
+        var ray = new Ray(new PointXY(-directionSource.Direction.X, -directionSource.Direction.Y), directionSource.Angle);
+
+        List<PointXY> intersections = contour.GetPointIntersections(ray);
+
+        Assert.That(intersections, Is.EqualTo(new[] { default(PointXY) }));
+        Assert.That(((ParameterizedOrientedRectangleContour)contour).GetPointIntersections(ray), Is.EqualTo(intersections));
+    }
+
+    [Test]
+    public void OrientedRectangleContour_WithZeroHeight_UsesLineSegmentSemantics()
+    {
+        var contour = new OrientedRectangleContour(default, new VectorXY(4f, 0f), 0f);
+
+        Assert.That(contour.Length, Is.EqualTo(8f));
+        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.True);
+        Assert.That(contour.Encloses(new PointXY(0f, 1f)), Is.False);
+        Assert.That(contour.SignedDistance(new PointXY(1f, 0f)), Is.EqualTo(0f));
+
+        List<PointXY> crossing = contour.GetPointIntersections(new Ray(new PointXY(0f, -1f), MathF.PI * 0.5f));
+        Assert.That(crossing, Has.Count.EqualTo(1));
+        AssertPoint(crossing[0], default);
+        Assert.That(contour.GetPointIntersections(new Ray(new PointXY(-3f, 0f))), Is.Empty);
+    }
+
+    [Test]
     public void ParameterizedOrientedRectangleContour_GetPoint_UsesDefaultRightEdgeParameterOrigin()
     {
         var contour = new ParameterizedOrientedRectangleContour(
@@ -234,6 +319,68 @@ public class OrientedRectangleTests
         AssertPoint(contour.GetPoint(1f), new PointXY(-1f, 2f));
         AssertPoint(contour.GetPoint(3f), new PointXY(-1f, 0f));
         AssertPoint(contour.GetPoint(contour.Length), new PointXY(0f, 2f));
+    }
+
+    [Test]
+    public void DefaultParameterizedOrientedRectangleContour_RepresentsOriginPoint()
+    {
+        ParameterizedOrientedRectangleContour contour = default;
+        var explicitOriginPoint = new ParameterizedOrientedRectangleContour(default, default, 0f);
+
+        Assert.That(contour, Is.EqualTo(explicitOriginPoint));
+        Assert.That(contour.AxisX, Is.EqualTo(VectorXY.BasisX));
+        Assert.That(contour.AxisY, Is.EqualTo(VectorXY.BasisY));
+        Assert.That(contour.Length, Is.EqualTo(0f));
+        Assert.That(contour.ParameterOrigin, Is.EqualTo(default(PointXY)));
+        Assert.That(contour.GetPoint(0f), Is.EqualTo(default(PointXY)));
+
+        ParameterizedCurveProjection projection = contour.ProjectWithParameter(new PointXY(3f, 4f));
+        Assert.That(projection.ProjectedPoint, Is.EqualTo(default(PointXY)));
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f));
+        Assert.That(projection.Distance, Is.EqualTo(5f));
+        Assert.That((OrientedRectangleContour)contour, Is.EqualTo(default(OrientedRectangleContour)));
+        Assert.That(contour.ToRegion(), Is.EqualTo(default(OrientedRectangle)));
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_WithZeroWidth_TraversesAndProjectsLineSegment()
+    {
+        var contour = new ParameterizedOrientedRectangleContour(
+            new PointXY(1f, 2f),
+            new VectorXY(0f, 4f),
+            0.37f);
+        PointXY point = contour.GetPoint(1f);
+
+        ParameterizedCurveProjection projection = contour.ProjectWithParameter(point);
+
+        Assert.That(contour.Length, Is.EqualTo(8f));
+        Assert.That(contour.Encloses(point), Is.True);
+        Assert.That(contour.Distance(point), Is.EqualTo(0f));
+        Assert.That(contour.SignedDistance(point), Is.EqualTo(0f));
+        Assert.That(projection.ProjectedPoint, Is.EqualTo(point));
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(0f));
+        Assert.That(((OrientedRectangleContour)contour).Encloses(point), Is.True);
+        Assert.That(contour.ToRegion().Contains(point), Is.True);
+    }
+
+    [Test]
+    public void ParameterizedOrientedRectangleContour_WithZeroHeight_CanonicalizesBottomRightParameterOrigin()
+    {
+        var namedOrigin = new ParameterizedOrientedRectangleContour(
+            default,
+            new VectorXY(4f, 0f),
+            0.37f,
+            RectangleContourParameterOrigin.BottomRight);
+        var lengthOrigin = new ParameterizedOrientedRectangleContour(
+            default,
+            new VectorXY(4f, 0f),
+            0.37f,
+            8f);
+
+        Assert.That(namedOrigin, Is.EqualTo(lengthOrigin));
+        Assert.That(namedOrigin.ParameterOrigin, Is.EqualTo(namedOrigin.BottomRight));
+        Assert.That(namedOrigin.GetPoint(0f), Is.EqualTo(lengthOrigin.GetPoint(0f)));
     }
 
     [Test]
@@ -543,7 +690,13 @@ public class OrientedRectangleTests
             new OrientedRectangle(new PointXY(float.PositiveInfinity, 0f), new VectorXY(1f, 1f), 0f));
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new OrientedRectangle(new PointXY(0f, 0f), new VectorXY(0f, 1f), 0f));
+            new OrientedRectangle(new PointXY(0f, 0f), new VectorXY(-0.001f, 1f), 0f));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new OrientedRectangleContour(new PointXY(0f, 0f), new VectorXY(1f, -0.001f), 0f));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedOrientedRectangleContour(new PointXY(0f, 0f), new VectorXY(-0.001f, 1f), 0f));
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             new OrientedRectangle(new PointXY(0f, 0f), new VectorXY(1f, 1f), float.NaN));
