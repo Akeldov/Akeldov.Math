@@ -2,6 +2,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
@@ -45,10 +46,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (float.IsNaN(fadeDistance) || float.IsInfinity(fadeDistance) || fadeDistance < 0f)
                 throw new ArgumentOutOfRangeException(nameof(fadeDistance), fadeDistance, "Fade distance must be finite and non-negative.");
 
-            return RasterizeCurves(
+            return RasterizeCurves<T, Gray8BitColor, Gray8BitCurveColorMapper>(
                 curves,
                 rasterGeometry,
-                distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
+                new Gray8BitCurveColorMapper(curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
         /// <summary>
@@ -120,10 +121,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (float.IsNaN(fadeDistance) || float.IsInfinity(fadeDistance) || fadeDistance < 0f)
                 throw new ArgumentOutOfRangeException(nameof(fadeDistance), fadeDistance, "Fade distance must be finite and non-negative.");
 
-            return RasterizeCurves(
+            return RasterizeCurves<T, Gray16BitColor, Gray16BitCurveColorMapper>(
                 curves,
                 rasterGeometry,
-                distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
+                new Gray16BitCurveColorMapper(curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
         /// <summary>
@@ -195,10 +196,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (float.IsNaN(fadeDistance) || float.IsInfinity(fadeDistance) || fadeDistance < 0f)
                 throw new ArgumentOutOfRangeException(nameof(fadeDistance), fadeDistance, "Fade distance must be finite and non-negative.");
 
-            return RasterizeCurves(
+            return RasterizeCurves<T, RGBA8BitColor, RGBA8BitCurveColorMapper>(
                 curves,
                 rasterGeometry,
-                distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
+                new RGBA8BitCurveColorMapper(curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
         /// <summary>
@@ -270,10 +271,10 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (float.IsNaN(fadeDistance) || float.IsInfinity(fadeDistance) || fadeDistance < 0f)
                 throw new ArgumentOutOfRangeException(nameof(fadeDistance), fadeDistance, "Fade distance must be finite and non-negative.");
 
-            return RasterizeCurves(
+            return RasterizeCurves<T, RGBA16BitColor, RGBA16BitCurveColorMapper>(
                 curves,
                 rasterGeometry,
-                distance => MapDistanceToColor(distance, curveWidth, fadeDistance, curveColor, backgroundColor));
+                new RGBA16BitCurveColorMapper(curveWidth, fadeDistance, curveColor, backgroundColor));
         }
 
         /// <summary>
@@ -307,31 +308,132 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 rasterGeometry);
         }
 
-        private static SpatialRaster<TColor> RasterizeCurves<TCurve, TColor>(
+        private static SpatialRaster<TColor> RasterizeCurves<TCurve, TColor, TColorMapper>(
             IReadOnlyList<TCurve> curves,
             RasterGeometry rasterGeometry,
-            Func<float, TColor> distanceToColor)
+            TColorMapper colorMapper)
             where TCurve : ICurve
+            where TColorMapper : struct, ICurveColorMapper<TColor>
         {
-            ValidateGrid(rasterGeometry);
-            var values = new TColor[checked(rasterGeometry.Resolution.X * rasterGeometry.Resolution.Y)];
-            VectorXY cellSize = rasterGeometry.CellSize;
-            float firstX = rasterGeometry.Origin.X + cellSize.X * 0.5f;
-            float firstY = rasterGeometry.Origin.Y + cellSize.Y * 0.5f;
+            var sampler = new CurveRasterSampler<TCurve, TColor, TColorMapper>(curves, colorMapper);
+            return SpatialRasterizationCore<TColor>.Rasterize(rasterGeometry, sampler, nameof(rasterGeometry));
+        }
 
-            for (int y = 0; y < rasterGeometry.Resolution.Y; y++)
+        private interface ICurveColorMapper<TColor>
+        {
+            TColor Map(float distance);
+        }
+
+        private struct CurveRasterSampler<TCurve, TColor, TColorMapper> : ISpatialRasterSampler<TColor>
+            where TCurve : ICurve
+            where TColorMapper : struct, ICurveColorMapper<TColor>
+        {
+            private readonly IReadOnlyList<TCurve> _curves;
+            private TColorMapper _colorMapper;
+
+            public CurveRasterSampler(IReadOnlyList<TCurve> curves, TColorMapper colorMapper)
             {
-                float pointY = firstY + y * cellSize.Y;
-                int valueIndex = y * rasterGeometry.Resolution.X;
-                for (int x = 0; x < rasterGeometry.Resolution.X; x++)
-                {
-                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    float distance = GetNearestDistance(curves, point);
-                    values[valueIndex++] = distanceToColor(distance);
-                }
+                _curves = curves;
+                _colorMapper = colorMapper;
             }
 
-            return new SpatialRaster<TColor>(rasterGeometry, values);
+            public TColor Sample(PointXY point) => _colorMapper.Map(GetNearestDistance(_curves, point));
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private readonly struct Gray8BitCurveColorMapper : ICurveColorMapper<Gray8BitColor>
+        {
+            private readonly float _curveWidth;
+            private readonly float _fadeDistance;
+            private readonly Gray8BitColor _curveColor;
+            private readonly Gray8BitColor _backgroundColor;
+
+            public Gray8BitCurveColorMapper(
+                float curveWidth,
+                float fadeDistance,
+                Gray8BitColor curveColor,
+                Gray8BitColor backgroundColor)
+            {
+                _curveWidth = curveWidth;
+                _fadeDistance = fadeDistance;
+                _curveColor = curveColor;
+                _backgroundColor = backgroundColor;
+            }
+
+            public Gray8BitColor Map(float distance) =>
+                MapDistanceToColor(distance, _curveWidth, _fadeDistance, _curveColor, _backgroundColor);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private readonly struct Gray16BitCurveColorMapper : ICurveColorMapper<Gray16BitColor>
+        {
+            private readonly float _curveWidth;
+            private readonly float _fadeDistance;
+            private readonly Gray16BitColor _curveColor;
+            private readonly Gray16BitColor _backgroundColor;
+
+            public Gray16BitCurveColorMapper(
+                float curveWidth,
+                float fadeDistance,
+                Gray16BitColor curveColor,
+                Gray16BitColor backgroundColor)
+            {
+                _curveWidth = curveWidth;
+                _fadeDistance = fadeDistance;
+                _curveColor = curveColor;
+                _backgroundColor = backgroundColor;
+            }
+
+            public Gray16BitColor Map(float distance) =>
+                MapDistanceToColor(distance, _curveWidth, _fadeDistance, _curveColor, _backgroundColor);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private readonly struct RGBA8BitCurveColorMapper : ICurveColorMapper<RGBA8BitColor>
+        {
+            private readonly float _curveWidth;
+            private readonly float _fadeDistance;
+            private readonly RGBA8BitColor _curveColor;
+            private readonly RGBA8BitColor _backgroundColor;
+
+            public RGBA8BitCurveColorMapper(
+                float curveWidth,
+                float fadeDistance,
+                RGBA8BitColor curveColor,
+                RGBA8BitColor backgroundColor)
+            {
+                _curveWidth = curveWidth;
+                _fadeDistance = fadeDistance;
+                _curveColor = curveColor;
+                _backgroundColor = backgroundColor;
+            }
+
+            public RGBA8BitColor Map(float distance) =>
+                MapDistanceToColor(distance, _curveWidth, _fadeDistance, _curveColor, _backgroundColor);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private readonly struct RGBA16BitCurveColorMapper : ICurveColorMapper<RGBA16BitColor>
+        {
+            private readonly float _curveWidth;
+            private readonly float _fadeDistance;
+            private readonly RGBA16BitColor _curveColor;
+            private readonly RGBA16BitColor _backgroundColor;
+
+            public RGBA16BitCurveColorMapper(
+                float curveWidth,
+                float fadeDistance,
+                RGBA16BitColor curveColor,
+                RGBA16BitColor backgroundColor)
+            {
+                _curveWidth = curveWidth;
+                _fadeDistance = fadeDistance;
+                _curveColor = curveColor;
+                _backgroundColor = backgroundColor;
+            }
+
+            public RGBA16BitColor Map(float distance) =>
+                MapDistanceToColor(distance, _curveWidth, _fadeDistance, _curveColor, _backgroundColor);
         }
 
         private static float GetNearestDistance<T>(IReadOnlyList<T> curves, PointXY point)
@@ -459,13 +561,5 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return (ushort)MathF.Round(value);
         }
 
-        private static void ValidateGrid(RasterGeometry rasterGeometry)
-        {
-            if (!rasterGeometry.Size.IsFinite || rasterGeometry.Size.X <= 0f || rasterGeometry.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(rasterGeometry), "Raster grid size components must be finite and positive.");
-
-            if (rasterGeometry.Resolution.X <= 0 || rasterGeometry.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(rasterGeometry), "Raster grid resolution components must be positive.");
-        }
     }
 }

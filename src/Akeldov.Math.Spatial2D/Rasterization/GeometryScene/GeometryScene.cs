@@ -85,42 +85,36 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <returns>A raster whose value array is new, mutable, and owned by the caller.</returns>
         public SpatialRaster<TColor> Rasterize(RasterGeometry grid)
         {
-            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
+            var sampler = new GeometrySceneRasterSampler(_backgroundColor, _layerPasses);
+            return SpatialRasterizationCore<TColor>.Rasterize(grid, sampler, nameof(grid));
+        }
 
-            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
+        private readonly struct GeometrySceneRasterSampler : ISpatialRasterSampler<TColor>
+        {
+            private readonly TColor _backgroundColor;
+            private readonly List<LayerPass<TColor>> _layerPasses;
 
-            var values = new TColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            VectorXY cellSize = grid.CellSize;
-            float firstX = grid.Origin.X + cellSize.X * 0.5f;
-            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
-
-            for (int y = 0; y < grid.Resolution.Y; y++)
+            public GeometrySceneRasterSampler(TColor backgroundColor, List<LayerPass<TColor>> layerPasses)
             {
-                float pointY = firstY + y * cellSize.Y;
-                int valueIndex = y * grid.Resolution.X;
-
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    TColor color = _backgroundColor;
-
-                    for (int layerIndex = 0; layerIndex < _layerPasses.Count; layerIndex++)
-                    {
-                        var layerPass = _layerPasses[layerIndex];
-                        var layer = layerPass.Layer;
-                        var blend = layerPass.Blend;
-
-                        color = blend(color, layer.Sample(point));
-                    }
-
-                    values[valueIndex++] = color;
-                }
+                _backgroundColor = backgroundColor;
+                _layerPasses = layerPasses;
             }
 
-            var raster = new SpatialRaster<TColor>(grid, values);
-            return raster;
+            public TColor Sample(PointXY point)
+            {
+                TColor color = _backgroundColor;
+
+                for (int layerIndex = 0; layerIndex < _layerPasses.Count; layerIndex++)
+                {
+                    var layerPass = _layerPasses[layerIndex];
+                    var layer = layerPass.Layer;
+                    var blend = layerPass.Blend;
+
+                    color = blend(color, layer.Sample(point));
+                }
+
+                return color;
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            ValidateGrid(grid);
+            RasterGeometryValidation.ValidateAndGetCellCount(grid, nameof(grid));
             IReadOnlyList<TPointSource> sources = source.Sources;
             if (sources == null)
                 throw new ArgumentException("Influence source index must expose a non-null source snapshot.", nameof(source));
@@ -56,23 +56,28 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                     throw new ArgumentException("Influence source positions must be finite.", nameof(source));
             }
 
-            var values = new RGBA16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            VectorXY cellSize = grid.CellSize;
-            float firstX = grid.Origin.X + cellSize.X * 0.5f;
-            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
+            var sampler = new CullingMapRasterSampler(this, source);
+            return SpatialRasterizationCore<RGBA16BitColor>.Rasterize(grid, sampler, nameof(grid));
+        }
 
-            for (int y = 0; y < grid.Resolution.Y; y++)
+        private readonly struct CullingMapRasterSampler : ISpatialRasterSampler<RGBA16BitColor>
+        {
+            private readonly CullingMapRGBA16BitRasterizer<TPointSource> _rasterizer;
+            private readonly IInfluenceSourceIndex<TPointSource> _source;
+
+            public CullingMapRasterSampler(
+                CullingMapRGBA16BitRasterizer<TPointSource> rasterizer,
+                IInfluenceSourceIndex<TPointSource> source)
             {
-                float pointY = firstY + y * cellSize.Y;
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    List<TPointSource> selectedSources = SelectSources(source, point);
-                    values[y * grid.Resolution.X + x] = GetSelectionColor(selectedSources);
-                }
+                _rasterizer = rasterizer;
+                _source = source;
             }
 
-            return new SpatialRaster<RGBA16BitColor>(grid, values);
+            public RGBA16BitColor Sample(PointXY point)
+            {
+                List<TPointSource> selectedSources = SelectSources(_source, point);
+                return _rasterizer.GetSelectionColor(selectedSources);
+            }
         }
 
         private static List<TPointSource> SelectSources(IInfluenceSourceIndex<TPointSource> source, PointXY point)
@@ -143,13 +148,5 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return (ushort)MathF.Round(srgb * ushort.MaxValue);
         }
 
-        private static void ValidateGrid(RasterGeometry grid)
-        {
-            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
-
-            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
-        }
     }
 }

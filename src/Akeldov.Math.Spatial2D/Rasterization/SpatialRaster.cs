@@ -34,26 +34,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
 
-            if (float.IsNaN(geometry.Origin.X) || float.IsInfinity(geometry.Origin.X) ||
-                float.IsNaN(geometry.Origin.Y) || float.IsInfinity(geometry.Origin.Y) ||
-                float.IsNaN(geometry.Size.X) || float.IsInfinity(geometry.Size.X) || geometry.Size.X <= 0f ||
-                float.IsNaN(geometry.Size.Y) || float.IsInfinity(geometry.Size.Y) || geometry.Size.Y <= 0f ||
-                geometry.Resolution.X <= 0 || geometry.Resolution.Y <= 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(geometry),
-                    geometry,
-                    "Raster geometry must have finite bounds, positive size, and positive resolution components.");
-            }
+            int cellCount = RasterGeometryValidation.ValidateAndGetCellCount(geometry, nameof(geometry));
 
-            long cellCount = (long)geometry.Resolution.X * geometry.Resolution.Y;
-            if (cellCount > int.MaxValue)
-                throw new ArgumentOutOfRangeException(
-                    nameof(geometry),
-                    geometry,
-                    "Raster cell count must fit in a one-dimensional array.");
-
-            if (values.Length != (int)cellCount)
+            if (values.Length != cellCount)
                 throw new ArgumentException("Raster value count must match the raster geometry resolution.", nameof(values));
 
             return geometry.Resolution;

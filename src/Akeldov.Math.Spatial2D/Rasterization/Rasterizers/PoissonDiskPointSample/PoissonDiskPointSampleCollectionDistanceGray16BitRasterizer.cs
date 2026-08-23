@@ -32,56 +32,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            ValidateGrid(grid);
+            RasterGeometryValidation.ValidateAndGetCellCount(grid, nameof(grid));
             PoissonDiskPointSample[] samples = CopySamples(source);
-            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            VectorXY cellSize = grid.CellSize;
-            float firstX = grid.Origin.X + cellSize.X * 0.5f;
-            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
-
-            for (int y = 0; y < grid.Resolution.Y; y++)
-            {
-                float pointY = firstY + y * cellSize.Y;
-                int valueIndex = y * grid.Resolution.X;
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    PoissonDiskPointSample nearestSample = FindNearestSample(samples, point, out float distance);
-                    values[valueIndex++] = _sampleDistanceToGrayLevel(nearestSample, distance);
-                }
-            }
-
-            return new SpatialRaster<Gray16BitColor>(grid, values);
-        }
-
-        private static PoissonDiskPointSample FindNearestSample(
-            PoissonDiskPointSample[] samples,
-            PointXY point,
-            out float distance)
-        {
-            PoissonDiskPointSample nearestSample = samples[0];
-            float nearestDistanceSquared = DistanceSquared(point, nearestSample.Point);
-
-            for (int i = 1; i < samples.Length; i++)
-            {
-                PoissonDiskPointSample sample = samples[i];
-                float distanceSquared = DistanceSquared(point, sample.Point);
-                if (distanceSquared < nearestDistanceSquared)
-                {
-                    nearestSample = sample;
-                    nearestDistanceSquared = distanceSquared;
-                }
-            }
-
-            distance = MathF.Sqrt(nearestDistanceSquared);
-            return nearestSample;
-        }
-
-        private static float DistanceSquared(PointXY left, PointXY right)
-        {
-            float dx = left.X - right.X;
-            float dy = left.Y - right.Y;
-            return dx * dx + dy * dy;
+            var sampler = new PoissonDiskPointSampleCollectionDistanceRasterSampler<Gray16BitColor>(
+                samples,
+                _sampleDistanceToGrayLevel);
+            return SpatialRasterizationCore<Gray16BitColor>.Rasterize(grid, sampler, nameof(grid));
         }
 
         private static PoissonDiskPointSample[] CopySamples(IReadOnlyList<PoissonDiskPointSample> source)
@@ -109,13 +65,5 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return copy;
         }
 
-        private static void ValidateGrid(RasterGeometry grid)
-        {
-            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
-
-            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
-        }
     }
 }

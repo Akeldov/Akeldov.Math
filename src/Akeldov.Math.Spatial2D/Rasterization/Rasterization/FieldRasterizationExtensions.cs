@@ -27,43 +27,22 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
 
-            if (float.IsNaN(grid.Origin.X) || float.IsInfinity(grid.Origin.X) ||
-                float.IsNaN(grid.Origin.Y) || float.IsInfinity(grid.Origin.Y) ||
-                !grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f ||
-                grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
+            var sampler = new FieldSpatialRasterSampler<TFieldValue, TRasterValue>(field, selector);
+            return SpatialRasterizationCore<TRasterValue>.Rasterize(grid, sampler, nameof(grid));
+        }
+
+        private readonly struct FieldSpatialRasterSampler<TFieldValue, TRasterValue> : ISpatialRasterSampler<TRasterValue>
+        {
+            private readonly IField<TFieldValue> _field;
+            private readonly Func<TFieldValue, TRasterValue> _selector;
+
+            public FieldSpatialRasterSampler(IField<TFieldValue> field, Func<TFieldValue, TRasterValue> selector)
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(grid),
-                    grid,
-                    "Raster geometry must have finite bounds, positive size, and positive resolution components.");
+                _field = field;
+                _selector = selector;
             }
 
-            long cellCount = (long)grid.Resolution.X * grid.Resolution.Y;
-            if (cellCount > int.MaxValue)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(grid),
-                    grid,
-                    "Raster cell count must fit in a one-dimensional array.");
-            }
-
-            var values = new TRasterValue[(int)cellCount];
-            VectorXY cellSize = grid.CellSize;
-            float firstX = grid.Origin.X + cellSize.X * 0.5f;
-            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
-
-            int valueIndex = 0;
-            for (int y = 0; y < grid.Resolution.Y; y++)
-            {
-                float pointY = firstY + y * cellSize.Y;
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    var point = new PointXY(firstX + x * cellSize.X, pointY);
-                    values[valueIndex++] = selector(field.Sample(point));
-                }
-            }
-
-            return new SpatialRaster<TRasterValue>(grid, values);
+            public TRasterValue Sample(PointXY point) => _selector(_field.Sample(point));
         }
     }
 }

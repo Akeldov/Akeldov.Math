@@ -38,34 +38,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            ValidateGrid(grid);
-            var values = new Gray8BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
-            VectorXY cellSize = grid.CellSize;
-            float firstX = grid.Origin.X + cellSize.X * 0.5f;
-            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
-
-            for (int y = 0; y < grid.Resolution.Y; y++)
-            {
-                float pointY = firstY + y * cellSize.Y;
-                int valueIndex = y * grid.Resolution.X;
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    float distance = source.Distance(point);
-                    values[valueIndex++] = _distanceToGrayLevel(distance);
-                }
-            }
-
-            return new SpatialRaster<Gray8BitColor>(grid, values);
-        }
-
-        private static void ValidateGrid(RasterGeometry grid)
-        {
-            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
-
-            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
+            var sampler = new PointDistanceRasterSampler<T, Gray8BitColor>(source, _distanceToGrayLevel);
+            return SpatialRasterizationCore<Gray8BitColor>.Rasterize(grid, sampler, nameof(grid));
         }
     }
 }

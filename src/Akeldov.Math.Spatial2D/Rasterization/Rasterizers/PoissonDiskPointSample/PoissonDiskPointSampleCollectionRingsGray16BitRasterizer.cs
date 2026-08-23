@@ -51,26 +51,33 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            ValidateGrid(grid);
+            RasterGeometryValidation.ValidateAndGetCellCount(grid, nameof(grid));
             PoissonDiskPointSample[] samples = CopySamples(source);
-            var values = new Gray16BitColor[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float edgeFalloff = MathF.Max(cellSize.X, cellSize.Y) * 0.5f;
-            float firstX = grid.Origin.X + cellSize.X * 0.5f;
-            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
 
-            for (int y = 0; y < grid.Resolution.Y; y++)
+            var sampler = new RingsRasterSampler(this, samples, edgeFalloff);
+            return SpatialRasterizationCore<Gray16BitColor>.Rasterize(grid, sampler, nameof(grid));
+        }
+
+        private readonly struct RingsRasterSampler : ISpatialRasterSampler<Gray16BitColor>
+        {
+            private readonly PoissonDiskPointSampleCollectionRingsGray16BitRasterizer _rasterizer;
+            private readonly PoissonDiskPointSample[] _samples;
+            private readonly float _edgeFalloff;
+
+            public RingsRasterSampler(
+                PoissonDiskPointSampleCollectionRingsGray16BitRasterizer rasterizer,
+                PoissonDiskPointSample[] samples,
+                float edgeFalloff)
             {
-                float pointY = firstY + y * cellSize.Y;
-                int valueIndex = y * grid.Resolution.X;
-                for (int x = 0; x < grid.Resolution.X; x++)
-                {
-                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
-                    values[valueIndex++] = RasterizeCell(samples, point, edgeFalloff);
-                }
+                _rasterizer = rasterizer;
+                _samples = samples;
+                _edgeFalloff = edgeFalloff;
             }
 
-            return new SpatialRaster<Gray16BitColor>(grid, values);
+            public Gray16BitColor Sample(PointXY point) =>
+                _rasterizer.RasterizeCell(_samples, point, _edgeFalloff);
         }
 
         private Gray16BitColor RasterizeCell(PoissonDiskPointSample[] samples, PointXY point, float edgeFalloff)
@@ -133,13 +140,5 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return copy;
         }
 
-        private static void ValidateGrid(RasterGeometry grid)
-        {
-            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
-
-            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
-        }
     }
 }
