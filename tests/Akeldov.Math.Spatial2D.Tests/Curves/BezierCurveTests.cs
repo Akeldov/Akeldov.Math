@@ -130,6 +130,92 @@ public class BezierCurveTests
     }
 
     [Test]
+    public void QuadraticBezier_LineIntersections_SolvesCurvePolynomial()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+        var line = new Line(new PointXY(-1f, 0.5f), new PointXY(3f, 0.5f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(line);
+
+        float rootOffset = MathF.Sqrt(0.5f);
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 1f - rootOffset, 0.5f);
+        AssertPoint(intersections[1], 1f + rootOffset, 0.5f);
+    }
+
+    [Test]
+    public void CubicBezier_LineIntersections_SolvesCurvePolynomial()
+    {
+        var curve = new CubicBezier(
+            new PointXY(0f, 0f),
+            new PointXY(0f, 3f),
+            new PointXY(3f, 3f),
+            new PointXY(3f, 0f));
+        var line = new Line(new PointXY(-1f, 1f), new PointXY(4f, 1f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(line);
+
+        float firstParameter = (3f - MathF.Sqrt(5f)) / 6f;
+        float secondParameter = (3f + MathF.Sqrt(5f)) / 6f;
+        PointXY firstExpected = curve.GetPointAt(firstParameter);
+        PointXY secondExpected = curve.GetPointAt(secondParameter);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], firstExpected.X, firstExpected.Y);
+        AssertPoint(intersections[1], secondExpected.X, secondExpected.Y);
+    }
+
+    [Test]
+    public void CubicBezier_LineIntersections_WhenPolynomialHasThreeRoots_ReturnsAllPoints()
+    {
+        var curve = new CubicBezier(
+            new PointXY(0f, -3f / 32f),
+            new PointXY(1f, 13f / 96f),
+            new PointXY(2f, -13f / 96f),
+            new PointXY(3f, 3f / 32f));
+        var line = new Line(new PointXY(-1f, 0f), new PointXY(4f, 0f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(3));
+        AssertPoint(intersections[0], 0.75f, 0f);
+        AssertPoint(intersections[1], 1.5f, 0f);
+        AssertPoint(intersections[2], 2.25f, 0f);
+    }
+
+    [Test]
+    public void BezierLineIntersections_WhenLineIsOutsideCurveWithinGeometryEpsilon_ReturnsEmpty()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+        float lineY = 1f + GeometryConstants.GeometryEpsilon * 0.5f;
+        var line = new Line(new PointXY(-1f, lineY), new PointXY(3f, lineY));
+
+        List<PointXY> intersections = curve.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void BezierLineIntersections_WhenCurveContinuouslyOverlapsLine_ReturnsEmpty()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 0f),
+            new PointXY(2f, 0f));
+        var line = new Line(new PointXY(-1f, 0f), new PointXY(3f, 0f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(line);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
     public void QuadraticBezier_CountRightwardCrossings_CountsRootsAndExcludesTangent()
     {
         var curve = new QuadraticBezier(

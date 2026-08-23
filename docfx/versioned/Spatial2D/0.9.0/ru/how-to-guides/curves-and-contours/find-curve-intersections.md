@@ -52,8 +52,9 @@ static List<PointXY> FindIntersections(ICurve curve, Ray ray)
 ```
 
 Линейные и круговые кривые (`Line`, `Ray`, `Segment`, `ParameterizedLine`,
-`ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc` и `ParameterizedArc`) также
-предоставляют `GetPointIntersections(Line)` для пересечения с бесконечной прямой:
+`ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc` и `ParameterizedArc`), а также
+`QuadraticBezier` и `CubicBezier` предоставляют `GetPointIntersections(Line)` для пересечения
+с бесконечной прямой:
 
 ```csharp
 var segment = new Segment(new PointXY(-2f, 1f), new PointXY(2f, 1f));
@@ -64,11 +65,12 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 
 В Spatial2D нет единого метода для пересечения двух произвольных кривых.
 
-Пересечения кривых Безье вычисляются по внутренней полилинейной аппроксимации. Используйте
-результат с той же точностью, что и длину, проекцию и расстояние для кривых Безье.
+Пересечения кривых Безье с лучом вычисляются по внутренней полилинейной аппроксимации.
+Пересечения `QuadraticBezier` и `CubicBezier` с прямой вместо этого находятся решением полинома
+исходной кривой. Общий `BezierCurve` не предоставляет перегрузку для прямой.
 
 `GetPointIntersections(Ray)` использует стандартный геометрический допуск библиотеки. Пересечения
-линейных и круговых кривых с `Line` используют точные сравнения.
+с `Line` используют точные сравнения.
 
 ## Учесть наложения и концы
 
