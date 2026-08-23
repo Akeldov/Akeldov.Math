@@ -62,6 +62,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a segment and a parameterized line using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source segment.</param>
+        /// <param name="line">The parameterized line to intersect with the source segment.</param>
+        /// <returns>A new mutable list owned by the caller. A continuous overlap returns an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Segment source, ParameterizedLine line)
+        {
+            return GetPointIntersections(source, line.Line);
+        }
+
+        /// <summary>
         /// Returns the signed distance from a point to a normalized line equation.
         /// </summary>
         /// <param name="line">The line that defines the signed-distance function.</param>

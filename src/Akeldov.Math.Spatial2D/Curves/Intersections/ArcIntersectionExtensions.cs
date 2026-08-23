@@ -53,6 +53,21 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between an arc and a parameterized line using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="line">The parameterized line to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered in the parameterized direction of the line.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, ParameterizedLine line)
+        {
+            List<PointXY> intersections = GetPointIntersections(source, line.Line);
+            if (VectorXY.Dot(line.Direction, line.Line.Direction) < 0f)
+                intersections.Reverse();
+
+            return intersections;
+        }
+
+        /// <summary>
         /// Adds a circle intersection when it lies within the arc's closed angular region.
         /// </summary>
         /// <param name="source">The source arc.</param>

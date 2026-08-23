@@ -145,6 +145,20 @@ public class ArcTests
     }
 
     [Test]
+    public void PointIntersections_WhenParameterizedLineDirectionIsReversed_ReturnsPointsInParameterizedDirection()
+    {
+        var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI);
+        var geometricLine = new Line(new PointXY(-2f, 0f), new PointXY(2f, 0f));
+        var line = new ParameterizedLine(geometricLine, new PointXY(0f, 0f), new VectorXY(-1f, 0f));
+
+        List<PointXY> intersections = arc.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertVector(intersections[0], 1f, 0f);
+        AssertVector(intersections[1], -1f, 0f);
+    }
+
+    [Test]
     public void PointIntersections_WhenLineCrossesCircleOutsideArc_ReturnsEmpty()
     {
         var arc = new Arc(new PointXY(0f, 0f), 1f, 0f, MathF.PI / 2f);

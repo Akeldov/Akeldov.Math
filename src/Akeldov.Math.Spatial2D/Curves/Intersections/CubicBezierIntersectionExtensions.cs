@@ -53,6 +53,21 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
+        /// Returns isolated point intersections between a cubic Bezier curve and a parameterized line by solving the curve polynomial.
+        /// </summary>
+        /// <param name="source">The source cubic Bezier curve.</param>
+        /// <param name="line">The parameterized line to intersect with the source curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered in the parameterized direction of the line. Points belonging to continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this CubicBezier source, ParameterizedLine line)
+        {
+            List<PointXY> intersections = GetPointIntersections(source, line.Line);
+            if (VectorXY.Dot(line.Direction, line.Line.Direction) < 0f)
+                intersections.Reverse();
+
+            return intersections;
+        }
+
+        /// <summary>
         /// Adds exact endpoint roots to the parameter list.
         /// </summary>
         /// <param name="startValue">The polynomial value at parameter zero.</param>

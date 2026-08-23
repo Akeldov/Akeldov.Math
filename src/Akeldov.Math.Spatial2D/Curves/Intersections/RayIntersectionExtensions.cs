@@ -32,5 +32,16 @@ namespace Akeldov.Math.Spatial2D.Curves
             PointXY intersection = source.Origin + rayCoordinate * rayDirection;
             return new List<PointXY> { intersection };
         }
+
+        /// <summary>
+        /// Returns the isolated point intersection between a ray and a parameterized line using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="line">The parameterized line to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller. Parallel lines, continuous overlaps, and intersections behind the ray return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, ParameterizedLine line)
+        {
+            return GetPointIntersections(source, line.Line);
+        }
     }
 }

@@ -18,5 +18,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             return LineIntersectionExtensions.GetPointIntersections(source.Line, line);
         }
+
+        /// <summary>
+        /// Returns the isolated point intersection between two parameterized lines using exact comparisons.
+        /// </summary>
+        /// <param name="source">The source parameterized line.</param>
+        /// <param name="line">The parameterized line to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller. Parallel or coincident lines return an empty list.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedLine source, ParameterizedLine line)
+        {
+            return LineIntersectionExtensions.GetPointIntersections(source.Line, line);
+        }
     }
 }

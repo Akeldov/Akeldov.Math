@@ -149,6 +149,24 @@ public class ParameterizedSegmentChainTests
     }
 
     [Test]
+    public void GetPointIntersections_WhenParameterizedLineDirectionIsReversed_ReturnsPointsInParameterizedDirection()
+    {
+        var chain = new ParameterizedSegmentChain(
+            new PointXY(2f, 0f),
+            new PointXY(2f, 2f),
+            new PointXY(0f, 2f),
+            new PointXY(0f, 0f));
+        var geometricLine = new Line(new PointXY(-1f, 1f), new PointXY(3f, 1f));
+        var line = new ParameterizedLine(geometricLine, new PointXY(0f, 1f), new VectorXY(-1f, 0f));
+
+        List<PointXY> intersections = chain.GetPointIntersections(line);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 2f, 1f);
+        AssertPoint(intersections[1], 0f, 1f);
+    }
+
+    [Test]
     public void GetPointIntersections_WhenVertexBelongsToContinuousLineOverlap_OmitsVertex()
     {
         var chain = new ParameterizedSegmentChain(

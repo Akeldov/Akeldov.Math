@@ -147,6 +147,24 @@ public class BezierCurveTests
     }
 
     [Test]
+    public void QuadraticBezier_ParameterizedLineIntersections_UsesParameterizedDirection()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, 0f),
+            new PointXY(1f, 2f),
+            new PointXY(2f, 0f));
+        var geometricLine = new Line(new PointXY(-1f, 0.5f), new PointXY(3f, 0.5f));
+        var line = new ParameterizedLine(geometricLine, new PointXY(0f, 0.5f), new VectorXY(-1f, 0f));
+
+        List<PointXY> intersections = curve.GetPointIntersections(line);
+
+        float rootOffset = MathF.Sqrt(0.5f);
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 1f + rootOffset, 0.5f);
+        AssertPoint(intersections[1], 1f - rootOffset, 0.5f);
+    }
+
+    [Test]
     public void CubicBezier_LineIntersections_SolvesCurvePolynomial()
     {
         var curve = new CubicBezier(
