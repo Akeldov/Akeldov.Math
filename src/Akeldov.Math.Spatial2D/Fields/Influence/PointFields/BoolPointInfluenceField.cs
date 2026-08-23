@@ -23,16 +23,14 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
-        /// Initializes a new Boolean influence field with source culling.
+        /// Initializes a new Boolean influence field backed by a source index.
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence points.</param>
-        /// <param name="influenceSources">The influence points used by the field.</param>
-        /// <param name="influenceSourceCuller">The culler used to select a subset of points for each sampled point.</param>
+        /// <param name="influenceSourceIndex">The index that owns and selects the influence points.</param>
         public BoolPointInfluenceField(
             IInfluenceSampler<BoolPointInfluenceSource, bool> sampler,
-            IReadOnlyList<BoolPointInfluenceSource> influenceSources,
-            IInfluenceSourceCuller<BoolPointInfluenceSource> influenceSourceCuller)
-            : base(sampler, influenceSources, influenceSourceCuller)
+            IInfluenceSourceIndex<BoolPointInfluenceSource> influenceSourceIndex)
+            : base(sampler, influenceSourceIndex)
         {
             _distinctValues = GetDistinctValues(InfluenceSources);
         }

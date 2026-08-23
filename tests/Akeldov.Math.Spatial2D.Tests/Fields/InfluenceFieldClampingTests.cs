@@ -163,17 +163,16 @@ public class InfluenceFieldClampingTests
     [TestCase(3f, 2f, "min")]
     [TestCase(float.NaN, 2f, "min")]
     [TestCase(1f, float.NaN, "max")]
-    public void FloatCurveInfluenceField_WithCuller_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
+    public void FloatCurveInfluenceField_WithIndex_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
     {
         var sources = CreateCurveSources();
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             new FloatCurveInfluenceField(
                 new ConstantSampler<ICurveInfluenceSource<float>, float>(0f),
-                sources,
+                new FixedCurveIndex(sources),
                 min,
-                max,
-                new FixedCurveCuller(sources)));
+                max));
 
         Assert.That(exception!.ParamName, Is.EqualTo(paramName));
     }
@@ -204,18 +203,18 @@ public class InfluenceFieldClampingTests
         }
     }
 
-    private sealed class FixedCurveCuller : IInfluenceSourceCuller<ICurveInfluenceSource<float>>
+    private sealed class FixedCurveIndex : IInfluenceSourceIndex<ICurveInfluenceSource<float>>
     {
-        private readonly List<ICurveInfluenceSource<float>> _sources;
-
-        public FixedCurveCuller(IReadOnlyList<ICurveInfluenceSource<float>> sources)
+        public FixedCurveIndex(IReadOnlyList<ICurveInfluenceSource<float>> sources)
         {
-            _sources = new List<ICurveInfluenceSource<float>>(sources);
+            Sources = Array.AsReadOnly(sources.ToArray());
         }
 
-        public List<ICurveInfluenceSource<float>> Cull(PointXY point)
+        public IReadOnlyList<ICurveInfluenceSource<float>> Sources { get; }
+
+        public List<ICurveInfluenceSource<float>> SelectSources(PointXY point)
         {
-            return _sources;
+            return new List<ICurveInfluenceSource<float>> { Sources[0] };
         }
     }
 }

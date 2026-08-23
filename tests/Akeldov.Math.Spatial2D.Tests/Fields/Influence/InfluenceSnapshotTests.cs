@@ -49,15 +49,15 @@ public class InfluenceSnapshotTests
     }
 
     [Test]
-    public void DelaunayCuller_MatchesApprovedImage()
+    public void DelaunayIndex_MatchesApprovedImage()
     {
         FloatPointInfluenceSource[] sources = CreateCullerSources();
-        var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
+        var index = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
 
-        List<FloatPointInfluenceSource> selectedSources = culler.Cull(new PointXY(50f, 34f));
+        List<FloatPointInfluenceSource> selectedSources = index.SelectSources(new PointXY(50f, 34f));
 
         Assert.That(selectedSources, Has.Count.EqualTo(3));
-        AssertMatchesApprovedCullerPng("delaunay-culler.png", culler, sources, CullerFieldSize);
+        AssertMatchesApprovedIndexPng("delaunay-culler.png", index, CullerFieldSize);
     }
 
     private static FloatPointInfluenceSource[] CreateFieldSources()
@@ -102,14 +102,13 @@ public class InfluenceSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual, "Actual influence field image");
     }
 
-    private static void AssertMatchesApprovedCullerPng(
+    private static void AssertMatchesApprovedIndexPng(
         string approvedFileName,
-        IInfluenceSourceCuller<FloatPointInfluenceSource> culler,
-        IReadOnlyList<FloatPointInfluenceSource> sources,
+        IInfluenceSourceIndex<FloatPointInfluenceSource> sourceIndex,
         VectorXY fieldSize)
     {
-        byte[] actual = InfluencePngRenderer.RenderCullerSelection(culler, sources, fieldSize, width: 320, height: 224);
-        AssertMatchesApprovedPng(approvedFileName, actual, "Actual influence culler image");
+        byte[] actual = InfluencePngRenderer.RenderIndexSelection(sourceIndex, fieldSize, width: 320, height: 224);
+        AssertMatchesApprovedPng(approvedFileName, actual, "Actual influence index image");
     }
 
     private static void AssertMatchesApprovedPng(

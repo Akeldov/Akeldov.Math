@@ -12,15 +12,14 @@ public class CullingMapSnapshotTests
         resolution: new VectorXYInt(160, 112));
 
     [Test]
-    public void RasterizeCullingMap_WithDelaunayCuller_MatchesApprovedImage()
+    public void RasterizeCullingMap_WithDelaunayIndex_MatchesApprovedImage()
     {
         FloatPointInfluenceSource[] sources = CreateSources();
-        var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
+        var index = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
         Dictionary<PointXY, RGBA16BitColor> sourceColors = CreateSourceColors(sources);
 
-        SpatialRaster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
+        SpatialRaster<RGBA16BitColor> raster = index.RasterizeCullingMap(
             SnapshotGrid,
-            culler,
             point => sourceColors[point]);
 
         byte[] actual = SaveToPngBytes(raster, "delaunay-culling-map-rgba16.png");
@@ -29,15 +28,14 @@ public class CullingMapSnapshotTests
     }
 
     [Test]
-    public void RasterizeCullingMap_WithHalfPlaneCuller_MatchesApprovedImage()
+    public void RasterizeCullingMap_WithHalfPlaneIndex_MatchesApprovedImage()
     {
         FloatPointInfluenceSource[] sources = CreateSources();
-        var culler = new HalfPlaneCuller<FloatPointInfluenceSource>(sources);
+        var index = new HalfPlaneInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
         Dictionary<PointXY, RGBA16BitColor> sourceColors = CreateSourceColors(sources);
 
-        SpatialRaster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
+        SpatialRaster<RGBA16BitColor> raster = index.RasterizeCullingMap(
             SnapshotGrid,
-            culler,
             point => sourceColors[point]);
 
         byte[] actual = SaveToPngBytes(raster, "half-plane-culling-map-rgba16.png");

@@ -12,9 +12,8 @@ namespace Akeldov.Math.Spatial2D.Fields
         where TSource : IInfluenceSource<TValue>
     {
         private readonly IInfluenceSampler<TSource, TValue> _sampler;
-        private readonly IInfluenceSourceCuller<TSource>? _influenceSourceCuller;
-        private readonly TSource[] _influenceSources;
-        private readonly IReadOnlyList<TSource> _readOnlyInfluenceSources;
+        private readonly IInfluenceSourceIndex<TSource>? _influenceSourceIndex;
+        private readonly IReadOnlyList<TSource> _influenceSources;
 
         /// <summary>
         /// Initializes a new influence field with the specified sampler and influence sources.
@@ -32,40 +31,43 @@ namespace Akeldov.Math.Spatial2D.Fields
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(influenceSources));
 
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _influenceSourceCuller = null;
-            _influenceSources = CopyInfluenceSources(influenceSources);
-            _readOnlyInfluenceSources = Array.AsReadOnly(_influenceSources);
+            _influenceSourceIndex = null;
+            _influenceSources = Array.AsReadOnly(CopyInfluenceSources(influenceSources));
         }
 
         /// <summary>
-        /// Initializes a new influence field with source culling.
+        /// Initializes a new influence field that selects sources through the specified index.
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence sources.</param>
-        /// <param name="influenceSources">The influence sources used by the field.</param>
-        /// <param name="influenceSourceCuller">
-        /// The culler used to select a non-empty subset of sources for each sampled point.
+        /// <param name="influenceSourceIndex">
+        /// The index that owns the immutable source snapshot and selects sources for each sampled point.
         /// </param>
         public InfluenceField(
             IInfluenceSampler<TSource, TValue> sampler,
-            IReadOnlyList<TSource> influenceSources,
-            IInfluenceSourceCuller<TSource> influenceSourceCuller)
+            IInfluenceSourceIndex<TSource> influenceSourceIndex)
         {
-            if (influenceSources == null)
-                throw new ArgumentNullException(nameof(influenceSources));
-
-            if (influenceSources.Count == 0)
-                throw new ArgumentException("Influence sources collection must not be empty.", nameof(influenceSources));
-
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _influenceSourceCuller = influenceSourceCuller ?? throw new ArgumentNullException(nameof(influenceSourceCuller));
-            _influenceSources = CopyInfluenceSources(influenceSources);
-            _readOnlyInfluenceSources = Array.AsReadOnly(_influenceSources);
+            _influenceSourceIndex = influenceSourceIndex ?? throw new ArgumentNullException(nameof(influenceSourceIndex));
+            _influenceSources = influenceSourceIndex.Sources;
+
+            if (_influenceSources == null)
+                throw new ArgumentException("Influence source index must expose a non-null source snapshot.", nameof(influenceSourceIndex));
+
+            if (_influenceSources.Count == 0)
+                throw new ArgumentException("Influence source index must contain at least one source.", nameof(influenceSourceIndex));
+
+            for (int i = 0; i < _influenceSources.Count; i++)
+            {
+                if (_influenceSources[i] is null)
+                    throw new ArgumentException("Influence source index snapshot cannot contain null elements.", nameof(influenceSourceIndex));
+            }
         }
 
         /// <summary>
-        /// Gets the read-only influence sources configured for this field.
+        /// Gets the immutable source snapshot used by this field. In indexed mode this is the
+        /// snapshot owned and exposed by the configured index; otherwise it is a field-owned copy.
         /// </summary>
-        public IReadOnlyList<TSource> InfluenceSources => _readOnlyInfluenceSources;
+        public IReadOnlyList<TSource> InfluenceSources => _influenceSources;
 
         /// <summary>
         /// Samples the field value at the specified point by delegating to the configured sampler.
@@ -75,7 +77,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// The sampler result. Derived bounded field types may clamp this value to their public range.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        /// The configured culler returned a null or empty source list.
+        /// The configured index returned a null or empty source list, or a list containing null.
         /// </exception>
         public virtual TValue Sample(PointXY point)
         {
@@ -84,18 +86,25 @@ namespace Akeldov.Math.Spatial2D.Fields
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            if (_influenceSourceCuller == null)
+            if (_influenceSourceIndex == null)
                 return _sampler.Sample(_influenceSources, point);
 
-            IReadOnlyList<TSource> selectedSources = _influenceSourceCuller.Cull(point);
+            List<TSource> selectedSources = _influenceSourceIndex.SelectSources(point);
 
             if (selectedSources == null)
                 throw new InvalidOperationException(
-                    "Influence source culler returned null. Culler implementations must return a non-empty source list.");
+                    "Influence source index returned null. Index implementations must return a non-empty source list.");
 
             if (selectedSources.Count == 0)
                 throw new InvalidOperationException(
-                    "Influence source culler returned an empty source list. Culler implementations must return at least one source.");
+                    "Influence source index returned an empty source list. Index implementations must select at least one source.");
+
+            for (int i = 0; i < selectedSources.Count; i++)
+            {
+                if (selectedSources[i] is null)
+                    throw new InvalidOperationException(
+                        "Influence source index returned a source list containing null.");
+            }
 
             return _sampler.Sample(selectedSources, point);
         }

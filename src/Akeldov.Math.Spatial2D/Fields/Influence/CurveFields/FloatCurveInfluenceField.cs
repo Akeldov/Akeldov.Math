@@ -41,24 +41,22 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
-        /// Initializes a new floating-point curve influence field with source culling.
+        /// Initializes a new floating-point curve influence field backed by a source index.
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence curves.</param>
-        /// <param name="influenceSources">The influence curves used by the field.</param>
+        /// <param name="influenceSourceIndex">The index that owns and selects the influence curves.</param>
         /// <param name="min">The minimum value returned by the field.</param>
         /// <param name="max">The maximum value returned by the field.</param>
-        /// <param name="influenceSourceCuller">The culler used to select a subset of curves for each sampled point.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="min"/> or <paramref name="max"/> is NaN, or when
         /// <paramref name="min"/> is greater than <paramref name="max"/>.
         /// </exception>
         public FloatCurveInfluenceField(
             IInfluenceSampler<ICurveInfluenceSource<float>, float> sampler,
-            IReadOnlyList<ICurveInfluenceSource<float>> influenceSources,
+            IInfluenceSourceIndex<ICurveInfluenceSource<float>> influenceSourceIndex,
             float min,
-            float max,
-            IInfluenceSourceCuller<ICurveInfluenceSource<float>> influenceSourceCuller)
-            : base(sampler, influenceSources, influenceSourceCuller)
+            float max)
+            : base(sampler, influenceSourceIndex)
         {
             ValidateRange(min, max);
 

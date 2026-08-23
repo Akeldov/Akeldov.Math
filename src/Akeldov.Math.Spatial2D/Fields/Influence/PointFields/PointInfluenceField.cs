@@ -23,16 +23,14 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
-        /// Initializes a new point influence field with source culling.
+        /// Initializes a new point influence field backed by a source index.
         /// </summary>
         /// <param name="sampler">The strategy used to combine point influence sources.</param>
-        /// <param name="influenceSources">The point influence sources used by the field.</param>
-        /// <param name="influenceSourceCuller">The culler used to select sources for each sampled point.</param>
+        /// <param name="influenceSourceIndex">The index that owns and selects the point influence sources.</param>
         public PointInfluenceField(
             IInfluenceSampler<TPointSource, TValue> sampler,
-            IReadOnlyList<TPointSource> influenceSources,
-            IInfluenceSourceCuller<TPointSource> influenceSourceCuller)
-            : base(sampler, influenceSources, influenceSourceCuller)
+            IInfluenceSourceIndex<TPointSource> influenceSourceIndex)
+            : base(sampler, influenceSourceIndex)
         {
         }
     }

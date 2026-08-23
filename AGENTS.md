@@ -233,7 +233,7 @@ The repository's .NET build and test commands write under `bin` and `obj`, which
 - Heavy stress tests live under `tests\Akeldov.Math.Spatial2D.Tests\Stress`.
   Stress fixtures must use both `Category("Stress")` and `Explicit` so normal test runs stay fast.
   Name them by subsystem, for example `PoissonDiskStressTests`, `VoronoiStressTests`,
-  `DelaunayCullerStressTests`, `RasterizationStressTests`, or `RegionStressTests`.
+  `DelaunayInfluenceSourceIndexStressTests`, `RasterizationStressTests`, or `RegionStressTests`.
 
 For seeded fuzz and stress tests, use fixed seeds in `[TestCase]` and include the seed and
 iteration/scenario in failure messages so failures are reproducible.

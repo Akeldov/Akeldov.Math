@@ -15,8 +15,8 @@ documentation work. Check an item only after its tests and documentation have be
   rule, and test sign, units, bounds, and non-finite input behavior.
 - [ ] **Expose Delaunay triangulation as a standalone operation.** Move the triangulation result
   behind a public, independently callable API instead of making it available only as an internal
-  step of `DelaunayCuller<TPointSource>`. Define triangle/index ownership, deterministic behavior,
-  duplicate and collinear-point handling, and reuse the same implementation in the culler.
+  step of `DelaunayInfluenceSourceIndex<TPointSource>`. Define triangle/index ownership, deterministic behavior,
+  duplicate and collinear-point handling, and reuse the same implementation in the source index.
 - [ ] **Support point-matched TrueType composite glyphs.** Implement composite component
   placement when arguments identify parent and component points instead of an XY offset. Add a
   licensed font fixture that exercises the feature, reject invalid point indexes with a clear
@@ -47,7 +47,7 @@ documentation work. Check an item only after its tests and documentation have be
   membership. Add deterministic behavior for ambiguous boundary cases and document it.
 - [ ] **Strengthen Voronoi relaxation and Delaunay correctness tests.** Add deterministic positive
   tests for one and multiple centroid-relaxation iterations, preserved site weights, and empty-cell
-  behavior. Add fixed-seed parity tests for `DelaunayCuller<TPointSource>` against an independent
+  behavior. Add fixed-seed parity tests for `DelaunayInfluenceSourceIndex<TPointSource>` against an independent
   slow oracle that verifies the containing triangle inside the hull and the nearest hull feature
   outside it.
 - [ ] **Audit angle units across the public API.** Ensure every angle parameter and property says

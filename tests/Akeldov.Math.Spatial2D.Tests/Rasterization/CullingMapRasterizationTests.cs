@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class CullingMapRasterizationTests
 {
     [Test]
-    public void RasterizeCullingMap_WhenCullerSelectsOneTwoAndThreeSources_BlendsSourceColorsInLinearRgb()
+    public void RasterizeCullingMap_WhenIndexSelectsOneTwoAndThreeSources_BlendsSourceColorsInLinearRgb()
     {
         TestPointSource[] sources = CreateSources();
         var grid = new RasterGeometry(
@@ -15,9 +15,8 @@ public class CullingMapRasterizationTests
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
 
-        SpatialRaster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
+        SpatialRaster<RGBA16BitColor> raster = new XBandIndex(sources).RasterizeCullingMap(
             grid,
-            new XBandCuller(sources),
             SourceColor);
 
         Assert.That(raster[0, 0], Is.EqualTo(SourceColor(sources[0].Position)));
@@ -34,28 +33,29 @@ public class CullingMapRasterizationTests
             size: new VectorXY(1f, 1f),
             resolution: new VectorXYInt(1, 1));
 
-        SpatialRaster<RGBA16BitColor> raster = sources.RasterizeCullingMap(
+        SpatialRaster<RGBA16BitColor> raster = new ThirdSourceIndex(sources).RasterizeCullingMap(
             grid,
-            new ThirdSourceCuller(sources),
             SourceColor);
 
         Assert.That(raster[0, 0], Is.EqualTo(SourceColor(sources[2].Position)));
     }
 
     [Test]
-    public void CullingMapRGBA16BitRasterizer_WhenConstructedWithNullCuller_Throws()
+    public void Rasterize_WhenSourceIndexIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() =>
-            new CullingMapRGBA16BitRasterizer<TestPointSource>(null!, SourceColor));
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(SourceColor);
+
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            rasterizer.Rasterize(null!, CreateGrid()));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
 
     [Test]
     public void CullingMapRGBA16BitRasterizer_WhenConstructedWithNullColorSelector_Throws()
     {
-        var culler = new FixedCuller(new TestPointSource(new PointXY(0f, 0f)));
-
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new CullingMapRGBA16BitRasterizer<TestPointSource>(culler, null!));
+            new CullingMapRGBA16BitRasterizer<TestPointSource>(null!));
 
         Assert.That(exception!.ParamName, Is.EqualTo("sourcePositionToColor"));
     }
@@ -63,11 +63,11 @@ public class CullingMapRasterizationTests
     [Test]
     public void Rasterize_WhenSourceIsEmpty_Throws()
     {
-        var culler = new FixedCuller(new TestPointSource(new PointXY(0f, 0f)));
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(culler, SourceColor);
+        var index = new FixedIndex(Array.Empty<TestPointSource>(), new List<TestPointSource>());
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(SourceColor);
 
         var exception = Assert.Throws<ArgumentException>(() =>
-            rasterizer.Rasterize(Array.Empty<TestPointSource>(), CreateGrid()));
+            rasterizer.Rasterize(index, CreateGrid()));
 
         Assert.That(exception!.ParamName, Is.EqualTo("source"));
     }
@@ -76,35 +76,34 @@ public class CullingMapRasterizationTests
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
         TestPointSource[] sources = CreateSources();
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new FixedCuller(sources[0]), SourceColor);
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(SourceColor);
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            rasterizer.Rasterize(sources, default));
+            rasterizer.Rasterize(new FixedIndex(sources, new List<TestPointSource> { sources[0] }), default));
     }
 
     [Test]
-    public void Rasterize_WhenCullerReturnsNull_ThrowsInvalidOperationException()
+    public void Rasterize_WhenIndexReturnsNull_ThrowsInvalidOperationException()
     {
         TestPointSource[] sources = CreateSources();
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new NullCuller(), SourceColor);
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(SourceColor);
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            rasterizer.Rasterize(sources, CreateGrid()));
+            rasterizer.Rasterize(new FixedIndex(sources, null), CreateGrid()));
 
         Assert.That(exception!.Message, Does.Contain("returned null"));
     }
 
     [Test]
-    public void Rasterize_WhenCullerReturnsForeignSource_ThrowsInvalidOperationException()
+    public void Rasterize_WhenIndexReturnsListContainingNull_ThrowsInvalidOperationException()
     {
         TestPointSource[] sources = CreateSources();
-        var foreignSource = new TestPointSource(new PointXY(10f, 10f));
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new FixedCuller(foreignSource), SourceColor);
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(SourceColor);
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            rasterizer.Rasterize(sources, CreateGrid()));
+            rasterizer.Rasterize(new FixedIndex(sources, new List<TestPointSource> { null! }), CreateGrid()));
 
-        Assert.That(exception!.Message, Does.Contain("not present"));
+        Assert.That(exception!.Message, Does.Contain("containing null"));
     }
 
     private static RasterGeometry CreateGrid()
@@ -133,62 +132,57 @@ public class CullingMapRasterizationTests
         return new RGBA16BitColor(0, 0, 60000, ushort.MaxValue);
     }
 
-    private sealed class XBandCuller : IInfluenceSourceCuller<TestPointSource>
+    private sealed class XBandIndex : IInfluenceSourceIndex<TestPointSource>
     {
-        private readonly TestPointSource[] _sources;
-
-        public XBandCuller(TestPointSource[] sources)
+        public XBandIndex(TestPointSource[] sources)
         {
-            _sources = sources;
+            Sources = Array.AsReadOnly(sources.ToArray());
         }
 
-        public List<TestPointSource> Cull(PointXY point)
+        public IReadOnlyList<TestPointSource> Sources { get; }
+
+        public List<TestPointSource> SelectSources(PointXY point)
         {
             if (point.X < 1f)
-                return new List<TestPointSource> { _sources[0] };
+                return new List<TestPointSource> { Sources[0] };
 
             if (point.X < 2f)
-                return new List<TestPointSource> { _sources[0], _sources[1] };
+                return new List<TestPointSource> { Sources[0], Sources[1] };
 
-            return new List<TestPointSource> { _sources[0], _sources[1], _sources[2] };
+            return new List<TestPointSource> { Sources[0], Sources[1], Sources[2] };
         }
     }
 
-    private sealed class ThirdSourceCuller : IInfluenceSourceCuller<TestPointSource>
+    private sealed class ThirdSourceIndex : IInfluenceSourceIndex<TestPointSource>
     {
-        private readonly TestPointSource[] _sources;
-
-        public ThirdSourceCuller(TestPointSource[] sources)
+        public ThirdSourceIndex(TestPointSource[] sources)
         {
-            _sources = sources;
+            Sources = Array.AsReadOnly(sources.ToArray());
         }
 
-        public List<TestPointSource> Cull(PointXY point)
+        public IReadOnlyList<TestPointSource> Sources { get; }
+
+        public List<TestPointSource> SelectSources(PointXY point)
         {
-            return new List<TestPointSource> { _sources[2] };
+            return new List<TestPointSource> { Sources[2] };
         }
     }
 
-    private sealed class FixedCuller : IInfluenceSourceCuller<TestPointSource>
+    private sealed class FixedIndex : IInfluenceSourceIndex<TestPointSource>
     {
-        private readonly TestPointSource _source;
+        private readonly List<TestPointSource>? _selectedSources;
 
-        public FixedCuller(TestPointSource source)
+        public FixedIndex(IReadOnlyList<TestPointSource> sources, List<TestPointSource>? selectedSources)
         {
-            _source = source;
+            Sources = Array.AsReadOnly(sources.ToArray());
+            _selectedSources = selectedSources;
         }
 
-        public List<TestPointSource> Cull(PointXY point)
-        {
-            return new List<TestPointSource> { _source };
-        }
-    }
+        public IReadOnlyList<TestPointSource> Sources { get; }
 
-    private sealed class NullCuller : IInfluenceSourceCuller<TestPointSource>
-    {
-        public List<TestPointSource> Cull(PointXY point)
+        public List<TestPointSource> SelectSources(PointXY point)
         {
-            return null!;
+            return _selectedSources!;
         }
     }
 

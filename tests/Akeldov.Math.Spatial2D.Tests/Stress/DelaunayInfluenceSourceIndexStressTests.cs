@@ -4,23 +4,23 @@ namespace Akeldov.Math.Spatial2D.Tests.Stress;
 
 [Explicit("Stress tests are excluded from normal test runs.")]
 [Category("Stress")]
-public class DelaunayCullerStressTests
+public class DelaunayInfluenceSourceIndexStressTests
 {
     [TestCase(5101)]
     [TestCase(5102)]
     [TestCase(5103)]
-    public void Cull_WithLargePointCloud_ReturnsNonEmptySubsetFromOriginalSources(int seed)
+    public void SelectSources_WithLargePointCloud_ReturnsNonEmptySubsetFromSnapshot(int seed)
     {
         var random = new Random(seed);
         FloatPointInfluenceSource[] sources = CreateSources(random, sourceCount: 350);
-        var sourceSet = new HashSet<FloatPointInfluenceSource>(sources);
-        var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
+        var index = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+        var sourceSet = new HashSet<FloatPointInfluenceSource>(index.Sources);
 
         for (int i = 0; i < 1_500; i++)
         {
             var point = new PointXY(NextFloat(random, -650f, 650f), NextFloat(random, -650f, 650f));
 
-            List<FloatPointInfluenceSource> selectedSources = culler.Cull(point);
+            List<FloatPointInfluenceSource> selectedSources = index.SelectSources(point);
 
             Assert.That(selectedSources, Has.Count.InRange(1, 3), $"Seed: {seed}, point: {i}.");
             for (int j = 0; j < selectedSources.Count; j++)

@@ -22,14 +22,15 @@ public class BoolPointInfluenceFieldTests
     }
 
     [Test]
-    public void Sample_WithCuller_UsesSelectedSources()
+    public void Sample_WithIndex_UsesSelectedSources()
     {
         var falseSource = new BoolPointInfluenceSource(1f, new PointXY(0f, 0f), false);
         var trueSource = new BoolPointInfluenceSource(1f, new PointXY(10f, 0f), true);
         var field = new BoolPointInfluenceField(
             new NearestInfluenceSampler<BoolPointInfluenceSource, bool>(),
-            new[] { falseSource, trueSource },
-            new FixedCuller(new List<BoolPointInfluenceSource> { falseSource }));
+            new FixedIndex(
+                new[] { falseSource, trueSource },
+                new List<BoolPointInfluenceSource> { falseSource }));
 
         bool value = field.Sample(new PointXY(10f, 0f));
 
@@ -72,18 +73,23 @@ public class BoolPointInfluenceFieldTests
         Assert.That(field.Sample(new PointXY(0f, 0f)), Is.False);
     }
 
-    private sealed class FixedCuller : IInfluenceSourceCuller<BoolPointInfluenceSource>
+    private sealed class FixedIndex : IInfluenceSourceIndex<BoolPointInfluenceSource>
     {
-        private readonly List<BoolPointInfluenceSource> _sources;
+        private readonly List<BoolPointInfluenceSource> _selectedSources;
 
-        public FixedCuller(List<BoolPointInfluenceSource> sources)
+        public FixedIndex(
+            IReadOnlyList<BoolPointInfluenceSource> sources,
+            List<BoolPointInfluenceSource> selectedSources)
         {
-            _sources = sources;
+            Sources = Array.AsReadOnly(sources.ToArray());
+            _selectedSources = selectedSources;
         }
 
-        public List<BoolPointInfluenceSource> Cull(PointXY point)
+        public IReadOnlyList<BoolPointInfluenceSource> Sources { get; }
+
+        public List<BoolPointInfluenceSource> SelectSources(PointXY point)
         {
-            return _sources;
+            return _selectedSources;
         }
     }
 }

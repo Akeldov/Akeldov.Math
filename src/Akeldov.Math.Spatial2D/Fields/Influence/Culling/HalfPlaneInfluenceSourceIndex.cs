@@ -8,16 +8,17 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// Selects point influence sources by excluding sources hidden behind half-plane boundaries.
     /// </summary>
     /// <typeparam name="TPointSource">The point influence source type.</typeparam>
-    public class HalfPlaneCuller<TPointSource> : IInfluenceSourceCuller<TPointSource>
+    public sealed class HalfPlaneInfluenceSourceIndex<TPointSource> : IInfluenceSourceIndex<TPointSource>
         where TPointSource : IPointInfluenceSource
     {
-        private readonly IReadOnlyList<TPointSource> _pointSources;
+        private readonly TPointSource[] _pointSources;
+        private readonly IReadOnlyList<TPointSource> _readOnlyPointSources;
 
         /// <summary>
-        /// Initializes a new half-plane influence source culler.
+        /// Initializes a new half-plane influence source index.
         /// </summary>
-        /// <param name="pointSources">The point influence sources available for culling.</param>
-        public HalfPlaneCuller(IReadOnlyList<TPointSource> pointSources)
+        /// <param name="pointSources">The point influence sources used to create the immutable snapshot.</param>
+        public HalfPlaneInfluenceSourceIndex(IReadOnlyList<TPointSource> pointSources)
         {
             if (pointSources == null)
                 throw new ArgumentNullException(nameof(pointSources));
@@ -39,26 +40,53 @@ namespace Akeldov.Math.Spatial2D.Fields
             }
 
             _pointSources = copy;
+            _readOnlyPointSources = Array.AsReadOnly(copy);
         }
+
+        /// <summary>
+        /// Gets the immutable source snapshot owned by this index.
+        /// </summary>
+        public IReadOnlyList<TPointSource> Sources => _readOnlyPointSources;
 
         /// <summary>
         /// Returns influence sources that are visible from the specified point.
         /// </summary>
         /// <param name="point">The point being sampled.</param>
-        /// <returns>A new mutable list of visible influence sources owned by the caller.</returns>
-        public List<TPointSource> Cull(PointXY point)
+        /// <returns>A new mutable list of visible sources owned by the caller.</returns>
+        public List<TPointSource> SelectSources(PointXY point)
         {
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            var orderedPointSources = OrderBy(_pointSources, x => x.Position.Distance(point));
-            var culledPointSources = new List<TPointSource>();
-            var lines = new List<Line>();
-            for (int i = 0; i < orderedPointSources.Count; i++)
+            List<int> selectedIndexes = SelectSourceIndexes(_pointSources, point);
+            var selectedSources = new List<TPointSource>(selectedIndexes.Count);
+            for (int i = 0; i < selectedIndexes.Count; i++)
+                selectedSources.Add(_pointSources[selectedIndexes[i]]);
+
+            return selectedSources;
+        }
+
+        internal static List<int> SelectSourceIndexes(IReadOnlyList<TPointSource> pointSources, PointXY point)
+        {
+            var orderedIndexes = new List<int>(pointSources.Count);
+            for (int i = 0; i < pointSources.Count; i++)
+                orderedIndexes.Add(i);
+
+            orderedIndexes.Sort((left, right) =>
             {
-                var pointSource = orderedPointSources[i];
+                int comparison = pointSources[left].Position.Distance(point)
+                    .CompareTo(pointSources[right].Position.Distance(point));
+                return comparison != 0 ? comparison : left.CompareTo(right);
+            });
+
+            var selectedIndexes = new List<int>();
+            var lines = new List<Line>();
+            for (int i = 0; i < orderedIndexes.Count; i++)
+            {
+                int sourceIndex = orderedIndexes[i];
+                TPointSource pointSource = pointSources[sourceIndex];
                 bool isExcluded = false;
 
                 for (int j = 0; j < lines.Count; j++)
@@ -73,7 +101,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
                 if (!isExcluded)
                 {
-                    culledPointSources.Add(pointSource);
+                    selectedIndexes.Add(sourceIndex);
 
                     if (pointSource.Position.Distance(point) <= GeometryConstants.GeometryEpsilon)
                         continue;
@@ -84,24 +112,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 }
             }
 
-            return culledPointSources;
+            return selectedIndexes;
         }
-
-        private List<TEntity> OrderBy<TEntity, TProperty>(
-            IReadOnlyList<TEntity> source, Func<TEntity, TProperty> selector)
-            where TProperty : IComparable<TProperty>
-        {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-
-            var result = new List<TEntity>(source);
-
-            result.Sort((x, y) =>
-            {
-                return (selector(x)).CompareTo(selector(y));
-            });
-
-            return result;
-        }
-
     }
 }

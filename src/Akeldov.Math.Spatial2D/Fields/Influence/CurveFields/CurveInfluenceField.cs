@@ -23,16 +23,14 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
-        /// Initializes a new curve influence field with source culling.
+        /// Initializes a new curve influence field backed by a source index.
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence curves.</param>
-        /// <param name="influenceSources">The influence curves used by the field.</param>
-        /// <param name="influenceSourceCuller">The culler used to select a subset of curves for each sampled point.</param>
+        /// <param name="influenceSourceIndex">The index that owns and selects the influence curves.</param>
         public CurveInfluenceField(
             IInfluenceSampler<TCurveSource, TValue> sampler,
-            IReadOnlyList<TCurveSource> influenceSources,
-            IInfluenceSourceCuller<TCurveSource> influenceSourceCuller)
-            : base(sampler, influenceSources, influenceSourceCuller)
+            IInfluenceSourceIndex<TCurveSource> influenceSourceIndex)
+            : base(sampler, influenceSourceIndex)
         {
         }
     }

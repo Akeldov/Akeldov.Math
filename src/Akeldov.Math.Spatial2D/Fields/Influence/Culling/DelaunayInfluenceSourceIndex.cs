@@ -4,37 +4,36 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Spatial2D.Fields
 {
     /// <summary>
-    /// Selects the Delaunay triangle containing the sampled point.
+    /// Indexes point influence sources by their Delaunay triangulation.
     /// </summary>
     /// <remarks>
-    /// When the sampled point is outside the triangulated area, this culler returns the nearest
+    /// When the sampled point is outside the triangulated area, this index selects the nearest
     /// convex hull feature: a single hull vertex or the two endpoints of a hull edge. When the
-    /// source points cannot form a non-degenerate hull, it falls back to half-plane culling and
+    /// source points cannot form a non-degenerate hull, it falls back to half-plane selection and
     /// keeps at most two sources.
     /// </remarks>
     /// <typeparam name="TPointSource">The point influence source type.</typeparam>
-    public sealed class DelaunayCuller<TPointSource> : IInfluenceSourceCuller<TPointSource>
+    public sealed class DelaunayInfluenceSourceIndex<TPointSource> : IInfluenceSourceIndex<TPointSource>
         where TPointSource : IPointInfluenceSource
     {
         private const float Epsilon = GeometryConstants.GeometryEpsilon;
 
         private readonly TPointSource[] _sources;
+        private readonly IReadOnlyList<TPointSource> _readOnlySources;
         private readonly PointXY[] _positions;
         private readonly Triangle[] _triangles;
         private readonly TriangleSpatialIndex? _triangleIndex;
         private readonly int[] _convexHull;
-        private readonly HalfPlaneCuller<TPointSource> _fallbackCuller;
 
         /// <summary>
-        /// Initializes a new Delaunay influence source culler.
+        /// Initializes a new Delaunay influence source index.
         /// </summary>
         /// <param name="pointSources">The point influence sources used to build the triangulation.</param>
-        public DelaunayCuller(IReadOnlyList<TPointSource> pointSources)
+        public DelaunayInfluenceSourceIndex(IReadOnlyList<TPointSource> pointSources)
         {
             _sources = CopySources(pointSources, out _positions);
+            _readOnlySources = Array.AsReadOnly(_sources);
             ThrowIfAnyDuplicatePoint(_positions, nameof(pointSources));
-
-            _fallbackCuller = new HalfPlaneCuller<TPointSource>(_sources);
 
             if (!HasNonCollinearTriple(_positions))
             {
@@ -52,6 +51,11 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
+        /// Gets the immutable source snapshot owned by this index.
+        /// </summary>
+        public IReadOnlyList<TPointSource> Sources => _readOnlySources;
+
+        /// <summary>
         /// Returns influence sources selected for the specified point.
         /// </summary>
         /// <param name="point">The point being sampled.</param>
@@ -59,23 +63,33 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// A new mutable list owned by the caller containing the selected triangle sources,
         /// nearest hull feature sources, or fallback sources.
         /// </returns>
-        public List<TPointSource> Cull(PointXY point)
+        public List<TPointSource> SelectSources(PointXY point)
         {
             PointXYValidation.ThrowIfNotFinite(
                 point,
                 nameof(point),
                 "Point coordinates must be finite.");
 
+            List<int> selectedIndexes;
             if (_triangleIndex != null &&
                 _triangleIndex.TryFindContainingTriangle(point, out Triangle triangle))
             {
-                return CreateTriangleSourceList(triangle);
+                selectedIndexes = CreateTriangleIndexList(triangle);
+            }
+            else if (_convexHull.Length >= 3)
+            {
+                selectedIndexes = SelectNearestHullFeature(point);
+            }
+            else
+            {
+                selectedIndexes = SelectCollinearFallback(point);
             }
 
-            if (_convexHull.Length >= 3)
-                return CullToNearestHullFeature(point);
+            var selectedSources = new List<TPointSource>(selectedIndexes.Count);
+            for (int i = 0; i < selectedIndexes.Count; i++)
+                selectedSources.Add(_sources[selectedIndexes[i]]);
 
-            return CullCollinearFallback(point);
+            return selectedSources;
         }
 
         private static TPointSource[] CopySources(
@@ -107,30 +121,30 @@ namespace Akeldov.Math.Spatial2D.Fields
             return sources;
         }
 
-        private List<TPointSource> CreateTriangleSourceList(Triangle triangle)
+        private static List<int> CreateTriangleIndexList(Triangle triangle)
         {
-            return new List<TPointSource>(3)
+            return new List<int>(3)
             {
-                _sources[triangle.A],
-                _sources[triangle.B],
-                _sources[triangle.C]
+                triangle.A,
+                triangle.B,
+                triangle.C
             };
         }
 
-        private List<TPointSource> CullToNearestHullFeature(PointXY point)
+        private List<int> SelectNearestHullFeature(PointXY point)
         {
             HullEdge nearestEdge = FindNearestHullEdge(point);
 
             if (nearestEdge.ProjectionParameter <= Epsilon)
-                return new List<TPointSource>(1) { _sources[nearestEdge.StartIndex] };
+                return new List<int>(1) { nearestEdge.StartIndex };
 
             if (nearestEdge.ProjectionParameter >= 1f - Epsilon)
-                return new List<TPointSource>(1) { _sources[nearestEdge.EndIndex] };
+                return new List<int>(1) { nearestEdge.EndIndex };
 
-            return new List<TPointSource>(2)
+            return new List<int>(2)
             {
-                _sources[nearestEdge.StartIndex],
-                _sources[nearestEdge.EndIndex]
+                nearestEdge.StartIndex,
+                nearestEdge.EndIndex
             };
         }
 
@@ -161,28 +175,31 @@ namespace Akeldov.Math.Spatial2D.Fields
             return new HullEdge(startIndex, endIndex, projectionParameter, distanceSquared);
         }
 
-        private List<TPointSource> CullCollinearFallback(PointXY point)
+        private List<int> SelectCollinearFallback(PointXY point)
         {
-            List<TPointSource> selectedSources = _fallbackCuller.Cull(point);
-            return KeepNearestFallbackSegment(selectedSources, point);
+            List<int> selectedIndexes = HalfPlaneInfluenceSourceIndex<TPointSource>.SelectSourceIndexes(_sources, point);
+            return KeepNearestFallbackSegment(selectedIndexes, point);
         }
 
-        private static List<TPointSource> KeepNearestFallbackSegment(List<TPointSource> sources, PointXY point)
+        private List<int> KeepNearestFallbackSegment(List<int> sourceIndexes, PointXY point)
         {
-            if (sources.Count <= 2)
-                return sources;
+            if (sourceIndexes.Count <= 2)
+                return sourceIndexes;
 
             int bestStartIndex = 0;
             int bestEndIndex = 1;
-            float bestDistanceSquared = DistanceToSegmentSquared(sources[0].Position, sources[1].Position, point);
+            float bestDistanceSquared = DistanceToSegmentSquared(
+                _sources[sourceIndexes[0]].Position,
+                _sources[sourceIndexes[1]].Position,
+                point);
 
-            for (int startIndex = 0; startIndex < sources.Count; startIndex++)
+            for (int startIndex = 0; startIndex < sourceIndexes.Count; startIndex++)
             {
-                for (int endIndex = startIndex + 1; endIndex < sources.Count; endIndex++)
+                for (int endIndex = startIndex + 1; endIndex < sourceIndexes.Count; endIndex++)
                 {
                     float distanceSquared = DistanceToSegmentSquared(
-                        sources[startIndex].Position,
-                        sources[endIndex].Position,
+                        _sources[sourceIndexes[startIndex]].Position,
+                        _sources[sourceIndexes[endIndex]].Position,
                         point);
 
                     if (distanceSquared < bestDistanceSquared)
@@ -194,10 +211,10 @@ namespace Akeldov.Math.Spatial2D.Fields
                 }
             }
 
-            return new List<TPointSource>(2)
+            return new List<int>(2)
             {
-                sources[bestStartIndex],
-                sources[bestEndIndex]
+                sourceIndexes[bestStartIndex],
+                sourceIndexes[bestEndIndex]
             };
         }
 

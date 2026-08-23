@@ -30,16 +30,14 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <summary>
-        /// Initializes a new integer influence field with source culling.
+        /// Initializes a new integer influence field backed by a source index.
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence points.</param>
-        /// <param name="influenceSources">The influence points used by the field.</param>
-        /// <param name="influenceSourceCuller">The culler used to select a subset of points for each sampled point.</param>
+        /// <param name="influenceSourceIndex">The index that owns and selects the influence points.</param>
         public IntPointInfluenceField(
             IInfluenceSampler<IntPointInfluenceSource, int> sampler,
-            IReadOnlyList<IntPointInfluenceSource> influenceSources,
-            IInfluenceSourceCuller<IntPointInfluenceSource> influenceSourceCuller)
-            : base(sampler, influenceSources, influenceSourceCuller)
+            IInfluenceSourceIndex<IntPointInfluenceSource> influenceSourceIndex)
+            : base(sampler, influenceSourceIndex)
         {
             (_min, _max, _distinctValues) = GetRangeAndDistinctValues(InfluenceSources);
         }

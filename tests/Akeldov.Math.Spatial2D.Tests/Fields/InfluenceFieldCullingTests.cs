@@ -5,7 +5,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Fields;
 public class InfluenceFieldCullingTests
 {
     [Test]
-    public void Sample_WhenCullerReturnsSubset_UsesSelectedSources()
+    public void Sample_WhenIndexReturnsSubset_UsesSelectedSources()
     {
         var sources = new[]
         {
@@ -15,12 +15,27 @@ public class InfluenceFieldCullingTests
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
             new SourceCountSampler(),
-            sources,
-            new FixedCuller(new List<FloatPointInfluenceSource> { sources[0] }));
+            new FixedIndex(sources, new List<FloatPointInfluenceSource> { sources[0] }));
 
         float value = field.Sample(new PointXY(3f, 4f));
 
         Assert.That(value, Is.EqualTo(1f));
+    }
+
+    [Test]
+    public void Constructor_WithIndex_UsesIndexOwnedSnapshot()
+    {
+        var sources = new[]
+        {
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 10f)
+        };
+        var index = new FixedIndex(sources, new List<FloatPointInfluenceSource> { sources[0] });
+
+        var field = new InfluenceField<FloatPointInfluenceSource, float>(
+            new SourceCountSampler(),
+            index);
+
+        Assert.That(field.InfluenceSources, Is.SameAs(index.Sources));
     }
 
     [Test]
@@ -37,7 +52,7 @@ public class InfluenceFieldCullingTests
     }
 
     [Test]
-    public void Sample_WhenCullerReturnsNull_ThrowsInvalidOperationException()
+    public void Sample_WhenIndexReturnsNull_ThrowsInvalidOperationException()
     {
         var sources = new[]
         {
@@ -46,8 +61,7 @@ public class InfluenceFieldCullingTests
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
             new SourceCountSampler(),
-            sources,
-            new FixedCuller(null));
+            new FixedIndex(sources, null));
 
         var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(0f, 0f)));
 
@@ -55,7 +69,7 @@ public class InfluenceFieldCullingTests
     }
 
     [Test]
-    public void Sample_WhenCullerReturnsEmptyList_ThrowsInvalidOperationException()
+    public void Sample_WhenIndexReturnsEmptyList_ThrowsInvalidOperationException()
     {
         var sources = new[]
         {
@@ -64,12 +78,27 @@ public class InfluenceFieldCullingTests
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
             new SourceCountSampler(),
-            sources,
-            new FixedCuller(new List<FloatPointInfluenceSource>()));
+            new FixedIndex(sources, new List<FloatPointInfluenceSource>()));
 
         var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(0f, 0f)));
 
         Assert.That(exception!.Message, Does.Contain("empty source list"));
+    }
+
+    [Test]
+    public void Sample_WhenIndexReturnsListContainingNull_ThrowsInvalidOperationException()
+    {
+        var sources = new[]
+        {
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 10f)
+        };
+        var field = new InfluenceField<FloatPointInfluenceSource, float>(
+            new SourceCountSampler(),
+            new FixedIndex(sources, new List<FloatPointInfluenceSource> { null! }));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(0f, 0f)));
+
+        Assert.That(exception!.Message, Does.Contain("containing null"));
     }
 
     [Test]
@@ -91,10 +120,10 @@ public class InfluenceFieldCullingTests
     }
 
     [Test]
-    public void Constructor_WhenHalfPlaneCullerPointSourcesAreEmpty_Throws()
+    public void Constructor_WhenHalfPlaneIndexPointSourcesAreEmpty_Throws()
     {
         var exception = Assert.Throws<ArgumentException>(
-            () => new HalfPlaneCuller<FloatPointInfluenceSource>(Array.Empty<FloatPointInfluenceSource>()));
+            () => new HalfPlaneInfluenceSourceIndex<FloatPointInfluenceSource>(Array.Empty<FloatPointInfluenceSource>()));
 
         Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
     }
@@ -107,18 +136,23 @@ public class InfluenceFieldCullingTests
         }
     }
 
-    private sealed class FixedCuller : IInfluenceSourceCuller<FloatPointInfluenceSource>
+    private sealed class FixedIndex : IInfluenceSourceIndex<FloatPointInfluenceSource>
     {
-        private readonly List<FloatPointInfluenceSource>? _sources;
+        private readonly List<FloatPointInfluenceSource>? _selectedSources;
 
-        public FixedCuller(List<FloatPointInfluenceSource>? sources)
+        public FixedIndex(
+            IReadOnlyList<FloatPointInfluenceSource> sources,
+            List<FloatPointInfluenceSource>? selectedSources)
         {
-            _sources = sources;
+            Sources = Array.AsReadOnly(sources.ToArray());
+            _selectedSources = selectedSources;
         }
 
-        public List<FloatPointInfluenceSource> Cull(PointXY point)
+        public IReadOnlyList<FloatPointInfluenceSource> Sources { get; }
+
+        public List<FloatPointInfluenceSource> SelectSources(PointXY point)
         {
-            return _sources!;
+            return _selectedSources!;
         }
     }
 }

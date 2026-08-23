@@ -1,10 +1,12 @@
-# Source Culling
+# Source Indexing and Culling
 
-Culling selects a local subset of sources before the sampler computes a value.
+An influence source index owns an immutable snapshot and selects relevant sources before the sampler computes a value.
 This is useful when the field should be driven by nearby geometric neighborhoods instead of every source.
+Pass either `sampler` and a source list to sample every source, or `sampler` and an index to use indexed selection.
+The indexed form does not require the source list separately because the index is its single owner.
 
 The example below uses the same source layout, colors, and raster grid as the culling map snapshot tests.
-It writes rasters where each cell is colored by the sources selected by a culler at that cell center.
+It writes rasters where each cell is colored by the sources selected by an index at that cell center.
 
 ```csharp
 using System.Collections.Generic;
@@ -36,29 +38,29 @@ var sourceColors = new Dictionary<PointXY, RGBA16BitColor>
     { sources[4].Position, new RGBA16BitColor(0xa8a8, 0x5555, 0xf7f7, 0xffff) }
 };
 
-var halfPlaneCuller = new HalfPlaneCuller<FloatPointInfluenceSource>(sources);
-sources
-    .RasterizeCullingMap(grid, halfPlaneCuller, point => sourceColors[point])
+var halfPlaneIndex = new HalfPlaneInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+halfPlaneIndex
+    .RasterizeCullingMap(grid, point => sourceColors[point])
     .SaveAsPng("half-plane-culling-map.png");
 
-var delaunayCuller = new DelaunayCuller<FloatPointInfluenceSource>(sources);
-sources
-    .RasterizeCullingMap(grid, delaunayCuller, point => sourceColors[point])
+var delaunayIndex = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+delaunayIndex
+    .RasterizeCullingMap(grid, point => sourceColors[point])
     .SaveAsPng("delaunay-culling-map.png");
 ```
 
 ## Half-Plane Culling
 
-`HalfPlaneCuller<TPointSource>` orders sources by distance from the sampled point and excludes sources hidden behind half-plane boundaries created by nearer sources.
+`HalfPlaneInfluenceSourceIndex<TPointSource>` orders sources by distance from the sampled point and excludes sources hidden behind half-plane boundaries created by nearer sources.
 
 ![Half-plane culling map](../../assets/spatial2d/influence/half-plane-culling-map.png)
 
 ## Delaunay Culling
 
-`DelaunayCuller<TPointSource>` selects the Delaunay triangle containing the sampled point.
+`DelaunayInfluenceSourceIndex<TPointSource>` selects the sources of the Delaunay triangle containing the sampled point.
 Outside the triangulated area, it falls back to the nearest convex hull feature.
 
 ![Delaunay culling map](../../assets/spatial2d/influence/delaunay-culling-map.png)
 
-The current culler implementation uses float geometry with the library geometry tolerance.
-It builds the triangulation up front, then checks triangles linearly for each sampled point.
+The current index implementation uses float geometry with the library geometry tolerance.
+It builds the triangulation and its spatial lookup structure up front.

@@ -14,8 +14,8 @@ var sources = new[]
 };
 
 var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
-var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
-var field = new FloatPointInfluenceField(sampler, sources, culler);
+var sourceIndex = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+var field = new FloatPointInfluenceField(sampler, sourceIndex);
 
 var grid = new RasterGeometry(
     new PointXY(0f, 0f),

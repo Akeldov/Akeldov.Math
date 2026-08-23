@@ -54,13 +54,13 @@ internal static class InfluencePngRenderer
         return EncodeRgbaPng(width, height, pixels);
     }
 
-    public static byte[] RenderCullerSelection(
-        IInfluenceSourceCuller<FloatPointInfluenceSource> culler,
-        IReadOnlyList<FloatPointInfluenceSource> sources,
+    public static byte[] RenderIndexSelection(
+        IInfluenceSourceIndex<FloatPointInfluenceSource> sourceIndex,
         VectorXY fieldSize,
         int width,
         int height)
     {
+        IReadOnlyList<FloatPointInfluenceSource> sources = sourceIndex.Sources;
         var pixels = new byte[width * height * 4];
         int[] hullIndices = GetConvexHullIndices(sources);
         var fallbackBlendColor = new Rgba(248, 250, 252, 255);
@@ -73,7 +73,7 @@ internal static class InfluencePngRenderer
             {
                 float sampleX = (x + 0.5f) * fieldSize.X / width;
                 var point = new PointXY(sampleX, sampleY);
-                List<FloatPointInfluenceSource> selectedSources = culler.Cull(point);
+                List<FloatPointInfluenceSource> selectedSources = sourceIndex.SelectSources(point);
                 Rgba color = SelectionColor(sources, selectedSources);
 
                 if (!PointInPolygon(point, sources, hullIndices))
@@ -284,7 +284,7 @@ internal static class InfluencePngRenderer
                 return i;
         }
 
-        return 0;
+        throw new InvalidOperationException("Selected source does not belong to the index snapshot.");
     }
 
     private static Rgba SourceColor(int index)

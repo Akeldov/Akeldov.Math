@@ -6,11 +6,11 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Fields;
 
 [MemoryDiagnoser]
 [ShortRunJob]
-public class DelaunayCullerBenchmarks
+public class DelaunayInfluenceSourceIndexBenchmarks
 {
     private FloatPointInfluenceSource[] _sources = null!;
     private PointXY[] _queries = null!;
-    private DelaunayCuller<FloatPointInfluenceSource> _culler = null!;
+    private DelaunayInfluenceSourceIndex<FloatPointInfluenceSource> _index = null!;
 
     [Params(32, 128, 512)]
     public int SourceCount { get; set; }
@@ -36,22 +36,22 @@ public class DelaunayCullerBenchmarks
         for (int i = 0; i < _queries.Length; i++)
             _queries[i] = NextPoint(random, 1000f);
 
-        _culler = new DelaunayCuller<FloatPointInfluenceSource>(_sources);
+        _index = new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(_sources);
     }
 
     [Benchmark]
-    public DelaunayCuller<FloatPointInfluenceSource> Build()
+    public DelaunayInfluenceSourceIndex<FloatPointInfluenceSource> Build()
     {
-        return new DelaunayCuller<FloatPointInfluenceSource>(_sources);
+        return new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(_sources);
     }
 
     [Benchmark]
-    public int CullQueries()
+    public int SelectSources()
     {
         int selectedSourceCount = 0;
 
         for (int i = 0; i < _queries.Length; i++)
-            selectedSourceCount += _culler.Cull(_queries[i]).Count;
+            selectedSourceCount += _index.SelectSources(_queries[i]).Count;
 
         return selectedSourceCount;
     }
