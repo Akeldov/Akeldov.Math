@@ -81,10 +81,9 @@ List<PointXY> lineIntersections = segment.GetPointIntersections(probeLine);
 `GetPointIntersections(Ray)` использует стандартный геометрический допуск библиотеки. Пересечения
 с `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment` или
 `ParameterizedSegmentChain`, `Arc` или `ParameterizedArc` используют точные сравнения для линейных
-и круговых исходных кривых. `QuadraticBezier` и `CubicBezier` дополнительно предоставляют численную
-перегрузку для `Arc`: исходный полином четвёртой или шестой степени изолируется в `double`, после чего
-координаты округляются до `float` без параметра геометрического допуска. Перегрузки для
-`ParameterizedArc` у них пока нет.
+и круговых исходных кривых. `QuadraticBezier` и `CubicBezier` дополнительно предоставляют численные
+перегрузки для `Arc` и `ParameterizedArc`: исходный полином четвёртой или шестой степени изолируется
+в `double`, после чего координаты округляются до `float` без параметра геометрического допуска.
 
 ## Учесть наложения и концы
 

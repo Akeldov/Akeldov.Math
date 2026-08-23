@@ -284,6 +284,49 @@ public class BezierTests
     }
 
     [Test]
+    public void QuadraticBezierParameterizedArcIntersections_WhenArcIsClockwise_ReturnsPointsInAngularDirection()
+    {
+        var curve = new QuadraticBezier(
+            new PointXY(0f, -2f),
+            new PointXY(0f, 0f),
+            new PointXY(0f, 2f));
+        var arc = new ParameterizedArc(
+            new PointXY(0f, 0f),
+            1f,
+            0f,
+            2f * MathF.PI,
+            AngularDirection.Clockwise);
+
+        List<PointXY> intersections = curve.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 0f, -1f);
+        AssertPoint(intersections[1], 0f, 1f);
+    }
+
+    [Test]
+    public void CubicBezierParameterizedArcIntersections_WhenArcIsClockwise_ReturnsPointsInAngularDirection()
+    {
+        var curve = new CubicBezier(
+            new PointXY(0f, -2f),
+            new PointXY(0f, -2f / 3f),
+            new PointXY(0f, 2f / 3f),
+            new PointXY(0f, 2f));
+        var arc = new ParameterizedArc(
+            new PointXY(0f, 0f),
+            1f,
+            0f,
+            2f * MathF.PI,
+            AngularDirection.Clockwise);
+
+        List<PointXY> intersections = curve.GetPointIntersections(arc);
+
+        Assert.That(intersections, Has.Count.EqualTo(2));
+        AssertPoint(intersections[0], 0f, -1f);
+        AssertPoint(intersections[1], 0f, 1f);
+    }
+
+    [Test]
     public void QuadraticBezier_CountRightwardCrossings_CountsRootsAndExcludesTangent()
     {
         var curve = new QuadraticBezier(

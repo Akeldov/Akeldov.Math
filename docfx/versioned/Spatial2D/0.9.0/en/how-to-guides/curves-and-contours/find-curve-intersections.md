@@ -80,9 +80,9 @@ polynomial of the original curve. General `BezierCurve` does not provide these o
 `GetPointIntersections(Ray)` uses the library's standard geometry tolerance. Intersections with
 `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, or
 `ParameterizedSegmentChain`, `Arc`, or `ParameterizedArc` use exact comparisons for linear and
-circular source curves. `QuadraticBezier` and `CubicBezier` additionally provide a numerical `Arc`
-overload that isolates the original quartic or sextic polynomial in `double` and rounds coordinates
-to `float` without a geometry-epsilon parameter. They do not yet provide `ParameterizedArc`.
+circular source curves. `QuadraticBezier` and `CubicBezier` additionally provide numerical `Arc`
+and `ParameterizedArc` overloads that isolate the original quartic or sextic polynomial in `double`
+and round coordinates to `float` without a geometry-epsilon parameter.
 
 ## Account for overlaps and endpoints
 
