@@ -18,7 +18,33 @@ Akeldov.Math.Spatial2D.Curves.SegmentIntersectionExtensions
 *REMOVED*Akeldov.Math.Spatial2D.Contours.ParameterizedRectangleContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Contours.RectangleContour.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Curves.Arc.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.BezierCurve(params Akeldov.Math.Spatial2D.PointXY[]! controlPoints) -> void
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.BezierCurve(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! controlPoints) -> void
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.ControlPoints.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.Degree.get -> int
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.EndPoint.get -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.Equals(Akeldov.Math.Spatial2D.Curves.BezierCurve? other) -> bool
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.Flatten(int segmentCount) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.ParameterizedSegment>!
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPointAt(float t) -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.GetPointIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.Length.get -> float
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.ProjectWithParameter(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.ParameterizedCurveProjection
+*REMOVED*Akeldov.Math.Spatial2D.Curves.BezierCurve.StartPoint.get -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*override Akeldov.Math.Spatial2D.Curves.BezierCurve.Equals(object? obj) -> bool
+*REMOVED*override Akeldov.Math.Spatial2D.Curves.BezierCurve.GetHashCode() -> int
+*REMOVED*override Akeldov.Math.Spatial2D.Curves.BezierCurve.ToString() -> string!
+*REMOVED*static Akeldov.Math.Spatial2D.Curves.BezierCurve.operator !=(Akeldov.Math.Spatial2D.Curves.BezierCurve? left, Akeldov.Math.Spatial2D.Curves.BezierCurve? right) -> bool
+*REMOVED*static Akeldov.Math.Spatial2D.Curves.BezierCurve.operator +(Akeldov.Math.Spatial2D.Curves.BezierCurve! left, Akeldov.Math.Spatial2D.VectorXY right) -> Akeldov.Math.Spatial2D.Curves.BezierCurve!
+*REMOVED*static Akeldov.Math.Spatial2D.Curves.BezierCurve.operator -(Akeldov.Math.Spatial2D.Curves.BezierCurve! left, Akeldov.Math.Spatial2D.VectorXY right) -> Akeldov.Math.Spatial2D.Curves.BezierCurve!
+*REMOVED*static Akeldov.Math.Spatial2D.Curves.BezierCurve.operator ==(Akeldov.Math.Spatial2D.Curves.BezierCurve? left, Akeldov.Math.Spatial2D.Curves.BezierCurve? right) -> bool
 *REMOVED*Akeldov.Math.Spatial2D.Curves.CubicBezier.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Curves.ICurve.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 *REMOVED*Akeldov.Math.Spatial2D.Curves.Line.GetRayIntersections(Akeldov.Math.Spatial2D.Curves.Ray ray, float geometryEpsilon = 1E-06) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!

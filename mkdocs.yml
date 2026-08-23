@@ -59,7 +59,6 @@ nav:
                   - Overview: Spatial2D/curves/bezier/index.md
                   - QuadraticBezier: Spatial2D/curves/bezier/quadratic-bezier.md
                   - CubicBezier: Spatial2D/curves/bezier/cubic-bezier.md
-                  - BezierCurve: Spatial2D/curves/bezier/bezier-curve.md
           - Contours:
               - Overview: Spatial2D/contours/index.md
               - Circular:

@@ -29,17 +29,20 @@ Library Ownership means the library keeps control over mutation through its publ
 This contract is used for structural views, retained state, validated pass-through inputs, and semantic algorithm results whose order, cardinality, or other invariants must be preserved.
 
 ```csharp
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var curve = new BezierCurve(
-    new PointXY(0f, 0f),
-    new PointXY(1f, 2f),
-    new PointXY(3f, 0f));
+var contour = new CompositeContour(
+    new IFinitePath[]
+    {
+        new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
+        new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(0f, 2f)),
+        new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
+    });
 
-var controlPoints = curve.ControlPoints; // IReadOnlyList<PointXY>
-bool isReadOnlyCollection = controlPoints is ReadOnlyCollection<PointXY>; // true
+IReadOnlyList<IFinitePath> curves = contour.Curves;
 ```
 
 Library Ownership describes the returned API surface rather than necessarily identifying who allocated the underlying collection. For example, a validated input may be returned as-is without granting mutation through the returned contract.

@@ -3,7 +3,7 @@ using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
-public class BezierCurveTests
+public class BezierTests
 {
     [Test]
     public void QuadraticBezier_GetPointAt_ReturnsQuadraticPoint()
@@ -59,36 +59,6 @@ public class BezierCurveTests
 
         AssertPoint(projection.ProjectedPoint, 1.5f, 2.25f);
         Assert.That(projection.Distance, Is.EqualTo(0.75f).Within(GeometryConstants.GeometryEpsilon));
-    }
-
-    [Test]
-    public void BezierCurve_GetPointAt_UsesArbitraryDegreeDeCasteljauEvaluation()
-    {
-        var curve = new BezierCurve(
-            new PointXY(0f, 0f),
-            new PointXY(0f, 3f),
-            new PointXY(3f, 3f),
-            new PointXY(3f, 0f));
-
-        Assert.That(curve.Degree, Is.EqualTo(3));
-        AssertPoint(curve.GetPointAt(0.5f), 1.5f, 2.25f);
-    }
-
-    [Test]
-    public void BezierCurve_Constructor_CopiesControlPoints()
-    {
-        var controlPoints = new[]
-        {
-            new PointXY(0f, 0f),
-            new PointXY(1f, 1f),
-            new PointXY(2f, 0f)
-        };
-
-        var curve = new BezierCurve(controlPoints);
-        controlPoints[1] = new PointXY(10f, 10f);
-
-        Assert.That(curve.ControlPoints, Has.Count.EqualTo(3));
-        AssertPoint(curve.ControlPoints[1], 1f, 1f);
     }
 
     [Test]
@@ -275,18 +245,6 @@ public class BezierCurveTests
     }
 
     [Test]
-    public void BezierCurve_CountRightwardCrossings_UsesCachedApproximation()
-    {
-        var curve = new BezierCurve(
-            new PointXY(0f, 0f),
-            new PointXY(1f, 2f),
-            new PointXY(2f, 0f));
-
-        Assert.That(curve.CountRightwardCrossings(new PointXY(-1f, 0.5f)), Is.EqualTo(2));
-        Assert.That(curve.CountRightwardCrossings(new PointXY(3f, 0.5f)), Is.Zero);
-    }
-
-    [Test]
     public void QuadraticBezier_Flatten_ReturnsNewCallerOwnedMutableSegments()
     {
         var curve = new QuadraticBezier(
@@ -306,7 +264,7 @@ public class BezierCurveTests
     }
 
     [Test]
-    public void BezierCurve_WhenUsedInCompositeContour_CanEncloseArea()
+    public void QuadraticBezier_WhenUsedInCompositeContour_CanEncloseArea()
     {
         var arch = new QuadraticBezier(
             new PointXY(0f, 0f),
@@ -347,26 +305,6 @@ public class BezierCurveTests
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() => curve.Flatten(segmentCount));
 
         Assert.That(exception!.ParamName, Is.EqualTo("segmentCount"));
-    }
-
-    [Test]
-    public void Constructor_WhenControlPointCoordinateIsInvalid_Throws()
-    {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new BezierCurve(
-                new PointXY(0f, 0f),
-                new PointXY(float.PositiveInfinity, 0f)));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("controlPoints"));
-    }
-
-    [Test]
-    public void BezierCurve_Constructor_WhenTooFewControlPointsAreProvided_Throws()
-    {
-        var exception = Assert.Throws<ArgumentException>(() =>
-            new BezierCurve(new[] { new PointXY(0f, 0f) }));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("controlPoints"));
     }
 
     private static void AssertPoint(PointXY actual, float expectedX, float expectedY)

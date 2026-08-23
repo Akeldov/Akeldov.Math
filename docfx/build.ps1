@@ -140,6 +140,8 @@ function Update-MergedArticleContributionLinks {
         [Parameter(Mandatory)]
         [string] $OverrideRoot,
 
+        [string[]] $InheritedOverrideRoots,
+
         [Parameter(Mandatory)]
         [string] $StageRoot,
 
@@ -165,12 +167,22 @@ function Update-MergedArticleContributionLinks {
                 $relativeArticlePath = [System.IO.Path]::ChangeExtension(
                     (Get-RelativeSitePath -Root $outputRoot -Path $_.FullName),
                     '.md')
+                $sourcePath = Join-Path `
+                    $languageBaseRoot $relativeArticlePath
+
+                foreach ($inheritedOverrideRoot in $InheritedOverrideRoots) {
+                    $inheritedOverridePath = Join-Path `
+                        (Join-Path $inheritedOverrideRoot $language) `
+                        $relativeArticlePath
+                    if (Test-Path -LiteralPath $inheritedOverridePath) {
+                        $sourcePath = $inheritedOverridePath
+                    }
+                }
+
                 $overridePath = Join-Path `
                     $languageOverrideRoot $relativeArticlePath
-                $sourcePath = if (Test-Path -LiteralPath $overridePath) {
-                    $overridePath
-                } else {
-                    Join-Path $languageBaseRoot $relativeArticlePath
+                if (Test-Path -LiteralPath $overridePath) {
+                    $sourcePath = $overridePath
                 }
 
                 if (-not (Test-Path -LiteralPath $sourcePath)) {
@@ -1881,10 +1893,18 @@ function Add-VersionAliasRedirects {
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $localDocfx = Join-Path $repositoryRoot '.tmp\docfx-tool\docfx.exe'
 $siteRoot = Join-Path $PSScriptRoot '_site\Akeldov.Math'
+$spatial2DUpcomingApiRoot = Join-Path `
+    $PSScriptRoot 'api\Spatial2D\upcoming'
+$hexesUpcomingApiRoot = Join-Path `
+    $PSScriptRoot 'api\Hexes\upcoming'
 $spatial2DArticleBaseRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.8.0'
 $spatial2DArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\0.9.0'
+$spatial2DUpcomingArticleOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\upcoming'
+$spatial2DStableArticleStageRoot = Join-Path `
+    $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-stable'
 $spatial2DUpcomingArticleStageRoot = Join-Path `
     $repositoryRoot '.tmp\docfx-upcoming\Spatial2D'
 $hexesArticleBaseRoot = Join-Path `
@@ -1909,10 +1929,24 @@ if (Test-Path -LiteralPath $siteRoot) {
     Remove-Item -LiteralPath $siteRoot -Recurse -Force
 }
 
+foreach ($upcomingApiRoot in @(
+    $spatial2DUpcomingApiRoot,
+    $hexesUpcomingApiRoot)) {
+    if (Test-Path -LiteralPath $upcomingApiRoot) {
+        Remove-Item -LiteralPath $upcomingApiRoot -Recurse -Force
+    }
+}
+
 New-MergedArticleSource `
     -RepositoryRoot $repositoryRoot `
     -BaseRoot $spatial2DArticleBaseRoot `
     -OverrideRoot $spatial2DArticleOverrideRoot `
+    -StageRoot $spatial2DStableArticleStageRoot
+
+New-MergedArticleSource `
+    -RepositoryRoot $repositoryRoot `
+    -BaseRoot $spatial2DStableArticleStageRoot `
+    -OverrideRoot $spatial2DUpcomingArticleOverrideRoot `
     -StageRoot $spatial2DUpcomingArticleStageRoot
 
 New-MergedArticleSource `
@@ -1932,12 +1966,14 @@ Update-MergedArticleContributionLinks `
     -RepositoryRoot $repositoryRoot `
     -SiteRoot $siteRoot `
     -BaseRoot $spatial2DArticleBaseRoot `
-    -OverrideRoot $spatial2DArticleOverrideRoot `
+    -OverrideRoot $spatial2DUpcomingArticleOverrideRoot `
+    -InheritedOverrideRoots @($spatial2DArticleOverrideRoot) `
     -StageRoot $spatial2DUpcomingArticleStageRoot `
     -Library 'Spatial2D' `
     -VersionPath 'upcoming'
 
 Remove-Item -LiteralPath $spatial2DUpcomingArticleStageRoot -Recurse -Force
+Remove-Item -LiteralPath $spatial2DStableArticleStageRoot -Recurse -Force
 
 Update-MergedArticleContributionLinks `
     -RepositoryRoot $repositoryRoot `

@@ -31,7 +31,6 @@ Akeldov.Math.Spatial2D is a .NET library for two-dimensional geometry, curves, c
     - [Bezier Curves](curves/bezier/index.md)
         - [QuadraticBezier](curves/bezier/quadratic-bezier.md)
         - [CubicBezier](curves/bezier/cubic-bezier.md)
-        - [BezierCurve](curves/bezier/bezier-curve.md)
 - [Contours](contours/index.md)
     - [Circular](contours/circular/index.md)
         - [Circle](contours/circle.md)

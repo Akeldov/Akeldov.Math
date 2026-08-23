@@ -8,7 +8,6 @@ Bezier curves are finite directed paths shaped by endpoints and control points. 
 | --- | ---: | ---: | --- |
 | [`QuadraticBezier`](quadratic-bezier.md) | 2 | 1 | A simple bend or TrueType-style quadratic outline is needed. |
 | [`CubicBezier`](cubic-bezier.md) | 3 | 2 | Separate outgoing and incoming handles are needed for vector drawing paths. |
-| [`BezierCurve`](bezier-curve.md) | `Count - 1` | Variable | The degree is data-driven or higher than three. |
 
 All three types implement `IFinitePath`. `StartPoint` and `EndPoint` define traversal direction, and the control points shape the curve without usually lying on it.
 
@@ -34,5 +33,3 @@ var curve = new CubicBezier(
 PointXY middleByParameter = curve.GetPointAt(0.5f);          // (1.5, 2.25)
 PointXY middleByLength = curve.GetPoint(curve.Length * 0.5f);
 ```
-
-`BezierCurve` copies its input control points and exposes the copied structural state through `IReadOnlyList<PointXY>`. Use `QuadraticBezier` or `CubicBezier` when the degree is known at compile time and named control-point properties are more convenient.
