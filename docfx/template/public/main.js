@@ -267,73 +267,45 @@ async function getVersionContext() {
 }
 
 async function getLanguageContext() {
-    const moduleUrl = new URL(import.meta.url);
-    const registryUrls = [
-        new URL('../../languages.json', moduleUrl),
-        new URL('../languages.json', moduleUrl)
-    ];
-
-    for (const registryUrl of registryUrls) {
-        const registry = await fetchJson(registryUrl);
-        if (!Array.isArray(registry?.languages) || registry.languages.length === 0) {
-            continue;
-        }
-
-        const rootUrl = new URL('./', registryUrl);
-        if (!window.location.pathname.startsWith(rootUrl.pathname)) {
-            continue;
-        }
-
-        const relativePath = window.location.pathname.substring(rootUrl.pathname.length);
-        const segments = relativePath.split('/').filter(Boolean);
-        const localizedLanguage = registry.languages.find(
-            language => language.path && language.path === segments[0]);
-        const pagePath = localizedLanguage
-            ? segments.slice(1).join('/')
-            : segments.join('/');
-        const apiPage = pagePath === 'api' || pagePath.startsWith('api/');
-        const preferredLanguageCode = apiPage && hasRussianLanguageContext()
-            ? 'ru'
-            : 'en';
-        const currentLanguage = apiPage
-            ? registry.languages.find(
-                language => language.code === preferredLanguageCode)
-                ?? registry.languages[0]
-            : localizedLanguage
-                ?? registry.languages.find(language => !language.path)
-                ?? registry.languages[0];
-
-        return {
-            apiPage,
-            currentLanguage,
-            languages: registry.languages,
-            pagePath: pagePath || 'index.html',
-            rootUrl
-        };
+    const rootUrl = new URL('../', import.meta.url);
+    const registry = await fetchJson(new URL('languages.json', rootUrl));
+    if (!Array.isArray(registry?.languages) || registry.languages.length === 0
+        || !window.location.pathname.startsWith(rootUrl.pathname)) {
+        return null;
     }
 
-    return null;
+    const relativePath = window.location.pathname.substring(rootUrl.pathname.length);
+    const segments = relativePath.split('/').filter(Boolean);
+    const localizedLanguage = registry.languages.find(
+        language => language.path && language.path === segments[0]);
+    const pagePath = localizedLanguage
+        ? segments.slice(1).join('/')
+        : segments.join('/');
+    const apiPage = pagePath === 'api' || pagePath.startsWith('api/');
+    const preferredLanguageCode = apiPage && hasRussianLanguageContext()
+        ? 'ru'
+        : 'en';
+    const currentLanguage = apiPage
+        ? registry.languages.find(
+            language => language.code === preferredLanguageCode)
+            ?? registry.languages[0]
+        : localizedLanguage
+            ?? registry.languages.find(language => !language.path)
+            ?? registry.languages[0];
+
+    return {
+        apiPage,
+        currentLanguage,
+        languages: registry.languages,
+        pagePath: pagePath || 'index.html',
+        rootUrl
+    };
 }
 
 async function getLibraryNavigationContext() {
-    const moduleUrl = new URL(import.meta.url);
-    const registryUrls = [
-        new URL('../../library-navigation.json', moduleUrl),
-        new URL('../library-navigation.json', moduleUrl)
-    ];
-    let registry = null;
-    let rootUrl = null;
-
-    for (const registryUrl of registryUrls) {
-        const candidate = await fetchJson(registryUrl);
-        if (Array.isArray(candidate?.libraries)) {
-            registry = candidate;
-            rootUrl = new URL('./', registryUrl);
-            break;
-        }
-    }
-
-    if (!registry || !rootUrl) {
+    const rootUrl = new URL('../', import.meta.url);
+    const registry = await fetchJson(new URL('library-navigation.json', rootUrl));
+    if (!Array.isArray(registry?.libraries)) {
         return null;
     }
 

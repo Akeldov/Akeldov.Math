@@ -24,7 +24,7 @@ dotnet run
 The exact resolution is derived from the map bounds, margin, and requested pixel density. The
 program prints that resolution and the absolute path to `hex-elevation.png`.
 
-![Smoothly interpolated hex-map elevation values](../../../../../../assets/hexes/tutorials/rasterizing-a-hex-map.png)
+![Smoothly interpolated hex-map elevation values](/Akeldov.Math/assets/hexes/tutorials/rasterizing-a-hex-map.png)
 
 The image shows the procedural elevation field blended between hex centers. The half-radius
 margin is transparent, and finite-map boundary samples are normalized from whichever neighboring

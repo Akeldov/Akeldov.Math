@@ -18,7 +18,10 @@
       {
         "src": "../../..",
         "files": [
-          "toc.yml"
+          "toc.yml",
+          "index.md",
+          "about.md",
+          "Libraries/index.md"
         ]
       },
       {
@@ -48,6 +51,15 @@
           "index.md"
         ],
         "dest": "api/Spatial2D/1.0.0"
+      }
+    ],
+    "resource": [
+      {
+        "src": "../../..",
+        "files": [
+          "Spatial2D/index.html",
+          "Hexes/index.html"
+        ]
       }
     ],
     "output": "../../../../.tmp/docfx-versioned/Spatial2D-1.0.0/site/Akeldov.Math",
