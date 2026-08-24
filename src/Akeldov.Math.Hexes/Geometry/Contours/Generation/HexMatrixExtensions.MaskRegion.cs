@@ -142,12 +142,12 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             return new ContourBasedRegion(contours);
         }
 
-        private static List<IFinitePath> BuildClosedSegmentChain(
+        private static List<IContourPath> BuildClosedSegmentChain(
             IReadOnlyList<ParameterizedSegment> segments,
             bool[] used,
             int startIndex)
         {
-            var orderedCurves = new List<IFinitePath>();
+            var orderedCurves = new List<IContourPath>();
 
             used[startIndex] = true;
             orderedCurves.Add(segments[startIndex]);

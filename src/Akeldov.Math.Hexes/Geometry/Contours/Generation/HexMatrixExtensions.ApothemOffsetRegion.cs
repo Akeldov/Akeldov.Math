@@ -53,7 +53,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 throw new ArgumentNullException(nameof(polyhexGeometry));
 
             ContourBasedRegion sourceRegion = polyhexGeometry.ToRegion(layout);
-            var offsetCurves = new List<IFinitePath>();
+            var offsetCurves = new List<IContourPath>();
 
             for (int i = 0; i < sourceRegion.Contours.Count; i++)
             {
@@ -69,7 +69,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         private static void AddOffsetCandidateCurves(
             IContour sourceContour,
             float offsetDistance,
-            List<IFinitePath> offsetCurves)
+            List<IContourPath> offsetCurves)
         {
             ParameterizedSegment[] sourceSegments = GetSourceSegments(sourceContour);
             ParameterizedSegment[] offsetSegments = OffsetOutward(sourceSegments, offsetDistance);
@@ -215,16 +215,16 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
         private static ContourBasedRegion CreateOuterOffsetRegion(
             ContourBasedRegion sourceRegion,
-            IReadOnlyList<IFinitePath> candidateCurves,
+            IReadOnlyList<IContourPath> candidateCurves,
             float offsetDistance)
         {
-            List<IFinitePath> sections = SplitCurvesAtIntersections(candidateCurves);
-            var boundarySections = new List<IFinitePath>(sections.Count);
+            List<IContourPath> sections = SplitCurvesAtIntersections(candidateCurves);
+            var boundarySections = new List<IContourPath>(sections.Count);
             float offsetEpsilon = GetOffsetEpsilon(offsetDistance);
 
             for (int i = 0; i < sections.Count; i++)
             {
-                IFinitePath section = sections[i];
+                IContourPath section = sections[i];
                 if (section.Length <= offsetEpsilon)
                     continue;
 
@@ -239,7 +239,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             return new ContourBasedRegion(OrderClosedContours(boundarySections));
         }
 
-        private static List<IFinitePath> SplitCurvesAtIntersections(IReadOnlyList<IFinitePath> curves)
+        private static List<IContourPath> SplitCurvesAtIntersections(IReadOnlyList<IContourPath> curves)
         {
             var splitCoordinates = new List<float>[curves.Count];
 
@@ -260,7 +260,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 }
             }
 
-            var sections = new List<IFinitePath>();
+            var sections = new List<IContourPath>();
 
             for (int i = 0; i < curves.Count; i++)
             {
@@ -298,8 +298,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             splitCoordinates.Add(coordinate);
         }
 
-        private static IFinitePath CreateCurveSection(
-            IFinitePath curve,
+        private static IContourPath CreateCurveSection(
+            IContourPath curve,
             float startCoordinate,
             float endCoordinate)
         {
@@ -474,7 +474,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 coordinate <= 1f + GeometryConstants.GeometryEpsilon;
         }
 
-        private static List<IContour> OrderClosedContours(IReadOnlyList<IFinitePath> curves)
+        private static List<IContour> OrderClosedContours(IReadOnlyList<IContourPath> curves)
         {
             var used = new bool[curves.Count];
             var contours = new List<IContour>();
@@ -484,7 +484,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 if (used[i])
                     continue;
 
-                List<IFinitePath> chain = BuildClosedChain(curves, used, i);
+                List<IContourPath> chain = BuildClosedChain(curves, used, i);
                 contours.Add(new CompositeContour(chain));
             }
 
@@ -494,12 +494,12 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             return contours;
         }
 
-        private static List<IFinitePath> BuildClosedChain(
-            IReadOnlyList<IFinitePath> curves,
+        private static List<IContourPath> BuildClosedChain(
+            IReadOnlyList<IContourPath> curves,
             bool[] used,
             int startIndex)
         {
-            var chain = new List<IFinitePath>();
+            var chain = new List<IContourPath>();
 
             used[startIndex] = true;
             chain.Add(curves[startIndex]);
@@ -515,7 +515,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
                 used[nextIndex] = true;
 
-                IFinitePath nextCurve = reverse ? ReverseCurve(curves[nextIndex]) : curves[nextIndex];
+                IContourPath nextCurve = reverse ? ReverseCurve(curves[nextIndex]) : curves[nextIndex];
                 chain.Add(nextCurve);
                 currentPoint = nextCurve.EndPoint;
             }
@@ -557,7 +557,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             return -1;
         }
 
-        private static IFinitePath ReverseCurve(IFinitePath curve)
+        private static IContourPath ReverseCurve(IContourPath curve)
         {
             if (curve is ParameterizedArc arc)
             {
