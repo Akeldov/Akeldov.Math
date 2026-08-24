@@ -1554,6 +1554,12 @@ function Add-VersionedLibraryDocumentation {
         throw 'Reference package path, hash, and assembly name must be specified together.'
     }
 
+    $validInheritedArticleOverrideRoots = @(
+        $InheritedArticleOverrideRoots | Where-Object {
+            -not [string]::IsNullOrWhiteSpace($_)
+        }
+    )
+
     New-Item -ItemType Directory -Path $temporaryParent -Force | Out-Null
 
     try {
@@ -1577,7 +1583,7 @@ function Add-VersionedLibraryDocumentation {
                     -Destination $articleStageRoot -Recurse
 
                 $languageStageRoot = Join-Path $articleStageRoot $language
-                $articleOverrideRoots = @($InheritedArticleOverrideRoots) +
+                $articleOverrideRoots = @($validInheritedArticleOverrideRoots) +
                     @($VersionAdapterRoot)
 
                 foreach ($articleOverrideRoot in $articleOverrideRoots) {
@@ -1679,7 +1685,7 @@ function Add-VersionedLibraryDocumentation {
                             $languageSourceRoot $relativeArticlePath
 
                         foreach ($inheritedArticleOverrideRoot in
-                            $InheritedArticleOverrideRoots) {
+                            $validInheritedArticleOverrideRoots) {
                             $inheritedOverridePath = Join-Path `
                                 (Join-Path `
                                     $inheritedArticleOverrideRoot `
