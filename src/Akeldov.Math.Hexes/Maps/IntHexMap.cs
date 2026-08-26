@@ -251,6 +251,39 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a map whose cells contain the products of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The first source map.</param>
+        /// <param name="right">The second source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when a cell product does not fit in <see cref="int"/>.
+        /// </exception>
+        public static IntHexMap operator *(IntHexMap left, IntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Topology != right.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
+
+            var values = new int[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = checked(left[index] * right[index]);
+
+            return new IntHexMap(left.Topology, values);
+        }
+
+        /// <summary>
         /// Creates a map by multiplying every cell in the source map by the specified value.
         /// </summary>
         /// <param name="map">The source map.</param>

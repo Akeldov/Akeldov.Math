@@ -19,7 +19,7 @@
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - `IntHexMap` and `FloatHexMap` support cell-wise unary negation with `-`.
-- `FloatHexMap` supports cell-wise multiplication of two maps with `*`.
+- `IntHexMap` and `FloatHexMap` support cell-wise multiplication of two maps with `*`.
 - `ToIntHexMap` and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 
 All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,

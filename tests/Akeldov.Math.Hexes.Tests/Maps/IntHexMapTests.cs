@@ -315,6 +315,7 @@ public class IntHexMapTests
         var maximum = new IntHexMap(topology, new[] { int.MaxValue });
         var minimum = new IntHexMap(topology, new[] { int.MinValue });
         var one = new IntHexMap(topology, new[] { 1 });
+        var two = new IntHexMap(topology, new[] { 2 });
         var greaterThanHalfMaximum = new IntHexMap(topology, new[] { (int.MaxValue / 2) + 1 });
 
         Assert.Multiple(() =>
@@ -325,9 +326,87 @@ public class IntHexMapTests
             Assert.Throws<OverflowException>(() => _ = minimum - one);
             Assert.Throws<OverflowException>(() => _ = minimum - 1);
             Assert.Throws<OverflowException>(() => _ = 1 - minimum);
+            Assert.Throws<OverflowException>(() => _ = greaterThanHalfMaximum * two);
             Assert.Throws<OverflowException>(() => _ = greaterThanHalfMaximum * 2);
             Assert.Throws<OverflowException>(() => _ = 2 * greaterThanHalfMaximum);
             Assert.Throws<OverflowException>(() => _ = minimum / -1);
+        });
+    }
+
+    [Test]
+    public void Multiplication_ReturnsElementWiseProductWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var left = new IntHexMap(topology, new[] { 3, -4, 8 });
+        var right = new IntHexMap(topology, new[] { 2, 3, -1 });
+
+        IntHexMap result = left * right;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(-12));
+            Assert.That(result[2], Is.EqualTo(-8));
+            Assert.That(left[0], Is.EqualTo(3));
+            Assert.That(right[0], Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Multiplication_WithEquivalentTopologies_ReturnsElementWiseProduct()
+    {
+        var left = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 2, 3 });
+        var right = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 4, -2 });
+
+        IntHexMap result = left * right;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(8));
+            Assert.That(result[1], Is.EqualTo(-6));
+        });
+    }
+
+    [Test]
+    public void Multiplication_WithDifferentTopologies_Throws()
+    {
+        var left = new IntHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var differentResolution = new IntHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var differentLayout = new IntHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left * differentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left * differentLayout)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void Multiplication_WithNullOperand_Throws()
+    {
+        var map = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR));
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing * map)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = map * missing)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
         });
     }
 
