@@ -1,5 +1,7 @@
 #nullable enable
+Akeldov.Math.Hexes.BoolHexMapExtensions
 static Akeldov.Math.Hexes.BoolHexMap.operator !(Akeldov.Math.Hexes.BoolHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BoolHexMapExtensions.ToBoolHexMap(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
