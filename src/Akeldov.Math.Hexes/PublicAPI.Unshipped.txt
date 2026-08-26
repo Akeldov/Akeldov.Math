@@ -1,3 +1,4 @@
 #nullable enable
 static Akeldov.Math.Hexes.BoolHexMap.operator !(Akeldov.Math.Hexes.BoolHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!

@@ -32,6 +32,47 @@ public class IntHexMapTests
     }
 
     [Test]
+    public void UnaryNegation_ReturnsElementWiseNegationWithoutChangingOperand()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new IntHexMap(topology, new[] { 1, -2, 0 });
+
+        IntHexMap result = -map;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(2));
+            Assert.That(result[2], Is.Zero);
+            Assert.That(map[0], Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void UnaryNegation_WhenCellContainsMinimumValue_ThrowsOverflowException()
+    {
+        var map = new IntHexMap(
+            new HexMapTopology(1, 1, Layout.OddR),
+            new[] { int.MinValue });
+
+        Assert.Throws<OverflowException>(() => _ = -map);
+    }
+
+    [Test]
+    public void UnaryNegation_WithNullOperand_Throws()
+    {
+        IntHexMap? missing = null;
+
+#pragma warning disable CS8604
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = -missing);
+#pragma warning restore CS8604
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
+
+    [Test]
     public void Addition_ReturnsElementWiseSumWithoutChangingOperands()
     {
         var topology = new HexMapTopology(3, 1, Layout.OddR);

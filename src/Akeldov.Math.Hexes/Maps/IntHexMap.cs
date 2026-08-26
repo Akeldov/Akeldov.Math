@@ -76,6 +76,29 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a map whose cells contain the arithmetic negation of the corresponding cells in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when a cell contains <see cref="int.MinValue"/>, whose negation does not fit in <see cref="int"/>.
+        /// </exception>
+        public static IntHexMap operator -(IntHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new int[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = checked(-map[index]);
+
+            return new IntHexMap(map.Topology, values);
+        }
+
+        /// <summary>
         /// Creates a map whose cells contain the sums of the corresponding cells in two source maps.
         /// </summary>
         /// <param name="left">The first source map.</param>
