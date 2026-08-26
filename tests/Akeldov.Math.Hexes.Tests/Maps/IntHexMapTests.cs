@@ -452,6 +452,99 @@ public class IntHexMapTests
     }
 
     [Test]
+    public void Division_ReturnsElementWiseIntegerQuotientWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var left = new IntHexMap(topology, new[] { 7, -5, 8 });
+        var right = new IntHexMap(topology, new[] { 2, 2, -2 });
+
+        IntHexMap result = left / right;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(-2));
+            Assert.That(result[2], Is.EqualTo(-4));
+            Assert.That(left[0], Is.EqualTo(7));
+            Assert.That(right[0], Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Division_WithEquivalentTopologies_ReturnsElementWiseIntegerQuotient()
+    {
+        var left = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 10, 6 });
+        var right = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 4, -2 });
+
+        IntHexMap result = left / right;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(2));
+            Assert.That(result[1], Is.EqualTo(-3));
+        });
+    }
+
+    [Test]
+    public void Division_WithDifferentTopologies_Throws()
+    {
+        var left = new IntHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var differentResolution = new IntHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var differentLayout = new IntHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left / differentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left / differentLayout)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void Division_WithNullOperand_Throws()
+    {
+        var map = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR), new[] { 1 });
+        IntHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing / map)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = map / missing)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Division_WithInvalidCellOperation_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var one = new IntHexMap(topology, new[] { 1 });
+        var zero = new IntHexMap(topology, new[] { 0 });
+        var minimum = new IntHexMap(topology, new[] { int.MinValue });
+        var negativeOne = new IntHexMap(topology, new[] { -1 });
+
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<DivideByZeroException>(() => _ = one / zero);
+            Assert.Throws<OverflowException>(() => _ = minimum / negativeOne);
+        });
+    }
+
+    [Test]
     public void Division_WithIntValue_DividesEveryCellWithoutChangingMap()
     {
         var topology = new HexMapTopology(3, 1, Layout.OddR);
