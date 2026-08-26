@@ -20,6 +20,7 @@
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - `IntHexMap` and `FloatHexMap` support cell-wise unary negation with `-`.
 - `IntHexMap` and `FloatHexMap` support cell-wise multiplication of two maps with `*`.
+- Mixed `FloatHexMap` and `IntHexMap` multiplication returns a `FloatHexMap` in either operand order.
 - `ToIntHexMap` and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 
 All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,

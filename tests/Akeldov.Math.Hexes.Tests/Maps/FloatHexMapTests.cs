@@ -376,6 +376,104 @@ public class FloatHexMapTests
     }
 
     [Test]
+    public void MixedMultiplication_ReturnsElementWiseFloatProductsWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var floatMap = new FloatHexMap(topology, new[] { 1.5f, -2f, 4f });
+        var intMap = new IntHexMap(topology, new[] { 2, 3, -1 });
+
+        FloatHexMap floatLeftResult = floatMap * intMap;
+        FloatHexMap intLeftResult = intMap * floatMap;
+        floatLeftResult[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(floatLeftResult.Topology, Is.EqualTo(topology));
+            Assert.That(floatLeftResult[0], Is.EqualTo(100f));
+            Assert.That(floatLeftResult[1], Is.EqualTo(-6f));
+            Assert.That(floatLeftResult[2], Is.EqualTo(-4f));
+            Assert.That(intLeftResult[0], Is.EqualTo(3f));
+            Assert.That(intLeftResult[1], Is.EqualTo(-6f));
+            Assert.That(intLeftResult[2], Is.EqualTo(-4f));
+            Assert.That(floatMap[0], Is.EqualTo(1.5f));
+            Assert.That(intMap[0], Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void MixedMultiplication_WithEquivalentTopologies_ReturnsElementWiseFloatProducts()
+    {
+        var floatMap = new FloatHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 2.5f, 3f });
+        var intMap = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 4, -2 });
+
+        FloatHexMap floatLeftResult = floatMap * intMap;
+        FloatHexMap intLeftResult = intMap * floatMap;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(floatLeftResult[0], Is.EqualTo(10f));
+            Assert.That(floatLeftResult[1], Is.EqualTo(-6f));
+            Assert.That(intLeftResult[0], Is.EqualTo(10f));
+            Assert.That(intLeftResult[1], Is.EqualTo(-6f));
+        });
+    }
+
+    [Test]
+    public void MixedMultiplication_WithDifferentTopologies_Throws()
+    {
+        var floatMap = new FloatHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var differentResolution = new IntHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var differentLayout = new IntHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = floatMap * differentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = floatMap * differentLayout)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = differentResolution * floatMap)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = differentLayout * floatMap)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void MixedMultiplication_WithNullOperand_Throws()
+    {
+        var floatMap = new FloatHexMap(new HexMapTopology(1, 1, Layout.OddR));
+        var intMap = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR));
+        FloatHexMap? missingFloatMap = null;
+        IntHexMap? missingIntMap = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missingFloatMap * intMap)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = floatMap * missingIntMap)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missingIntMap * floatMap)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = intMap * missingFloatMap)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
     public void Multiplication_WithFloatValue_MultipliesEveryCellWithoutChangingMap()
     {
         var topology = new HexMapTopology(3, 1, Layout.OddR);
