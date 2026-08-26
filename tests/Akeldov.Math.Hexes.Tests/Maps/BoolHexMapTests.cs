@@ -37,6 +37,38 @@ public class BoolHexMapTests
     }
 
     [Test]
+    public void LogicalNot_ReturnsElementWiseNegationWithoutChangingOperand()
+    {
+        var topology = new HexMapTopology(2, 2, Layout.EvenQ);
+        var map = new BoolHexMap(topology, new[] { true, false, false, true });
+
+        BoolHexMap result = !map;
+        result[0] = true;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.True);
+            Assert.That(result[1], Is.True);
+            Assert.That(result[2], Is.True);
+            Assert.That(result[3], Is.False);
+            Assert.That(map[0], Is.True);
+        });
+    }
+
+    [Test]
+    public void LogicalNot_WithNullOperand_Throws()
+    {
+        BoolHexMap? missing = null;
+
+#pragma warning disable CS8604
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = !missing);
+#pragma warning restore CS8604
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
+
+    [Test]
     public void BitwiseAnd_ReturnsElementWiseConjunctionWithoutChangingOperands()
     {
         var topology = new HexMapTopology(2, 2, Layout.EvenQ);

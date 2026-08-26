@@ -16,7 +16,7 @@
 
 ## Specialization
 
-- `BoolHexMap` adds cell-wise `&`, `|`, `^`, and conditional `Select` operations.
+- `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - `ToIntHexMap` and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 

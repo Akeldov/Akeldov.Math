@@ -42,6 +42,26 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a map whose cells contain the logical negation of the corresponding cells in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static BoolHexMap operator !(BoolHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new bool[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = !map[index];
+
+            return new BoolHexMap(map.Topology, values);
+        }
+
+        /// <summary>
         /// Creates a map whose cells contain the conjunction of the corresponding cells in two source maps.
         /// </summary>
         /// <param name="left">The first source map.</param>
