@@ -32,6 +32,37 @@ public class FloatHexMapTests
     }
 
     [Test]
+    public void UnaryNegation_ReturnsElementWiseNegationWithoutChangingOperand()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new FloatHexMap(topology, new[] { 1.5f, -2f, float.PositiveInfinity });
+
+        FloatHexMap result = -map;
+        result[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100f));
+            Assert.That(result[1], Is.EqualTo(2f));
+            Assert.That(result[2], Is.EqualTo(float.NegativeInfinity));
+            Assert.That(map[0], Is.EqualTo(1.5f));
+        });
+    }
+
+    [Test]
+    public void UnaryNegation_WithNullOperand_Throws()
+    {
+        FloatHexMap? missing = null;
+
+#pragma warning disable CS8604
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = -missing);
+#pragma warning restore CS8604
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
+
+    [Test]
     public void Addition_ReturnsElementWiseSumWithoutChangingOperands()
     {
         var topology = new HexMapTopology(3, 1, Layout.OddR);
