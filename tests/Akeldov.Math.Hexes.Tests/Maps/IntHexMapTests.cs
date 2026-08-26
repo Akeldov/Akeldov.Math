@@ -582,4 +582,49 @@ public class IntHexMapTests
 
         Assert.That(exception!.ParamName, Is.EqualTo("map"));
     }
+
+    [Test]
+    public void Remainder_WithIntValue_ReturnsElementWiseRemainderWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new IntHexMap(topology, new[] { 7, -5, 8 });
+
+        IntHexMap result = map % 3;
+        result[0] = 100;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100));
+            Assert.That(result[1], Is.EqualTo(-2));
+            Assert.That(result[2], Is.EqualTo(2));
+            Assert.That(map[0], Is.EqualTo(7));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithInvalidDivisor_Throws()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var one = new IntHexMap(topology, new[] { 1 });
+        var minimum = new IntHexMap(topology, new[] { int.MinValue });
+
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<DivideByZeroException>(() => _ = one % 0);
+            Assert.Throws<OverflowException>(() => _ = minimum % -1);
+        });
+    }
+
+    [Test]
+    public void Remainder_WithIntValueAndNullMap_Throws()
+    {
+        IntHexMap? missing = null;
+
+#pragma warning disable CS8604
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = missing % 2);
+#pragma warning restore CS8604
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
 }
