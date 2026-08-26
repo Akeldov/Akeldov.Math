@@ -22,6 +22,7 @@
 - `IntHexMap` and `FloatHexMap` support cell-wise multiplication of two maps with `*`.
 - Mixed `FloatHexMap` and `IntHexMap` multiplication returns a `FloatHexMap` in either operand order.
 - `FloatHexMap` supports cell-wise division of two maps with `/` using floating-point semantics.
+- Dividing a `FloatHexMap` by an `IntHexMap` also returns a `FloatHexMap`.
 - `ToIntHexMap` and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 
 All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,
