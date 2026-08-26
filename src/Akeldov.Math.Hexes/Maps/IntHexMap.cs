@@ -385,6 +385,42 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a map whose cells contain the integer remainders after division by the corresponding cells in another map.
+        /// </summary>
+        /// <param name="left">The source map whose cell values are the dividends.</param>
+        /// <param name="right">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        /// <exception cref="DivideByZeroException">
+        /// Thrown when a cell in <paramref name="right"/> is zero.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when a cell computes <see cref="int.MinValue"/> % <c>-1</c>.
+        /// </exception>
+        public static IntHexMap operator %(IntHexMap left, IntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Topology != right.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
+
+            var values = new int[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = checked(left[index] % right[index]);
+
+            return new IntHexMap(left.Topology, values);
+        }
+
+        /// <summary>
         /// Creates a map whose cells contain the integer remainders after division by the specified value.
         /// </summary>
         /// <param name="map">The source map whose cell values are the dividends.</param>
