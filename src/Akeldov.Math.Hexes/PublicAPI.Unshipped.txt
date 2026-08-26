@@ -6,5 +6,6 @@ static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
