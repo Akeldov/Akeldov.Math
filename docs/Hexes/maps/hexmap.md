@@ -26,9 +26,13 @@
 - `IntHexMap` supports cell-wise remainder after division by another map or an integer constant with `%`.
 - Mixed `FloatHexMap` and `IntHexMap` division returns a `FloatHexMap` in either operand order.
 - `ToBoolHexMap`, `ToIntHexMap`, and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
+- `SpatialBoolHexMap`, `SpatialIntHexMap`, and `SpatialFloatHexMap` provide the same operator surface while preserving `HexMapGeometry` in every result.
 
 All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,
 and return new maps from their operators without modifying the inputs.
+
+Binary operators between spatial maps require equal topology, origin, and radius. Spatial and
+topology-only specialized maps intentionally do not define cross-operators.
 
 ```csharp
 var topology = new HexMapTopology(4, 3, Layout.OddR);

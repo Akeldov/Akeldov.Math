@@ -1,0 +1,962 @@
+using Akeldov.Math.Hexes.Geometry;
+using System;
+
+namespace Akeldov.Math.Hexes
+{
+    /// <summary>
+    /// Stores one mutable floating-point value for every cell in a spatial hex map.
+    /// </summary>
+    public class SpatialFloatHexMap : SpatialHexMap<float>, IFloatHexMap
+    {
+        /// <summary>
+        /// Initializes an empty map whose cells contain zero.
+        /// </summary>
+        /// <param name="geometry">The spatial geometry of the map.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
+        /// </exception>
+        public SpatialFloatHexMap(HexMapGeometry geometry)
+            : base(geometry)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new hex map that uses the specified array as its backing storage.
+        /// </summary>
+        /// <param name="geometry">The spatial geometry of the map.</param>
+        /// <param name="values">
+        /// The backing array. Its length must equal the number of cells in <paramref name="geometry"/>.
+        /// Values must be stored in row-major order: X advances first, and the value at coordinates
+        /// <c>(x, y)</c> is stored at <c>y * geometry.Topology.Resolution.X + x</c>.
+        /// </param>
+        /// <remarks>
+        /// <b>Ownership warning:</b> the array is retained by the map and is not copied. The caller and
+        /// the map share the same mutable storage, so changes made through either one are visible through
+        /// the other. Do not reuse or modify the array independently when exclusive map ownership is required.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="values"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the length of <paramref name="values"/> does not match the geometry topology cell count.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
+        /// </exception>
+        public SpatialFloatHexMap(HexMapGeometry geometry, float[] values)
+            : base(geometry, values)
+        {
+        }
+
+        /// <inheritdoc/>
+        /// <exception cref="InvalidOperationException">Thrown when the map contains no cells.</exception>
+        public float Min
+        {
+            get
+            {
+                if (Topology.Count == 0)
+                    throw new InvalidOperationException("Cannot get the minimum value of an empty map.");
+
+                float min = this[0];
+                for (int index = 1; index < Topology.Count; index++)
+                    min = MathF.Min(min, this[index]);
+
+                return min;
+            }
+        }
+
+        /// <inheritdoc/>
+        /// <exception cref="InvalidOperationException">Thrown when the map contains no cells.</exception>
+        public float Max
+        {
+            get
+            {
+                if (Topology.Count == 0)
+                    throw new InvalidOperationException("Cannot get the maximum value of an empty map.");
+
+                float max = this[0];
+                for (int index = 1; index < Topology.Count; index++)
+                    max = MathF.Max(max, this[index]);
+
+                return max;
+            }
+        }
+
+        /// <summary>
+        /// Creates a map whose cells contain the arithmetic negation of the corresponding cells in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator -(SpatialFloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = -map[index];
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map whose cells contain the sums of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The first source map.</param>
+        /// <param name="right">The second source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator +(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] + right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by adding the specified value to every cell in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value to add to every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator +(SpatialFloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] + value;
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by adding the specified value to every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value to add to every cell.</param>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator +(float value, SpatialFloatHexMap map) => map + value;
+
+        /// <summary>
+        /// Creates a map whose cells contain the differences of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The source map whose cell values are the minuends.</param>
+        /// <param name="right">The source map whose cell values are the subtrahends.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator -(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] - right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by subtracting the specified value from every cell in the source map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value to subtract from every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator -(SpatialFloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] - value;
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by subtracting every source cell value from the specified value.
+        /// </summary>
+        /// <param name="value">The value used as the minuend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the subtrahends.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator -(float value, SpatialFloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = value - map[index];
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map whose cells contain the products of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The first source map.</param>
+        /// <param name="right">The second source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator *(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] * right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the products of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The floating-point source map.</param>
+        /// <param name="right">The integer source map.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator *(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] * right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the products of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The integer source map.</param>
+        /// <param name="right">The floating-point source map.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator *(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] * right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by multiplying every cell in the source map by the specified value.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value by which to multiply every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator *(SpatialFloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] * value;
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by multiplying every cell in the source map by the specified value.
+        /// </summary>
+        /// <param name="value">The value by which to multiply every cell.</param>
+        /// <param name="map">The source map.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator *(float value, SpatialFloatHexMap map) => map * value;
+
+        /// <summary>
+        /// Creates a map whose cells contain the quotients of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The source map whose cell values are the dividends.</param>
+        /// <param name="right">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator /(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] / right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the quotients of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The floating-point source map whose cell values are the dividends.</param>
+        /// <param name="right">The integer source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator /(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] / right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the quotients of the corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The integer source map whose cell values are the dividends.</param>
+        /// <param name="right">The floating-point source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator /(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] / right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by dividing every cell in the source map by the specified value.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="value">The value by which to divide every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator /(SpatialFloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] / value;
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by dividing the specified value by every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value used as the dividend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator /(float value, SpatialFloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = value / map[index];
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map whose cells contain the floating-point remainders of corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The source map whose cell values are the dividends.</param>
+        /// <param name="right">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator %(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] % right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the remainders of corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The floating-point source map whose cell values are the dividends.</param>
+        /// <param name="right">The integer source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator %(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] % right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the remainders of corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The integer source map whose cell values are the dividends.</param>
+        /// <param name="right">The floating-point source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same geometry.
+        /// </exception>
+        public static SpatialFloatHexMap operator %(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] % right[index];
+
+            return new SpatialFloatHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map whose cells contain the floating-point remainders after division by the specified value.
+        /// </summary>
+        /// <param name="map">The source map whose cell values are the dividends.</param>
+        /// <param name="value">The value used as the divisor for every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator %(SpatialFloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] % value;
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a map by taking the remainder of the specified value divided by every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value used as the dividend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialFloatHexMap operator %(float value, SpatialFloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = value % map[index];
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is less than the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator <(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] < right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is less than the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The integer source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator <(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] < right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is less than the right value.
+        /// </summary>
+        /// <param name="left">The integer source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator <(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] < right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is greater than the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator >(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] > right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is greater than the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The integer source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator >(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] > right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is greater than the right value.
+        /// </summary>
+        /// <param name="left">The integer source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator >(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] > right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is less than or equal to the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator <=(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] <= right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is less than or equal to the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The integer source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator <=(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] <= right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is less than or equal to the right value.
+        /// </summary>
+        /// <param name="left">The integer source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator <=(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] <= right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is greater than or equal to the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator >=(SpatialFloatHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] >= right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is greater than or equal to the right value.
+        /// </summary>
+        /// <param name="left">The floating-point source map containing the left values.</param>
+        /// <param name="right">The integer source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator >=(SpatialFloatHexMap left, SpatialIntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] >= right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+
+        /// <summary>
+        /// Creates a Boolean map identifying cells where the left value is greater than or equal to the right value.
+        /// </summary>
+        /// <param name="left">The integer source map containing the left values.</param>
+        /// <param name="right">The floating-point source map containing the right values.</param>
+        /// <returns>A new mutable Boolean hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
+        public static SpatialBoolHexMap operator >=(SpatialIntHexMap left, SpatialFloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Geometry != right.Geometry)
+                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+
+            var values = new bool[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] >= right[index];
+
+            return new SpatialBoolHexMap(left.Geometry, values);
+        }
+    }
+}
+

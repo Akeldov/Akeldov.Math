@@ -11,7 +11,7 @@
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
-		<PackageReleaseNotes>Added dedicated Boolean, integer, and floating-point hex maps. Integer and floating-point maps provide minimum and maximum queries, copy conversions, and arithmetic operators; Boolean maps provide logical operators. Added conditional selection for Boolean, numeric, and generic maps, deterministic Perlin-noise generation, and Gaussian blur for floating-point hex maps. Expanded public API and map-operation test coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added dedicated Boolean, integer, and floating-point hex maps, including geometry-preserving spatial variants. Integer and floating-point maps provide minimum and maximum queries, copy conversions, arithmetic, remainder, and comparison operators; Boolean maps provide logical operators. Added conditional selection for Boolean, numeric, and generic maps, deterministic Perlin-noise generation, and Gaussian blur for floating-point hex maps. Expanded public API and map-operation test coverage.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>
