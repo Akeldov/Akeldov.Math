@@ -796,4 +796,52 @@ public class FloatHexMapTests
 
         Assert.That(exception!.ParamName, Is.EqualTo("map"));
     }
+
+    [Test]
+    public void Division_WithFloatValueAsDividend_DividesByEveryCellWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new FloatHexMap(topology, new[] { 2f, -4f, 0.5f });
+
+        FloatHexMap result = 8f / map;
+        result[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100f));
+            Assert.That(result[1], Is.EqualTo(-2f));
+            Assert.That(result[2], Is.EqualTo(16f));
+            Assert.That(map[0], Is.EqualTo(2f));
+        });
+    }
+
+    [Test]
+    public void Division_WithFloatValueAsDividendAndZeroCell_UsesFloatSemantics()
+    {
+        var map = new FloatHexMap(
+            new HexMapTopology(3, 1, Layout.OddR),
+            new[] { 2f, 0f, -2f });
+
+        FloatHexMap result = 2f / map;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(1f));
+            Assert.That(result[1], Is.EqualTo(float.PositiveInfinity));
+            Assert.That(result[2], Is.EqualTo(-1f));
+        });
+    }
+
+    [Test]
+    public void Division_WithFloatValueAsDividendAndNullMap_Throws()
+    {
+        FloatHexMap? missing = null;
+
+#pragma warning disable CS8604
+        var exception = Assert.Throws<ArgumentNullException>(() => _ = 2f / missing);
+#pragma warning restore CS8604
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
 }

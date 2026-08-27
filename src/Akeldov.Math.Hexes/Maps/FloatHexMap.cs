@@ -461,5 +461,26 @@ namespace Akeldov.Math.Hexes
 
             return new FloatHexMap(map.Topology, values);
         }
+
+        /// <summary>
+        /// Creates a map by dividing the specified value by every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value used as the dividend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator /(float value, FloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = value / map[index];
+
+            return new FloatHexMap(map.Topology, values);
+        }
     }
 }
