@@ -1,7 +1,73 @@
+using Akeldov.Math.Hexes.Geometry;
+
 namespace Akeldov.Math.Hexes.Tests.Maps;
 
 public class FloatHexMapExtensionsTests
 {
+    [Test]
+    public void GetMinMax_ReturnsBothExtremaForInterfaceTypedSpatialMap()
+    {
+        var geometry = new HexMapGeometry(4, 1, 2f, Layout.OddR);
+        IHexMap<float> map = new SpatialFloatHexMap(geometry, new[] { 7f, -4f, 12f, 3f });
+
+        (float min, float max) = map.GetMinMax();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(min, Is.EqualTo(-4f));
+            Assert.That(max, Is.EqualTo(12f));
+        });
+    }
+
+    [Test]
+    public void GetMinMax_WhenMapContainsNaN_PropagatesNaN()
+    {
+        IHexMap<float> map = new HexMap<float>(
+            new HexMapTopology(3, 1, Layout.OddR),
+            new[] { 1f, float.NaN, 3f });
+
+        (float min, float max) = map.GetMinMax();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(min, Is.NaN);
+            Assert.That(max, Is.NaN);
+        });
+    }
+
+    [Test]
+    public void TryGetMinMax_WhenMapIsEmpty_ReturnsFalseAndZeroOutputs()
+    {
+        IHexMap<float> map = new HexMap<float>(new HexMapTopology(0, 0, Layout.OddR));
+
+        bool found = map.TryGetMinMax(out float min, out float max);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(found, Is.False);
+            Assert.That(min, Is.Zero);
+            Assert.That(max, Is.Zero);
+            Assert.Throws<InvalidOperationException>(() => map.GetMinMax());
+        });
+    }
+
+    [Test]
+    public void GetMinMax_WhenMapIsNull_Throws()
+    {
+        IHexMap<float>? map = null;
+
+#pragma warning disable CS8604
+        var getException = Assert.Throws<ArgumentNullException>(() => map.GetMinMax());
+        var tryException = Assert.Throws<ArgumentNullException>(() => map.TryGetMinMax(out _, out _));
+#pragma warning restore CS8604
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(getException!.ParamName, Is.EqualTo("map"));
+            Assert.That(tryException!.ParamName, Is.EqualTo("map"));
+        });
+    }
+
     [Test]
     public void ToFloatHexMap_ReturnsIndependentMutableCopy()
     {

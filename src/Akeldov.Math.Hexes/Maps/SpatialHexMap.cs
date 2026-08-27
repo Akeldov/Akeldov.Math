@@ -64,7 +64,7 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Gets the spatial geometry of the hex map.
+        /// Gets the spatial geometry of the hex map. Its topology equals <see cref="HexMap{TValue}.Topology"/>.
         /// </summary>
         public HexMapGeometry Geometry { get; }
     }

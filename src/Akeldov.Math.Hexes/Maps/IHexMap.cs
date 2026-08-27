@@ -5,6 +5,11 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Provides read-only access to values arranged over a rectangular hex-map topology.
     /// </summary>
+    /// <remarks>
+    /// This interface provides a read-only view; it does not guarantee immutable or snapshot state.
+    /// An implementing map or its backing storage may remain mutable, so values observed through the
+    /// interface can change over time.
+    /// </remarks>
     /// <typeparam name="TValue">The type stored in each hex cell.</typeparam>
     public interface IHexMap<TValue>
     {

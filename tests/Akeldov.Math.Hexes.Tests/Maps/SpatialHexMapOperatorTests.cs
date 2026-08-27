@@ -41,28 +41,20 @@ public class SpatialHexMapOperatorTests
     }
 
     [Test]
-    public void OperatorSurface_ExactlyMatchesOrdinaryMapsWithoutCrossOperators()
+    public void NativeOperatorSurface_ExactlyMatchesOrdinaryMaps()
     {
         MethodInfo[] ordinary = GetOperators(OrdinaryTypes);
-        MethodInfo[] spatial = GetOperators(SpatialTypes);
+        MethodInfo[] spatial = GetNativeSpatialOperators();
 
         Assert.Multiple(() =>
         {
-            Assert.That(ordinary, Has.Length.EqualTo(58));
-            Assert.That(spatial, Has.Length.EqualTo(58));
+            Assert.That(ordinary, Has.Length.EqualTo(62));
+            Assert.That(spatial, Has.Length.EqualTo(62));
             Assert.That(
                 spatial.Select(Signature).OrderBy(value => value),
                 Is.EqualTo(ordinary.Select(Signature).OrderBy(value => value)));
             Assert.That(spatial.Any(method => method.Name is "op_Equality" or "op_Inequality"), Is.False);
         });
-
-        foreach (MethodInfo method in GetOperators(OrdinaryTypes.Concat(SpatialTypes).ToArray()))
-        {
-            Type[] operands = method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
-            bool hasOrdinary = operands.Any(type => OrdinaryTypes.Contains(type));
-            bool hasSpatial = operands.Any(type => SpatialTypes.Contains(type));
-            Assert.That(hasOrdinary && hasSpatial, Is.False, Signature(method));
-        }
     }
 
     [Test]
@@ -70,7 +62,7 @@ public class SpatialHexMapOperatorTests
     {
         HexMapGeometry geometry = Geometry();
         MethodInfo[] ordinary = GetOperators(OrdinaryTypes);
-        Dictionary<string, MethodInfo> spatial = GetOperators(SpatialTypes).ToDictionary(Signature);
+        Dictionary<string, MethodInfo> spatial = GetNativeSpatialOperators().ToDictionary(Signature);
 
         foreach (MethodInfo ordinaryOperator in ordinary)
         {
@@ -154,12 +146,12 @@ public class SpatialHexMapOperatorTests
             new(new HexMapTopology(2, 1, Layout.EvenR), geometry.Origin, geometry.Radius),
             new(new HexMapTopology(1, 2, Layout.OddR), geometry.Origin, geometry.Radius),
         };
-        MethodInfo[] operators = GetOperators(SpatialTypes);
+        MethodInfo[] operators = GetNativeSpatialOperators();
         MethodInfo[] binaryMapOperators = operators.Where(method =>
             method.GetParameters().Length == 2 &&
             method.GetParameters().All(parameter => SpatialTypes.Contains(parameter.ParameterType))).ToArray();
 
-        Assert.That(binaryMapOperators, Has.Length.EqualTo(35));
+        Assert.That(binaryMapOperators, Has.Length.EqualTo(39));
         foreach (MethodInfo method in binaryMapOperators)
         {
             object?[] equalArguments = Arguments(method, geometry);
@@ -232,6 +224,10 @@ public class SpatialHexMapOperatorTests
     private static MethodInfo[] GetOperators(Type[] types) => types
         .SelectMany(type => type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly))
         .Where(method => method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
+        .ToArray();
+
+    private static MethodInfo[] GetNativeSpatialOperators() => GetOperators(SpatialTypes)
+        .Where(method => method.GetParameters().All(parameter => !OrdinaryTypes.Contains(parameter.ParameterType)))
         .ToArray();
 
     private static string Signature(MethodInfo method) =>

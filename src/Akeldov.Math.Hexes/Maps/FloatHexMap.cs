@@ -5,7 +5,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable floating-point value for every cell in a rectangular hex-map topology.
     /// </summary>
-    public class FloatHexMap : HexMap<float>, IFloatHexMap
+    public partial class FloatHexMap : HexMap<float>, IFloatHexMap
     {
         /// <summary>
         /// Initializes an empty map whose cells contain zero.

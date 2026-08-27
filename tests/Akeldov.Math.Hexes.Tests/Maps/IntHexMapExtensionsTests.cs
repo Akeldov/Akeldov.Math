@@ -1,7 +1,57 @@
+using Akeldov.Math.Hexes.Geometry;
+
 namespace Akeldov.Math.Hexes.Tests.Maps;
 
 public class IntHexMapExtensionsTests
 {
+    [Test]
+    public void GetMinMax_ReturnsBothExtremaForInterfaceTypedSpatialMap()
+    {
+        var geometry = new HexMapGeometry(4, 1, 2f, Layout.OddR);
+        IHexMap<int> map = new SpatialIntHexMap(geometry, new[] { 7, -4, 12, 3 });
+
+        (int min, int max) = map.GetMinMax();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(min, Is.EqualTo(-4));
+            Assert.That(max, Is.EqualTo(12));
+        });
+    }
+
+    [Test]
+    public void TryGetMinMax_WhenMapIsEmpty_ReturnsFalseAndZeroOutputs()
+    {
+        IHexMap<int> map = new HexMap<int>(new HexMapTopology(0, 0, Layout.OddR));
+
+        bool found = map.TryGetMinMax(out int min, out int max);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(found, Is.False);
+            Assert.That(min, Is.Zero);
+            Assert.That(max, Is.Zero);
+            Assert.Throws<InvalidOperationException>(() => map.GetMinMax());
+        });
+    }
+
+    [Test]
+    public void GetMinMax_WhenMapIsNull_Throws()
+    {
+        IHexMap<int>? map = null;
+
+#pragma warning disable CS8604
+        var getException = Assert.Throws<ArgumentNullException>(() => map.GetMinMax());
+        var tryException = Assert.Throws<ArgumentNullException>(() => map.TryGetMinMax(out _, out _));
+#pragma warning restore CS8604
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(getException!.ParamName, Is.EqualTo("map"));
+            Assert.That(tryException!.ParamName, Is.EqualTo("map"));
+        });
+    }
+
     [Test]
     public void ToIntHexMap_ReturnsIndependentMutableCopy()
     {

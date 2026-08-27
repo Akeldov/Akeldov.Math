@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable Boolean value for every cell in a spatial hex map.
     /// </summary>
-    public class SpatialBoolHexMap : SpatialHexMap<bool>
+    public sealed partial class SpatialBoolHexMap : SpatialHexMap<bool>
     {
         /// <summary>
         /// Initializes an empty map whose cells contain <see langword="false"/>.
@@ -159,4 +159,3 @@ namespace Akeldov.Math.Hexes
         }
     }
 }
-

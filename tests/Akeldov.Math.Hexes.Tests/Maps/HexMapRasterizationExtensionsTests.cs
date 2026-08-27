@@ -88,6 +88,21 @@ public class HexMapRasterizationExtensionsTests
     }
 
     [Test]
+    public void SpatialHexMapRasterize_WhenTopologyDiffersFromGeometry_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, radius: 1f, layout: Layout.OddR);
+        ISpatialHexMap<int> map = new InconsistentSpatialHexMap(
+            geometry,
+            new HexMapTopology(1, 1, Layout.EvenR));
+        RasterGeometry rasterGeometry = geometry.ToRasterGeometry(pixelsPerApothem: 1f);
+
+        var exception = Assert.Throws<ArgumentException>(
+            () => map.Rasterize(rasterGeometry, value => value));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
+
+    [Test]
     public void HexMapTopologyRasterize_WithMargin_ExpandsGridByMarginOnEachSide()
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);
@@ -249,5 +264,22 @@ public class HexMapRasterizationExtensionsTests
             Environment.GetFolderPath(Environment.SpecialFolder.Fonts),
             "arial.ttf");
         return File.Exists(path) ? TrueTypeFont.Load(path) : null;
+    }
+
+    private sealed class InconsistentSpatialHexMap : ISpatialHexMap<int>
+    {
+        public InconsistentSpatialHexMap(HexMapGeometry geometry, HexMapTopology topology)
+        {
+            Geometry = geometry;
+            Topology = topology;
+        }
+
+        public HexMapGeometry Geometry { get; }
+
+        public HexMapTopology Topology { get; }
+
+        public int this[VectorXYInt index] => default;
+
+        public int this[int index] => default;
     }
 }

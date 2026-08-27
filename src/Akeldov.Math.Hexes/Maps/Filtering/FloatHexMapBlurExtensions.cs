@@ -38,7 +38,40 @@ namespace Akeldov.Math.Hexes
 
             int maximumRadius = GetMaximumUsefulRadius(map.Topology);
             int radius = (int)System.Math.Min(System.Math.Ceiling(3d * sigma), maximumRadius);
-            return GaussianBlurCore(map, sigma, radius);
+            return new FloatHexMap(map.Topology, CreateBlurredValues(map, sigma, radius));
+        }
+
+        /// <summary>
+        /// Applies a Gaussian blur to a spatial floating-point hex map using a kernel truncated at
+        /// three standard deviations.
+        /// </summary>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="sigma">
+        /// The positive finite Gaussian standard deviation, measured in distances between the
+        /// centers of edge-adjacent hexes.
+        /// </param>
+        /// <returns>
+        /// A new mutable spatial floating-point hex map owned by the caller. The result preserves
+        /// the source geometry, and the source map is not modified. At map boundaries, weights are
+        /// normalized over the source cells that are present.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="sigma"/> is not finite and positive.
+        /// </exception>
+        public static SpatialFloatHexMap GaussianBlur(this SpatialFloatHexMap map, float sigma)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (float.IsNaN(sigma) || float.IsInfinity(sigma) || sigma <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(sigma), sigma, "Gaussian sigma must be finite and positive.");
+
+            int maximumRadius = GetMaximumUsefulRadius(map.Topology);
+            int radius = (int)System.Math.Min(System.Math.Ceiling(3d * sigma), maximumRadius);
+            return new SpatialFloatHexMap(map.Geometry, CreateBlurredValues(map, sigma, radius));
         }
 
         /// <summary>
@@ -76,15 +109,55 @@ namespace Akeldov.Math.Hexes
                 throw new ArgumentOutOfRangeException(nameof(radius), radius, "Gaussian kernel radius must be non-negative.");
 
             radius = System.Math.Min(radius, GetMaximumUsefulRadius(map.Topology));
-            return GaussianBlurCore(map, sigma, radius);
+            return new FloatHexMap(map.Topology, CreateBlurredValues(map, sigma, radius));
         }
 
-        private static FloatHexMap GaussianBlurCore(IHexMap<float> map, float sigma, int radius)
+        /// <summary>
+        /// Applies a Gaussian blur to a spatial floating-point hex map using an explicitly
+        /// truncated kernel.
+        /// </summary>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="sigma">
+        /// The positive finite Gaussian standard deviation, measured in distances between the
+        /// centers of edge-adjacent hexes.
+        /// </param>
+        /// <param name="radius">
+        /// The non-negative kernel radius in hex steps. A radius of zero returns an independent
+        /// spatial copy of the source values.
+        /// </param>
+        /// <returns>
+        /// A new mutable spatial floating-point hex map owned by the caller. The result preserves
+        /// the source geometry, and the source map is not modified. At map boundaries, weights are
+        /// normalized over the source cells that are present.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="sigma"/> is not finite and positive, or when
+        /// <paramref name="radius"/> is negative.
+        /// </exception>
+        public static SpatialFloatHexMap GaussianBlur(this SpatialFloatHexMap map, float sigma, int radius)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (float.IsNaN(sigma) || float.IsInfinity(sigma) || sigma <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(sigma), sigma, "Gaussian sigma must be finite and positive.");
+
+            if (radius < 0)
+                throw new ArgumentOutOfRangeException(nameof(radius), radius, "Gaussian kernel radius must be non-negative.");
+
+            radius = System.Math.Min(radius, GetMaximumUsefulRadius(map.Topology));
+            return new SpatialFloatHexMap(map.Geometry, CreateBlurredValues(map, sigma, radius));
+        }
+
+        private static float[] CreateBlurredValues(IHexMap<float> map, float sigma, int radius)
         {
             HexMapTopology topology = map.Topology;
             var values = new float[topology.Count];
             if (values.Length == 0)
-                return new FloatHexMap(topology, values);
+                return values;
 
             GaussianKernelEntry[] kernel = CreateKernel(sigma, radius);
             int width = topology.Resolution.X;
@@ -114,7 +187,7 @@ namespace Akeldov.Math.Hexes
                 values[outputIndex++] = (float)(weightedValue / weightSum);
             }
 
-            return new FloatHexMap(topology, values);
+            return values;
         }
 
         private static GaussianKernelEntry[] CreateKernel(float sigma, int radius)

@@ -18,7 +18,9 @@
 
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
+- `Min` and `Max` each scan the map in O(N) time; `GetMinMax` obtains both extrema in one pass, and `TryGetMinMax` handles empty maps without throwing.
 - `IntHexMap` and `FloatHexMap` support cell-wise unary negation with `-`.
+- Mixed `FloatHexMap` and `IntHexMap` addition and subtraction return a `FloatHexMap` in either operand order; the spatial counterparts return `SpatialFloatHexMap` and require equal geometry.
 - `IntHexMap` and `FloatHexMap` support cell-wise multiplication of two maps with `*`.
 - Mixed `FloatHexMap` and `IntHexMap` multiplication returns a `FloatHexMap` in either operand order.
 - `FloatHexMap` supports cell-wise division of two maps with `/` using floating-point semantics.
@@ -29,12 +31,14 @@
 - `ToSpatialHexMap(geometry)` copies Boolean, integer, or floating-point maps into the corresponding spatial specialization; the supplied geometry must have the same topology.
 - `ToHexMap()` copies a Boolean, integer, or floating-point spatial map back to its corresponding topology-only specialized type.
 - `SpatialBoolHexMap`, `SpatialIntHexMap`, and `SpatialFloatHexMap` provide the same operator surface while preserving `HexMapGeometry` in every result.
+- Cross-operators combine one spatial specialized map with one topology-only specialized map in either operand order; the result is spatial and retains the spatial operand's geometry.
 
 All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,
 and return new maps from their operators without modifying the inputs.
 
-Binary operators between spatial maps require equal topology, origin, and radius. Spatial and
-topology-only specialized maps intentionally do not define cross-operators.
+Binary operators between two spatial maps require equal topology, origin, and radius. Cross-operators
+between one spatial and one topology-only map require equal topology; the topology-only operand does
+not introduce an origin or radius that could conflict with the spatial operand.
 
 ```csharp
 var topology = new HexMapTopology(4, 3, Layout.OddR);

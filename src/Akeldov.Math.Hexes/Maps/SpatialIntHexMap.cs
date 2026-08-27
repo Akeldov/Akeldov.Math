@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable integer value for every cell in a spatial hex map.
     /// </summary>
-    public class SpatialIntHexMap : SpatialHexMap<int>, IIntHexMap
+    public sealed partial class SpatialIntHexMap : SpatialHexMap<int>, ISpatialIntHexMap
     {
         /// <summary>
         /// Initializes an empty map whose cells contain zero.
@@ -621,4 +621,3 @@ namespace Akeldov.Math.Hexes
         }
     }
 }
-

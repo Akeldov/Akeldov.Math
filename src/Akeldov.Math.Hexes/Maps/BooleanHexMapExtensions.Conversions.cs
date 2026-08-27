@@ -3,10 +3,7 @@ using System;
 
 namespace Akeldov.Math.Hexes
 {
-    /// <summary>
-    /// Provides conversions to mutable Boolean hex maps.
-    /// </summary>
-    public static class BoolHexMapExtensions
+    public static partial class BooleanHexMapExtensions
     {
         /// <summary>
         /// Creates an independent mutable copy of the specified Boolean hex map.

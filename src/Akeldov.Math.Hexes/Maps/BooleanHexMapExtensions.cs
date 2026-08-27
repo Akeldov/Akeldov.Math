@@ -3,9 +3,9 @@ using System;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides Boolean operations for hex maps.
+    /// Provides Boolean operations and conversions for hex maps.
     /// </summary>
-    public static class BooleanHexMapExtensions
+    public static partial class BooleanHexMapExtensions
     {
         /// <summary>
         /// Creates a hex map whose cells contain the conjunction of the corresponding cells in
@@ -61,6 +61,12 @@ namespace Akeldov.Math.Hexes
             if (right == null)
                 throw new ArgumentNullException(nameof(right));
 
+            if (left.Topology != left.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(left));
+
+            if (right.Topology != right.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(right));
+
             if (left.Geometry != right.Geometry)
                 throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
 
@@ -94,11 +100,20 @@ namespace Akeldov.Math.Hexes
             if (right == null)
                 throw new ArgumentNullException(nameof(right));
 
+            if (left.Topology != left.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(left));
+
             if (left.Topology != right.Topology)
                 throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
 
-            if (right is ISpatialHexMap<bool> spatialRight && left.Geometry != spatialRight.Geometry)
-                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+            if (right is ISpatialHexMap<bool> spatialRight)
+            {
+                if (spatialRight.Topology != spatialRight.Geometry.Topology)
+                    throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(right));
+
+                if (left.Geometry != spatialRight.Geometry)
+                    throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+            }
 
             return new SpatialHexMap<bool>(left.Geometry, CreateConjunctionValues(left, right));
         }
@@ -129,6 +144,12 @@ namespace Akeldov.Math.Hexes
 
             if (right == null)
                 throw new ArgumentNullException(nameof(right));
+
+            if (right.Topology != right.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(right));
+
+            if (left is ISpatialHexMap<bool> spatialLeftMap && spatialLeftMap.Topology != spatialLeftMap.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(left));
 
             if (left.Topology != right.Topology)
                 throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
@@ -193,6 +214,12 @@ namespace Akeldov.Math.Hexes
             if (right == null)
                 throw new ArgumentNullException(nameof(right));
 
+            if (left.Topology != left.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(left));
+
+            if (right.Topology != right.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(right));
+
             if (left.Geometry != right.Geometry)
                 throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
 
@@ -226,11 +253,20 @@ namespace Akeldov.Math.Hexes
             if (right == null)
                 throw new ArgumentNullException(nameof(right));
 
+            if (left.Topology != left.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(left));
+
             if (left.Topology != right.Topology)
                 throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
 
-            if (right is ISpatialHexMap<bool> spatialRight && left.Geometry != spatialRight.Geometry)
-                throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+            if (right is ISpatialHexMap<bool> spatialRight)
+            {
+                if (spatialRight.Topology != spatialRight.Geometry.Topology)
+                    throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(right));
+
+                if (left.Geometry != spatialRight.Geometry)
+                    throw new ArgumentException("Spatial hex maps must have the same geometry.", nameof(right));
+            }
 
             return new SpatialHexMap<bool>(left.Geometry, CreateDisjunctionValues(left, right));
         }
@@ -261,6 +297,12 @@ namespace Akeldov.Math.Hexes
 
             if (right == null)
                 throw new ArgumentNullException(nameof(right));
+
+            if (right.Topology != right.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(right));
+
+            if (left is ISpatialHexMap<bool> spatialLeftMap && spatialLeftMap.Topology != spatialLeftMap.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(left));
 
             if (left.Topology != right.Topology)
                 throw new ArgumentException("Hex maps must have the same topology.", nameof(right));

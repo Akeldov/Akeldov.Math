@@ -51,6 +51,9 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="map"/> or <paramref name="colorSelector"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the map topology differs from its geometry topology.
+        /// </exception>
         public static SpatialRaster<TColor> Rasterize<TValue, TColor>(
             this ISpatialHexMap<TValue> map,
             float pixelsPerApothem,
@@ -113,6 +116,9 @@ namespace Akeldov.Math.Hexes
 
             if (colorSelector == null)
                 throw new ArgumentNullException(nameof(colorSelector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
 
             int count = checked(rasterGeometry.Resolution.X * rasterGeometry.Resolution.Y);
             var values = new TColor[count];

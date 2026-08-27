@@ -4,8 +4,7 @@
 
 ## Metadata
 
-- Width.
-- Height.
+- `Topology`, including width, height, and layout.
 
 ## Access
 
@@ -17,6 +16,11 @@
 
 - Keeps map consumers independent from specific value domains.
 - Allows topology, geometry, chromatization, and partitioning maps to share a common shape.
+- Provides read-only access without promising immutable or snapshot state.
+
+Mutable implementations may change while they are observed through `IHexMap<TValue>`. Algorithms
+that need to write values use the separate mutable-map capability rather than assuming every map
+implementation owns writable storage.
 
 ## Rasterization
 

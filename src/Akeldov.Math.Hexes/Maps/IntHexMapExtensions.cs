@@ -4,10 +4,60 @@ using System;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides conversions to mutable integer hex maps.
+    /// Provides integer hex-map queries and conversions.
     /// </summary>
     public static class IntHexMapExtensions
     {
+        /// <summary>
+        /// Computes the minimum and maximum values in a single pass over the map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <returns>The minimum and maximum cell values.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">Thrown when the map contains no cells.</exception>
+        public static (int Min, int Max) GetMinMax(this IHexMap<int> map)
+        {
+            if (!map.TryGetMinMax(out int min, out int max))
+                throw new InvalidOperationException("Cannot get the minimum and maximum values of an empty map.");
+
+            return (min, max);
+        }
+
+        /// <summary>
+        /// Attempts to compute the minimum and maximum values in a single pass over the map.
+        /// </summary>
+        /// <param name="map">The source map.</param>
+        /// <param name="min">The minimum cell value, or zero when the map is empty.</param>
+        /// <param name="max">The maximum cell value, or zero when the map is empty.</param>
+        /// <returns><see langword="true"/> when the map contains at least one cell; otherwise, <see langword="false"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static bool TryGetMinMax(this IHexMap<int> map, out int min, out int max)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (map.Topology.Count == 0)
+            {
+                min = default;
+                max = default;
+                return false;
+            }
+
+            min = map[0];
+            max = map[0];
+            for (int index = 1; index < map.Topology.Count; index++)
+            {
+                min = System.Math.Min(min, map[index]);
+                max = System.Math.Max(max, map[index]);
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Creates an independent mutable copy of the specified integer hex map.
         /// </summary>

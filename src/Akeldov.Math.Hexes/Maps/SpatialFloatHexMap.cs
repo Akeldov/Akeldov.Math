@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable floating-point value for every cell in a spatial hex map.
     /// </summary>
-    public class SpatialFloatHexMap : SpatialHexMap<float>, IFloatHexMap
+    public sealed partial class SpatialFloatHexMap : SpatialHexMap<float>, ISpatialFloatHexMap
     {
         /// <summary>
         /// Initializes an empty map whose cells contain zero.
@@ -959,4 +959,3 @@ namespace Akeldov.Math.Hexes
         }
     }
 }
-
