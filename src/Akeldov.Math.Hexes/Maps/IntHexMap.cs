@@ -385,6 +385,33 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a map by dividing the specified value by every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value used as the dividend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="DivideByZeroException">
+        /// Thrown when a cell in <paramref name="map"/> is zero.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when <paramref name="value"/> is <see cref="int.MinValue"/> and a cell contains <c>-1</c>.
+        /// </exception>
+        public static IntHexMap operator /(int value, IntHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new int[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = checked(value / map[index]);
+
+            return new IntHexMap(map.Topology, values);
+        }
+
+        /// <summary>
         /// Creates a map whose cells contain the integer remainders after division by the corresponding cells in another map.
         /// </summary>
         /// <param name="left">The source map whose cell values are the dividends.</param>
