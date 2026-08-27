@@ -1,7 +1,11 @@
 #nullable enable
 Akeldov.Math.Hexes.BoolHexMapExtensions
 static Akeldov.Math.Hexes.BoolHexMap.operator !(Akeldov.Math.Hexes.BoolHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BoolHexMapExtensions.ToHexMap(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BoolHexMapExtensions.ToSpatialHexMap(this Akeldov.Math.Hexes.IHexMap<bool>! map, Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.BoolHexMapExtensions.ToBoolHexMap(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.ToHexMap(this Akeldov.Math.Hexes.ISpatialHexMap<float>! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.ToSpatialHexMap(this Akeldov.Math.Hexes.IHexMap<float>! map, Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
@@ -38,6 +42,8 @@ static Akeldov.Math.Hexes.IntHexMap.operator <(Akeldov.Math.Hexes.IntHexMap! lef
 static Akeldov.Math.Hexes.IntHexMap.operator >(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator <=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator >=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.ToHexMap(this Akeldov.Math.Hexes.ISpatialHexMap<int>! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.ToSpatialHexMap(this Akeldov.Math.Hexes.IHexMap<int>! map, Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Hexes.SpatialIntHexMap!
 Akeldov.Math.Hexes.SpatialBoolHexMap
 Akeldov.Math.Hexes.SpatialBoolHexMap.SpatialBoolHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
 Akeldov.Math.Hexes.SpatialBoolHexMap.SpatialBoolHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, bool[]! values) -> void
