@@ -482,5 +482,137 @@ namespace Akeldov.Math.Hexes
 
             return new FloatHexMap(map.Topology, values);
         }
+
+        /// <summary>
+        /// Creates a map whose cells contain the floating-point remainders of corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The source map whose cell values are the dividends.</param>
+        /// <param name="right">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        public static FloatHexMap operator %(FloatHexMap left, FloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Topology != right.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] % right[index];
+
+            return new FloatHexMap(left.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the remainders of corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The floating-point source map whose cell values are the dividends.</param>
+        /// <param name="right">The integer source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        public static FloatHexMap operator %(FloatHexMap left, IntHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Topology != right.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] % right[index];
+
+            return new FloatHexMap(left.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a floating-point map whose cells contain the remainders of corresponding cells in two source maps.
+        /// </summary>
+        /// <param name="left">The integer source map whose cell values are the dividends.</param>
+        /// <param name="right">The floating-point source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable floating-point hex map owned by the caller. Neither source map is modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source maps do not have the same topology.
+        /// </exception>
+        public static FloatHexMap operator %(IntHexMap left, FloatHexMap right)
+        {
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Topology != right.Topology)
+                throw new ArgumentException("Hex maps must have the same topology.", nameof(right));
+
+            var values = new float[left.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] % right[index];
+
+            return new FloatHexMap(left.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a map whose cells contain the floating-point remainders after division by the specified value.
+        /// </summary>
+        /// <param name="map">The source map whose cell values are the dividends.</param>
+        /// <param name="value">The value used as the divisor for every cell.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator %(FloatHexMap map, float value)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index] % value;
+
+            return new FloatHexMap(map.Topology, values);
+        }
+
+        /// <summary>
+        /// Creates a map by taking the remainder of the specified value divided by every cell in the source map.
+        /// </summary>
+        /// <param name="value">The value used as the dividend for every cell.</param>
+        /// <param name="map">The source map whose cell values are the divisors.</param>
+        /// <returns>A new mutable hex map owned by the caller. The source map is not modified.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        public static FloatHexMap operator %(float value, FloatHexMap map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = value % map[index];
+
+            return new FloatHexMap(map.Topology, values);
+        }
     }
 }

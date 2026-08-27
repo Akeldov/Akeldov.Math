@@ -844,4 +844,289 @@ public class FloatHexMapTests
 
         Assert.That(exception!.ParamName, Is.EqualTo("map"));
     }
+
+    [Test]
+    public void Remainder_ReturnsElementWiseRemainderWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var left = new FloatHexMap(topology, new[] { 7.5f, -5.5f, 8f });
+        var right = new FloatHexMap(topology, new[] { 2f, 3f, -3f });
+
+        FloatHexMap result = left % right;
+        result[0] = 100f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(result[0], Is.EqualTo(100f));
+            Assert.That(result[1], Is.EqualTo(-2.5f));
+            Assert.That(result[2], Is.EqualTo(2f));
+            Assert.That(left[0], Is.EqualTo(7.5f));
+            Assert.That(right[0], Is.EqualTo(2f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithEquivalentTopologies_ReturnsElementWiseRemainder()
+    {
+        var left = new FloatHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 10.5f, 7f });
+        var right = new FloatHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 4f, -3f });
+
+        FloatHexMap result = left % right;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(2.5f));
+            Assert.That(result[1], Is.EqualTo(1f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithDifferentTopologies_Throws()
+    {
+        var left = new FloatHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var differentResolution = new FloatHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var differentLayout = new FloatHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left % differentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = left % differentLayout)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithNullOperand_Throws()
+    {
+        var map = new FloatHexMap(new HexMapTopology(1, 1, Layout.OddR), new[] { 1f });
+        FloatHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing % map)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = map % missing)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Remainder_WithZeroOrNonFiniteCells_UsesFloatSemantics()
+    {
+        var topology = new HexMapTopology(4, 1, Layout.OddR);
+        var left = new FloatHexMap(topology, new[] { 2f, float.PositiveInfinity, float.NaN, 2f });
+        var right = new FloatHexMap(topology, new[] { 0f, 2f, 2f, float.PositiveInfinity });
+
+        FloatHexMap result = left % right;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.NaN);
+            Assert.That(result[1], Is.NaN);
+            Assert.That(result[2], Is.NaN);
+            Assert.That(result[3], Is.EqualTo(2f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithFloatAndIntMaps_ReturnsFloatRemaindersWithoutChangingOperands()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var floatDividend = new FloatHexMap(topology, new[] { 7.5f, -5.5f, 8f });
+        var intDivisor = new IntHexMap(topology, new[] { 2, 3, -3 });
+        var intDividend = new IntHexMap(topology, new[] { 7, -5, 8 });
+        var floatDivisor = new FloatHexMap(topology, new[] { 2.5f, 3f, -3f });
+
+        FloatHexMap floatLeftResult = floatDividend % intDivisor;
+        FloatHexMap intLeftResult = intDividend % floatDivisor;
+        floatLeftResult[0] = 100f;
+        intLeftResult[0] = 200f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(floatLeftResult.Topology, Is.EqualTo(topology));
+            Assert.That(floatLeftResult[0], Is.EqualTo(100f));
+            Assert.That(floatLeftResult[1], Is.EqualTo(-2.5f));
+            Assert.That(floatLeftResult[2], Is.EqualTo(2f));
+            Assert.That(intLeftResult.Topology, Is.EqualTo(topology));
+            Assert.That(intLeftResult[0], Is.EqualTo(200f));
+            Assert.That(intLeftResult[1], Is.EqualTo(-2f));
+            Assert.That(intLeftResult[2], Is.EqualTo(2f));
+            Assert.That(floatDividend[0], Is.EqualTo(7.5f));
+            Assert.That(intDivisor[0], Is.EqualTo(2));
+            Assert.That(intDividend[0], Is.EqualTo(7));
+            Assert.That(floatDivisor[0], Is.EqualTo(2.5f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithMixedEquivalentTopologies_ReturnsFloatRemainders()
+    {
+        var floatMap = new FloatHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 4.5f, -3.5f });
+        var intMap = new IntHexMap(
+            new HexMapTopology(2, 1, Layout.EvenQ),
+            new[] { 10, 7 });
+
+        FloatHexMap floatLeftResult = floatMap % intMap;
+        FloatHexMap intLeftResult = intMap % floatMap;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(floatLeftResult[0], Is.EqualTo(4.5f));
+            Assert.That(floatLeftResult[1], Is.EqualTo(-3.5f));
+            Assert.That(intLeftResult[0], Is.EqualTo(1f));
+            Assert.That(intLeftResult[1], Is.EqualTo(0f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithMixedDifferentTopologies_Throws()
+    {
+        var floatMap = new FloatHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var intMap = new IntHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var intDifferentResolution = new IntHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var intDifferentLayout = new IntHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+        var floatDifferentResolution = new FloatHexMap(new HexMapTopology(1, 2, Layout.OddR));
+        var floatDifferentLayout = new FloatHexMap(new HexMapTopology(2, 1, Layout.EvenR));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = floatMap % intDifferentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = floatMap % intDifferentLayout)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = intMap % floatDifferentResolution)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentException>(() => _ = intMap % floatDifferentLayout)!.ParamName,
+                Is.EqualTo("right"));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithMixedNullOperand_Throws()
+    {
+        var floatMap = new FloatHexMap(new HexMapTopology(1, 1, Layout.OddR), new[] { 1f });
+        var intMap = new IntHexMap(new HexMapTopology(1, 1, Layout.OddR), new[] { 1 });
+        FloatHexMap? missingFloatMap = null;
+        IntHexMap? missingIntMap = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missingFloatMap % intMap)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = floatMap % missingIntMap)!.ParamName,
+                Is.EqualTo("right"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missingIntMap % floatMap)!.ParamName,
+                Is.EqualTo("left"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = intMap % missingFloatMap)!.ParamName,
+                Is.EqualTo("right"));
+#pragma warning restore CS8604
+        });
+    }
+
+    [Test]
+    public void Remainder_WithMixedZeroDivisor_UsesFloatSemantics()
+    {
+        var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var floatMap = new FloatHexMap(topology, new[] { 2f });
+        var zeroFloatMap = new FloatHexMap(topology, new[] { 0f });
+        var intMap = new IntHexMap(topology, new[] { 2 });
+        var zeroIntMap = new IntHexMap(topology, new[] { 0 });
+
+        FloatHexMap floatLeftResult = floatMap % zeroIntMap;
+        FloatHexMap intLeftResult = intMap % zeroFloatMap;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(floatLeftResult[0], Is.NaN);
+            Assert.That(intLeftResult[0], Is.NaN);
+        });
+    }
+
+    [Test]
+    public void Remainder_WithFloatValue_ReturnsBothElementWiseOrdersWithoutChangingMap()
+    {
+        var topology = new HexMapTopology(3, 1, Layout.OddR);
+        var map = new FloatHexMap(topology, new[] { 3f, -4f, 0.75f });
+
+        FloatHexMap mapLeftResult = map % 2f;
+        FloatHexMap valueLeftResult = 8f % map;
+        mapLeftResult[0] = 100f;
+        valueLeftResult[0] = 200f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mapLeftResult.Topology, Is.EqualTo(topology));
+            Assert.That(mapLeftResult[0], Is.EqualTo(100f));
+            Assert.That(mapLeftResult[1], Is.EqualTo(0f));
+            Assert.That(mapLeftResult[2], Is.EqualTo(0.75f));
+            Assert.That(valueLeftResult.Topology, Is.EqualTo(topology));
+            Assert.That(valueLeftResult[0], Is.EqualTo(200f));
+            Assert.That(valueLeftResult[1], Is.EqualTo(0f));
+            Assert.That(valueLeftResult[2], Is.EqualTo(0.5f));
+            Assert.That(map[0], Is.EqualTo(3f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithFloatValueAndZeroDivisor_UsesFloatSemantics()
+    {
+        var map = new FloatHexMap(
+            new HexMapTopology(3, 1, Layout.OddR),
+            new[] { 2f, 0f, -2f });
+
+        FloatHexMap mapLeftResult = map % 0f;
+        FloatHexMap valueLeftResult = 2f % map;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mapLeftResult[0], Is.NaN);
+            Assert.That(mapLeftResult[1], Is.NaN);
+            Assert.That(mapLeftResult[2], Is.NaN);
+            Assert.That(valueLeftResult[0], Is.EqualTo(0f));
+            Assert.That(valueLeftResult[1], Is.NaN);
+            Assert.That(valueLeftResult[2], Is.EqualTo(0f));
+        });
+    }
+
+    [Test]
+    public void Remainder_WithFloatValueAndNullMap_Throws()
+    {
+        FloatHexMap? missing = null;
+
+        Assert.Multiple(() =>
+        {
+#pragma warning disable CS8604
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = missing % 2f)!.ParamName,
+                Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => _ = 2f % missing)!.ParamName,
+                Is.EqualTo("map"));
+#pragma warning restore CS8604
+        });
+    }
 }
