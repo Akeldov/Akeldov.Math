@@ -17,6 +17,7 @@
 ## Specialization
 
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
+- Boolean maps provide one-step hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`) plus linear-time flood fill, component labeling, and distance transforms.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - `Min` and `Max` each scan the map in O(N) time; `GetMinMax` obtains both extrema in one pass, and `TryGetMinMax` handles empty maps without throwing.
 - `IntHexMap` and `FloatHexMap` support cell-wise unary negation with `-`.
@@ -49,6 +50,28 @@ var waterCost = new IntHexMap(topology, new int[topology.Count]);
 IntHexMap movementCost = land.Select(landCost, waterCost);
 IntHexMap adjustedCost = (movementCost + 2) * 3;
 ```
+
+## Boolean morphology and connectivity
+
+Boolean morphology uses each cell and its six edge-adjacent neighbors. The finite map is treated as
+the complete domain, so missing neighbors beyond its boundary are ignored. `Open` and `Close` execute
+two direct passes through an internal pooled scratch buffer; they do not allocate an intermediate map.
+
+```csharp
+BoolHexMap expanded = land.Dilate();
+BoolHexMap cleaned = land.Open();
+BoolHexMap boundary = land.Outline();
+
+BoolHexMap selectedRegion = land.FloodFill(new VectorXYInt(4, 3));
+(IntHexMap labels, int componentCount) = land.ConnectedComponents();
+IntHexMap distanceToWater = land.DistanceTransform(targetValue: false);
+```
+
+`FloodFill` selects the connected region having the same Boolean value as its seed. Component label
+zero represents `false`; `true` components receive deterministic positive labels in row-major discovery
+order. `DistanceTransform` contains the minimum number of hex steps to the requested value, or
+`int.MaxValue` when that value is absent. Spatial overloads preserve the source geometry and return the
+corresponding spatial specialization.
 
 ## Perlin noise generation
 

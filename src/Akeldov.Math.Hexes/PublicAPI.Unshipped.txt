@@ -213,3 +213,19 @@ static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.Spatia
 static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Close(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Close(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ConnectedComponents(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> (Akeldov.Math.Hexes.IntHexMap! Labels, int Count)
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ConnectedComponents(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> (Akeldov.Math.Hexes.SpatialIntHexMap! Labels, int Count)
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Dilate(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Dilate(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.DistanceTransform(this Akeldov.Math.Hexes.IHexMap<bool>! map, bool targetValue = false) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.DistanceTransform(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, bool targetValue = false) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Erode(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Erode(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.FloodFill(this Akeldov.Math.Hexes.IHexMap<bool>! map, Akeldov.Math.Spatial2D.VectorXYInt seed) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.FloodFill(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, Akeldov.Math.Spatial2D.VectorXYInt seed) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Open(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Open(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Outline(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Outline(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
