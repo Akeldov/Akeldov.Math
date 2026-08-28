@@ -269,3 +269,6 @@ Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent4 = 16 -> Akeldov.Mat
 Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent5 = 32 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
 Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.All = Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent0 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent1 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent2 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent3 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent4 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent5 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
 Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions
+static Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions.SamplePartialSextuplet<TValue>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt index) -> Akeldov.Math.Hexes.Topology.PartialSextuplet<TValue>
+static Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions.SampleSextuplet<TValue>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt index) -> Akeldov.Math.Hexes.Topology.Sextuplet<TValue>
