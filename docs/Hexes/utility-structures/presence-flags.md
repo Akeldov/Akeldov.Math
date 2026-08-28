@@ -9,6 +9,11 @@ Presence flags describe which positions exist in partial grouped values.
 - Marks `Right`.
 - Supports an `All` value for complete triplets.
 
+## `SextupletPresenceFlags`
+
+- Marks six adjacent positions without a main position.
+- Supports an `All` value for complete sextuplets.
+
 ## `SeptupletPresenceFlags`
 
 - Marks `Main`.

@@ -11,8 +11,12 @@ Generic containers group related values used by topology, geometry, and chromati
 - `PartialTriplet<T>`.
     - Stores a triplet with presence flags.
 
-## Septuplets
+## Sextuplets and Septuplets
 
+- `Sextuplet<T>`.
+    - Stores the six values ordered by adjacent hex-edge position, without a main value.
+- `PartialSextuplet<T>`.
+    - Stores six adjacent values with presence flags.
 - `Septuplet<T>`.
     - Stores a main value and six adjacent values.
 - `PartialSeptuplet<T>`.
@@ -21,5 +25,6 @@ Generic containers group related values used by topology, geometry, and chromati
 ## Usage
 
 - Triplets model vertex-neighborhood data.
+- Sextuplets model neighbor-only data.
 - Septuplets model center-plus-neighbor data.
 - Partial containers preserve boundary information.

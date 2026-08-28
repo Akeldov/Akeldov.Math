@@ -21,7 +21,7 @@ The library is organized around practical hex-grid workflows.
 - Dedicated Boolean, integer, and floating-point maps in topology-only and spatial variants.
 - Extrema queries, arithmetic, remainder, and comparison operators for numeric maps; logical operators for Boolean maps.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point maps.
-- Index maps and compact pair, triplet, and septuplet containers with presence flags.
+- Index maps and compact pair, triplet, sextuplet, and septuplet containers with presence flags.
 - Polyhex masks, builders, extension operations, and binary serialization.
 
 ### Geometry and Rasterization
