@@ -5,7 +5,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable integer value for every cell in a rectangular hex-map topology.
     /// </summary>
-    public class IntHexMap : HexMap<int>, IIntHexMap
+    public partial class IntHexMap : HexMap<int>, IIntHexMap
     {
         /// <summary>
         /// Initializes an empty map whose cells contain zero.
