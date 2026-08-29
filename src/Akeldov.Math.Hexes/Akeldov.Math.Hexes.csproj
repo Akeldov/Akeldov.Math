@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Hexes</PackageId>
-		<Version>0.2.0</Version>
+		<Version>0.3.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
-		<PackageReleaseNotes>Added dedicated Boolean, integer, and floating-point hex maps, including geometry-preserving spatial variants. Integer and floating-point maps provide minimum and maximum queries, copy conversions, arithmetic, remainder, and comparison operators; Boolean maps provide logical operators. Added conditional selection for Boolean, numeric, and generic maps, deterministic Perlin-noise generation, and Gaussian blur for floating-point hex maps. Expanded public API and map-operation test coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added geometry-preserving Boolean, integer, and floating-point spatial hex maps and conversions between spatial and topology-only specialized maps. Expanded numeric maps with element-wise, scalar, mixed integer/floating-point, and spatial/non-spatial arithmetic, remainder, negation, comparison-mask, clamping, and range-rescaling operations. Added Boolean-map morphology, outlines, flood fill, connected components, and distance transforms. Added sextuplet and partial-sextuplet containers with presence flags and layout-aware six-neighbor map sampling. Migration note: the minimum Akeldov.Math.Spatial2D dependency is now 1.0.0, with compatible 1.x releases accepted; contour integration was updated for its 1.0 contracts. Expanded public API and test coverage.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>

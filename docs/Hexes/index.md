@@ -48,7 +48,7 @@ Akeldov.Math.Hexes is a .NET library for hex-grid coordinate systems, topology, 
 ## Installation
 
 ```powershell
-dotnet add package Akeldov.Math.Hexes --version 0.2.0
+dotnet add package Akeldov.Math.Hexes --version 0.3.0
 ```
 
 ## Target Frameworks

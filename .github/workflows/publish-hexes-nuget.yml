@@ -1,6 +1,9 @@
 name: Publish Hexes to NuGet
 
 on:
+  push:
+    tags:
+      - hexes/v*
   workflow_dispatch:
 
 permissions:
@@ -12,7 +15,7 @@ env:
   TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Hexes.Tests/bin/Debug/net6.0/Akeldov.Math.Hexes.Tests.dll
   PACKAGE_OUTPUT_PATH: artifacts/packages
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
-  SPATIAL2D_PACKAGE_VERSION: 0.8.0
+  SPATIAL2D_PACKAGE_VERSION: 1.0.0
 
 jobs:
   publish:
@@ -23,13 +26,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
-            9.0.x
+            9.0.301
+
+      - name: Pin release SDK
+        shell: pwsh
+        run: |
+          @{
+            sdk = @{
+              version = '9.0.301'
+              rollForward = 'disable'
+            }
+          } |
+            ConvertTo-Json -Depth 2 |
+            Set-Content -LiteralPath global.json -Encoding utf8
+
+          $sdkVersion = (dotnet --version).Trim()
+          if ($sdkVersion -cne '9.0.301') {
+            throw "Expected .NET SDK 9.0.301, but resolved $sdkVersion."
+          }
 
       - name: Show .NET info
         shell: pwsh
@@ -57,6 +79,10 @@ jobs:
           dotnet vstest $env:TEST_ASSEMBLY_PATH
           "--logger:console;verbosity=detailed"
 
+      - name: Restore package project
+        shell: pwsh
+        run: dotnet restore $env:PROJECT_PATH
+
       - name: Resolve package version
         id: version
         shell: pwsh
@@ -72,6 +98,23 @@ jobs:
             throw "Package version '$packageVersion' does not look like a valid NuGet SemVer version."
           }
 
+          $expectedTag = "hexes/v$packageVersion"
+
+          if ($env:GITHUB_REF_TYPE -ne 'tag' -or $env:GITHUB_REF_NAME -cne $expectedTag) {
+            throw "Publish from the '$expectedTag' tag, not '$($env:GITHUB_REF)'."
+          }
+
+          $tagType = git cat-file -t $env:GITHUB_REF
+          if ($LASTEXITCODE -ne 0 -or $tagType.Trim() -ne 'tag') {
+            throw "The '$expectedTag' release tag must be annotated."
+          }
+
+          $tagCommit = (git rev-list -n 1 $env:GITHUB_REF).Trim()
+          $checkedOutCommit = (git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $tagCommit -cne $checkedOutCommit) {
+            throw "The '$expectedTag' tag does not identify the checked-out commit."
+          }
+
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
           "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
 
@@ -84,6 +127,7 @@ jobs:
           --disable-build-servers
           /p:PackageVersion=$env:PACKAGE_VERSION
           /p:ContinuousIntegrationBuild=true
+          /p:IncludeSourceRevisionInInformationalVersion=false
           /maxcpucount:1
 
       - name: Pack
@@ -95,6 +139,256 @@ jobs:
           --output $env:PACKAGE_OUTPUT_PATH
           /p:PackageVersion=$env:PACKAGE_VERSION
           /p:ContinuousIntegrationBuild=true
+          /p:IncludeSourceRevisionInInformationalVersion=false
+
+      - name: Verify release candidate
+        shell: pwsh
+        run: |
+          $packages = @(Get-ChildItem $env:PACKAGE_OUTPUT_PATH -Filter "*.nupkg")
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly one generated NuGet package, but found $($packages.Count)."
+          }
+
+          $packageName = "Akeldov.Math.Hexes.$($env:PACKAGE_VERSION).nupkg"
+          if ($packages[0].Name -cne $packageName) {
+            throw "Expected package '$packageName', but found '$($packages[0].Name)'."
+          }
+
+          $candidatePath = Join-Path `
+            "docfx/versioned/Hexes/$($env:PACKAGE_VERSION)/source" `
+            $packageName
+          if (-not (Test-Path -LiteralPath $candidatePath -PathType Leaf)) {
+            throw "The immutable release candidate is missing: $candidatePath"
+          }
+
+          $candidateHash = (Get-FileHash $candidatePath -Algorithm SHA256).Hash
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $generatedArchive = [System.IO.Compression.ZipFile]::OpenRead($packages[0].FullName)
+          $candidateArchive = [System.IO.Compression.ZipFile]::OpenRead(
+            (Resolve-Path $candidatePath))
+
+          try {
+            function Assert-PackageEntrySet {
+              param(
+                [System.IO.Compression.ZipArchive] $Archive,
+                [string] $ArchiveName)
+
+              $requiredEntryPaths = @(
+                '_rels/.rels',
+                'Akeldov.Math.Hexes.nuspec',
+                'lib/net6.0/Akeldov.Math.Hexes.dll',
+                'lib/net6.0/Akeldov.Math.Hexes.xml',
+                'lib/netstandard2.1/Akeldov.Math.Hexes.dll',
+                'lib/netstandard2.1/Akeldov.Math.Hexes.xml',
+                'README.md',
+                '[Content_Types].xml')
+              $entryPaths = @($Archive.Entries | ForEach-Object FullName)
+              $duplicateEntryPaths = @(
+                $entryPaths |
+                  Group-Object |
+                  Where-Object Count -gt 1 |
+                  ForEach-Object Name)
+              if ($duplicateEntryPaths.Count -ne 0) {
+                throw "Duplicate package entries in ${ArchiveName}: $($duplicateEntryPaths -join ', ')"
+              }
+
+              $missingEntryPaths = @(
+                $requiredEntryPaths |
+                  Where-Object { $entryPaths -cnotcontains $_ })
+              if ($missingEntryPaths.Count -ne 0) {
+                throw "Required package entries are missing from ${ArchiveName}: $($missingEntryPaths -join ', ')"
+              }
+
+              $corePropertyPaths = @(
+                $entryPaths |
+                  Where-Object {
+                    $_ -match '^package/services/metadata/core-properties/[0-9a-f]{32}\.psmdcp$'
+                  })
+              if ($corePropertyPaths.Count -ne 1) {
+                throw "Expected exactly one NuGet core-properties entry in ${ArchiveName}."
+              }
+
+              $allowedEntryPaths = @($requiredEntryPaths + $corePropertyPaths)
+              $unexpectedEntryPaths = @(
+                $entryPaths |
+                  Where-Object { $allowedEntryPaths -cnotcontains $_ })
+              if ($unexpectedEntryPaths.Count -ne 0) {
+                throw "Unexpected package entries in ${ArchiveName}: $($unexpectedEntryPaths -join ', ')"
+              }
+            }
+
+            Assert-PackageEntrySet `
+              -Archive $generatedArchive `
+              -ArchiveName $packages[0].Name
+            Assert-PackageEntrySet `
+              -Archive $candidateArchive `
+              -ArchiveName $packageName
+
+            function Read-NormalizedNuspec {
+              param(
+                [System.IO.Compression.ZipArchive] $Archive,
+                [string] $ArchiveName)
+
+              $nuspecEntry = $Archive.GetEntry('Akeldov.Math.Hexes.nuspec')
+              if ($null -eq $nuspecEntry) {
+                throw "Required package payload is missing from ${ArchiveName}: Akeldov.Math.Hexes.nuspec"
+              }
+
+              $reader = [System.IO.StreamReader]::new($nuspecEntry.Open())
+              try {
+                [xml]$nuspec = $reader.ReadToEnd()
+              } finally {
+                $reader.Dispose()
+              }
+
+              $namespaceManager = [System.Xml.XmlNamespaceManager]::new($nuspec.NameTable)
+              $namespaceManager.AddNamespace('n', $nuspec.DocumentElement.NamespaceURI)
+              $metadata = $nuspec.SelectSingleNode('/n:package/n:metadata', $namespaceManager)
+              if ($null -eq $metadata) {
+                throw "Package metadata is missing from ${ArchiveName}."
+              }
+
+              $id = $metadata.SelectSingleNode('n:id', $namespaceManager)
+              $version = $metadata.SelectSingleNode('n:version', $namespaceManager)
+              $license = $metadata.SelectSingleNode('n:license', $namespaceManager)
+              $readme = $metadata.SelectSingleNode('n:readme', $namespaceManager)
+              $projectUrl = $metadata.SelectSingleNode('n:projectUrl', $namespaceManager)
+              $description = $metadata.SelectSingleNode('n:description', $namespaceManager)
+              $releaseNotes = $metadata.SelectSingleNode('n:releaseNotes', $namespaceManager)
+              $repository = $metadata.SelectSingleNode('n:repository', $namespaceManager)
+
+              if ($null -eq $id -or $id.InnerText -cne 'Akeldov.Math.Hexes') {
+                throw "Unexpected package ID in ${ArchiveName}."
+              }
+
+              if ($null -eq $version -or $version.InnerText -cne $env:PACKAGE_VERSION) {
+                throw "Unexpected package version in ${ArchiveName}."
+              }
+
+              if ($null -eq $license -or $license.GetAttribute('type') -cne 'expression' -or
+                  $license.InnerText -cne 'MIT') {
+                throw "Unexpected package license in ${ArchiveName}."
+              }
+
+              if ($null -eq $readme -or $readme.InnerText -cne 'README.md') {
+                throw "Unexpected package README metadata in ${ArchiveName}."
+              }
+
+              if ($null -eq $projectUrl -or
+                  $projectUrl.InnerText -cne 'https://akeldov.github.io/Akeldov.Math/Hexes/') {
+                throw "Unexpected package project URL in ${ArchiveName}."
+              }
+
+              if ($null -eq $description -or [string]::IsNullOrWhiteSpace($description.InnerText) -or
+                  $null -eq $releaseNotes -or [string]::IsNullOrWhiteSpace($releaseNotes.InnerText)) {
+                throw "Description or release notes are missing from ${ArchiveName}."
+              }
+
+              if ($null -eq $repository -or $repository.GetAttribute('type') -cne 'git' -or
+                  $repository.GetAttribute('url') -cne 'https://github.com/Akeldov/Akeldov.Math') {
+                throw "Unexpected package repository metadata in ${ArchiveName}."
+              }
+
+              $repositoryCommit = $repository.GetAttribute('commit')
+              if ($repositoryCommit -notmatch '^[0-9a-fA-F]{40}$') {
+                throw "Invalid repository commit in ${ArchiveName}."
+              }
+
+              $dependencies = @($metadata.SelectNodes(
+                'n:dependencies/n:group/n:dependency',
+                $namespaceManager))
+              if ($dependencies.Count -ne 2) {
+                throw "Expected two Spatial2D dependency groups in ${ArchiveName}."
+              }
+
+              $dependencySignatures = @($dependencies | ForEach-Object {
+                  "$($_.ParentNode.GetAttribute('targetFramework'))|" +
+                  "$($_.GetAttribute('id'))|$($_.GetAttribute('version'))|" +
+                  "$($_.GetAttribute('exclude'))"
+                } | Sort-Object)
+              $expectedDependencySignatures = @(
+                '.NETStandard2.1|Akeldov.Math.Spatial2D|[1.0.0, 2.0.0)|Build,Analyzers',
+                'net6.0|Akeldov.Math.Spatial2D|[1.0.0, 2.0.0)|Build,Analyzers')
+              if (($dependencySignatures -join "`n") -cne
+                  ($expectedDependencySignatures -join "`n")) {
+                throw "Unexpected Spatial2D dependency metadata in ${ArchiveName}."
+              }
+
+              # The immutable candidate is necessarily created before the release commit that
+              # contains it. Compare every other nuspec field exactly, but validate its source
+              # revision independently instead of requiring this self-referential value to match.
+              $repository.RemoveAttribute('commit')
+
+              [pscustomobject]@{
+                RepositoryCommit = $repositoryCommit
+                NormalizedXml = $nuspec.OuterXml
+              }
+            }
+
+            $generatedNuspec = Read-NormalizedNuspec `
+              -Archive $generatedArchive `
+              -ArchiveName $packages[0].Name
+            $candidateNuspec = Read-NormalizedNuspec `
+              -Archive $candidateArchive `
+              -ArchiveName $packageName
+
+            $checkedOutCommit = (git rev-parse HEAD).Trim()
+            if ($LASTEXITCODE -ne 0 -or
+                $generatedNuspec.RepositoryCommit -cne $checkedOutCommit) {
+              throw "Generated package repository commit does not match the checked-out commit."
+            }
+
+            git merge-base --is-ancestor `
+              $candidateNuspec.RepositoryCommit `
+              $checkedOutCommit
+            if ($LASTEXITCODE -ne 0) {
+              throw "Release candidate repository commit is not an ancestor of the checked-out commit."
+            }
+
+            if ($generatedNuspec.NormalizedXml -cne $candidateNuspec.NormalizedXml) {
+              throw "Generated nuspec does not match the release candidate metadata."
+            }
+
+            $payloadPaths = @(
+              'lib/net6.0/Akeldov.Math.Hexes.dll',
+              'lib/net6.0/Akeldov.Math.Hexes.xml',
+              'lib/netstandard2.1/Akeldov.Math.Hexes.dll',
+              'lib/netstandard2.1/Akeldov.Math.Hexes.xml',
+              'README.md')
+
+            foreach ($payloadPath in $payloadPaths) {
+              $generatedEntry = $generatedArchive.GetEntry($payloadPath)
+              $candidateEntry = $candidateArchive.GetEntry($payloadPath)
+              if ($null -eq $generatedEntry -or $null -eq $candidateEntry) {
+                throw "Required package payload is missing: $payloadPath"
+              }
+
+              $generatedStream = $generatedEntry.Open()
+              $candidateStream = $candidateEntry.Open()
+              $sha256 = [System.Security.Cryptography.SHA256]::Create()
+              try {
+                $generatedHash = ([BitConverter]::ToString(
+                  $sha256.ComputeHash($generatedStream))).Replace('-', '')
+                $candidateHashForEntry = ([BitConverter]::ToString(
+                  $sha256.ComputeHash($candidateStream))).Replace('-', '')
+              } finally {
+                $sha256.Dispose()
+                $generatedStream.Dispose()
+                $candidateStream.Dispose()
+              }
+
+              if ($generatedHash -cne $candidateHashForEntry) {
+                throw "Generated payload does not match the release candidate: $payloadPath"
+              }
+            }
+          } finally {
+            $generatedArchive.Dispose()
+            $candidateArchive.Dispose()
+          }
+
+          "CANDIDATE_PACKAGE_PATH=$((Resolve-Path $candidatePath).Path)" >> $env:GITHUB_ENV
+          "Hexes $($env:PACKAGE_VERSION) SHA-256: $candidateHash" >> $env:GITHUB_STEP_SUMMARY
 
       - name: Publish to NuGet
         shell: pwsh
@@ -105,13 +399,6 @@ jobs:
             throw "Repository or environment secret NUGET_API_KEY is required."
           }
 
-          $packages = @(Get-ChildItem $env:PACKAGE_OUTPUT_PATH -Filter "Akeldov.Math.Hexes.*.nupkg")
-
-          if ($packages.Count -ne 1) {
-            throw "Expected exactly one Hexes package, but found $($packages.Count)."
-          }
-
-          dotnet nuget push $packages[0].FullName `
+          dotnet nuget push $env:CANDIDATE_PACKAGE_PATH `
             --api-key $env:NUGET_API_KEY `
-            --source $env:NUGET_SOURCE `
-            --skip-duplicate
+            --source $env:NUGET_SOURCE

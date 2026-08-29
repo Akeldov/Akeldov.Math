@@ -74,6 +74,7 @@ Akeldov.Math.Hexes.HexMap<TValue>.this[int index].get -> TValue
 Akeldov.Math.Hexes.HexMap<TValue>.this[int index].set -> void
 Akeldov.Math.Hexes.HexMap<TValue>.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
 Akeldov.Math.Hexes.HexMapGeometryExtensions
+Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions
 Akeldov.Math.Hexes.HexMapTopology
 Akeldov.Math.Hexes.HexMapTopology.Count.get -> int
 Akeldov.Math.Hexes.HexMapTopology.Deconstruct(out int width, out int height, out Akeldov.Math.Hexes.Layout layout) -> void
@@ -130,9 +131,11 @@ Akeldov.Math.Hexes.IntHexMap.IntHexMap(Akeldov.Math.Hexes.HexMapTopology topolog
 Akeldov.Math.Hexes.IntHexMap.Max.get -> int
 Akeldov.Math.Hexes.IntHexMap.Min.get -> int
 Akeldov.Math.Hexes.IntHexMapExtensions
+Akeldov.Math.Hexes.ISpatialFloatHexMap
 Akeldov.Math.Hexes.ISpatialHexMap<TValue>
 Akeldov.Math.Hexes.ISpatialHexMap<TValue>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
 Akeldov.Math.Hexes.ISpatialHexMapExtensions
+Akeldov.Math.Hexes.ISpatialIntHexMap
 Akeldov.Math.Hexes.Layout
 Akeldov.Math.Hexes.Layout.EvenQ = 3 -> Akeldov.Math.Hexes.Layout
 Akeldov.Math.Hexes.Layout.EvenR = 1 -> Akeldov.Math.Hexes.Layout
@@ -191,10 +194,23 @@ Akeldov.Math.Hexes.SixfoldAngle.Deg300 = 5 -> Akeldov.Math.Hexes.SixfoldAngle
 Akeldov.Math.Hexes.SixfoldAngle.Deg60 = 1 -> Akeldov.Math.Hexes.SixfoldAngle
 Akeldov.Math.Hexes.SixfoldAngleExtensions
 Akeldov.Math.Hexes.SixfoldAngles
+Akeldov.Math.Hexes.SpatialBoolHexMap
+Akeldov.Math.Hexes.SpatialBoolHexMap.SpatialBoolHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.SpatialBoolHexMap.SpatialBoolHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, bool[]! values) -> void
+Akeldov.Math.Hexes.SpatialFloatHexMap
+Akeldov.Math.Hexes.SpatialFloatHexMap.Max.get -> float
+Akeldov.Math.Hexes.SpatialFloatHexMap.Min.get -> float
+Akeldov.Math.Hexes.SpatialFloatHexMap.SpatialFloatHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.SpatialFloatHexMap.SpatialFloatHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, float[]! values) -> void
 Akeldov.Math.Hexes.SpatialHexMap<TValue>
 Akeldov.Math.Hexes.SpatialHexMap<TValue>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
 Akeldov.Math.Hexes.SpatialHexMap<TValue>.SpatialHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
 Akeldov.Math.Hexes.SpatialHexMap<TValue>.SpatialHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, TValue[]! values) -> void
+Akeldov.Math.Hexes.SpatialIntHexMap
+Akeldov.Math.Hexes.SpatialIntHexMap.Max.get -> int
+Akeldov.Math.Hexes.SpatialIntHexMap.Min.get -> int
+Akeldov.Math.Hexes.SpatialIntHexMap.SpatialIntHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> void
+Akeldov.Math.Hexes.SpatialIntHexMap.SpatialIntHexMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, int[]! values) -> void
 Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster
 Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.BarycentricPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry) -> void
 Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster.BarycentricPartialTripletRaster(Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> void
@@ -412,6 +428,27 @@ Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(T main, T adjac
 Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(T main, T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, bool hasMain, bool hasAdjacent0, bool hasAdjacent1, bool hasAdjacent2, bool hasAdjacent3, bool hasAdjacent4, bool hasAdjacent5) -> void
 Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
 Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.ToSeptuplet() -> Akeldov.Math.Hexes.Topology.Septuplet<T>
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Adjacent0.get -> T
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Adjacent1.get -> T
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Adjacent2.get -> T
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Adjacent3.get -> T
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Adjacent4.get -> T
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Adjacent5.get -> T
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Deconstruct(out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5) -> void
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Deconstruct(out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5, out Akeldov.Math.Hexes.Topology.SextupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.HasAdjacent0.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.HasAdjacent1.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.HasAdjacent2.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.HasAdjacent3.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.HasAdjacent4.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.HasAdjacent5.get -> bool
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.PartialSextuplet() -> void
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.PartialSextuplet(Akeldov.Math.Hexes.Topology.Sextuplet<T> sextuplet, Akeldov.Math.Hexes.Topology.SextupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.PartialSextuplet(T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, Akeldov.Math.Hexes.Topology.SextupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.PartialSextuplet(T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, bool hasAdjacent0, bool hasAdjacent1, bool hasAdjacent2, bool hasAdjacent3, bool hasAdjacent4, bool hasAdjacent5) -> void
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialSextuplet<T>.ToSextuplet() -> Akeldov.Math.Hexes.Topology.Sextuplet<T>
 Akeldov.Math.Hexes.Topology.PartialTriplet<T>
 Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Deconstruct(out T main, out T left, out T right) -> void
 Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Deconstruct(out T main, out T left, out T right, out Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
@@ -469,6 +506,25 @@ Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent5 = 64 -> Akeldov.Mat
 Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.All = Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Main | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent0 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent1 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent2 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent3 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent4 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent5 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
 Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Main = 1 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
 Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.Sextuplet<T>
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Adjacent0.get -> T
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Adjacent1.get -> T
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Adjacent2.get -> T
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Adjacent3.get -> T
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Adjacent4.get -> T
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Adjacent5.get -> T
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Deconstruct(out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5) -> void
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Sextuplet() -> void
+Akeldov.Math.Hexes.Topology.Sextuplet<T>.Sextuplet(T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5) -> void
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent0 = 1 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent1 = 2 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent2 = 4 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent3 = 8 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent4 = 16 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent5 = 32 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.All = Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent0 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent1 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent2 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent3 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent4 | Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.Adjacent5 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.SextupletPresenceFlags
 Akeldov.Math.Hexes.Topology.Triplet<T>
 Akeldov.Math.Hexes.Topology.Triplet<T>.Deconstruct(out T main, out T left, out T right) -> void
 Akeldov.Math.Hexes.Topology.Triplet<T>.Left.get -> T
@@ -559,14 +615,39 @@ static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.IH
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.And(this Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Close(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Close(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ConnectedComponents(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> (Akeldov.Math.Hexes.IntHexMap! Labels, int Count)
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ConnectedComponents(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> (Akeldov.Math.Hexes.SpatialIntHexMap! Labels, int Count)
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Dilate(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Dilate(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.DistanceTransform(this Akeldov.Math.Hexes.IHexMap<bool>! map, bool targetValue = false) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.DistanceTransform(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, bool targetValue = false) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Erode(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Erode(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.FloodFill(this Akeldov.Math.Hexes.IHexMap<bool>! map, Akeldov.Math.Spatial2D.VectorXYInt seed) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.FloodFill(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, Akeldov.Math.Spatial2D.VectorXYInt seed) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Open(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Open(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.HexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.IHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.IHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! left, Akeldov.Math.Hexes.ISpatialHexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialHexMap<bool>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Or(this Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Outline(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Outline(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.BoolHexMap! whenTrue, Akeldov.Math.Hexes.BoolHexMap! whenFalse) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.FloatHexMap! whenTrue, Akeldov.Math.Hexes.FloatHexMap! whenFalse) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.IntHexMap! whenTrue, Akeldov.Math.Hexes.IntHexMap! whenFalse) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.SpatialBoolHexMap! condition, Akeldov.Math.Hexes.SpatialBoolHexMap! whenTrue, Akeldov.Math.Hexes.SpatialBoolHexMap! whenFalse) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.SpatialBoolHexMap! condition, Akeldov.Math.Hexes.SpatialFloatHexMap! whenTrue, Akeldov.Math.Hexes.SpatialFloatHexMap! whenFalse) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select(this Akeldov.Math.Hexes.SpatialBoolHexMap! condition, Akeldov.Math.Hexes.SpatialIntHexMap! whenTrue, Akeldov.Math.Hexes.SpatialIntHexMap! whenFalse) -> Akeldov.Math.Hexes.SpatialIntHexMap!
 static Akeldov.Math.Hexes.BooleanHexMapExtensions.Select<TValue>(this Akeldov.Math.Hexes.BoolHexMap! condition, Akeldov.Math.Hexes.HexMap<TValue>! whenTrue, Akeldov.Math.Hexes.HexMap<TValue>! whenFalse) -> Akeldov.Math.Hexes.HexMap<TValue>!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ToBoolHexMap(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ToHexMap(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.BooleanHexMapExtensions.ToSpatialHexMap(this Akeldov.Math.Hexes.IHexMap<bool>! map, Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.BoolHexMap.operator !(Akeldov.Math.Hexes.BoolHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.BoolHexMap.operator &(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.BoolHexMap.operator ^(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.BoolHexMap.operator |(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
@@ -576,18 +657,65 @@ static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetEvenRChromatic
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetOddQChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
 static Akeldov.Math.Hexes.Chromatization.VectorXYIntExtensions.GetOddRChromaticClass(this Akeldov.Math.Spatial2D.VectorXYInt hexIndex) -> int
 static Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions.GetChromaticTriplet(this Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> vertexHexIndexTriplet, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+static Akeldov.Math.Hexes.FloatHexMap.operator %(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator %(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator %(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator %(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator %(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator -(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator *(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator /(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMap.operator +(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.IHexMap<float>! map, float sigma) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.IHexMap<float>! map, float sigma, int radius) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.SpatialFloatHexMap! map, float sigma) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapBlurExtensions.GaussianBlur(this Akeldov.Math.Hexes.SpatialFloatHexMap! map, float sigma, int radius) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Clamp(this Akeldov.Math.Hexes.IHexMap<float>! map, float min, float max) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Clamp(this Akeldov.Math.Hexes.ISpatialHexMap<float>! map, float min, float max) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.GetMinMax(this Akeldov.Math.Hexes.IHexMap<float>! map) -> (float Min, float Max)
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Rescale(this Akeldov.Math.Hexes.IHexMap<float>! map, float newMin, float newMax) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Rescale(this Akeldov.Math.Hexes.ISpatialHexMap<float>! map, float newMin, float newMax) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
 static Akeldov.Math.Hexes.FloatHexMapExtensions.ToFloatHexMap(this Akeldov.Math.Hexes.IHexMap<float>! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.ToHexMap(this Akeldov.Math.Hexes.ISpatialHexMap<float>! map) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.ToSpatialHexMap(this Akeldov.Math.Hexes.IHexMap<float>! map, Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.TryGetMinMax(this Akeldov.Math.Hexes.IHexMap<float>! map, out float min, out float max) -> bool
 static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
 static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToApothemOffsetRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
 static Akeldov.Math.Hexes.Geometry.Contours.HexMatrixExtensions.ToRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry) -> Akeldov.Math.Spatial2D.Regions.ContourBasedRegion!
@@ -620,6 +748,8 @@ static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.ToVectorQRS(this Akeldov.M
 static Akeldov.Math.Hexes.Geometry.VectorXYIntExtensions.GetHexCenter(this Akeldov.Math.Spatial2D.VectorXYInt index, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
 static Akeldov.Math.Hexes.Geometry.VectorXYIntExtensions.GetHexCenter(this Akeldov.Math.Spatial2D.VectorXYInt index, float hexRadius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
 static Akeldov.Math.Hexes.HexMapGeometryExtensions.Rasterize(this Akeldov.Math.Hexes.Geometry.HexMapGeometry hexMapGeometry, float curveWidth, float fadeDistance, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor curveColor, Akeldov.Math.Spatial2D.Imaging.Gray8BitColor backgroundColor, int pixelsPerApothem) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions.SamplePartialSextuplet<TValue>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt index) -> Akeldov.Math.Hexes.Topology.PartialSextuplet<TValue>
+static Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions.SampleSextuplet<TValue>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt index) -> Akeldov.Math.Hexes.Topology.Sextuplet<TValue>
 static Akeldov.Math.Hexes.HexMapTopology.operator !=(Akeldov.Math.Hexes.HexMapTopology left, Akeldov.Math.Hexes.HexMapTopology right) -> bool
 static Akeldov.Math.Hexes.HexMapTopology.operator ==(Akeldov.Math.Hexes.HexMapTopology left, Akeldov.Math.Hexes.HexMapTopology right) -> bool
 static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology hexMapTopology, float radius, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
@@ -632,16 +762,43 @@ static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.H
 static Akeldov.Math.Hexes.HexMapTopologyExtensions.Rasterize(this Akeldov.Math.Hexes.HexMapTopology topology, float radius, Akeldov.Math.Spatial2D.VectorXY origin, Akeldov.Math.Hexes.HexMapTopologyRasterizationOptions options, Akeldov.Math.Hexes.HexMapTopologyXYLabelsRasterizationOptions xyLabels, Akeldov.Math.Hexes.HexMapTopologyQRSLabelsRasterizationOptions qrsLabels) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
 static Akeldov.Math.Hexes.HexMapTopologyPerlinNoiseExtensions.CreatePerlinNoise(this Akeldov.Math.Hexes.HexMapTopology topology, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.IHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt resolution, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TColor>!
+static Akeldov.Math.Hexes.IntHexMap.operator %(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator %(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator %(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator -(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator *(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator /(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMap.operator +(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator <(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator <(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator <(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator <=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator <=(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator <=(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator >(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator >(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator >(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator >=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator >=(Akeldov.Math.Hexes.IntHexMap! map, int value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMap.operator >=(int value, Akeldov.Math.Hexes.IntHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Clamp(this Akeldov.Math.Hexes.IHexMap<int>! map, int min, int max) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Clamp(this Akeldov.Math.Hexes.ISpatialHexMap<int>! map, int min, int max) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.GetMinMax(this Akeldov.Math.Hexes.IHexMap<int>! map) -> (int Min, int Max)
+static Akeldov.Math.Hexes.IntHexMapExtensions.Rescale(this Akeldov.Math.Hexes.IHexMap<int>! map, int newMin, int newMax) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Rescale(this Akeldov.Math.Hexes.ISpatialHexMap<int>! map, int newMin, int newMax) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.ToHexMap(this Akeldov.Math.Hexes.ISpatialHexMap<int>! map) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.IntHexMapExtensions.ToIntHexMap(this Akeldov.Math.Hexes.IHexMap<int>! map) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.ToSpatialHexMap(this Akeldov.Math.Hexes.IHexMap<int>! map, Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.TryGetMinMax(this Akeldov.Math.Hexes.IHexMap<int>! map, out int min, out int max) -> bool
 static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
 static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, float margin, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
 static Akeldov.Math.Hexes.ISpatialHexMapExtensions.Rasterize<TValue, TColor>(this Akeldov.Math.Hexes.ISpatialHexMap<TValue>! map, float pixelsPerApothem, System.Func<TValue, TColor>! colorSelector) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TColor>!
@@ -663,6 +820,162 @@ static Akeldov.Math.Hexes.SixfoldAngleExtensions.Cos(this Akeldov.Math.Hexes.Six
 static Akeldov.Math.Hexes.SixfoldAngleExtensions.Negate(this Akeldov.Math.Hexes.SixfoldAngle angle) -> Akeldov.Math.Hexes.SixfoldAngle
 static Akeldov.Math.Hexes.SixfoldAngleExtensions.Sin(this Akeldov.Math.Hexes.SixfoldAngle angle) -> float
 static Akeldov.Math.Hexes.SixfoldAngles.All.get -> Akeldov.Math.Hexes.SixfoldAngle[]!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator !(Akeldov.Math.Hexes.SpatialBoolHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator &(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator &(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator &(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator ^(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator ^(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator ^(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator |(Akeldov.Math.Hexes.BoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator |(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.BoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialBoolHexMap.operator |(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator %(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator -(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator *(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator /(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator +(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialFloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialFloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator %(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator -(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator *(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator /(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator +(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator <=(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.IntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.FloatHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.IntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! left, Akeldov.Math.Hexes.SpatialIntHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.Topology.BinaryReaderExtensions.ReadPolyhexStamp(this System.IO.BinaryReader! binaryReader) -> Akeldov.Math.Hexes.Topology.Polyhex?
 static Akeldov.Math.Hexes.Topology.BinaryWriterExtensions.Write(this System.IO.BinaryWriter! binaryWriter, Akeldov.Math.Hexes.Topology.Polyhex? polyhexStamp) -> void
 static Akeldov.Math.Hexes.Topology.BoolExtensions.GetRelativeOffset(this bool axisIsEven, Akeldov.Math.Hexes.Topology.HexEdge hexEdge, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXYInt
@@ -693,11 +1006,11 @@ static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.explicit operator Akeldov.Math.H
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.implicit operator Akeldov.Math.Hexes.Vectors.QRS.VectorQRS(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt v) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.One.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator !=(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> bool
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator -(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator *(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector, float scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator *(float scalar, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
-static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator +(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
-static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator -(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator /(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS vector, float scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator +(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.operator ==(Akeldov.Math.Hexes.Vectors.QRS.VectorQRS left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRS right) -> bool
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRS.Zero.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.Rotate(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS point, float angleRad) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS
@@ -706,11 +1019,11 @@ static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.ToNormalizedAxial(this
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSExtensions.ToQRSIndex(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRS axialPoint, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.One.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator !=(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> bool
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator -(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator *(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector, int scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator *(int scalar, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
-static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator +(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
-static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator -(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator /(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt vector, int scalar) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
+static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator +(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.operator ==(Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt left, Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt right) -> bool
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt.Zero.get -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt
 static Akeldov.Math.Hexes.Vectors.QRS.VectorQRSIntExtensions.Rotate(this Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt point, float angleRad) -> Akeldov.Math.Hexes.Vectors.QRS.VectorQRS

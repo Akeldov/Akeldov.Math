@@ -18,10 +18,11 @@ The library is organized around practical hex-grid workflows.
 
 - Rectangular map topology with edge, vertex, pair, triplet, and six-neighbor adjacency helpers.
 - Mutable `HexMap<T>` and geometry-aware `SpatialHexMap<T>` value storage.
-- Dedicated Boolean, integer, and floating-point maps in topology-only and spatial variants.
-- Extrema queries, arithmetic, remainder, and comparison operators for numeric maps; logical operators for Boolean maps.
+- Dedicated Boolean, integer, and floating-point maps in topology-only and geometry-preserving spatial variants, with copy conversions between them.
+- Element-wise, scalar, mixed numeric, and spatial/non-spatial arithmetic, remainder, comparison-mask, clamping, and range-rescaling operations for numeric maps.
+- Logical operations, morphology, outlines, flood fill, connected components, and distance transforms for Boolean maps.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point maps.
-- Index maps and compact pair, triplet, sextuplet, and septuplet containers with presence flags.
+- Index maps and compact pair, triplet, sextuplet, and septuplet containers with presence flags, including layout-aware six-neighbor sampling.
 - Polyhex masks, builders, extension operations, and binary serialization.
 
 ### Geometry and Rasterization
