@@ -4,9 +4,9 @@ using System;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides floating-point hex-map queries and conversions.
+    /// Provides floating-point hex-map queries, transformations, and conversions.
     /// </summary>
-    public static class FloatHexMapExtensions
+    public static partial class FloatHexMapExtensions
     {
         /// <summary>
         /// Computes the minimum and maximum values in a single pass over the map.

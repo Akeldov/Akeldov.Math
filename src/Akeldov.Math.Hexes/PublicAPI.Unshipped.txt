@@ -304,3 +304,11 @@ static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(Akeldov.Math.Hexes.Spatial
 static Akeldov.Math.Hexes.SpatialIntHexMap.operator >(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(Akeldov.Math.Hexes.SpatialIntHexMap! map, int value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.SpatialIntHexMap.operator >=(int value, Akeldov.Math.Hexes.SpatialIntHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Clamp(this Akeldov.Math.Hexes.IHexMap<float>! map, float min, float max) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Clamp(this Akeldov.Math.Hexes.ISpatialHexMap<float>! map, float min, float max) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Rescale(this Akeldov.Math.Hexes.IHexMap<float>! map, float newMin, float newMax) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.FloatHexMapExtensions.Rescale(this Akeldov.Math.Hexes.ISpatialHexMap<float>! map, float newMin, float newMax) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Clamp(this Akeldov.Math.Hexes.IHexMap<int>! map, int min, int max) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Clamp(this Akeldov.Math.Hexes.ISpatialHexMap<int>! map, int min, int max) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Rescale(this Akeldov.Math.Hexes.IHexMap<int>! map, int newMin, int newMax) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.IntHexMapExtensions.Rescale(this Akeldov.Math.Hexes.ISpatialHexMap<int>! map, int newMin, int newMax) -> Akeldov.Math.Hexes.SpatialIntHexMap!

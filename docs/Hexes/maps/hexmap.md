@@ -31,6 +31,10 @@
 - `IntHexMap` and `FloatHexMap` support cell-wise `<`, `>`, `<=`, and `>=` comparisons with an
   integer or floating-point constant, respectively, in either operand order. The result is a
   `BoolHexMap`; spatial operands return a `SpatialBoolHexMap` and preserve their geometry.
+- `Clamp(min, max)` creates a new map with every numeric value restricted to the inclusive range.
+- `Rescale(newMin, newMax)` linearly maps the current minimum and maximum to a new inclusive range.
+  A constant map is filled with `newMin`; integer results use midpoint-to-even rounding. Spatial
+  overloads preserve the source geometry.
 - `ToBoolHexMap`, `ToIntHexMap`, and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 - `ToSpatialHexMap(geometry)` copies Boolean, integer, or floating-point maps into the corresponding spatial specialization; the supplied geometry must have the same topology.
 - `ToHexMap()` copies a Boolean, integer, or floating-point spatial map back to its corresponding topology-only specialized type.
