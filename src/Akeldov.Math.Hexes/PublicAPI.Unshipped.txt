@@ -272,3 +272,19 @@ Akeldov.Math.Hexes.Topology.SextupletPresenceFlags.None = 0 -> Akeldov.Math.Hexe
 Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions
 static Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions.SamplePartialSextuplet<TValue>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt index) -> Akeldov.Math.Hexes.Topology.PartialSextuplet<TValue>
 static Akeldov.Math.Hexes.HexMapSextupletSamplingExtensions.SampleSextuplet<TValue>(this Akeldov.Math.Hexes.IHexMap<TValue>! map, Akeldov.Math.Spatial2D.VectorXYInt index) -> Akeldov.Math.Hexes.Topology.Sextuplet<TValue>
+static Akeldov.Math.Hexes.FloatHexMap.operator <(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator <=(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(Akeldov.Math.Hexes.FloatHexMap! map, float value) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.FloatHexMap.operator >=(float value, Akeldov.Math.Hexes.FloatHexMap! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator <=(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(Akeldov.Math.Hexes.SpatialFloatHexMap! map, float value) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.SpatialFloatHexMap.operator >=(float value, Akeldov.Math.Hexes.SpatialFloatHexMap! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!

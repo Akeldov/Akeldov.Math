@@ -48,8 +48,8 @@ public class SpatialHexMapOperatorTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(ordinary, Has.Length.EqualTo(62));
-            Assert.That(spatial, Has.Length.EqualTo(62));
+            Assert.That(ordinary, Has.Length.EqualTo(70));
+            Assert.That(spatial, Has.Length.EqualTo(70));
             Assert.That(
                 spatial.Select(Signature).OrderBy(value => value),
                 Is.EqualTo(ordinary.Select(Signature).OrderBy(value => value)));

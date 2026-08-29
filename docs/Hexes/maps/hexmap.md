@@ -28,6 +28,9 @@
 - `IntHexMap` supports cell-wise division of two maps with `/` using integer semantics.
 - `IntHexMap` supports cell-wise remainder after division by another map or an integer constant with `%`.
 - Mixed `FloatHexMap` and `IntHexMap` division returns a `FloatHexMap` in either operand order.
+- `FloatHexMap` supports cell-wise `<`, `>`, `<=`, and `>=` comparisons with a floating-point
+  constant in either operand order. The result is a `BoolHexMap`; spatial operands return a
+  `SpatialBoolHexMap` and preserve their geometry.
 - `ToBoolHexMap`, `ToIntHexMap`, and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 - `ToSpatialHexMap(geometry)` copies Boolean, integer, or floating-point maps into the corresponding spatial specialization; the supplied geometry must have the same topology.
 - `ToHexMap()` copies a Boolean, integer, or floating-point spatial map back to its corresponding topology-only specialized type.
