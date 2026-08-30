@@ -1,0 +1,46 @@
+using System;
+
+namespace Akeldov.Math.Spatial2D.Fields
+{
+    /// <summary>
+    /// Represents floating-point fields that provide pointwise minimum and maximum bounds.
+    /// </summary>
+    public readonly struct FloatFieldRange
+    {
+        /// <summary>
+        /// Initializes a floating-point field range.
+        /// </summary>
+        /// <param name="minField">The field that provides the pointwise minimum bound.</param>
+        /// <param name="maxField">The field that provides the pointwise maximum bound.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="minField"/> or <paramref name="maxField"/> is
+        /// <see langword="null"/>.
+        /// </exception>
+        public FloatFieldRange(IFloatField minField, IFloatField maxField)
+        {
+            MinField = minField ?? throw new ArgumentNullException(nameof(minField));
+            MaxField = maxField ?? throw new ArgumentNullException(nameof(maxField));
+        }
+
+        /// <summary>
+        /// Gets the field that provides the pointwise minimum bound.
+        /// </summary>
+        public IFloatField MinField { get; }
+
+        /// <summary>
+        /// Gets the field that provides the pointwise maximum bound.
+        /// </summary>
+        public IFloatField MaxField { get; }
+
+        /// <summary>
+        /// Deconstructs the range into its minimum and maximum fields.
+        /// </summary>
+        /// <param name="minField">Receives the field that provides the pointwise minimum bound.</param>
+        /// <param name="maxField">Receives the field that provides the pointwise maximum bound.</param>
+        public void Deconstruct(out IFloatField minField, out IFloatField maxField)
+        {
+            minField = MinField;
+            maxField = MaxField;
+        }
+    }
+}
