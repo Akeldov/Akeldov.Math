@@ -6,6 +6,64 @@ namespace Akeldov.Math.Hexes.Tests.Maps;
 public class HexMapValueMappingExtensionsTests
 {
     [Test]
+    public void MapValues_WithSpecializedResultTypes_ReturnsSpecializedMaps()
+    {
+        var topology = new HexMapTopology(3, 3, Layout.OddR);
+        IHexMap<int> source = new HexMap<int>(topology, Enumerable.Range(1, topology.Count).ToArray());
+
+        BoolHexMap valueBoolResult = source.MapValues((int value) => value > 4);
+        IntHexMap valueIntResult = source.MapValues((int value) => value * 2);
+        FloatHexMap valueFloatResult = source.MapValues((int value) => value / 2f);
+        BoolHexMap partialBoolResult = source.MapValues(
+            (PartialSextuplet<int> sample) => sample.Presence == SextupletPresenceFlags.All);
+        IntHexMap partialIntResult = source.MapValues(GetPresentValueSum);
+        FloatHexMap partialFloatResult = source.MapValues(
+            (PartialSextuplet<int> sample) => GetPresentValueSum(sample) / 2f);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(valueBoolResult, Is.TypeOf<BoolHexMap>());
+            Assert.That(valueIntResult, Is.TypeOf<IntHexMap>());
+            Assert.That(valueFloatResult, Is.TypeOf<FloatHexMap>());
+            Assert.That(partialBoolResult, Is.TypeOf<BoolHexMap>());
+            Assert.That(partialIntResult, Is.TypeOf<IntHexMap>());
+            Assert.That(partialFloatResult, Is.TypeOf<FloatHexMap>());
+            Assert.That(valueIntResult[0], Is.EqualTo(2));
+            Assert.That(partialBoolResult[new Akeldov.Math.Spatial2D.VectorXYInt(1, 1)], Is.True);
+        });
+    }
+
+    [Test]
+    public void MapValues_WithSpecializedSpatialResultTypes_ReturnsSpecializedMapsAndPreservesGeometry()
+    {
+        var geometry = new HexMapGeometry(3, 3, new(4f, -2f), 1.5f, Layout.EvenQ);
+        ISpatialHexMap<int> source = new SpatialHexMap<int>(
+            geometry,
+            Enumerable.Range(1, geometry.Topology.Count).ToArray());
+
+        SpatialBoolHexMap valueBoolResult = source.MapValues((int value) => value > 4);
+        SpatialIntHexMap valueIntResult = source.MapValues((int value) => value * 2);
+        SpatialFloatHexMap valueFloatResult = source.MapValues((int value) => value / 2f);
+        SpatialBoolHexMap partialBoolResult = source.MapValues(
+            (PartialSextuplet<int> sample) => sample.Presence == SextupletPresenceFlags.All);
+        SpatialIntHexMap partialIntResult = source.MapValues(GetPresentValueSum);
+        SpatialFloatHexMap partialFloatResult = source.MapValues(
+            (PartialSextuplet<int> sample) => GetPresentValueSum(sample) / 2f);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(valueBoolResult, Is.TypeOf<SpatialBoolHexMap>());
+            Assert.That(valueIntResult, Is.TypeOf<SpatialIntHexMap>());
+            Assert.That(valueFloatResult, Is.TypeOf<SpatialFloatHexMap>());
+            Assert.That(partialBoolResult, Is.TypeOf<SpatialBoolHexMap>());
+            Assert.That(partialIntResult, Is.TypeOf<SpatialIntHexMap>());
+            Assert.That(partialFloatResult, Is.TypeOf<SpatialFloatHexMap>());
+            Assert.That(valueBoolResult.Geometry, Is.EqualTo(geometry));
+            Assert.That(partialFloatResult.Geometry, Is.EqualTo(geometry));
+        });
+    }
+
+    [Test]
     public void MapValues_MapsSourceValuesInRowMajorOrder()
     {
         var topology = new HexMapTopology(3, 2, Layout.OddR);

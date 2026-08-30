@@ -6,6 +6,99 @@ namespace Akeldov.Math.Hexes
     public static partial class ISpatialHexMapExtensions
     {
         /// <summary>
+        /// Maps each source value to a Boolean value while preserving the source geometry.
+        /// </summary>
+        /// <typeparam name="TSource">The source map value type.</typeparam>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="selector">The function that maps each source value to a Boolean value.</param>
+        /// <returns>A new mutable spatial Boolean hex map owned by the caller.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="selector"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialBoolHexMap MapValues<TSource>(
+            this ISpatialHexMap<TSource> map,
+            Func<TSource, bool> selector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialBoolHexMap(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedValues(map, selector));
+        }
+
+        /// <summary>
+        /// Maps each source value to an integer value while preserving the source geometry.
+        /// </summary>
+        /// <typeparam name="TSource">The source map value type.</typeparam>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="selector">The function that maps each source value to an integer value.</param>
+        /// <returns>A new mutable spatial integer hex map owned by the caller.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="selector"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialIntHexMap MapValues<TSource>(
+            this ISpatialHexMap<TSource> map,
+            Func<TSource, int> selector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialIntHexMap(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedValues(map, selector));
+        }
+
+        /// <summary>
+        /// Maps each source value to a floating-point value while preserving the source geometry.
+        /// </summary>
+        /// <typeparam name="TSource">The source map value type.</typeparam>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="selector">The function that maps each source value to a floating-point value.</param>
+        /// <returns>A new mutable spatial floating-point hex map owned by the caller.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="selector"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialFloatHexMap MapValues<TSource>(
+            this ISpatialHexMap<TSource> map,
+            Func<TSource, float> selector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialFloatHexMap(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedValues(map, selector));
+        }
+
+        /// <summary>
         /// Maps each value of the specified spatial hex map while preserving the source geometry.
         /// </summary>
         /// <typeparam name="TSource">The source map value type.</typeparam>
@@ -32,11 +125,102 @@ namespace Akeldov.Math.Hexes
             if (map.Topology != map.Geometry.Topology)
                 throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
 
-            var values = new TResult[map.Topology.Count];
-            for (int index = 0; index < values.Length; index++)
-                values[index] = selector(map[index]);
+            return new SpatialHexMap<TResult>(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedValues(map, selector));
+        }
 
-            return new SpatialHexMap<TResult>(map.Geometry, values);
+        /// <summary>
+        /// Maps each partial sextuplet adjacent to a source cell to a Boolean value while preserving geometry.
+        /// </summary>
+        /// <typeparam name="TSource">The source map value type.</typeparam>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="selector">The function that maps each partial adjacent sextuplet to a Boolean value.</param>
+        /// <returns>A new mutable spatial Boolean hex map owned by the caller.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="selector"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialBoolHexMap MapValues<TSource>(
+            this ISpatialHexMap<TSource> map,
+            Func<PartialSextuplet<TSource>, bool> selector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialBoolHexMap(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedPartialSextupletValues(map, selector));
+        }
+
+        /// <summary>
+        /// Maps each partial sextuplet adjacent to a source cell to an integer value while preserving geometry.
+        /// </summary>
+        /// <typeparam name="TSource">The source map value type.</typeparam>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="selector">The function that maps each partial adjacent sextuplet to an integer value.</param>
+        /// <returns>A new mutable spatial integer hex map owned by the caller.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="selector"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialIntHexMap MapValues<TSource>(
+            this ISpatialHexMap<TSource> map,
+            Func<PartialSextuplet<TSource>, int> selector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialIntHexMap(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedPartialSextupletValues(map, selector));
+        }
+
+        /// <summary>
+        /// Maps each partial sextuplet adjacent to a source cell to a floating-point value while preserving geometry.
+        /// </summary>
+        /// <typeparam name="TSource">The source map value type.</typeparam>
+        /// <param name="map">The source spatial map.</param>
+        /// <param name="selector">The function that maps each partial adjacent sextuplet to a floating-point value.</param>
+        /// <returns>A new mutable spatial floating-point hex map owned by the caller.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="selector"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialFloatHexMap MapValues<TSource>(
+            this ISpatialHexMap<TSource> map,
+            Func<PartialSextuplet<TSource>, float> selector)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialFloatHexMap(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedPartialSextupletValues(map, selector));
         }
 
         /// <summary>
@@ -73,18 +257,9 @@ namespace Akeldov.Math.Hexes
             if (map.Topology != map.Geometry.Topology)
                 throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
 
-            HexMapTopology topology = map.Topology;
-            var values = new TResult[topology.Count];
-            int flatIndex = 0;
-            for (int y = 0; y < topology.Resolution.Y; y++)
-            {
-                for (int x = 0; x < topology.Resolution.X; x++)
-                {
-                    values[flatIndex++] = selector(map.SamplePartialSextuplet(new(x, y)));
-                }
-            }
-
-            return new SpatialHexMap<TResult>(map.Geometry, values);
+            return new SpatialHexMap<TResult>(
+                map.Geometry,
+                IHexMapExtensions.CreateMappedPartialSextupletValues(map, selector));
         }
     }
 }
