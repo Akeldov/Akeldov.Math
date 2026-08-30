@@ -112,6 +112,106 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a spatial integer hex map by sampling pointwise bounds and drawing a random value
+        /// between them at the center of every hex in the specified geometry.
+        /// </summary>
+        /// <param name="range">The spatial fields that provide the pointwise minimum and maximum bounds.</param>
+        /// <param name="geometry">The hex geometry that defines the sampled centers.</param>
+        /// <param name="random">The random number generator used to draw each cell value.</param>
+        /// <returns>
+        /// A new mutable spatial integer hex map owned by the caller. Its values are drawn from the
+        /// pointwise ranges sampled at the hex centers defined by <paramref name="geometry"/>.
+        /// </returns>
+        /// <remarks>
+        /// Hexes are processed in row-major order. Both sampled bounds are inclusive. Equal bounds
+        /// produce that bound.
+        /// </remarks>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="range"/> is the uninitialized default value.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="random"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when a sampled minimum is greater than its maximum.
+        /// </exception>
+        public static SpatialIntHexMap ToSpatialHexMap(
+            this IntFieldRange range,
+            HexMapGeometry geometry,
+            Random random)
+        {
+            if (range.MinField == null || range.MaxField == null)
+                throw new ArgumentException("Integer field range must be initialized.", nameof(range));
+
+            if (random == null)
+                throw new ArgumentNullException(nameof(random));
+
+            return range.ToSpatialHexMap(new HexCenterMap(geometry), random);
+        }
+
+        /// <summary>
+        /// Creates a spatial integer hex map by sampling pointwise bounds and drawing a random value
+        /// between them at each precomputed hex center.
+        /// </summary>
+        /// <param name="range">The spatial fields that provide the pointwise minimum and maximum bounds.</param>
+        /// <param name="hexCenters">The precomputed hex centers that define the sampled geometry.</param>
+        /// <param name="random">The random number generator used to draw each cell value.</param>
+        /// <returns>
+        /// A new mutable spatial integer hex map owned by the caller. Its values are drawn from the
+        /// pointwise ranges sampled at the points stored in <paramref name="hexCenters"/>.
+        /// </returns>
+        /// <remarks>
+        /// Hexes are processed in row-major order. Both sampled bounds are inclusive. Equal bounds
+        /// produce that bound.
+        /// </remarks>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="range"/> is the uninitialized default value.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="hexCenters"/> or <paramref name="random"/> is
+        /// <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when a sampled minimum is greater than its maximum.
+        /// </exception>
+        public static SpatialIntHexMap ToSpatialHexMap(
+            this IntFieldRange range,
+            HexCenterMap hexCenters,
+            Random random)
+        {
+            if (range.MinField == null || range.MaxField == null)
+                throw new ArgumentException("Integer field range must be initialized.", nameof(range));
+
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            if (random == null)
+                throw new ArgumentNullException(nameof(random));
+
+            var values = new int[hexCenters.Topology.Count];
+            var fullRangeBuffer = new byte[sizeof(int)];
+            for (int index = 0; index < values.Length; index++)
+            {
+                int min = range.MinField.Sample(hexCenters[index]);
+                int max = range.MaxField.Sample(hexCenters[index]);
+
+                if (min > max)
+                {
+                    throw new InvalidOperationException(
+                        $"Integer field range returned invalid bounds at hex index {index}. " +
+                        "Minimum must be less than or equal to maximum.");
+                }
+
+                values[index] = NextInclusive(random, min, max, fullRangeBuffer);
+            }
+
+            return new SpatialIntHexMap(hexCenters.Geometry, values);
+        }
+
+        /// <summary>
         /// Creates a Boolean mask identifying cells whose integer value is present in the specified value list.
         /// </summary>
         /// <param name="map">The source integer map.</param>
@@ -249,6 +349,27 @@ namespace Akeldov.Math.Hexes
                 values[index] = map[index];
 
             return new IntHexMap(map.Topology, values);
+        }
+
+        private static int NextInclusive(Random random, int min, int max, byte[] fullRangeBuffer)
+        {
+            if (min == max)
+                return min;
+
+            if (max < int.MaxValue)
+                return random.Next(min, max + 1);
+
+            if (min > int.MinValue)
+                return random.Next(min - 1, max) + 1;
+
+            random.NextBytes(fullRangeBuffer);
+            uint value =
+                (uint)fullRangeBuffer[0] |
+                (uint)fullRangeBuffer[1] << 8 |
+                (uint)fullRangeBuffer[2] << 16 |
+                (uint)fullRangeBuffer[3] << 24;
+
+            return unchecked((int)value);
         }
 
         private static bool[] CreateValueMaskValues(IHexMap<int> map, IReadOnlyList<int> includedValues)

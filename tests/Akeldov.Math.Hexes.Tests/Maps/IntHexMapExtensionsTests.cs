@@ -129,6 +129,137 @@ public class IntHexMapExtensionsTests
     }
 
     [Test]
+    public void ToSpatialHexMap_FromIntFieldRangeAndGeometry_IncludesSampledMaximum()
+    {
+        var geometry = new HexMapGeometry(3, 1, new VectorXY(2f, -1f), 1f, Layout.OddR);
+        var centers = new HexCenterMap(geometry);
+        var range = new IntFieldRange(
+            new DelegateIntField(point => (int)System.MathF.Round(point.X)),
+            new DelegateIntField(point => (int)System.MathF.Round(point.X) + 4));
+        var random = new UpperBoundRandom();
+
+        SpatialIntHexMap result = range.ToSpatialHexMap(geometry, random);
+
+        var expectedBounds = new (int Min, int Max)[geometry.Topology.Count];
+        var expectedValues = new int[geometry.Topology.Count];
+        for (int index = 0; index < geometry.Topology.Count; index++)
+        {
+            int min = (int)System.MathF.Round(centers[index].X);
+            expectedBounds[index] = (min, min + 5);
+            expectedValues[index] = min + 4;
+        }
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(random.NextBounds, Is.EqualTo(expectedBounds));
+
+            for (int index = 0; index < expectedValues.Length; index++)
+                Assert.That(result[index], Is.EqualTo(expectedValues[index]));
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldRangeAndHexCenters_UsesProvidedCenters()
+    {
+        var geometry = new HexMapGeometry(2, 1, new VectorXY(-4f, 3f), 0.75f, Layout.EvenQ);
+        var centers = new HexCenterMap(geometry);
+        var range = new IntFieldRange(
+            new DelegateIntField(_ => 4),
+            new DelegateIntField(_ => 4));
+        var random = new UpperBoundRandom();
+
+        SpatialIntHexMap result = range.ToSpatialHexMap(centers, random);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(result[0], Is.EqualTo(4));
+            Assert.That(result[1], Is.EqualTo(4));
+            Assert.That(random.NextBounds, Is.Empty);
+            Assert.That(random.NextBytesCallCount, Is.Zero);
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldRange_WhenMaximumIsIntMaxValue_IncludesMaximum()
+    {
+        var geometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
+        var range = new IntFieldRange(
+            new DelegateIntField(_ => int.MaxValue - 2),
+            new DelegateIntField(_ => int.MaxValue));
+        var random = new UpperBoundRandom();
+
+        SpatialIntHexMap result = range.ToSpatialHexMap(geometry, random);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(int.MaxValue));
+            Assert.That(random.NextBounds, Is.EqualTo(new[] { (int.MaxValue - 3, int.MaxValue) }));
+            Assert.That(random.NextBytesCallCount, Is.Zero);
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldRange_WhenRangeCoversAllIntValues_IncludesIntMaxValue()
+    {
+        var geometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
+        var range = new IntFieldRange(
+            new DelegateIntField(_ => int.MinValue),
+            new DelegateIntField(_ => int.MaxValue));
+        var random = new UpperBoundRandom();
+
+        SpatialIntHexMap result = range.ToSpatialHexMap(geometry, random);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(int.MaxValue));
+            Assert.That(random.NextBounds, Is.Empty);
+            Assert.That(random.NextBytesCallCount, Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldRange_WhenArgumentsAreInvalid_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
+        var range = new IntFieldRange(
+            new DelegateIntField(_ => 0),
+            new DelegateIntField(_ => 1));
+        var random = new Random(1);
+        HexCenterMap? hexCenters = null;
+        Random? nullRandom = null;
+
+        var rangeException = Assert.Throws<ArgumentException>(() => default(IntFieldRange).ToSpatialHexMap(geometry, random));
+#pragma warning disable CS8604
+        var hexCentersException = Assert.Throws<ArgumentNullException>(() => range.ToSpatialHexMap(hexCenters, random));
+        var randomException = Assert.Throws<ArgumentNullException>(() => range.ToSpatialHexMap(geometry, nullRandom));
+#pragma warning restore CS8604
+        var geometryException = Assert.Throws<ArgumentOutOfRangeException>(() => range.ToSpatialHexMap(default(HexMapGeometry), random));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(rangeException!.ParamName, Is.EqualTo("range"));
+            Assert.That(hexCentersException!.ParamName, Is.EqualTo("hexCenters"));
+            Assert.That(randomException!.ParamName, Is.EqualTo("random"));
+            Assert.That(geometryException!.ParamName, Is.EqualTo("geometry"));
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldRange_WhenSampledMinimumExceedsMaximum_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
+        var range = new IntFieldRange(
+            new DelegateIntField(_ => 2),
+            new DelegateIntField(_ => 1));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => range.ToSpatialHexMap(geometry, new Random(1)));
+
+        Assert.That(exception!.Message, Does.Contain("hex index 0"));
+    }
+
+    [Test]
     public void ToValueMask_ReturnsBooleanMaskForListedValues()
     {
         var topology = new HexMapTopology(6, 1, Layout.OddR);
@@ -322,6 +453,44 @@ public class IntHexMapExtensionsTests
         public int Max => 1_000_000;
 
         public int Sample(PointXY point) => (int)System.MathF.Round(point.X * 10f + point.Y);
+    }
+
+    private sealed class DelegateIntField : IIntField
+    {
+        private readonly Func<PointXY, int> _sample;
+
+        public DelegateIntField(Func<PointXY, int> sample)
+        {
+            _sample = sample;
+        }
+
+        public int Min => int.MinValue;
+
+        public int Max => int.MaxValue;
+
+        public int Sample(PointXY point) => _sample(point);
+    }
+
+    private sealed class UpperBoundRandom : Random
+    {
+        public List<(int Min, int Max)> NextBounds { get; } = new();
+
+        public int NextBytesCallCount { get; private set; }
+
+        public override int Next(int minValue, int maxValue)
+        {
+            NextBounds.Add((minValue, maxValue));
+            return maxValue - 1;
+        }
+
+        public override void NextBytes(byte[] buffer)
+        {
+            NextBytesCallCount++;
+            buffer[0] = 0xff;
+            buffer[1] = 0xff;
+            buffer[2] = 0xff;
+            buffer[3] = 0x7f;
+        }
     }
 
     private sealed class InconsistentSpatialIntMap : ISpatialIntHexMap

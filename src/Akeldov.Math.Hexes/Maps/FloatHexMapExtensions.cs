@@ -113,6 +113,106 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates a spatial floating-point hex map by sampling pointwise bounds and drawing a random
+        /// value between them at the center of every hex in the specified geometry.
+        /// </summary>
+        /// <param name="range">The spatial fields that provide the pointwise minimum and maximum bounds.</param>
+        /// <param name="geometry">The hex geometry that defines the sampled centers.</param>
+        /// <param name="random">The random number generator used to draw each cell value.</param>
+        /// <returns>
+        /// A new mutable spatial floating-point hex map owned by the caller. Its values are drawn from
+        /// the pointwise ranges sampled at the hex centers defined by <paramref name="geometry"/>.
+        /// </returns>
+        /// <remarks>
+        /// Hexes are processed in row-major order. For each hex, the method linearly interpolates from
+        /// the sampled minimum to the sampled maximum using <see cref="Random.NextDouble"/>.
+        /// </remarks>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="range"/> is the uninitialized default value.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="random"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when a sampled bound is not finite or a sampled minimum is greater than its maximum.
+        /// </exception>
+        public static SpatialFloatHexMap ToSpatialHexMap(
+            this FloatFieldRange range,
+            HexMapGeometry geometry,
+            Random random)
+        {
+            if (range.MinField == null || range.MaxField == null)
+                throw new ArgumentException("Float field range must be initialized.", nameof(range));
+
+            if (random == null)
+                throw new ArgumentNullException(nameof(random));
+
+            return range.ToSpatialHexMap(new HexCenterMap(geometry), random);
+        }
+
+        /// <summary>
+        /// Creates a spatial floating-point hex map by sampling pointwise bounds and drawing a random
+        /// value between them at each precomputed hex center.
+        /// </summary>
+        /// <param name="range">The spatial fields that provide the pointwise minimum and maximum bounds.</param>
+        /// <param name="hexCenters">The precomputed hex centers that define the sampled geometry.</param>
+        /// <param name="random">The random number generator used to draw each cell value.</param>
+        /// <returns>
+        /// A new mutable spatial floating-point hex map owned by the caller. Its values are drawn from
+        /// the pointwise ranges sampled at the points stored in <paramref name="hexCenters"/>.
+        /// </returns>
+        /// <remarks>
+        /// Hexes are processed in row-major order. For each hex, the method linearly interpolates from
+        /// the sampled minimum to the sampled maximum using <see cref="Random.NextDouble"/>.
+        /// </remarks>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="range"/> is the uninitialized default value.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="hexCenters"/> or <paramref name="random"/> is
+        /// <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when a sampled bound is not finite or a sampled minimum is greater than its maximum.
+        /// </exception>
+        public static SpatialFloatHexMap ToSpatialHexMap(
+            this FloatFieldRange range,
+            HexCenterMap hexCenters,
+            Random random)
+        {
+            if (range.MinField == null || range.MaxField == null)
+                throw new ArgumentException("Float field range must be initialized.", nameof(range));
+
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            if (random == null)
+                throw new ArgumentNullException(nameof(random));
+
+            var values = new float[hexCenters.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+            {
+                float min = range.MinField.Sample(hexCenters[index]);
+                float max = range.MaxField.Sample(hexCenters[index]);
+
+                if (float.IsNaN(min) || float.IsInfinity(min) ||
+                    float.IsNaN(max) || float.IsInfinity(max) || min > max)
+                {
+                    throw new InvalidOperationException(
+                        $"Float field range returned invalid bounds at hex index {index}. " +
+                        "Bounds must be finite and minimum must be less than or equal to maximum.");
+                }
+
+                values[index] = (float)((double)min + random.NextDouble() * ((double)max - min));
+            }
+
+            return new SpatialFloatHexMap(hexCenters.Geometry, values);
+        }
+
+        /// <summary>
         /// Creates an independent mutable copy of the specified floating-point hex map.
         /// </summary>
         /// <param name="map">The source map.</param>
