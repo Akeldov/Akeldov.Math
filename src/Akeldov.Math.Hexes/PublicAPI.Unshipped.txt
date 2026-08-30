@@ -1,1 +1,14 @@
 #nullable enable
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!>!
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Centers.get -> Akeldov.Math.Hexes.Geometry.HexCenterMap!
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Participates(Akeldov.Math.Spatial2D.VectorXYInt index) -> bool
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Participates(int index) -> bool
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.this[int index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?>!
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.ToMutableParticipationMask() -> Akeldov.Math.Hexes.BoolHexMap!
+Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitioner.Partition(Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, Akeldov.Math.Hexes.IHexMap<bool>! participationMask) -> Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap!
+static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Hexes.IHexMap<bool>! participationMask) -> Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap!

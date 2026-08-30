@@ -75,6 +75,112 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
+    public void Partition_WithParticipationMask_AssignsOnlyParticipatingHexCenters()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(4f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, false, true });
+        var partitioner = new VoronoiHexPartitioner(sites);
+
+        MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
+        ISpatialHexMap<VoronoiCell?> spatialMap = map;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Centers, Is.SameAs(hexCenters));
+            Assert.That(spatialMap.Geometry, Is.EqualTo(hexCenters.Geometry));
+            Assert.That(map[0], Is.SameAs(map.Cells[0]));
+            Assert.That(map[1], Is.Null);
+            Assert.That(map[2], Is.SameAs(map.Cells[1]));
+            Assert.That(map[new VectorXYInt(0, 0)], Is.SameAs(map.Cells[0]));
+            Assert.That(map[new VectorXYInt(1, 0)], Is.Null);
+            Assert.That(map.Participates(0), Is.True);
+            Assert.That(map.Participates(1), Is.False);
+            Assert.That(map.Participates(new VectorXYInt(2, 0)), Is.True);
+            Assert.That(map.Cells, Has.Count.EqualTo(2));
+            Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+            Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
+        });
+    }
+
+    [Test]
+    public void ToVoronoiHexPartitionMap_WithParticipationMask_PartitionsOnlyParticipatingHexCenters()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(4f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, false, true });
+
+        MaskedVoronoiHexPartitionMap map = hexCenters.ToVoronoiHexPartitionMap(sites, participationMask);
+
+        Assert.That(map[0], Is.SameAs(map.Cells[0]));
+        Assert.That(map[1], Is.Null);
+        Assert.That(map[2], Is.SameAs(map.Cells[1]));
+        Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+        Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
+    }
+
+    [Test]
+    public void Partition_WithEmptyParticipationMask_KeepsEmptyCellsAndNullAssignments()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(4f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var participationMask = new BoolHexMap(hexCenters.Topology);
+        var partitioner = new VoronoiHexPartitioner(sites);
+
+        MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map[0], Is.Null);
+            Assert.That(map[1], Is.Null);
+            Assert.That(map.Participates(0), Is.False);
+            Assert.That(map.Participates(1), Is.False);
+            Assert.That(map.Cells, Has.Count.EqualTo(2));
+            Assert.That(map.Cells[0].HexIndexes, Is.Empty);
+            Assert.That(map.Cells[1].HexIndexes, Is.Empty);
+        });
+    }
+
+    [Test]
+    public void MaskedPartitionToMutableMaps_ReturnCallerOwnedCopies()
+    {
+        var sites = new[]
+        {
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(4f, 0f), 1f)
+        };
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, false, true });
+        var partitioner = new VoronoiHexPartitioner(sites);
+        MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
+
+        HexMap<VoronoiCell?> mutableMap = map.ToMutableHexMap();
+        BoolHexMap mutableMask = map.ToMutableParticipationMask();
+        mutableMap[1] = map.Cells[1];
+        mutableMask[0] = false;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mutableMap[1], Is.SameAs(map.Cells[1]));
+            Assert.That(map[1], Is.Null);
+            Assert.That(mutableMask[0], Is.False);
+            Assert.That(map.Participates(0), Is.True);
+        });
+    }
+
+    [Test]
     public void ToMutableHexMap_ReturnsCallerOwnedAssignmentCopy()
     {
         var sites = new[]
@@ -188,6 +294,47 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
+    public void Partition_WithParticipationMask_DoesNotReadExcludedHexCenters()
+    {
+        var sites = new[] { new Site(new PointXY(float.MaxValue, 0f), 1f) };
+        var geometry = new HexMapGeometry(
+            width: 2,
+            height: 1,
+            origin: new VectorXY(float.MaxValue, 0f),
+            radius: (float.MaxValue / 4f).ConvertHexApothemToRadius(),
+            layout: Layout.OddR);
+        var hexCenters = new HexCenterMap(geometry);
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, false });
+        var partitioner = new VoronoiHexPartitioner(sites);
+
+        MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
+
+        Assert.That(map[0], Is.SameAs(map.Cells[0]));
+        Assert.That(map[1], Is.Null);
+        Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+    }
+
+    [Test]
+    public void Partition_WithParticipationMask_WhenIncludedHexCenterCoordinateIsNotFinite_Throws()
+    {
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
+        var geometry = new HexMapGeometry(
+            width: 2,
+            height: 1,
+            origin: new VectorXY(float.MaxValue, 0f),
+            radius: (float.MaxValue / 4f).ConvertHexApothemToRadius(),
+            layout: Layout.OddR);
+        var hexCenters = new HexCenterMap(geometry);
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { false, true });
+        var partitioner = new VoronoiHexPartitioner(sites);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            partitioner.Partition(hexCenters, participationMask));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("hexCenters"));
+    }
+
+    [Test]
     public void VoronoiCell_WhenSiteIndexIsNegative_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -254,6 +401,31 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
+    public void Partition_WhenParticipationMaskIsNull_Throws()
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var partitioner = new VoronoiHexPartitioner(new[] { new Site(new PointXY(0f, 0f), 1f) });
+
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            partitioner.Partition(hexCenters, null!));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("participationMask"));
+    }
+
+    [Test]
+    public void Partition_WhenParticipationMaskHasDifferentTopology_Throws()
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var participationMask = new BoolHexMap(new HexMapTopology(2, 1, Layout.OddR));
+        var partitioner = new VoronoiHexPartitioner(new[] { new Site(new PointXY(0f, 0f), 1f) });
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            partitioner.Partition(hexCenters, participationMask));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("participationMask"));
+    }
+
+    [Test]
     public void ToVoronoiHexPartitionMap_WhenHexCenterMapIsNull_Throws()
     {
         HexCenterMap hexCenters = null!;
@@ -263,5 +435,17 @@ public class VoronoiHexPartitionerTests
             hexCenters.ToVoronoiHexPartitionMap(sites));
 
         Assert.That(exception!.ParamName, Is.EqualTo("hexCenters"));
+    }
+
+    [Test]
+    public void ToVoronoiHexPartitionMap_WhenParticipationMaskIsNull_Throws()
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
+
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            hexCenters.ToVoronoiHexPartitionMap(sites, null!));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("participationMask"));
     }
 }

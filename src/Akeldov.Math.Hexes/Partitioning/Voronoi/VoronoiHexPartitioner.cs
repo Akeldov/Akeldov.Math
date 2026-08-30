@@ -70,6 +70,73 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
         }
 
+        /// <summary>
+        /// Assigns participating centers from the specified hex center map to their nearest weighted
+        /// Voronoi site.
+        /// </summary>
+        /// <param name="hexCenters">The hex center map to partition.</param>
+        /// <param name="participationMask">
+        /// The Boolean map that indicates which hex centers participate in the partition.
+        /// </param>
+        /// <returns>
+        /// A new read-only masked hex partition map with per-hex assignments and a semantic cell list.
+        /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
+        /// </returns>
+        public MaskedVoronoiHexPartitionMap Partition(
+            HexCenterMap hexCenters,
+            IHexMap<bool> participationMask)
+        {
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            if (participationMask == null)
+                throw new ArgumentNullException(nameof(participationMask));
+
+            if (hexCenters.Topology != participationMask.Topology)
+                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
+
+            var count = hexCenters.Topology.Count;
+            var cellIndexes = new int[count];
+            var participationMaskValues = new bool[count];
+            var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
+
+            int flatIndex = 0;
+            for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
+            {
+                for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
+                {
+                    if (!participationMask[flatIndex])
+                    {
+                        flatIndex++;
+                        continue;
+                    }
+
+                    participationMaskValues[flatIndex] = true;
+
+                    PointXY center = hexCenters[flatIndex];
+                    if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
+                        float.IsNaN(center.Y) || float.IsInfinity(center.Y))
+                        throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
+
+                    int cellIndex = GetNearestWeightedCellIndex(center);
+                    cellIndexes[flatIndex] = cellIndex;
+                    hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
+                    flatIndex++;
+                }
+            }
+
+            var cells = CreateCells(hexIndexBuckets);
+
+            var assignments = new VoronoiCell?[count];
+            for (int i = 0; i < assignments.Length; i++)
+            {
+                if (participationMaskValues[i])
+                    assignments[i] = cells[cellIndexes[i]];
+            }
+
+            return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+        }
+
         private static Site[] CopyAndValidateSites(IReadOnlyList<Site> sites)
         {
             if (sites == null)
