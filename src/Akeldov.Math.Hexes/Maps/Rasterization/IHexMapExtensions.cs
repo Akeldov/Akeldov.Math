@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Provides extension methods for hex-indexed map values.
     /// </summary>
-    public static class IHexMapExtensions
+    public static partial class IHexMapExtensions
     {
         /// <summary>
         /// Rasterizes the specified map using the provided raster geometry and value-to-color selector.

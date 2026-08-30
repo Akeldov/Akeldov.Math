@@ -7,9 +7,9 @@ using System;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides rasterization extensions for spatial hex maps.
+    /// Provides extension methods for spatial hex maps.
     /// </summary>
-    public static class ISpatialHexMapExtensions
+    public static partial class ISpatialHexMapExtensions
     {
         /// <summary>
         /// Creates a spatial raster grid that covers the whole hex map and optional outer margin.
