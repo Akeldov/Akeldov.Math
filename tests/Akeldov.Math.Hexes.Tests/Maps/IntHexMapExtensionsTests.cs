@@ -1,5 +1,6 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Fields;
 
 namespace Akeldov.Math.Hexes.Tests.Maps;
 
@@ -50,6 +51,80 @@ public class IntHexMapExtensionsTests
         {
             Assert.That(getException!.ParamName, Is.EqualTo("map"));
             Assert.That(tryException!.ParamName, Is.EqualTo("map"));
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldAndGeometry_SamplesHexCenters()
+    {
+        var geometry = new HexMapGeometry(3, 2, new VectorXY(-4f, 8f), 1.5f, Layout.OddR);
+        var centers = new HexCenterMap(geometry);
+        IIntField field = new CoordinateIntField();
+
+        SpatialIntHexMap result = field.ToSpatialHexMap(geometry);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<SpatialIntHexMap>());
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+
+            for (int index = 0; index < geometry.Topology.Count; index++)
+                Assert.That(result[index], Is.EqualTo(field.Sample(centers[index])));
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntFieldAndHexCenters_SamplesProvidedCenters()
+    {
+        var geometry = new HexMapGeometry(2, 2, new VectorXY(3f, -1f), 0.75f, Layout.EvenQ);
+        var centers = new HexCenterMap(geometry);
+        IIntField field = new CoordinateIntField();
+
+        SpatialIntHexMap result = field.ToSpatialHexMap(centers);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+
+            for (int index = 0; index < geometry.Topology.Count; index++)
+                Assert.That(result[index], Is.EqualTo(field.Sample(centers[index])));
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntField_WhenGeometryIsEmpty_ReturnsEmptySpatialMap()
+    {
+        var geometry = new HexMapGeometry(0, 0, new VectorXY(3f, -2f), 1.25f, Layout.EvenR);
+        IIntField field = new CoordinateIntField();
+
+        SpatialIntHexMap result = field.ToSpatialHexMap(geometry);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(result.Topology.Count, Is.Zero);
+        });
+    }
+
+    [Test]
+    public void ToSpatialHexMap_FromIntField_WhenArgumentsAreInvalid_Throws()
+    {
+        var geometry = new HexMapGeometry(1, 1, 1f, Layout.OddR);
+        IIntField? field = null;
+        IIntField source = new CoordinateIntField();
+        HexCenterMap? hexCenters = null;
+
+#pragma warning disable CS8604
+        var fieldException = Assert.Throws<ArgumentNullException>(() => field.ToSpatialHexMap(geometry));
+        var hexCentersException = Assert.Throws<ArgumentNullException>(() => source.ToSpatialHexMap(hexCenters));
+#pragma warning restore CS8604
+        var geometryException = Assert.Throws<ArgumentOutOfRangeException>(() => source.ToSpatialHexMap(default(HexMapGeometry)));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(fieldException!.ParamName, Is.EqualTo("field"));
+            Assert.That(hexCentersException!.ParamName, Is.EqualTo("hexCenters"));
+            Assert.That(geometryException!.ParamName, Is.EqualTo("geometry"));
         });
     }
 
@@ -238,6 +313,15 @@ public class IntHexMapExtensionsTests
 #pragma warning restore CS8604
 
         Assert.That(exception!.ParamName, Is.EqualTo("map"));
+    }
+
+    private sealed class CoordinateIntField : IIntField
+    {
+        public int Min => -1_000_000;
+
+        public int Max => 1_000_000;
+
+        public int Sample(PointXY point) => (int)System.MathF.Round(point.X * 10f + point.Y);
     }
 
     private sealed class InconsistentSpatialIntMap : ISpatialIntHexMap

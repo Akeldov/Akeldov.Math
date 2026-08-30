@@ -1,4 +1,5 @@
 using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Spatial2D.Fields;
 using System;
 using System.Collections.Generic;
 
@@ -57,6 +58,57 @@ namespace Akeldov.Math.Hexes
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Creates a spatial integer hex map by sampling a spatial field at the center of every hex
+        /// in the specified geometry.
+        /// </summary>
+        /// <param name="field">The spatial integer field to sample.</param>
+        /// <param name="geometry">The hex geometry that defines the sampled centers.</param>
+        /// <returns>
+        /// A new mutable spatial integer hex map owned by the caller. Its values are sampled from
+        /// <paramref name="field"/> at the hex centers defined by <paramref name="geometry"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="field"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
+        /// </exception>
+        public static SpatialIntHexMap ToSpatialHexMap(this IIntField field, HexMapGeometry geometry)
+        {
+            if (field == null)
+                throw new ArgumentNullException(nameof(field));
+
+            return field.ToSpatialHexMap(new HexCenterMap(geometry));
+        }
+
+        /// <summary>
+        /// Creates a spatial integer hex map by sampling a spatial field at each precomputed hex center.
+        /// </summary>
+        /// <param name="field">The spatial integer field to sample.</param>
+        /// <param name="hexCenters">The precomputed hex centers that define the sampled geometry.</param>
+        /// <returns>
+        /// A new mutable spatial integer hex map owned by the caller. Its values are sampled from
+        /// <paramref name="field"/> at the points stored in <paramref name="hexCenters"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="field"/> or <paramref name="hexCenters"/> is <see langword="null"/>.
+        /// </exception>
+        public static SpatialIntHexMap ToSpatialHexMap(this IIntField field, HexCenterMap hexCenters)
+        {
+            if (field == null)
+                throw new ArgumentNullException(nameof(field));
+
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            var values = new int[hexCenters.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = field.Sample(hexCenters[index]);
+
+            return new SpatialIntHexMap(hexCenters.Geometry, values);
         }
 
         /// <summary>
