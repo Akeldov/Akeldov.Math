@@ -5,6 +5,47 @@ namespace Akeldov.Math.Hexes.Tests.Maps;
 
 public class HexMapValueMappingExtensionsTests
 {
+    [Test]
+    public void MapValues_MapsSourceValuesInRowMajorOrder()
+    {
+        var topology = new HexMapTopology(3, 2, Layout.OddR);
+        IHexMap<int> source = new HexMap<int>(topology, new[] { 3, 1, 4, 1, 5, 9 });
+        var selectedValues = new List<int>();
+
+        HexMap<string> result = source.MapValues((int value) =>
+        {
+            selectedValues.Add(value);
+            return value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(selectedValues, Is.EqualTo(new[] { 3, 1, 4, 1, 5, 9 }));
+            Assert.That(
+                Enumerable.Range(0, topology.Count).Select(index => result[index]),
+                Is.EqualTo(new[] { "3", "1", "4", "1", "5", "9" }));
+        });
+    }
+
+    [Test]
+    public void MapValues_WithSourceValues_FromSpatialMap_PreservesGeometry()
+    {
+        var geometry = new HexMapGeometry(3, 1, new(4f, -2f), 1.5f, Layout.EvenQ);
+        ISpatialHexMap<int> source = new SpatialHexMap<int>(geometry, new[] { 2, 4, 8 });
+
+        SpatialHexMap<int> result = source.MapValues((int value) => value * 2);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(result.Topology, Is.EqualTo(geometry.Topology));
+            Assert.That(
+                Enumerable.Range(0, geometry.Topology.Count).Select(index => result[index]),
+                Is.EqualTo(new[] { 4, 8, 16 }));
+        });
+    }
+
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
@@ -81,7 +122,7 @@ public class HexMapValueMappingExtensionsTests
         IHexMap<int> source = new HexMap<int>(topology);
         int selectorCallCount = 0;
 
-        HexMap<int> result = source.MapValues(_ => selectorCallCount++);
+        HexMap<int> result = source.MapValues((PartialSextuplet<int> _) => selectorCallCount++);
 
         Assert.Multiple(() =>
         {
@@ -98,19 +139,26 @@ public class HexMapValueMappingExtensionsTests
         ISpatialHexMap<int> nullSpatialMap = null!;
         var source = new HexMap<int>(new HexMapTopology(1, 1, Layout.OddR));
         var spatialSource = new SpatialHexMap<int>(new HexMapGeometry(1, 1, 1f, Layout.OddR));
+        Func<int, int> nullValueSelector = null!;
         Func<PartialSextuplet<int>, int> nullSelector = null!;
 
         Assert.Multiple(() =>
         {
             Assert.That(
-                Assert.Throws<ArgumentNullException>(() => nullMap.MapValues(sample => 0))!.ParamName,
+                Assert.Throws<ArgumentNullException>(() => nullMap.MapValues((PartialSextuplet<int> sample) => 0))!.ParamName,
                 Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => source.MapValues(nullValueSelector))!.ParamName,
+                Is.EqualTo("selector"));
             Assert.That(
                 Assert.Throws<ArgumentNullException>(() => source.MapValues(nullSelector))!.ParamName,
                 Is.EqualTo("selector"));
             Assert.That(
-                Assert.Throws<ArgumentNullException>(() => nullSpatialMap.MapValues(sample => 0))!.ParamName,
+                Assert.Throws<ArgumentNullException>(() => nullSpatialMap.MapValues((PartialSextuplet<int> sample) => 0))!.ParamName,
                 Is.EqualTo("map"));
+            Assert.That(
+                Assert.Throws<ArgumentNullException>(() => spatialSource.MapValues(nullValueSelector))!.ParamName,
+                Is.EqualTo("selector"));
             Assert.That(
                 Assert.Throws<ArgumentNullException>(() => spatialSource.MapValues(nullSelector))!.ParamName,
                 Is.EqualTo("selector"));
@@ -124,9 +172,15 @@ public class HexMapValueMappingExtensionsTests
             new HexMapTopology(1, 1, Layout.OddR),
             new HexMapGeometry(2, 1, 1f, Layout.OddR));
 
-        var exception = Assert.Throws<ArgumentException>(() => source.MapValues(sample => 0));
+        var partialException = Assert.Throws<ArgumentException>(
+            () => source.MapValues((PartialSextuplet<int> sample) => 0));
+        var valueException = Assert.Throws<ArgumentException>(() => source.MapValues((int value) => 0));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("map"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(partialException!.ParamName, Is.EqualTo("map"));
+            Assert.That(valueException!.ParamName, Is.EqualTo("map"));
+        });
     }
 
     private static int GetPresentValueSum(PartialSextuplet<int> sample)
