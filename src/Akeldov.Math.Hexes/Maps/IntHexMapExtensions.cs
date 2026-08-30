@@ -290,6 +290,36 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
+        /// Creates an independent mutable floating-point copy of the specified spatial integer hex map.
+        /// </summary>
+        /// <param name="map">The source spatial integer map.</param>
+        /// <returns>
+        /// A new mutable spatial floating-point hex map owned by the caller. Its geometry is preserved,
+        /// its values are converted to <see cref="float"/>, and subsequent changes to either map do not
+        /// affect the other.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialFloatHexMap ToSpatialFloatHexMap(this ISpatialHexMap<int> map)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            var values = new float[map.Topology.Count];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = map[index];
+
+            return new SpatialFloatHexMap(map.Geometry, values);
+        }
+
+        /// <summary>
         /// Creates an independent mutable spatial copy of the specified integer hex map.
         /// </summary>
         /// <param name="map">The source map.</param>

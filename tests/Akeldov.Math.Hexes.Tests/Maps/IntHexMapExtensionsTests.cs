@@ -446,6 +446,64 @@ public class IntHexMapExtensionsTests
         Assert.That(exception!.ParamName, Is.EqualTo("map"));
     }
 
+    [Test]
+    public void ToSpatialFloatHexMap_ConvertsValuesAndReturnsIndependentMutableCopy()
+    {
+        var geometry = new HexMapGeometry(4, 1, new VectorXY(3f, -2f), 1.25f, Layout.EvenQ);
+        var sourceMap = new SpatialIntHexMap(geometry, new[] { int.MinValue, -2, 4, int.MaxValue });
+        ISpatialHexMap<int> source = sourceMap;
+
+        SpatialFloatHexMap result = source.ToSpatialFloatHexMap();
+        sourceMap[0] = 10;
+        result[1] = 20f;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<SpatialFloatHexMap>());
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(result[0], Is.EqualTo((float)int.MinValue));
+            Assert.That(result[1], Is.EqualTo(20f));
+            Assert.That(result[2], Is.EqualTo(4f));
+            Assert.That(result[3], Is.EqualTo((float)int.MaxValue));
+            Assert.That(sourceMap[1], Is.EqualTo(-2));
+        });
+    }
+
+    [Test]
+    public void ToSpatialFloatHexMap_WhenMapIsEmpty_ReturnsEmptyMapWithSameGeometry()
+    {
+        var geometry = new HexMapGeometry(0, 0, new VectorXY(3f, -2f), 1.25f, Layout.EvenR);
+        ISpatialHexMap<int> source = new SpatialIntHexMap(geometry);
+
+        SpatialFloatHexMap result = source.ToSpatialFloatHexMap();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(result.Topology.Count, Is.Zero);
+        });
+    }
+
+    [Test]
+    public void ToSpatialFloatHexMap_WhenMapIsInvalid_Throws()
+    {
+        ISpatialHexMap<int>? map = null;
+        var inconsistent = new InconsistentSpatialIntMap(
+            topology: new HexMapTopology(1, 1, Layout.OddR),
+            geometry: new HexMapGeometry(1, 1, 1f, Layout.EvenR));
+
+#pragma warning disable CS8604
+        var nullException = Assert.Throws<ArgumentNullException>(() => map.ToSpatialFloatHexMap());
+#pragma warning restore CS8604
+        var inconsistentException = Assert.Throws<ArgumentException>(() => inconsistent.ToSpatialFloatHexMap());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(nullException!.ParamName, Is.EqualTo("map"));
+            Assert.That(inconsistentException!.ParamName, Is.EqualTo("map"));
+        });
+    }
+
     private sealed class CoordinateIntField : IIntField
     {
         public int Min => -1_000_000;
