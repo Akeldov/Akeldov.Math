@@ -1,5 +1,6 @@
 using Akeldov.Math.Hexes.Geometry;
 using System;
+using System.Collections.Generic;
 
 namespace Akeldov.Math.Hexes
 {
@@ -56,6 +57,61 @@ namespace Akeldov.Math.Hexes
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Creates a Boolean mask identifying cells whose integer value is present in the specified value list.
+        /// </summary>
+        /// <param name="map">The source integer map.</param>
+        /// <param name="values">The integer values that should be marked in the result mask.</param>
+        /// <returns>
+        /// A new mutable Boolean hex map owned by the caller. A result cell is <see langword="true"/>
+        /// when the source cell value is present in <paramref name="values"/>; otherwise, it is
+        /// <see langword="false"/>. The source map is not modified.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="values"/> is <see langword="null"/>.
+        /// </exception>
+        public static BoolHexMap ToValueMask(this IIntHexMap map, IReadOnlyList<int> values)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            return new BoolHexMap(map.Topology, CreateValueMaskValues(map, values));
+        }
+
+        /// <summary>
+        /// Creates a spatial Boolean mask identifying cells whose integer value is present in the
+        /// specified value list while preserving the source spatial geometry.
+        /// </summary>
+        /// <param name="map">The source spatial integer map.</param>
+        /// <param name="values">The integer values that should be marked in the result mask.</param>
+        /// <returns>
+        /// A new mutable spatial Boolean hex map owned by the caller. A result cell is
+        /// <see langword="true"/> when the source cell value is present in <paramref name="values"/>;
+        /// otherwise, it is <see langword="false"/>. The source map is not modified.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="map"/> or <paramref name="values"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the source topology does not match its geometry topology.
+        /// </exception>
+        public static SpatialBoolHexMap ToValueMask(this ISpatialIntHexMap map, IReadOnlyList<int> values)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            if (map.Topology != map.Geometry.Topology)
+                throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
+
+            return new SpatialBoolHexMap(map.Geometry, CreateValueMaskValues(map, values));
         }
 
         /// <summary>
@@ -141,6 +197,19 @@ namespace Akeldov.Math.Hexes
                 values[index] = map[index];
 
             return new IntHexMap(map.Topology, values);
+        }
+
+        private static bool[] CreateValueMaskValues(IHexMap<int> map, IReadOnlyList<int> includedValues)
+        {
+            var values = new bool[map.Topology.Count];
+            if (includedValues.Count == 0)
+                return values;
+
+            var includedValueSet = new HashSet<int>(includedValues);
+            for (int index = 0; index < values.Length; index++)
+                values[index] = includedValueSet.Contains(map[index]);
+
+            return values;
         }
     }
 }
