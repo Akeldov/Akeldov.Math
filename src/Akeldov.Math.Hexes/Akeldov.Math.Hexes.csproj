@@ -24,7 +24,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Akeldov.Math.Spatial2D" Version="[1.0.0, 2.0.0)" />
 		<PackageReference Include="Meziantou.Analyzer" Version="3.0.124">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -33,6 +32,10 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj" />
 	</ItemGroup>
 
 </Project>
