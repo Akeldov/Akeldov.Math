@@ -1362,3 +1362,15 @@ Akeldov.Math.Spatial2D.Rasterization.SignedPointDistanceProviderCollectionRaster
 Akeldov.Math.Spatial2D.Rasterization.SignedPointDistanceProviderRasterizer<TValue>
 Akeldov.Math.Spatial2D.Rasterization.SignedPointDistanceProviderRasterizer<TValue>.Rasterize(Akeldov.Math.Spatial2D.ISignedPointDistanceProvider! source, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry grid) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TValue>!
 Akeldov.Math.Spatial2D.Rasterization.SignedPointDistanceProviderRasterizer<TValue>.SignedPointDistanceProviderRasterizer(System.Func<float, TValue>! signedDistanceToValue) -> void
+Akeldov.Math.Spatial2D.Fields.FloatFieldRange
+Akeldov.Math.Spatial2D.Fields.FloatFieldRange.Deconstruct(out Akeldov.Math.Spatial2D.Fields.IFloatField! minField, out Akeldov.Math.Spatial2D.Fields.IFloatField! maxField) -> void
+Akeldov.Math.Spatial2D.Fields.FloatFieldRange.FloatFieldRange() -> void
+Akeldov.Math.Spatial2D.Fields.FloatFieldRange.FloatFieldRange(Akeldov.Math.Spatial2D.Fields.IFloatField! minField, Akeldov.Math.Spatial2D.Fields.IFloatField! maxField) -> void
+Akeldov.Math.Spatial2D.Fields.FloatFieldRange.MaxField.get -> Akeldov.Math.Spatial2D.Fields.IFloatField!
+Akeldov.Math.Spatial2D.Fields.FloatFieldRange.MinField.get -> Akeldov.Math.Spatial2D.Fields.IFloatField!
+Akeldov.Math.Spatial2D.Fields.IntFieldRange
+Akeldov.Math.Spatial2D.Fields.IntFieldRange.Deconstruct(out Akeldov.Math.Spatial2D.Fields.IIntField! minField, out Akeldov.Math.Spatial2D.Fields.IIntField! maxField) -> void
+Akeldov.Math.Spatial2D.Fields.IntFieldRange.IntFieldRange() -> void
+Akeldov.Math.Spatial2D.Fields.IntFieldRange.IntFieldRange(Akeldov.Math.Spatial2D.Fields.IIntField! minField, Akeldov.Math.Spatial2D.Fields.IIntField! maxField) -> void
+Akeldov.Math.Spatial2D.Fields.IntFieldRange.MaxField.get -> Akeldov.Math.Spatial2D.Fields.IIntField!
+Akeldov.Math.Spatial2D.Fields.IntFieldRange.MinField.get -> Akeldov.Math.Spatial2D.Fields.IIntField!

@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.1.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2026 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added pairwise intersection extension APIs for lines, rays, segments, parameterized segment chains, arcs, circles, and quadratic and cubic Bezier curves, using exact polynomial root isolation where applicable. Added a shared generic cell-center rasterization core and generic distance and parameterized-curve rasterizers that replace the color-specific rasterizer classes. Replaced influence-source cullers with reusable IInfluenceSourceIndex implementations, including DelaunayInfluenceSourceIndex and HalfPlaneInfluenceSourceIndex. Breaking changes include removing BezierCurve in favor of QuadraticBezier and CubicBezier, removing legacy ray-intersection members from curve and contour abstractions in favor of concrete extension APIs, splitting rightward-crossing and contour-path capabilities into dedicated contracts, removing geometryEpsilon from signed-distance members, and removing the replaced culler and color-specific rasterizer APIs. Rectangular regions and contours now accept non-negative dimensions: one zero dimension represents a line segment, and the default value represents the origin point. Eliminated transient per-query allocations in Delaunay influence-source selection and per-cell arc-intersection allocations in contour signed-distance rasterization, restoring or improving the 0.9.0 benchmark baseline. Expanded curve-intersection, rasterization, influence-field, public-API, test, benchmark, and bilingual documentation coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added FloatFieldRange and IntFieldRange value types for grouping the fields that provide pointwise minimum and maximum bounds. The new types validate their field references, expose them through MinField and MaxField, and support deconstruction. This release is backward compatible with 1.0.0.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>

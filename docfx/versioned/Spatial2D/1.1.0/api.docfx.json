@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../../../../.tmp/docfx-versioned/Spatial2D-1.1.0/package/lib/net6.0",
+          "files": [
+            "Akeldov.Math.Spatial2D.dll"
+          ]
+        }
+      ],
+      "dest": "../../../../.tmp/docfx-versioned/Spatial2D-1.1.0/api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "src": "../../..",
+        "files": [
+          "toc.yml",
+          "index.md",
+          "about.md",
+          "Libraries/index.md"
+        ]
+      },
+      {
+        "src": "../../../../.tmp/docfx-versioned/Spatial2D-1.1.0/articles/en",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "Spatial2D/1.1.0"
+      },
+      {
+        "src": "../../../../.tmp/docfx-versioned/Spatial2D-1.1.0/articles/ru",
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "dest": "ru/Spatial2D/1.1.0"
+      },
+      {
+        "src": "../../../../.tmp/docfx-versioned/Spatial2D-1.1.0/api",
+        "files": [
+          "**/*.yml"
+        ],
+        "dest": "api/Spatial2D/1.1.0"
+      },
+      {
+        "src": "../reference",
+        "files": [
+          "index.md"
+        ],
+        "dest": "api/Spatial2D/1.1.0"
+      }
+    ],
+    "resource": [
+      {
+        "src": "../../..",
+        "files": [
+          "Spatial2D/index.html",
+          "Hexes/index.html"
+        ]
+      }
+    ],
+    "output": "../../../../.tmp/docfx-versioned/Spatial2D-1.1.0/site/Akeldov.Math",
+    "template": [
+      "default",
+      "modern",
+      "../../../template"
+    ],
+    "globalMetadata": {
+      "_appName": "Akeldov.Math",
+      "_appTitle": "Akeldov.Math Documentation",
+      "_appLogoPath": "assets/logo-akeldov.png",
+      "_appFaviconPath": "assets/favicon-akeldov.png",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/Akeldov/Akeldov.Math",
+        "branch": "main"
+      }
+    }
+  }
+}

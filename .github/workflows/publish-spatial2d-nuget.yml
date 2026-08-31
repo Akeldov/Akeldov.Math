@@ -94,6 +94,7 @@ jobs:
 
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
           "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
+          "REPOSITORY_COMMIT=$expectedTag" >> $env:GITHUB_ENV
 
       - name: Build package
         shell: pwsh
@@ -105,6 +106,7 @@ jobs:
           /p:PackageVersion=$env:PACKAGE_VERSION
           /p:ContinuousIntegrationBuild=true
           /p:IncludeSourceRevisionInInformationalVersion=false
+          /p:RepositoryCommit=$env:REPOSITORY_COMMIT
           /maxcpucount:1
 
       - name: Pack
@@ -117,6 +119,7 @@ jobs:
           /p:PackageVersion=$env:PACKAGE_VERSION
           /p:ContinuousIntegrationBuild=true
           /p:IncludeSourceRevisionInInformationalVersion=false
+          /p:RepositoryCommit=$env:REPOSITORY_COMMIT
 
       - name: Verify release candidate
         shell: pwsh
