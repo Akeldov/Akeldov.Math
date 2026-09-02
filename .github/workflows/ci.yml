@@ -86,7 +86,7 @@ jobs:
       fail-fast: false
       matrix:
         spatial2d_version:
-          - 1.0.0
+          - 1.1.0
     env:
       SPATIAL2D_PROJECT_PATH: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
       HEXES_TEST_PROJECT_PATH: tests/Akeldov.Math.Hexes.Tests/Akeldov.Math.Hexes.Tests.csproj

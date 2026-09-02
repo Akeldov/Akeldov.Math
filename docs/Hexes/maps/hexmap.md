@@ -19,6 +19,9 @@
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
 - Boolean maps provide one-step hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`) plus linear-time flood fill, component labeling, and distance transforms.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
+- `MapValues` transforms either each source value or each cell's partial six-neighbor set. Boolean,
+  integer, and floating-point selectors return the matching specialized map; other selectors return
+  `HexMap<TResult>`. Spatial sources preserve their geometry.
 - `Min` and `Max` each scan the map in O(N) time; `GetMinMax` obtains both extrema in one pass, and `TryGetMinMax` handles empty maps without throwing.
 - `IntHexMap` and `FloatHexMap` support cell-wise unary negation with `-`.
 - Mixed `FloatHexMap` and `IntHexMap` addition and subtraction return a `FloatHexMap` in either operand order; the spatial counterparts return `SpatialFloatHexMap` and require equal geometry.
@@ -38,6 +41,9 @@
 - `ToBoolHexMap`, `ToIntHexMap`, and `ToFloatHexMap` create independent mutable copies of interface-typed maps.
 - `ToSpatialHexMap(geometry)` copies Boolean, integer, or floating-point maps into the corresponding spatial specialization; the supplied geometry must have the same topology.
 - `ToHexMap()` copies a Boolean, integer, or floating-point spatial map back to its corresponding topology-only specialized type.
+- `ToSpatialFloatHexMap()` converts spatial integer values to floating point, while
+  `ToSpatialIntHexMap()` truncates spatial floating-point values toward zero; both preserve geometry.
+- `ToValueMask(values)` converts an integer map into a Boolean mask that selects the listed values.
 - `SpatialBoolHexMap`, `SpatialIntHexMap`, and `SpatialFloatHexMap` provide the same operator surface while preserving `HexMapGeometry` in every result.
 - Cross-operators combine one spatial specialized map with one topology-only specialized map in either operand order; the result is spatial and retains the spatial operand's geometry.
 
@@ -57,6 +63,34 @@ var waterCost = new IntHexMap(topology, new int[topology.Count]);
 IntHexMap movementCost = land.Select(landCost, waterCost);
 IntHexMap adjustedCost = (movementCost + 2) * 3;
 ```
+
+## Map values and neighborhoods
+
+`MapValues` creates independent mutable storage without changing the source. A selector can receive
+each value directly or a `PartialSextuplet<TValue>` containing the six edge-adjacent values. At map
+boundaries, missing neighbors are marked absent and carry `default(TValue)`.
+
+```csharp
+IntHexMap doubledCost = movementCost.MapValues(value => value * 2);
+BoolHexMap hasExpensiveNeighbor = movementCost.MapValues(neighbors =>
+    (neighbors.HasAdjacent0 && neighbors.Adjacent0 >= 8) ||
+    (neighbors.HasAdjacent1 && neighbors.Adjacent1 >= 8));
+```
+
+The neighbor positions `Adjacent0` through `Adjacent5` correspond to `HexEdge.Edge0` through
+`HexEdge.Edge5` for the topology's layout. Spatial overloads validate the source geometry and retain
+it in the result.
+
+## Sample Spatial2D fields
+
+Call `ToSpatialHexMap` on an `IFloatField` or `IIntField` to sample it at every hex center. Pass a
+`HexMapGeometry`, or reuse a precomputed `HexCenterMap` when several fields share the same geometry.
+The result is a new mutable `SpatialFloatHexMap` or `SpatialIntHexMap`.
+
+`FloatFieldRange` and `IntFieldRange` have matching overloads that draw one value from the sampled
+pointwise bounds for every center using a caller-supplied `Random`. Cells are processed in row-major
+order. Floating-point values use the interpolation factor returned by `Random.NextDouble`; integer
+bounds are inclusive. Invalid or reversed bounds fail at the first affected cell.
 
 ## Boolean morphology and connectivity
 

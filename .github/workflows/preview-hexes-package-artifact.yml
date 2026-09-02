@@ -11,7 +11,7 @@ env:
   TEST_PROJECT_PATH: tests/Akeldov.Math.Hexes.Tests/Akeldov.Math.Hexes.Tests.csproj
   TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Hexes.Tests/bin/Debug/net6.0/Akeldov.Math.Hexes.Tests.dll
   PACKAGE_OUTPUT_PATH: artifacts/packages
-  SPATIAL2D_PACKAGE_VERSION: 1.0.0
+  SPATIAL2D_PACKAGE_VERSION: 1.1.0
 
 jobs:
   build-preview-package:
