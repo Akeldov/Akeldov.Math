@@ -28,16 +28,32 @@ public class VectorQRSIntTests
     [Test]
     public void Constructor_WithQRS_ThrowsWhenSumIsNotZero()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(2, -5, 2));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(2, -5, 2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception!.ParamName, Is.EqualTo("s"));
+            Assert.That(exception.ActualValue, Is.EqualTo(2));
+            Assert.That(exception.Message, Does.Contain("q (2), r (-5), and s (2)"));
+        });
     }
 
     [Test]
     public void Constructor_WithQR_ThrowsWhenDerivedSDoesNotFitInt32()
     {
+        var lowException = Assert.Throws<ArgumentOutOfRangeException>(
+            () => _ = new VectorQRSInt(int.MinValue, 0));
+        var highException = Assert.Throws<ArgumentOutOfRangeException>(
+            () => _ = new VectorQRSInt(int.MaxValue, 2));
+
         Assert.Multiple(() =>
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(int.MinValue, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(int.MaxValue, 2));
+            Assert.That(lowException!.ParamName, Is.EqualTo("r"));
+            Assert.That(lowException.ActualValue, Is.EqualTo(0));
+            Assert.That(lowException.Message, Does.Contain($"q ({int.MinValue}) and r (0)"));
+            Assert.That(highException!.ParamName, Is.EqualTo("r"));
+            Assert.That(highException.ActualValue, Is.EqualTo(2));
+            Assert.That(highException.Message, Does.Contain($"q ({int.MaxValue}) and r (2)"));
         });
     }
 

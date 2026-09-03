@@ -16,7 +16,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         {
             long s = -(long)q - r;
             if (s < int.MinValue || s > int.MaxValue)
-                throw new ArgumentOutOfRangeException("(q, r)", (q, r), "The derived s component must fit in Int32.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(r),
+                    r,
+                    $"The values q ({q}) and r ({r}) derive an s component outside Int32.");
 
             Q = q;
             R = r;
@@ -32,7 +35,10 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         public VectorQRSInt(int q, int r, int s)
         {
             if ((long)q + r + s != 0L)
-                throw new ArgumentOutOfRangeException("(q, r, s)", (q, r, s), "The sum of (q, r, s) must be zero.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(s),
+                    s,
+                    $"The components q ({q}), r ({r}), and s ({s}) must sum to zero.");
 
             Q = q;
             R = r;
