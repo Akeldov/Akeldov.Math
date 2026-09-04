@@ -12,7 +12,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// </summary>
     public sealed class BarycentricPartialTripletRaster : ISpatialRaster<PartialTriplet<float>>
     {
-        private PartialTriplet<float>[] _values = Array.Empty<PartialTriplet<float>>();
+        private readonly PartialTriplet<float>[] _values = Array.Empty<PartialTriplet<float>>();
 
         /// <summary>
         /// Initializes a new instance that covers the whole source hex map.
