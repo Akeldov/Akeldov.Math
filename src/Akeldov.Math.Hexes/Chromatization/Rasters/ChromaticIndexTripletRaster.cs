@@ -76,14 +76,10 @@ namespace Akeldov.Math.Hexes.Topology
         public Triplet<byte> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if ((uint)index.X >= (uint)Resolution.X ||
-                    (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
-
-                return _values[index.Y * Resolution.X + index.X];
-            }
+            get => (uint)index.X >= (uint)Resolution.X ||
+                   (uint)index.Y >= (uint)Resolution.Y
+                ? throw new IndexOutOfRangeException($"Raster index out of bounds: {index}")
+                : _values[index.Y * Resolution.X + index.X];
         }
 
         /// <summary>
