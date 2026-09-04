@@ -74,12 +74,9 @@ namespace Akeldov.Math.Hexes.Topology
         public PartialTriplet<float> this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if ((uint)index.X >= (uint)Resolution.X || (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
-                return _values[index.Y * Resolution.X + index.X];
-            }
+            get => (uint)index.X >= (uint)Resolution.X || (uint)index.Y >= (uint)Resolution.Y
+                ? throw new ArgumentOutOfRangeException(nameof(index), index, $"Raster index out of bounds: {index}")
+                : _values[index.Y * Resolution.X + index.X];
         }
 
         /// <summary>
@@ -127,7 +124,8 @@ namespace Akeldov.Math.Hexes.Topology
                     FillEvenQ();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(SourceHexMapGeometry.Topology.Layout));
+                    throw new InvalidOperationException(
+                        $"Unsupported source hex map layout: {SourceHexMapGeometry.Topology.Layout}.");
             }
         }
 
