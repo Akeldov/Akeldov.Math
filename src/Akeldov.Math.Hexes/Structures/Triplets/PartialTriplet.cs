@@ -78,17 +78,17 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets whether the primary position is present.
         /// </summary>
-        public bool HasMain => (Presence & TripletPresenceFlags.Main) != 0;
+        public bool HasMain => (Presence & TripletPresenceFlags.Main) != TripletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether the left position is present.
         /// </summary>
-        public bool HasLeft => (Presence & TripletPresenceFlags.Left) != 0;
+        public bool HasLeft => (Presence & TripletPresenceFlags.Left) != TripletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether the right position is present.
         /// </summary>
-        public bool HasRight => (Presence & TripletPresenceFlags.Right) != 0;
+        public bool HasRight => (Presence & TripletPresenceFlags.Right) != TripletPresenceFlags.None;
 
         /// <summary>
         /// Returns the stored values as a complete triplet, discarding presence information.
