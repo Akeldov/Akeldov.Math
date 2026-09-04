@@ -149,37 +149,37 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets whether the primary position is present.
         /// </summary>
-        public bool HasMain => (Presence & SeptupletPresenceFlags.Main) != 0;
+        public bool HasMain => (Presence & SeptupletPresenceFlags.Main) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether adjacent position 0 is present.
         /// </summary>
-        public bool HasAdjacent0 => (Presence & SeptupletPresenceFlags.Adjacent0) != 0;
+        public bool HasAdjacent0 => (Presence & SeptupletPresenceFlags.Adjacent0) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether adjacent position 1 is present.
         /// </summary>
-        public bool HasAdjacent1 => (Presence & SeptupletPresenceFlags.Adjacent1) != 0;
+        public bool HasAdjacent1 => (Presence & SeptupletPresenceFlags.Adjacent1) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether adjacent position 2 is present.
         /// </summary>
-        public bool HasAdjacent2 => (Presence & SeptupletPresenceFlags.Adjacent2) != 0;
+        public bool HasAdjacent2 => (Presence & SeptupletPresenceFlags.Adjacent2) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether adjacent position 3 is present.
         /// </summary>
-        public bool HasAdjacent3 => (Presence & SeptupletPresenceFlags.Adjacent3) != 0;
+        public bool HasAdjacent3 => (Presence & SeptupletPresenceFlags.Adjacent3) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether adjacent position 4 is present.
         /// </summary>
-        public bool HasAdjacent4 => (Presence & SeptupletPresenceFlags.Adjacent4) != 0;
+        public bool HasAdjacent4 => (Presence & SeptupletPresenceFlags.Adjacent4) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether adjacent position 5 is present.
         /// </summary>
-        public bool HasAdjacent5 => (Presence & SeptupletPresenceFlags.Adjacent5) != 0;
+        public bool HasAdjacent5 => (Presence & SeptupletPresenceFlags.Adjacent5) != SeptupletPresenceFlags.None;
 
         /// <summary>
         /// Returns the stored values as a complete septuplet, discarding presence information.
