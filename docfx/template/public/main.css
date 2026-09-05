@@ -31,6 +31,7 @@ body > header .navbar-nav > .nav-item > .nav-link,
 body > header .navbar-nav > .nav-item > .nav-link.active,
 body > header .navbar-nav > .nav-item > .nav-link.show,
 body > header form.icons .btn,
+body > header .docs-icons-placeholder .btn,
 body > header .docs-repository-link {
     color: rgba(255, 255, 255, 0.88);
 }
@@ -149,8 +150,23 @@ body > header #search-query:disabled {
     width: 2.5rem;
 }
 
+.docs-icons-placeholder {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    margin-left: auto;
+    min-width: 5.5rem;
+    order: 40;
+    position: relative;
+}
+
+.docs-header-control-placeholder {
+    pointer-events: none;
+}
+
 html.docs-ui-pending body > header form.icons,
-html.docs-ui-pending body > header .docs-repository-link {
+html.docs-ui-pending body > header
+    .docs-repository-link:not(.docs-header-control-placeholder) {
     visibility: hidden;
 }
 
@@ -248,7 +264,8 @@ html.docs-ui-pending body > header .docs-repository-link {
         grid-area: navigation;
     }
 
-    .navbar #navbar > form.icons {
+    .navbar #navbar > form.icons,
+    .navbar #navbar > .docs-icons-placeholder {
         grid-area: icons;
         justify-content: flex-end;
         margin-left: 0;
@@ -266,6 +283,11 @@ html.docs-ui-pending body > header .docs-repository-link {
 }
 
 @media (max-width: 767.98px) {
+    .navbar #navbar > .docs-icons-placeholder {
+        align-self: center;
+        margin: 1rem 0;
+    }
+
     .docs-context-navigation-inner {
         padding-right: 0;
     }

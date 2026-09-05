@@ -806,6 +806,10 @@ function start() {
             initializationPending = false;
 
             if (await initializeSelectors()) {
+                for (const placeholder of document.querySelectorAll(
+                    '.docs-header-control-placeholder')) {
+                    placeholder.remove();
+                }
                 document.documentElement.classList.remove('docs-ui-pending');
                 observer.disconnect();
                 initializationRunning = false;

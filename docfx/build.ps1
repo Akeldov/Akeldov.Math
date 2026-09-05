@@ -1147,7 +1147,21 @@ function Set-PageUiShells {
     }
 
     $fallbackScript = @'
-      <script>window.setTimeout(() => document.documentElement.classList.remove('docs-ui-pending'), 3000)</script>
+      <script>window.setTimeout(() => { document.querySelectorAll('.docs-header-control-placeholder').forEach(element => element.remove()); document.documentElement.classList.remove('docs-ui-pending') }, 3000)</script>
+'@
+    $headerControlsShell = @'
+              <div class="docs-icons-placeholder docs-header-control-placeholder" aria-hidden="true">
+                <div class="dropdown docs-language-selector">
+                  <button type="button" class="btn border-0 docs-language-button" tabindex="-1"><i class="bi bi-translate"></i></button>
+                </div>
+                <div class="dropdown">
+                  <a class="btn border-0 dropdown-toggle" tabindex="-1">
+                    <i class="bi bi-circle-half docs-theme-placeholder-icon"></i>
+                  </a>
+                </div>
+              </div>
+              <span class="btn border-0 docs-repository-link docs-header-control-placeholder" aria-hidden="true"><i class="bi bi-github"></i></span>
+              <script>document.querySelector('.docs-theme-placeholder-icon').className = `bi bi-${({ light: 'sun', dark: 'moon' })[localStorage.getItem('theme')] || 'circle-half'} docs-theme-placeholder-icon`</script>
 '@
     $patchedPageCount = 0
     $contextShellCount = 0
@@ -1201,6 +1215,18 @@ function Set-PageUiShells {
             $content = $content.Insert(
                 $headEnd,
                 "$fallbackScript`r`n")
+
+            $searchForm = [System.Text.RegularExpressions.Regex]::Match(
+                $content,
+                '<form\b[^>]*\bid="search"[^>]*>.*?</form>',
+                [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+                    [System.Text.RegularExpressions.RegexOptions]::Singleline)
+            if (-not $searchForm.Success) {
+                throw "The generated page search shell is invalid: $($_.FullName)"
+            }
+            $content = $content.Insert(
+                $searchForm.Index + $searchForm.Length,
+                "`r`n$headerControlsShell")
 
             $relativePath = Get-RelativeSitePath `
                 -Root $SiteRoot `
