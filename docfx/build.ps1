@@ -1122,6 +1122,172 @@ function Set-SearchRuntimeIndexes {
     }
 }
 
+function ConvertTo-DocfxTocShellText {
+    param(
+        [AllowEmptyString()]
+        [string] $Text
+    )
+
+    if ([string]::IsNullOrEmpty($Text)) {
+        return ''
+    }
+
+    $parts = [System.Collections.Generic.List[string]]::new()
+    $start = 0
+    $matches = [System.Text.RegularExpressions.Regex]::Matches(
+        $Text,
+        '([a-z0-9])([A-Z]+[a-z])|([a-zA-Z0-9][.,/<>_])')
+    foreach ($match in $matches) {
+        $boundaryLength = if ($match.Groups[1].Success) {
+            $match.Groups[1].Length
+        } else {
+            $match.Groups[3].Length
+        }
+        $boundary = $match.Index + $boundaryLength
+        $parts.Add([System.Net.WebUtility]::HtmlEncode(
+                $Text.Substring($start, $boundary - $start)))
+        $start = $boundary
+    }
+    if ($start -lt $Text.Length) {
+        $parts.Add([System.Net.WebUtility]::HtmlEncode(
+                $Text.Substring($start)))
+    }
+
+    return $parts -join '<wbr>'
+}
+
+function Get-NormalizedDocfxPagePath {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+    if ([System.IO.Path]::GetFileName($fullPath) -ieq 'index.html') {
+        $fullPath = [System.IO.Path]::GetDirectoryName($fullPath)
+    } elseif ([System.IO.Path]::GetExtension($fullPath) -ieq '.html') {
+        $fullPath = Join-Path `
+            ([System.IO.Path]::GetDirectoryName($fullPath)) `
+            ([System.IO.Path]::GetFileNameWithoutExtension($fullPath))
+    }
+
+    return $fullPath.TrimEnd(
+        [System.IO.Path]::DirectorySeparatorChar,
+        [System.IO.Path]::AltDirectorySeparatorChar).ToLowerInvariant()
+}
+
+function ConvertTo-DocfxTocShellNodes {
+    param(
+        [Parameter(Mandatory)]
+        [object[]] $Nodes,
+
+        [Parameter(Mandatory)]
+        [string] $TocDirectory,
+
+        [Parameter(Mandatory)]
+        [string] $CurrentPagePath
+    )
+
+    $items = [System.Collections.Generic.List[string]]::new()
+    $hasActiveNode = $false
+
+    foreach ($node in $Nodes) {
+        if ($null -eq $node -or
+            -not ($node.PSObject.Properties.Name -contains 'name') -or
+            [string]::IsNullOrWhiteSpace([string] $node.name)) {
+            continue
+        }
+
+        $children = if ($node.PSObject.Properties.Name -contains 'items') {
+            @($node.items)
+        } else {
+            @()
+        }
+        $childResult = if ($children.Count -gt 0) {
+            ConvertTo-DocfxTocShellNodes `
+                -Nodes $children `
+                -TocDirectory $TocDirectory `
+                -CurrentPagePath $CurrentPagePath
+        } else {
+            [pscustomobject]@{
+                HasActiveNode = $false
+                Html = ''
+            }
+        }
+
+        $isCurrentNode = $false
+        $href = if ($node.PSObject.Properties.Name -contains 'href') {
+            [string] $node.href
+        } else {
+            ''
+        }
+        if (-not [string]::IsNullOrWhiteSpace($href) -and
+            $href -notmatch '^[a-z][a-z0-9+.-]*:' -and
+            -not $href.StartsWith('//')) {
+            $hrefPath = ($href -split '[?#]', 2)[0]
+            $hrefPath = [System.Uri]::UnescapeDataString($hrefPath).
+                Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+            $targetPath = Get-NormalizedDocfxPagePath -Path (
+                Join-Path $TocDirectory $hrefPath)
+            $isCurrentNode = $targetPath -eq $CurrentPagePath
+        }
+
+        $isActiveNode = $isCurrentNode -or $childResult.HasActiveNode
+        $hasActiveNode = $hasActiveNode -or $isActiveNode
+        $isLeaf = $children.Count -eq 0
+        $itemClasses = [System.Collections.Generic.List[string]]::new()
+        if (-not $isLeaf) {
+            $itemClasses.Add('expander')
+            if ($isActiveNode) {
+                $itemClasses.Add('expanded')
+            }
+        }
+        if ($isActiveNode) {
+            $itemClasses.Add('active')
+        }
+        $classAttribute = if ($itemClasses.Count -gt 0) {
+            ' class="' + ($itemClasses -join ' ') + '"'
+        } else {
+            ''
+        }
+        $linkClass = if ($isActiveNode) {
+            ''
+        } else {
+            ' class="nav-link"'
+        }
+        $name = ConvertTo-DocfxTocShellText -Text ([string] $node.name)
+        $expander = if ($isLeaf) {
+            ''
+        } else {
+            '<span class="expand-stub"></span>'
+        }
+        $link = if (-not [string]::IsNullOrWhiteSpace($href)) {
+            '<a' + $linkClass + ' href="#" tabindex="-1">' + $name + '</a>'
+        } elseif ($isLeaf) {
+            '<span class="text-body-tertiary name-only">' + $name + '</span>'
+        } else {
+            '<a' + $linkClass + ' href="#" tabindex="-1">' + $name + '</a>'
+        }
+        $visibleChildren = if (-not $isLeaf -and $isActiveNode) {
+            $childResult.Html
+        } else {
+            ''
+        }
+        $items.Add(
+            '<li' + $classAttribute + '>' + $expander + $link +
+            $visibleChildren + '</li>')
+    }
+
+    return [pscustomobject]@{
+        HasActiveNode = $hasActiveNode
+        Html = if ($items.Count -gt 0) {
+            '<ul>' + ($items -join '') + '</ul>'
+        } else {
+            ''
+        }
+    }
+}
+
 function Set-PageUiShells {
     param(
         [Parameter(Mandatory)]
@@ -1134,6 +1300,10 @@ function Set-PageUiShells {
         -Encoding UTF8 |
         ConvertFrom-Json
     $versionRegistries = @{}
+    $tocRegistries = @{}
+    $siteRootFullPath = [System.IO.Path]::GetFullPath($SiteRoot).
+        TrimEnd([System.IO.Path]::DirectorySeparatorChar) +
+        [System.IO.Path]::DirectorySeparatorChar
 
     foreach ($library in $navigationRegistry.libraries) {
         $versionRegistryPath = Join-Path `
@@ -1168,6 +1338,7 @@ function Set-PageUiShells {
     $contextShellCount = 0
     $preStyledAdmonitionCount = 0
     $primaryNavigationShellCount = 0
+    $tocShellCount = 0
 
     Get-ChildItem -LiteralPath $SiteRoot -Filter '*.html' -File -Recurse |
         ForEach-Object {
@@ -1200,11 +1371,11 @@ function Set-PageUiShells {
                     $classValue.Index,
                     $classValue.Length).Insert(
                     $classValue.Index,
-                    "$($classValue.Value) docs-ui-pending")
+                    "$($classValue.Value) docs-ui-pending docs-toc-pending")
             } else {
                 $updatedHtmlTag = $htmlTag.Value.Insert(
                     $htmlTag.Value.Length - 1,
-                    ' class="docs-ui-pending"')
+                    ' class="docs-ui-pending docs-toc-pending"')
             }
 
             $content = $content.Remove(
@@ -1281,6 +1452,114 @@ $apiNavigationLocalization
                 $searchForm.Index + $searchForm.Length,
                 "`r`n$primaryNavigationShell$headerControlsShell")
             $primaryNavigationShellCount++
+
+            $tocMetaTag = [System.Text.RegularExpressions.Regex]::Match(
+                $content,
+                '<meta\b[^>]*\bname="docfx:tocrel"[^>]*>',
+                [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            $tocContainer =
+                [System.Text.RegularExpressions.Regex]::Match(
+                    $content,
+                    '(<nav\b[^>]*\bid="toc"[^>]*>)(\s*</nav>)',
+                    [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+                        [System.Text.RegularExpressions.RegexOptions]::Singleline)
+            if ($tocMetaTag.Success -and $tocContainer.Success) {
+                $tocMetaContent = [System.Text.RegularExpressions.Regex]::Match(
+                    $tocMetaTag.Value,
+                    '\bcontent="([^"]+)"',
+                    [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+                if (-not $tocMetaContent.Success) {
+                    throw "The generated page TOC metadata is invalid: $($_.FullName)"
+                }
+
+                $tocRelativePath = [System.Net.WebUtility]::HtmlDecode(
+                    $tocMetaContent.Groups[1].Value)
+                $tocJsonRelativePath = [System.IO.Path]::ChangeExtension(
+                    $tocRelativePath,
+                    '.json').Replace(
+                        '/',
+                        [System.IO.Path]::DirectorySeparatorChar)
+                $tocJsonPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $_.DirectoryName $tocJsonRelativePath))
+                if (-not $tocJsonPath.StartsWith(
+                        $siteRootFullPath,
+                        [System.StringComparison]::OrdinalIgnoreCase) -or
+                    -not (Test-Path -LiteralPath $tocJsonPath -PathType Leaf)) {
+                    throw "The generated page TOC data is invalid: $($_.FullName)"
+                }
+
+                $tocRegistryKey = $tocJsonPath.ToLowerInvariant()
+                if (-not $tocRegistries.ContainsKey($tocRegistryKey)) {
+                    $tocRegistries[$tocRegistryKey] = Get-Content `
+                        -LiteralPath $tocJsonPath `
+                        -Raw `
+                        -Encoding UTF8 |
+                        ConvertFrom-Json
+                }
+                $tocRegistry = $tocRegistries[$tocRegistryKey]
+                $tocNodes = if ($tocRegistry.PSObject.Properties.Name -contains
+                    'items') {
+                    @($tocRegistry.items)
+                } else {
+                    @()
+                }
+                $tocNodeShell = ConvertTo-DocfxTocShellNodes `
+                    -Nodes $tocNodes `
+                    -TocDirectory ([System.IO.Path]::GetDirectoryName(
+                            $tocJsonPath)) `
+                    -CurrentPagePath (Get-NormalizedDocfxPagePath `
+                        -Path $_.FullName)
+
+                $disableTocFilter = $false
+                $disableTocFilterTag =
+                    [System.Text.RegularExpressions.Regex]::Match(
+                        $content,
+                        '<meta\b[^>]*\bname="docfx:disabletocfilter"[^>]*>',
+                        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+                if ($disableTocFilterTag.Success) {
+                    $disableTocFilterContent =
+                        [System.Text.RegularExpressions.Regex]::Match(
+                            $disableTocFilterTag.Value,
+                            '\bcontent="true"',
+                            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+                    $disableTocFilter = $disableTocFilterContent.Success
+                }
+                $tocFilterLabel = if ($language -eq 'ru') {
+                    '&#1060;&#1080;&#1083;&#1100;&#1090;&#1088; &#1087;&#1086; &#1079;&#1072;&#1075;&#1086;&#1083;&#1086;&#1074;&#1082;&#1091;'
+                } else {
+                    'Filter by title'
+                }
+                $tocFilterShell = if ($disableTocFilter) {
+                    ''
+                } else {
+                    @"
+          <form class="filter docs-toc-placeholder" aria-hidden="true">
+            <i class="bi bi-filter"></i>
+            <input class="form-control" type="search" placeholder="$tocFilterLabel" autocomplete="off" aria-label="$tocFilterLabel" tabindex="-1" data-placeholder-ru="&#1060;&#1080;&#1083;&#1100;&#1090;&#1088; &#1087;&#1086; &#1079;&#1072;&#1075;&#1086;&#1083;&#1086;&#1074;&#1082;&#1091;">
+          </form>
+"@
+                }
+                $tocApiLocalization = if ($apiPage -and
+                    -not $disableTocFilter) {
+                    @'
+          <script class="docs-toc-placeholder">try { if (new URLSearchParams(location.search).get('lang') === 'ru' || localStorage.getItem('akeldov-docs-language-preference') === 'ru') { const input = document.querySelector('#toc > form.docs-toc-placeholder input'); input.placeholder = input.dataset.placeholderRu; input.setAttribute('aria-label', input.dataset.placeholderRu) } } catch {}</script>
+'@
+                } else {
+                    ''
+                }
+                $tocShell = @"
+$tocFilterShell          <div class="flex-fill overflow-y-auto docs-toc-placeholder" aria-hidden="true">$($tocNodeShell.Html)</div>
+$tocApiLocalization
+"@
+                $updatedTocContainer = $tocContainer.Groups[1].Value +
+                    "`r`n$tocShell" + $tocContainer.Groups[2].Value
+                $content = $content.Remove(
+                    $tocContainer.Index,
+                    $tocContainer.Length).Insert(
+                    $tocContainer.Index,
+                    $updatedTocContainer)
+                $tocShellCount++
+            }
 
             $breadcrumbTag = [System.Text.RegularExpressions.Regex]::Match(
                 $content,
@@ -1534,7 +1813,8 @@ $sectionShells
     if ($patchedPageCount -eq 0 -or
         $breadcrumbShellCount -ne $patchedPageCount -or
         $primaryNavigationShellCount -ne $patchedPageCount -or
-        $contextShellCount -eq 0) {
+        $contextShellCount -eq 0 -or
+        $tocShellCount -eq 0) {
         throw 'No generated pages were patched with stable UI shells.'
     }
 
@@ -1544,6 +1824,7 @@ $sectionShells
         ContextShellCount = $contextShellCount
         PageCount = $patchedPageCount
         PrimaryNavigationCount = $primaryNavigationShellCount
+        TocCount = $tocShellCount
     }
 }
 
@@ -3068,7 +3349,8 @@ Write-Host (
 Write-Host (
     "UI: added stable controls, primary navigation, and breadcrumb shells to " +
     "$($pageUiShellResult.PrimaryNavigationCount) pages, pre-styled " +
-    "$($pageUiShellResult.AdmonitionCount) admonitions, and added " +
+    "$($pageUiShellResult.AdmonitionCount) admonitions, added TOC shells to " +
+    "$($pageUiShellResult.TocCount) pages, and added " +
     "context navigation shells to " +
     "$($pageUiShellResult.ContextShellCount) versioned pages.")
 

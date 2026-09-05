@@ -173,6 +173,14 @@ html.docs-ui-pending body > header #navbar
     display: none;
 }
 
+.docs-toc-placeholder {
+    pointer-events: none;
+}
+
+html.docs-toc-pending #toc > :not(.docs-toc-placeholder) {
+    display: none;
+}
+
 .docs-breadcrumb-shell {
     min-height: 2.3125rem;
 }

@@ -767,6 +767,34 @@ function addRepositoryLink() {
     return true;
 }
 
+function finalizeTocShell() {
+    const toc = document.getElementById('toc');
+    if (!toc) {
+        document.documentElement.classList.remove('docs-toc-pending');
+        return true;
+    }
+
+    const placeholders = toc.querySelectorAll(
+        ':scope > .docs-toc-placeholder');
+    if (placeholders.length === 0) {
+        document.documentElement.classList.remove('docs-toc-pending');
+        return true;
+    }
+
+    const renderedContent = toc.querySelector(
+        ':scope > .flex-fill:not(.docs-toc-placeholder)');
+    if (!renderedContent) {
+        return false;
+    }
+
+    for (const placeholder of placeholders) {
+        placeholder.remove();
+    }
+    document.documentElement.classList.remove('docs-toc-pending');
+
+    return true;
+}
+
 async function initializeSelectors() {
     const [versionReady, languageReady, navigationReady] = await Promise.all([
         addVersionSelector(),
@@ -774,11 +802,13 @@ async function initializeSelectors() {
         addLibraryNavigation()
     ]);
     const repositoryReady = addRepositoryLink();
+    const tocReady = finalizeTocShell();
 
     return versionReady
         && languageReady
         && navigationReady
-        && repositoryReady;
+        && repositoryReady
+        && tocReady;
 }
 
 function start() {
