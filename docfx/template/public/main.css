@@ -164,6 +164,15 @@ body > header #search-query:disabled {
     pointer-events: none;
 }
 
+.docs-primary-navigation-placeholder {
+    pointer-events: none;
+}
+
+html.docs-ui-pending body > header #navbar
+    > .navbar-nav:not(.docs-primary-navigation-placeholder) {
+    display: none;
+}
+
 .docs-breadcrumb-shell {
     min-height: 2.3125rem;
 }

@@ -1167,6 +1167,7 @@ function Set-PageUiShells {
     $breadcrumbShellCount = 0
     $contextShellCount = 0
     $preStyledAdmonitionCount = 0
+    $primaryNavigationShellCount = 0
 
     Get-ChildItem -LiteralPath $SiteRoot -Filter '*.html' -File -Recurse |
         ForEach-Object {
@@ -1226,10 +1227,6 @@ function Set-PageUiShells {
             if (-not $searchForm.Success) {
                 throw "The generated page search shell is invalid: $($_.FullName)"
             }
-            $content = $content.Insert(
-                $searchForm.Index + $searchForm.Length,
-                "`r`n$headerControlsShell")
-
             $relativePath = Get-RelativeSitePath `
                 -Root $SiteRoot `
                 -Path $_.FullName
@@ -1245,6 +1242,45 @@ function Set-PageUiShells {
                 $apiPage = $true
                 $contextOffset = 1
             }
+
+            $homeLabel = if ($language -eq 'ru') {
+                '&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;'
+            } else {
+                'Home'
+            }
+            $librariesLabel = if ($language -eq 'ru') {
+                '&#1041;&#1080;&#1073;&#1083;&#1080;&#1086;&#1090;&#1077;&#1082;&#1080;'
+            } else {
+                'Libraries'
+            }
+            $aboutLabel = if ($language -eq 'ru') {
+                '&#1054; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;'
+            } else {
+                'About'
+            }
+            $apiNavigationLocalization = if ($apiPage) {
+                @'
+              <script>try { if (new URLSearchParams(location.search).get('lang') === 'ru' || localStorage.getItem('akeldov-docs-language-preference') === 'ru') { document.querySelectorAll('.docs-primary-navigation-placeholder [data-label-ru]').forEach(element => { element.textContent = element.dataset.labelRu }) } } catch {}</script>
+'@
+            } else {
+                ''
+            }
+            $primaryNavigationShell = @"
+              <ul class="navbar-nav docs-primary-navigation-placeholder docs-header-control-placeholder" aria-hidden="true">
+                <li class="nav-item"><a class="nav-link" tabindex="-1" data-label-ru="&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;">$homeLabel</a></li>
+                <li class="nav-item dropdown">
+                  <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" class="nav-link dropdown-toggle" data-label-ru="&#1041;&#1080;&#1073;&#1083;&#1080;&#1086;&#1090;&#1077;&#1082;&#1080;">
+                    $librariesLabel
+                  </a>
+                </li>
+                <li class="nav-item"><a class="nav-link" tabindex="-1" data-label-ru="&#1054; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;">$aboutLabel</a></li>
+              </ul>
+$apiNavigationLocalization
+"@
+            $content = $content.Insert(
+                $searchForm.Index + $searchForm.Length,
+                "`r`n$primaryNavigationShell$headerControlsShell")
+            $primaryNavigationShellCount++
 
             $breadcrumbTag = [System.Text.RegularExpressions.Regex]::Match(
                 $content,
@@ -1497,6 +1533,7 @@ $sectionShells
 
     if ($patchedPageCount -eq 0 -or
         $breadcrumbShellCount -ne $patchedPageCount -or
+        $primaryNavigationShellCount -ne $patchedPageCount -or
         $contextShellCount -eq 0) {
         throw 'No generated pages were patched with stable UI shells.'
     }
@@ -1506,6 +1543,7 @@ $sectionShells
         BreadcrumbCount = $breadcrumbShellCount
         ContextShellCount = $contextShellCount
         PageCount = $patchedPageCount
+        PrimaryNavigationCount = $primaryNavigationShellCount
     }
 }
 
@@ -3028,8 +3066,8 @@ Write-Host (
     "$($searchIndexResult.RussianCount) Russian/API entries across " +
     "$($searchIndexResult.ScopedCount) version scopes.")
 Write-Host (
-    "UI: added stable controls and breadcrumb shells to " +
-    "$($pageUiShellResult.PageCount) pages, pre-styled " +
+    "UI: added stable controls, primary navigation, and breadcrumb shells to " +
+    "$($pageUiShellResult.PrimaryNavigationCount) pages, pre-styled " +
     "$($pageUiShellResult.AdmonitionCount) admonitions, and added " +
     "context navigation shells to " +
     "$($pageUiShellResult.ContextShellCount) versioned pages.")
