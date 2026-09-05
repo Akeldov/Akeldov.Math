@@ -164,6 +164,14 @@ body > header #search-query:disabled {
     pointer-events: none;
 }
 
+.docs-breadcrumb-shell {
+    min-height: 2.3125rem;
+}
+
+.docs-breadcrumb-shell.docs-breadcrumb-shell-empty {
+    min-height: 1rem;
+}
+
 html.docs-ui-pending body > header form.icons,
 html.docs-ui-pending body > header
     .docs-repository-link:not(.docs-header-control-placeholder) {

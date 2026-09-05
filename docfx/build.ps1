@@ -1164,7 +1164,9 @@ function Set-PageUiShells {
               <script>document.querySelector('.docs-theme-placeholder-icon').className = `bi bi-${({ light: 'sun', dark: 'moon' })[localStorage.getItem('theme')] || 'circle-half'} docs-theme-placeholder-icon`</script>
 '@
     $patchedPageCount = 0
+    $breadcrumbShellCount = 0
     $contextShellCount = 0
+    $preStyledAdmonitionCount = 0
 
     Get-ChildItem -LiteralPath $SiteRoot -Filter '*.html' -File -Recurse |
         ForEach-Object {
@@ -1242,6 +1244,80 @@ function Set-PageUiShells {
             } elseif ($segments.Count -gt 0 -and $segments[0] -eq 'api') {
                 $apiPage = $true
                 $contextOffset = 1
+            }
+
+            $breadcrumbTag = [System.Text.RegularExpressions.Regex]::Match(
+                $content,
+                '<nav\b[^>]*\bid="breadcrumb"[^>]*>',
+                [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            if (-not $breadcrumbTag.Success) {
+                throw "The generated page breadcrumb shell is invalid: $($_.FullName)"
+            }
+            $breadcrumbClassName = if ($relativePath -match
+                '^api/(?:Spatial2D|Hexes)/[^/]+/index\.html$') {
+                'docs-breadcrumb-shell docs-breadcrumb-shell-empty'
+            } else {
+                'docs-breadcrumb-shell'
+            }
+            $breadcrumbClass = [System.Text.RegularExpressions.Regex]::Match(
+                $breadcrumbTag.Value,
+                'class="([^"]*)"',
+                [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            if ($breadcrumbClass.Success) {
+                $classValue = $breadcrumbClass.Groups[1]
+                $updatedBreadcrumbTag = $breadcrumbTag.Value.Remove(
+                    $classValue.Index,
+                    $classValue.Length).Insert(
+                    $classValue.Index,
+                    "$($classValue.Value) $breadcrumbClassName")
+            } else {
+                $updatedBreadcrumbTag = $breadcrumbTag.Value.Insert(
+                    $breadcrumbTag.Value.Length - 1,
+                    (' class="' + $breadcrumbClassName + '"'))
+            }
+            $content = $content.Remove(
+                $breadcrumbTag.Index,
+                $breadcrumbTag.Length).Insert(
+                $breadcrumbTag.Index,
+                $updatedBreadcrumbTag)
+            $breadcrumbShellCount++
+
+            foreach ($admonition in @(
+                    [pscustomobject]@{
+                        Name = 'NOTE'
+                        Classes = 'alert alert-info'
+                    },
+                    [pscustomobject]@{
+                        Name = 'TIP'
+                        Classes = 'alert alert-info'
+                    },
+                    [pscustomobject]@{
+                        Name = 'WARNING'
+                        Classes = 'alert alert-warning'
+                    },
+                    [pscustomobject]@{
+                        Name = 'IMPORTANT'
+                        Classes = 'alert alert-danger'
+                    },
+                    [pscustomobject]@{
+                        Name = 'CAUTION'
+                        Classes = 'alert alert-danger'
+                    })) {
+                $sourceClass =
+                    'class="' + $admonition.Name + '"'
+                $admonitionCount = (
+                    [System.Text.RegularExpressions.Regex]::Matches(
+                        $content,
+                        [System.Text.RegularExpressions.Regex]::Escape(
+                            $sourceClass))).Count
+                if ($admonitionCount -eq 0) {
+                    continue
+                }
+                $content = $content.Replace(
+                    $sourceClass,
+                    ('class="' + $admonition.Name + ' ' +
+                        $admonition.Classes + '"'))
+                $preStyledAdmonitionCount += $admonitionCount
             }
 
             $library = if ($segments.Count -gt $contextOffset) {
@@ -1419,11 +1495,15 @@ $sectionShells
             $patchedPageCount++
         }
 
-    if ($patchedPageCount -eq 0 -or $contextShellCount -eq 0) {
+    if ($patchedPageCount -eq 0 -or
+        $breadcrumbShellCount -ne $patchedPageCount -or
+        $contextShellCount -eq 0) {
         throw 'No generated pages were patched with stable UI shells.'
     }
 
     return [pscustomobject]@{
+        AdmonitionCount = $preStyledAdmonitionCount
+        BreadcrumbCount = $breadcrumbShellCount
         ContextShellCount = $contextShellCount
         PageCount = $patchedPageCount
     }
@@ -2948,8 +3028,10 @@ Write-Host (
     "$($searchIndexResult.RussianCount) Russian/API entries across " +
     "$($searchIndexResult.ScopedCount) version scopes.")
 Write-Host (
-    "UI: added stable controls to $($pageUiShellResult.PageCount) pages " +
-    "and context navigation shells to " +
+    "UI: added stable controls and breadcrumb shells to " +
+    "$($pageUiShellResult.PageCount) pages, pre-styled " +
+    "$($pageUiShellResult.AdmonitionCount) admonitions, and added " +
+    "context navigation shells to " +
     "$($pageUiShellResult.ContextShellCount) versioned pages.")
 
 Add-VersionAliasRedirects `
