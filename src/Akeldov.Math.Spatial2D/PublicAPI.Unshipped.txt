@@ -1,1 +1,23 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Curves.Nurbs
+Akeldov.Math.Spatial2D.Curves.Nurbs.ControlPoints.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.Nurbs.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int
+Akeldov.Math.Spatial2D.Curves.Nurbs.Degree.get -> int
+Akeldov.Math.Spatial2D.Curves.Nurbs.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Curves.Nurbs.EndPoint.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.Flatten() -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial2D.Curves.Nurbs.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.GetPointAt(float t) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.GetPointAtKnot(float knot) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.KnotEnd.get -> float
+Akeldov.Math.Spatial2D.Curves.Nurbs.KnotStart.get -> float
+Akeldov.Math.Spatial2D.Curves.Nurbs.Knots.get -> System.Collections.Generic.IReadOnlyList<float>!
+Akeldov.Math.Spatial2D.Curves.Nurbs.Length.get -> float
+Akeldov.Math.Spatial2D.Curves.Nurbs.Nurbs(int degree, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! controlPoints, System.Collections.Generic.IReadOnlyList<float>! weights, System.Collections.Generic.IReadOnlyList<float>! knots, int segmentsPerKnotSpan = 64) -> void
+Akeldov.Math.Spatial2D.Curves.Nurbs.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
+Akeldov.Math.Spatial2D.Curves.Nurbs.ProjectWithParameter(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial2D.Curves.Nurbs.SegmentsPerKnotSpan.get -> int
+Akeldov.Math.Spatial2D.Curves.Nurbs.StartPoint.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.Nurbs.Weights.get -> System.Collections.Generic.IReadOnlyList<float>!

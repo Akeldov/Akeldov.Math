@@ -115,6 +115,23 @@ public class CurveSnapshotTests
                 new PointXY(2.5f, -1.8f))))
             .SetName("CubicBezier_MatchesApprovedImage");
 
+        yield return new TestCaseData(
+            "nurbs-distance.png",
+            Curve(() => new Nurbs(
+                degree: 3,
+                controlPoints: new[]
+                {
+                    new PointXY(-2.5f, -2.1f),
+                    new PointXY(-2.5f, 2.3f),
+                    new PointXY(-0.9f, 2.5f),
+                    new PointXY(0.8f, -2.4f),
+                    new PointXY(2.4f, -2.2f),
+                    new PointXY(2.5f, 2.3f)
+                },
+                weights: new[] { 1f, 2f, 0.6f, 1.8f, 0.7f, 1f },
+                knots: new[] { 0f, 0f, 0f, 0f, 0.2f, 0.75f, 1f, 1f, 1f, 1f })))
+            .SetName("Nurbs_MatchesApprovedImage");
+
     }
 
     private static IEnumerable<TestCaseData> ParameterizedThicknessCurveCases()
