@@ -132,6 +132,22 @@ public class CurveSnapshotTests
                 knots: new[] { 0f, 0f, 0f, 0f, 0.2f, 0.75f, 1f, 1f, 1f, 1f })))
             .SetName("Nurbs_MatchesApprovedImage");
 
+        yield return new TestCaseData(
+            "bspline-distance.png",
+            Curve(() => new BSpline(
+                degree: 3,
+                controlPoints: new[]
+                {
+                    new PointXY(-2.5f, -2.1f),
+                    new PointXY(-2.5f, 2.3f),
+                    new PointXY(-0.9f, 2.5f),
+                    new PointXY(0.8f, -2.4f),
+                    new PointXY(2.4f, -2.2f),
+                    new PointXY(2.5f, 2.3f)
+                },
+                knots: new[] { 0f, 0f, 0f, 0f, 0.2f, 0.75f, 1f, 1f, 1f, 1f })))
+            .SetName("BSpline_MatchesApprovedImage");
+
     }
 
     private static IEnumerable<TestCaseData> ParameterizedThicknessCurveCases()

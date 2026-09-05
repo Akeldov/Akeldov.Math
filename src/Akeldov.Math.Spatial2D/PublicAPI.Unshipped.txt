@@ -1,4 +1,25 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Curves.BSpline
+Akeldov.Math.Spatial2D.Curves.BSpline.ControlPoints.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Curves.BSpline.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int
+Akeldov.Math.Spatial2D.Curves.BSpline.Degree.get -> int
+Akeldov.Math.Spatial2D.Curves.BSpline.Distance(Akeldov.Math.Spatial2D.PointXY point) -> float
+Akeldov.Math.Spatial2D.Curves.BSpline.EndPoint.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BSpline.EndpointA.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BSpline.EndpointB.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BSpline.Flatten() -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial2D.Curves.BSpline.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BSpline.GetPointAt(float t) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BSpline.GetPointAtKnot(float knot) -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Curves.BSpline.KnotEnd.get -> float
+Akeldov.Math.Spatial2D.Curves.BSpline.KnotStart.get -> float
+Akeldov.Math.Spatial2D.Curves.BSpline.Knots.get -> System.Collections.Generic.IReadOnlyList<float>!
+Akeldov.Math.Spatial2D.Curves.BSpline.Length.get -> float
+Akeldov.Math.Spatial2D.Curves.BSpline.BSpline(int degree, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! controlPoints, System.Collections.Generic.IReadOnlyList<float>! knots, int segmentsPerKnotSpan = 64) -> void
+Akeldov.Math.Spatial2D.Curves.BSpline.Project(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.CurveProjection
+Akeldov.Math.Spatial2D.Curves.BSpline.ProjectWithParameter(Akeldov.Math.Spatial2D.PointXY point) -> Akeldov.Math.Spatial2D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial2D.Curves.BSpline.SegmentsPerKnotSpan.get -> int
+Akeldov.Math.Spatial2D.Curves.BSpline.StartPoint.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Curves.Nurbs
 Akeldov.Math.Spatial2D.Curves.Nurbs.ControlPoints.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Curves.Nurbs.CountRightwardCrossings(Akeldov.Math.Spatial2D.PointXY origin) -> int

@@ -4,30 +4,28 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Represents a finite directed non-uniform rational B-spline (NURBS) curve.
+    /// Represents a finite directed non-uniform polynomial B-spline curve.
     /// </summary>
     /// <remarks>
-    /// <para>Supports positive weights, degree one or higher, and clamped or unclamped knot
+    /// <para>Supports degree one or higher and clamped or unclamped knot
     /// vectors. Interior knot multiplicity cannot exceed the degree: the path must be continuous.</para>
-    /// <para><see cref="GetPointAt"/> and <see cref="GetPointAtKnot"/> evaluate the rational
+    /// <para><see cref="GetPointAt"/> and <see cref="GetPointAtKnot"/> evaluate the polynomial
     /// spline using de Boor's algorithm. Length, distance, projection, length-coordinate
     /// traversal and crossing queries use a cached polyline with <see cref="SegmentsPerKnotSpan"/>
     /// equal parameter subdivisions of each non-empty knot span. This is an approximation,
-    /// not an error bound; increase the subdivision count for sharp bends or extreme weights.</para>
+    /// not an error bound; increase the subdivision count for sharp bends.</para>
     /// </remarks>
-    public sealed class Nurbs : IContourPath
+    public sealed class BSpline : IContourPath
     {
         private readonly PointXY[] _controlPoints;
-        private readonly float[] _weights;
         private readonly float[] _knots;
         private readonly SplinePathApproximation _approximation;
 
         /// <summary>
-        /// Initializes a NURBS curve from copied control points, weights and knots.
+        /// Initializes a B-spline curve from copied control points and knots.
         /// </summary>
         /// <param name="degree">The degree, at least one and less than the control point count.</param>
         /// <param name="controlPoints">The finite control points in traversal order. The input is copied.</param>
-        /// <param name="weights">One finite, strictly positive weight per control point. The input is copied.</param>
         /// <param name="knots">The finite nondecreasing knot vector, containing control point count
         /// plus degree plus one entries. The active domain is [knots[degree], knots[control point count]]
         /// and must have positive width. Interior multiplicities must not exceed the degree;
@@ -35,25 +33,20 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="segmentsPerKnotSpan">The positive number of approximation segments per non-empty knot span.</param>
         /// <exception cref="ArgumentNullException">An input collection is null.</exception>
         /// <exception cref="ArgumentException">Collection sizes or knot ordering, domain or multiplicities are invalid.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The degree, a point, weight, knot or subdivision count
+        /// <exception cref="ArgumentOutOfRangeException">The degree, a point, knot or subdivision count
         /// is invalid, or the approximate length cannot be represented as a finite float.</exception>
-        public Nurbs(
+        public BSpline(
             int degree,
             IReadOnlyList<PointXY> controlPoints,
-            IReadOnlyList<float> weights,
             IReadOnlyList<float> knots,
             int segmentsPerKnotSpan = 64)
         {
             if (controlPoints is null)
                 throw new ArgumentNullException(nameof(controlPoints));
-            if (weights is null)
-                throw new ArgumentNullException(nameof(weights));
             if (knots is null)
                 throw new ArgumentNullException(nameof(knots));
             if (degree < 1 || degree >= controlPoints.Count)
                 throw new ArgumentOutOfRangeException(nameof(degree), "Degree must be positive and less than the control point count.");
-            if (weights.Count != controlPoints.Count)
-                throw new ArgumentException("Each control point must have one weight.", nameof(weights));
             if (knots.Count != (long)controlPoints.Count + degree + 1)
                 throw new ArgumentException("Knot count must equal control point count plus degree plus one.", nameof(knots));
             if (segmentsPerKnotSpan <= 0)
@@ -62,26 +55,20 @@ namespace Akeldov.Math.Spatial2D.Curves
             Degree = degree;
             SegmentsPerKnotSpan = segmentsPerKnotSpan;
             _controlPoints = new PointXY[controlPoints.Count];
-            _weights = new float[weights.Count];
 
             for (int i = 0; i < _controlPoints.Length; i++)
             {
                 PointXY point = controlPoints[i];
                 PointXYValidation.ThrowIfNotFinite(point, nameof(controlPoints), "Control point coordinates must be finite.");
-                float weight = weights[i];
-                if (float.IsNaN(weight) || float.IsInfinity(weight) || weight <= 0f)
-                    throw new ArgumentOutOfRangeException(nameof(weights), "Weights must be finite and strictly positive.");
 
                 _controlPoints[i] = point;
-                _weights[i] = weight;
             }
 
             _knots = SplineEvaluation.CopyAndValidateKnots(knots, degree, _controlPoints.Length);
             ControlPoints = Array.AsReadOnly(_controlPoints);
-            Weights = Array.AsReadOnly(_weights);
             Knots = Array.AsReadOnly(_knots);
             _approximation = new SplinePathApproximation(
-                SplineEvaluation.CreateApproximation(degree, _controlPoints, _weights, _knots, segmentsPerKnotSpan));
+                SplineEvaluation.CreateApproximation(degree, _controlPoints, null, _knots, segmentsPerKnotSpan));
             double length = _approximation.Length;
             if (length > float.MaxValue)
                 throw new ArgumentOutOfRangeException(nameof(controlPoints), "Approximate curve length must fit in a finite float.");
@@ -94,9 +81,6 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <summary>Gets a read-only view of the copied control point state.</summary>
         public IReadOnlyList<PointXY> ControlPoints { get; }
-
-        /// <summary>Gets a read-only view of the copied weight state.</summary>
-        public IReadOnlyList<float> Weights { get; }
 
         /// <summary>Gets a read-only view of the copied knot vector state.</summary>
         public IReadOnlyList<float> Knots { get; }
@@ -125,26 +109,26 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>Gets the cached approximate length in world coordinate units.</summary>
         public float Length { get; }
 
-        /// <summary>Evaluates the rational spline at a normalized parameter.</summary>
+        /// <summary>Evaluates the polynomial spline at a normalized parameter.</summary>
         /// <param name="t">The finite normalized parameter in [0, 1], mapped linearly to the active knot domain.</param>
-        /// <returns>The point on the rational spline, independent of the polyline approximation.</returns>
+        /// <returns>The point on the polynomial spline, independent of the polyline approximation.</returns>
         public PointXY GetPointAt(float t)
         {
             if (float.IsNaN(t) || float.IsInfinity(t) || t < 0f || t > 1f)
                 throw new ArgumentOutOfRangeException(nameof(t), "Parameter must be finite and lie within [0, 1].");
 
-            return SplineEvaluation.Evaluate(Degree, _controlPoints, _weights, _knots, (1.0 - t) * KnotStart + (double)t * KnotEnd);
+            return SplineEvaluation.Evaluate(Degree, _controlPoints, null, _knots, (1.0 - t) * KnotStart + (double)t * KnotEnd);
         }
 
-        /// <summary>Evaluates the rational spline at a parameter in the original knot units.</summary>
+        /// <summary>Evaluates the polynomial spline at a parameter in the original knot units.</summary>
         /// <param name="knot">The finite knot parameter in [<see cref="KnotStart"/>, <see cref="KnotEnd"/>].</param>
-        /// <returns>The point on the rational spline, including either endpoint of the active domain.</returns>
+        /// <returns>The point on the polynomial spline, including either endpoint of the active domain.</returns>
         public PointXY GetPointAtKnot(float knot)
         {
             if (float.IsNaN(knot) || float.IsInfinity(knot) || knot < KnotStart || knot > KnotEnd)
                 throw new ArgumentOutOfRangeException(nameof(knot), "Parameter must be finite and lie within the active knot domain.");
 
-            return SplineEvaluation.Evaluate(Degree, _controlPoints, _weights, _knots, knot);
+            return SplineEvaluation.Evaluate(Degree, _controlPoints, null, _knots, knot);
         }
 
         /// <summary>Returns a point on the cached polyline at an approximate distance along the curve.</summary>
