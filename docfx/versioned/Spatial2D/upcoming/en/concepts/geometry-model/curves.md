@@ -32,20 +32,23 @@ accept `IFinitePath`, and a composite-contour builder should accept `IContourPat
 
 Choose a type from the curve's extent and whether traversal direction matters:
 
-| Family | Type | Extent and curve-coordinate domain | Use when |
-|---|---|---|---|
-| Linear | <xref:Akeldov.Math.Spatial2D.Curves.Line> | Infinite; not parameterized | Only the geometric line matters. |
-| Linear | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedLine> | Infinite; `(-infinity, +infinity)` | An origin, direction, and signed coordinate along the line are required. |
-| Linear | <xref:Akeldov.Math.Spatial2D.Curves.Ray> | Half-infinite; `[0, +infinity)` | Geometry behind the origin must be excluded. |
-| Linear | <xref:Akeldov.Math.Spatial2D.Curves.Segment> | Finite; not parameterized | Endpoint order should not affect geometric identity. |
-| Linear | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegment> | Finite; `[0, Length]` | Direction or distance from the start point matters. |
-| Linear | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain> | Finite open polyline; `[0, Length]` | Consecutive segments should behave as one path. |
-| Circular | <xref:Akeldov.Math.Spatial2D.Curves.Arc> | Finite angular span; not parameterized | Only the arc geometry matters. |
-| Circular | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedArc> | Directed angular span; `[0, Length]` | Clockwise or counterclockwise traversal matters. |
-| Bezier | <xref:Akeldov.Math.Spatial2D.Curves.QuadraticBezier> | Finite path; `[0, Length]` | One control point is sufficient. |
-| Bezier | <xref:Akeldov.Math.Spatial2D.Curves.CubicBezier> | Finite path; `[0, Length]` | Separate outgoing and incoming control points are needed. |
-| Spline | <xref:Akeldov.Math.Spatial2D.Curves.BSpline> | Finite path; `[0, Length]` | A degree, control points, and a nonuniform knot vector define the curve. |
-| Spline | <xref:Akeldov.Math.Spatial2D.Curves.Nurbs> | Finite path; `[0, Length]` | Rational weights are needed in addition to the B-spline data. |
+| Family | Type | Preview | Extent and curve-coordinate domain | Use when |
+|---|---|---|---|---|
+| Linear | <xref:Akeldov.Math.Spatial2D.Curves.Line> | <img src="/Akeldov.Math/assets/spatial2d/curves/line.png" width="64" height="64" alt="Distance rendering of Line"> | Infinite; not parameterized | Only the geometric line matters. |
+| Linear | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedLine> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-line.png" width="64" height="64" alt="Distance rendering of ParameterizedLine with increasing thickness"> | Infinite; `(-infinity, +infinity)` | An origin, direction, and signed coordinate along the line are required. |
+| Linear | <xref:Akeldov.Math.Spatial2D.Curves.Ray> | <img src="/Akeldov.Math/assets/spatial2d/curves/ray.png" width="64" height="64" alt="Distance rendering of Ray with increasing thickness"> | Half-infinite; `[0, +infinity)` | Geometry behind the origin must be excluded. |
+| Linear | <xref:Akeldov.Math.Spatial2D.Curves.Segment> | <img src="/Akeldov.Math/assets/spatial2d/curves/segment.png" width="64" height="64" alt="Distance rendering of Segment"> | Finite; not parameterized | Endpoint order should not affect geometric identity. |
+| Linear | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegment> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-segment.png" width="64" height="64" alt="Distance rendering of ParameterizedSegment with increasing thickness"> | Finite; `[0, Length]` | Direction or distance from the start point matters. |
+| Linear | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-segment-chain.png" width="64" height="64" alt="Distance rendering of ParameterizedSegmentChain with increasing thickness"> | Finite open polyline; `[0, Length]` | Consecutive segments should behave as one path. |
+| Circular | <xref:Akeldov.Math.Spatial2D.Curves.Arc> | <img src="/Akeldov.Math/assets/spatial2d/curves/arc.png" width="64" height="64" alt="Distance rendering of Arc"> | Finite angular span; not parameterized | Only the arc geometry matters. |
+| Circular | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedArc> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-arc.png" width="64" height="64" alt="Distance rendering of ParameterizedArc with increasing thickness"> | Directed angular span; `[0, Length]` | Clockwise or counterclockwise traversal matters. |
+| Bezier | <xref:Akeldov.Math.Spatial2D.Curves.QuadraticBezier> | <img src="/Akeldov.Math/assets/spatial2d/curves/quadratic-bezier.png" width="64" height="64" alt="Distance rendering of QuadraticBezier with increasing thickness"> | Finite path; `[0, Length]` | One control point is sufficient. |
+| Bezier | <xref:Akeldov.Math.Spatial2D.Curves.CubicBezier> | <img src="/Akeldov.Math/assets/spatial2d/curves/cubic-bezier.png" width="64" height="64" alt="Distance rendering of CubicBezier with increasing thickness"> | Finite path; `[0, Length]` | Separate outgoing and incoming control points are needed. |
+| Spline | <xref:Akeldov.Math.Spatial2D.Curves.BSpline> | <img src="/Akeldov.Math/assets/spatial2d/curves/b-spline.png" width="64" height="64" alt="Distance rendering of BSpline with increasing thickness"> | Finite path; `[0, Length]` | A degree, control points, and a nonuniform knot vector define the curve. |
+| Spline | <xref:Akeldov.Math.Spatial2D.Curves.Nurbs> | <img src="/Akeldov.Math/assets/spatial2d/curves/nurbs.png" width="64" height="64" alt="Distance rendering of Nurbs with increasing thickness"> | Finite path; `[0, Length]` | Rational weights are needed in addition to the B-spline data. |
+
+Each preview is rasterized from the curve's distance field. On parameterized curves, the stroke
+becomes thicker as the curve coordinate increases, making the traversal direction visible.
 
 <xref:Akeldov.Math.Spatial2D.Contours.Circle> represents a complete circular boundary. Use
 <xref:Akeldov.Math.Spatial2D.Contours.ParameterizedCircle> when a full circle also needs a
