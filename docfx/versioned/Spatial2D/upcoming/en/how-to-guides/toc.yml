@@ -1,0 +1,38 @@
+- name: Curves and Contours
+  href: curves-and-contours/index.md
+  items:
+    - name: Project a Point onto a Curve
+      href: curves-and-contours/project-a-point-onto-a-curve.md
+    - name: Find Curve Intersections
+      href: curves-and-contours/find-curve-intersections.md
+    - name: Build a Closed Contour
+      href: curves-and-contours/build-a-closed-contour.md
+    - name: Create a B-spline
+      href: curves-and-contours/create-a-b-spline.md
+    - name: Create a NURBS Curve
+      href: curves-and-contours/create-a-nurbs-curve.md
+- name: Regions
+  href: regions/index.md
+  items:
+    - name: Create a Region with Holes
+      href: regions/create-a-region-with-holes.md
+- name: Fields
+  href: fields/index.md
+  items:
+    - name: Build an Influence Map
+      href: fields/build-an-influence-map.md
+- name: Sampling
+  href: sampling/index.md
+  items:
+    - name: Generate Poisson Disk Points
+      href: sampling/generate-poisson-disk-points.md
+- name: Partitioning
+  href: partitioning/index.md
+  items:
+    - name: Partition Items with Weighted Voronoi
+      href: partitioning/partition-items-with-weighted-voronoi.md
+- name: Rasterization
+  href: rasterization/index.md
+  items:
+    - name: Rasterize a Signed-Distance Field
+      href: rasterization/rasterize-a-signed-distance-field.md

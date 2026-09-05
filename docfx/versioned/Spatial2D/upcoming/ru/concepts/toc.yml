@@ -19,8 +19,6 @@
   items:
     - name: Кривые
       href: geometry-model/curves.md
-    - name: B-сплайны и NURBS
-      href: geometry-model/splines.md
     - name: Контуры
       href: geometry-model/contours.md
     - name: Регионы

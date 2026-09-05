@@ -121,7 +121,7 @@ The method returns a new contour and leaves the original unchanged. Corners invo
 path types are preserved. Use a finite positive radius appropriate for the neighboring segment
 lengths.
 
-For more background, see [Contours](../../concepts/geometry-model/contours.md) and
-[B-splines and NURBS](../../concepts/geometry-model/splines.md). For supported
-concrete geometries, you can also [find ray intersections](find-curve-intersections.md), or use
-the composite boundary to [create a region with holes](../regions/create-a-region-with-holes.md).
+For more background, see [Contours](../../concepts/geometry-model/contours.md). To add spline
+paths, [create a B-spline](create-a-b-spline.md) or [create a NURBS curve](create-a-nurbs-curve.md).
+For supported concrete geometries, you can also [find ray intersections](find-curve-intersections.md),
+or use the composite boundary to [create a region with holes](../regions/create-a-region-with-holes.md).

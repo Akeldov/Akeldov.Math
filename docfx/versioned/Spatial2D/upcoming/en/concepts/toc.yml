@@ -19,8 +19,6 @@
   items:
     - name: Curves
       href: geometry-model/curves.md
-    - name: B-splines and NURBS
-      href: geometry-model/splines.md
     - name: Contours
       href: geometry-model/contours.md
     - name: Regions

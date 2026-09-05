@@ -80,8 +80,10 @@ The direction stored by a path determines which endpoint has coordinate zero.
 Bezier and spline curves also expose `GetPointAt(t)`, where `t` is a normalized parameter in
 `[0, 1]`. Spline curves additionally expose `GetPointAtKnot(knot)` in the original knot units.
 These parameters are not generally proportional to arc length. Use `GetPoint` when the coordinate
-must represent distance along the approximated path. See [B-splines and NURBS](splines.md) for the
-knot-vector, weight, and approximation contracts.
+must represent distance along the approximated path. See
+[Create a B-spline](../../how-to-guides/curves-and-contours/create-a-b-spline.md) and
+[Create a NURBS curve](../../how-to-guides/curves-and-contours/create-a-nurbs-curve.md) for
+knot-vector, weight, and approximation examples.
 
 ## Project points and measure distance
 
@@ -141,7 +143,8 @@ hole of a [region](regions.md).
 
 For practical examples, see:
 
-- [B-splines and NURBS](splines.md)
+- [Create a B-spline](../../how-to-guides/curves-and-contours/create-a-b-spline.md)
+- [Create a NURBS curve](../../how-to-guides/curves-and-contours/create-a-nurbs-curve.md)
 - [Project a point onto a curve](../../how-to-guides/curves-and-contours/project-a-point-onto-a-curve.md)
 - [Find curve intersections](../../how-to-guides/curves-and-contours/find-curve-intersections.md)
 - [Build a closed contour](../../how-to-guides/curves-and-contours/build-a-closed-contour.md)

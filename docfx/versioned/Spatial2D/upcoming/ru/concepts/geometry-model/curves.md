@@ -83,9 +83,10 @@ PointXY halfway = path.GetPoint(path.Length * 0.5f); // (5, 0)
 Кривые Безье и сплайны также предоставляют метод `GetPointAt(t)`, где `t` — нормализованный
 параметр в диапазоне `[0, 1]`. Сплайны дополнительно предоставляют `GetPointAtKnot(knot)` в
 исходных единицах вектора узлов. Эти параметры обычно не пропорциональны длине дуги. Используйте
-`GetPoint`, если координата должна представлять расстояние вдоль аппроксимированного пути.
-Контракты вектора узлов, весов и аппроксимации описаны на странице
-[«B-сплайны и NURBS»](splines.md).
+`GetPoint`, если координата должна представлять расстояние вдоль аппроксимированного пути. Примеры
+работы с вектором узлов, весами и аппроксимацией приведены в руководствах
+[«Создать B-сплайн»](../../how-to-guides/curves-and-contours/create-a-b-spline.md) и
+[«Создать NURBS-кривую»](../../how-to-guides/curves-and-contours/create-a-nurbs-curve.md).
 
 ## Проекция точки и расстояние
 
@@ -146,7 +147,8 @@ List<PointXY> intersections = circle.GetPointIntersections(ray);
 
 Практические примеры:
 
-- [B-сплайны и NURBS](splines.md)
+- [Создать B-сплайн](../../how-to-guides/curves-and-contours/create-a-b-spline.md)
+- [Создать NURBS-кривую](../../how-to-guides/curves-and-contours/create-a-nurbs-curve.md)
 - [Проецирование точки на кривую](../../how-to-guides/curves-and-contours/project-a-point-onto-a-curve.md)
 - [Поиск пересечений кривой](../../how-to-guides/curves-and-contours/find-curve-intersections.md)
 - [Построение замкнутого контура](../../how-to-guides/curves-and-contours/build-a-closed-contour.md)
