@@ -2210,6 +2210,8 @@ $spatial2D10RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\1.0.0\ru'
 $spatial2D11RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\1.1.0\ru'
+$spatial2DUpcomingRussianOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\upcoming\ru'
 $hexes01RussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.1.0\ru'
 $hexes02RussianSourceRoot = Join-Path `
@@ -2277,6 +2279,10 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $spatial2D11RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
+    },
+    [pscustomobject]@{
+        Root = $spatial2DUpcomingRussianOverrideRoot
         OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
     },
     [pscustomobject]@{
