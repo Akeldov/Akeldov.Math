@@ -116,5 +116,27 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             return LineIntersectionExtensions.GetPointIntersections(source.Line, curve);
         }
+
+        /// <summary>Returns isolated point intersections between a parameterized line and a B-spline by solving the original polynomial spline spans.</summary>
+        /// <param name="source">The source parameterized line.</param>
+        /// <param name="curve">The B-spline to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedLine source, BSpline curve)
+        {
+            List<PointXY> intersections = BSplineIntersectionExtensions.GetPointIntersections(curve, source);
+            BSplineIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>Returns isolated point intersections between a parameterized line and a NURBS curve by solving the original rational spline spans.</summary>
+        /// <param name="source">The source parameterized line.</param>
+        /// <param name="curve">The NURBS curve to intersect with the source line.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this ParameterizedLine source, Nurbs curve)
+        {
+            List<PointXY> intersections = NurbsIntersectionExtensions.GetPointIntersections(curve, source);
+            NurbsIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
     }
 }

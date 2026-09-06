@@ -58,6 +58,8 @@ systems in a table.
 Direct `GetPointAt` and `GetPointAtKnot` evaluation uses de Boor's algorithm and preserves the
 exact rational form. `Length`, `GetPoint`, `Distance`, `Project`, `ProjectWithParameter`,
 `CountRightwardCrossings`, and `Flatten` use a cached polyline approximation.
+`GetPointIntersections` solves the original rational spans, so this approximation and
+`segmentsPerKnotSpan` do not affect its results.
 
 Set `segmentsPerKnotSpan` when those approximate operations need more subdivisions. Its default
 is `64`; increase it for sharp bends, highly uneven spans, or extreme weights:

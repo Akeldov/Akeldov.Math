@@ -212,6 +212,28 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
+        /// <summary>Returns isolated point intersections between a quadratic Bezier curve and a B-spline by solving the original polynomial equations.</summary>
+        /// <param name="source">The source quadratic Bezier curve.</param>
+        /// <param name="curve">The B-spline to intersect with the source Bezier curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this QuadraticBezier source, BSpline curve)
+        {
+            List<PointXY> intersections = BSplineIntersectionExtensions.GetPointIntersections(curve, source);
+            BSplineIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>Returns isolated point intersections between a quadratic Bezier curve and a NURBS curve by solving the original rational-polynomial equations.</summary>
+        /// <param name="source">The source quadratic Bezier curve.</param>
+        /// <param name="curve">The NURBS curve to intersect with the source Bezier curve.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this QuadraticBezier source, Nurbs curve)
+        {
+            List<PointXY> intersections = NurbsIntersectionExtensions.GetPointIntersections(curve, source);
+            NurbsIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
         /// <summary>
         /// Creates the polynomial obtained by substituting a parameterized source curve into a quadratic Bezier curve's implicit equation.
         /// </summary>

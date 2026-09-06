@@ -266,6 +266,28 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
+        /// <summary>Returns isolated point intersections between a ray and a B-spline by solving the original polynomial spline spans.</summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="curve">The B-spline to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps and intersections behind the ray are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, BSpline curve)
+        {
+            List<PointXY> intersections = BSplineIntersectionExtensions.GetPointIntersections(curve, source);
+            BSplineIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>Returns isolated point intersections between a ray and a NURBS curve by solving the original rational spline spans.</summary>
+        /// <param name="source">The source ray.</param>
+        /// <param name="curve">The NURBS curve to intersect with the source ray.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps and intersections behind the ray are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Ray source, Nurbs curve)
+        {
+            List<PointXY> intersections = NurbsIntersectionExtensions.GetPointIntersections(curve, source);
+            NurbsIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
         internal static List<PointXY> OrderPointIntersections(Ray ray, List<PointXY> intersections)
         {
             intersections.Sort((left, right) =>

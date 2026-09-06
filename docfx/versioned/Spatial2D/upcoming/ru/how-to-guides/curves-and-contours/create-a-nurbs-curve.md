@@ -58,6 +58,8 @@ PointXY pointOnArc = quarterCircle.GetPointAt(0.5f);
 Прямое вычисление через `GetPointAt` и `GetPointAtKnot` использует алгоритм де Бура и сохраняет
 точную рациональную форму. `Length`, `GetPoint`, `Distance`, `Project`, `ProjectWithParameter`,
 `CountRightwardCrossings` и `Flatten` используют кэшированную аппроксимацию ломаной.
+`GetPointIntersections` решает уравнения исходных рациональных участков, поэтому эта
+аппроксимация и `segmentsPerKnotSpan` не влияют на результат.
 
 Задайте `segmentsPerKnotSpan`, если приближённым операциям требуется больше подразделений.
 Значение по умолчанию — `64`; увеличивайте его для резких изгибов, сильно различающихся интервалов

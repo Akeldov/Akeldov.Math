@@ -59,6 +59,8 @@ movement or placement based on distance along the curve.
 `GetPointAt` and `GetPointAtKnot` evaluate the polynomial spline directly with de Boor's
 algorithm. `Length`, `GetPoint`, `Distance`, `Project`, `ProjectWithParameter`,
 `CountRightwardCrossings`, and `Flatten` use a cached polyline approximation.
+`GetPointIntersections` solves the original polynomial spans, so this approximation and
+`segmentsPerKnotSpan` do not affect its results.
 
 The optional `segmentsPerKnotSpan` argument controls the number of equal parameter subdivisions
 in each non-empty knot span. Its default is `64`. Increase it for sharp bends or highly uneven

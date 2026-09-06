@@ -59,6 +59,8 @@ PointXY middle = curve.GetPointAt(0.5f);
 `GetPointAt` и `GetPointAtKnot` вычисляют полиномиальный сплайн напрямую по алгоритму де Бура.
 `Length`, `GetPoint`, `Distance`, `Project`, `ProjectWithParameter`, `CountRightwardCrossings` и
 `Flatten` используют кэшированную аппроксимацию ломаной.
+`GetPointIntersections` решает уравнения исходных полиномиальных участков, поэтому эта
+аппроксимация и `segmentsPerKnotSpan` не влияют на результат.
 
 Необязательный аргумент `segmentsPerKnotSpan` задаёт количество равных подразделений параметра в
 каждом непустом узловом интервале. Значение по умолчанию — `64`. Увеличивайте его для резких

@@ -2,7 +2,7 @@
 
 Binary intersection operations are extension methods on supported concrete geometry types. Ray overloads return isolated intersection points in the forward direction of the ray. Curve interfaces, including `ICurve`, `IContourPath`, and `IContour`, do not declare ray intersections; keep a supported concrete type when calling an intersection extension. `CompositeContour` and `ParameterizedCompositeContour` do not provide ray-intersection overloads because their heterogeneous paths have no common binary-intersection contract.
 
-Linear and circular curves provide overloads for intersections with `Ray`, `Line`, `ParameterizedLine`, `Segment`, `ParameterizedSegment`, `ParameterizedSegmentChain`, `Arc`, and `ParameterizedArc`. `QuadraticBezier` and `CubicBezier` provide the ray and linear target overloads and numerical `Arc` and `ParameterizedArc` overloads. All of these source types also provide overloads for target `QuadraticBezier` and `CubicBezier` curves.
+Linear, circular, Bezier, B-spline, and NURBS curves provide binary intersection overloads for all supported concrete curve types. This includes `BSpline`–`BSpline`, `BSpline`–`Nurbs`, and `Nurbs`–`Nurbs` intersections in both call directions.
 
 The returned collection is a new mutable list owned by the caller.
 
@@ -38,8 +38,8 @@ orders them from `EndpointA` to `EndpointB`. A `ParameterizedSegment` orders the
 `StartPoint` to `EndPoint`. A `ParameterizedSegmentChain` orders distinct intersections from
 the chain's `StartPoint` to its `EndPoint`. An `Arc` orders intersections counterclockwise from
 its `StartAngle`, while a `ParameterizedArc` uses its `AngularDirection` from `StartPoint` to
-`EndPoint`. A target `QuadraticBezier` or `CubicBezier` orders intersections from its `StartPoint`
-to its `EndPoint`. Both segment types respect endpoint inclusion.
+`EndPoint`. A target `QuadraticBezier`, `CubicBezier`, `BSpline`, or `Nurbs` orders intersections
+from its `StartPoint` to its `EndPoint`. Both segment types respect endpoint inclusion.
 
 Points that belong to a continuous set of intersections are not returned. For example, a
 collinear overlap between a linear curve and the ray does not produce a representative point.
@@ -49,4 +49,6 @@ Ray intersections and intersections with `Line`, `ParameterizedLine`, `Segment`,
 intersecting a polyline approximation. Their `Arc` and `ParameterizedArc` overloads isolate quartic
 or sextic roots in `double` and round the resulting coordinates to `float`, without a
 geometry-epsilon parameter. Bezier-target intersections similarly isolate the original resultant
-of degree up to nine without flattening either curve.
+of degree up to nine without flattening either curve. B-spline and NURBS intersections convert
+each non-empty knot span to its original polynomial or homogeneous rational form and isolate the
+resulting roots or resultants in `double`; they never use `Flatten` or `SegmentsPerKnotSpan`.

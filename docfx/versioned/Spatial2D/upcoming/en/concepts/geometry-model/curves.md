@@ -101,8 +101,9 @@ float distance = projection.Distance;          // 3
 
 `Distance(point)` is the shorter choice when the closest position and curve coordinate are not
 needed. Linear and circular types calculate these operations analytically. Bezier and spline types
-use an internal polyline approximation for length, projection, and distance. Bezier intersections
-solve the original curve polynomial; spline types do not expose binary intersection overloads.
+use an internal polyline approximation for length, projection, and distance. Bezier, B-spline,
+and NURBS intersections solve the original polynomial or rational equations without flattening;
+`SegmentsPerKnotSpan` does not affect binary intersections.
 
 ## Intersect a curve with a ray
 

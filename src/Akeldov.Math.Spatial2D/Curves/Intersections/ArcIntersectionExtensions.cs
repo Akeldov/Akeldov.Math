@@ -226,6 +226,28 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
+        /// <summary>Returns isolated point intersections between an arc and a B-spline by solving the original polynomial spline-circle equations.</summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="curve">The B-spline to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, BSpline curve)
+        {
+            List<PointXY> intersections = BSplineIntersectionExtensions.GetPointIntersections(curve, source);
+            BSplineIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>Returns isolated point intersections between an arc and a NURBS curve by solving the original rational spline-circle equations.</summary>
+        /// <param name="source">The source arc.</param>
+        /// <param name="curve">The NURBS curve to intersect with the source arc.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Arc source, Nurbs curve)
+        {
+            List<PointXY> intersections = NurbsIntersectionExtensions.GetPointIntersections(curve, source);
+            NurbsIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
         /// <summary>
         /// Orders distinct known intersections counterclockwise along an arc from its start angle.
         /// </summary>

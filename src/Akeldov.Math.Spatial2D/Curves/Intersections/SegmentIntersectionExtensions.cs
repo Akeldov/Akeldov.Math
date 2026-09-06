@@ -210,6 +210,28 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
+        /// <summary>Returns isolated point intersections between a segment and a B-spline by solving the original polynomial spline spans.</summary>
+        /// <param name="source">The source segment.</param>
+        /// <param name="curve">The B-spline to intersect with the source segment.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Segment source, BSpline curve)
+        {
+            List<PointXY> intersections = BSplineIntersectionExtensions.GetPointIntersections(curve, source);
+            BSplineIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
+        /// <summary>Returns isolated point intersections between a segment and a NURBS curve by solving the original rational spline spans.</summary>
+        /// <param name="source">The source segment.</param>
+        /// <param name="curve">The NURBS curve to intersect with the source segment.</param>
+        /// <returns>A new mutable list owned by the caller, ordered from the spline's start point to its end point. Continuous overlaps are omitted.</returns>
+        public static List<PointXY> GetPointIntersections(this Segment source, Nurbs curve)
+        {
+            List<PointXY> intersections = NurbsIntersectionExtensions.GetPointIntersections(curve, source);
+            NurbsIntersectionExtensions.OrderPointIntersections(curve, intersections);
+            return intersections;
+        }
+
         /// <summary>
         /// Removes points outside a segment or at its excluded endpoints and orders the remaining points from its first endpoint to its second endpoint.
         /// </summary>

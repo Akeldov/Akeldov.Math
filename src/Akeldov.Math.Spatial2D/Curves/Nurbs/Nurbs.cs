@@ -13,7 +13,9 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// spline using de Boor's algorithm. Length, distance, projection, length-coordinate
     /// traversal and crossing queries use a cached polyline with <see cref="SegmentsPerKnotSpan"/>
     /// equal parameter subdivisions of each non-empty knot span. This is an approximation,
-    /// not an error bound; increase the subdivision count for sharp bends or extreme weights.</para>
+    /// not an error bound; increase the subdivision count for sharp bends or extreme weights.
+    /// Binary <c>GetPointIntersections</c> extension methods solve the original rational spans and
+    /// do not use this approximation or its subdivision count.</para>
     /// </remarks>
     public sealed class Nurbs : IContourPath
     {
