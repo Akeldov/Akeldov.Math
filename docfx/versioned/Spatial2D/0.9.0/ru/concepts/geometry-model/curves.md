@@ -32,19 +32,22 @@
 
 Тип определяется протяжённостью кривой и тем, имеет ли значение направление обхода:
 
-| Семейство | Тип | Протяжённость и область координаты | Когда использовать |
-|---|---|---|---|
-| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.Line> | Бесконечная; без параметризации | Важна только геометрия прямой. |
-| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedLine> | Бесконечная; `(-бесконечность, +бесконечность)` | Нужны начало отсчёта, направление и знаковая координата вдоль прямой. |
-| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.Ray> | Полубесконечная; `[0, +бесконечность)` | Геометрию позади начала луча нужно исключить. |
-| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.Segment> | Конечная; без параметризации | Порядок концов не должен влиять на геометрическую идентичность. |
-| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegment> | Конечная; `[0, Length]` | Важно направление или расстояние от начальной точки. |
-| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain> | Конечная открытая ломаная; `[0, Length]` | Последовательность отрезков должна вести себя как единый путь. |
-| Круговые | <xref:Akeldov.Math.Spatial2D.Curves.Arc> | Конечный угловой диапазон; без параметризации | Важна только геометрия дуги. |
-| Круговые | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedArc> | Направленный угловой диапазон; `[0, Length]` | Важен обход по часовой стрелке или против неё. |
-| Безье | <xref:Akeldov.Math.Spatial2D.Curves.QuadraticBezier> | Конечный путь; `[0, Length]` | Достаточно одной управляющей точки. |
-| Безье | <xref:Akeldov.Math.Spatial2D.Curves.CubicBezier> | Конечный путь; `[0, Length]` | Нужны отдельные исходящая и входящая управляющие точки. |
-| Безье | <xref:Akeldov.Math.Spatial2D.Curves.BezierCurve> | Конечный путь; `[0, Length]` | Степень и количество управляющих точек определяются данными. |
+| Семейство | Тип | Вид | Протяжённость и область координаты | Когда использовать |
+|---|---|---|---|---|
+| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.Line> | <img src="/Akeldov.Math/assets/spatial2d/curves/line.png" width="64" height="64" alt="Рендеринг расстояния до Line"> | Бесконечная; без параметризации | Важна только геометрия прямой. |
+| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedLine> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-line.png" width="64" height="64" alt="Рендеринг расстояния до ParameterizedLine с растущей толщиной"> | Бесконечная; `(-бесконечность, +бесконечность)` | Нужны начало отсчёта, направление и знаковая координата вдоль прямой. |
+| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.Ray> | <img src="/Akeldov.Math/assets/spatial2d/curves/ray.png" width="64" height="64" alt="Рендеринг расстояния до Ray с растущей толщиной"> | Полубесконечная; `[0, +бесконечность)` | Геометрию позади начала луча нужно исключить. |
+| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.Segment> | <img src="/Akeldov.Math/assets/spatial2d/curves/segment.png" width="64" height="64" alt="Рендеринг расстояния до Segment"> | Конечная; без параметризации | Порядок концов не должен влиять на геометрическую идентичность. |
+| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegment> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-segment.png" width="64" height="64" alt="Рендеринг расстояния до ParameterizedSegment с растущей толщиной"> | Конечная; `[0, Length]` | Важно направление или расстояние от начальной точки. |
+| Линейные | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedSegmentChain> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-segment-chain.png" width="64" height="64" alt="Рендеринг расстояния до ParameterizedSegmentChain с растущей толщиной"> | Конечная открытая ломаная; `[0, Length]` | Последовательность отрезков должна вести себя как единый путь. |
+| Круговые | <xref:Akeldov.Math.Spatial2D.Curves.Arc> | <img src="/Akeldov.Math/assets/spatial2d/curves/arc.png" width="64" height="64" alt="Рендеринг расстояния до Arc"> | Конечный угловой диапазон; без параметризации | Важна только геометрия дуги. |
+| Круговые | <xref:Akeldov.Math.Spatial2D.Curves.ParameterizedArc> | <img src="/Akeldov.Math/assets/spatial2d/curves/parameterized-arc.png" width="64" height="64" alt="Рендеринг расстояния до ParameterizedArc с растущей толщиной"> | Направленный угловой диапазон; `[0, Length]` | Важен обход по часовой стрелке или против неё. |
+| Безье | <xref:Akeldov.Math.Spatial2D.Curves.QuadraticBezier> | <img src="/Akeldov.Math/assets/spatial2d/curves/quadratic-bezier.png" width="64" height="64" alt="Рендеринг расстояния до QuadraticBezier с растущей толщиной"> | Конечный путь; `[0, Length]` | Достаточно одной управляющей точки. |
+| Безье | <xref:Akeldov.Math.Spatial2D.Curves.CubicBezier> | <img src="/Akeldov.Math/assets/spatial2d/curves/cubic-bezier.png" width="64" height="64" alt="Рендеринг расстояния до CubicBezier с растущей толщиной"> | Конечный путь; `[0, Length]` | Нужны отдельные исходящая и входящая управляющие точки. |
+| Безье | <xref:Akeldov.Math.Spatial2D.Curves.BezierCurve> | <img src="/Akeldov.Math/assets/spatial2d/curves/cubic-bezier.png" width="64" height="64" alt="Рендеринг расстояния до кубической BezierCurve с растущей толщиной"> | Конечный путь; `[0, Length]` | Степень и количество управляющих точек определяются данными. |
+
+Каждый эскиз растеризован по полю расстояния до кривой. У параметризованных кривых толщина
+линии растёт вместе с координатой кривой и тем самым показывает направление обхода.
 
 <xref:Akeldov.Math.Spatial2D.Contours.Circle> представляет полную окружность. Если полной
 окружности также нужны начало и направление обхода, используйте
