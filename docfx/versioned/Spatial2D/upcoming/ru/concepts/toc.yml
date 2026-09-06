@@ -25,6 +25,9 @@
       href: geometry-model/regions.md
 - name: Поля
   href: fields.md
+  items:
+    - name: Индексирование источников
+      href: fields/source-indexing.md
 - name: Пространственные алгоритмы
   href: spatial-algorithms.md
 - name: Растеризация

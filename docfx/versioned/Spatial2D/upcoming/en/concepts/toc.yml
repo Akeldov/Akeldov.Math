@@ -25,6 +25,9 @@
       href: geometry-model/regions.md
 - name: Fields
   href: fields.md
+  items:
+    - name: Source Indexing
+      href: fields/source-indexing.md
 - name: Spatial Algorithms
   href: spatial-algorithms.md
 - name: Rasterization
