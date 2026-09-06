@@ -26,6 +26,8 @@
 - name: Поля
   href: fields.md
   items:
+    - name: Стратегии сэмплирования
+      href: fields/sampling-strategies.md
     - name: Индексирование источников
       href: fields/source-indexing.md
 - name: Пространственные алгоритмы
