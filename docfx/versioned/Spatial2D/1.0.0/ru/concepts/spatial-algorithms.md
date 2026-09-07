@@ -20,74 +20,11 @@ Spatial2D предоставляет алгоритмы генерации ра�
 которых положения уже есть. Индексы источников влияния владеют неизменяемым снимком и возвращают
 временное локальное подмножество для одной выборки поля, не перераспределяя этот снимок навсегда.
 
-## Генерация точек дисками Пуассона
+<a id="генерация-точек-дисками-пуассона"></a>
+<a id="изменение-расстояния-с-помощью-поля"></a>
 
-Выборка дисков Пуассона заполняет прямоугольное поле, соблюдая минимальное расстояние между
-принятыми точками. Результат нерегулярен, но в нём нет тесных скоплений и больших случайных
-пробелов, характерных для независимой равномерной случайной выборки.
-
-```csharp
-using System;
-using System.Collections.Generic;
-using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
-
-var sampler = new PoissonDiskPointSampler(
-    random: new Random(12345),
-    maxAttempts: 30);
-
-var fieldSize = new VectorXY(100f, 60f);
-
-List<PoissonDiskPointSample> samples = sampler.Sample(
-    fieldSize,
-    minimalDistance: 6f);
-
-PointXY firstPoint = samples[0].Point;
-float firstSpacing = samples[0].MinimalDistance;
-```
-
-Точки лежат в полуоткрытом прямоугольнике от `(0, 0)` включительно до `fieldSize` исключительно.
-У выборщика нет параметра начала координат; сместите возвращённые точки, если целевой мировой
-прямоугольник начинается в другом месте.
-
-`maxAttempts` ограничивает количество кандидатов, проверяемых около каждой активной точки.
-Большее значение может дать более плотный результат ценой дополнительных вычислений. Передача
-`Random` с фиксированным зерном делает запуски повторяемыми в контролируемом окружении, что
-удобно для тестов и процедурной генерации.
-
-Возвращаемый `List<PoissonDiskPointSample>` является новым изменяемым списком и принадлежит
-вызывающему коду.
-
-## Изменение расстояния с помощью поля
-
-Минимальное расстояние может поступать из любого `IFloatField`. Это позволяет создавать области
-с разной плотностью в одном наборе точек:
-
-```csharp
-using Akeldov.Math.Spatial2D.Fields;
-
-var spacingField = new FloatPointInfluenceField(
-    new BarycentricFloatSampler<FloatPointInfluenceSource>(),
-    new[]
-    {
-        new FloatPointInfluenceSource(
-            weight: 1f,
-            position: new PointXY(0f, 0f),
-            value: 4f),
-        new FloatPointInfluenceSource(
-            weight: 1f,
-            position: new PointXY(fieldSize.X, 0f),
-            value: 12f)
-    });
-
-List<PoissonDiskPointSample> adaptiveSamples =
-    sampler.Sample(fieldSize, spacingField);
-```
-
-`Min`, `Max` поля и каждое выбранное значение должны быть конечными и положительными. Каждая
-принятая точка хранит расстояние, запрошенное в её положении. Для любой пары фактическое
-расстояние не меньше большего из двух сохранённых минимальных расстояний, поэтому точку с
-большим интервалом нельзя окружить соседями с малым интервалом.
+Генерация точек с постоянным и адаптивным расстоянием описана на странице
+[Семплер Пуассона](samplers/poisson-disk.md) в разделе [Семплеры](samplers/index.md).
 
 ## Разбиение элементов по взвешенным сайтам Вороного
 
@@ -99,6 +36,7 @@ List<PoissonDiskPointSample> adaptiveSamples =
 
 ```csharp
 using System.Collections.Generic;
+using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 var sites = new[]
@@ -217,5 +155,4 @@ IReadOnlyList<VoronoiItemPartition<PointXY>> relaxed =
 - [Разбить элементы по взвешенным сайтам Вороного](../how-to-guides/partitioning/partition-items-with-weighted-voronoi.md)
 - [Учебник по процедурному разбиению пространства](../tutorials/procedural-space-partitioning/index.md)
 - [Растеризация](rasterization.md)
-
 

@@ -25,6 +25,11 @@
       href: geometry-model/regions.md
 - name: Fields
   href: fields.md
+- name: Samplers
+  href: samplers/index.md
+  items:
+    - name: Poisson Disk Sampler
+      href: samplers/poisson-disk.md
 - name: Spatial Algorithms
   href: spatial-algorithms.md
 - name: Rasterization

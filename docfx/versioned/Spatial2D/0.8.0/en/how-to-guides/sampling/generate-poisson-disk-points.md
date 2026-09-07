@@ -111,6 +111,6 @@ When the destination rectangle starts elsewhere, add the destination offset to e
 when consuming or copying the result. Keep `MinimalDistance` unchanged because translation does
 not alter spacing.
 
-For the algorithm's invariants and its relationship to other spatial algorithms, see
-[Spatial Algorithms](../../concepts/spatial-algorithms.md). See
+For the algorithm's invariants, see
+[Poisson Disk Sampler](../../concepts/samplers/poisson-disk.md). See
 [Rasterization](../../concepts/rasterization.md) for other ways to turn spatial data into images.

@@ -42,8 +42,8 @@ values must all be finite and positive.
 
 ## Related documentation
 
-- [Spatial Algorithms](../../concepts/spatial-algorithms.md) explains Poisson disk invariants and
-  compares sampling with Voronoi partitioning and influence culling.
+- [Poisson Disk Sampler](../../concepts/samplers/poisson-disk.md) explains the invariants of
+  point generation with constant and adaptive spacing.
 - [Fields](../../concepts/fields.md) explains how to construct an `IFloatField` for adaptive
   spacing.
 - [Rasterization](../../concepts/rasterization.md) describes raster geometry, color formats, and

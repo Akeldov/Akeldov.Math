@@ -30,6 +30,11 @@
       href: fields/sampling-strategies.md
     - name: Индексирование источников
       href: fields/source-indexing.md
+- name: Семплеры
+  href: samplers/index.md
+  items:
+    - name: Семплер Пуассона
+      href: samplers/poisson-disk.md
 - name: Пространственные алгоритмы
   href: spatial-algorithms.md
 - name: Растеризация

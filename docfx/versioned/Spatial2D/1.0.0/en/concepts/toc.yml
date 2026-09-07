@@ -30,6 +30,11 @@
       href: fields/sampling-strategies.md
     - name: Source Indexing
       href: fields/source-indexing.md
+- name: Samplers
+  href: samplers/index.md
+  items:
+    - name: Poisson Disk Sampler
+      href: samplers/poisson-disk.md
 - name: Spatial Algorithms
   href: spatial-algorithms.md
 - name: Rasterization
