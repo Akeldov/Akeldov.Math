@@ -14,4 +14,3 @@ The project documentation is published at:
 | --- | --- | --- |
 | [Akeldov.Math.Spatial2D](https://akeldov.github.io/Akeldov.Math/Spatial2D/) | [![NuGet](https://img.shields.io/nuget/v/Akeldov.Math.Spatial2D.svg)](https://www.nuget.org/packages/Akeldov.Math.Spatial2D/) | Two-dimensional geometry, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities. |
 | [Akeldov.Math.Hexes](https://akeldov.github.io/Akeldov.Math/Hexes/) | [![NuGet](https://img.shields.io/nuget/v/Akeldov.Math.Hexes.svg)](https://www.nuget.org/packages/Akeldov.Math.Hexes/) | Hex-grid coordinates, topology, geometry, pathfinding, rasterization, polyhex contours, and weighted Voronoi utilities. |
-| [Akeldov.Math.Intervals](https://akeldov.github.io/Akeldov.Math/Intervals/) | Not packaged | Interval primitives for numeric ranges. |
