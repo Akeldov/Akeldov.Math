@@ -76,4 +76,6 @@ crowded by a small-spacing neighbor.
 - [Generate Poisson disk points](../../how-to-guides/sampling/generate-poisson-disk-points.md) —
   a practical guide, including visualization and PNG export.
 - [Fields](../fields.md) — value sources for adaptive spacing.
-- [Spatial Algorithms](../spatial-algorithms.md) — Voronoi partitioning and local neighborhoods.
+- [Voronoi Item Partitioning](../partitioning/voronoi.md) — assigning objects to generated sites.
+- [Procedural space partitioning](../../tutorials/procedural-space-partitioning/index.md) —
+  combining site generation, partitioning, and visualization.

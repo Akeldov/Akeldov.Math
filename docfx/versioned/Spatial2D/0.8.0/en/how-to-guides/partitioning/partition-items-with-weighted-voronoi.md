@@ -133,5 +133,5 @@ finite, items must not be `null`, site weights must be non-negative and not `NaN
 one site weight must be positive.
 
 For the weighted-distance rules and ownership contracts in more depth, see
-[Spatial Algorithms](../../concepts/spatial-algorithms.md). To generate well-spaced candidate
+[Voronoi Item Partitioning](../../concepts/partitioning/voronoi.md). To generate well-spaced candidate
 site positions first, see [Generate Poisson disk points](../sampling/generate-poisson-disk-points.md).

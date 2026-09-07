@@ -35,7 +35,10 @@
   items:
     - name: Семплер Пуассона
       href: samplers/poisson-disk.md
-- name: Пространственные алгоритмы
-  href: spatial-algorithms.md
+- name: Разбиения
+  href: partitioning/index.md
+  items:
+    - name: Разбиение элементов Вороного
+      href: partitioning/voronoi.md
 - name: Растеризация
   href: rasterization.md

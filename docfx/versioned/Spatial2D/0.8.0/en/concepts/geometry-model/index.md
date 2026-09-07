@@ -147,5 +147,5 @@ before building larger geometry.
 - [Contours](contours.md) explains closed boundaries, composite paths, enclosure, and smoothing.
 - [Regions](regions.md) explains filled shapes, holes, fill rules, and signed distance.
 
-The geometry model is consumed by [Fields](../fields.md),
-[Spatial Algorithms](../spatial-algorithms.md), and [Rasterization](../rasterization.md).
+The geometry model is consumed by [Fields](../fields.md), [Samplers](../samplers/index.md),
+[Partitioning](../partitioning/index.md), and [Rasterization](../rasterization.md).
