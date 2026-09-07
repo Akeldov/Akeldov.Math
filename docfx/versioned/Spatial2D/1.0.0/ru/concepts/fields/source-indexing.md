@@ -49,29 +49,116 @@ SelectSources(point) -> локальное непустое окружение
 один источник для вершины или два для ребра. Если все позиции коллинеарны, индекс использует
 линейное окружение из одного или двух источников вместо построения треугольников.
 
-## Создание и повторное использование
+## Общие данные примеров
 
-Следующее поле использует по одному треугольнику Делоне для барицентрической интерполяции:
+Сравним оба индекса на одном наборе из пяти источников. Расположение и цвета взяты из примера
+старой вики; разрешение увеличено до `400 × 280`. Каждый следующий фрагмент использует эти
+`grid`, `sources`, `sourceColors` и `query`:
 
 ```csharp
+using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Fields;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+var grid = new RasterGeometry(
+    origin: new PointXY(0f, 0f),
+    size: new VectorXY(100f, 70f),
+    resolution: new VectorXYInt(400, 280));
 
 var sources = new[]
 {
-    new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
-    new FloatPointInfluenceSource(1f, new PointXY(10f, 0f), 100f),
-    new FloatPointInfluenceSource(1f, new PointXY(0f, 10f), 50f),
-    new FloatPointInfluenceSource(1f, new PointXY(10f, 10f), 75f)
+    new FloatPointInfluenceSource(1f, new PointXY(12f, 12f), 0f),    // A
+    new FloatPointInfluenceSource(1f, new PointXY(88f, 14f), 25f),   // B
+    new FloatPointInfluenceSource(1f, new PointXY(18f, 58f), 50f),   // C
+    new FloatPointInfluenceSource(1f, new PointXY(83f, 54f), 75f),   // D
+    new FloatPointInfluenceSource(1f, new PointXY(50f, 34f), 100f)   // E
 };
 
-var sourceIndex =
-    new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
-var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
-var field = new FloatPointInfluenceField(sampler, sourceIndex);
-
-float value = field.Sample(new PointXY(4f, 3f));
+var sourceColors = new Dictionary<PointXY, RGBA16BitColor>
+{
+    { sources[0].Position, new RGBA16BitColor(0xefef, 0x4444, 0x4444, 0xffff) }, // Красный
+    { sources[1].Position, new RGBA16BitColor(0x2222, 0xc5c5, 0x5e5e, 0xffff) }, // Зелёный
+    { sources[2].Position, new RGBA16BitColor(0x3b3b, 0x8282, 0xf6f6, 0xffff) }, // Синий
+    { sources[3].Position, new RGBA16BitColor(0xf5f5, 0x9e9e, 0x0b0b, 0xffff) }, // Оранжевый
+    { sources[4].Position, new RGBA16BitColor(0xa8a8, 0x5555, 0xf7f7, 0xffff) }  // Фиолетовый
+};
+var query = new PointXY(50f, 5f);
 ```
+
+Обе PNG создаются самой библиотекой через `RasterizeCullingMap` и `SaveAsPng`, без
+постобработки. Для каждого центра ячейки растеризатор вызывает `SelectSources` и усредняет
+назначенные выбранным источникам цвета в линейном RGB. **Это карта состава выборки, а не
+тепловая карта значений поля**: значения `0…100` и сэмплер в её построении не участвуют.
+Резкая граница цвета означает смену выбранного набора, а не обязательно разрыв значения поля.
+
+На изображениях ось `y` направлена вверх. Источники `A` и `B` находятся внизу, `C` и `D` —
+вверху, `E` — около центра. Файлы сохраняются в рабочую директорию приложения.
+
+## Пример: отсечение полуплоскостями
+
+```csharp
+var halfPlaneIndex =
+    new HalfPlaneInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+
+var halfPlaneSelection = halfPlaneIndex.SelectSources(query); // Источники A, B, E
+halfPlaneIndex
+    .RasterizeCullingMap(grid, point => sourceColors[point])
+    .SaveAsPng("indexing-half-plane.png");
+```
+
+В точке `P(50, 5)` первым принимается ближайший источник `E(50, 34)`. Его граница `y = 34`
+скрывает `C` и `D`, расположенные выше. Источники `A` и `B` остаются видимыми, поэтому нижняя
+центральная область карты окрашивается смесью красного, зелёного и фиолетового.
+
+При перемещении точки запроса меняются порядок обхода и скрытые источники. Поэтому области
+постоянной выборки здесь не обязаны совпадать с треугольниками Делоне. Такой индекс подходит,
+например, для локального смешивания, в котором близкие датчики заслоняют дальние.
+
+<img src="~/assets/spatial2d/fields/indexing-half-plane.png" width="400" height="280" style="max-width: 100%; height: auto;" loading="lazy" alt="Карта отсечения полуплоскостями: многоугольные области окрашены смесью цветов видимых источников; внизу по центру выбраны A, B и E.">
+
+## Пример: выбор окружения по Делоне
+
+```csharp
+var delaunayIndex =
+    new DelaunayInfluenceSourceIndex<FloatPointInfluenceSource>(sources);
+
+var edgeSelection = delaunayIndex.SelectSources(query);                  // A, B
+var triangleSelection = delaunayIndex.SelectSources(new PointXY(50f, 20f)); // A, B, E
+var vertexSelection = delaunayIndex.SelectSources(new PointXY(0f, 0f));   // A
+delaunayIndex
+    .RasterizeCullingMap(grid, point => sourceColors[point])
+    .SaveAsPng("indexing-delaunay.png");
+```
+
+Внутри треугольника `ABE`, например в точке `(50, 20)`, выбираются три его вершины. Цвет
+постоянен на всём внутреннем участке этого треугольника: карта усредняет три цвета, а не
+интерполирует их по барицентрическим координатам.
+
+Точка `P(50, 5)` лежит вне выпуклой оболочки, ближе всего к ребру `AB`. Здесь индекс выбирает
+только `A` и `B`: нижняя полоса карты имеет смесь красного и зелёного без фиолетового `E`.
+В точке `(0, 0)` ближайший элемент оболочки — вершина `A`, поэтому нижний левый угол красный.
+Порядок перечисления источников в комментариях не является требованием к порядку списка.
+
+<img src="~/assets/spatial2d/fields/indexing-delaunay.png" width="400" height="280" style="max-width: 100%; height: auto;" loading="lazy" alt="Карта индекса Делоне: внутри оболочки видны однотонные треугольники; снаружи — области выбора двух вершин ребра или одной ближайшей вершины.">
+
+## Создание и повторное использование
+
+Карта выше визуализирует только работу индекса. Чтобы получить числовое поле, передайте уже
+созданный индекс вместе с сэмплером в конструктор поля:
+
+```csharp
+var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
+var field = new FloatPointInfluenceField(sampler, delaunayIndex);
+
+float value = field.Sample(new PointXY(50f, 20f));
+```
+
+В отличие от однотонного треугольника на карте выборки, это поле линейно меняется между
+значениями его вершин. Аналогично `halfPlaneIndex` можно передать полю с
+`InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>` для локального взвешенного
+смешивания. Примеры самих сэмплеров приведены на странице [Стратегии сэмплирования](sampling-strategies.md).
 
 Создавайте индекс один раз и используйте его для повторных запросов. Оба встроенных индекса
 копируют ссылки на источники в собственный снимок, поэтому добавление или удаление элементов в
