@@ -21,31 +21,41 @@
 каждый выбранный источник. Барицентрическое сэмплирование создаёт кусочно-линейное поле,
 определяемое локальной геометрией источников.
 
-## Создание сэмплера
+## Общие данные примеров
 
 Типы сэмплера и значения источника входят в обобщённый контракт. Для вещественных точечных
-источников все три стратегии можно заменять без изменения типа поля:
+источников все три стратегии можно заменять без изменения типа поля. В примерах ниже используем
+три источника с одинаковым весом `1` и одну точку запроса `P(4, 3)`:
 
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Fields;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
 
 var sources = new[]
 {
-    new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
-    new FloatPointInfluenceSource(1f, new PointXY(10f, 0f), 100f),
-    new FloatPointInfluenceSource(1f, new PointXY(0f, 10f), 50f)
+    new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),     // A
+    new FloatPointInfluenceSource(1f, new PointXY(10f, 0f), 100f),  // B
+    new FloatPointInfluenceSource(1f, new PointXY(0f, 10f), 50f)    // C
 };
 
-IInfluenceSampler<FloatPointInfluenceSource, float> sampler =
-    new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>();
-
-var field = new FloatPointInfluenceField(sampler, sources);
-float value = field.Sample(new PointXY(4f, 3f));
+var query = new PointXY(4f, 3f);
+var geometry = new RasterGeometry(
+    new PointXY(0f, 0f),
+    new VectorXY(10f, 10f),
+    new VectorXYInt(400, 400));
 ```
 
-Замените сэмплер на `NearestFloatInfluenceSampler<FloatPointInfluenceSource>` для резких областей
-или на `BarycentricFloatSampler<FloatPointInfluenceSource>` для линейной интерполяции.
+Каждый следующий фрагмент использует эти `sources`, `query` и `geometry`. Источники передаются полю напрямую,
+без пространственного индекса: все три участвуют в каждом запросе, поэтому сравнение показывает
+именно различия сэмплеров.
+
+Все PNG ниже — прямой результат `RasterizeHeatMap(geometry)` и `SaveAsPng`, вызванных в примерах.
+Библиотека вычисляет поле в центрах ячеек сетки `400 × 400` в квадрате `0 ≤ x, y ≤ 10`.
+Используется её стандартная температурная шкала: синий соответствует `0`, зелёный — `50`,
+красный — `100`. Ось `y` направлена вверх: источник `A` находится в нижнем левом углу,
+`B` — в нижнем правом, `C` — в верхнем левом. Файлы сохраняются в рабочую директорию приложения.
 
 ## Поведение ближайшего источника
 
@@ -56,6 +66,26 @@ float value = field.Sample(new PointXY(4f, 3f));
 Обобщённый `NearestInfluenceSampler<TSource, TValue>` работает с произвольными типами значений,
 включая `bool` и пользовательские категории. Вещественная и целочисленная версии предоставляют
 удобные числовые специализации с тем же поведением.
+
+### Пример: зоны ближайшего источника
+
+```csharp
+var nearestField = new FloatPointInfluenceField(
+    new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
+    sources);
+
+float nearestValue = nearestField.Sample(query); // 0
+nearestField.RasterizeHeatMap(geometry).SaveAsPng("sampling-nearest.png");
+```
+
+Расстояние от `P` до `A` равно `5`, до `B` — `√45 ≈ 6.71`, до `C` — `√65 ≈ 8.06`.
+Ближе всего источник `A`, поэтому результат равен его значению `0`.
+
+На карте получаются три однотонные области со значениями `0`, `50` и `100`.
+При пересечении границы ближайший источник меняется, и значение скачком переходит в другую
+категорию. Такой выбор подходит, например, для зон владения или назначения ближайшего датчика.
+
+<img src="~/assets/spatial2d/fields/sampling-nearest.png" width="400" height="400" style="max-width: 100%; height: auto;" loading="lazy" alt="PNG ближайшего источника: синяя область со значением 0 внизу слева, зелёная со значением 50 вверху слева и красная со значением 100 справа.">
 
 ## Обратно-взвешенное сэмплирование
 
@@ -75,6 +105,30 @@ float value = field.Sample(new PointXY(4f, 3f));
 Обратно-взвешенное сэмплирование является глобальным для полученного списка источников. Уменьшение
 этого списка на этапе выборки поля превращает смешивание в локальное и может заметно изменить
 результат.
+
+### Пример: плавное поле по трём измерениям
+
+```csharp
+var weightedField = new FloatPointInfluenceField(
+    new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>(),
+    sources);
+
+float weightedValue = weightedField.Sample(query); // Примерно 44.6176
+weightedField.RasterizeHeatMap(geometry).SaveAsPng("sampling-inverse-distance-weighted.png");
+```
+
+При одинаковом весе источников коэффициенты вклада в точке `P` равны `1/5`, `1/√45` и `1/√65`:
+
+```text
+f(P) = (0/5 + 100/√45 + 50/√65) / (1/5 + 1/√45 + 1/√65)
+     ≈ 44.62
+```
+
+Источник `A` остаётся ближайшим, но значения `B` и `C` тоже участвуют в результате.
+На карте виден непрерывный переход между измерениями; в точках самих источников поле возвращает
+их значения. Это удобно, например, для восстановления распределения температуры по датчикам.
+
+<img src="~/assets/spatial2d/fields/sampling-inverse-distance-weighted.png" width="400" height="400" style="max-width: 100%; height: auto;" loading="lazy" alt="PNG обратно-взвешенного сэмплирования: плавное смешивание синего, зелёного и красного значений трёх источников.">
 
 ## Поведение барицентрической стратегии
 
@@ -104,6 +158,35 @@ var sampler =
 числа кандидатов, поэтому небольшая локальная выборка предпочтительнее избыточно большого
 предела. `BarycentricIntSampler` использует те же геометрические правила и округляет результат
 интерполяции до ближайшего целого.
+
+### Пример: линейное изменение внутри треугольника
+
+```csharp
+var barycentricField = new FloatPointInfluenceField(
+    new BarycentricFloatSampler<FloatPointInfluenceSource>(),
+    sources);
+
+float barycentricValue = barycentricField.Sample(query); // 55
+barycentricField.RasterizeHeatMap(geometry).SaveAsPng("sampling-barycentric.png");
+```
+
+Точка `P(4, 3)` лежит внутри треугольника `ABC`. Её барицентрические коэффициенты для `A`, `B`
+и `C` равны `0.3`, `0.4` и `0.3`:
+
+```text
+P = 0.3 * A + 0.4 * B + 0.3 * C
+f(P) = 0.3 * 0 + 0.4 * 100 + 0.3 * 50 = 55
+```
+
+Внутри треугольника получается линейное поле `f(x, y) = 10x + 5y`.
+Оно подходит, например, для интерполяции высоты или другого скаляра по вершинам треугольной сетки.
+В этом примере все запросы используют один треугольник.
+
+Вне треугольника сэмплер экстраполирует ту же плоскость, а `FloatPointInfluenceField` ограничивает
+результат диапазоном `[0, 100]`. Поэтому правый верхний угол карты однотонный: в точке `(10, 10)`
+исходный результат `150` превращается в `100`.
+
+<img src="~/assets/spatial2d/fields/sampling-barycentric.png" width="400" height="400" style="max-width: 100%; height: auto;" loading="lazy" alt="PNG барицентрического сэмплирования: прямые цветовые переходы линейного поля и красная область ограниченной до 100 экстраполяции вверху справа.">
 
 ## Диапазоны результата и некорректные данные
 

@@ -2071,6 +2071,26 @@ function Add-VersionedLibraryDocumentation {
                                 -Destination $destination -Force
                         }
                 }
+
+                # Shared assets use the main DocFX root in inherited articles.
+                # Rebase these links for the independent version adapter's config.
+                $adapterUri = [System.Uri]::new(
+                    [System.IO.Path]::GetFullPath($VersionAdapterRoot).TrimEnd('\') + '\')
+                $assetsUri = [System.Uri]::new(
+                    (Join-Path $RepositoryRoot 'docfx\assets') + '\')
+                $assetSourcePrefix = '~/' +
+                    $adapterUri.MakeRelativeUri($assetsUri).ToString()
+                Get-ChildItem -LiteralPath $languageStageRoot -Recurse -Filter '*.md' -File |
+                    ForEach-Object {
+                        $content = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
+                        $updatedContent = $content.Replace('~/assets/', $assetSourcePrefix)
+                        if ($updatedContent -ne $content) {
+                            [System.IO.File]::WriteAllText(
+                                $_.FullName,
+                                $updatedContent,
+                                [System.Text.UTF8Encoding]::new($false))
+                        }
+                    }
             }
         }
 

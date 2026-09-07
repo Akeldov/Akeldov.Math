@@ -57,6 +57,7 @@
       {
         "src": "../../..",
         "files": [
+          "assets/**",
           "Spatial2D/index.html",
           "Hexes/index.html"
         ]
