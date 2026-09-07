@@ -5,6 +5,7 @@ const repositoryLinkId = 'akeldov-repository-link';
 const contextNavigationId = 'akeldov-library-navigation';
 const contextNavigationPlaceholderId = `${contextNavigationId}-placeholder`;
 const versionSelectorPlaceholderId = `${selectorId}-placeholder`;
+const jsonRequests = new Map();
 
 const russianUiTranslations = new Map([
     ['About', 'О проекте'],
@@ -23,13 +24,14 @@ const russianUiTranslations = new Map([
     ['Search', 'Поиск']
 ]);
 
-async function fetchJson(url) {
-    try {
-        const response = await fetch(url);
-        return response.ok ? await response.json() : null;
-    } catch {
-        return null;
+function fetchJson(url) {
+    const key = url.href;
+    if (!jsonRequests.has(key)) {
+        jsonRequests.set(key, fetch(url)
+            .then(response => response.ok ? response.json() : null)
+            .catch(() => null));
     }
+    return jsonRequests.get(key);
 }
 
 function isRussianPage() {
@@ -427,7 +429,6 @@ async function addLibraryNavigation() {
     if (!context) {
         document.getElementById(contextNavigationPlaceholderId)?.remove();
         document.body.classList.remove('docs-has-context-navigation');
-        document.body.style.removeProperty('--docs-header-height');
         return true;
     }
 
@@ -446,8 +447,8 @@ async function addLibraryNavigation() {
     libraryLink.href = new URL('index.html', context.conceptualRootUrl);
     libraryLink.textContent = context.library.name;
 
-    const versionSelectorPlaceholder = createVersionSelectorPlaceholder(
-        context.versionPath);
+    const versionSelectorPlaceholder = document.getElementById(versionSelectorPlaceholderId)
+        ?? createVersionSelectorPlaceholder(context.versionPath);
 
     const links = document.createElement('div');
     links.classList.add('docs-context-links');
@@ -520,19 +521,6 @@ async function addLibraryNavigation() {
     }
     document.body.classList.add('docs-has-context-navigation');
 
-    const synchronizeHeaderHeight = () => {
-        document.body.style.setProperty(
-            '--docs-header-height',
-            `${header.offsetHeight}px`);
-    };
-
-    synchronizeHeaderHeight();
-
-    if (typeof ResizeObserver !== 'undefined') {
-        const observer = new ResizeObserver(synchronizeHeaderHeight);
-        observer.observe(header);
-    }
-
     return true;
 }
 
@@ -545,7 +533,7 @@ async function addVersionSelector() {
     const navigation = document.getElementById(contextNavigationId);
     const libraryLink = navigation?.querySelector('.docs-context-library');
     if (!libraryLink) {
-        return false;
+        return !document.getElementById(contextNavigationPlaceholderId);
     }
 
     const context = await getVersionContext();
@@ -795,24 +783,68 @@ function finalizeTocShell() {
     return true;
 }
 
-async function initializeSelectors() {
-    const [versionReady, languageReady, navigationReady] = await Promise.all([
-        addVersionSelector(),
-        addLanguageSelector(),
-        addLibraryNavigation()
-    ]);
-    const repositoryReady = addRepositoryLink();
-    const tocReady = finalizeTocShell();
+function finalizePrimaryNavigation() {
+    const shell = document.querySelector('.docs-primary-navigation-shell');
+    if (!shell) {
+        return true;
+    }
 
-    return versionReady
-        && languageReady
-        && navigationReady
-        && repositoryReady
-        && tocReady;
+    const navigation = document.querySelector(
+        '#navbar > .navbar-nav:not(.docs-primary-navigation-shell)');
+    // Keep an open or focused fallback usable while DocFX finishes rendering.
+    if (!navigation || shell.contains(document.activeElement)
+        || shell.querySelector('details[open]')) {
+        return false;
+    }
+
+    shell.remove();
+    return true;
+}
+
+async function initializeHeaderControls() {
+    const languageReady = await addLanguageSelector();
+    const repositoryReady = addRepositoryLink();
+    if (languageReady && repositoryReady) {
+        for (const placeholder of document.querySelectorAll(
+            '.docs-header-control-placeholder')) {
+            placeholder.remove();
+        }
+        document.documentElement.classList.remove('docs-ui-pending');
+    }
+
+    return languageReady && repositoryReady;
+}
+
+async function initializeSelectors() {
+    const [headerReady, versionReady] = await Promise.all([
+        initializeHeaderControls(),
+        addLibraryNavigation().then(ready => ready && addVersionSelector())
+    ]);
+    return headerReady && versionReady && finalizeTocShell()
+        && finalizePrimaryNavigation();
+}
+
+function trackHeaderHeight() {
+    const header = document.querySelector('body > header');
+    if (!header) {
+        return;
+    }
+
+    const synchronizeHeaderHeight = () => {
+        document.body.style.setProperty(
+            '--docs-header-height', `${header.offsetHeight}px`);
+    };
+    synchronizeHeaderHeight();
+    if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(synchronizeHeaderHeight).observe(header);
+    } else {
+        window.addEventListener('resize', synchronizeHeaderHeight);
+    }
 }
 
 function start() {
     reserveLibraryNavigationSpace();
+    trackHeaderHeight();
     synchronizeLanguagePreference();
     localizeReferenceOverview();
     startRussianLocalization();
@@ -821,9 +853,16 @@ function start() {
     let initializationPending = true;
 
     const observer = new MutationObserver(() => {
+        finalizePrimaryNavigation();
+        finalizeTocShell();
         initializationPending = true;
         void initializeDynamicNavigation();
     });
+    const navigationShell = document.querySelector('.docs-primary-navigation-shell');
+    navigationShell?.addEventListener('focusout', () => {
+        queueMicrotask(finalizePrimaryNavigation);
+    });
+    navigationShell?.addEventListener('toggle', finalizePrimaryNavigation, true);
 
     async function initializeDynamicNavigation() {
         if (initializationRunning) {
@@ -836,11 +875,6 @@ function start() {
             initializationPending = false;
 
             if (await initializeSelectors()) {
-                for (const placeholder of document.querySelectorAll(
-                    '.docs-header-control-placeholder')) {
-                    placeholder.remove();
-                }
-                document.documentElement.classList.remove('docs-ui-pending');
                 observer.disconnect();
                 initializationRunning = false;
                 return;

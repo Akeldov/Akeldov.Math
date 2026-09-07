@@ -1288,6 +1288,47 @@ function ConvertTo-DocfxTocShellNodes {
     }
 }
 
+function ConvertTo-DocfxPrimaryNavigation {
+    param(
+        [object[]] $Nodes,
+        [object[]] $RussianNodes,
+        [string] $RootPrefix,
+        [string] $Language
+    )
+
+    $items = for ($index = 0; $index -lt $Nodes.Count; $index++) {
+        $node = $Nodes[$index]
+        $russianNode = $RussianNodes[$index]
+        $label = [System.Net.WebUtility]::HtmlEncode([string] $node.name)
+        $russianLabel = [System.Net.WebUtility]::HtmlEncode(
+            [string] $russianNode.name)
+        if ($node.items) {
+            $children = ConvertTo-DocfxPrimaryNavigation `
+                -Nodes $node.items `
+                -RussianNodes $russianNode.items `
+                -RootPrefix $RootPrefix `
+                -Language $Language
+            @"
+                <li class="nav-item">
+                  <details class="dropdown">
+                    <summary class="nav-link dropdown-toggle" data-label-ru="$russianLabel">$label</summary>
+                    <ul class="dropdown-menu">$children</ul>
+                  </details>
+                </li>
+"@
+        } else {
+            $href = [System.Net.WebUtility]::HtmlEncode(
+                "$RootPrefix$Language/$($node.href)")
+            $russianHref = [System.Net.WebUtility]::HtmlEncode(
+                "$($RootPrefix)ru/$($russianNode.href)")
+            @"
+                <li class="nav-item"><a class="nav-link" href="$href" data-href-ru="$russianHref" data-label-ru="$russianLabel">$label</a></li>
+"@
+        }
+    }
+    return $items -join "`r`n"
+}
+
 function Set-PageUiShells {
     param(
         [Parameter(Mandatory)]
@@ -1301,6 +1342,12 @@ function Set-PageUiShells {
         ConvertFrom-Json
     $versionRegistries = @{}
     $tocRegistries = @{}
+    $primaryNavigationRegistries = @{}
+    foreach ($language in @('en', 'ru')) {
+        $primaryNavigationRegistries[$language] = Get-Content `
+            -LiteralPath (Join-Path $SiteRoot "$language/toc.json") `
+            -Raw -Encoding UTF8 | ConvertFrom-Json
+    }
     $siteRootFullPath = [System.IO.Path]::GetFullPath($SiteRoot).
         TrimEnd([System.IO.Path]::DirectorySeparatorChar) +
         [System.IO.Path]::DirectorySeparatorChar
@@ -1316,9 +1363,6 @@ function Set-PageUiShells {
             ConvertFrom-Json
     }
 
-    $fallbackScript = @'
-      <script>window.setTimeout(() => { document.querySelectorAll('.docs-header-control-placeholder').forEach(element => element.remove()); document.documentElement.classList.remove('docs-ui-pending') }, 3000)</script>
-'@
     $headerControlsShell = @'
               <div class="docs-icons-placeholder docs-header-control-placeholder" aria-hidden="true">
                 <div class="dropdown docs-language-selector">
@@ -1331,7 +1375,7 @@ function Set-PageUiShells {
                 </div>
               </div>
               <span class="btn border-0 docs-repository-link docs-header-control-placeholder" aria-hidden="true"><i class="bi bi-github"></i></span>
-              <script>document.querySelector('.docs-theme-placeholder-icon').className = `bi bi-${({ light: 'sun', dark: 'moon' })[localStorage.getItem('theme')] || 'circle-half'} docs-theme-placeholder-icon`</script>
+              <script>try { document.querySelector('.docs-theme-placeholder-icon').className = `bi bi-${({ light: 'sun', dark: 'moon' })[localStorage.getItem('theme')] || 'circle-half'} docs-theme-placeholder-icon` } catch {}</script>
 '@
     $patchedPageCount = 0
     $breadcrumbShellCount = 0
@@ -1383,13 +1427,6 @@ function Set-PageUiShells {
                 $htmlTag.Length).Insert(
                 $htmlTag.Index,
                 $updatedHtmlTag)
-            $headEnd = $content.IndexOf(
-                '</head>',
-                [System.StringComparison]::OrdinalIgnoreCase)
-            $content = $content.Insert(
-                $headEnd,
-                "$fallbackScript`r`n")
-
             $searchForm = [System.Text.RegularExpressions.Regex]::Match(
                 $content,
                 '<form\b[^>]*\bid="search"[^>]*>.*?</form>',
@@ -1414,37 +1451,21 @@ function Set-PageUiShells {
                 $contextOffset = 1
             }
 
-            $homeLabel = if ($language -eq 'ru') {
-                '&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;'
-            } else {
-                'Home'
-            }
-            $librariesLabel = if ($language -eq 'ru') {
-                '&#1041;&#1080;&#1073;&#1083;&#1080;&#1086;&#1090;&#1077;&#1082;&#1080;'
-            } else {
-                'Libraries'
-            }
-            $aboutLabel = if ($language -eq 'ru') {
-                '&#1054; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;'
-            } else {
-                'About'
-            }
             $apiNavigationLocalization = if ($apiPage) {
                 @'
-              <script>try { if (new URLSearchParams(location.search).get('lang') === 'ru' || localStorage.getItem('akeldov-docs-language-preference') === 'ru') { document.querySelectorAll('.docs-primary-navigation-placeholder [data-label-ru]').forEach(element => { element.textContent = element.dataset.labelRu }) } } catch {}</script>
+              <script>try { if (new URLSearchParams(location.search).get('lang') === 'ru' || localStorage.getItem('akeldov-docs-language-preference') === 'ru') { document.querySelectorAll('.docs-primary-navigation-shell [data-label-ru]').forEach(element => { element.textContent = element.dataset.labelRu; if (element.dataset.hrefRu) element.setAttribute('href', element.dataset.hrefRu) }) } } catch {}</script>
 '@
             } else {
                 ''
             }
+            $primaryNavigationItems = ConvertTo-DocfxPrimaryNavigation `
+                -Nodes $primaryNavigationRegistries[$language].items `
+                -RussianNodes $primaryNavigationRegistries['ru'].items `
+                -RootPrefix ('../' * ($segments.Count - 1)) `
+                -Language $language
             $primaryNavigationShell = @"
-              <ul class="navbar-nav docs-primary-navigation-placeholder docs-header-control-placeholder" aria-hidden="true">
-                <li class="nav-item"><a class="nav-link" tabindex="-1" data-label-ru="&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;">$homeLabel</a></li>
-                <li class="nav-item dropdown">
-                  <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" tabindex="-1" class="nav-link dropdown-toggle" data-label-ru="&#1041;&#1080;&#1073;&#1083;&#1080;&#1086;&#1090;&#1077;&#1082;&#1080;">
-                    $librariesLabel
-                  </a>
-                </li>
-                <li class="nav-item"><a class="nav-link" tabindex="-1" data-label-ru="&#1054; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;">$aboutLabel</a></li>
+              <ul class="navbar-nav docs-primary-navigation-shell">
+$primaryNavigationItems
               </ul>
 $apiNavigationLocalization
 "@
@@ -1694,6 +1715,7 @@ $tocApiLocalization
                 $sections = @(
                     [pscustomobject]@{
                         Key = 'concepts'
+                        LabelRu = '&#1050;&#1086;&#1085;&#1094;&#1077;&#1087;&#1094;&#1080;&#1080;'
                         Label = if ($language -eq 'ru') {
                             '&#1050;&#1086;&#1085;&#1094;&#1077;&#1087;&#1094;&#1080;&#1080;'
                         } else {
@@ -1703,6 +1725,7 @@ $tocApiLocalization
                     },
                     [pscustomobject]@{
                         Key = 'tutorials'
+                        LabelRu = '&#1059;&#1095;&#1077;&#1073;&#1085;&#1080;&#1082;&#1080;'
                         Label = if ($language -eq 'ru') {
                             '&#1059;&#1095;&#1077;&#1073;&#1085;&#1080;&#1082;&#1080;'
                         } else {
@@ -1712,6 +1735,7 @@ $tocApiLocalization
                     },
                     [pscustomobject]@{
                         Key = 'how-to-guides'
+                        LabelRu = '&#1056;&#1091;&#1082;&#1086;&#1074;&#1086;&#1076;&#1089;&#1090;&#1074;&#1072;'
                         Label = if ($language -eq 'ru') {
                             '&#1056;&#1091;&#1082;&#1086;&#1074;&#1086;&#1076;&#1089;&#1090;&#1074;&#1072;'
                         } else {
@@ -1730,6 +1754,11 @@ $tocApiLocalization
                                 [pscustomobject]@{
                                     Key = $_.key
                                     LabelEncoded = $false
+                                    LabelRu = if ($_.labelRu) {
+                                        $_.labelRu
+                                    } else {
+                                        $_.label
+                                    }
                                     Label = if ($language -eq 'ru') {
                                         if ($_.labelRu) {
                                             $_.labelRu
@@ -1745,6 +1774,7 @@ $tocApiLocalization
                 }
                 $sections += [pscustomobject]@{
                     Key = 'reference'
+                    LabelRu = '&#1057;&#1087;&#1088;&#1072;&#1074;&#1086;&#1095;&#1085;&#1080;&#1082;'
                     Label = if ($language -eq 'ru') {
                         '&#1057;&#1087;&#1088;&#1072;&#1074;&#1086;&#1095;&#1085;&#1080;&#1082;'
                     } else {
@@ -1772,7 +1802,9 @@ $tocApiLocalization
                             [System.Net.WebUtility]::HtmlEncode(
                                 [string] $_.Label)
                         }
-                        "          <span class=`"docs-context-link$activeClass`">$label</span>"
+                        $russianLabel = [System.Net.WebUtility]::HtmlEncode(
+                            [System.Net.WebUtility]::HtmlDecode([string] $_.LabelRu))
+                        "          <span class=`"docs-context-link$activeClass`" data-label-ru=`"$russianLabel`">$label</span>"
                     }) -join "`r`n"
                 $libraryName = [System.Net.WebUtility]::HtmlEncode(
                     [string] $library.name)
@@ -1791,6 +1823,12 @@ $sectionShells
         </div>
       </nav>
 "@
+                if ($apiPage) {
+                    $navigationShell += @'
+
+      <script>try { if (new URLSearchParams(location.search).get('lang') === 'ru' || localStorage.getItem('akeldov-docs-language-preference') === 'ru') { document.querySelectorAll('#akeldov-library-navigation-placeholder [data-label-ru]').forEach(element => { element.textContent = element.dataset.labelRu }) } } catch {}</script>
+'@
+                }
                 $headerEnd = $content.IndexOf(
                     '</header>',
                     [System.StringComparison]::OrdinalIgnoreCase)

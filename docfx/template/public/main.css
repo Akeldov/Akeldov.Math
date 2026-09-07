@@ -9,6 +9,10 @@ body > header {
     flex-wrap: wrap;
 }
 
+body[data-layout] > header {
+    height: auto;
+}
+
 body > header .navbar {
     background: transparent;
 }
@@ -30,6 +34,8 @@ body > header .navbar-brand:hover,
 body > header .navbar-nav > .nav-item > .nav-link,
 body > header .navbar-nav > .nav-item > .nav-link.active,
 body > header .navbar-nav > .nav-item > .nav-link.show,
+body > header .docs-primary-navigation-shell summary,
+body > header [data-bs-target="#navpanel"],
 body > header form.icons .btn,
 body > header .docs-icons-placeholder .btn,
 body > header .docs-repository-link {
@@ -73,7 +79,7 @@ body > main::before {
     position: absolute;
     top: 0;
     transform: translateX(-50%);
-    width: 100vw;
+    width: 100%;
     z-index: -1;
 }
 
@@ -145,7 +151,7 @@ body > header #search-query:disabled {
     align-self: center;
     display: inline-flex;
     justify-content: center;
-    margin-left: 0.25rem;
+    margin-left: 0;
     order: 60;
     width: 2.5rem;
 }
@@ -164,12 +170,19 @@ body > header #search-query:disabled {
     pointer-events: none;
 }
 
-.docs-primary-navigation-placeholder {
-    pointer-events: none;
+.docs-primary-navigation-shell summary {
+    list-style: none;
 }
 
-html.docs-ui-pending body > header #navbar
-    > .navbar-nav:not(.docs-primary-navigation-placeholder) {
+.docs-primary-navigation-shell summary::-webkit-details-marker {
+    display: none;
+}
+
+.docs-primary-navigation-shell details[open] > .dropdown-menu {
+    display: block;
+}
+
+body > header #navbar > .docs-primary-navigation-shell ~ .navbar-nav {
     display: none;
 }
 
@@ -254,19 +267,59 @@ html.docs-ui-pending body > header
     color: #fff;
 }
 
+.navbar #navpanel,
+.navbar #navbar {
+    min-width: 0;
+}
+
+.navbar #navbar {
+    align-items: center;
+    gap: 0.5rem;
+    display: grid;
+    grid-template-areas:
+        "navigation navigation navigation"
+        "icons search repository";
+    grid-template-columns: 5.5rem minmax(0, 1fr) 2.5rem;
+    padding-block: 0.5rem;
+}
+
+.navbar #navbar > .navbar-nav {
+    grid-area: navigation;
+    min-width: 0;
+}
+
+.navbar #navbar > form.icons,
+.navbar #navbar > .docs-icons-placeholder {
+    grid-area: icons;
+    justify-content: flex-end;
+    margin: 0;
+    min-width: 5.5rem;
+}
+
+.navbar #navbar > form.search {
+    grid-area: search;
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+}
+
+.navbar #navbar > .docs-repository-link {
+    grid-area: repository;
+}
+
 @media (min-width: 768px) {
-    body.docs-has-context-navigation > header {
-        height: auto;
+    body[data-layout] > header {
+        min-height: 60px;
     }
 
-    body.docs-has-context-navigation > main > .toc-offcanvas,
-    body.docs-has-context-navigation > main > .affix {
-        max-height: calc(100vh - var(--docs-header-height, 108px) - 1.6rem);
-        top: calc(var(--docs-header-height, 108px) + 1.6rem);
+    body:not([data-search])[data-layout] > main > .toc-offcanvas,
+    body:not([data-search])[data-layout] > main > .affix {
+        max-height: calc(100vh - var(--docs-header-height, 60px) - 1.6rem);
+        top: calc(var(--docs-header-height, 60px) + 1.6rem);
     }
 
-    body.docs-has-context-navigation > main > .content > article [id] {
-        scroll-margin-top: var(--docs-header-height, 108px);
+    body[data-layout] > main > .content > article [id] {
+        scroll-margin-top: var(--docs-header-height, 60px);
     }
 
     body > header .navbar-nav .dropdown-menu {
@@ -278,39 +331,20 @@ html.docs-ui-pending body > header
     }
 
     .navbar #navbar {
-        align-items: center;
-        column-gap: 0.5rem;
-        display: grid;
-        grid-template-areas: "navigation icons search repository";
-        grid-template-columns: minmax(0, 1fr) 5.5rem minmax(12rem, 18rem) 2.5rem;
-    }
-
-    .navbar #navbar > .navbar-nav {
-        grid-area: navigation;
-    }
-
-    .navbar #navbar > form.icons,
-    .navbar #navbar > .docs-icons-placeholder {
-        grid-area: icons;
-        justify-content: flex-end;
-        margin-left: 0;
-        min-width: 5.5rem;
-    }
-
-    .navbar #navbar > form.search {
-        grid-area: search;
-        width: 100%;
-    }
-
-    .navbar #navbar > .docs-repository-link {
-        grid-area: repository;
+        grid-template-areas:
+            "navigation navigation navigation navigation"
+            ". icons search repository";
+        grid-template-columns: minmax(0, 1fr) 5.5rem minmax(0, 18rem) 2.5rem;
     }
 }
 
 @media (max-width: 767.98px) {
-    .navbar #navbar > .docs-icons-placeholder {
-        align-self: center;
-        margin: 1rem 0;
+    .navbar > .container-xxl {
+        flex-wrap: wrap !important;
+    }
+
+    .navbar #navpanel {
+        width: 100%;
     }
 
     .docs-context-navigation-inner {
@@ -322,17 +356,8 @@ html.docs-ui-pending body > header
     }
 }
 
-@media (min-width: 768px) and (max-width: 1199.98px) {
+@media (min-width: 1200px) {
     .navbar #navbar {
-        grid-template-areas:
-            "navigation navigation navigation"
-            "icons search repository";
-        grid-template-columns: 5.5rem minmax(12rem, 18rem) 2.5rem;
-        justify-content: end;
-        row-gap: 0.5rem;
-    }
-
-    .navbar #navbar > .navbar-nav {
-        justify-self: start;
+        grid-template-areas: "navigation icons search repository";
     }
 }
