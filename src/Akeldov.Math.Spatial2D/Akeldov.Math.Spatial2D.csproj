@@ -7,14 +7,14 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2026 Stanislav Akeldov</Copyright>
-		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added FloatFieldRange and IntFieldRange value types for grouping the fields that provide pointwise minimum and maximum bounds. The new types validate their field references, expose them through MinField and MaxField, and support deconstruction. This release is backward compatible with 1.0.0.</PackageReleaseNotes>
+		<Description>Two-dimensional geometry and vector math with linear, circular, Bezier, B-spline, and NURBS curves; pairwise curve intersection APIs; contours and regions; rasterization and imaging; spatial sampling and partitioning; and influence fields.</Description>
+		<PackageReleaseNotes>Added B-spline and NURBS curve types with point evaluation in normalized, knot, and arc-length coordinates, plus flattening, projection, distance, and contour support. Added exact point-intersection APIs between B-splines, NURBS curves, and all existing concrete curve types, including spline-to-spline combinations. All changes are additive and backward compatible with 1.1.0.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
+		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;b-spline;nurbs;contours;regions;rasterization;imaging;perlin-noise;gaussian-blur;sampling;voronoi;delaunay;poisson-disk</PackageTags>
 		<RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
 		<PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Spatial2D/</PackageProjectUrl>
 	</PropertyGroup>

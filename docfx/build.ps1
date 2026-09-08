@@ -2417,12 +2417,16 @@ $spatial2D10ArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\1.0.0'
 $spatial2D11ArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\1.1.0'
+$spatial2D12ArticleOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\1.2.0'
 $spatial2DUpcomingArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\upcoming'
 $spatial2D09ArticleStageRoot = Join-Path `
     $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-0.9.0'
 $spatial2D10ArticleStageRoot = Join-Path `
     $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-1.0.0'
+$spatial2D11ArticleStageRoot = Join-Path `
+    $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-1.1.0'
 $spatial2DStableArticleStageRoot = Join-Path `
     $repositoryRoot '.tmp\docfx-upcoming\Spatial2D-stable'
 $spatial2DUpcomingArticleStageRoot = Join-Path `
@@ -2481,6 +2485,12 @@ New-MergedArticleSource `
     -RepositoryRoot $repositoryRoot `
     -BaseRoot $spatial2D10ArticleStageRoot `
     -OverrideRoot $spatial2D11ArticleOverrideRoot `
+    -StageRoot $spatial2D11ArticleStageRoot
+
+New-MergedArticleSource `
+    -RepositoryRoot $repositoryRoot `
+    -BaseRoot $spatial2D11ArticleStageRoot `
+    -OverrideRoot $spatial2D12ArticleOverrideRoot `
     -StageRoot $spatial2DStableArticleStageRoot
 
 New-MergedArticleSource `
@@ -2522,13 +2532,15 @@ Update-MergedArticleContributionLinks `
     -InheritedOverrideRoots @(
         $spatial2D09ArticleOverrideRoot,
         $spatial2D10ArticleOverrideRoot,
-        $spatial2D11ArticleOverrideRoot) `
+        $spatial2D11ArticleOverrideRoot,
+        $spatial2D12ArticleOverrideRoot) `
     -StageRoot $spatial2DUpcomingArticleStageRoot `
     -Library 'Spatial2D' `
     -VersionPath 'upcoming'
 
 Remove-Item -LiteralPath $spatial2DUpcomingArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $spatial2DStableArticleStageRoot -Recurse -Force
+Remove-Item -LiteralPath $spatial2D11ArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $spatial2D10ArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $spatial2D09ArticleStageRoot -Recurse -Force
 
@@ -2602,6 +2614,23 @@ Add-VersionedLibraryDocumentation `
     -InheritedArticleOverrideRoots @(
         $spatial2D09ArticleOverrideRoot,
         $spatial2D10ArticleOverrideRoot)
+
+Add-VersionedLibraryDocumentation `
+    -Library 'Spatial2D' `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Spatial2D\1.2.0') `
+    -PackageVersion '1.2.0' `
+    -TargetVersionPath '1.2.0' `
+    -ExpectedPackageHash `
+        '136C8A0BE0F93650B52BF82E215824749C026CA755A5BBBD41D817701E01515F' `
+    -ArticleSourceRoot $spatial2DArticleBaseRoot `
+    -InheritedArticleOverrideRoots @(
+        $spatial2D09ArticleOverrideRoot,
+        $spatial2D10ArticleOverrideRoot,
+        $spatial2D11ArticleOverrideRoot)
 
 Add-VersionedLibraryDocumentation `
     -Library 'Hexes' `
@@ -2693,6 +2722,8 @@ $spatial2D10RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\1.0.0\ru'
 $spatial2D11RussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\1.1.0\ru'
+$spatial2D12RussianOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Spatial2D\1.2.0\ru'
 $spatial2DUpcomingRussianOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Spatial2D\upcoming\ru'
 $hexes01RussianSourceRoot = Join-Path `
@@ -2750,6 +2781,26 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $spatial2DVersionedRussianSourceRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.2.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D09RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.2.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D10RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.2.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D11RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.2.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D12RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' '1.2.0'
+    },
+    [pscustomobject]@{
+        Root = $spatial2DVersionedRussianSourceRoot
         OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
     },
     [pscustomobject]@{
@@ -2762,6 +2813,10 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $spatial2D11RussianOverrideRoot
+        OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
+    },
+    [pscustomobject]@{
+        Root = $spatial2D12RussianOverrideRoot
         OutputPrefix = Join-Path 'Spatial2D' 'upcoming'
     },
     [pscustomobject]@{
@@ -3415,7 +3470,7 @@ Write-Host (
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
     -Library 'Spatial2D' `
-    -CanonicalVersion '1.1.0' `
+    -CanonicalVersion '1.2.0' `
     -Alias 'latest' `
     -SiteBaseUrl $siteBaseUrl
 
