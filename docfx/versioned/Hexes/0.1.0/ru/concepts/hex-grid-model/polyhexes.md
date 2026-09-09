@@ -199,6 +199,29 @@ var exactRegion = geometry.ToRegion(Layout.OddR);
 var offsetRegion = geometry.ToApothemOffsetRegion(Layout.OddR);
 ```
 
+Например, следующая вогнутая маска создаёт регион, граница которого проходит по открытым рёбрам
+занятых гексов:
+
+```csharp
+var contourGeometry = new PolyhexGeometry(
+    new bool[,]
+    {
+        { false, true,  true,  false },
+        { true,  true,  true,  false },
+        { true,  false, true,  true  },
+        { false, true,  true,  true  },
+        { false, false, true,  false }
+    },
+    radius: 1f.ConvertHexApothemToRadius());
+
+var contourRegion = contourGeometry.ToRegion(Layout.OddR);
+```
+
+<img src="/Akeldov.Math/assets/hexes/polyhexes/contour-odd-r.png" width="160" height="128" loading="lazy" alt="Контур, построенный из вогнутого полигекса в раскладке OddR">
+
+Изображение сгенерировано на C# растеризацией только граничных кривых из
+`contourRegion.Contours`; внутренние области занятых гексов намеренно не залиты.
+
 Перегрузки без аргумента `layout` используют `Layout.OddR`. Раскладка не хранится в
 `PolyhexGeometry`: выбирайте её согласованно при каждом преобразовании маски. R-раскладки создают
 гексы вершиной вверх, а Q-раскладки — гексы горизонтальной стороной вверх. Для Q/R-маски нечётный

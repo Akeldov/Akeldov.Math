@@ -196,6 +196,29 @@ var exactRegion = geometry.ToRegion(Layout.OddR);
 var offsetRegion = geometry.ToApothemOffsetRegion(Layout.OddR);
 ```
 
+For example, the following concave mask produces a region whose boundary follows the exposed
+edges of its occupied hexes:
+
+```csharp
+var contourGeometry = new PolyhexGeometry(
+    new bool[,]
+    {
+        { false, true,  true,  false },
+        { true,  true,  true,  false },
+        { true,  false, true,  true  },
+        { false, true,  true,  true  },
+        { false, false, true,  false }
+    },
+    radius: 1f.ConvertHexApothemToRadius());
+
+var contourRegion = contourGeometry.ToRegion(Layout.OddR);
+```
+
+<img src="/Akeldov.Math/assets/hexes/polyhexes/contour-odd-r.png" width="160" height="128" loading="lazy" alt="Contour generated from a concave polyhex in the OddR layout">
+
+The image was generated in C# by rasterizing only the boundary curves from
+`contourRegion.Contours`; the occupied hex interiors are intentionally not filled.
+
 The overloads without a `layout` argument use `Layout.OddR`. The layout is not stored by
 `PolyhexGeometry`: choose it consistently each time a mask is converted. R layouts produce
 pointy-top cells, while Q layouts produce flat-top cells. In this Q/R-mask path, odd and even
