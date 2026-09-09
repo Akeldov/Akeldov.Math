@@ -10,12 +10,12 @@ distinguishes pointy-top from flat-top hexagons, but it cannot distinguish `OddR
 
 ## The four layouts
 
-| Layout | Orientation | Staggered dimension | Offset parity |
-| --- | --- | --- | --- |
-| `OddR` | `PointyTop` | rows (`Y`, or QRS `R`) | odd rows |
-| `EvenR` | `PointyTop` | rows (`Y`, or QRS `R`) | even rows |
-| `OddQ` | `FlatTop` | columns (`X`, or QRS `Q`) | odd columns |
-| `EvenQ` | `FlatTop` | columns (`X`, or QRS `Q`) | even columns |
+| Layout | Example | Orientation | Staggered dimension | Offset parity |
+| --- | --- | --- | --- | --- |
+| `OddR` | <img src="/Akeldov.Math/assets/hexes/layouts/odd-r.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="OddR layout example"> | `PointyTop` | rows (`Y`, or QRS `R`) | odd rows |
+| `EvenR` | <img src="/Akeldov.Math/assets/hexes/layouts/even-r.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="EvenR layout example"> | `PointyTop` | rows (`Y`, or QRS `R`) | even rows |
+| `OddQ` | <img src="/Akeldov.Math/assets/hexes/layouts/odd-q.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="OddQ layout example"> | `FlatTop` | columns (`X`, or QRS `Q`) | odd columns |
+| `EvenQ` | <img src="/Akeldov.Math/assets/hexes/layouts/even-q.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="EvenQ layout example"> | `FlatTop` | columns (`X`, or QRS `Q`) | even columns |
 
 In a pointy-top layout, a hex has a vertex at the top and rectangular storage is row-oriented.
 In a flat-top layout, a hex has a horizontal edge at the top and storage is column-oriented.

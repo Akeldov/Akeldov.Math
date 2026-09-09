@@ -10,12 +10,12 @@
 
 ## Четыре раскладки
 
-| Раскладка | Ориентация | Измерение со смещением | Чётность смещения |
-| --- | --- | --- | --- |
-| `OddR` | `PointyTop` | строки (`Y`, или `R` в QRS) | нечётные строки |
-| `EvenR` | `PointyTop` | строки (`Y`, или `R` в QRS) | чётные строки |
-| `OddQ` | `FlatTop` | столбцы (`X`, или `Q` в QRS) | нечётные столбцы |
-| `EvenQ` | `FlatTop` | столбцы (`X`, или `Q` в QRS) | чётные столбцы |
+| Раскладка | Пример | Ориентация | Измерение со смещением | Чётность смещения |
+| --- | --- | --- | --- | --- |
+| `OddR` | <img src="/Akeldov.Math/assets/hexes/layouts/odd-r.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="Пример раскладки OddR"> | `PointyTop` | строки (`Y`, или `R` в QRS) | нечётные строки |
+| `EvenR` | <img src="/Akeldov.Math/assets/hexes/layouts/even-r.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="Пример раскладки EvenR"> | `PointyTop` | строки (`Y`, или `R` в QRS) | чётные строки |
+| `OddQ` | <img src="/Akeldov.Math/assets/hexes/layouts/odd-q.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="Пример раскладки OddQ"> | `FlatTop` | столбцы (`X`, или `Q` в QRS) | нечётные столбцы |
+| `EvenQ` | <img src="/Akeldov.Math/assets/hexes/layouts/even-q.png" width="128" height="128" style="object-fit: contain;" loading="lazy" alt="Пример раскладки EvenQ"> | `FlatTop` | столбцы (`X`, или `Q` в QRS) | чётные столбцы |
 
 В раскладке `PointyTop` сверху находится вершина гекса, а прямоугольное хранилище организовано по
 строкам. В раскладке `FlatTop` сверху находится горизонтальная сторона, а хранилище организовано
