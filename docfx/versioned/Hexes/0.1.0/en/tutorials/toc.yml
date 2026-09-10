@@ -62,3 +62,5 @@
       href: rasterizing-a-hex-map/mapping-values-to-colors.md
     - name: Exporting the Image
       href: rasterizing-a-hex-map/exporting-the-image.md
+- name: Chromatizing a Hex Map
+  href: chromatizing-a-hex-map.md
