@@ -64,3 +64,5 @@
       href: rasterizing-a-hex-map/exporting-the-image.md
 - name: Chromatizing a Hex Map
   href: chromatizing-a-hex-map.md
+- name: Chromatization and Barycentric Interpolation
+  href: chromatic-barycentric-interpolation.md

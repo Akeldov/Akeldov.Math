@@ -117,3 +117,6 @@ Console.WriteLine(chromaticClass); // 0
 Если нужны упорядоченные по классам веса интерполяции на прямоугольной сетке выборки, перейдите к
 разделу
 [«Создание хроматического растра»](../how-to-guides/chromatization/create-a-chromatic-raster.md).
+
+Законченный RGB-пример приведён в следующем учебнике:
+[«Хроматизация и барицентрическая интерполяция»](chromatic-barycentric-interpolation.md).

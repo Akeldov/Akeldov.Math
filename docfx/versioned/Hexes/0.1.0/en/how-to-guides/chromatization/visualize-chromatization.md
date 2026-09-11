@@ -4,6 +4,9 @@ Render a `ChromaticIndexMap` with one color per class to inspect the three-color
 interpolation near hex vertices, map chromatically ordered barycentric weights to the red, green,
 and blue channels.
 
+See [Chromatization and Barycentric Interpolation](../../tutorials/chromatic-barycentric-interpolation.md)
+for illustrated output, the weight permutation, and the blending formula.
+
 ## Render the class map
 
 Create a spatial chromatic map, rasterize it with a three-color palette, and save the result as PNG:

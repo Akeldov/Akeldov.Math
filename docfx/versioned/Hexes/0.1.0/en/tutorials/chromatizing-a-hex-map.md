@@ -116,3 +116,6 @@ You now have a repeatable three-pass partition of the map. See the
 invariant and triplet ordering rules. Continue with
 [Create a Chromatic Raster](../how-to-guides/chromatization/create-a-chromatic-raster.md) when you
 need class-ordered interpolation weights on a rectangular sampling grid.
+
+For a worked RGB example, continue with
+[Chromatization and Barycentric Interpolation](chromatic-barycentric-interpolation.md).
