@@ -62,6 +62,8 @@
       href: rasterizing-a-hex-map/mapping-values-to-colors.md
     - name: Exporting the Image
       href: rasterizing-a-hex-map/exporting-the-image.md
+- name: Complete and Partial Index Maps
+  href: creating-index-neighborhood-maps.md
 - name: Chromatizing a Hex Map
   href: chromatizing-a-hex-map.md
 - name: Chromatization and Barycentric Interpolation

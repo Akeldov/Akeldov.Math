@@ -73,3 +73,6 @@ storage is not intended, pass a clone: `(int[])values.Clone()`.
 
 Next, [find hex neighbors](find-hex-neighbors.md). For the complete storage and indexing contract,
 see [Maps](../../concepts/data-storage/maps.md).
+
+For maps that precompute neighbor indices, see the
+[complete and partial index map examples](../../tutorials/creating-index-neighborhood-maps.md).

@@ -73,3 +73,6 @@ var initializedMap = new HexMap<int>(topology, values);
 
 Далее можно [найти соседей гекса](find-hex-neighbors.md). Полный контракт хранения и индексаторов
 описан в разделе [«Карты»](../../concepts/data-storage/maps.md).
+
+Карты, которые заранее вычисляют индексы соседей, показаны в
+[примерах полных и частичных индексных карт](../../tutorials/creating-index-neighborhood-maps.md).
