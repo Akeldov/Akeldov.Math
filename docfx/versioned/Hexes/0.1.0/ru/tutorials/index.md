@@ -7,3 +7,7 @@
 
 Учебник [«Полные и частичные индексные карты»](creating-index-neighborhood-maps.md) содержит
 два самостоятельных примера визуализации индексов соседей и сравнение обработки границ.
+
+Для троек по пикселям сравните [IndexTripletRaster](visualizing-index-triplet-raster.md) и
+[IndexPartialTripletRaster](visualizing-index-partial-triplet-raster.md): оба примера кодируют
+три выбранных индекса гексов в каналах RGB.

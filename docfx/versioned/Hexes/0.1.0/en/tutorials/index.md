@@ -7,3 +7,7 @@ a map into three stable classes.
 
 [Complete and Partial Index Maps](creating-index-neighborhood-maps.md) provides two standalone
 examples that visualize neighbor indices and compare boundary handling.
+
+For pixel-based triplets, compare [IndexTripletRaster](visualizing-index-triplet-raster.md) and
+[IndexPartialTripletRaster](visualizing-index-partial-triplet-raster.md): both examples encode
+the three selected hex indices in RGB channels.

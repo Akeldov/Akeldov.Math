@@ -64,6 +64,10 @@
       href: rasterizing-a-hex-map/exporting-the-image.md
 - name: Complete and Partial Index Maps
   href: creating-index-neighborhood-maps.md
+- name: Visualizing IndexTripletRaster
+  href: visualizing-index-triplet-raster.md
+- name: Visualizing IndexPartialTripletRaster
+  href: visualizing-index-partial-triplet-raster.md
 - name: Chromatizing a Hex Map
   href: chromatizing-a-hex-map.md
 - name: Chromatization and Barycentric Interpolation

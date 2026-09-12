@@ -4,6 +4,10 @@ Use <xref:Akeldov.Math.Hexes.Topology.IndexTripletRaster> to precompute the thre
 surround the sample point at the center of every raster cell. The result is lookup data for
 interpolation and other spatial operations; it is not an image by itself.
 
+For complete runnable RGB examples with images, see
+[Visualizing IndexTripletRaster](../../tutorials/visualizing-index-triplet-raster.md) and
+[Visualizing IndexPartialTripletRaster](../../tutorials/visualizing-index-partial-triplet-raster.md).
+
 ## Define the source and sampling geometries
 
 Create a `HexMapGeometry` for the finite source map, then derive a `RasterGeometry` that covers it:

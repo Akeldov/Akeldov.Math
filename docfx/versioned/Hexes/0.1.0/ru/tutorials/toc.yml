@@ -64,6 +64,10 @@
       href: rasterizing-a-hex-map/exporting-the-image.md
 - name: Полные и частичные индексные карты
   href: creating-index-neighborhood-maps.md
+- name: Визуализация IndexTripletRaster
+  href: visualizing-index-triplet-raster.md
+- name: Визуализация IndexPartialTripletRaster
+  href: visualizing-index-partial-triplet-raster.md
 - name: Хроматизация гексагональной карты
   href: chromatizing-a-hex-map.md
 - name: Хроматизация и барицентрическая интерполяция
