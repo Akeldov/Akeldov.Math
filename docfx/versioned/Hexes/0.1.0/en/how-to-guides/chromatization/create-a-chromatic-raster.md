@@ -4,6 +4,9 @@ Use chromatic rasters to precompute the three-color classes or class-ordered int
 around every rectangular raster sample. They preserve a stable relationship between classes `0`,
 `1`, and `2` even when the geometric `Main`, `Left`, and `Right` order changes across the grid.
 
+For a complete RGB example displaying class numbers, see
+[Visualizing ChromaticIndexTripletRaster](../../tutorials/visualizing-chromatic-index-triplet-raster.md).
+
 ## Define one sampling geometry
 
 Create a source hex geometry and the rectangular grid on which it will be sampled:

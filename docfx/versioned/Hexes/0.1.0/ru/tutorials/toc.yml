@@ -74,5 +74,7 @@
   href: visualizing-barycentric-partial-triplet-raster.md
 - name: Хроматизация гексагональной карты
   href: chromatizing-a-hex-map.md
+- name: Визуализация ChromaticIndexTripletRaster
+  href: visualizing-chromatic-index-triplet-raster.md
 - name: Хроматизация и барицентрическая интерполяция
   href: chromatic-barycentric-interpolation.md

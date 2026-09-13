@@ -16,3 +16,6 @@
 основной вес интерполяции в оттенках серого и объясняет отличие весов от индексов.
 Сравните её с [BarycentricPartialTripletRaster](visualizing-barycentric-partial-triplet-raster.md),
 чтобы увидеть влияние флагов наличия на границах конечной карты.
+
+[«Визуализация ChromaticIndexTripletRaster»](visualizing-chromatic-index-triplet-raster.md)
+кодирует три окружающих номера классов в RGB и объясняет их отличие от весов интерполяции.

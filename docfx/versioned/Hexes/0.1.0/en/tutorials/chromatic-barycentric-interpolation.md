@@ -37,6 +37,9 @@ Internally it combines `BarycentricTripletRaster` with `ChromaticIndexTripletRas
 sampling geometry. Its values are `ChromaticTriplet<float>`: `Index0`, `Index1`, and `Index2`
 are **weights**, not cell indices or class numbers.
 
+To see the class numbers before reordering the weights, compare
+[Visualizing ChromaticIndexTripletRaster](visualizing-chromatic-index-triplet-raster.md).
+
 ## Render class colors and blended weights
 
 Assign red to class `0`, green to class `1`, and blue to class `2`. Then the blending formula

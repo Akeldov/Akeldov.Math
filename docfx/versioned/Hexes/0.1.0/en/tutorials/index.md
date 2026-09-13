@@ -16,3 +16,6 @@ the three selected hex indices in RGB channels.
 the main interpolation weight in grayscale and explains how weights differ from indices.
 Compare it with [BarycentricPartialTripletRaster](visualizing-barycentric-partial-triplet-raster.md)
 to see the effect of presence flags at finite-map boundaries.
+
+[Visualizing ChromaticIndexTripletRaster](visualizing-chromatic-index-triplet-raster.md) encodes
+the three surrounding class numbers in RGB and distinguishes them from interpolation weights.
