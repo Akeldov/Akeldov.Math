@@ -2,6 +2,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Contours
 {
@@ -9,6 +10,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// Represents a circular contour with a length-based curve coordinate around its circumference.
     /// </summary>
     [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct ParameterizedCircle : IParameterizedContour, IEquatable<ParameterizedCircle>
     {
         private readonly Circle _circle;
