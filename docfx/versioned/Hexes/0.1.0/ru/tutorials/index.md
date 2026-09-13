@@ -11,3 +11,6 @@
 Для троек по пикселям сравните [IndexTripletRaster](visualizing-index-triplet-raster.md) и
 [IndexPartialTripletRaster](visualizing-index-partial-triplet-raster.md): оба примера кодируют
 три выбранных индекса гексов в каналах RGB.
+
+[«Визуализация BarycentricTripletRaster»](visualizing-barycentric-triplet-raster.md) показывает
+основной вес интерполяции в оттенках серого и объясняет отличие весов от индексов.

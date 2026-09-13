@@ -11,3 +11,6 @@ examples that visualize neighbor indices and compare boundary handling.
 For pixel-based triplets, compare [IndexTripletRaster](visualizing-index-triplet-raster.md) and
 [IndexPartialTripletRaster](visualizing-index-partial-triplet-raster.md): both examples encode
 the three selected hex indices in RGB channels.
+
+[Visualizing BarycentricTripletRaster](visualizing-barycentric-triplet-raster.md) displays
+the main interpolation weight in grayscale and explains how weights differ from indices.

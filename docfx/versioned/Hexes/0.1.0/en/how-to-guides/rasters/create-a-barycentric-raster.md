@@ -5,6 +5,9 @@ weights at the center of every raster cell. Its `Main`, `Left`, and `Right` weig
 the same positions in an `IndexTripletRaster`; combine the two rasters to interpolate values stored
 at hex centers.
 
+For a complete grayscale example with an image of the main weight, see
+[Visualizing BarycentricTripletRaster](../../tutorials/visualizing-barycentric-triplet-raster.md).
+
 ## Create matching lookup rasters
 
 Define the finite source map and one sampling geometry. For a bounded map, create the partial
