@@ -2,12 +2,14 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
     /// Represents a circular contour in two-dimensional space.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct Circle : IContour, IEquatable<Circle>
     {
         private readonly PointXY _center;
