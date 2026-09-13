@@ -97,6 +97,8 @@ out-of-map indices to read a bounded `HexMap<T>`.
 
 For finite-map boundaries, pair `IndexPartialTripletRaster` with
 `BarycentricPartialTripletRaster` and normalize the remaining weights when appropriate.
+Compare the images in
+[Visualizing BarycentricPartialTripletRaster](visualizing-barycentric-partial-triplet-raster.md).
 See [Create a Barycentric Raster](../how-to-guides/rasters/create-a-barycentric-raster.md)
 for a worked interpolation example.
 

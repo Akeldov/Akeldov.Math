@@ -14,3 +14,5 @@
 
 [«Визуализация BarycentricTripletRaster»](visualizing-barycentric-triplet-raster.md) показывает
 основной вес интерполяции в оттенках серого и объясняет отличие весов от индексов.
+Сравните её с [BarycentricPartialTripletRaster](visualizing-barycentric-partial-triplet-raster.md),
+чтобы увидеть влияние флагов наличия на границах конечной карты.

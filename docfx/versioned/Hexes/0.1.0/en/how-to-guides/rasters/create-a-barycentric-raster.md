@@ -7,6 +7,8 @@ at hex centers.
 
 For a complete grayscale example with an image of the main weight, see
 [Visualizing BarycentricTripletRaster](../../tutorials/visualizing-barycentric-triplet-raster.md).
+For the same visualization with presence flags, see
+[Visualizing BarycentricPartialTripletRaster](../../tutorials/visualizing-barycentric-partial-triplet-raster.md).
 
 ## Create matching lookup rasters
 

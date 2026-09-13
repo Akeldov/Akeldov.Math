@@ -102,6 +102,8 @@ static RGBA16BitColor ToColor(Triplet<float> barycentric)
 
 Для границ конечной карты используйте пару `IndexPartialTripletRaster` и
 `BarycentricPartialTripletRaster`, при необходимости нормализуя оставшиеся веса.
+Сравните изображения на странице
+[«Визуализация BarycentricPartialTripletRaster»](visualizing-barycentric-partial-triplet-raster.md).
 Законченный пример интерполяции приведён на странице
 [«Создать барицентрический растр»](../how-to-guides/rasters/create-a-barycentric-raster.md).
 

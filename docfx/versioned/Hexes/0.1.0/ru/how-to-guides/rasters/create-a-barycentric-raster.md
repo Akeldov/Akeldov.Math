@@ -6,6 +6,8 @@
 
 Законченный пример с изображением основного веса в оттенках серого приведён на странице
 [«Визуализация BarycentricTripletRaster»](../../tutorials/visualizing-barycentric-triplet-raster.md).
+Аналогичный пример с флагами наличия приведён на странице
+[«Визуализация BarycentricPartialTripletRaster»](../../tutorials/visualizing-barycentric-partial-triplet-raster.md).
 
 ## Создать согласованные растры поиска
 
