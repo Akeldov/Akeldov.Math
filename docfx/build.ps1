@@ -2632,6 +2632,8 @@ Add-VersionedLibraryDocumentation `
         $spatial2D10ArticleOverrideRoot,
         $spatial2D11ArticleOverrideRoot)
 
+# Stage the base version too, so its shared asset links are rebased just like
+# inherited articles in later versions.
 Add-VersionedLibraryDocumentation `
     -Library 'Hexes' `
     -RepositoryRoot $repositoryRoot `
@@ -2648,7 +2650,8 @@ Add-VersionedLibraryDocumentation `
             'versioned\Spatial2D\0.8.0\source\Akeldov.Math.Spatial2D.0.8.0.nupkg') `
     -ExpectedReferencePackageHash `
         '293179161CFEA2D649CCECBD770863E9504D95FF0984F095E187FA9809D8975E' `
-    -ReferenceAssemblyName 'Akeldov.Math.Spatial2D'
+    -ReferenceAssemblyName 'Akeldov.Math.Spatial2D' `
+    -ArticleSourceRoot $hexesArticleBaseRoot
 
 Add-VersionedLibraryDocumentation `
     -Library 'Hexes' `

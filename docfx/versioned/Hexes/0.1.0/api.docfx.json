@@ -25,14 +25,14 @@
         ]
       },
       {
-        "src": "en",
+        "src": "../../../../.tmp/docfx-versioned/Hexes-0.1.0/articles/en",
         "files": [
           "**/*.{md,yml}"
         ],
         "dest": "Hexes/0.1.0"
       },
       {
-        "src": "ru",
+        "src": "../../../../.tmp/docfx-versioned/Hexes-0.1.0/articles/ru",
         "files": [
           "**/*.{md,yml}"
         ],
@@ -57,6 +57,7 @@
       {
         "src": "../../..",
         "files": [
+          "assets/**",
           "Spatial2D/index.html",
           "Hexes/index.html"
         ]
