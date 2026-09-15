@@ -1,4 +1,3 @@
-using Akeldov.Math.Spatial2D;
 using System;
 using System.Globalization;
 
@@ -202,7 +201,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first line.</param>
         /// <param name="right">The second line.</param>
         /// <returns><see langword="true"/> if the lines are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(Line left, Line right) => left.Equals(right);
+        public static bool operator ==(Line left, Line right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Indicates whether two lines are different.
@@ -210,7 +212,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first line.</param>
         /// <param name="right">The second line.</param>
         /// <returns><see langword="true"/> if the lines are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(Line left, Line right) => !(left == right);
+        public static bool operator !=(Line left, Line right)
+        {
+            return !(left == right);
+        }
 
         private float GetSignedDistance(PointXY point)
         {
