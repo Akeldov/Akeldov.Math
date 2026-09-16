@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Hexes</PackageId>
-		<Version>0.4.0</Version>
+		<Version>0.5.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
-		<PackageReleaseNotes>Added masked weighted Voronoi partitioning so callers can exclude hexes while retaining a read-only semantic partition result. Added geometry-preserving sampling of Spatial2D integer and floating-point fields, including randomized pointwise field ranges, at hex centers. Added generic and specialized MapValues overloads for source values and partial six-neighbor sets, integer value-mask extraction, and conversions between spatial integer and floating-point maps. Migration note: the minimum Akeldov.Math.Spatial2D dependency is now 1.1.0, with compatible 1.x releases accepted. All changes are additive; expanded documentation and test coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added cell-wise == and != operators for Boolean, integer, and floating-point hex maps, including scalar comparisons, mixed numeric pairs, spatial pairs, and spatial/non-spatial pairs. Equality operators return new mutable Boolean mask maps, while spatial variants preserve geometry. Improved invalid-layout and argument diagnostics for raster and QRS APIs, and expanded map, chromatization, and raster documentation. Migration note: use is null or is not null instead of == null or != null with concrete specialized map types because equality operators now produce masks. The minimum Akeldov.Math.Spatial2D dependency remains 1.1.0, with compatible 1.x releases accepted.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>
