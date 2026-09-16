@@ -58,7 +58,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator !(SpatialBoolHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -82,10 +82,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator &(SpatialBoolHexMap left, SpatialBoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -112,10 +112,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator |(SpatialBoolHexMap left, SpatialBoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -142,10 +142,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator ^(SpatialBoolHexMap left, SpatialBoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)

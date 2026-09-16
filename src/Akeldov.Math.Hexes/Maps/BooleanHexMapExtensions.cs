@@ -24,10 +24,10 @@ namespace Akeldov.Math.Hexes
             this IHexMap<bool> left,
             IHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -55,10 +55,10 @@ namespace Akeldov.Math.Hexes
             this ISpatialHexMap<bool> left,
             ISpatialHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != left.Geometry.Topology)
@@ -94,10 +94,10 @@ namespace Akeldov.Math.Hexes
             this ISpatialHexMap<bool> left,
             IHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != left.Geometry.Topology)
@@ -139,10 +139,10 @@ namespace Akeldov.Math.Hexes
             this IHexMap<bool> left,
             ISpatialHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (right.Topology != right.Geometry.Topology)
@@ -177,10 +177,10 @@ namespace Akeldov.Math.Hexes
             this IHexMap<bool> left,
             IHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -208,10 +208,10 @@ namespace Akeldov.Math.Hexes
             this ISpatialHexMap<bool> left,
             ISpatialHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != left.Geometry.Topology)
@@ -247,10 +247,10 @@ namespace Akeldov.Math.Hexes
             this ISpatialHexMap<bool> left,
             IHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != left.Geometry.Topology)
@@ -292,10 +292,10 @@ namespace Akeldov.Math.Hexes
             this IHexMap<bool> left,
             ISpatialHexMap<bool> right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (right.Topology != right.Geometry.Topology)
@@ -342,13 +342,13 @@ namespace Akeldov.Math.Hexes
             FloatHexMap whenTrue,
             FloatHexMap whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Topology != whenTrue.Topology)
@@ -393,13 +393,13 @@ namespace Akeldov.Math.Hexes
             IntHexMap whenTrue,
             IntHexMap whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Topology != whenTrue.Topology)
@@ -444,13 +444,13 @@ namespace Akeldov.Math.Hexes
             BoolHexMap whenTrue,
             BoolHexMap whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Topology != whenTrue.Topology)
@@ -502,13 +502,13 @@ namespace Akeldov.Math.Hexes
             HexMap<TValue> whenTrue,
             HexMap<TValue> whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Topology != whenTrue.Topology)

@@ -21,18 +21,20 @@ public class CrossSpatialHexMapOperatorTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(ordinary, Has.Length.EqualTo(39));
-            Assert.That(cross, Has.Length.EqualTo(78));
+            Assert.That(ordinary, Has.Length.EqualTo(49));
+            Assert.That(cross, Has.Length.EqualTo(98));
             Assert.That(
                 cross.Count(method => method.DeclaringType == typeof(SpatialBoolHexMap)),
-                Is.EqualTo(6));
+                Is.EqualTo(10));
             Assert.That(
                 cross.Count(method => method.DeclaringType == typeof(SpatialFloatHexMap)),
-                Is.EqualTo(36));
+                Is.EqualTo(44));
             Assert.That(
                 cross.Count(method => method.DeclaringType == typeof(SpatialIntHexMap)),
-                Is.EqualTo(36));
-            Assert.That(cross.Any(method => method.Name is "op_Equality" or "op_Inequality"), Is.False);
+                Is.EqualTo(44));
+            Assert.That(
+                cross.Count(method => method.Name is "op_Equality" or "op_Inequality"),
+                Is.EqualTo(20));
         });
 
         foreach (MethodInfo ordinaryOperator in ordinary)
@@ -180,6 +182,8 @@ public class CrossSpatialHexMapOperatorTests
             Assert.That((spatialNaN % ordinaryOne)[0], Is.NaN);
             Assert.That((ordinaryOne < spatialNaN)[0], Is.False);
             Assert.That((spatialNaN >= ordinaryOne)[0], Is.False);
+            Assert.That((ordinaryOne == spatialNaN)[0], Is.False);
+            Assert.That((spatialNaN != ordinaryOne)[0], Is.True);
         });
     }
 

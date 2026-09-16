@@ -1,5 +1,7 @@
 using System;
 
+#pragma warning disable CS0660, CS0661 // Equality operators return cell masks rather than object-equality values.
+
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
@@ -88,7 +90,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator -(IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -115,10 +117,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator +(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -145,7 +147,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator +(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -186,10 +188,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator -(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -216,7 +218,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator -(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -240,7 +242,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator -(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -267,10 +269,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator *(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -297,7 +299,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator *(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -341,10 +343,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator /(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -374,7 +376,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator /(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -401,7 +403,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator /(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -431,10 +433,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator %(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -464,7 +466,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator %(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -491,7 +493,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static IntHexMap operator %(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -513,10 +515,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same topology.</exception>
         public static BoolHexMap operator <(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -541,10 +543,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same topology.</exception>
         public static BoolHexMap operator >(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -569,10 +571,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same topology.</exception>
         public static BoolHexMap operator <=(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -597,10 +599,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same topology.</exception>
         public static BoolHexMap operator >=(IntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -614,3 +616,4 @@ namespace Akeldov.Math.Hexes
         }
     }
 }
+#pragma warning restore CS0660, CS0661

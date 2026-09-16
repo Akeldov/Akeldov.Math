@@ -15,7 +15,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator <(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -36,7 +36,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator <(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -57,7 +57,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator >(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -78,7 +78,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator >(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -99,7 +99,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator <=(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -120,7 +120,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator <=(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -141,7 +141,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator >=(IntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -162,7 +162,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator >=(int value, IntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];

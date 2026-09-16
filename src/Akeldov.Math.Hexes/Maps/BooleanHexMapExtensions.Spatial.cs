@@ -24,10 +24,10 @@ namespace Akeldov.Math.Hexes
             this SpatialBoolHexMap left,
             SpatialBoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -56,10 +56,10 @@ namespace Akeldov.Math.Hexes
             this SpatialBoolHexMap left,
             SpatialBoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -98,13 +98,13 @@ namespace Akeldov.Math.Hexes
             SpatialFloatHexMap whenTrue,
             SpatialFloatHexMap whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Geometry != whenTrue.Geometry)
@@ -150,13 +150,13 @@ namespace Akeldov.Math.Hexes
             SpatialIntHexMap whenTrue,
             SpatialIntHexMap whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Geometry != whenTrue.Geometry)
@@ -202,13 +202,13 @@ namespace Akeldov.Math.Hexes
             SpatialBoolHexMap whenTrue,
             SpatialBoolHexMap whenFalse)
         {
-            if (condition == null)
+            if (condition is null)
                 throw new ArgumentNullException(nameof(condition));
 
-            if (whenTrue == null)
+            if (whenTrue is null)
                 throw new ArgumentNullException(nameof(whenTrue));
 
-            if (whenFalse == null)
+            if (whenFalse is null)
                 throw new ArgumentNullException(nameof(whenFalse));
 
             if (condition.Geometry != whenTrue.Geometry)

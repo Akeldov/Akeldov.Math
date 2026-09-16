@@ -48,12 +48,14 @@ public class SpatialHexMapOperatorTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(ordinary, Has.Length.EqualTo(78));
-            Assert.That(spatial, Has.Length.EqualTo(78));
+            Assert.That(ordinary, Has.Length.EqualTo(100));
+            Assert.That(spatial, Has.Length.EqualTo(100));
             Assert.That(
                 spatial.Select(Signature).OrderBy(value => value),
                 Is.EqualTo(ordinary.Select(Signature).OrderBy(value => value)));
-            Assert.That(spatial.Any(method => method.Name is "op_Equality" or "op_Inequality"), Is.False);
+            Assert.That(
+                spatial.Count(method => method.Name is "op_Equality" or "op_Inequality"),
+                Is.EqualTo(22));
         });
     }
 
@@ -105,15 +107,18 @@ public class SpatialHexMapOperatorTests
         object[] results =
         {
             !boolLeft, boolLeft & boolRight, boolLeft | boolRight, boolLeft ^ boolRight,
+            boolLeft == boolRight, boolLeft != false,
             -floatLeft, floatLeft + floatRight, floatLeft - floatRight,
             floatLeft * floatRight, floatLeft / floatRight, floatLeft % floatRight,
             floatLeft + 2f, 2f - floatLeft, floatLeft * 2f, 2f / floatLeft, floatLeft % 2f,
             floatLeft * intRight, intLeft * floatRight,
             floatLeft / intRight, intLeft / floatRight,
             floatLeft % intRight, intLeft % floatRight,
+            floatLeft == floatRight, floatLeft != intRight, 6f == floatLeft,
             -intLeft, intLeft + intRight, intLeft - intRight,
             intLeft * intRight, intLeft / intRight, intLeft % intRight,
             intLeft + 2, 2 - intLeft, intLeft * 2, 2 / intLeft, intLeft % 2,
+            intLeft == intRight, 3 != intLeft,
             floatLeft < floatRight, floatLeft <= intRight,
             intLeft > floatRight, intLeft >= intRight,
         };
@@ -151,7 +156,7 @@ public class SpatialHexMapOperatorTests
             method.GetParameters().Length == 2 &&
             method.GetParameters().All(parameter => SpatialTypes.Contains(parameter.ParameterType))).ToArray();
 
-        Assert.That(binaryMapOperators, Has.Length.EqualTo(39));
+        Assert.That(binaryMapOperators, Has.Length.EqualTo(49));
         foreach (MethodInfo method in binaryMapOperators)
         {
             object?[] equalArguments = Arguments(method, geometry);
@@ -218,6 +223,8 @@ public class SpatialHexMapOperatorTests
             Assert.That((special <= intValue)[0], Is.False);
             Assert.That((intValue > special)[0], Is.False);
             Assert.That((intValue >= special)[0], Is.False);
+            Assert.That((special == intValue)[0], Is.False);
+            Assert.That((special != intValue)[0], Is.True);
         });
     }
 
@@ -285,6 +292,7 @@ public class SpatialHexMapOperatorTests
     private static object Argument(Type type, int index, HexMapGeometry geometry)
     {
         bool left = index == 0;
+        if (type == typeof(bool)) return true;
         if (type == typeof(float)) return 2f;
         if (type == typeof(int)) return 2;
         if (type == typeof(BoolHexMap))

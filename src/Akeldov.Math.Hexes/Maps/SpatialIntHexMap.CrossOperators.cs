@@ -25,10 +25,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator +(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -62,10 +62,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator -(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -99,10 +99,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator *(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -139,10 +139,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator /(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -179,10 +179,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator %(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -212,10 +212,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -245,10 +245,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -278,10 +278,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <=(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -311,10 +311,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >=(SpatialIntHexMap left, IntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -348,10 +348,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator +(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -385,10 +385,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator -(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -422,10 +422,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator *(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -462,10 +462,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator /(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -502,10 +502,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator %(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -535,10 +535,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -568,10 +568,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -601,10 +601,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <=(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -634,10 +634,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >=(IntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -672,10 +672,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator +(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -710,10 +710,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator -(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -748,10 +748,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator *(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -786,10 +786,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator /(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -824,10 +824,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator %(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -861,10 +861,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -898,10 +898,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -935,10 +935,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <=(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -972,10 +972,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >=(SpatialIntHexMap left, FloatHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1010,10 +1010,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator +(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1048,10 +1048,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator -(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1086,10 +1086,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator *(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1124,10 +1124,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator /(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1162,10 +1162,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap operator %(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1199,10 +1199,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1236,10 +1236,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1273,10 +1273,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator <=(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -1310,10 +1310,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialBoolHexMap operator >=(FloatHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)

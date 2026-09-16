@@ -104,6 +104,30 @@ public class SpatialBoolHexMapCrossOperatorTests
             new[] { false, true, true, false },
             "right",
             "left");
+        yield return Case(
+            "SpatialEqualsOrdinary",
+            (spatialMap, ordinaryMap) => spatialMap == ordinaryMap,
+            new[] { true, false, false, true },
+            "left",
+            "right");
+        yield return Case(
+            "OrdinaryEqualsSpatial",
+            (spatialMap, ordinaryMap) => ordinaryMap == spatialMap,
+            new[] { true, false, false, true },
+            "right",
+            "left");
+        yield return Case(
+            "SpatialNotEqualsOrdinary",
+            (spatialMap, ordinaryMap) => spatialMap != ordinaryMap,
+            new[] { false, true, true, false },
+            "left",
+            "right");
+        yield return Case(
+            "OrdinaryNotEqualsSpatial",
+            (spatialMap, ordinaryMap) => ordinaryMap != spatialMap,
+            new[] { false, true, true, false },
+            "right",
+            "left");
     }
 
     private static TestCaseData Case(

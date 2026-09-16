@@ -95,7 +95,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator -(SpatialIntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -122,10 +122,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator +(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -152,7 +152,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator +(SpatialIntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -193,10 +193,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator -(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -223,7 +223,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator -(SpatialIntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -247,7 +247,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator -(int value, SpatialIntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -274,10 +274,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator *(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -304,7 +304,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator *(SpatialIntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -348,10 +348,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator /(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -381,7 +381,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator /(SpatialIntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -408,7 +408,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator /(int value, SpatialIntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -438,10 +438,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator %(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -471,7 +471,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator %(SpatialIntHexMap map, int value)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -498,7 +498,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialIntHexMap operator %(int value, SpatialIntHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new int[map.Topology.Count];
@@ -520,10 +520,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
         public static SpatialBoolHexMap operator <(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -548,10 +548,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
         public static SpatialBoolHexMap operator >(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -576,10 +576,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
         public static SpatialBoolHexMap operator <=(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)
@@ -604,10 +604,10 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentException">Thrown when the source maps do not have the same geometry.</exception>
         public static SpatialBoolHexMap operator >=(SpatialIntHexMap left, SpatialIntHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Geometry != right.Geometry)

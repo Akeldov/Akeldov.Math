@@ -30,7 +30,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static FloatHexMap GaussianBlur(this IHexMap<float> map, float sigma)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             if (float.IsNaN(sigma) || float.IsInfinity(sigma) || sigma <= 0f)
@@ -63,7 +63,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap GaussianBlur(this SpatialFloatHexMap map, float sigma)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             if (float.IsNaN(sigma) || float.IsInfinity(sigma) || sigma <= 0f)
@@ -99,7 +99,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static FloatHexMap GaussianBlur(this IHexMap<float> map, float sigma, int radius)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             if (float.IsNaN(sigma) || float.IsInfinity(sigma) || sigma <= 0f)
@@ -139,7 +139,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static SpatialFloatHexMap GaussianBlur(this SpatialFloatHexMap map, float sigma, int radius)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             if (float.IsNaN(sigma) || float.IsInfinity(sigma) || sigma <= 0f)

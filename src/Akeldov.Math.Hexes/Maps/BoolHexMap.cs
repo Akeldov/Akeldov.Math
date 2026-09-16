@@ -1,11 +1,13 @@
 using System;
 
+#pragma warning disable CS0660, CS0661 // Equality operators return cell masks rather than object-equality values.
+
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
     /// Stores one mutable Boolean value for every cell in a rectangular hex-map topology.
     /// </summary>
-    public class BoolHexMap : HexMap<bool>
+    public partial class BoolHexMap : HexMap<bool>
     {
         /// <summary>
         /// Initializes an empty map whose cells contain <see langword="false"/>.
@@ -51,7 +53,7 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator !(BoolHexMap map)
         {
-            if (map == null)
+            if (map is null)
                 throw new ArgumentNullException(nameof(map));
 
             var values = new bool[map.Topology.Count];
@@ -75,10 +77,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator &(BoolHexMap left, BoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -105,10 +107,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator |(BoolHexMap left, BoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -135,10 +137,10 @@ namespace Akeldov.Math.Hexes
         /// </exception>
         public static BoolHexMap operator ^(BoolHexMap left, BoolHexMap right)
         {
-            if (left == null)
+            if (left is null)
                 throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
+            if (right is null)
                 throw new ArgumentNullException(nameof(right));
 
             if (left.Topology != right.Topology)
@@ -152,3 +154,4 @@ namespace Akeldov.Math.Hexes
         }
     }
 }
+#pragma warning restore CS0660, CS0661
