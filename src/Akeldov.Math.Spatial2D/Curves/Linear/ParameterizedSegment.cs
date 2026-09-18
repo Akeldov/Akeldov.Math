@@ -1,4 +1,3 @@
-using Akeldov.Math.Spatial2D;
 using System;
 using System.Globalization;
 
