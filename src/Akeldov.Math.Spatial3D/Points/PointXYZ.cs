@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial3D
     /// Represents a three-dimensional point with single-precision floating-point coordinates.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public readonly struct PointXYZ : IPointDistanceProvider, IEquatable<PointXYZ>
+    public readonly struct PointXYZ : IPointDistanceProvider, IHasPosition3D, IEquatable<PointXYZ>
     {
         /// <summary>
         /// Initializes a new point with the specified coordinates.
@@ -51,6 +51,11 @@ namespace Akeldov.Math.Spatial3D
         /// Gets the Z coordinate.
         /// </summary>
         public float Z { get; }
+
+        /// <summary>
+        /// Gets this point as its own position.
+        /// </summary>
+        public PointXYZ Position => this;
 
         /// <summary>
         /// Indicates whether this point has the same coordinates as another point.

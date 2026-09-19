@@ -29,6 +29,8 @@ Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.Distance.get -> float
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ParameterizedCurveProjection() -> void
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ParameterizedCurveProjection(Akeldov.Math.Spatial3D.PointXYZ projectedPoint, float curveCoordinate, float distance) -> void
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ProjectedPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.IHasPosition3D
+Akeldov.Math.Spatial3D.IHasPosition3D.Position.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.IPointDistanceProvider
 Akeldov.Math.Spatial3D.IPointDistanceProvider.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
 Akeldov.Math.Spatial3D.ISignedPointDistanceProvider
@@ -39,6 +41,7 @@ Akeldov.Math.Spatial3D.PointXYZ.Distance(Akeldov.Math.Spatial3D.PointXYZ point) 
 Akeldov.Math.Spatial3D.PointXYZ.Equals(Akeldov.Math.Spatial3D.PointXYZ other) -> bool
 Akeldov.Math.Spatial3D.PointXYZ.PointXYZ() -> void
 Akeldov.Math.Spatial3D.PointXYZ.PointXYZ(float x, float y, float z) -> void
+Akeldov.Math.Spatial3D.PointXYZ.Position.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.PointXYZ.X.get -> float
 Akeldov.Math.Spatial3D.PointXYZ.Y.get -> float
 Akeldov.Math.Spatial3D.PointXYZ.Z.get -> float
