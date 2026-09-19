@@ -1,4 +1,11 @@
 #nullable enable
+Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.CurveProjection.CurveProjection() -> void
+Akeldov.Math.Spatial3D.Curves.CurveProjection.CurveProjection(Akeldov.Math.Spatial3D.PointXYZ projectedPoint, float distance) -> void
+Akeldov.Math.Spatial3D.Curves.CurveProjection.Distance.get -> float
+Akeldov.Math.Spatial3D.Curves.CurveProjection.ProjectedPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ICurve
+Akeldov.Math.Spatial3D.Curves.ICurve.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
 Akeldov.Math.Spatial3D.IPointDistanceProvider
 Akeldov.Math.Spatial3D.IPointDistanceProvider.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
 Akeldov.Math.Spatial3D.ISignedPointDistanceProvider
