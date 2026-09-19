@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>9-recommended</AnalysisLevel>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageId>Akeldov.Math.Spatial3D</PackageId>
+		<Version>0.1.0</Version>
+		<Authors>Stanislav Akeldov</Authors>
+		<Copyright>Copyright (c) 2026 Stanislav Akeldov</Copyright>
+		<Description>Three-dimensional geometry and vector math for .NET.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>math;geometry;3d;vectors;spatial</PackageTags>
+		<RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Meziantou.Analyzer" Version="3.0.124">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+</Project>
