@@ -58,6 +58,7 @@ static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXY
 static Akeldov.Math.Spatial3D.PointXYZ.operator ==(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> bool
 Akeldov.Math.Spatial3D.PointXYZExtensions
 static Akeldov.Math.Spatial3D.PointXYZExtensions.LerpTo(this Akeldov.Math.Spatial3D.PointXYZ source, Akeldov.Math.Spatial3D.PointXYZ target, float t) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PointXYZExtensions.SquaredDistanceTo(this Akeldov.Math.Spatial3D.PointXYZ source, Akeldov.Math.Spatial3D.PointXYZ target) -> float
 Akeldov.Math.Spatial3D.PositionedCollectionExtensions
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> Akeldov.Math.Spatial3D.PointXYZ
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetCentroid<TItem>(this TItem[]! items) -> Akeldov.Math.Spatial3D.PointXYZ

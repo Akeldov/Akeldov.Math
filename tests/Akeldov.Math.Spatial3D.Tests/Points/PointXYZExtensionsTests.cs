@@ -2,6 +2,23 @@ namespace Akeldov.Math.Spatial3D.Tests.Points;
 
 public class PointXYZExtensionsTests
 {
+    [TestCase(1f, 2f, 3f, 0f)]
+    [TestCase(4f, 2f, 3f, 9f)]
+    [TestCase(1f, 6f, 3f, 16f)]
+    [TestCase(1f, 2f, 15f, 144f)]
+    [TestCase(4f, 6f, 15f, 169f)]
+    public void SquaredDistanceTo_ReturnsSquaredEuclideanDistance(float x, float y, float z, float expected)
+    {
+        var source = new PointXYZ(1f, 2f, 3f);
+        var target = new PointXYZ(x, y, z);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(source.SquaredDistanceTo(target), Is.EqualTo(expected));
+            Assert.That(target.SquaredDistanceTo(source), Is.EqualTo(expected));
+        });
+    }
+
     [Test]
     public void LerpTo_WhenParameterIsBetweenZeroAndOne_ReturnsInterpolatedPoint()
     {
