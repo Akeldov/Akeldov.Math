@@ -1,4 +1,8 @@
 #nullable enable
+Akeldov.Math.Spatial3D.IPointDistanceProvider
+Akeldov.Math.Spatial3D.IPointDistanceProvider.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.ISignedPointDistanceProvider
+Akeldov.Math.Spatial3D.ISignedPointDistanceProvider.SignedDistance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
 Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.PointXYZ.Deconstruct(out float x, out float y, out float z) -> void
 Akeldov.Math.Spatial3D.PointXYZ.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float

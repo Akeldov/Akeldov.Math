@@ -42,8 +42,10 @@ public class PointXYZTests
     {
         var source = new PointXYZ(1f, 2f, 3f);
         var target = new PointXYZ(3f, 5f, 9f);
+        IPointDistanceProvider provider = source;
 
         Assert.That(source.Distance(target), Is.EqualTo(7f).Within(Tolerance));
+        Assert.That(provider.Distance(target), Is.EqualTo(7f).Within(Tolerance));
     }
 
     [Test]
