@@ -69,6 +69,7 @@ static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestTo<TItem>
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestTo<TItem>(this TItem[]! items, Akeldov.Math.Spatial3D.PointXYZ point) -> TItem
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> TItem
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this TItem[]! items) -> TItem
+Akeldov.Math.Spatial3D.Surfaces.ISurface
 Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.VectorXYZ.Deconstruct(out float x, out float y, out float z) -> void
 Akeldov.Math.Spatial3D.VectorXYZ.Equals(Akeldov.Math.Spatial3D.VectorXYZ other) -> bool
