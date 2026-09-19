@@ -220,5 +220,19 @@ namespace Akeldov.Math.Spatial3D
         /// <returns>The scaled vector.</returns>
         public static VectorXYZ operator /(VectorXYZ vector, float scalar) =>
             new VectorXYZ(vector.X / scalar, vector.Y / scalar, vector.Z / scalar);
+
+        /// <summary>
+        /// Converts an integer vector to a floating-point vector.
+        /// </summary>
+        /// <param name="vector">The integer vector to convert.</param>
+        public static implicit operator VectorXYZ(VectorXYZInt vector) =>
+            new VectorXYZ(vector.X, vector.Y, vector.Z);
+
+        /// <summary>
+        /// Converts a floating-point vector to an integer vector by truncating each component.
+        /// </summary>
+        /// <param name="vector">The floating-point vector to convert.</param>
+        public static explicit operator VectorXYZInt(VectorXYZ vector) =>
+            new VectorXYZInt((int)vector.X, (int)vector.Y, (int)vector.Z);
     }
 }

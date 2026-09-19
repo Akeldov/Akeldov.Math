@@ -19,6 +19,8 @@ static Akeldov.Math.Spatial3D.VectorXYZ.BasisY.get -> Akeldov.Math.Spatial3D.Vec
 static Akeldov.Math.Spatial3D.VectorXYZ.BasisZ.get -> Akeldov.Math.Spatial3D.VectorXYZ
 static Akeldov.Math.Spatial3D.VectorXYZ.Cross(in Akeldov.Math.Spatial3D.VectorXYZ left, in Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.VectorXYZ
 static Akeldov.Math.Spatial3D.VectorXYZ.Dot(in Akeldov.Math.Spatial3D.VectorXYZ left, in Akeldov.Math.Spatial3D.VectorXYZ right) -> float
+static Akeldov.Math.Spatial3D.VectorXYZ.explicit operator Akeldov.Math.Spatial3D.VectorXYZInt(Akeldov.Math.Spatial3D.VectorXYZ vector) -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZ.implicit operator Akeldov.Math.Spatial3D.VectorXYZ(Akeldov.Math.Spatial3D.VectorXYZInt vector) -> Akeldov.Math.Spatial3D.VectorXYZ
 static Akeldov.Math.Spatial3D.VectorXYZ.One.get -> Akeldov.Math.Spatial3D.VectorXYZ
 static Akeldov.Math.Spatial3D.VectorXYZ.operator !=(Akeldov.Math.Spatial3D.VectorXYZ left, Akeldov.Math.Spatial3D.VectorXYZ right) -> bool
 static Akeldov.Math.Spatial3D.VectorXYZ.operator *(Akeldov.Math.Spatial3D.VectorXYZ vector, float scalar) -> Akeldov.Math.Spatial3D.VectorXYZ
@@ -30,3 +32,29 @@ static Akeldov.Math.Spatial3D.VectorXYZ.operator -(Akeldov.Math.Spatial3D.Vector
 static Akeldov.Math.Spatial3D.VectorXYZ.operator /(Akeldov.Math.Spatial3D.VectorXYZ vector, float scalar) -> Akeldov.Math.Spatial3D.VectorXYZ
 static Akeldov.Math.Spatial3D.VectorXYZ.operator ==(Akeldov.Math.Spatial3D.VectorXYZ left, Akeldov.Math.Spatial3D.VectorXYZ right) -> bool
 static Akeldov.Math.Spatial3D.VectorXYZ.Zero.get -> Akeldov.Math.Spatial3D.VectorXYZ
+Akeldov.Math.Spatial3D.VectorXYZInt
+Akeldov.Math.Spatial3D.VectorXYZInt.Deconstruct(out int x, out int y, out int z) -> void
+Akeldov.Math.Spatial3D.VectorXYZInt.Equals(Akeldov.Math.Spatial3D.VectorXYZInt other) -> bool
+Akeldov.Math.Spatial3D.VectorXYZInt.Length.get -> float
+Akeldov.Math.Spatial3D.VectorXYZInt.VectorXYZInt() -> void
+Akeldov.Math.Spatial3D.VectorXYZInt.VectorXYZInt(int x, int y, int z) -> void
+Akeldov.Math.Spatial3D.VectorXYZInt.X.get -> int
+Akeldov.Math.Spatial3D.VectorXYZInt.Y.get -> int
+Akeldov.Math.Spatial3D.VectorXYZInt.Z.get -> int
+override Akeldov.Math.Spatial3D.VectorXYZInt.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.VectorXYZInt.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.VectorXYZInt.ToString() -> string!
+static Akeldov.Math.Spatial3D.VectorXYZInt.BasisX.get -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.BasisY.get -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.BasisZ.get -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.One.get -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator !=(Akeldov.Math.Spatial3D.VectorXYZInt left, Akeldov.Math.Spatial3D.VectorXYZInt right) -> bool
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator *(Akeldov.Math.Spatial3D.VectorXYZInt vector, float scalar) -> Akeldov.Math.Spatial3D.VectorXYZ
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator *(Akeldov.Math.Spatial3D.VectorXYZInt vector, int scalar) -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator *(float scalar, Akeldov.Math.Spatial3D.VectorXYZInt vector) -> Akeldov.Math.Spatial3D.VectorXYZ
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator *(int scalar, Akeldov.Math.Spatial3D.VectorXYZInt vector) -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator +(Akeldov.Math.Spatial3D.VectorXYZInt left, Akeldov.Math.Spatial3D.VectorXYZInt right) -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator -(Akeldov.Math.Spatial3D.VectorXYZInt left, Akeldov.Math.Spatial3D.VectorXYZInt right) -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator /(Akeldov.Math.Spatial3D.VectorXYZInt vector, int scalar) -> Akeldov.Math.Spatial3D.VectorXYZInt
+static Akeldov.Math.Spatial3D.VectorXYZInt.operator ==(Akeldov.Math.Spatial3D.VectorXYZInt left, Akeldov.Math.Spatial3D.VectorXYZInt right) -> bool
+static Akeldov.Math.Spatial3D.VectorXYZInt.Zero.get -> Akeldov.Math.Spatial3D.VectorXYZInt
