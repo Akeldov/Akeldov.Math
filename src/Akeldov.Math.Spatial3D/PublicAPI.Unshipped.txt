@@ -56,6 +56,15 @@ static Akeldov.Math.Spatial3D.PointXYZ.operator +(Akeldov.Math.Spatial3D.VectorX
 static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> Akeldov.Math.Spatial3D.VectorXYZ
 static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXYZ point, Akeldov.Math.Spatial3D.VectorXYZ vector) -> Akeldov.Math.Spatial3D.PointXYZ
 static Akeldov.Math.Spatial3D.PointXYZ.operator ==(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> bool
+Akeldov.Math.Spatial3D.PointXYZExtensions
+static Akeldov.Math.Spatial3D.PointXYZExtensions.LerpTo(this Akeldov.Math.Spatial3D.PointXYZ source, Akeldov.Math.Spatial3D.PointXYZ target, float t) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.PositionedCollectionExtensions
+static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetCentroid<TItem>(this TItem[]! items) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestTo<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items, Akeldov.Math.Spatial3D.PointXYZ point) -> TItem
+static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestTo<TItem>(this TItem[]! items, Akeldov.Math.Spatial3D.PointXYZ point) -> TItem
+static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> TItem
+static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this TItem[]! items) -> TItem
 Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.VectorXYZ.Deconstruct(out float x, out float y, out float z) -> void
 Akeldov.Math.Spatial3D.VectorXYZ.Equals(Akeldov.Math.Spatial3D.VectorXYZ other) -> bool
