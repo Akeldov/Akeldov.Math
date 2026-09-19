@@ -18,6 +18,8 @@ Akeldov.Math.Spatial3D.Curves.IParameterizedCurve.ProjectWithParameter(Akeldov.M
 Akeldov.Math.Spatial3D.Curves.IPath
 Akeldov.Math.Spatial3D.Curves.IPath.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.IPath.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.IRayPath
+Akeldov.Math.Spatial3D.Curves.IRayPath.Origin.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
