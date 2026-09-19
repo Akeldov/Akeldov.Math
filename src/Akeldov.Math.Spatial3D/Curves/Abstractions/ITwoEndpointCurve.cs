@@ -7,7 +7,8 @@ namespace Akeldov.Math.Spatial3D.Curves
     /// </summary>
     /// <remarks>
     /// <see cref="EndpointA"/> and <see cref="EndpointB"/> identify the two boundary points of the curve.
-    /// They do not imply traversal direction.
+    /// They do not imply traversal direction. Use <see cref="IPath"/> when ordered
+    /// start and end points are part of the contract.
     /// </remarks>
     public interface ITwoEndpointCurve : ICurve
     {

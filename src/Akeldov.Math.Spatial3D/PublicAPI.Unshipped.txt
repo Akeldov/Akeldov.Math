@@ -8,11 +8,25 @@ Akeldov.Math.Spatial3D.Curves.ICurve
 Akeldov.Math.Spatial3D.Curves.ICurve.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
 Akeldov.Math.Spatial3D.Curves.IFiniteCurve
 Akeldov.Math.Spatial3D.Curves.IFiniteCurve.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.IFinitePath
+Akeldov.Math.Spatial3D.Curves.IFiniteTwoEndpointCurve
 Akeldov.Math.Spatial3D.Curves.IOneEndpointCurve
 Akeldov.Math.Spatial3D.Curves.IOneEndpointCurve.Endpoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.IParameterizedCurve
+Akeldov.Math.Spatial3D.Curves.IParameterizedCurve.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.IParameterizedCurve.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.IPath
+Akeldov.Math.Spatial3D.Curves.IPath.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.IPath.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.CurveCoordinate.get -> float
+Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.Distance.get -> float
+Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ParameterizedCurveProjection() -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ParameterizedCurveProjection(Akeldov.Math.Spatial3D.PointXYZ projectedPoint, float curveCoordinate, float distance) -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ProjectedPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.IPointDistanceProvider
 Akeldov.Math.Spatial3D.IPointDistanceProvider.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
 Akeldov.Math.Spatial3D.ISignedPointDistanceProvider
