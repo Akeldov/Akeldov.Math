@@ -2,6 +2,105 @@ namespace Akeldov.Math.Spatial3D.Tests.Points;
 
 public class PointXYZExtensionsTests
 {
+    [TestCase(0.5f, 0f, 0f)]
+    [TestCase(0f, 0.5f, 0f)]
+    [TestCase(0f, 0f, 0.5f)]
+    public void AlmostEquals_WhenPointsAreWithinDefaultTolerance_ReturnsTrue(float xFactor, float yFactor, float zFactor)
+    {
+        var source = new PointXYZ(0f, 0f, 0f);
+        var target = new PointXYZ(
+            xFactor * GeometryConstants.GeometryEpsilon,
+            yFactor * GeometryConstants.GeometryEpsilon,
+            zFactor * GeometryConstants.GeometryEpsilon);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(source.AlmostEquals(target), Is.True);
+            Assert.That(target.AlmostEquals(source), Is.True);
+        });
+    }
+
+    [Test]
+    public void AlmostEquals_WhenEuclideanDistanceExceedsDefaultTolerance_ReturnsFalse()
+    {
+        var source = new PointXYZ(0f, 0f, 0f);
+        var target = new PointXYZ(
+            GeometryConstants.GeometryEpsilon,
+            GeometryConstants.GeometryEpsilon,
+            GeometryConstants.GeometryEpsilon);
+
+        Assert.That(source.AlmostEquals(target), Is.False);
+    }
+
+    [TestCase(12f, false)]
+    [TestCase(13f, true)]
+    [TestCase(14f, true)]
+    public void AlmostEquals_WithExplicitTolerance_UsesInclusiveEuclideanDistance(float epsilon, bool expected)
+    {
+        var source = new PointXYZ(1f, 2f, 3f);
+        var target = new PointXYZ(4f, 6f, 15f);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(source.AlmostEquals(target, epsilon), Is.EqualTo(expected));
+            Assert.That(target.AlmostEquals(source, epsilon), Is.EqualTo(expected));
+        });
+    }
+
+    [TestCase(0f, true)]
+    [TestCase(float.Epsilon, false)]
+    public void AlmostEquals_WhenToleranceIsZero_RequiresEqualCoordinates(float z, bool expected)
+    {
+        var source = new PointXYZ(0f, 0f, 0f);
+        var target = new PointXYZ(0f, 0f, z);
+
+        Assert.That(source.AlmostEquals(target, 0f), Is.EqualTo(expected));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void AlmostEquals_WhenToleranceIsInvalid_Throws(float epsilon)
+    {
+        var point = new PointXYZ(1f, 2f, 3f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => point.AlmostEquals(point, epsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("epsilon"));
+    }
+
+    [TestCase(float.MaxValue)]
+    [TestCase(float.Epsilon)]
+    public void AlmostEquals_WithExtremeFiniteTolerance_AvoidsOverflowAndUnderflow(float epsilon)
+    {
+        var origin = new PointXYZ(0f, 0f, 0f);
+        var positive = new PointXYZ(0f, 0f, epsilon);
+        var negative = new PointXYZ(0f, 0f, -epsilon);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(origin.AlmostEquals(positive, epsilon), Is.True);
+            Assert.That(negative.AlmostEquals(positive, epsilon), Is.False);
+        });
+    }
+
+    [TestCase(float.PositiveInfinity, 0f, 0f)]
+    [TestCase(0f, float.NegativeInfinity, 0f)]
+    [TestCase(0f, 0f, float.PositiveInfinity)]
+    public void AlmostEquals_WhenPointHasInfiniteCoordinate_ReturnsFalse(float x, float y, float z)
+    {
+        var point = new PointXYZ(x, y, z);
+        var origin = new PointXYZ(0f, 0f, 0f);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(point.AlmostEquals(point), Is.False);
+            Assert.That(point.AlmostEquals(origin), Is.False);
+            Assert.That(origin.AlmostEquals(point), Is.False);
+        });
+    }
+
     [TestCase(1f, 2f, 3f, 0f)]
     [TestCase(4f, 2f, 3f, 9f)]
     [TestCase(1f, 6f, 3f, 16f)]

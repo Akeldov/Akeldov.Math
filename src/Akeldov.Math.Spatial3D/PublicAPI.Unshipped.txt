@@ -29,6 +29,8 @@ Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.Distance.get -> float
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ParameterizedCurveProjection() -> void
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ParameterizedCurveProjection(Akeldov.Math.Spatial3D.PointXYZ projectedPoint, float curveCoordinate, float distance) -> void
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.ProjectedPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.GeometryConstants
+const Akeldov.Math.Spatial3D.GeometryConstants.GeometryEpsilon = 1E-06 -> float
 Akeldov.Math.Spatial3D.IHasPosition3D
 Akeldov.Math.Spatial3D.IHasPosition3D.Position.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.IPointDistanceProvider
@@ -57,6 +59,7 @@ static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXY
 static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXYZ point, Akeldov.Math.Spatial3D.VectorXYZ vector) -> Akeldov.Math.Spatial3D.PointXYZ
 static Akeldov.Math.Spatial3D.PointXYZ.operator ==(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> bool
 Akeldov.Math.Spatial3D.PointXYZExtensions
+static Akeldov.Math.Spatial3D.PointXYZExtensions.AlmostEquals(this Akeldov.Math.Spatial3D.PointXYZ source, Akeldov.Math.Spatial3D.PointXYZ target, float epsilon = 1E-06) -> bool
 static Akeldov.Math.Spatial3D.PointXYZExtensions.LerpTo(this Akeldov.Math.Spatial3D.PointXYZ source, Akeldov.Math.Spatial3D.PointXYZ target, float t) -> Akeldov.Math.Spatial3D.PointXYZ
 static Akeldov.Math.Spatial3D.PointXYZExtensions.SquaredDistanceTo(this Akeldov.Math.Spatial3D.PointXYZ source, Akeldov.Math.Spatial3D.PointXYZ target) -> float
 Akeldov.Math.Spatial3D.PositionedCollectionExtensions
