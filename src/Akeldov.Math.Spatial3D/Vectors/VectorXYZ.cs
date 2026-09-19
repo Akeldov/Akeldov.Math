@@ -2,7 +2,9 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Akeldov.Math.Spatial3D
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     /// <summary>
     /// Represents a three-dimensional vector with single-precision floating-point components.
