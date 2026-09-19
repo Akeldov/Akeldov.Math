@@ -6,6 +6,13 @@ Akeldov.Math.Spatial3D.Curves.CurveProjection.Distance.get -> float
 Akeldov.Math.Spatial3D.Curves.CurveProjection.ProjectedPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.ICurve
 Akeldov.Math.Spatial3D.Curves.ICurve.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.IFiniteCurve
+Akeldov.Math.Spatial3D.Curves.IFiniteCurve.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.IOneEndpointCurve
+Akeldov.Math.Spatial3D.Curves.IOneEndpointCurve.Endpoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve
+Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.IPointDistanceProvider
 Akeldov.Math.Spatial3D.IPointDistanceProvider.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
 Akeldov.Math.Spatial3D.ISignedPointDistanceProvider
