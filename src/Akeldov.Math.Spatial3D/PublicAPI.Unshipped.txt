@@ -1,4 +1,24 @@
 #nullable enable
+Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.PointXYZ.Deconstruct(out float x, out float y, out float z) -> void
+Akeldov.Math.Spatial3D.PointXYZ.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.PointXYZ.Equals(Akeldov.Math.Spatial3D.PointXYZ other) -> bool
+Akeldov.Math.Spatial3D.PointXYZ.PointXYZ() -> void
+Akeldov.Math.Spatial3D.PointXYZ.PointXYZ(float x, float y, float z) -> void
+Akeldov.Math.Spatial3D.PointXYZ.X.get -> float
+Akeldov.Math.Spatial3D.PointXYZ.Y.get -> float
+Akeldov.Math.Spatial3D.PointXYZ.Z.get -> float
+override Akeldov.Math.Spatial3D.PointXYZ.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.PointXYZ.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.PointXYZ.ToString() -> string!
+static Akeldov.Math.Spatial3D.PointXYZ.explicit operator Akeldov.Math.Spatial3D.PointXYZ(Akeldov.Math.Spatial3D.VectorXYZ coordinates) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PointXYZ.explicit operator Akeldov.Math.Spatial3D.VectorXYZ(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.VectorXYZ
+static Akeldov.Math.Spatial3D.PointXYZ.operator !=(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> bool
+static Akeldov.Math.Spatial3D.PointXYZ.operator +(Akeldov.Math.Spatial3D.PointXYZ point, Akeldov.Math.Spatial3D.VectorXYZ vector) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PointXYZ.operator +(Akeldov.Math.Spatial3D.VectorXYZ vector, Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> Akeldov.Math.Spatial3D.VectorXYZ
+static Akeldov.Math.Spatial3D.PointXYZ.operator -(Akeldov.Math.Spatial3D.PointXYZ point, Akeldov.Math.Spatial3D.VectorXYZ vector) -> Akeldov.Math.Spatial3D.PointXYZ
+static Akeldov.Math.Spatial3D.PointXYZ.operator ==(Akeldov.Math.Spatial3D.PointXYZ left, Akeldov.Math.Spatial3D.PointXYZ right) -> bool
 Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.VectorXYZ.Deconstruct(out float x, out float y, out float z) -> void
 Akeldov.Math.Spatial3D.VectorXYZ.Equals(Akeldov.Math.Spatial3D.VectorXYZ other) -> bool

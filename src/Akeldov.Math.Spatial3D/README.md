@@ -5,4 +5,5 @@ Akeldov.Math.Spatial3D is a .NET library for three-dimensional geometry and vect
 ## Features
 
 - Immutable single-precision `VectorXYZ` and integer `VectorXYZInt` values.
+- Immutable `PointXYZ` values with distance measurement and vector translation.
 - Vector length, normalization, dot product, cross product, and arithmetic operations.
