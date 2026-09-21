@@ -70,6 +70,31 @@ static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestTo<TItem>
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> TItem
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this TItem[]! items) -> TItem
 Akeldov.Math.Spatial3D.Surfaces.ISurface
+Akeldov.Math.Spatial3D.Surfaces.ISurface.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection
+Akeldov.Math.Spatial3D.Surfaces.Plane
+Akeldov.Math.Spatial3D.Surfaces.Plane.ClosestPointToOrigin.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Surfaces.Plane.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Surfaces.Plane.Equals(Akeldov.Math.Spatial3D.Surfaces.Plane other) -> bool
+Akeldov.Math.Spatial3D.Surfaces.Plane.EquationA.get -> float
+Akeldov.Math.Spatial3D.Surfaces.Plane.EquationB.get -> float
+Akeldov.Math.Spatial3D.Surfaces.Plane.EquationC.get -> float
+Akeldov.Math.Spatial3D.Surfaces.Plane.EquationD.get -> float
+Akeldov.Math.Spatial3D.Surfaces.Plane.Normal.get -> Akeldov.Math.Spatial3D.VectorXYZ
+Akeldov.Math.Spatial3D.Surfaces.Plane.Plane() -> void
+Akeldov.Math.Spatial3D.Surfaces.Plane.Plane(Akeldov.Math.Spatial3D.PointXYZ a, Akeldov.Math.Spatial3D.PointXYZ b, Akeldov.Math.Spatial3D.PointXYZ c) -> void
+Akeldov.Math.Spatial3D.Surfaces.Plane.Plane(Akeldov.Math.Spatial3D.PointXYZ point, Akeldov.Math.Spatial3D.VectorXYZ normal) -> void
+Akeldov.Math.Spatial3D.Surfaces.Plane.Plane(float a, float b, float c, float d) -> void
+Akeldov.Math.Spatial3D.Surfaces.Plane.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection
+override Akeldov.Math.Spatial3D.Surfaces.Plane.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Surfaces.Plane.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Surfaces.Plane.ToString() -> string!
+static Akeldov.Math.Spatial3D.Surfaces.Plane.operator !=(Akeldov.Math.Spatial3D.Surfaces.Plane left, Akeldov.Math.Spatial3D.Surfaces.Plane right) -> bool
+static Akeldov.Math.Spatial3D.Surfaces.Plane.operator ==(Akeldov.Math.Spatial3D.Surfaces.Plane left, Akeldov.Math.Spatial3D.Surfaces.Plane right) -> bool
+Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection
+Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection.Distance.get -> float
+Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection.ProjectedPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection.SurfaceProjection() -> void
+Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection.SurfaceProjection(Akeldov.Math.Spatial3D.PointXYZ projectedPoint, float distance) -> void
 Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.VectorXYZ.Deconstruct(out float x, out float y, out float z) -> void
 Akeldov.Math.Spatial3D.VectorXYZ.Equals(Akeldov.Math.Spatial3D.VectorXYZ other) -> bool
