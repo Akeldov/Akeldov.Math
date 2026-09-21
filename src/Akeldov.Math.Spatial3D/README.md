@@ -8,6 +8,6 @@ Akeldov.Math.Spatial3D is a .NET library for three-dimensional geometry and vect
 - Immutable `PointXYZ` values with distance measurement, vector translation, and linear interpolation.
 - Centroid and nearest-item helpers for collections of `IHasPosition3D` values.
 - Signed and unsigned point-distance provider contracts.
-- Curve and path contracts for point projection, distance measurement, finite length, endpoints, and parameterization in length units.
+- An infinite line primitive and curve/path contracts for projection, distance measurement, finite length, endpoints, and parameterization.
 - Surface projection and distance contracts, with an infinite plane primitive.
 - Vector length, normalization, dot product, cross product, and arithmetic operations.

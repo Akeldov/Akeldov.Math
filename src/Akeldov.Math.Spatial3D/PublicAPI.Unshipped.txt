@@ -23,6 +23,20 @@ Akeldov.Math.Spatial3D.Curves.IRayPath.Origin.get -> Akeldov.Math.Spatial3D.Poin
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.ITwoEndpointCurve.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Line
+Akeldov.Math.Spatial3D.Curves.Line.ClosestPointToOrigin.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Line.Direction.get -> Akeldov.Math.Spatial3D.VectorXYZ
+Akeldov.Math.Spatial3D.Curves.Line.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.Line.Equals(Akeldov.Math.Spatial3D.Curves.Line other) -> bool
+Akeldov.Math.Spatial3D.Curves.Line.Line() -> void
+Akeldov.Math.Spatial3D.Curves.Line.Line(Akeldov.Math.Spatial3D.PointXYZ a, Akeldov.Math.Spatial3D.PointXYZ b) -> void
+Akeldov.Math.Spatial3D.Curves.Line.Line(Akeldov.Math.Spatial3D.PointXYZ point, Akeldov.Math.Spatial3D.VectorXYZ direction) -> void
+Akeldov.Math.Spatial3D.Curves.Line.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+override Akeldov.Math.Spatial3D.Curves.Line.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Curves.Line.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Curves.Line.ToString() -> string!
+static Akeldov.Math.Spatial3D.Curves.Line.operator !=(Akeldov.Math.Spatial3D.Curves.Line left, Akeldov.Math.Spatial3D.Curves.Line right) -> bool
+static Akeldov.Math.Spatial3D.Curves.Line.operator ==(Akeldov.Math.Spatial3D.Curves.Line left, Akeldov.Math.Spatial3D.Curves.Line right) -> bool
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.CurveCoordinate.get -> float
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.Distance.get -> float
