@@ -97,6 +97,20 @@ static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator !=(Akeldov.Ma
 static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator +(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.ParameterizedSegment
 static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator -(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.ParameterizedSegment
 static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator ==(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.Curves.ParameterizedSegment right) -> bool
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.ParameterizedSegmentChain(params Akeldov.Math.Spatial3D.PointXYZ[]! points) -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.ParameterizedSegmentChain(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.PointXYZ>! points) -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Points.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.PointXYZ>!
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Segments.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.Ray
 Akeldov.Math.Spatial3D.Curves.Ray.Direction.get -> Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.Curves.Ray.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
