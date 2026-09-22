@@ -1,4 +1,28 @@
 #nullable enable
+Akeldov.Math.Spatial3D.Curves.CubicBezier
+Akeldov.Math.Spatial3D.Curves.CubicBezier.ControlPointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.ControlPointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.CubicBezier() -> void
+Akeldov.Math.Spatial3D.Curves.CubicBezier.CubicBezier(Akeldov.Math.Spatial3D.PointXYZ startPoint, Akeldov.Math.Spatial3D.PointXYZ controlPointA, Akeldov.Math.Spatial3D.PointXYZ controlPointB, Akeldov.Math.Spatial3D.PointXYZ endPoint) -> void
+Akeldov.Math.Spatial3D.Curves.CubicBezier.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.CubicBezier.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.Equals(Akeldov.Math.Spatial3D.Curves.CubicBezier other) -> bool
+Akeldov.Math.Spatial3D.Curves.CubicBezier.Flatten(int segmentCount) -> System.Collections.Generic.List<Akeldov.Math.Spatial3D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial3D.Curves.CubicBezier.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.GetPointAt(float t) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.CubicBezier.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.CubicBezier.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.CubicBezier.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.CubicBezier.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+override Akeldov.Math.Spatial3D.Curves.CubicBezier.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Curves.CubicBezier.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Curves.CubicBezier.ToString() -> string!
+static Akeldov.Math.Spatial3D.Curves.CubicBezier.operator !=(Akeldov.Math.Spatial3D.Curves.CubicBezier left, Akeldov.Math.Spatial3D.Curves.CubicBezier right) -> bool
+static Akeldov.Math.Spatial3D.Curves.CubicBezier.operator +(Akeldov.Math.Spatial3D.Curves.CubicBezier left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.CubicBezier
+static Akeldov.Math.Spatial3D.Curves.CubicBezier.operator -(Akeldov.Math.Spatial3D.Curves.CubicBezier left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.CubicBezier
+static Akeldov.Math.Spatial3D.Curves.CubicBezier.operator ==(Akeldov.Math.Spatial3D.Curves.CubicBezier left, Akeldov.Math.Spatial3D.Curves.CubicBezier right) -> bool
 Akeldov.Math.Spatial3D.Curves.CurveProjection
 Akeldov.Math.Spatial3D.Curves.CurveProjection.CurveProjection() -> void
 Akeldov.Math.Spatial3D.Curves.CurveProjection.CurveProjection(Akeldov.Math.Spatial3D.PointXYZ projectedPoint, float distance) -> void
