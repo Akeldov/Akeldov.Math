@@ -73,6 +73,23 @@ override Akeldov.Math.Spatial3D.Curves.ParameterizedLine.ToString() -> string!
 static Akeldov.Math.Spatial3D.Curves.ParameterizedLine.explicit operator Akeldov.Math.Spatial3D.Curves.Line(Akeldov.Math.Spatial3D.Curves.ParameterizedLine line) -> Akeldov.Math.Spatial3D.Curves.Line
 static Akeldov.Math.Spatial3D.Curves.ParameterizedLine.operator !=(Akeldov.Math.Spatial3D.Curves.ParameterizedLine left, Akeldov.Math.Spatial3D.Curves.ParameterizedLine right) -> bool
 static Akeldov.Math.Spatial3D.Curves.ParameterizedLine.operator ==(Akeldov.Math.Spatial3D.Curves.ParameterizedLine left, Akeldov.Math.Spatial3D.Curves.ParameterizedLine right) -> bool
+Akeldov.Math.Spatial3D.Curves.Ray
+Akeldov.Math.Spatial3D.Curves.Ray.Direction.get -> Akeldov.Math.Spatial3D.VectorXYZ
+Akeldov.Math.Spatial3D.Curves.Ray.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.Ray.Endpoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Ray.Equals(Akeldov.Math.Spatial3D.Curves.Ray other) -> bool
+Akeldov.Math.Spatial3D.Curves.Ray.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Ray.Origin.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Ray.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.Ray.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.Ray.Ray() -> void
+Akeldov.Math.Spatial3D.Curves.Ray.Ray(Akeldov.Math.Spatial3D.PointXYZ origin) -> void
+Akeldov.Math.Spatial3D.Curves.Ray.Ray(Akeldov.Math.Spatial3D.PointXYZ origin, Akeldov.Math.Spatial3D.VectorXYZ direction) -> void
+override Akeldov.Math.Spatial3D.Curves.Ray.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Curves.Ray.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Curves.Ray.ToString() -> string!
+static Akeldov.Math.Spatial3D.Curves.Ray.operator !=(Akeldov.Math.Spatial3D.Curves.Ray left, Akeldov.Math.Spatial3D.Curves.Ray right) -> bool
+static Akeldov.Math.Spatial3D.Curves.Ray.operator ==(Akeldov.Math.Spatial3D.Curves.Ray left, Akeldov.Math.Spatial3D.Curves.Ray right) -> bool
 Akeldov.Math.Spatial3D.GeometryConstants
 const Akeldov.Math.Spatial3D.GeometryConstants.GeometryEpsilon = 1E-06 -> float
 Akeldov.Math.Spatial3D.IHasPosition3D
