@@ -111,6 +111,29 @@ Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Project(Akeldov.Math.Spa
 Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
 Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.Segments.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.Curves.ParameterizedSegment>!
 Akeldov.Math.Spatial3D.Curves.ParameterizedSegmentChain.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.ControlPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.Equals(Akeldov.Math.Spatial3D.Curves.QuadraticBezier other) -> bool
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.Flatten(int segmentCount) -> System.Collections.Generic.List<Akeldov.Math.Spatial3D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.GetPointAt(float t) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.QuadraticBezier() -> void
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.QuadraticBezier(Akeldov.Math.Spatial3D.PointXYZ startPoint, Akeldov.Math.Spatial3D.PointXYZ controlPoint, Akeldov.Math.Spatial3D.PointXYZ endPoint) -> void
+Akeldov.Math.Spatial3D.Curves.QuadraticBezier.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+override Akeldov.Math.Spatial3D.Curves.QuadraticBezier.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Curves.QuadraticBezier.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Curves.QuadraticBezier.ToString() -> string!
+static Akeldov.Math.Spatial3D.Curves.QuadraticBezier.operator !=(Akeldov.Math.Spatial3D.Curves.QuadraticBezier left, Akeldov.Math.Spatial3D.Curves.QuadraticBezier right) -> bool
+static Akeldov.Math.Spatial3D.Curves.QuadraticBezier.operator +(Akeldov.Math.Spatial3D.Curves.QuadraticBezier left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.QuadraticBezier
+static Akeldov.Math.Spatial3D.Curves.QuadraticBezier.operator -(Akeldov.Math.Spatial3D.Curves.QuadraticBezier left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.QuadraticBezier
+static Akeldov.Math.Spatial3D.Curves.QuadraticBezier.operator ==(Akeldov.Math.Spatial3D.Curves.QuadraticBezier left, Akeldov.Math.Spatial3D.Curves.QuadraticBezier right) -> bool
 Akeldov.Math.Spatial3D.Curves.Ray
 Akeldov.Math.Spatial3D.Curves.Ray.Direction.get -> Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.Curves.Ray.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
