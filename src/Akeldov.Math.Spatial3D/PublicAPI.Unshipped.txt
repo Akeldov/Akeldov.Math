@@ -90,6 +90,25 @@ override Akeldov.Math.Spatial3D.Curves.Ray.GetHashCode() -> int
 override Akeldov.Math.Spatial3D.Curves.Ray.ToString() -> string!
 static Akeldov.Math.Spatial3D.Curves.Ray.operator !=(Akeldov.Math.Spatial3D.Curves.Ray left, Akeldov.Math.Spatial3D.Curves.Ray right) -> bool
 static Akeldov.Math.Spatial3D.Curves.Ray.operator ==(Akeldov.Math.Spatial3D.Curves.Ray left, Akeldov.Math.Spatial3D.Curves.Ray right) -> bool
+Akeldov.Math.Spatial3D.Curves.Segment
+Akeldov.Math.Spatial3D.Curves.Segment.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.Segment.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Segment.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Segment.Equals(Akeldov.Math.Spatial3D.Curves.Segment other) -> bool
+Akeldov.Math.Spatial3D.Curves.Segment.IncludesEndpointA.get -> bool
+Akeldov.Math.Spatial3D.Curves.Segment.IncludesEndpointB.get -> bool
+Akeldov.Math.Spatial3D.Curves.Segment.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.Segment.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.Segment.Segment() -> void
+Akeldov.Math.Spatial3D.Curves.Segment.Segment(Akeldov.Math.Spatial3D.PointXYZ startPoint, Akeldov.Math.Spatial3D.PointXYZ endPoint) -> void
+Akeldov.Math.Spatial3D.Curves.Segment.Segment(Akeldov.Math.Spatial3D.PointXYZ startPoint, Akeldov.Math.Spatial3D.PointXYZ endPoint, bool includesEndpointA, bool includesEndpointB) -> void
+override Akeldov.Math.Spatial3D.Curves.Segment.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Curves.Segment.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Curves.Segment.ToString() -> string!
+static Akeldov.Math.Spatial3D.Curves.Segment.operator !=(Akeldov.Math.Spatial3D.Curves.Segment left, Akeldov.Math.Spatial3D.Curves.Segment right) -> bool
+static Akeldov.Math.Spatial3D.Curves.Segment.operator +(Akeldov.Math.Spatial3D.Curves.Segment left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.Segment
+static Akeldov.Math.Spatial3D.Curves.Segment.operator -(Akeldov.Math.Spatial3D.Curves.Segment left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.Segment
+static Akeldov.Math.Spatial3D.Curves.Segment.operator ==(Akeldov.Math.Spatial3D.Curves.Segment left, Akeldov.Math.Spatial3D.Curves.Segment right) -> bool
 Akeldov.Math.Spatial3D.GeometryConstants
 const Akeldov.Math.Spatial3D.GeometryConstants.GeometryEpsilon = 1E-06 -> float
 Akeldov.Math.Spatial3D.IHasPosition3D
