@@ -86,6 +86,27 @@ Akeldov.Math.Spatial3D.Curves.LineReferencePointMode.GlobalZero = 0 -> Akeldov.M
 Akeldov.Math.Spatial3D.Curves.LineReferencePointMode.Midpoint = 3 -> Akeldov.Math.Spatial3D.Curves.LineReferencePointMode
 Akeldov.Math.Spatial3D.Curves.LineReferencePointMode.PointA = 1 -> Akeldov.Math.Spatial3D.Curves.LineReferencePointMode
 Akeldov.Math.Spatial3D.Curves.LineReferencePointMode.PointB = 2 -> Akeldov.Math.Spatial3D.Curves.LineReferencePointMode
+Akeldov.Math.Spatial3D.Curves.Nurbs
+Akeldov.Math.Spatial3D.Curves.Nurbs.ControlPoints.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.PointXYZ>!
+Akeldov.Math.Spatial3D.Curves.Nurbs.Degree.get -> int
+Akeldov.Math.Spatial3D.Curves.Nurbs.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.Nurbs.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.Flatten() -> System.Collections.Generic.List<Akeldov.Math.Spatial3D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial3D.Curves.Nurbs.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.GetPointAt(float t) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.GetPointAtKnot(float knot) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.KnotEnd.get -> float
+Akeldov.Math.Spatial3D.Curves.Nurbs.KnotStart.get -> float
+Akeldov.Math.Spatial3D.Curves.Nurbs.Knots.get -> System.Collections.Generic.IReadOnlyList<float>!
+Akeldov.Math.Spatial3D.Curves.Nurbs.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.Nurbs.Nurbs(int degree, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.PointXYZ>! controlPoints, System.Collections.Generic.IReadOnlyList<float>! weights, System.Collections.Generic.IReadOnlyList<float>! knots, int segmentsPerKnotSpan = 64) -> void
+Akeldov.Math.Spatial3D.Curves.Nurbs.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.Nurbs.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.Nurbs.SegmentsPerKnotSpan.get -> int
+Akeldov.Math.Spatial3D.Curves.Nurbs.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.Nurbs.Weights.get -> System.Collections.Generic.IReadOnlyList<float>!
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.CurveCoordinate.get -> float
 Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection.Distance.get -> float
