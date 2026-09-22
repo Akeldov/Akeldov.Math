@@ -73,6 +73,30 @@ override Akeldov.Math.Spatial3D.Curves.ParameterizedLine.ToString() -> string!
 static Akeldov.Math.Spatial3D.Curves.ParameterizedLine.explicit operator Akeldov.Math.Spatial3D.Curves.Line(Akeldov.Math.Spatial3D.Curves.ParameterizedLine line) -> Akeldov.Math.Spatial3D.Curves.Line
 static Akeldov.Math.Spatial3D.Curves.ParameterizedLine.operator !=(Akeldov.Math.Spatial3D.Curves.ParameterizedLine left, Akeldov.Math.Spatial3D.Curves.ParameterizedLine right) -> bool
 static Akeldov.Math.Spatial3D.Curves.ParameterizedLine.operator ==(Akeldov.Math.Spatial3D.Curves.ParameterizedLine left, Akeldov.Math.Spatial3D.Curves.ParameterizedLine right) -> bool
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.Equals(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment other) -> bool
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.IncludesEndPoint.get -> bool
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.IncludesStartPoint.get -> bool
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.ParameterizedSegment() -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.ParameterizedSegment(Akeldov.Math.Spatial3D.PointXYZ startPoint, Akeldov.Math.Spatial3D.PointXYZ endPoint) -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.ParameterizedSegment(Akeldov.Math.Spatial3D.PointXYZ startPoint, Akeldov.Math.Spatial3D.PointXYZ endPoint, bool includesStartPoint, bool includesEndPoint) -> void
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+override Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.Equals(object? obj) -> bool
+override Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.GetHashCode() -> int
+override Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.ToString() -> string!
+static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.explicit operator Akeldov.Math.Spatial3D.Curves.Segment(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment segment) -> Akeldov.Math.Spatial3D.Curves.Segment
+static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator !=(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.Curves.ParameterizedSegment right) -> bool
+static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator +(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.ParameterizedSegment
+static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator -(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.VectorXYZ right) -> Akeldov.Math.Spatial3D.Curves.ParameterizedSegment
+static Akeldov.Math.Spatial3D.Curves.ParameterizedSegment.operator ==(Akeldov.Math.Spatial3D.Curves.ParameterizedSegment left, Akeldov.Math.Spatial3D.Curves.ParameterizedSegment right) -> bool
 Akeldov.Math.Spatial3D.Curves.Ray
 Akeldov.Math.Spatial3D.Curves.Ray.Direction.get -> Akeldov.Math.Spatial3D.VectorXYZ
 Akeldov.Math.Spatial3D.Curves.Ray.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
