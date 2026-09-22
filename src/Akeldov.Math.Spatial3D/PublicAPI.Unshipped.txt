@@ -1,4 +1,24 @@
 #nullable enable
+Akeldov.Math.Spatial3D.Curves.BSpline
+Akeldov.Math.Spatial3D.Curves.BSpline.BSpline(int degree, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.PointXYZ>! controlPoints, System.Collections.Generic.IReadOnlyList<float>! knots, int segmentsPerKnotSpan = 64) -> void
+Akeldov.Math.Spatial3D.Curves.BSpline.ControlPoints.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial3D.PointXYZ>!
+Akeldov.Math.Spatial3D.Curves.BSpline.Degree.get -> int
+Akeldov.Math.Spatial3D.Curves.BSpline.Distance(Akeldov.Math.Spatial3D.PointXYZ point) -> float
+Akeldov.Math.Spatial3D.Curves.BSpline.EndPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.BSpline.EndpointA.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.BSpline.EndpointB.get -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.BSpline.Flatten() -> System.Collections.Generic.List<Akeldov.Math.Spatial3D.Curves.ParameterizedSegment>!
+Akeldov.Math.Spatial3D.Curves.BSpline.GetPoint(float curveCoordinate) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.BSpline.GetPointAt(float t) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.BSpline.GetPointAtKnot(float knot) -> Akeldov.Math.Spatial3D.PointXYZ
+Akeldov.Math.Spatial3D.Curves.BSpline.KnotEnd.get -> float
+Akeldov.Math.Spatial3D.Curves.BSpline.KnotStart.get -> float
+Akeldov.Math.Spatial3D.Curves.BSpline.Knots.get -> System.Collections.Generic.IReadOnlyList<float>!
+Akeldov.Math.Spatial3D.Curves.BSpline.Length.get -> float
+Akeldov.Math.Spatial3D.Curves.BSpline.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.CurveProjection
+Akeldov.Math.Spatial3D.Curves.BSpline.ProjectWithParameter(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Curves.ParameterizedCurveProjection
+Akeldov.Math.Spatial3D.Curves.BSpline.SegmentsPerKnotSpan.get -> int
+Akeldov.Math.Spatial3D.Curves.BSpline.StartPoint.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.CubicBezier
 Akeldov.Math.Spatial3D.Curves.CubicBezier.ControlPointA.get -> Akeldov.Math.Spatial3D.PointXYZ
 Akeldov.Math.Spatial3D.Curves.CubicBezier.ControlPointB.get -> Akeldov.Math.Spatial3D.PointXYZ
