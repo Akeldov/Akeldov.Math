@@ -277,6 +277,7 @@ static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestTo<TItem>
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this System.Collections.Generic.IReadOnlyList<TItem>! items) -> TItem
 static Akeldov.Math.Spatial3D.PositionedCollectionExtensions.GetClosestToCentroid<TItem>(this TItem[]! items) -> TItem
 Akeldov.Math.Spatial3D.Surfaces.IClosedSurface
+Akeldov.Math.Spatial3D.Surfaces.IClosedSurface.Encloses(Akeldov.Math.Spatial3D.PointXYZ point) -> bool
 Akeldov.Math.Spatial3D.Surfaces.ISurface
 Akeldov.Math.Spatial3D.Surfaces.ISurface.Project(Akeldov.Math.Spatial3D.PointXYZ point) -> Akeldov.Math.Spatial3D.Surfaces.SurfaceProjection
 Akeldov.Math.Spatial3D.Surfaces.Plane
