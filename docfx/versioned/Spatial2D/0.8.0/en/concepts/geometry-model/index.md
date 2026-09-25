@@ -12,7 +12,7 @@ Each layer adds meaning while reusing the operations of the layer below it where
 
 | Layer | Represents | Main abstractions | Typical queries |
 |---|---|---|---|
-| Coordinates | Positions, directions, offsets, and sizes | <xref:Akeldov.Math.Spatial2D.PointXY>, <xref:Akeldov.Math.Spatial2D.VectorXY> | Distance between points, vector length, dot product, rotation |
+| [Points](points.md) and [vectors](vectors.md) | Positions, directions, offsets, and sizes | <xref:Akeldov.Math.Spatial2D.PointXY>, <xref:Akeldov.Math.Spatial2D.VectorXY> | Distance between points, vector length, dot product, rotation |
 | [Curves](curves.md) | One-dimensional geometry, open or closed, finite or infinite | <xref:Akeldov.Math.Spatial2D.Curves.ICurve>, <xref:Akeldov.Math.Spatial2D.Curves.IParameterizedCurve> | Projection, boundary distance, ray intersections, point at a curve coordinate |
 | [Contours](contours.md) | Finite closed boundaries | <xref:Akeldov.Math.Spatial2D.Contours.IContour>, <xref:Akeldov.Math.Spatial2D.Contours.IParameterizedContour> | Enclosure, signed distance, perimeter length |
 | [Regions](regions.md) | Filled two-dimensional areas | <xref:Akeldov.Math.Spatial2D.Regions.IRegion>, <xref:Akeldov.Math.Spatial2D.Regions.IContourBasedRegion> | Area membership and signed distance to the boundary |
@@ -137,11 +137,14 @@ are expressed in radians, with positive rotation counterclockwise from the posit
 Public geometry constructors and queries that require finite coordinates reject `NaN` and
 infinity at their boundaries.
 
-Review [Fundamentals](../fundamentals/index.md) for points, vectors, units, and ownership rules
-before building larger geometry.
+Review [Fundamentals](../fundamentals/index.md) for coordinate conventions, units, and ownership
+rules before building larger geometry.
 
 ## Continue through the model
 
+- [Points](points.md) explains positions, distance, interpolation, and point transformations.
+- [Vectors](vectors.md) explains floating-point and integer vectors, direction operations, and
+  conversion.
 - [Curves](curves.md) explains curve capabilities, concrete curve families, projection, and
   parameterization.
 - [Contours](contours.md) explains closed boundaries, composite paths, enclosure, and smoothing.

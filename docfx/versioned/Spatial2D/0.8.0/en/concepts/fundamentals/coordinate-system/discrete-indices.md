@@ -184,7 +184,7 @@ var index = new VectorXYInt(
 Do not replace `Floor` with a direct cast when negative coordinates are possible: integer casts
 truncate toward zero and can incorrectly move a point just below the origin into index zero.
 Use rounding only when the desired rule is nearest grid coordinate rather than containing cell.
-See [Vectors](vectors.md) for conversion and rounding semantics.
+See [Vectors](../../geometry-model/vectors.md) for conversion and rounding semantics.
 
 ## Compare indices exactly
 

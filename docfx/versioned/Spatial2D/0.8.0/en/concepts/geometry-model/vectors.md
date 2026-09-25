@@ -27,7 +27,7 @@ incidental representation.
 
 Do not use `VectorXYInt` merely because the current values happen to be whole numbers. For
 example, a direction can become fractional after normalization or rotation, so it should remain
-a `VectorXY`. See [Discrete Indices](discrete-indices.md) for values that identify cells or
+a `VectorXY`. See [Discrete Indices](../fundamentals/coordinate-system/discrete-indices.md) for values that identify cells or
 elements of a discrete structure.
 
 ## Create and inspect vectors

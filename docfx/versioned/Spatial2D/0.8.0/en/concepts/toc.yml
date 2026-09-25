@@ -4,10 +4,6 @@
     - name: Coordinate System
       href: fundamentals/coordinate-system/index.md
       items:
-        - name: Points
-          href: fundamentals/coordinate-system/points.md
-        - name: Vectors
-          href: fundamentals/coordinate-system/vectors.md
         - name: Discrete Indices
           href: fundamentals/coordinate-system/discrete-indices.md
     - name: Angles and Units
@@ -17,6 +13,10 @@
 - name: Geometry Model
   href: geometry-model/index.md
   items:
+    - name: Points
+      href: geometry-model/points.md
+    - name: Vectors
+      href: geometry-model/vectors.md
     - name: Curves
       href: geometry-model/curves.md
     - name: Contours

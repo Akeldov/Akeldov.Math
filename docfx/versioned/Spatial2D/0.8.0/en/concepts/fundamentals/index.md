@@ -8,8 +8,10 @@ Use `PointXY` for positions, `VectorXY` for floating-point vectors, and `VectorX
 integer vectors. Like `VectorXY`, `VectorXYInt` can represent directions, offsets, and sizes;
 APIs also use it for values such as raster indices and resolutions.
 
-See [Coordinate System](coordinate-system/index.md) for details about points, vectors, and
-discrete indices.
+See [Coordinate System](coordinate-system/index.md) for Cartesian axes and the relationship
+between continuous coordinates and discrete indices. The [Points](../geometry-model/points.md)
+and [Vectors](../geometry-model/vectors.md) pages in Geometry Model describe the types and their
+operations.
 
 ## Angles and Units
 

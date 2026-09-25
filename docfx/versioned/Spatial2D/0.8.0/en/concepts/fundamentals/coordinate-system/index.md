@@ -31,17 +31,18 @@ For rotation direction and measurement conventions, see
 resolution.
 
 `PointXY` and `VectorXY` use `float` components. Conversion to `VectorXYInt` can discard a
-fractional part, so the [Vectors](vectors.md) page describes the available conversion rules.
+fractional part, so the [Vectors](../../geometry-model/vectors.md) page describes the available
+conversion rules.
 
 Raster APIs connect continuous and discrete values explicitly. For example,
 <xref:Akeldov.Math.Spatial2D.Rasterization.RasterGeometry> combines a `PointXY` origin and
 `VectorXY` size with a `VectorXYInt` resolution. See [Discrete Indices](discrete-indices.md) for
 raster addressing and world-space mapping.
 
-## Topics
+## Related topics
 
-- [Points](points.md) — positions, distance, interpolation, and point transformations.
-- [Vectors](vectors.md) — floating-point and integer vectors, direction operations, and
+- [Points](../../geometry-model/points.md) — positions, distance, interpolation, and point transformations.
+- [Vectors](../../geometry-model/vectors.md) — floating-point and integer vectors, direction operations, and
   conversion.
 - [Discrete Indices](discrete-indices.md) — raster indices, resolutions, offsets, and
   world-space mapping.
