@@ -20,7 +20,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new mutable Boolean hex map with independent storage, owned by the caller.</returns>
         /// <remarks>
         /// <para>
-        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.WriteHexMap(BinaryWriter, IHexMap{bool})"/>.
+        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, IHexMap{bool})"/>.
         /// Every Boolean payload byte must be exactly zero or one. The format version is
         /// independent of the package version. Unknown versions, map kinds, and value kinds are rejected.
         /// </para>
@@ -111,7 +111,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new mutable integer hex map with independent storage, owned by the caller.</returns>
         /// <remarks>
         /// <para>
-        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.WriteHexMap(BinaryWriter, IHexMap{int})"/>.
+        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, IHexMap{int})"/>.
         /// All Int32 values are accepted, including both extrema. The format version is independent
         /// of the package version. Unknown versions, map kinds, and non-Int32 value kinds are rejected.
         /// </para>
@@ -196,7 +196,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new mutable floating-point hex map with independent storage, owned by the caller.</returns>
         /// <remarks>
         /// <para>
-        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.WriteHexMap(BinaryWriter, IHexMap{float})"/>.
+        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, IHexMap{float})"/>.
         /// All IEEE 754 binary32 bit patterns are accepted, including signed zero, subnormal
         /// values, infinities, and NaN payloads. No normalization or arithmetic conversion is
         /// performed. The format version is independent of the package version. Unknown versions,

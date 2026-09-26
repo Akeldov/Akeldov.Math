@@ -54,7 +54,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="path">The absolute path, or a path relative to the current working directory.</param>
         /// <param name="map">The Boolean map to serialize. It must not change during serialization.</param>
         /// <remarks>
-        /// Uses <see cref="HexMapBinaryWriterExtensions.WriteHexMap(BinaryWriter, IHexMap{bool})"/>.
+        /// Uses <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, IHexMap{bool})"/>.
         /// Preserves topology and values only. Pass a source typed as ISpatialHexMap to a spatial
         /// overload of Write to include geometry. Overload selection uses the compile-time source type.
         /// An existing file is truncated. Parent directories are not created. The file is flushed and
@@ -78,7 +78,7 @@ namespace Akeldov.Math.Hexes
 
             using var stream = File.Create(path);
             using var writer = new BinaryWriter(stream);
-            writer.WriteHexMap(map);
+            writer.Write(map);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="path">The absolute path, or a path relative to the current working directory.</param>
         /// <param name="map">The integer map to serialize. It must not change during serialization.</param>
         /// <remarks>
-        /// Uses <see cref="HexMapBinaryWriterExtensions.WriteHexMap(BinaryWriter, IHexMap{int})"/>.
+        /// Uses <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, IHexMap{int})"/>.
         /// Preserves topology and values only. Pass a source typed as ISpatialHexMap to a spatial
         /// overload of Write to include geometry. Overload selection uses the compile-time source type.
         /// An existing file is truncated. Parent directories are not created. The file is flushed and
@@ -145,7 +145,7 @@ namespace Akeldov.Math.Hexes
 
             using var stream = File.Create(path);
             using var writer = new BinaryWriter(stream);
-            writer.WriteHexMap(map);
+            writer.Write(map);
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="path">The absolute path, or a path relative to the current working directory.</param>
         /// <param name="map">The floating-point map to serialize. It must not change during serialization.</param>
         /// <remarks>
-        /// Uses <see cref="HexMapBinaryWriterExtensions.WriteHexMap(BinaryWriter, IHexMap{float})"/>.
+        /// Uses <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, IHexMap{float})"/>.
         /// Preserves topology and values only. Pass a source typed as ISpatialHexMap to a spatial
         /// overload of Write to include geometry. Overload selection uses the compile-time source type.
         /// An existing file is truncated. Parent directories are not created. The file is flushed and
@@ -212,7 +212,7 @@ namespace Akeldov.Math.Hexes
 
             using var stream = File.Create(path);
             using var writer = new BinaryWriter(stream);
-            writer.WriteHexMap(map);
+            writer.Write(map);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="path">The absolute path, or a path relative to the current working directory.</param>
         /// <param name="map">The spatial Boolean map to serialize. It must not change during serialization.</param>
         /// <remarks>
-        /// Uses <see cref="HexMapBinaryWriterExtensions.WriteSpatialHexMap(BinaryWriter, ISpatialHexMap{bool})"/>.
+        /// Uses <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, ISpatialHexMap{bool})"/>.
         /// Preserves topology, origin, radius, and values.
         /// An existing file is truncated. Parent directories are not created. The file is flushed and
         /// closed on success and closed on failure. Writing is not atomic; an error after opening
@@ -289,7 +289,7 @@ namespace Akeldov.Math.Hexes
 
             using var stream = File.Create(path);
             using var writer = new BinaryWriter(stream);
-            writer.WriteSpatialHexMap(map);
+            writer.Write(map);
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="path">The absolute path, or a path relative to the current working directory.</param>
         /// <param name="map">The spatial integer map to serialize. It must not change during serialization.</param>
         /// <remarks>
-        /// Uses <see cref="HexMapBinaryWriterExtensions.WriteSpatialHexMap(BinaryWriter, ISpatialHexMap{int})"/>.
+        /// Uses <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, ISpatialHexMap{int})"/>.
         /// Preserves topology, origin, radius, and values.
         /// An existing file is truncated. Parent directories are not created. The file is flushed and
         /// closed on success and closed on failure. Writing is not atomic; an error after opening
@@ -366,7 +366,7 @@ namespace Akeldov.Math.Hexes
 
             using var stream = File.Create(path);
             using var writer = new BinaryWriter(stream);
-            writer.WriteSpatialHexMap(map);
+            writer.Write(map);
         }
 
         /// <summary>
@@ -409,7 +409,7 @@ namespace Akeldov.Math.Hexes
         /// <param name="path">The absolute path, or a path relative to the current working directory.</param>
         /// <param name="map">The spatial floating-point map to serialize. It must not change during serialization.</param>
         /// <remarks>
-        /// Uses <see cref="HexMapBinaryWriterExtensions.WriteSpatialHexMap(BinaryWriter, ISpatialHexMap{float})"/>.
+        /// Uses <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, ISpatialHexMap{float})"/>.
         /// Preserves topology, origin, radius, and values.
         /// An existing file is truncated. Parent directories are not created. The file is flushed and
         /// closed on success and closed on failure. Writing is not atomic; an error after opening
@@ -443,7 +443,7 @@ namespace Akeldov.Math.Hexes
 
             using var stream = File.Create(path);
             using var writer = new BinaryWriter(stream);
-            writer.WriteSpatialHexMap(map);
+            writer.Write(map);
         }
     }
 }

@@ -233,15 +233,15 @@ public class HexMapFileTests<T>
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
         if (_spatial)
         {
-            if (_kind == 1) writer.WriteSpatialHexMap((ISpatialHexMap<bool>)(object)map);
-            else if (_kind == 2) writer.WriteSpatialHexMap((ISpatialHexMap<int>)(object)map);
-            else writer.WriteSpatialHexMap((ISpatialHexMap<float>)(object)map);
+            if (_kind == 1) writer.Write((ISpatialHexMap<bool>)(object)map);
+            else if (_kind == 2) writer.Write((ISpatialHexMap<int>)(object)map);
+            else writer.Write((ISpatialHexMap<float>)(object)map);
         }
         else
         {
-            if (_kind == 1) writer.WriteHexMap((IHexMap<bool>)(object)map);
-            else if (_kind == 2) writer.WriteHexMap((IHexMap<int>)(object)map);
-            else writer.WriteHexMap((IHexMap<float>)(object)map);
+            if (_kind == 1) writer.Write((IHexMap<bool>)(object)map);
+            else if (_kind == 2) writer.Write((IHexMap<int>)(object)map);
+            else writer.Write((IHexMap<float>)(object)map);
         }
         return stream.ToArray();
     }

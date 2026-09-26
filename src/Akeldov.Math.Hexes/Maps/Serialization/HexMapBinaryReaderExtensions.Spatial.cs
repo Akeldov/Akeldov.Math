@@ -19,7 +19,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new mutable spatial Boolean hex map with independent storage, owned by the caller.</returns>
         /// <remarks>
         /// <para>
-        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.WriteSpatialHexMap(BinaryWriter, ISpatialHexMap{bool})"/>.
+        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, ISpatialHexMap{bool})"/>.
         /// Every Boolean payload byte must be exactly zero or one.
         /// Origin components must be finite; radius must be finite and positive. Geometry bits
         /// are preserved and the apothem is derived from the radius.
@@ -79,7 +79,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new mutable spatial integer hex map with independent storage, owned by the caller.</returns>
         /// <remarks>
         /// <para>
-        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.WriteSpatialHexMap(BinaryWriter, ISpatialHexMap{int})"/>.
+        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, ISpatialHexMap{int})"/>.
         /// All Int32 values are accepted, including both extrema.
         /// Origin components must be finite; radius must be finite and positive. Geometry bits
         /// are preserved and the apothem is derived from the radius.
@@ -133,7 +133,7 @@ namespace Akeldov.Math.Hexes
         /// <returns>A new mutable spatial floating-point hex map with independent storage, owned by the caller.</returns>
         /// <remarks>
         /// <para>
-        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.WriteSpatialHexMap(BinaryWriter, ISpatialHexMap{float})"/>.
+        /// Reads the format documented by <see cref="HexMapBinaryWriterExtensions.Write(BinaryWriter, ISpatialHexMap{float})"/>.
         /// All value bit patterns are accepted, including signed zero, subnormals, infinities, and NaN payloads.
         /// Origin components must be finite; radius must be finite and positive. Geometry bits
         /// are preserved and the apothem is derived from the radius.

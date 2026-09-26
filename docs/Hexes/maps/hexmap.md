@@ -48,7 +48,7 @@
   `ToSpatialIntHexMap()` truncates spatial floating-point values toward zero; both preserve geometry.
 - `ToValueMask(values)` converts an integer map into a Boolean mask that selects the listed values.
 - `SpatialBoolHexMap`, `SpatialIntHexMap`, and `SpatialFloatHexMap` provide the same operator surface while preserving `HexMapGeometry` in every result.
-- The upcoming release adds [binary serialization of spatial maps](../utility-structures/binary-helpers.md#spatial-maps-upcoming) through `WriteSpatialHexMap` and matching readers, preserving topology, origin, radius, and Boolean, integer, or floating-point values.
+- The upcoming release adds [binary serialization of spatial maps](../utility-structures/binary-helpers.md#spatial-maps-upcoming) through `Write` and matching readers, preserving topology, origin, radius, and Boolean, integer, or floating-point values.
 - `HexMapFile` provides [file reading and writing](../utility-structures/binary-helpers.md#map-files-upcoming) for all six map variants, accepting absolute and relative paths.
 - Cross-operators combine one spatial specialized map with one topology-only specialized map in either operand order; the result is spatial and retains the spatial operand's geometry.
 

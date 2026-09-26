@@ -23,7 +23,7 @@ Binary helpers provide shared serialization support for hex-grid utility values.
 
 ## Boolean maps (upcoming)
 
-The upcoming release adds `BinaryWriter.WriteHexMap(IHexMap<bool>)` and
+The upcoming release adds `BinaryWriter.Write(IHexMap<bool>)` and
 `BinaryReader.ReadBoolHexMap(maxCellCount)`. Import `Akeldov.Math.Hexes` to use these extensions.
 They preserve the map's width, height, layout, and Boolean values. Reading returns a new mutable
 `BoolHexMap` with independent storage.
@@ -38,7 +38,7 @@ var map = new BoolHexMap(
 
 using (var writer = new BinaryWriter(File.Create("mask.hmap")))
 {
-    writer.WriteHexMap(map);
+    writer.Write(map);
 }
 
 BoolHexMap restored;
@@ -94,7 +94,7 @@ value cannot be distinguished from intentional data.
 
 ## Integer maps (upcoming)
 
-The upcoming release also adds `BinaryWriter.WriteHexMap(IHexMap<int>)` and
+The upcoming release also adds `BinaryWriter.Write(IHexMap<int>)` and
 `BinaryReader.ReadIntHexMap(maxCellCount)`. They preserve the topology and every signed `Int32`
 value, including `Int32.MinValue`, `Int32.MaxValue`, zero, and negative values. Reading returns a
 new mutable `IntHexMap` with independent storage.
@@ -109,7 +109,7 @@ var map = new IntHexMap(
 
 using (var writer = new BinaryWriter(File.Create("costs.hmap")))
 {
-    writer.WriteHexMap(map);
+    writer.Write(map);
 }
 
 IntHexMap restored;
@@ -139,7 +139,7 @@ records with `InvalidDataException`; neither reader converts another value kind 
 
 ## Floating-point maps (upcoming)
 
-The upcoming release adds `BinaryWriter.WriteHexMap(IHexMap<float>)` and
+The upcoming release adds `BinaryWriter.Write(IHexMap<float>)` and
 `BinaryReader.ReadFloatHexMap(maxCellCount)`. They preserve the topology and the raw bits of every
 `Single` value. Reading returns a new mutable `FloatHexMap` with independent storage.
 
@@ -153,7 +153,7 @@ var map = new FloatHexMap(
 
 using (var writer = new BinaryWriter(File.Create("heights.hmap")))
 {
-    writer.WriteHexMap(map);
+    writer.Write(map);
 }
 
 FloatHexMap restored;
@@ -188,7 +188,7 @@ value kind rejects the record with `InvalidDataException`, even when both types 
 
 ## Spatial maps (upcoming)
 
-Use `BinaryWriter.WriteSpatialHexMap` with `ISpatialHexMap<bool>`, `ISpatialHexMap<int>`, or
+Use `BinaryWriter.Write` with `ISpatialHexMap<bool>`, `ISpatialHexMap<int>`, or
 `ISpatialHexMap<float>` to preserve topology, origin, radius, and cell values. These overloads
 accept both the specialized spatial maps and generic `SpatialHexMap<T>` sources. Read them with
 `ReadSpatialBoolHexMap`, `ReadSpatialIntHexMap`, and `ReadSpatialFloatHexMap`, respectively.
@@ -209,7 +209,7 @@ var map = new SpatialFloatHexMap(
 
 using (var writer = new BinaryWriter(File.Create("terrain.hmap")))
 {
-    writer.WriteSpatialHexMap(map);
+    writer.Write(map);
 }
 
 SpatialFloatHexMap restored;
@@ -219,8 +219,9 @@ using (var reader = new BinaryReader(File.OpenRead("terrain.hmap")))
 }
 ```
 
-`WriteSpatialHexMap` explicitly selects geometry-preserving serialization. `WriteHexMap`
-continues to write topology and values only, including when passed a spatial map directly.
+`Write` selects the format using the compile-time type of its argument. Concrete spatial maps
+and `ISpatialHexMap<T>` sources select the overload that preserves geometry. Sources typed as
+`IHexMap<T>` select the topology-only overload, even if the underlying map is spatial.
 Choose the corresponding reader; topology-only readers reject spatial records and spatial readers
 reject topology-only records. Readers also reject other value kinds without converting them.
 

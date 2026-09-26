@@ -36,7 +36,7 @@ public class SpatialHexMapSerializationPayloadTests
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
 
-        writer.WriteSpatialHexMap(map);
+        writer.Write(map);
         Assert.That(BinaryPrimitives.ReadInt32LittleEndian(stream.ToArray().AsSpan(28)), Is.EqualTo(expectedBits));
         stream.Position = 0;
         using var reader = new BinaryReader(stream);
@@ -79,12 +79,12 @@ public class SpatialHexMapSerializationPayloadTests
         using Stream stream = nonSeekable ? new NonSeekableStream(buffer) : buffer;
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
         writer.Write(123456);
-        writer.WriteSpatialHexMap(costs);
-        writer.WriteHexMap(mask);
-        writer.WriteSpatialHexMap(heights);
-        writer.WriteHexMap(costs);
-        writer.WriteSpatialHexMap(mask);
-        writer.WriteHexMap(heights);
+        writer.Write(costs);
+        writer.Write((IHexMap<bool>)mask);
+        writer.Write(heights);
+        writer.Write((IHexMap<int>)costs);
+        writer.Write(mask);
+        writer.Write((IHexMap<float>)heights);
         writer.Write(654321);
         buffer.Position = 0;
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);

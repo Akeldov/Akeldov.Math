@@ -22,7 +22,7 @@ public class BoolHexMapSerializationTests
     [TestCase(Layout.EvenR, 1)]
     [TestCase(Layout.OddQ, 2)]
     [TestCase(Layout.EvenQ, 3)]
-    public void WriteHexMap_WritesVersionOneBytes(Layout layout, byte layoutCode)
+    public void Write_WritesVersionOneBytes(Layout layout, byte layoutCode)
     {
         var map = new BoolHexMap(new HexMapTopology(3, 2, layout),
             new[] { true, false, false, true, true, false });
@@ -31,7 +31,7 @@ public class BoolHexMapSerializationTests
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
 
-        writer.WriteHexMap(map);
+        writer.Write(map);
 
         Assert.That(stream.ToArray(), Is.EqualTo(expected));
     }
@@ -69,7 +69,7 @@ public class BoolHexMapSerializationTests
         var original = new BoolHexMap(new HexMapTopology(2, 2, Layout.OddQ), originalValues);
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
-        writer.WriteHexMap(original);
+        writer.Write(original);
         originalValues[0] = false;
         stream.Position = 0;
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
@@ -98,7 +98,7 @@ public class BoolHexMapSerializationTests
         var map = new BoolHexMap(new HexMapTopology(width, height, layout));
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
-        writer.WriteHexMap(map);
+        writer.Write(map);
         stream.Position = 0;
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
 
@@ -115,7 +115,7 @@ public class BoolHexMapSerializationTests
 
     [TestCase(false)]
     [TestCase(true)]
-    public void WriteHexMap_InterfaceSourceSerializesOnlyTopologyAndValues(bool spatial)
+    public void Write_InterfaceSourceSerializesOnlyTopologyAndValues(bool spatial)
     {
         var topology = new HexMapTopology(3, 2, Layout.EvenQ);
         var values = new[] { true, false, false, true, true, false };
@@ -125,7 +125,7 @@ public class BoolHexMapSerializationTests
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
 
-        writer.WriteHexMap(source);
+        writer.Write(source);
 
         Assert.That(stream.ToArray(), Is.EqualTo(GoldenRecord));
     }
@@ -138,8 +138,8 @@ public class BoolHexMapSerializationTests
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
         writer.Write(123456);
-        writer.WriteHexMap(first);
-        writer.WriteHexMap(second);
+        writer.Write(first);
+        writer.Write(second);
         writer.Write(654321);
         stream.Position = 0;
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
@@ -168,7 +168,7 @@ public class BoolHexMapSerializationTests
         using var buffer = new MemoryStream();
         using var stream = new NonSeekableStream(buffer);
         using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
-        writer.WriteHexMap(map);
+        writer.Write(map);
         writer.Write((byte)42);
         buffer.Position = 0;
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
@@ -261,7 +261,7 @@ public class BoolHexMapSerializationTests
     }
 
     [Test]
-    public void WriteHexMap_NullArgumentsAreRejectedBeforeWriting()
+    public void Write_NullArgumentsAreRejectedBeforeWriting()
     {
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
@@ -270,9 +270,9 @@ public class BoolHexMapSerializationTests
         Assert.Multiple(() =>
         {
             Assert.That(Assert.Throws<ArgumentNullException>(() =>
-                HexMapBinaryWriterExtensions.WriteHexMap(null!, map))!.ParamName, Is.EqualTo("writer"));
+                HexMapBinaryWriterExtensions.Write(null!, map))!.ParamName, Is.EqualTo("writer"));
             Assert.That(Assert.Throws<ArgumentNullException>(() =>
-                writer.WriteHexMap((IHexMap<bool>)null!))!.ParamName, Is.EqualTo("map"));
+                writer.Write((IHexMap<bool>)null!))!.ParamName, Is.EqualTo("map"));
             Assert.That(stream.Length, Is.Zero);
         });
     }

@@ -39,7 +39,7 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the geometry origin is not finite, or its radius is not finite and positive.
         /// </exception>
-        public static void WriteSpatialHexMap(this BinaryWriter writer, ISpatialHexMap<bool> map)
+        public static void Write(this BinaryWriter writer, ISpatialHexMap<bool> map)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
@@ -108,7 +108,7 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the geometry origin is not finite, or its radius is not finite and positive.
         /// </exception>
-        public static void WriteSpatialHexMap(this BinaryWriter writer, ISpatialHexMap<int> map)
+        public static void Write(this BinaryWriter writer, ISpatialHexMap<int> map)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
@@ -177,7 +177,7 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the geometry origin is not finite, or its radius is not finite and positive.
         /// </exception>
-        public static void WriteSpatialHexMap(this BinaryWriter writer, ISpatialHexMap<float> map)
+        public static void Write(this BinaryWriter writer, ISpatialHexMap<float> map)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));

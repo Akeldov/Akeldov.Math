@@ -32,7 +32,7 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="writer"/> or <paramref name="map"/> is <see langword="null"/>.
         /// </exception>
-        public static void WriteHexMap(this BinaryWriter writer, IHexMap<bool> map)
+        public static void Write(this BinaryWriter writer, IHexMap<bool> map)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
@@ -80,7 +80,7 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="writer"/> or <paramref name="map"/> is <see langword="null"/>.
         /// </exception>
-        public static void WriteHexMap(this BinaryWriter writer, IHexMap<int> map)
+        public static void Write(this BinaryWriter writer, IHexMap<int> map)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
@@ -128,7 +128,7 @@ namespace Akeldov.Math.Hexes
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="writer"/> or <paramref name="map"/> is <see langword="null"/>.
         /// </exception>
-        public static void WriteHexMap(this BinaryWriter writer, IHexMap<float> map)
+        public static void Write(this BinaryWriter writer, IHexMap<float> map)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));

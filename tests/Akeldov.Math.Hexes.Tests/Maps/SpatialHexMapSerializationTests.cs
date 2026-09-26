@@ -63,7 +63,7 @@ public class SpatialHexMapSerializationTests<T>
     [TestCase(Layout.EvenR, 1)]
     [TestCase(Layout.OddQ, 2)]
     [TestCase(Layout.EvenQ, 3)]
-    public void WriteSpatialHexMap_WritesVersionOneBytes(Layout layout, byte layoutCode)
+    public void Write_WritesVersionOneBytes(Layout layout, byte layoutCode)
     {
         var map = CreateMap(GoldenGeometry(layout), GoldenValues);
         byte[] expected = GoldenRecord;
@@ -97,7 +97,7 @@ public class SpatialHexMapSerializationTests<T>
     }
 
     [Test]
-    public void WriteSpatialHexMap_AcceptsGenericInterfaceSource()
+    public void Write_AcceptsGenericInterfaceSource()
     {
         ISpatialHexMap<T> map = new SpatialHexMap<T>(GoldenGeometry(), GoldenValues);
         using var stream = new MemoryStream();
@@ -328,7 +328,7 @@ public class SpatialHexMapSerializationTests<T>
     }
 
     [Test]
-    public void WriteSpatialHexMap_NullArgumentsAreRejectedBeforeWriting()
+    public void Write_NullArgumentsAreRejectedBeforeWriting()
     {
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
@@ -340,7 +340,7 @@ public class SpatialHexMapSerializationTests<T>
     }
 
     [Test]
-    public void WriteSpatialHexMap_DefaultGeometryIsRejectedBeforeWriting()
+    public void Write_DefaultGeometryIsRejectedBeforeWriting()
     {
         var map = new CustomSpatialMap(default, default);
         using var stream = new MemoryStream();
@@ -352,7 +352,7 @@ public class SpatialHexMapSerializationTests<T>
 
     [TestCase(2, 3, Layout.EvenQ)]
     [TestCase(3, 2, Layout.OddR)]
-    public void WriteSpatialHexMap_InconsistentTopologyIsRejectedBeforeWriting(int width, int height, Layout layout)
+    public void Write_InconsistentTopologyIsRejectedBeforeWriting(int width, int height, Layout layout)
     {
         var map = new CustomSpatialMap(new HexMapTopology(width, height, layout), GoldenGeometry());
         using var stream = new MemoryStream();
@@ -382,9 +382,9 @@ public class SpatialHexMapSerializationTests<T>
 
     private void Write(BinaryWriter writer, ISpatialHexMap<T> map)
     {
-        if (_kind == 1) writer.WriteSpatialHexMap((ISpatialHexMap<bool>)(object)map);
-        else if (_kind == 2) writer.WriteSpatialHexMap((ISpatialHexMap<int>)(object)map);
-        else writer.WriteSpatialHexMap((ISpatialHexMap<float>)(object)map);
+        if (_kind == 1) writer.Write((ISpatialHexMap<bool>)(object)map);
+        else if (_kind == 2) writer.Write((ISpatialHexMap<int>)(object)map);
+        else writer.Write((ISpatialHexMap<float>)(object)map);
     }
 
     private SpatialHexMap<T> Read(BinaryReader reader, int maxCellCount = int.MaxValue) => (SpatialHexMap<T>)(_kind switch
