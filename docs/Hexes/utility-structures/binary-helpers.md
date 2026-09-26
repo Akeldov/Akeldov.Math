@@ -91,3 +91,48 @@ can hold the declared payload before allocating.
 
 The format does not include a checksum: a changed byte that is still a valid field or Boolean
 value cannot be distinguished from intentional data.
+
+## Integer maps (upcoming)
+
+The upcoming release also adds `BinaryWriter.WriteHexMap(IHexMap<int>)` and
+`BinaryReader.ReadIntHexMap(maxCellCount)`. They preserve the topology and every signed `Int32`
+value, including `Int32.MinValue`, `Int32.MaxValue`, zero, and negative values. Reading returns a
+new mutable `IntHexMap` with independent storage.
+
+```csharp
+using System.IO;
+using Akeldov.Math.Hexes;
+
+var map = new IntHexMap(
+    new HexMapTopology(3, 2, Layout.EvenQ),
+    new[] { int.MinValue, int.MaxValue, 0, -1, 0x12345678, -2 });
+
+using (var writer = new BinaryWriter(File.Create("costs.hmap")))
+{
+    writer.WriteHexMap(map);
+}
+
+IntHexMap restored;
+using (var reader = new BinaryReader(File.OpenRead("costs.hmap")))
+{
+    restored = reader.ReadIntHexMap(maxCellCount: 1_000_000);
+}
+```
+
+The writer accepts any `IHexMap<int>`, including `IntHexMap` and `HexMap<int>`. A spatial source
+contributes its topology and values; its origin and radius are not serialized. The source must
+not change during serialization.
+
+Integer records use the same [version-1 header](#version-1-format), with value kind **`2`** at
+offset 6. The payload contains `width * height` signed little-endian `Int32` values, each encoded
+as four bytes in two's-complement representation, in row-major order. The total record size is
+`16 + 4 * width * height` bytes. The existing Boolean record format remains unchanged.
+
+The same stream lifetime rules and [reading limits and errors](#reading-limits-and-errors)
+apply. `maxCellCount` limits the number of cells, not bytes: each integer cell requires four
+payload bytes. The seekable-stream payload-length check uses 64-bit arithmetic before allocating
+the value array. Truncation within a four-byte integer also causes `EndOfStreamException`.
+
+Boolean and integer records can share a stream when read in the written order with their
+respective methods. `ReadIntHexMap` rejects Boolean records, and `ReadBoolHexMap` rejects integer
+records with `InvalidDataException`; neither reader converts another value kind implicitly.
