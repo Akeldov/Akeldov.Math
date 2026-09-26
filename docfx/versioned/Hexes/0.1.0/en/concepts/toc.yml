@@ -12,6 +12,10 @@
           href: fundamentals/coordinate-systems/spatial-coordinates.md
     - name: Layouts
       href: fundamentals/layouts.md
+    - name: Topology
+      href: hex-grid-model/topology.md
+    - name: Geometry
+      href: hex-grid-model/geometry.md
     - name: Coordinate Discretization
       href: fundamentals/coordinate-discretization.md
     - name: Rotations and Transformations
@@ -19,10 +23,6 @@
 - name: Hex Grid Model
   href: hex-grid-model/index.md
   items:
-    - name: Topology
-      href: hex-grid-model/topology.md
-    - name: Geometry
-      href: hex-grid-model/geometry.md
     - name: Polyhexes
       href: hex-grid-model/polyhexes.md
 - name: Data Storage

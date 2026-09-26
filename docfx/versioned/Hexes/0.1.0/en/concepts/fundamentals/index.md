@@ -1,8 +1,8 @@
 # Fundamentals
 
-This section explains the coordinate conventions behind Akeldov.Math.Hexes. The key distinction
-is between logical hex coordinates, rectangular storage indices, and continuous world-space
-coordinates.
+This section explains the coordinate conventions, topology, and geometry behind Akeldov.Math.Hexes.
+Logical hex coordinates, rectangular storage indices, and continuous world-space coordinates
+serve different roles. Topology defines the finite grid, and geometry places it in space.
 
 ## Coordinate Systems
 
@@ -31,6 +31,23 @@ when creating topology, maps, or geometry.
 
 See [Layouts](layouts.md) for the orientation and offset conventions.
 
+## Topology
+
+<xref:Akeldov.Math.Hexes.HexMapTopology> combines a rectangular resolution with a layout. It
+defines the finite index domain without storing cell values, a world-space origin, or a hex size.
+Maps, neighborhood rasters, and algorithms can share the same immutable topology.
+
+See [Topology](../hex-grid-model/topology.md) for construction, bounds, equality, and layout
+consistency.
+
+## Geometry
+
+<xref:Akeldov.Math.Hexes.Geometry.HexMapGeometry> adds the world-space center of the zero hex and
+its radius to a topology; the apothem is derived from the radius. Use the same geometry for center
+calculations, map bounds, spatial sampling, and rasterization that must agree on placement.
+
+See [Geometry](../hex-grid-model/geometry.md) for size, origins, centers, vertices, and map bounds.
+
 ## Coordinate Discretization
 
 Keep coordinates fractional until an operation needs a specific cell. `ToQRSIndex(Layout)` rounds
@@ -56,5 +73,5 @@ translation.
 See [Rotations and Transformations](rotations-and-transformations.md) for the available rotation
 and affine transformation operations.
 
-Continue to the [Hex Grid Model](../hex-grid-model/index.md) to see how these conventions are used
-by topology, geometry, and polyhex APIs.
+Continue to the [Hex Grid Model](../hex-grid-model/index.md) to see how topology and geometry
+relate to reusable polyhex shapes, or to [Data Storage](../data-storage/index.md) for maps and rasters.

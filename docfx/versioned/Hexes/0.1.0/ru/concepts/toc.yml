@@ -12,6 +12,10 @@
           href: fundamentals/coordinate-systems/spatial-coordinates.md
     - name: Раскладки
       href: fundamentals/layouts.md
+    - name: Топология
+      href: hex-grid-model/topology.md
+    - name: Геометрия
+      href: hex-grid-model/geometry.md
     - name: Дискретизация координат
       href: fundamentals/coordinate-discretization.md
     - name: Повороты и преобразования
@@ -19,10 +23,6 @@
 - name: Модель гексагональной сетки
   href: hex-grid-model/index.md
   items:
-    - name: Топология
-      href: hex-grid-model/topology.md
-    - name: Геометрия
-      href: hex-grid-model/geometry.md
     - name: Полигексы
       href: hex-grid-model/polyhexes.md
 - name: Хранение данных

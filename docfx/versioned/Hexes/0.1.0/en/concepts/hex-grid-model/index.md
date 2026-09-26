@@ -11,44 +11,8 @@ clear which operations depend on storage dimensions, physical scale, or only cel
 | Reusable finite shape | <xref:Akeldov.Math.Hexes.Topology.Polyhex> | An immutable cell mask in local Q/R coordinates |
 | Shape construction | <xref:Akeldov.Math.Hexes.Topology.PolyhexBuilder> | A mutable mask that produces an immutable polyhex |
 
-## Topology
-
-<xref:Akeldov.Math.Hexes.HexMapTopology> is an immutable value that defines a rectangular set of
-row-and-column indices. Its non-negative width and height determine which `VectorXYInt` values are
-inside the map, while its <xref:Akeldov.Math.Hexes.Layout> determines how those indices correspond
-to the hex lattice.
-
-Topology does not store cell values or a physical hex size. Maps, neighborhood rasters, and
-algorithms can therefore share the same topology without duplicating its structural parameters.
-
-See [Topology](topology.md) for construction, bounds, equality, and layout consistency.
-
-## Geometry
-
-<xref:Akeldov.Math.Hexes.Geometry.HexMapGeometry> adds the information required to place that
-topology in Spatial2D coordinates: the world-space center of the zero hex and its radius. The
-apothem is derived from the radius. The same logical topology can consequently be placed at
-different origins or rendered at different scales.
-
-```csharp
-using Akeldov.Math.Hexes;
-using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Spatial2D;
-
-var topology = new HexMapTopology(
-    width: 12,
-    height: 8,
-    layout: Layout.OddR);
-
-var geometry = new HexMapGeometry(
-    topology,
-    origin: new VectorXY(100f, 50f),
-    radius: 10f);
-```
-
-Use one geometry value whenever center calculations, map bounds, spatial sampling, or
-rasterization must agree on topology and placement. See [Geometry](geometry.md) for origins,
-dimensions, bounds, and spatial helpers.
+[Fundamentals](../fundamentals/index.md) covers [Topology](topology.md) and [Geometry](geometry.md).
+These define the finite grid and its placement; polyhexes describe reusable cell shapes.
 
 ## Polyhexes
 
@@ -74,4 +38,4 @@ geometry wrappers.
 
 These model values describe structure rather than owning map data. Continue with
 [Data Storage](../data-storage/index.md) to choose maps and rasters built on top of them, or return
-to [Fundamentals](../fundamentals/index.md) for the coordinate and layout conventions they use.
+to [Fundamentals](../fundamentals/index.md) for coordinates, layouts, topology, and geometry.
