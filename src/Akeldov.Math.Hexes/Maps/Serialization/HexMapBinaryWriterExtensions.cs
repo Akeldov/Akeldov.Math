@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Writes hex maps to versioned binary records.
     /// </summary>
-    public static class HexMapBinaryWriterExtensions
+    public static partial class HexMapBinaryWriterExtensions
     {
         /// <summary>
         /// Writes a Boolean map's topology and values as one version-1 binary record.

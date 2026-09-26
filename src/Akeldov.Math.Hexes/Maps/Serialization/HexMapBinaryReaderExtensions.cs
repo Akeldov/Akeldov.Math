@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Reads hex maps from versioned binary records.
     /// </summary>
-    public static class HexMapBinaryReaderExtensions
+    public static partial class HexMapBinaryReaderExtensions
     {
         /// <summary>
         /// Reads one version-1 Boolean hex-map record, preserving its dimensions, layout, and values.

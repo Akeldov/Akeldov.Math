@@ -185,3 +185,74 @@ within a value causes `EndOfStreamException`.
 Boolean, integer, and floating-point records can share a stream. Read them in the written order
 using `ReadBoolHexMap`, `ReadIntHexMap`, and `ReadFloatHexMap`, respectively. A reader for another
 value kind rejects the record with `InvalidDataException`, even when both types use four-byte cells.
+
+## Spatial maps (upcoming)
+
+Use `BinaryWriter.WriteSpatialHexMap` with `ISpatialHexMap<bool>`, `ISpatialHexMap<int>`, or
+`ISpatialHexMap<float>` to preserve topology, origin, radius, and cell values. These overloads
+accept both the specialized spatial maps and generic `SpatialHexMap<T>` sources. Read them with
+`ReadSpatialBoolHexMap`, `ReadSpatialIntHexMap`, and `ReadSpatialFloatHexMap`, respectively.
+Each reader returns a new mutable specialized spatial map with independent storage.
+
+```csharp
+using System.IO;
+using Akeldov.Math.Hexes;
+using Akeldov.Math.Hexes.Geometry;
+using Akeldov.Math.Spatial2D;
+
+var geometry = new HexMapGeometry(
+    new HexMapTopology(3, 2, Layout.EvenQ),
+    new VectorXY(-10f, 20f),
+    radius: 2f);
+var map = new SpatialFloatHexMap(
+    geometry, new[] { 1.5f, -2.25f, 0f, -0f, float.PositiveInfinity, float.NaN });
+
+using (var writer = new BinaryWriter(File.Create("terrain.hmap")))
+{
+    writer.WriteSpatialHexMap(map);
+}
+
+SpatialFloatHexMap restored;
+using (var reader = new BinaryReader(File.OpenRead("terrain.hmap")))
+{
+    restored = reader.ReadSpatialFloatHexMap(maxCellCount: 1_000_000);
+}
+```
+
+`WriteSpatialHexMap` explicitly selects geometry-preserving serialization. `WriteHexMap`
+continues to write topology and values only, including when passed a spatial map directly.
+Choose the corresponding reader; topology-only readers reject spatial records and spatial readers
+reject topology-only records. Readers also reject other value kinds without converting them.
+
+### Spatial version 1 format
+
+Spatial records use the same [16-byte header](#version-1-format), with map kind **`1`** at
+offset 5. Value kind remains `1` for Boolean, `2` for Int32, or `3` for Single. Geometry follows:
+
+| Offset | Size | Field |
+|---|---|---|
+| 16 | 4 bytes | Origin.X, little-endian IEEE 754 binary32 |
+| 20 | 4 bytes | Origin.Y, little-endian IEEE 754 binary32 |
+| 24 | 4 bytes | Radius, little-endian IEEE 754 binary32 |
+| 28 | Variable | Row-major cell values, X advancing first |
+
+Origin is the center of the zero hex. Radius is the distance from a hex center to a vertex,
+in coordinate-space units. The apothem is derived from the radius when reading.
+Geometry fields retain their exact bits, including negative zero in origin coordinates.
+Cell encoding is identical to the matching topology-only format: one canonical Boolean byte,
+four Int32 bytes, or four raw Single bytes. All floating-point cell bit patterns are supported.
+The total size is `28 + width * height * bytesPerCell`. Empty spatial maps occupy 28 bytes
+and retain both dimensions and all geometry fields.
+
+### Spatial validation and streams
+
+The same [reading limits and errors](#reading-limits-and-errors) and stream lifetime rules apply.
+Readers additionally reject non-finite origin components and non-positive or non-finite radii
+with `InvalidDataException`. Geometry and cell limits are validated before value storage is
+allocated. Seekable streams are checked for the full payload with 64-bit arithmetic.
+Truncation in the header, geometry, or values causes `EndOfStreamException`.
+
+Writers reject invalid geometry with `ArgumentOutOfRangeException`, and reject a custom
+source whose `Geometry.Topology` differs from `Topology` with `ArgumentException`,
+before writing any bytes. Sources must not change during serialization.
+All six map variants can share a stream when read in the written order with the matching methods.
