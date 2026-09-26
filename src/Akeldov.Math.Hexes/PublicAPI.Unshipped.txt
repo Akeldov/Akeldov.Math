@@ -2,6 +2,8 @@
 Akeldov.Math.Hexes.HexMapBinaryReaderExtensions
 Akeldov.Math.Hexes.HexMapBinaryWriterExtensions
 static Akeldov.Math.Hexes.HexMapBinaryReaderExtensions.ReadBoolHexMap(this System.IO.BinaryReader! reader, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.HexMapBinaryReaderExtensions.ReadFloatHexMap(this System.IO.BinaryReader! reader, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.HexMapBinaryReaderExtensions.ReadIntHexMap(this System.IO.BinaryReader! reader, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.IntHexMap!
 static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteHexMap(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.IHexMap<bool>! map) -> void
+static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteHexMap(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.IHexMap<float>! map) -> void
 static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteHexMap(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.IHexMap<int>! map) -> void

@@ -21,6 +21,7 @@
 - Boolean maps provide one-step hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`) plus linear-time flood fill, component labeling, and distance transforms.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - The upcoming release adds [binary serialization of integer maps](../utility-structures/binary-helpers.md#integer-maps-upcoming), preserving topology and the full signed `Int32` value range.
+- The upcoming release adds [binary serialization of floating-point maps](../utility-structures/binary-helpers.md#floating-point-maps-upcoming), preserving topology and exact `Single` value bits, including signed zero, infinities, and NaN payloads.
 - `MapValues` transforms either each source value or each cell's partial six-neighbor set. Boolean,
   integer, and floating-point selectors return the matching specialized map; other selectors return
   `HexMap<TResult>`. Spatial sources preserve their geometry.

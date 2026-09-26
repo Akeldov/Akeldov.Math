@@ -8,5 +8,6 @@ namespace Akeldov.Math.Hexes
         internal const byte TopologyMapKind = 0;
         internal const byte BooleanValueKind = 1;
         internal const byte Int32ValueKind = 2;
+        internal const byte SingleValueKind = 3;
     }
 }

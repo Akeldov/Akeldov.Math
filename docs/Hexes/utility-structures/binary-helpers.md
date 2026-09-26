@@ -136,3 +136,52 @@ the value array. Truncation within a four-byte integer also causes `EndOfStreamE
 Boolean and integer records can share a stream when read in the written order with their
 respective methods. `ReadIntHexMap` rejects Boolean records, and `ReadBoolHexMap` rejects integer
 records with `InvalidDataException`; neither reader converts another value kind implicitly.
+
+## Floating-point maps (upcoming)
+
+The upcoming release adds `BinaryWriter.WriteHexMap(IHexMap<float>)` and
+`BinaryReader.ReadFloatHexMap(maxCellCount)`. They preserve the topology and the raw bits of every
+`Single` value. Reading returns a new mutable `FloatHexMap` with independent storage.
+
+```csharp
+using System.IO;
+using Akeldov.Math.Hexes;
+
+var map = new FloatHexMap(
+    new HexMapTopology(3, 2, Layout.EvenQ),
+    new[] { 1.5f, -2.25f, 0f, -0f, float.PositiveInfinity, float.NaN });
+
+using (var writer = new BinaryWriter(File.Create("heights.hmap")))
+{
+    writer.WriteHexMap(map);
+}
+
+FloatHexMap restored;
+using (var reader = new BinaryReader(File.OpenRead("heights.hmap")))
+{
+    restored = reader.ReadFloatHexMap(maxCellCount: 1_000_000);
+}
+```
+
+The writer accepts any `IHexMap<float>`, including `FloatHexMap` and `HexMap<float>`. A spatial
+source contributes its topology and values; its origin and radius are not serialized. The source
+must not change during serialization.
+
+Floating-point records use the same [version-1 header](#version-1-format), with value kind **`3`**
+at offset 6. The payload contains `width * height` IEEE 754 binary32 values, each stored as four
+little-endian bytes, in row-major order. The total record size is `16 + 4 * width * height` bytes.
+The Boolean and integer record formats remain unchanged.
+
+Serialization performs no rounding, normalization, or arithmetic conversion. Both signs of zero,
+subnormal values, finite extrema, positive and negative infinity, and NaN signs and payloads are
+preserved. All 32-bit value patterns are accepted. Use `BitConverter.SingleToInt32Bits` when
+comparing restored bits; floating-point equality cannot distinguish signed zeros or NaN payloads.
+
+The same stream lifetime rules and [reading limits and errors](#reading-limits-and-errors) apply.
+`maxCellCount` limits cells, not bytes; each cell requires four payload bytes. Seekable streams
+are checked for the full payload using 64-bit arithmetic before allocation. A record truncated
+within a value causes `EndOfStreamException`.
+
+Boolean, integer, and floating-point records can share a stream. Read them in the written order
+using `ReadBoolHexMap`, `ReadIntHexMap`, and `ReadFloatHexMap`, respectively. A reader for another
+value kind rejects the record with `InvalidDataException`, even when both types use four-byte cells.
