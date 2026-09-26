@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>1.2.0</Version>
+		<Version>1.2.1</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2026 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry and vector math with linear, circular, Bezier, B-spline, and NURBS curves; pairwise curve intersection APIs; contours and regions; rasterization and imaging; spatial sampling and partitioning; and influence fields.</Description>
-		<PackageReleaseNotes>Added B-spline and NURBS curve types with point evaluation in normalized, knot, and arc-length coordinates, plus flattening, projection, distance, and contour support. Added exact point-intersection APIs between B-splines, NURBS curves, and all existing concrete curve types, including spline-to-spline combinations. All changes are additive and backward compatible with 1.1.0.</PackageReleaseNotes>
+		<PackageReleaseNotes>Maintenance release: explicitly declared sequential layout for point, vector, line, circle, Bezier, and curve projection structs. Cleaned up using directives and formatting, and suppressed namespace warnings for intentionally grouped source files. Public API signatures and geometry behavior remain unchanged from 1.2.0.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;b-spline;nurbs;contours;regions;rasterization;imaging;perlin-noise;gaussian-blur;sampling;voronoi;delaunay;poisson-disk</PackageTags>
