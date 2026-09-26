@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Akeldov.Math.Spatial2D.Fields
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     /// <summary>
     /// Samples floating-point values using barycentric interpolation over nearby influence samples.
