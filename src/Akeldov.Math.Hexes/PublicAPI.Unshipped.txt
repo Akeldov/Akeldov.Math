@@ -1,6 +1,7 @@
 #nullable enable
 Akeldov.Math.Hexes.HexMapBinaryReaderExtensions
 Akeldov.Math.Hexes.HexMapBinaryWriterExtensions
+Akeldov.Math.Hexes.HexMapFile
 static Akeldov.Math.Hexes.HexMapBinaryReaderExtensions.ReadBoolHexMap(this System.IO.BinaryReader! reader, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.HexMapBinaryReaderExtensions.ReadFloatHexMap(this System.IO.BinaryReader! reader, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.FloatHexMap!
 static Akeldov.Math.Hexes.HexMapBinaryReaderExtensions.ReadIntHexMap(this System.IO.BinaryReader! reader, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.IntHexMap!
@@ -13,3 +14,15 @@ static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteHexMap(this System.I
 static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteSpatialHexMap(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> void
 static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteSpatialHexMap(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.ISpatialHexMap<float>! map) -> void
 static Akeldov.Math.Hexes.HexMapBinaryWriterExtensions.WriteSpatialHexMap(this System.IO.BinaryWriter! writer, Akeldov.Math.Hexes.ISpatialHexMap<int>! map) -> void
+static Akeldov.Math.Hexes.HexMapFile.ReadBoolHexMap(string! path, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.HexMapFile.ReadFloatHexMap(string! path, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.FloatHexMap!
+static Akeldov.Math.Hexes.HexMapFile.ReadIntHexMap(string! path, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.IntHexMap!
+static Akeldov.Math.Hexes.HexMapFile.ReadSpatialBoolHexMap(string! path, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.HexMapFile.ReadSpatialFloatHexMap(string! path, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.SpatialFloatHexMap!
+static Akeldov.Math.Hexes.HexMapFile.ReadSpatialIntHexMap(string! path, int maxCellCount = 2147483647) -> Akeldov.Math.Hexes.SpatialIntHexMap!
+static Akeldov.Math.Hexes.HexMapFile.Write(string! path, Akeldov.Math.Hexes.IHexMap<bool>! map) -> void
+static Akeldov.Math.Hexes.HexMapFile.Write(string! path, Akeldov.Math.Hexes.IHexMap<float>! map) -> void
+static Akeldov.Math.Hexes.HexMapFile.Write(string! path, Akeldov.Math.Hexes.IHexMap<int>! map) -> void
+static Akeldov.Math.Hexes.HexMapFile.Write(string! path, Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> void
+static Akeldov.Math.Hexes.HexMapFile.Write(string! path, Akeldov.Math.Hexes.ISpatialHexMap<float>! map) -> void
+static Akeldov.Math.Hexes.HexMapFile.Write(string! path, Akeldov.Math.Hexes.ISpatialHexMap<int>! map) -> void

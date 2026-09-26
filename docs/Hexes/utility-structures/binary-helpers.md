@@ -256,3 +256,43 @@ Writers reject invalid geometry with `ArgumentOutOfRangeException`, and reject a
 source whose `Geometry.Topology` differs from `Topology` with `ArgumentException`,
 before writing any bytes. Sources must not change during serialization.
 All six map variants can share a stream when read in the written order with the matching methods.
+
+## Map files (upcoming)
+
+`HexMapFile` opens and closes files for all six map variants, using the same binary serializers:
+
+```csharp
+using Akeldov.Math.Hexes;
+
+HexMapFile.Write("mask.hmap", boolMap);
+HexMapFile.Write("costs.hmap", intMap);
+HexMapFile.Write("heights.hmap", floatMap);
+HexMapFile.Write("spatial-mask.hmap", spatialBoolMap);
+HexMapFile.Write("spatial-costs.hmap", spatialIntMap);
+HexMapFile.Write("spatial-heights.hmap", spatialFloatMap);
+
+BoolHexMap mask = HexMapFile.ReadBoolHexMap("mask.hmap");
+IntHexMap costs = HexMapFile.ReadIntHexMap("costs.hmap");
+FloatHexMap heights = HexMapFile.ReadFloatHexMap("heights.hmap");
+SpatialBoolHexMap spatialMask = HexMapFile.ReadSpatialBoolHexMap("spatial-mask.hmap");
+SpatialIntHexMap spatialCosts = HexMapFile.ReadSpatialIntHexMap("spatial-costs.hmap");
+SpatialFloatHexMap spatialHeights = HexMapFile.ReadSpatialFloatHexMap(
+    "spatial-heights.hmap", maxCellCount: 1_000_000);
+```
+
+`Write` has overloads for `IHexMap<bool/int/float>` and `ISpatialHexMap<bool/int/float>`.
+A concrete spatial type or an `ISpatialHexMap<T>` variable selects the overload that preserves
+origin and radius. If a spatial source is passed through an `IHexMap<T>` variable, the selected
+overload writes topology and values only. Overload selection uses the compile-time type.
+
+Paths may be absolute or relative. Relative paths are resolved against the process's current
+working directory, which may differ from the executable's directory. Parent directories must
+already exist. Writing creates a file or truncates an existing one; it does not append.
+Writes are not atomic, so an error after opening the file can leave a partial record.
+Null maps and invalid spatial geometry are rejected before opening the destination file.
+
+Each reader returns a new mutable specialized map, reads the first record, and ignores any
+trailing data. Every reader supports the optional `maxCellCount` limit with the same meaning
+and default as the stream methods. Files are closed on both success and failure; successful
+writes are flushed before returning. Serialization and file-system exceptions propagate
+to the caller. Use the stream extensions when reading or writing multiple records in one file.
