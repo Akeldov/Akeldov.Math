@@ -1,8 +1,8 @@
+using System;
+using System.Runtime.InteropServices;
+
 namespace Akeldov.Math.Spatial2D.Curves
 {
-    using System;
-    using System.Runtime.InteropServices;
-
     /// <summary>
     /// Represents the result of projecting a point onto a parameterized curve.
     /// </summary>
