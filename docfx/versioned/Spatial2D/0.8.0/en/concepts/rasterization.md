@@ -206,18 +206,9 @@ types when supplied with a suitable background and blending function.
 
 ## Choose colors and export
 
-Spatial2D provides four image cell types:
-
-| Cell type | Channels | Suitable for |
-|---|---|---|
-| <xref:Akeldov.Math.Spatial2D.Imaging.Gray8BitColor> | 8-bit grayscale | Masks and compact scalar images. |
-| <xref:Akeldov.Math.Spatial2D.Imaging.Gray16BitColor> | 16-bit grayscale | Height or distance values that need more precision. |
-| <xref:Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor> | 8 bits per RGBA channel | Ordinary color images with alpha. |
-| <xref:Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor> | 16 bits per RGBA channel | High-precision composition and gradients. |
-
-`SaveAsPng` supports all four color types and writes to a path or stream. `SaveAsBmp` supports the
-8-bit grayscale and 8-bit RGBA types. Export consumes `IRaster<TColor>`: it writes resolution and
-cell values, while world-space `Geometry` remains application metadata.
+Use a grayscale or RGBA cell type to produce an image, then export the color raster with
+`SaveAsPng` or `SaveAsBmp`. See [Imaging](imaging.md) for channel ranges, 8-bit and 16-bit precision,
+the difference between interpolation and alpha composition, and supported export formats.
 
 ## Practical rules
 
@@ -225,8 +216,6 @@ cell values, while world-space `Geometry` remains application metadata.
   remain visible.
 - Treat `RasterGeometry` as part of the data contract when raster values must map back to space.
 - Use signed distance only for sources with meaningful inside/outside semantics.
-- Prefer 16-bit values while composing or preserving scalar precision; reduce to 8-bit only when
-  the output format or memory budget calls for it.
 - Remember that constructors retain their value arrays. Copy an array first when later mutations
   by the original owner must not affect the raster.
 

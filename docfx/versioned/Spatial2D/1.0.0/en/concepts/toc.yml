@@ -42,3 +42,5 @@
       href: partitioning/voronoi.md
 - name: Rasterization
   href: rasterization.md
+- name: Imaging
+  href: imaging.md
