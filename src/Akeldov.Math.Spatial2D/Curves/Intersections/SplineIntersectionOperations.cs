@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
