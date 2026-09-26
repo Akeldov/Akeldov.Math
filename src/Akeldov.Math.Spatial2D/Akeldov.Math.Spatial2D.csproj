@@ -9,7 +9,7 @@
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
 		<Version>1.2.1</Version>
 		<Authors>Stanislav Akeldov</Authors>
-		<Copyright>Copyright (c) 2026 Stanislav Akeldov</Copyright>
+		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry and vector math with linear, circular, Bezier, B-spline, and NURBS curves; pairwise curve intersection APIs; contours and regions; rasterization and imaging; spatial sampling and partitioning; and influence fields.</Description>
 		<PackageReleaseNotes>Maintenance release: explicitly declared sequential layout for point, vector, line, circle, Bezier, and curve projection structs. Cleaned up using directives and formatting, and suppressed namespace warnings for intentionally grouped source files. Public API signatures and geometry behavior remain unchanged from 1.2.0.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

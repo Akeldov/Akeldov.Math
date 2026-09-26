@@ -1,5 +1,15 @@
 # Agent Notes
 
+## Spatial2D and Hexes Copyright
+
+Keep the following metadata unchanged in the Spatial2D and Hexes project files:
+
+```xml
+<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
+```
+
+Do not update the year during release preparation or routine maintenance.
+
 ## Small Validation Guards
 
 Do not extract small argument or state checks into separate helper methods just for reuse.
