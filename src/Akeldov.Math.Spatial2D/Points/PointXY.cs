@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D
 {
     /// <summary>
     /// Represents a two-dimensional point with single-precision floating-point coordinates.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct PointXY : IPointDistanceProvider, IHasPosition2D, IEquatable<PointXY>
     {
         /// <summary>

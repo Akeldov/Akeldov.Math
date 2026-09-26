@@ -2,6 +2,7 @@ using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -12,6 +13,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Length and length-coordinate operations use a fixed internal polyline approximation
     /// of the curve. Ray intersections are found by solving the original curve polynomial.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct QuadraticBezier : IContourPath, IEquatable<QuadraticBezier>
     {
         private readonly PointXY _startPoint;

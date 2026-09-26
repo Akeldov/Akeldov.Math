@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D
 {
     /// <summary>
     /// Represents a two-dimensional vector with single-precision floating-point components.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct VectorXY : IEquatable<VectorXY>
     {
         /// <summary>

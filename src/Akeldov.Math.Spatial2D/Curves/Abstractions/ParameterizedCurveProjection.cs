@@ -1,10 +1,12 @@
 namespace Akeldov.Math.Spatial2D.Curves
 {
     using System;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents the result of projecting a point onto a parameterized curve.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct ParameterizedCurveProjection
     {
         /// <summary>

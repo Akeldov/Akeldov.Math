@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -9,6 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value represents the horizontal line <c>y = 0</c>.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct Line : ICurve, IRightwardCrossingProvider, IEquatable<Line>
     {
         private readonly float _equationA;
