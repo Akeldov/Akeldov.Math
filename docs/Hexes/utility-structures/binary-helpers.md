@@ -20,3 +20,74 @@ Binary helpers provide shared serialization support for hex-grid utility values.
 
 - Null readers and writers are rejected.
 - Invalid serialized enum values are rejected.
+
+## Boolean maps (upcoming)
+
+The upcoming release adds `BinaryWriter.WriteHexMap(IHexMap<bool>)` and
+`BinaryReader.ReadBoolHexMap(maxCellCount)`. Import `Akeldov.Math.Hexes` to use these extensions.
+They preserve the map's width, height, layout, and Boolean values. Reading returns a new mutable
+`BoolHexMap` with independent storage.
+
+```csharp
+using System.IO;
+using Akeldov.Math.Hexes;
+
+var map = new BoolHexMap(
+    new HexMapTopology(3, 2, Layout.EvenQ),
+    new[] { true, false, false, true, true, false });
+
+using (var writer = new BinaryWriter(File.Create("mask.hmap")))
+{
+    writer.WriteHexMap(map);
+}
+
+BoolHexMap restored;
+using (var reader = new BinaryReader(File.OpenRead("mask.hmap")))
+{
+    restored = reader.ReadBoolHexMap(maxCellCount: 1_000_000);
+}
+```
+
+The writer accepts any `IHexMap<bool>`, including `BoolHexMap` and `HexMap<bool>`. This operation
+saves topology and values only: if a spatial map is supplied through the interface, its origin
+and radius are not included. The source must not change during serialization.
+
+The extensions operate at the current stream position and leave the reader, writer, and stream
+open. They support streams without seeking. Each successful read consumes exactly one record,
+so multiple maps and other application data can share a stream. The caller controls flushing and
+disposal; a failed read does not restore the stream position.
+
+### Version 1 format
+
+The format version is independent of the NuGet package version. The header is exactly 16 bytes:
+
+| Offset | Size | Field |
+|---|---|---|
+| 0 | 4 bytes | ASCII signature `HMAP`, without a string-length prefix |
+| 4 | 1 byte | Format version: `1` |
+| 5 | 1 byte | Map kind: `0` for topology and values |
+| 6 | 1 byte | Value kind: `1` for Boolean values |
+| 7 | 4 bytes | Width, a non-negative little-endian `Int32` |
+| 11 | 4 bytes | Height, a non-negative little-endian `Int32` |
+| 15 | 1 byte | Layout: `0` = `OddR`, `1` = `EvenR`, `2` = `OddQ`, `3` = `EvenQ` |
+
+The header is followed by `width * height` bytes, each exactly `0` for false or `1` for true.
+Values are stored in row-major order: X advances first, and `(x, y)` maps to `y * width + x`.
+There is no padding or trailing marker. Empty maps have no payload and preserve their original
+dimensions, including `0 x N` and `N x 0`.
+
+### Reading limits and errors
+
+`maxCellCount` defaults to `Int32.MaxValue`. Pass an application-specific limit to bound the
+value-array allocation; zero accepts only empty maps. The reader validates the header and cell
+count before allocating storage. For seekable streams, it also checks that the remaining bytes
+can hold the declared payload before allocating.
+
+- Null readers, writers, and maps cause `ArgumentNullException`.
+- A negative `maxCellCount` causes `ArgumentOutOfRangeException`.
+- Invalid signatures, versions, kinds, dimensions, layouts, Boolean bytes, and excessive cell
+  counts cause `InvalidDataException`.
+- Incomplete records cause `EndOfStreamException`.
+
+The format does not include a checksum: a changed byte that is still a valid field or Boolean
+value cannot be distinguished from intentional data.

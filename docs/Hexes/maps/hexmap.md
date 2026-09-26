@@ -17,6 +17,7 @@
 ## Specialization
 
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
+- The upcoming release adds [binary serialization of Boolean maps](../utility-structures/binary-helpers.md#boolean-maps-upcoming), preserving topology and values in a versioned format.
 - Boolean maps provide one-step hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`) plus linear-time flood fill, component labeling, and distance transforms.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - `MapValues` transforms either each source value or each cell's partial six-neighbor set. Boolean,
