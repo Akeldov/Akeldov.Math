@@ -18,6 +18,7 @@ The library is organized around practical hex-grid workflows.
 
 - Rectangular map topology with edge, vertex, pair, triplet, and six-neighbor adjacency helpers.
 - Mutable `HexMap<T>` and geometry-aware `SpatialHexMap<T>` value storage.
+- Versioned binary stream and file serialization for Boolean, integer, and floating-point maps, including spatial geometry and exact floating-point bits.
 - Dedicated Boolean, integer, and floating-point maps in topology-only and geometry-preserving spatial variants, with copy conversions between them.
 - Generic and specialized value mapping from individual cells or partial six-neighbor sets, with spatial geometry preserved when present.
 - Element-wise, scalar, mixed numeric, and spatial/non-spatial arithmetic, remainder, comparison-mask, clamping, and range-rescaling operations for numeric maps.

@@ -21,9 +21,9 @@ Binary helpers provide shared serialization support for hex-grid utility values.
 - Null readers and writers are rejected.
 - Invalid serialized enum values are rejected.
 
-## Boolean maps (upcoming)
+## Boolean maps
 
-The upcoming release adds `BinaryWriter.Write(IHexMap<bool>)` and
+Version 0.6.0 adds `BinaryWriter.Write(IHexMap<bool>)` and
 `BinaryReader.ReadBoolHexMap(maxCellCount)`. Import `Akeldov.Math.Hexes` to use these extensions.
 They preserve the map's width, height, layout, and Boolean values. Reading returns a new mutable
 `BoolHexMap` with independent storage.
@@ -92,9 +92,9 @@ can hold the declared payload before allocating.
 The format does not include a checksum: a changed byte that is still a valid field or Boolean
 value cannot be distinguished from intentional data.
 
-## Integer maps (upcoming)
+## Integer maps
 
-The upcoming release also adds `BinaryWriter.Write(IHexMap<int>)` and
+Version 0.6.0 adds `BinaryWriter.Write(IHexMap<int>)` and
 `BinaryReader.ReadIntHexMap(maxCellCount)`. They preserve the topology and every signed `Int32`
 value, including `Int32.MinValue`, `Int32.MaxValue`, zero, and negative values. Reading returns a
 new mutable `IntHexMap` with independent storage.
@@ -137,9 +137,9 @@ Boolean and integer records can share a stream when read in the written order wi
 respective methods. `ReadIntHexMap` rejects Boolean records, and `ReadBoolHexMap` rejects integer
 records with `InvalidDataException`; neither reader converts another value kind implicitly.
 
-## Floating-point maps (upcoming)
+## Floating-point maps
 
-The upcoming release adds `BinaryWriter.Write(IHexMap<float>)` and
+Version 0.6.0 adds `BinaryWriter.Write(IHexMap<float>)` and
 `BinaryReader.ReadFloatHexMap(maxCellCount)`. They preserve the topology and the raw bits of every
 `Single` value. Reading returns a new mutable `FloatHexMap` with independent storage.
 
@@ -186,7 +186,7 @@ Boolean, integer, and floating-point records can share a stream. Read them in th
 using `ReadBoolHexMap`, `ReadIntHexMap`, and `ReadFloatHexMap`, respectively. A reader for another
 value kind rejects the record with `InvalidDataException`, even when both types use four-byte cells.
 
-## Spatial maps (upcoming)
+## Spatial maps
 
 Use `BinaryWriter.Write` with `ISpatialHexMap<bool>`, `ISpatialHexMap<int>`, or
 `ISpatialHexMap<float>` to preserve topology, origin, radius, and cell values. These overloads
@@ -258,7 +258,7 @@ source whose `Geometry.Topology` differs from `Topology` with `ArgumentException
 before writing any bytes. Sources must not change during serialization.
 All six map variants can share a stream when read in the written order with the matching methods.
 
-## Map files (upcoming)
+## Map files
 
 `HexMapFile` opens and closes files for all six map variants, using the same binary serializers:
 

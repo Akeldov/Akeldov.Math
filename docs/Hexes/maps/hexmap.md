@@ -17,11 +17,11 @@
 ## Specialization
 
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
-- The upcoming release adds [binary serialization of Boolean maps](../utility-structures/binary-helpers.md#boolean-maps-upcoming), preserving topology and values in a versioned format.
+- Version 0.6.0 adds [binary serialization of Boolean maps](../utility-structures/binary-helpers.md#boolean-maps), preserving topology and values in a versioned format.
 - Boolean maps provide one-step hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`) plus linear-time flood fill, component labeling, and distance transforms.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
-- The upcoming release adds [binary serialization of integer maps](../utility-structures/binary-helpers.md#integer-maps-upcoming), preserving topology and the full signed `Int32` value range.
-- The upcoming release adds [binary serialization of floating-point maps](../utility-structures/binary-helpers.md#floating-point-maps-upcoming), preserving topology and exact `Single` value bits, including signed zero, infinities, and NaN payloads.
+- Version 0.6.0 adds [binary serialization of integer maps](../utility-structures/binary-helpers.md#integer-maps), preserving topology and the full signed `Int32` value range.
+- Version 0.6.0 adds [binary serialization of floating-point maps](../utility-structures/binary-helpers.md#floating-point-maps), preserving topology and exact `Single` value bits, including signed zero, infinities, and NaN payloads.
 - `MapValues` transforms either each source value or each cell's partial six-neighbor set. Boolean,
   integer, and floating-point selectors return the matching specialized map; other selectors return
   `HexMap<TResult>`. Spatial sources preserve their geometry.
@@ -48,8 +48,8 @@
   `ToSpatialIntHexMap()` truncates spatial floating-point values toward zero; both preserve geometry.
 - `ToValueMask(values)` converts an integer map into a Boolean mask that selects the listed values.
 - `SpatialBoolHexMap`, `SpatialIntHexMap`, and `SpatialFloatHexMap` provide the same operator surface while preserving `HexMapGeometry` in every result.
-- The upcoming release adds [binary serialization of spatial maps](../utility-structures/binary-helpers.md#spatial-maps-upcoming) through `Write` and matching readers, preserving topology, origin, radius, and Boolean, integer, or floating-point values.
-- `HexMapFile` provides [file reading and writing](../utility-structures/binary-helpers.md#map-files-upcoming) for all six map variants, accepting absolute and relative paths.
+- Version 0.6.0 adds [binary serialization of spatial maps](../utility-structures/binary-helpers.md#spatial-maps) through `Write` and matching readers, preserving topology, origin, radius, and Boolean, integer, or floating-point values.
+- `HexMapFile` provides [file reading and writing](../utility-structures/binary-helpers.md#map-files) for all six map variants, accepting absolute and relative paths.
 - Cross-operators combine one spatial specialized map with one topology-only specialized map in either operand order; the result is spatial and retains the spatial operand's geometry.
 
 All specialized maps inherit `HexMap<TValue>`, retain the same topology-backed indexing contract,
