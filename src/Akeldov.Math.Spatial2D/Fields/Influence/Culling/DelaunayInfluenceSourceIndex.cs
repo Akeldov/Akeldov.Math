@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Fields
 {
@@ -550,6 +551,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             public float DistanceSquared { get; }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct Triangle
         {
             private readonly PointXY _circumcenter;
