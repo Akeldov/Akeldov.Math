@@ -125,7 +125,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             var nearest = GetNearestSamples(sources, point, k, sampleA, sampleB, sampleC);
 
             for (int i = 0; i < k; i++)
+            {
                 for (int j = i + 1; j < k; j++)
+                {
                     for (int m = j + 1; m < k; m++)
                     {
                         var a = nearest[i];
@@ -143,6 +145,8 @@ namespace Akeldov.Math.Spatial2D.Fields
                                    b.Value * lB +
                                    c.Value * lC;
                     }
+                }
+            }
 
             float bestPenalty = float.PositiveInfinity;
             var bestA = nearest[0];
@@ -151,7 +155,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             float bestLA = 0, bestLB = 0, bestLC = 0;
 
             for (int i = 0; i < k; i++)
+            {
                 for (int j = i + 1; j < k; j++)
+                {
                     for (int m = j + 1; m < k; m++)
                     {
                         var a = nearest[i];
@@ -186,6 +192,8 @@ namespace Akeldov.Math.Spatial2D.Fields
                             bestLC = lC;
                         }
                     }
+                }
+            }
 
             if (float.IsPositiveInfinity(bestPenalty))
                 return LerpOnSegment(nearest[0], nearest[1], point);
