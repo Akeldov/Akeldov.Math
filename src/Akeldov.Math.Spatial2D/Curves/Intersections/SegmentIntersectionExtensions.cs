@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides exact intersection calculations for <see cref="Segment"/>.
     /// </summary>
@@ -13,8 +14,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="source">The source segment.</param>
         /// <param name="ray">The ray to intersect with the source segment.</param>
         /// <returns>A new mutable list owned by the caller. A continuous overlap and intersections behind the ray return an empty list.</returns>
-        public static List<PointXY> GetPointIntersections(this Segment source, Ray ray) =>
-            RayIntersectionExtensions.GetPointIntersections(ray, source);
+
+        public static List<PointXY> GetPointIntersections(this Segment source, Ray ray)
+        {
+            return RayIntersectionExtensions.GetPointIntersections(ray, source);
+        }
 
         /// <summary>
         /// Returns isolated point intersections between a segment and a line using exact comparisons.
@@ -377,7 +381,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="line">The line that defines the signed-distance function.</param>
         /// <param name="point">The point to evaluate.</param>
         /// <returns>The signed distance in world coordinate units.</returns>
-        private static float GetSignedDistance(Line line, PointXY point) =>
-            line.EquationA * point.X + line.EquationB * point.Y + line.EquationC;
+        private static float GetSignedDistance(Line line, PointXY point)
+        {
+            return line.EquationA * point.X + line.EquationB * point.Y + line.EquationC;
+        }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }
