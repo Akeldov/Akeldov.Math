@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides exact intersection calculations for <see cref="Ray"/>.
     /// </summary>
@@ -330,4 +331,5 @@ namespace Akeldov.Math.Spatial2D.Curves
             return overlapEnd > overlapStart;
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

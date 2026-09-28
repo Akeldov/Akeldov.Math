@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides exact-curve intersection calculations for <see cref="BSpline"/>.
     /// </summary>
@@ -100,4 +101,5 @@ namespace Akeldov.Math.Spatial2D.Curves
                 SplineIntersectionOperations.CreateSpans(curve),
                 intersections);
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

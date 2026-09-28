@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides intersection calculations for <see cref="QuadraticBezier"/>.
     /// </summary>
@@ -565,4 +566,5 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static double GetSignedDistance(Line line, PointXY point) =>
             (double)line.EquationA * point.X + (double)line.EquationB * point.Y + line.EquationC;
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

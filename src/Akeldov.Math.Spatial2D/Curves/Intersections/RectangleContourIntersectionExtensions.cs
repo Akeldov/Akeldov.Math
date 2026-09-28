@@ -3,6 +3,7 @@ using Akeldov.Math.Spatial2D.Contours;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides exact intersection calculations for <see cref="RectangleContour"/>.
     /// </summary>
@@ -47,4 +48,5 @@ namespace Akeldov.Math.Spatial2D.Curves
             return RayIntersectionExtensions.OrderPointIntersections(ray, intersections);
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

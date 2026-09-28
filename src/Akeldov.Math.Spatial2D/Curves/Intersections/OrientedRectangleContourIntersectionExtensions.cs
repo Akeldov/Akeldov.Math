@@ -4,6 +4,7 @@ using Akeldov.Math.Spatial2D.Contours;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides exact intersection calculations for <see cref="OrientedRectangleContour"/>.
     /// </summary>
@@ -190,4 +191,5 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static double Dot(VectorXY left, VectorXY right) =>
             (double)left.X * right.X + (double)left.Y * right.Y;
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

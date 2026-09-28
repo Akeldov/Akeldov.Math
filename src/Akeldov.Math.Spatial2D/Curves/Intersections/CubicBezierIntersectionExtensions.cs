@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides intersection calculations for <see cref="CubicBezier"/>.
     /// </summary>
@@ -761,4 +762,5 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static double CubeRoot(double value) =>
             value < 0.0 ? -System.Math.Pow(-value, 1.0 / 3.0) : System.Math.Pow(value, 1.0 / 3.0);
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

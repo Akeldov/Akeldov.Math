@@ -3,6 +3,7 @@ using Akeldov.Math.Spatial2D.Contours;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides exact intersection calculations for <see cref="ParameterizedRectangleContour"/>.
     /// </summary>
@@ -17,4 +18,5 @@ namespace Akeldov.Math.Spatial2D.Curves
         public static List<PointXY> GetPointIntersections(this ParameterizedRectangleContour source, Ray ray) =>
             RectangleContourIntersectionExtensions.GetPointIntersections((RectangleContour)source, ray);
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides intersection calculations for <see cref="ParameterizedArc"/>.
     /// </summary>
@@ -174,4 +175,5 @@ namespace Akeldov.Math.Spatial2D.Curves
             return coordinate < 0f ? coordinate + 2f * System.MathF.PI : coordinate;
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }
