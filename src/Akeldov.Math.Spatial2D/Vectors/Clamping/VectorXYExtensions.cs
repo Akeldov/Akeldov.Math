@@ -25,8 +25,8 @@ namespace Akeldov.Math.Spatial2D
             if (max.Y < min.Y)
                 throw new ArgumentException($"Cannot clamp value: min.Y ({min.Y}) must be less than or equal to max.Y ({max.Y}).");
 
-            var x = MathF.Min(MathF.Max(source.X, min.X), max.X);
-            var y = MathF.Min(MathF.Max(source.Y, min.Y), max.Y);
+            float x = MathF.Min(MathF.Max(source.X, min.X), max.X);
+            float y = MathF.Min(MathF.Max(source.Y, min.Y), max.Y);
 
             return new VectorXY(x, y);
         }
@@ -40,8 +40,8 @@ namespace Akeldov.Math.Spatial2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY ClampMin(this VectorXY source, VectorXY min)
         {
-            var x = MathF.Max(source.X, min.X);
-            var y = MathF.Max(source.Y, min.Y);
+            float x = MathF.Max(source.X, min.X);
+            float y = MathF.Max(source.Y, min.Y);
 
             return new VectorXY(x, y);
         }
@@ -55,8 +55,8 @@ namespace Akeldov.Math.Spatial2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY ClampMax(this VectorXY source, VectorXY max)
         {
-            var x = MathF.Min(source.X, max.X);
-            var y = MathF.Min(source.Y, max.Y);
+            float x = MathF.Min(source.X, max.X);
+            float y = MathF.Min(source.Y, max.Y);
 
             return new VectorXY(x, y);
         }
@@ -70,8 +70,8 @@ namespace Akeldov.Math.Spatial2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY ClampMin(this VectorXY source, VectorXYInt min)
         {
-            var x = MathF.Max(source.X, min.X);
-            var y = MathF.Max(source.Y, min.Y);
+            float x = MathF.Max(source.X, min.X);
+            float y = MathF.Max(source.Y, min.Y);
 
             return new VectorXY(x, y);
         }
@@ -85,8 +85,8 @@ namespace Akeldov.Math.Spatial2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY ClampMax(this VectorXY source, VectorXYInt max)
         {
-            var x = MathF.Min(source.X, max.X);
-            var y = MathF.Min(source.Y, max.Y);
+            float x = MathF.Min(source.X, max.X);
+            float y = MathF.Min(source.Y, max.Y);
 
             return new VectorXY(x, y);
         }

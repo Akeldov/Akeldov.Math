@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Generates two-dimensional Poisson disk point samples.
     /// </summary>
@@ -121,4 +122,5 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             return minimalDistance;
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

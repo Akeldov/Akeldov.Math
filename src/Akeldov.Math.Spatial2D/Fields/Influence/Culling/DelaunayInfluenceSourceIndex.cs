@@ -781,6 +781,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             private static int GetCellCount(int triangleCount)
             {
+
                 int cellCount = (int)MathF.Ceiling(MathF.Sqrt(triangleCount));
 
                 if (cellCount < 4)

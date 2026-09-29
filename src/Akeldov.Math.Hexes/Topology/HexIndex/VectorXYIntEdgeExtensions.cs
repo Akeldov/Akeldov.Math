@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -19,11 +18,11 @@ namespace Akeldov.Math.Hexes.Topology
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt GetAdjacent(this VectorXYInt index, HexEdge hexEdge, Layout layout)
         {
-            var axisIsEven = layout.IsPointyTop()
+            bool axisIsEven = layout.IsPointyTop()
                 ? (index.Y & 1) == 0
                 : (index.X & 1) == 0;
 
-            var relativeNeighborIndex = axisIsEven.GetRelativeOffset(hexEdge, layout);
+            VectorXYInt relativeNeighborIndex = axisIsEven.GetRelativeOffset(hexEdge, layout);
             return index + relativeNeighborIndex;
         }
 
