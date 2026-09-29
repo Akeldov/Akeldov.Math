@@ -12,6 +12,8 @@ dotnet_diagnostic.CA1510.severity = none
 dotnet_diagnostic.CA1510.severity = none
 # IDE0008: Use explicit type
 csharp_style_var_when_type_is_apparent = false
+# IDE0011: Add braces
+csharp_prefer_braces = when_multiline
 # IDE0090: Do not prefer target-typed new expressions.
 csharp_style_implicit_object_creation_when_type_is_apparent = false
 # IDE0130: Source folders organize files independently of public namespaces.
