@@ -19,8 +19,10 @@ namespace Akeldov.Math.Spatial2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(this float value, float min, float max)
         {
+#pragma warning disable MA0015 // Specify the parameter name in ArgumentException
             if (max < min)
                 throw new ArgumentException($"Cannot clamp value: min ({min}) must be less than or equal to max ({max}).");
+#pragma warning restore MA0015 // Specify the parameter name in ArgumentException
 
             return MathF.Min(MathF.Max(value, min), max);
         }

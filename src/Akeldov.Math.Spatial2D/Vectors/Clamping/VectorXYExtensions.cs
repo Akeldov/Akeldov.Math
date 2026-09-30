@@ -19,11 +19,13 @@ namespace Akeldov.Math.Spatial2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Clamp(this VectorXY source, VectorXY min, VectorXY max)
         {
+#pragma warning disable MA0015 // Specify the parameter name in ArgumentException
             if (max.X < min.X)
                 throw new ArgumentException($"Cannot clamp value: min.X ({min.X}) must be less than or equal to max.X ({max.X}).");
 
             if (max.Y < min.Y)
                 throw new ArgumentException($"Cannot clamp value: min.Y ({min.Y}) must be less than or equal to max.Y ({max.Y}).");
+#pragma warning restore MA0015 // Specify the parameter name in ArgumentException
 
             float x = MathF.Min(MathF.Max(source.X, min.X), max.X);
             float y = MathF.Min(MathF.Max(source.Y, min.Y), max.Y);

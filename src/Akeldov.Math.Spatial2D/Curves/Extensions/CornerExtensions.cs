@@ -133,7 +133,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             angle = VectorXY.Angle(dirBA, dirBC).NormalizeAngleRad();
             if (angle <= 0f)
-                throw new ArgumentException("The angle must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(angle), angle, "The angle must be greater than zero.");
 
             return bisector;
         }

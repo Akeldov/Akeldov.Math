@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides scaling helpers for read-only lists.
     /// </summary>
@@ -30,11 +31,11 @@ namespace Akeldov.Math.Spatial2D
 
             for (int i = 0; i < items.Count; i++)
             {
-                var item = items[i];
+                T item = items[i];
                 if (item is null)
                     throw new ArgumentException("Scalable items collection cannot contain null elements.", nameof(items));
 
-                var scaled = item.Scale(scale);
+                T scaled = item.Scale(scale);
 
                 res.Add(scaled);
             }
@@ -42,4 +43,5 @@ namespace Akeldov.Math.Spatial2D
             return res;
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

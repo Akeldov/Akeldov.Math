@@ -13,7 +13,9 @@ dotnet_diagnostic.CA1510.severity = none
 # IDE0008: Use explicit type
 csharp_style_var_when_type_is_apparent = false
 # IDE0011: Add braces
-csharp_prefer_braces = when_multiline
+csharp_prefer_braces = false
+# IDE0046: Convert to conditional expression
+dotnet_style_prefer_conditional_expression_over_return = false
 # IDE0078: Use pattern matching
 dotnet_diagnostic.IDE0078.severity = none
 # IDE0090: Do not prefer target-typed new expressions.
