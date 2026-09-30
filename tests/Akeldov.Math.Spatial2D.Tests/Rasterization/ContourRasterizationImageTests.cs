@@ -38,7 +38,7 @@ public class ContourRasterizationImageTests
         if (File.Exists(path))
             File.Delete(path);
 
-        Assert.Throws<ArgumentException>(() => raster.SaveAsPng(path));
+        Assert.Throws<ArgumentOutOfRangeException>(() => raster.SaveAsPng(path));
         Assert.That(File.Exists(path), Is.False);
     }
 

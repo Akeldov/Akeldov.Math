@@ -105,7 +105,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             float sweep = (endAngle - startAngle).NormalizeAngleRad();
             if (sweep > MathF.PI)
             {
-                var t = startAngle;
+                float t = startAngle;
                 startAngle = endAngle;
                 endAngle = t;
             }

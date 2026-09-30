@@ -13,7 +13,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int GetNearestWeightedSiteIndex(this Site[] sites, PointXY point)
         {
-            var px = point.X; var py = point.Y;
+            float px = point.X;
+            float py = point.Y;
+
             float bestWeightedDistance = float.PositiveInfinity;
             int bestWeightedIndex = 0;
             float bestInfiniteDistance = float.PositiveInfinity;
@@ -22,10 +24,10 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             int i = 0, n = sites.Length;
             for (; i + 3 < n; i += 4)
             {
-                ref readonly var s0 = ref sites[i + 0];
-                ref readonly var s1 = ref sites[i + 1];
-                ref readonly var s2 = ref sites[i + 2];
-                ref readonly var s3 = ref sites[i + 3];
+                ref readonly Site s0 = ref sites[i + 0];
+                ref readonly Site s1 = ref sites[i + 1];
+                ref readonly Site s2 = ref sites[i + 2];
+                ref readonly Site s3 = ref sites[i + 3];
 
                 if (TryUpdate(
                     ref bestWeightedDistance,
