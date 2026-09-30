@@ -178,8 +178,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
         private static void ValidateRasterSize(int width, int height)
         {
-            if (width <= 0 || height <= 0)
-                throw new ArgumentException("Raster width and height must be positive.");
+            if (width <= 0)
+                throw new ArgumentOutOfRangeException(nameof(width), width, "Raster width and height must be positive.");
+
+            if (height <= 0)
+                throw new ArgumentOutOfRangeException(nameof(height), height, "Raster width and height must be positive.");
         }
 
         private static void WriteGray8(
