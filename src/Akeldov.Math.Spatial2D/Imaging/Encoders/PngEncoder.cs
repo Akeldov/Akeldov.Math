@@ -71,8 +71,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            using (var stream = File.Create(path))
-                Save(raster, stream, compressionLevel);
+            using var stream = File.Create(path);
+            Save(raster, stream, compressionLevel);
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            using (var stream = File.Create(path))
-                Save(raster, stream, compressionLevel);
+            using var stream = File.Create(path);
+            Save(raster, stream, compressionLevel);
         }
 
         /// <summary>

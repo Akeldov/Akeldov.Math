@@ -14,6 +14,8 @@ dotnet_diagnostic.CA1510.severity = none
 csharp_style_var_when_type_is_apparent = false
 # IDE0011: Add braces
 csharp_prefer_braces = false
+# IDE0032: Use auto property
+dotnet_style_prefer_auto_properties = false
 # IDE0046: Convert to conditional expression
 dotnet_style_prefer_conditional_expression_over_return = false
 # IDE0078: Use pattern matching

@@ -83,7 +83,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             }
             for (; i < n; i++)
             {
-                ref readonly var s = ref sites[i];
+                ref readonly Site s = ref sites[i];
                 if (TryUpdate(
                     ref bestWeightedDistance,
                     ref bestWeightedIndex,
