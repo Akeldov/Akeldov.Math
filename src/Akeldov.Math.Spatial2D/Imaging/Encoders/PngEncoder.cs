@@ -353,29 +353,27 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
         private static byte[] CreateZlibData(byte[] data, CompressionLevel compressionLevel)
         {
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+            stream.WriteByte(0x78);
+            if (compressionLevel == CompressionLevel.NoCompression ||
+                compressionLevel == CompressionLevel.Fastest)
             {
-                stream.WriteByte(0x78);
-                if (compressionLevel == CompressionLevel.NoCompression ||
-                    compressionLevel == CompressionLevel.Fastest)
-                {
-                    stream.WriteByte(0x01);
-                }
-                else if ((int)compressionLevel == 3)
-                {
-                    stream.WriteByte(0xda);
-                }
-                else
-                {
-                    stream.WriteByte(0x9c);
-                }
-
-                using (var deflateStream = new DeflateStream(stream, compressionLevel, leaveOpen: true))
-                    deflateStream.Write(data, 0, data.Length);
-
-                WriteUInt32(stream, Adler32(data));
-                return stream.ToArray();
+                stream.WriteByte(0x01);
             }
+            else if ((int)compressionLevel == 3)
+            {
+                stream.WriteByte(0xda);
+            }
+            else
+            {
+                stream.WriteByte(0x9c);
+            }
+
+            using (var deflateStream = new DeflateStream(stream, compressionLevel, leaveOpen: true))
+                deflateStream.Write(data, 0, data.Length);
+
+            WriteUInt32(stream, Adler32(data));
+            return stream.ToArray();
         }
 
         private static void WriteChunk(Stream stream, string type, byte[] data)
