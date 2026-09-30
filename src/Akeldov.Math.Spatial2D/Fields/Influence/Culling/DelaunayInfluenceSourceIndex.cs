@@ -361,7 +361,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 PointXY current = points[currentIndex];
                 PointXY next = points[nextIndex];
                 PointXY candidate = points[candidateIndex];
-                float orientation = Cross(next - current, candidate - current);
+                float orientation = VectorXY.Cross(next - current, candidate - current);
 
                 if (orientation < -Epsilon ||
                     (orientation.IsAlmostZero() && SquaredDistance(current, candidate) > SquaredDistance(current, next)))
@@ -407,7 +407,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 2; i < points.Length; i++)
             {
-                if (!Cross(second - first, points[i] - first).IsAlmostZero())
+                if (!VectorXY.Cross(second - first, points[i] - first).IsAlmostZero())
                     return true;
             }
 
@@ -420,19 +420,14 @@ namespace Akeldov.Math.Spatial2D.Fields
             PointXY b = points[triangle.B];
             PointXY c = points[triangle.C];
 
-            float abSide = Cross(b - a, point - a);
-            float bcSide = Cross(c - b, point - b);
-            float caSide = Cross(a - c, point - c);
+            float abSide = VectorXY.Cross(b - a, point - a);
+            float bcSide = VectorXY.Cross(c - b, point - b);
+            float caSide = VectorXY.Cross(a - c, point - c);
 
             bool hasNegativeSide = abSide < -Epsilon || bcSide < -Epsilon || caSide < -Epsilon;
             bool hasPositiveSide = abSide > Epsilon || bcSide > Epsilon || caSide > Epsilon;
 
             return !(hasNegativeSide && hasPositiveSide);
-        }
-
-        private static float Cross(VectorXY left, VectorXY right)
-        {
-            return left.X * right.Y - left.Y * right.X;
         }
 
         private static float SquaredDistance(PointXY a, PointXY b)

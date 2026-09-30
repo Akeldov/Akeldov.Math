@@ -177,7 +177,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                             MathF.Max(0f, -lB) +
                             MathF.Max(0f, -lC);
 
-                        float area2 = MathF.Abs(Cross(pb - pa, pc - pa));
+                        float area2 = MathF.Abs(VectorXY.Cross(pb - pa, pc - pa));
                         if (area2 <= GeometryConstants.GeometryEpsilon)
                             continue;
 
@@ -224,15 +224,15 @@ namespace Akeldov.Math.Spatial2D.Fields
             PointXY a, PointXY b, PointXY c, PointXY p,
             out float lA, out float lB, out float lC)
         {
-            float denom = Cross(b - a, c - a);
+            float denom = VectorXY.Cross(b - a, c - a);
             if (denom.IsAlmostZero(Epsilon))
             {
                 lA = lB = lC = 0f;
                 return false;
             }
 
-            lB = Cross(p - a, c - a) / denom;
-            lC = Cross(b - a, p - a) / denom;
+            lB = VectorXY.Cross(p - a, c - a) / denom;
+            lC = VectorXY.Cross(b - a, p - a) / denom;
             lA = 1f - lB - lC;
             return true;
         }
@@ -323,8 +323,5 @@ namespace Akeldov.Math.Spatial2D.Fields
             nearest[index] = sample;
             effectiveDistances[index] = effectiveDistance;
         }
-
-        private static float Cross(VectorXY u, VectorXY v)
-            => u.X * v.Y - u.Y * v.X;
     }
 }
