@@ -108,11 +108,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         }
 
         /// <summary>
-        /// Gets the read-only semantic result of Voronoi cells, one per source site.
+        /// Gets the read-only semantic result of Voronoi cells in source-site order.
         /// </summary>
         /// <remarks>
         /// This list represents the partitioner's cells and their grouped participating hex indexes.
         /// It remains consistent with this map's read-only per-hex assignments.
+        /// Empty cells may be excluded by the partitioner's policy. Each cell's
+        /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Cells { get; }
 

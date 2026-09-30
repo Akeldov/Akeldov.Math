@@ -367,6 +367,157 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
+    public void Partition_WithEmptyCellPolicy_HandlesEmptyCellsAndAssignments(
+        [Values(EmptyCellPolicy.LeaveAsIs, EmptyCellPolicy.Exclude)] EmptyCellPolicy policy,
+        [Values] bool useExtension)
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[]
+        {
+            new Site(new PointXY(-100f, 0f), 1f),
+            new Site(hexCenters[1], 1f),
+            new Site(new PointXY(100f, 0f), 1f),
+            new Site(hexCenters[0], 1f),
+            new Site(new PointXY(200f, 0f), 1f)
+        };
+
+        var map = useExtension
+            ? hexCenters.ToVoronoiHexPartitionMap(sites, policy)
+            : new VoronoiHexPartitioner(sites, policy).Partition(hexCenters);
+
+        int firstCellIndex = policy == EmptyCellPolicy.Exclude ? 0 : 1;
+        int secondCellIndex = policy == EmptyCellPolicy.Exclude ? 1 : 3;
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Cells, Has.Count.EqualTo(policy == EmptyCellPolicy.Exclude ? 2 : 5));
+            Assert.That(map.Cells.Select(cell => cell.SiteIndex), Is.EqualTo(Enumerable.Range(0, map.Cells.Count)));
+            Assert.That(map[0], Is.SameAs(map.Cells[secondCellIndex]));
+            Assert.That(map[1], Is.SameAs(map.Cells[firstCellIndex]));
+            Assert.That(map[0].Site, Is.EqualTo(sites[3]));
+            Assert.That(map[1].Site, Is.EqualTo(sites[1]));
+            Assert.That(map[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+            Assert.That(map[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(1, 0) }));
+            Assert.That(map.Cells.Count(cell => cell.HexIndexes.Count == 0),
+                Is.EqualTo(policy == EmptyCellPolicy.Exclude ? 0 : 3));
+        });
+    }
+
+    [Test]
+    public void Partition_WithParticipationMaskAndEmptyCellPolicy_HandlesEmptyCellsAndAssignments(
+        [Values(EmptyCellPolicy.LeaveAsIs, EmptyCellPolicy.Exclude)] EmptyCellPolicy policy,
+        [Values] bool useExtension)
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[]
+        {
+            new Site(new PointXY(-100f, 0f), 1f),
+            new Site(hexCenters[2], 1f),
+            new Site(hexCenters[1], 1f),
+            new Site(hexCenters[0], 1f),
+            new Site(new PointXY(100f, 0f), 1f)
+        };
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, false, true });
+
+        var map = useExtension
+            ? hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, policy)
+            : new VoronoiHexPartitioner(sites, policy).Partition(hexCenters, participationMask);
+
+        int firstCellIndex = policy == EmptyCellPolicy.Exclude ? 0 : 1;
+        int secondCellIndex = policy == EmptyCellPolicy.Exclude ? 1 : 3;
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Cells, Has.Count.EqualTo(policy == EmptyCellPolicy.Exclude ? 2 : 5));
+            Assert.That(map.Cells.Select(cell => cell.SiteIndex), Is.EqualTo(Enumerable.Range(0, map.Cells.Count)));
+            Assert.That(map[0], Is.SameAs(map.Cells[secondCellIndex]));
+            Assert.That(map[1], Is.Null);
+            Assert.That(map[2], Is.SameAs(map.Cells[firstCellIndex]));
+            Assert.That(map[0]!.Site, Is.EqualTo(sites[3]));
+            Assert.That(map[2]!.Site, Is.EqualTo(sites[1]));
+            Assert.That(map[0]!.HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+            Assert.That(map[2]!.HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
+            Assert.That(map.Participates(0), Is.True);
+            Assert.That(map.Participates(1), Is.False);
+            Assert.That(map.Participates(2), Is.True);
+            Assert.That(map.Cells.Count(cell => cell.HexIndexes.Count == 0),
+                Is.EqualTo(policy == EmptyCellPolicy.Exclude ? 0 : 3));
+        });
+    }
+
+    [Test]
+    public void ToVoronoiHexPartitionMap_WhenPolicyIsThrowExceptionAndCellIsEmpty_Throws()
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[]
+        {
+            new Site(hexCenters[0], 1f),
+            new Site(new PointXY(100f, 0f), 1f)
+        };
+
+        Assert.Throws<InvalidOperationException>(() =>
+            hexCenters.ToVoronoiHexPartitionMap(sites, EmptyCellPolicy.ThrowException));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void ToVoronoiHexPartitionMap_WhenPolicyIsThrowExceptionAndMaskEmptiesCell_Throws(bool excludeAll)
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(hexCenters[0], 1f), new Site(hexCenters[1], 1f) };
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { !excludeAll, false });
+
+        Assert.Throws<InvalidOperationException>(() =>
+            hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.ThrowException));
+    }
+
+    [TestCase(EmptyCellPolicy.LeaveAsIs, 2)]
+    [TestCase(EmptyCellPolicy.Exclude, 0)]
+    public void ToVoronoiHexPartitionMap_WithEmptyParticipationMask_AppliesEmptyCellPolicy(
+        EmptyCellPolicy policy, int expectedCellCount)
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(hexCenters[0], 1f), new Site(hexCenters[1], 1f) };
+        var participationMask = new BoolHexMap(hexCenters.Topology);
+
+        var map = hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, policy);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Cells, Has.Count.EqualTo(expectedCellCount));
+            Assert.That(map.Cells.All(cell => cell.HexIndexes.Count == 0), Is.True);
+            Assert.That(map[0], Is.Null);
+            Assert.That(map[1], Is.Null);
+        });
+    }
+
+    [TestCase(EmptyCellPolicy.LeaveAsIs)]
+    [TestCase(EmptyCellPolicy.Exclude)]
+    [TestCase(EmptyCellPolicy.ThrowException)]
+    public void ToVoronoiHexPartitionMap_WhenAllCellsArePopulated_PreservesCells(EmptyCellPolicy policy)
+    {
+        var hexCenters = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(hexCenters[0], 1f), new Site(hexCenters[1], 1f) };
+        var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, true });
+
+        var map = hexCenters.ToVoronoiHexPartitionMap(sites, policy);
+        var maskedMap = hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, policy);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Cells, Has.Count.EqualTo(2));
+            Assert.That(maskedMap.Cells, Has.Count.EqualTo(2));
+            for (int i = 0; i < sites.Length; i++)
+            {
+                Assert.That(map[i], Is.SameAs(map.Cells[i]));
+                Assert.That(map[i].SiteIndex, Is.EqualTo(i));
+                Assert.That(map[i].Site, Is.EqualTo(sites[i]));
+                Assert.That(maskedMap[i], Is.SameAs(maskedMap.Cells[i]));
+                Assert.That(maskedMap[i]!.SiteIndex, Is.EqualTo(i));
+                Assert.That(maskedMap[i]!.Site, Is.EqualTo(sites[i]));
+            }
+        });
+    }
+
+    [Test]
     public void Constructor_WhenSitesIsNull_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new VoronoiHexPartitioner(null!));

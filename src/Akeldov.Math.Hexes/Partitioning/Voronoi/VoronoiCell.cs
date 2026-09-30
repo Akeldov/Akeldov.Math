@@ -14,7 +14,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <summary>
         /// Initializes a new Voronoi cell.
         /// </summary>
-        /// <param name="siteIndex">The zero-based index of the source site.</param>
+        /// <param name="siteIndex">The zero-based cell index in the partition result.</param>
         /// <param name="site">The weighted site represented by this cell.</param>
         /// <param name="hexIndexes">The hex indexes assigned to this cell.</param>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -34,8 +34,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         }
 
         /// <summary>
-        /// Gets the zero-based index of the source site.
+        /// Gets the zero-based cell index in the partition result.
         /// </summary>
+        /// <remarks>
+        /// When empty cells are excluded, the partitioner renumbers the remaining cells without gaps.
+        /// The index then may differ from the site's index in the original input list.
+        /// </remarks>
         public int SiteIndex { get; }
 
         /// <summary>

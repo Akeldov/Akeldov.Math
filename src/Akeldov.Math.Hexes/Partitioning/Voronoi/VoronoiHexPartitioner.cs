@@ -14,14 +14,26 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     public sealed class VoronoiHexPartitioner
     {
         private readonly Site[] _sites;
+        private readonly EmptyCellPolicy _emptyCellPolicy;
 
         /// <summary>
-        /// Initializes a new hex Voronoi partitioner with the specified sites.
+        /// Initializes a new hex Voronoi partitioner with the specified sites, preserving empty cells.
         /// </summary>
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         public VoronoiHexPartitioner(IReadOnlyList<Site> sites)
+            : this(sites, EmptyCellPolicy.LeaveAsIs)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new hex Voronoi partitioner with empty-cell handling.
+        /// </summary>
+        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
+        /// <param name="emptyCellPolicy">The policy used for cells that receive no hexes.</param>
+        public VoronoiHexPartitioner(IReadOnlyList<Site> sites, EmptyCellPolicy emptyCellPolicy)
         {
             _sites = CopyAndValidateSites(sites);
+            _emptyCellPolicy = emptyCellPolicy;
         }
 
         /// <summary>
@@ -33,6 +45,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Use <see cref="VoronoiHexPartitionMap.ToMutableHexMap"/> to create a mutable
         /// caller-owned assignment copy.
         /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
+        /// </exception>
         public VoronoiHexPartitionMap Partition(HexCenterMap hexCenters)
         {
             if (hexCenters == null)
@@ -59,12 +74,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
             }
 
-            var cells = CreateCells(hexIndexBuckets);
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
 
             var assignments = new VoronoiCell[count];
             for (int i = 0; i < assignments.Length; i++)
             {
-                assignments[i] = cells[cellIndexes[i]];
+                assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
             }
 
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
@@ -82,6 +97,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// A new read-only masked hex partition map with per-hex assignments and a semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
         /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
+        /// </exception>
         public MaskedVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<bool> participationMask)
@@ -125,13 +143,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
             }
 
-            var cells = CreateCells(hexIndexBuckets);
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
 
             var assignments = new VoronoiCell?[count];
             for (int i = 0; i < assignments.Length; i++)
             {
                 if (participationMaskValues[i])
-                    assignments[i] = cells[cellIndexes[i]];
+                    assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
             }
 
             return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
@@ -181,15 +199,26 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return buckets;
         }
 
-        private VoronoiCell[] CreateCells(List<VectorXYInt>[] hexIndexBuckets)
+        private VoronoiCell[] CreateCells(List<VectorXYInt>[] hexIndexBuckets, out int[] cellIndexesBySite)
         {
-            var cells = new VoronoiCell[_sites.Length];
-            for (int i = 0; i < cells.Length; i++)
+            var cells = new List<VoronoiCell>(_sites.Length);
+            cellIndexesBySite = new int[_sites.Length];
+            for (int i = 0; i < _sites.Length; i++)
             {
-                cells[i] = new VoronoiCell(i, _sites[i], hexIndexBuckets[i]);
+                if (hexIndexBuckets[i].Count == 0)
+                {
+                    if (_emptyCellPolicy == EmptyCellPolicy.Exclude)
+                        continue;
+
+                    if (_emptyCellPolicy != EmptyCellPolicy.LeaveAsIs)
+                        throw new InvalidOperationException($"Couldn't tessellate by empty cells, empty cell: {_sites[i]}.");
+                }
+
+                cellIndexesBySite[i] = cells.Count;
+                cells.Add(new VoronoiCell(cells.Count, _sites[i], hexIndexBuckets[i]));
             }
 
-            return cells;
+            return cells.ToArray();
         }
 
         private int GetNearestWeightedCellIndex(PointXY point)
