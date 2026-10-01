@@ -2441,6 +2441,10 @@ $hexes04ArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.4.0'
 $hexes05ArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.5.0'
+$hexes07ArticleOverrideRoot = Join-Path `
+    $PSScriptRoot 'versioned\Hexes\0.7.0'
+$hexes06ArticleStageRoot = Join-Path `
+    $repositoryRoot '.tmp\docfx-upcoming\Hexes-0.6.0'
 $hexes06ArticleOverrideRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.6.0'
 $hexes02ArticleStageRoot = Join-Path `
@@ -2535,6 +2539,12 @@ New-MergedArticleSource `
     -RepositoryRoot $repositoryRoot `
     -BaseRoot $hexes05ArticleStageRoot `
     -OverrideRoot $hexes06ArticleOverrideRoot `
+    -StageRoot $hexes06ArticleStageRoot
+
+New-MergedArticleSource `
+    -RepositoryRoot $repositoryRoot `
+    -BaseRoot $hexes06ArticleStageRoot `
+    -OverrideRoot $hexes07ArticleOverrideRoot `
     -StageRoot $hexesUpcomingArticleStageRoot
 
 & $docfx (Join-Path $PSScriptRoot 'docfx.json')
@@ -2568,17 +2578,19 @@ Update-MergedArticleContributionLinks `
     -RepositoryRoot $repositoryRoot `
     -SiteRoot $siteRoot `
     -BaseRoot $hexesArticleBaseRoot `
-    -OverrideRoot $hexes06ArticleOverrideRoot `
+    -OverrideRoot $hexes07ArticleOverrideRoot `
     -InheritedOverrideRoots @(
         $hexes02ArticleOverrideRoot,
         $hexes03ArticleOverrideRoot,
         $hexes04ArticleOverrideRoot,
-        $hexes05ArticleOverrideRoot) `
+        $hexes05ArticleOverrideRoot,
+        $hexes06ArticleOverrideRoot) `
     -StageRoot $hexesUpcomingArticleStageRoot `
     -Library 'Hexes' `
     -VersionPath 'upcoming'
 
 Remove-Item -LiteralPath $hexesUpcomingArticleStageRoot -Recurse -Force
+Remove-Item -LiteralPath $hexes06ArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $hexes05ArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $hexes04ArticleStageRoot -Recurse -Force
 Remove-Item -LiteralPath $hexes03ArticleStageRoot -Recurse -Force
@@ -2785,6 +2797,31 @@ Add-VersionedLibraryDocumentation `
         $hexes04ArticleOverrideRoot,
         $hexes05ArticleOverrideRoot)
 
+Add-VersionedLibraryDocumentation `
+    -Library 'Hexes' `
+    -RepositoryRoot $repositoryRoot `
+    -Docfx $docfx `
+    -SiteRoot $siteRoot `
+    -VersionAdapterRoot (
+        Join-Path $PSScriptRoot 'versioned\Hexes\0.7.0') `
+    -PackageVersion '0.7.0' `
+    -TargetVersionPath '0.7.0' `
+    -ExpectedPackageHash `
+        'E4B111AD3D6CB52CF9E1261BFCF2A41EE20BEAD8375D0C1D9C192BCE7990FBE2' `
+    -ReferencePackagePath (
+        Join-Path $PSScriptRoot `
+            'versioned\Spatial2D\1.1.0\source\Akeldov.Math.Spatial2D.1.1.0.nupkg') `
+    -ExpectedReferencePackageHash `
+        '958EA64F5ED02FA990268FB8D8880183AE53B0D267B795DF93A6D803882F96DD' `
+    -ReferenceAssemblyName 'Akeldov.Math.Spatial2D' `
+    -ArticleSourceRoot $hexesArticleBaseRoot `
+    -InheritedArticleOverrideRoots @(
+        $hexes02ArticleOverrideRoot,
+        $hexes03ArticleOverrideRoot,
+        $hexes04ArticleOverrideRoot,
+        $hexes05ArticleOverrideRoot,
+        $hexes06ArticleOverrideRoot)
+
 $englishRoot = Join-Path $siteRoot 'en'
 $russianRoot = Join-Path $siteRoot 'ru'
 $russianSourceRoot = Join-Path $PSScriptRoot 'ru'
@@ -2810,6 +2847,8 @@ $hexes04RussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.4.0\ru'
 $hexes05RussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.5.0\ru'
+$hexes07RussianSourceRoot = Join-Path `
+    $PSScriptRoot 'versioned\Hexes\0.7.0\ru'
 $hexes06RussianSourceRoot = Join-Path `
     $PSScriptRoot 'versioned\Hexes\0.6.0\ru'
 $russianSourceMappings = @(
@@ -2987,6 +3026,35 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $hexes01RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes02RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes03RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes04RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes05RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes06RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+    [pscustomobject]@{
+        Root = $hexes07RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' '0.7.0'
+    },
+
+    [pscustomobject]@{
+        Root = $hexes01RussianSourceRoot
         OutputPrefix = Join-Path 'Hexes' 'upcoming'
     },
     [pscustomobject]@{
@@ -3007,6 +3075,10 @@ $russianSourceMappings = @(
     },
     [pscustomobject]@{
         Root = $hexes06RussianSourceRoot
+        OutputPrefix = Join-Path 'Hexes' 'upcoming'
+    },
+    [pscustomobject]@{
+        Root = $hexes07RussianSourceRoot
         OutputPrefix = Join-Path 'Hexes' 'upcoming'
     }
 )
@@ -3607,7 +3679,7 @@ Add-VersionAliasRedirects `
 Add-VersionAliasRedirects `
     -SiteRoot $siteRoot `
     -Library 'Hexes' `
-    -CanonicalVersion '0.6.0' `
+    -CanonicalVersion '0.7.0' `
     -Alias 'latest' `
     -SiteBaseUrl $siteBaseUrl
 

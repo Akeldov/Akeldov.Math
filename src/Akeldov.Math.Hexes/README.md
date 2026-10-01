@@ -23,7 +23,7 @@ The library is organized around practical hex-grid workflows.
 - Generic and specialized value mapping from individual cells or partial six-neighbor sets, with spatial geometry preserved when present.
 - Element-wise, scalar, mixed numeric, and spatial/non-spatial arithmetic, remainder, comparison-mask, clamping, and range-rescaling operations for numeric maps.
 - Sampling of Spatial2D integer and floating-point fields at hex centers, including randomized pointwise ranges.
-- Logical operations, morphology, outlines, flood fill, connected components, and distance transforms for Boolean maps.
+- Logical operations, multi-ring and per-cell distance-limited morphology, outlines, flood fill, connected components, and distance transforms for Boolean maps.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point maps.
 - Index maps and compact pair, triplet, sextuplet, and septuplet containers with presence flags, including layout-aware six-neighbor sampling.
 - Polyhex masks, builders, extension operations, and binary serialization.
@@ -46,7 +46,7 @@ The library is organized around practical hex-grid workflows.
 
 - Weighted shortest-path search using separate cell entry and exit costs.
 - Impassable cells represented by positive-infinity transfer costs.
-- Weighted Voronoi partitioning of all or selected hex centers with read-only cell assignments.
+- Weighted Voronoi partitioning with participation and region masks and configurable empty-cell handling with read-only cell assignments.
 
 ## Documentation
 

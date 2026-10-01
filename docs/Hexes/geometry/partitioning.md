@@ -62,6 +62,20 @@ using the center map's geometry. Sites outside the map receive no hexes and foll
 empty-cell policy. A hex without an eligible site in its region causes an
 `InvalidOperationException`. The result is a `VoronoiHexPartitionMap`.
 
+## Combined Participation and Region Masks
+
+```csharp
+var selectedRegions = hexCenters.ToVoronoiHexPartitionMap(
+    sites, participationMask, regionMask, EmptyCellPolicy.Exclude);
+```
+
+Both masks must match the center-map topology. Only participating hexes are assigned, and each
+can select only a site in its own region. Excluded hexes have null assignments and do not occur
+in any cell's `HexIndexes`. Site eligibility comes from the region mask: a site in an excluded
+hex can still receive participating hexes in the same region. Sites outside the map receive no
+hexes. Missing eligible sites in a participating region cause `InvalidOperationException`;
+empty cells follow the selected policy after assignment.
+
 ## Weighted Sites
 
 - Larger weights can pull farther centers into a cell.

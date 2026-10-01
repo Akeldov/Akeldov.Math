@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Hexes</PackageId>
-		<Version>0.6.0</Version>
+		<Version>0.7.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
-		<PackageReleaseNotes>Added versioned HMAP binary serialization for Boolean, integer, and floating-point hex maps, including spatial variants that preserve origin and radius. BinaryWriter.Write overloads select the map format by the compile-time source type; matching readers validate headers, geometry, payloads, and optional cell-count limits. Float values preserve exact IEEE 754 bits. HexMapFile provides file reading and writing with absolute or relative paths and automatic resource disposal. The minimum Akeldov.Math.Spatial2D dependency remains 1.1.0, with compatible 1.x releases accepted.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added multi-ring and per-cell distance-limited Boolean dilation and erosion with linear-time traversal and spatial geometry preservation. Added Voronoi empty-cell policies, region masks, and combined participation and region masks. Region assignments are restricted to sites in the same region. Breaking API change: Dilate, Erode, Open, and Close moved from BooleanHexMapExtensions to IHexMapBoolExtensions and ISpatialHexMapBoolExtensions; extension-call syntax is unchanged, but explicit static calls and previously compiled consumers must be updated or rebuilt. The minimum Akeldov.Math.Spatial2D dependency remains 1.1.0, with compatible 1.x releases accepted.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>
