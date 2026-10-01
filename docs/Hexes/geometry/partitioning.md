@@ -37,12 +37,30 @@ var maskedPartition = hexCenters.ToVoronoiHexPartitionMap(
 
 ## Participation Masks
 
+- These overloads accept an `IHexMap<bool>` participation mask.
 - `Partition(hexCenters, participationMask)` and
   `ToVoronoiHexPartitionMap(sites, participationMask)` assign only hexes whose mask value is
   `true`.
 - The participation mask must have the same topology as the center map.
 - Excluded hexes return `null` from `MaskedVoronoiHexPartitionMap`; they are not included in any
   cell's `HexIndexes`.
+
+## Region Masks
+
+Pass an `IHexMap<int>` to restrict each hex to sites in the same region:
+
+```csharp
+var regionPartition = hexCenters.ToVoronoiHexPartitionMap(sites, regionMask);
+var compactRegionPartition = hexCenters.ToVoronoiHexPartitionMap(
+    sites, regionMask, EmptyCellPolicy.Exclude);
+```
+
+Equal mask values identify the same region, including disconnected hexes. Zero and negative
+values are valid region identifiers; every hex participates. The mask must have the same
+topology as the center map. A site's region comes from the hex containing its position,
+using the center map's geometry. Sites outside the map receive no hexes and follow the
+empty-cell policy. A hex without an eligible site in its region causes an
+`InvalidOperationException`. The result is a `VoronoiHexPartitionMap`.
 
 ## Weighted Sites
 
