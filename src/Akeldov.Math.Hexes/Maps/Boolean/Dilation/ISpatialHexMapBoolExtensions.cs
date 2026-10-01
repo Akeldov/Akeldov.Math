@@ -72,7 +72,7 @@ namespace Akeldov.Math.Hexes
             if (map.Topology != map.Geometry.Topology)
                 throw new ArgumentException("Spatial hex map topology must match its geometry topology.", nameof(map));
 
-            return new SpatialBoolHexMap(map.Geometry, BooleanHexMapDilationHelper.CreateDilatedValues(map, ringsCount));
+            return new SpatialBoolHexMap(map.Geometry, BooleanHexMapExpansionHelper.CreateExpandedValues(map, ringsCount, expandedValue: true));
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Akeldov.Math.Hexes
             if (map.Topology != maxDilateDistanceMap.Topology)
                 throw new ArgumentException("Hex maps must have the same topology.", nameof(maxDilateDistanceMap));
 
-            return new SpatialBoolHexMap(map.Geometry, BooleanHexMapDilationHelper.CreateConstrainedDilatedValues(map, maxDilateDistanceMap));
+            return new SpatialBoolHexMap(map.Geometry, BooleanHexMapExpansionHelper.CreateConstrainedExpandedValues(map, maxDilateDistanceMap, expandedValue: true));
         }
     }
 }

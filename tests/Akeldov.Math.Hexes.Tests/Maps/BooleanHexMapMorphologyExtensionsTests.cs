@@ -492,6 +492,8 @@ public class BooleanHexMapMorphologyExtensionsTests
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Dilate(0))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Dilate(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Erode())!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Erode(0))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Erode(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Close())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Outline())!.ParamName, Is.EqualTo("map"));
@@ -499,6 +501,8 @@ public class BooleanHexMapMorphologyExtensionsTests
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Dilate(0))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Dilate(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Erode())!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Erode(0))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Erode(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Close())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Outline())!.ParamName, Is.EqualTo("map"));
@@ -517,6 +521,9 @@ public class BooleanHexMapMorphologyExtensionsTests
             Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(new UniformIntMap(map.Topology, 1)))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Erode())!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentException>(() => map.Erode(0))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentException>(() => map.Erode(3))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentException>(() => map.Erode(new UniformIntMap(map.Topology, 1)))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Close())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Outline())!.ParamName, Is.EqualTo("map"));
@@ -536,6 +543,11 @@ public class BooleanHexMapMorphologyExtensionsTests
             map => map.Dilate(int.MaxValue),
             map => map.Dilate(new UniformIntMap(map.Topology, int.MaxValue)),
             map => map.Erode(),
+            map => map.Erode(0),
+            map => map.Erode(1),
+            map => map.Erode(8),
+            map => map.Erode(int.MaxValue),
+            map => map.Erode(new UniformIntMap(map.Topology, int.MaxValue)),
             map => map.Open(),
             map => map.Close(),
             map => map.Outline(),

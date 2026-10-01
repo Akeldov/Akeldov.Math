@@ -58,7 +58,7 @@ namespace Akeldov.Math.Hexes
             if (ringsCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(ringsCount));
 
-            return new BoolHexMap(map.Topology, BooleanHexMapDilationHelper.CreateDilatedValues(map, ringsCount));
+            return new BoolHexMap(map.Topology, BooleanHexMapExpansionHelper.CreateExpandedValues(map, ringsCount, expandedValue: true));
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Akeldov.Math.Hexes
             if (map.Topology != maxDilateDistanceMap.Topology)
                 throw new ArgumentException("Hex maps must have the same topology.", nameof(maxDilateDistanceMap));
 
-            return new BoolHexMap(map.Topology, BooleanHexMapDilationHelper.CreateConstrainedDilatedValues(map, maxDilateDistanceMap));
+            return new BoolHexMap(map.Topology, BooleanHexMapExpansionHelper.CreateConstrainedExpandedValues(map, maxDilateDistanceMap, expandedValue: true));
         }
     }
 }

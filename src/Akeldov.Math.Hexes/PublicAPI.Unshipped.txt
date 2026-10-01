@@ -16,12 +16,16 @@ static Akeldov.Math.Hexes.IHexMapBoolExtensions.Dilate(this Akeldov.Math.Hexes.I
 static Akeldov.Math.Hexes.IHexMapBoolExtensions.Dilate(this Akeldov.Math.Hexes.IHexMap<bool>! map, int ringsCount) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.IHexMapBoolExtensions.Dilate<TIntMap>(this Akeldov.Math.Hexes.IHexMap<bool>! map, TIntMap maxDilateDistanceMap) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.IHexMapBoolExtensions.Erode(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IHexMapBoolExtensions.Erode(this Akeldov.Math.Hexes.IHexMap<bool>! map, int ringsCount) -> Akeldov.Math.Hexes.BoolHexMap!
+static Akeldov.Math.Hexes.IHexMapBoolExtensions.Erode<TIntMap>(this Akeldov.Math.Hexes.IHexMap<bool>! map, TIntMap maxErodeDistanceMap) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.IHexMapBoolExtensions.Open(this Akeldov.Math.Hexes.IHexMap<bool>! map) -> Akeldov.Math.Hexes.BoolHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Close(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Dilate(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Dilate(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, int ringsCount) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Dilate<TIntMap>(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, TIntMap maxDilateDistanceMap) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Erode(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Erode(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, int ringsCount) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
+static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Erode<TIntMap>(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map, TIntMap maxErodeDistanceMap) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.ISpatialHexMapBoolExtensions.Open(this Akeldov.Math.Hexes.ISpatialHexMap<bool>! map) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Hexes.IHexMap<bool>! participationMask, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy) -> Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap!
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!

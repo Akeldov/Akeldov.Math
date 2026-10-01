@@ -106,6 +106,7 @@ two direct passes through an internal pooled scratch buffer; they do not allocat
 ```csharp
 BoolHexMap expanded = land.Dilate();
 BoolHexMap expandedByThreeRings = land.Dilate(ringsCount: 3);
+BoolHexMap erodedByThreeRings = land.Erode(ringsCount: 3);
 BoolHexMap cleaned = land.Open();
 BoolHexMap boundary = land.Outline();
 
@@ -128,6 +129,15 @@ allowed, but its full length counts against each cell's limit. Zero and negative
 entry into `false` cells; original `true` cells are always retained and act as distance-zero sources.
 The method uses O(N) time and space, leaves both inputs unchanged, and preserves the Boolean map's
 geometry for spatial results. Limits are matched by cell index.
+
+`Erode()` expands the `false` area by one ring, shrinking the `true` area. `Erode(ringsCount)`
+and `Erode(maxErodeDistanceMap)` mirror the dilation overloads, propagating from original `false`
+cells instead. Zero rings returns an independent copy; negative ring counts are rejected.
+For the limit-map overload, zero and negative limits protect `true` cells from erosion and block
+propagation through them. Detours count their full length, and original `false` cells remain false
+regardless of their limits. Both overloads use O(N) time and space without repeated whole-map erosion
+passes or intermediate inverted maps. They preserve spatial geometry and leave the inputs unchanged.
+Missing neighbors outside the map are ignored, so an entirely `true` map remains `true`.
 
 `FloodFill` selects the connected region having the same Boolean value as its seed. Component label
 zero represents `false`; `true` components receive deterministic positive labels in row-major discovery
