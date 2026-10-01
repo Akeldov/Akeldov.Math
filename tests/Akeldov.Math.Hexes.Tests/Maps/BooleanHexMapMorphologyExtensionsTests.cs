@@ -151,6 +151,196 @@ public class BooleanHexMapMorphologyExtensionsTests
         });
     }
 
+    [Test]
+    public void Dilate_WithDistanceLimits_BlocksCellsBeyondAnInsufficientLimit()
+    {
+        var topology = new HexMapTopology(5, 1, Layout.OddR);
+        var source = Map(topology, VectorXYInt.Zero);
+        var limits = new IntHexMap(topology, new[] { 0, 1, 1, 50, 50 });
+
+        BoolHexMap result = source.Dilate(limits);
+
+        Assert.That(ReadValues(result), Is.EqualTo(new[] { true, true, false, false, false }));
+    }
+
+    [TestCase(2, false)]
+    [TestCase(3, true)]
+    public void Dilate_WithDistanceLimits_CountsFullDetourLength(int targetLimit, bool expectedTarget)
+    {
+        var topology = new HexMapTopology(3, 2, Layout.OddR);
+        var source = Map(topology, VectorXYInt.Zero);
+        var limits = new HexMap<int>(topology, Enumerable.Repeat(int.MaxValue, topology.Count).ToArray());
+        limits[new VectorXYInt(1, 0)] = 0;
+        limits[new VectorXYInt(2, 0)] = targetLimit;
+
+        BoolHexMap result = source.Dilate(limits);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[new VectorXYInt(1, 0)], Is.False);
+            Assert.That(result[new VectorXYInt(2, 0)], Is.EqualTo(expectedTarget));
+            Assert.That(result[new VectorXYInt(1, 1)], Is.True);
+        });
+    }
+
+    [Test]
+    public void Dilate_WithDistanceLimits_UsesNearestAdmissibleSource()
+    {
+        var topology = new HexMapTopology(7, 1, Layout.OddR);
+        var source = Map(topology, VectorXYInt.Zero, new VectorXYInt(6, 0));
+        IHexMap<int> limits = new IntHexMap(topology, new[] { 0, 1, 2, 3, 2, 1, int.MinValue });
+
+        Assert.That(ReadValues(source.Dilate<IHexMap<int>>(limits)), Is.All.True);
+    }
+
+    [TestCase(0)]
+    [TestCase(-1)]
+    [TestCase(int.MinValue)]
+    public void Dilate_WithNonPositiveDistanceLimits_PreservesOriginalTrueCells(int limit)
+    {
+        var topology = new HexMapTopology(7, 5, Layout.EvenQ);
+        var source = Map(topology, VectorXYInt.Zero, new VectorXYInt(3, 2));
+        var limits = new UniformIntMap(topology, limit);
+
+        BoolHexMap result = source.Dilate(limits);
+
+        Assert.That(ReadValues(result), Is.EqualTo(ReadValues(source)));
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void Dilate_WithUniformDistanceLimits_MatchesRingCount(Layout layout)
+    {
+        var topology = new HexMapTopology(11, 9, layout);
+        var source = Map(topology, VectorXYInt.Zero, new VectorXYInt(8, 6));
+        foreach (int ringsCount in new[] { 0, 1, 2, 5, int.MaxValue })
+        {
+            BoolHexMap result = source.Dilate(new UniformIntMap(topology, ringsCount));
+            Assert.That(ReadValues(result), Is.EqualTo(ReadValues(source.Dilate(ringsCount))), $"Rings: {ringsCount}");
+        }
+    }
+
+    [TestCase(0, 0)]
+    [TestCase(0, 7)]
+    [TestCase(7, 0)]
+    [TestCase(1, 1)]
+    public void Dilate_WithDistanceLimits_HandlesEmptyDomainsAndUniformMasks(int width, int height)
+    {
+        var geometry = new HexMapGeometry(width, height, VectorXY.Zero, 1f, Layout.EvenR);
+        foreach (bool value in new[] { false, true })
+        {
+            var source = new SpatialBoolHexMap(geometry, Enumerable.Repeat(value, geometry.Topology.Count).ToArray());
+            SpatialBoolHexMap result = source.Dilate(new UniformIntMap(geometry.Topology, int.MaxValue));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.SameAs(source));
+                Assert.That(result.Geometry, Is.EqualTo(geometry));
+                Assert.That(ReadValues(result), Is.EqualTo(ReadValues(source)));
+            });
+        }
+    }
+
+    [TestCase(Layout.OddR, 1729)]
+    [TestCase(Layout.EvenR, 2718)]
+    [TestCase(Layout.OddQ, 31415)]
+    [TestCase(Layout.EvenQ, 65537)]
+    public void Dilate_WithDistanceLimits_MatchesSynchronousExpansion(Layout layout, int seed)
+    {
+        var random = new Random(seed);
+        for (int scenario = 0; scenario < 50; scenario++)
+        {
+            var geometry = new HexMapGeometry(random.Next(1, 12), random.Next(1, 12), new VectorXY(10f, -20f), 2f, layout);
+            int count = geometry.Topology.Count;
+            bool[] original = Enumerable.Range(0, count).Select(_ => random.NextDouble() < 0.1).ToArray();
+            int[] originalLimits = Enumerable.Range(0, count).Select(_ => random.Next(-1, 12)).ToArray();
+            var source = new BoolHexMap(geometry.Topology, (bool[])original.Clone());
+            ISpatialHexMap<bool> spatial = new SpatialBoolHexMap(geometry, (bool[])original.Clone());
+            var limits = new IntHexMap(geometry.Topology, (int[])originalLimits.Clone());
+            // Whole-map synchronous steps are an independent oracle for the queued traversal.
+            var expected = new BoolHexMap(geometry.Topology, (bool[])original.Clone());
+            for (int distance = 1; distance < count; distance++)
+            {
+                BoolHexMap candidates = expected.Dilate();
+                for (int index = 0; index < count; index++)
+                    expected[index] |= candidates[index] && originalLimits[index] >= distance;
+            }
+
+            BoolHexMap result = source.Dilate(limits);
+            SpatialBoolHexMap spatialResult = spatial.Dilate(limits);
+            string context = $"Seed: {seed}, scenario: {scenario}";
+            Assert.Multiple(() =>
+            {
+                Assert.That(ReadValues(result), Is.EqualTo(ReadValues(expected)), context);
+                Assert.That(result.Topology, Is.EqualTo(geometry.Topology), context);
+                Assert.That(ReadValues(spatialResult), Is.EqualTo(ReadValues(expected)), context);
+                Assert.That(spatialResult.Geometry, Is.EqualTo(geometry), context);
+                Assert.That(ReadValues(source), Is.EqualTo(original), context);
+                Assert.That(ReadValues(spatial), Is.EqualTo(original), context);
+                Assert.That(Enumerable.Range(0, count).Select(index => limits[index]), Is.EqualTo(originalLimits), context);
+            });
+
+            result[0] = !result[0];
+            spatialResult[0] = !spatialResult[0];
+            Assert.That(source[0], Is.EqualTo(original[0]), context);
+            Assert.That(spatial[0], Is.EqualTo(original[0]), context);
+        }
+    }
+
+    [Test]
+    public void Dilate_WithSpatialDistanceLimits_MatchesByIndexAndPreservesSourceGeometry()
+    {
+        var geometry = new HexMapGeometry(4, 3, new VectorXY(5f, 7f), 2f, Layout.EvenQ);
+        var limitGeometry = new HexMapGeometry(4, 3, new VectorXY(-10f, 3f), 5f, Layout.EvenQ);
+        var source = new SpatialBoolHexMap(geometry, Values(geometry.Topology, VectorXYInt.Zero));
+        ISpatialIntHexMap limits = new SpatialIntHexMap(limitGeometry, Enumerable.Repeat(2, geometry.Topology.Count).ToArray());
+
+        SpatialBoolHexMap result = source.Dilate(limits);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Geometry, Is.EqualTo(geometry));
+            Assert.That(ReadValues(result), Is.EqualTo(ReadValues(source.Dilate(2))));
+        });
+    }
+
+    [Test]
+    public void Dilate_WithDistanceLimits_ValidatesNullMaps()
+    {
+        var geometry = new HexMapGeometry(2, 2, VectorXY.Zero, 1f, Layout.OddR);
+        IHexMap<bool> source = new BoolHexMap(geometry.Topology);
+        ISpatialHexMap<bool> spatial = new SpatialBoolHexMap(geometry);
+        var limits = new IntHexMap(geometry.Topology);
+        IHexMap<int> nullLimits = null!;
+        IHexMap<bool> nullSource = null!;
+        ISpatialHexMap<bool> nullSpatial = null!;
+        Assert.Multiple(() =>
+        {
+            Assert.That(Assert.Throws<ArgumentNullException>(() => source.Dilate(nullLimits))!.ParamName, Is.EqualTo("maxDilateDistanceMap"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Dilate(nullLimits))!.ParamName, Is.EqualTo("maxDilateDistanceMap"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => nullSource.Dilate(limits))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => nullSpatial.Dilate(limits))!.ParamName, Is.EqualTo("map"));
+        });
+    }
+
+    [TestCase(3, 2, Layout.OddR)]
+    [TestCase(2, 3, Layout.OddR)]
+    [TestCase(1, 4, Layout.OddR)]
+    [TestCase(2, 2, Layout.EvenR)]
+    public void Dilate_WithDistanceLimits_RejectsDifferentTopologies(int width, int height, Layout layout)
+    {
+        var geometry = new HexMapGeometry(2, 2, VectorXY.Zero, 1f, Layout.OddR);
+        IHexMap<bool> source = new BoolHexMap(geometry.Topology);
+        ISpatialHexMap<bool> spatial = new SpatialBoolHexMap(geometry);
+        var limits = new UniformIntMap(new HexMapTopology(width, height, layout), 1);
+        Assert.Multiple(() =>
+        {
+            Assert.That(Assert.Throws<ArgumentException>(() => source.Dilate(limits))!.ParamName, Is.EqualTo("maxDilateDistanceMap"));
+            Assert.That(Assert.Throws<ArgumentException>(() => spatial.Dilate(limits))!.ParamName, Is.EqualTo("maxDilateDistanceMap"));
+        });
+    }
+
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
@@ -325,6 +515,7 @@ public class BooleanHexMapMorphologyExtensionsTests
             Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(0))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(3))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(new UniformIntMap(map.Topology, 1)))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Erode())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Close())!.ParamName, Is.EqualTo("map"));
@@ -343,6 +534,7 @@ public class BooleanHexMapMorphologyExtensionsTests
             map => map.Dilate(1),
             map => map.Dilate(8),
             map => map.Dilate(int.MaxValue),
+            map => map.Dilate(new UniformIntMap(map.Topology, int.MaxValue)),
             map => map.Erode(),
             map => map.Open(),
             map => map.Close(),
@@ -374,6 +566,23 @@ public class BooleanHexMapMorphologyExtensionsTests
 
     private static int FlatIndex(VectorXYInt index, HexMapTopology topology) =>
         index.Y * topology.Resolution.X + index.X;
+
+    private readonly struct UniformIntMap : IHexMap<int>
+    {
+        private readonly int _value;
+
+        public UniformIntMap(HexMapTopology topology, int value)
+        {
+            Topology = topology;
+            _value = value;
+        }
+
+        public HexMapTopology Topology { get; }
+
+        public int this[VectorXYInt index] => _value;
+
+        public int this[int index] => _value;
+    }
 
     private sealed class InconsistentSpatialBoolMap : ISpatialHexMap<bool>
     {

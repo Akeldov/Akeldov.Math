@@ -120,6 +120,15 @@ For multiple rings, a bounded breadth-first traversal visits each reached cell a
 using a pooled queue and O(N) time and space for N map cells, instead of repeating full-map passes.
 The source remains unchanged, and spatial maps retain their geometry.
 
+`land.Dilate(maxDilateDistanceMap)` accepts any `IHexMap<int>` implementation with the same
+topology. Each value is the maximum number of steps allowed to reach that cell from the original
+`true` area. Every cell along the path must admit its arrival distance: a cell with limit `1`
+cannot be entered at step `2`, and expansion cannot pass through it. An alternative route is
+allowed, but its full length counts against each cell's limit. Zero and negative limits block
+entry into `false` cells; original `true` cells are always retained and act as distance-zero sources.
+The method uses O(N) time and space, leaves both inputs unchanged, and preserves the Boolean map's
+geometry for spatial results. Limits are matched by cell index.
+
 `FloodFill` selects the connected region having the same Boolean value as its seed. Component label
 zero represents `false`; `true` components receive deterministic positive labels in row-major discovery
 order. `DistanceTransform` contains the minimum number of hex steps to the requested value, or
