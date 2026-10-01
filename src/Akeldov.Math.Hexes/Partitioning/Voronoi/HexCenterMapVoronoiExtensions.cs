@@ -135,7 +135,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
-        /// <param name="participationMask">
+        /// <param name="regionsMask">
         /// The map of region identifiers with the same topology as <paramref name="hexCenters"/>.
         /// Equal values identify the same region, including disconnected hexes. All integer values,
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
@@ -156,13 +156,52 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
-            IHexMap<int> participationMask,
+            IHexMap<int> regionsMask,
             EmptyCellPolicy emptyCellPolicy)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask);
+            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, regionsMask);
+        }
+
+        /// <summary>
+        /// Assigns participating hex centers to their nearest weighted Voronoi site in the same region.
+        /// </summary>
+        /// <param name="hexCenters">The hex center map to partition.</param>
+        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
+        /// <param name="emptyCellPolicy">The policy for cells receiving no participating hexes.</param>
+        /// <param name="participationMask">The Boolean map indicating which hex centers participate.</param>
+        /// <param name="regionsMask">
+        /// The region identifiers, with the same topology as the center map. Equal integer values
+        /// identify the same region, including disconnected hexes; zero and negative values are valid.
+        /// </param>
+        /// <returns>
+        /// A new read-only masked partition map with a semantic cell list. Excluded hexes return null.
+        /// </returns>
+        /// <remarks>
+        /// A site's region is determined by the hex containing its position, regardless of that hex's
+        /// participation. Sites outside the map receive no hexes. Empty-cell handling applies to all sites.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">A map is null.</exception>
+        /// <exception cref="ArgumentException">The maps have different topologies.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A participating center coordinate is not finite.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// A participating hex has no eligible site in its region, or the policy is
+        /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
+        /// A zero-weight site is eligible only at its position within the geometry tolerance.
+        /// </exception>
+        public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+            this HexCenterMap hexCenters,
+            IReadOnlyList<Site> sites,
+            IHexMap<bool> participationMask,
+            IHexMap<int> regionsMask,
+            EmptyCellPolicy emptyCellPolicy)
+        {
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask, regionsMask);
         }
     }
 }

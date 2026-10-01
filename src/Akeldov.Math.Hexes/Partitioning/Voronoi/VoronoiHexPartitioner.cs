@@ -160,7 +160,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Assigns every hex center to its nearest weighted Voronoi site in the same mask region.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
-        /// <param name="participationMask">
+        /// <param name="regionsMask">
         /// The map of region identifiers with the same topology as <paramref name="hexCenters"/>.
         /// Equal values identify the same region, including disconnected hexes. All integer values,
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
@@ -183,18 +183,18 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public VoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
-            IHexMap<int> participationMask)
+            IHexMap<int> regionsMask)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            if (participationMask == null)
-                throw new ArgumentNullException(nameof(participationMask));
+            if (regionsMask == null)
+                throw new ArgumentNullException(nameof(regionsMask));
 
-            if (hexCenters.Topology != participationMask.Topology)
-                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
+            if (hexCenters.Topology != regionsMask.Topology)
+                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(regionsMask));
 
-            var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, participationMask);
+            var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regionsMask);
             var count = hexCenters.Topology.Count;
             var cellIndexes = new int[count];
             var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
@@ -209,7 +209,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                         float.IsNaN(center.Y) || float.IsInfinity(center.Y))
                         throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
 
-                    int region = participationMask[flatIndex];
+                    int region = regionsMask[flatIndex];
                     if (!siteIndexesByRegion.TryGetValue(region, out var siteIndexes))
                         throw new InvalidOperationException($"Region {region} contains no Voronoi sites.");
 
@@ -234,7 +234,97 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
         }
 
-        private Dictionary<int, List<int>> GroupSiteIndexesByRegion(HexMapGeometry geometry, IHexMap<int> participationMask)
+        /// <summary>
+        /// Assigns participating hex centers to their nearest weighted Voronoi site in the same region.
+        /// </summary>
+        /// <param name="hexCenters">The hex center map to partition.</param>
+        /// <param name="participationMask">The Boolean map indicating which hex centers participate.</param>
+        /// <param name="regionsMask">
+        /// The region identifiers, with the same topology as the center map. Equal integer values
+        /// identify the same region, including disconnected hexes; zero and negative values are valid.
+        /// </param>
+        /// <returns>
+        /// A new read-only masked partition map with a semantic cell list. Excluded hexes return null.
+        /// </returns>
+        /// <remarks>
+        /// A site's region is determined by the hex containing its position, regardless of that hex's
+        /// participation. Sites outside the map receive no hexes. Empty-cell handling applies to all sites.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">A map is null.</exception>
+        /// <exception cref="ArgumentException">The maps have different topologies.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A participating center coordinate is not finite.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// A participating hex has no eligible site in its region, or the policy is
+        /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
+        /// A zero-weight site is eligible only at its position within the geometry tolerance.
+        /// </exception>
+        public MaskedVoronoiHexPartitionMap Partition(
+            HexCenterMap hexCenters,
+            IHexMap<bool> participationMask,
+            IHexMap<int> regionsMask)
+        {
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            if (participationMask == null)
+                throw new ArgumentNullException(nameof(participationMask));
+
+            if (hexCenters.Topology != participationMask.Topology)
+                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
+
+            if (regionsMask == null)
+                throw new ArgumentNullException(nameof(regionsMask));
+
+            if (hexCenters.Topology != regionsMask.Topology)
+                throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
+
+            var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regionsMask);
+            var cellIndexes = new int[hexCenters.Topology.Count];
+            var participationMaskValues = new bool[hexCenters.Topology.Count];
+            var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
+
+            int flatIndex = 0;
+            for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
+            {
+                for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
+                {
+                    if (!participationMask[flatIndex])
+                    {
+                        flatIndex++;
+                        continue;
+                    }
+
+                    participationMaskValues[flatIndex] = true;
+                    PointXY center = hexCenters[flatIndex];
+                    if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
+                        float.IsNaN(center.Y) || float.IsInfinity(center.Y))
+                        throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
+
+                    int region = regionsMask[flatIndex];
+                    if (!siteIndexesByRegion.TryGetValue(region, out var siteIndexes))
+                        throw new InvalidOperationException($"Region {region} contains no Voronoi sites.");
+
+                    int cellIndex = GetNearestWeightedCellIndex(center, siteIndexes);
+                    if (cellIndex < 0)
+                        throw new InvalidOperationException($"Region {region} has no eligible Voronoi site for hex ({x}, {y}).");
+
+                    cellIndexes[flatIndex] = cellIndex;
+                    hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
+                    flatIndex++;
+                }
+            }
+
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
+
+            var assignments = new VoronoiCell?[hexCenters.Topology.Count];
+            for (int i = 0; i < assignments.Length; i++)
+                if (participationMaskValues[i])
+                    assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
+
+            return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+        }
+
+        private Dictionary<int, List<int>> GroupSiteIndexesByRegion(HexMapGeometry geometry, IHexMap<int> regionsMask)
         {
             var siteIndexesByRegion = new Dictionary<int, List<int>>();
             for (int i = 0; i < _sites.Length; i++)
@@ -244,7 +334,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                     index.Y < 0 || index.Y >= geometry.Topology.Resolution.Y)
                     continue;
 
-                int region = participationMask[index];
+                int region = regionsMask[index];
                 if (!siteIndexesByRegion.TryGetValue(region, out var siteIndexes))
                 {
                     siteIndexes = new List<int>();
