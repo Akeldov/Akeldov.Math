@@ -18,7 +18,7 @@
 
 - `BoolHexMap` adds cell-wise `!`, `&`, `|`, `^`, and conditional `Select` operations.
 - Version 0.6.0 adds [binary serialization of Boolean maps](../utility-structures/binary-helpers.md#boolean-maps), preserving topology and values in a versioned format.
-- Boolean maps provide one-step hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`) plus linear-time flood fill, component labeling, and distance transforms.
+- Boolean maps provide hex morphology (`Dilate`, `Erode`, `Open`, `Close`, and `Outline`), dilation by a specified number of rings, plus linear-time flood fill, component labeling, and distance transforms.
 - `IntHexMap` and `FloatHexMap` add `Min`, `Max`, and cell-wise arithmetic.
 - Version 0.6.0 adds [binary serialization of integer maps](../utility-structures/binary-helpers.md#integer-maps), preserving topology and the full signed `Int32` value range.
 - Version 0.6.0 adds [binary serialization of floating-point maps](../utility-structures/binary-helpers.md#floating-point-maps), preserving topology and exact `Single` value bits, including signed zero, infinities, and NaN payloads.
@@ -105,6 +105,7 @@ two direct passes through an internal pooled scratch buffer; they do not allocat
 
 ```csharp
 BoolHexMap expanded = land.Dilate();
+BoolHexMap expandedByThreeRings = land.Dilate(ringsCount: 3);
 BoolHexMap cleaned = land.Open();
 BoolHexMap boundary = land.Outline();
 
@@ -112,6 +113,12 @@ BoolHexMap selectedRegion = land.FloodFill(new VectorXYInt(4, 3));
 (IntHexMap labels, int componentCount) = land.ConnectedComponents();
 IntHexMap distanceToWater = land.DistanceTransform(targetValue: false);
 ```
+
+`Dilate(ringsCount)` includes all cells within the given number of hex steps of any `true` cell,
+clipped to the existing map. Zero returns an independent copy; negative counts are rejected.
+For multiple rings, a bounded breadth-first traversal visits each reached cell at most once,
+using a pooled queue and O(N) time and space for N map cells, instead of repeating full-map passes.
+The source remains unchanged, and spatial maps retain their geometry.
 
 `FloodFill` selects the connected region having the same Boolean value as its seed. Component label
 zero represents `false`; `true` components receive deterministic positive labels in row-major discovery

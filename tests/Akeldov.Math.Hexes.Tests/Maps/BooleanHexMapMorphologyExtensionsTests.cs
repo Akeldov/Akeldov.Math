@@ -29,6 +29,132 @@ public class BooleanHexMapMorphologyExtensionsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
+    public void Dilate_WithRingCount_ExpandsSingleCellToHexDisk(Layout layout)
+    {
+        var topology = new HexMapTopology(17, 17, layout);
+        var source = Map(topology, new VectorXYInt(8, 8));
+
+        for (int ringsCount = 0; ringsCount <= 4; ringsCount++)
+        {
+            BoolHexMap result = source.Dilate(ringsCount);
+            Assert.That(ReadValues(result).Count(value => value), Is.EqualTo(1 + 3 * ringsCount * (ringsCount + 1)),
+                $"Rings: {ringsCount}");
+        }
+    }
+
+    [TestCase(Layout.OddR, 1729)]
+    [TestCase(Layout.EvenR, 2718)]
+    [TestCase(Layout.OddQ, 31415)]
+    [TestCase(Layout.EvenQ, 65537)]
+    public void Dilate_WithRingCount_MatchesRepeatedDilation(Layout layout, int seed)
+    {
+        var random = new Random(seed);
+        for (int scenario = 0; scenario < 60; scenario++)
+        {
+            // Include empty and one-cell-wide maps, both parity axes, and overlapping fronts.
+            int width = scenario % 10 == 0 ? 1 : random.Next(0, 18);
+            int height = scenario % 10 == 1 ? 1 : random.Next(0, 18);
+            var geometry = new HexMapGeometry(width, height, new VectorXY(10f, -20f), 2f, layout);
+            double density = (scenario % 8) switch
+            {
+                0 => 0,
+                1 => 0.01,
+                2 => 0.05,
+                3 => 0.125,
+                4 => 0.25,
+                5 => 0.5,
+                6 => 0.75,
+                _ => 1,
+            };
+            bool[] original = Enumerable.Range(0, geometry.Topology.Count)
+                .Select(_ => random.NextDouble() < density).ToArray();
+            var source = new BoolHexMap(geometry.Topology, (bool[])original.Clone());
+            ISpatialHexMap<bool> spatial = new SpatialBoolHexMap(geometry, (bool[])original.Clone());
+            int ringsCount = scenario % 9;
+            BoolHexMap expected = source;
+            for (int ring = 0; ring < ringsCount; ring++)
+                expected = expected.Dilate();
+
+            BoolHexMap result = source.Dilate(ringsCount);
+            SpatialBoolHexMap spatialResult = spatial.Dilate(ringsCount);
+            string context = $"Seed: {seed}, scenario: {scenario}, size: {width}x{height}, rings: {ringsCount}";
+            Assert.Multiple(() =>
+            {
+                Assert.That(ReadValues(result), Is.EqualTo(ReadValues(expected)), context);
+                Assert.That(result.Topology, Is.EqualTo(source.Topology), context);
+                Assert.That(ReadValues(spatialResult), Is.EqualTo(ReadValues(expected)), context);
+                Assert.That(spatialResult.Geometry, Is.EqualTo(geometry), context);
+                Assert.That(ReadValues(source), Is.EqualTo(original), context);
+                Assert.That(ReadValues(spatial), Is.EqualTo(original), context);
+            });
+        }
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(3)]
+    public void Dilate_WithRingCount_ReturnsIndependentMap(int ringsCount)
+    {
+        var topology = new HexMapTopology(9, 9, Layout.OddR);
+        var source = Map(topology, new VectorXYInt(4, 4));
+        bool[] original = ReadValues(source);
+
+        BoolHexMap result = source.Dilate(ringsCount);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.SameAs(source));
+            Assert.That(result.Topology, Is.EqualTo(topology));
+            Assert.That(ReadValues(source), Is.EqualTo(original));
+            if (ringsCount == 0)
+                Assert.That(ReadValues(result), Is.EqualTo(original));
+        });
+        result[0] = !result[0];
+        Assert.That(ReadValues(source), Is.EqualTo(original));
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void Dilate_WithMaximumRingCount_FillsMapOnlyWhenTrueCellsExist(Layout layout)
+    {
+        var geometry = new HexMapGeometry(11, 7, VectorXY.Zero, 1f, layout);
+        var source = Map(geometry.Topology, VectorXYInt.Zero);
+        var empty = new BoolHexMap(geometry.Topology);
+        ISpatialHexMap<bool> spatial = new SpatialBoolHexMap(geometry, ReadValues(source));
+        ISpatialHexMap<bool> spatialEmpty = new SpatialBoolHexMap(geometry);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ReadValues(source.Dilate(int.MaxValue)), Is.All.True);
+            Assert.That(ReadValues(empty.Dilate(int.MaxValue)), Is.All.False);
+            Assert.That(ReadValues(spatial.Dilate(int.MaxValue)), Is.All.True);
+            Assert.That(ReadValues(spatialEmpty.Dilate(int.MaxValue)), Is.All.False);
+        });
+    }
+
+    [TestCase(-1)]
+    [TestCase(int.MinValue)]
+    public void Dilate_WithNegativeRingCount_Throws(int ringsCount)
+    {
+        var geometry = new HexMapGeometry(2, 2, VectorXY.Zero, 1f, Layout.OddR);
+        IHexMap<bool> ordinary = new BoolHexMap(geometry.Topology);
+        ISpatialHexMap<bool> spatial = new SpatialBoolHexMap(geometry);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => ordinary.Dilate(ringsCount))!.ParamName,
+                Is.EqualTo("ringsCount"));
+            Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => spatial.Dilate(ringsCount))!.ParamName,
+                Is.EqualTo("ringsCount"));
+        });
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
     public void Erode_WithCellAndSixNeighbors_LeavesCenter(Layout layout)
     {
         var topology = new HexMapTopology(7, 7, layout);
@@ -101,6 +227,7 @@ public class BooleanHexMapMorphologyExtensionsTests
         Assert.Multiple(() =>
         {
             Assert.That(source.Dilate()[0], Is.EqualTo(value));
+            Assert.That(source.Dilate(int.MaxValue)[0], Is.EqualTo(value));
             Assert.That(source.Erode()[0], Is.EqualTo(value));
             Assert.That(source.Open()[0], Is.EqualTo(value));
             Assert.That(source.Close()[0], Is.EqualTo(value));
@@ -116,6 +243,7 @@ public class BooleanHexMapMorphologyExtensionsTests
         BoolHexMap[] results =
         {
             source.Dilate(), source.Erode(), source.Open(), source.Close(), source.Outline(),
+            source.Dilate(0), source.Dilate(1), source.Dilate(int.MaxValue),
         };
 
         Assert.Multiple(() =>
@@ -144,6 +272,7 @@ public class BooleanHexMapMorphologyExtensionsTests
         SpatialBoolHexMap[] results =
         {
             source.Dilate(), source.Erode(), source.Open(), source.Close(), source.Outline(),
+            source.Dilate(0), source.Dilate(1), source.Dilate(3),
         };
 
         values[0] = !values[0];
@@ -170,11 +299,15 @@ public class BooleanHexMapMorphologyExtensionsTests
         Assert.Multiple(() =>
         {
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Dilate())!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Dilate(0))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Dilate(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Erode())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Close())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => ordinary.Outline())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Dilate())!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Dilate(0))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Dilate(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Erode())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => spatial.Close())!.ParamName, Is.EqualTo("map"));
@@ -190,6 +323,8 @@ public class BooleanHexMapMorphologyExtensionsTests
         Assert.Multiple(() =>
         {
             Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate())!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(0))!.ParamName, Is.EqualTo("map"));
+            Assert.That(Assert.Throws<ArgumentException>(() => map.Dilate(3))!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Erode())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Open())!.ParamName, Is.EqualTo("map"));
             Assert.That(Assert.Throws<ArgumentException>(() => map.Close())!.ParamName, Is.EqualTo("map"));
@@ -204,6 +339,10 @@ public class BooleanHexMapMorphologyExtensionsTests
         Func<IHexMap<bool>, BoolHexMap>[] operations =
         {
             map => map.Dilate(),
+            map => map.Dilate(0),
+            map => map.Dilate(1),
+            map => map.Dilate(8),
+            map => map.Dilate(int.MaxValue),
             map => map.Erode(),
             map => map.Open(),
             map => map.Close(),
