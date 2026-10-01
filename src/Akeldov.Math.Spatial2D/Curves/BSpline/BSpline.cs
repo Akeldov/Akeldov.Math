@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Represents a finite directed non-uniform polynomial B-spline curve.
     /// </summary>
@@ -187,4 +188,5 @@ namespace Akeldov.Math.Spatial2D.Curves
             return _approximation.Flatten();
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

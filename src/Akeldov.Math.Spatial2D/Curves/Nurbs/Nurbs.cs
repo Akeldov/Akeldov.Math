@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Represents a finite directed non-uniform rational B-spline (NURBS) curve.
     /// </summary>
@@ -164,7 +165,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>Returns the shortest distance to the cached curve approximation.</summary>
         /// <param name="point">The finite point to measure from.</param>
         /// <returns>The approximate unsigned distance in world coordinate units.</returns>
-        public float Distance(PointXY point) => ProjectWithParameter(point).Distance;
+        public float Distance(PointXY point)
+        {
+            return ProjectWithParameter(point).Distance;
+        }
 
         /// <summary>Projects a point onto the cached curve approximation.</summary>
         /// <param name="point">The finite point to project.</param>
@@ -203,4 +207,5 @@ namespace Akeldov.Math.Spatial2D.Curves
             return _approximation.Flatten();
         }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

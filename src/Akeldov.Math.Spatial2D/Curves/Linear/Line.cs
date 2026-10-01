@@ -167,10 +167,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="other">The line to compare with this line.</param>
         /// <returns><see langword="true"/> if both lines are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(Line other) =>
-            EquationA.Equals(other.EquationA) &&
-            EquationB.Equals(other.EquationB) &&
-            EquationC.Equals(other.EquationC);
+        public bool Equals(Line other)
+        {
+            return EquationA.Equals(other.EquationA) &&
+                EquationB.Equals(other.EquationB) &&
+                EquationC.Equals(other.EquationC);
+        }
 
         /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(EquationA, EquationB, EquationC);

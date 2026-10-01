@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -9,6 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value starts at the coordinate origin and points along the positive X axis.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct Ray : IRayPath, IRightwardCrossingProvider, IEquatable<Ray>
     {
         private readonly PointXY _origin;
@@ -110,7 +112,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point and distance to this ray.</returns>
         public CurveProjection Project(PointXY point)
         {
-            var projection = ProjectWithParameter(point);
+            ParameterizedCurveProjection projection = ProjectWithParameter(point);
             return new CurveProjection(projection.ProjectedPoint, projection.Distance);
         }
 
@@ -151,8 +153,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         public override int GetHashCode() => HashCode.Combine(Origin, Direction);
 
         /// <inheritdoc/>
-        public override string ToString() =>
-            string.Format(CultureInfo.InvariantCulture, "({0} + t*{1}, t >= 0)", Origin, Direction);
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "({0} + t*{1}, t >= 0)", Origin, Direction);
+        }
 
         /// <summary>
         /// Returns the point at the specified ray length coordinate.
