@@ -2,7 +2,6 @@ using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Buffers;
-using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes
 {
@@ -191,6 +190,7 @@ namespace Akeldov.Math.Hexes
 
             return new SpatialIntHexMap(map.Geometry, CreateDistanceTransformValues(map, targetValue));
         }
+
 #pragma warning restore RS0026
 
         private static bool[] CreateFloodFillValues(IHexMap<bool> map, int seedIndex)
@@ -218,7 +218,7 @@ namespace Akeldov.Math.Hexes
                     int currentIndex = queue[head++];
                     int y = currentIndex / width;
                     int x = currentIndex - y * width;
-                    VectorXYInt[] offsets = GetConnectivityOffsets(
+                    VectorXYInt[] offsets = BooleanHexMapTraversalHelper.GetConnectivityOffsets(
                         x,
                         y,
                         parityUsesY,
@@ -227,7 +227,7 @@ namespace Akeldov.Math.Hexes
 
                     for (int direction = 0; direction < offsets.Length; direction++)
                     {
-                        if (!TryGetNeighborFlatIndex(x, y, offsets[direction], width, height, out int neighborIndex) ||
+                        if (!BooleanHexMapTraversalHelper.TryGetNeighborFlatIndex(x, y, offsets[direction], width, height, out int neighborIndex) ||
                             selected[neighborIndex] ||
                             map[neighborIndex] != selectedValue)
                             continue;
@@ -276,7 +276,7 @@ namespace Akeldov.Math.Hexes
                         int currentIndex = queue[head++];
                         int y = currentIndex / width;
                         int x = currentIndex - y * width;
-                        VectorXYInt[] offsets = GetConnectivityOffsets(
+                        VectorXYInt[] offsets = BooleanHexMapTraversalHelper.GetConnectivityOffsets(
                             x,
                             y,
                             parityUsesY,
@@ -285,7 +285,7 @@ namespace Akeldov.Math.Hexes
 
                         for (int direction = 0; direction < offsets.Length; direction++)
                         {
-                            if (!TryGetNeighborFlatIndex(x, y, offsets[direction], width, height, out int neighborIndex) ||
+                            if (!BooleanHexMapTraversalHelper.TryGetNeighborFlatIndex(x, y, offsets[direction], width, height, out int neighborIndex) ||
                                 labels[neighborIndex] != 0 ||
                                 !map[neighborIndex])
                                 continue;
@@ -340,7 +340,7 @@ namespace Akeldov.Math.Hexes
                     int nextDistance = distances[currentIndex] + 1;
                     int y = currentIndex / width;
                     int x = currentIndex - y * width;
-                    VectorXYInt[] offsets = GetConnectivityOffsets(
+                    VectorXYInt[] offsets = BooleanHexMapTraversalHelper.GetConnectivityOffsets(
                         x,
                         y,
                         parityUsesY,
@@ -349,7 +349,7 @@ namespace Akeldov.Math.Hexes
 
                     for (int direction = 0; direction < offsets.Length; direction++)
                     {
-                        if (!TryGetNeighborFlatIndex(x, y, offsets[direction], width, height, out int neighborIndex) ||
+                        if (!BooleanHexMapTraversalHelper.TryGetNeighborFlatIndex(x, y, offsets[direction], width, height, out int neighborIndex) ||
                             distances[neighborIndex] != int.MaxValue)
                             continue;
 
@@ -364,39 +364,6 @@ namespace Akeldov.Math.Hexes
             }
 
             return distances;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static VectorXYInt[] GetConnectivityOffsets(
-            int x,
-            int y,
-            bool parityUsesY,
-            VectorXYInt[] evenOffsets,
-            VectorXYInt[] oddOffsets)
-        {
-            bool axisIsEven = ((parityUsesY ? y : x) & 1) == 0;
-            return axisIsEven ? evenOffsets : oddOffsets;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool TryGetNeighborFlatIndex(
-            int x,
-            int y,
-            VectorXYInt offset,
-            int width,
-            int height,
-            out int neighborIndex)
-        {
-            int neighborX = x + offset.X;
-            int neighborY = y + offset.Y;
-            if ((uint)neighborX >= (uint)width || (uint)neighborY >= (uint)height)
-            {
-                neighborIndex = default;
-                return false;
-            }
-
-            neighborIndex = neighborY * width + neighborX;
-            return true;
         }
     }
 }
