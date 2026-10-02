@@ -109,7 +109,7 @@ public class BmpLoadingTests
     [Test]
     public void LoadFromBmp_WithTopDownBgraFixture_PreservesAlphaAndNormalizesRows()
     {
-        using var stream = new ShortReadStream(ReadFixture("rgba32-top-down.bmp"));
+        using var stream = new ShortReadStream(ReadFixture("rgba8-top-down.bmp"));
 
         Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromBmp(stream);
 
@@ -123,7 +123,7 @@ public class BmpLoadingTests
     }
 
     [TestCase("indexed8-color.bmp")]
-    [TestCase("rgba32-top-down.bmp")]
+    [TestCase("rgba8-top-down.bmp")]
     public void LoadFromBmp_WithUnsupportedGrayscaleFormat_Throws(string fileName)
     {
         using var stream = new MemoryStream(ReadFixture(fileName));

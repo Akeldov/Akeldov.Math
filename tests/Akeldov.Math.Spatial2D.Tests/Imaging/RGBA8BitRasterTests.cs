@@ -69,7 +69,7 @@ public class RGBA8BitRasterTests
     }
 
     [Test]
-    public void SaveAsBmp_WhenRasterIsRGBA8Bit_WritesBmp32WithBgraPixels()
+    public void SaveAsBmp_WhenRasterIsRGBA8Bit_WritesBgra8Pixels()
     {
         SpatialRaster<RGBA8BitColor> raster = CreateRasterWithFirstPixel();
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rgba8.bmp");
@@ -93,7 +93,7 @@ public class RGBA8BitRasterTests
     }
 
     [Test]
-    public void SaveAsBmp_WhenRGBA8BitStreamIsProvided_WritesBmp32WithBgraPixels()
+    public void SaveAsBmp_WhenRGBA8BitStreamIsProvided_WritesBgra8Pixels()
     {
         SpatialRaster<RGBA8BitColor> raster = CreateRasterWithFirstPixel();
         using var stream = new MemoryStream();
