@@ -32,6 +32,7 @@ The library is organized around practical 2D geometry workflows.
 - Color helpers for normalized values, blending, and temperature heat maps.
 - Generic geometry scenes with composable shape and TrueType text layers.
 - 8-bit BMP and 8-/16-bit PNG export helpers with configurable PNG compression.
+- PNG and BMP loading from files and streams into mutable rasters.
 
 ### Spatial Sampling and Partitioning
 

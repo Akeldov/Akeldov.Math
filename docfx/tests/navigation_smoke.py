@@ -79,7 +79,7 @@ class NavigationSmokeTests(unittest.TestCase):
         self.assertTrue(shell.locator(".dropdown-menu a").first.is_visible())
         self.assertEqual(self.page.locator("#navbar > .navbar-nav:visible").count(), 1)
         shell.locator(".dropdown-menu a").first.click()
-        self.page.wait_for_url("**/en/Spatial2D/1.2.0/index.html")
+        self.page.wait_for_url("**/en/Spatial2D/1.3.0/index.html")
 
     def test_responsive_header_and_controls(self):
         paths = (
@@ -138,7 +138,7 @@ class NavigationSmokeTests(unittest.TestCase):
         self.page.wait_for_function("document.querySelectorAll('#search-results a').length > 0")
 
     def test_version_and_language_switches_preserve_section(self):
-        for library, current, target in (("Spatial2D", "1.1.0", "0.9.0"), ("Hexes", "0.7.0", "0.2.0")):
+        for library, current, target in (("Spatial2D", "1.3.0", "0.9.0"), ("Hexes", "0.7.0", "0.2.0")):
             with self.subTest(library=library):
                 self.load_ready(f"ru/{library}/{current}/concepts/index.html")
                 self.page.locator("#akeldov-docs-version").select_option(target)
