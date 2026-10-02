@@ -1,1 +1,3 @@
 #nullable enable
+static Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>.LoadFromPng(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>!
+static Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>.LoadFromPng(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>!

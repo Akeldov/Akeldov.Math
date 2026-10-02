@@ -92,3 +92,27 @@ Raster<Gray16BitColor> distance = new SpatialRaster<Gray16BitColor>(
     .ToRaster();
 distance.SaveAsPng("distance.png");
 ```
+
+## Reading 16-bit RGBA PNG
+
+Use the static `Raster<RGBA16BitColor>.LoadFromPng` overloads to load a file or a stream:
+
+```csharp
+using System.IO;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+Raster<RGBA16BitColor> fromFile = Raster<RGBA16BitColor>.LoadFromPng("scene.png");
+
+using Stream stream = File.OpenRead("scene.png");
+Raster<RGBA16BitColor> fromStream = Raster<RGBA16BitColor>.LoadFromPng(stream);
+```
+
+The PNG must use 16-bit RGBA channels. Loading preserves channel values and alpha without
+color-space conversion, and supports all five scanline filters and Adam7 interlacing.
+The loaded raster is new, mutable, and owned by the caller. Y increases from the bottom image
+row, matching `SaveAsPng`. PNG does not retain `RasterGeometry` spatial bounds.
+
+Stream loading starts at the current position, stops after the PNG trailer, and leaves the
+stream open. Seeking is not required. Invalid or truncated PNG data throws `InvalidDataException`;
+unsupported PNG color formats or raster value types throw `NotSupportedException`.
