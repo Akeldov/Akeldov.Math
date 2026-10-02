@@ -95,30 +95,31 @@ distance.SaveAsPng("distance.png");
 
 ## Reading PNG
 
-Use the static `LoadFromPng` overloads on `Raster<RGBA8BitColor>`, `Raster<RGBA16BitColor>`,
-`Raster<Gray8BitColor>`, or `Raster<Gray16BitColor>` to load a file or a stream:
+Use `RasterImageLoader` in `Akeldov.Math.Spatial2D.Imaging` to load a file or a stream.
+Choose `LoadRgba8FromPng`, `LoadRgba16FromPng`, `LoadGray8FromPng`, or `LoadGray16FromPng`
+for the required pixel type:
 
 ```csharp
 using System.IO;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
 
-Raster<RGBA16BitColor> fromFile = Raster<RGBA16BitColor>.LoadFromPng("scene.png");
+Raster<RGBA16BitColor> fromFile = RasterImageLoader.LoadRgba16FromPng("scene.png");
 
 using Stream stream = File.OpenRead("scene.png");
-Raster<RGBA16BitColor> fromStream = Raster<RGBA16BitColor>.LoadFromPng(stream);
+Raster<RGBA16BitColor> fromStream = RasterImageLoader.LoadRgba16FromPng(stream);
 
-Raster<RGBA8BitColor> rgba8FromFile = Raster<RGBA8BitColor>.LoadFromPng("preview.png");
+Raster<RGBA8BitColor> rgba8FromFile = RasterImageLoader.LoadRgba8FromPng("preview.png");
 using Stream rgba8Stream = File.OpenRead("preview.png");
-Raster<RGBA8BitColor> rgba8FromStream = Raster<RGBA8BitColor>.LoadFromPng(rgba8Stream);
+Raster<RGBA8BitColor> rgba8FromStream = RasterImageLoader.LoadRgba8FromPng(rgba8Stream);
 
-Raster<Gray16BitColor> gray16FromFile = Raster<Gray16BitColor>.LoadFromPng("heightmap.png");
+Raster<Gray16BitColor> gray16FromFile = RasterImageLoader.LoadGray16FromPng("heightmap.png");
 using Stream gray16Stream = File.OpenRead("heightmap.png");
-Raster<Gray16BitColor> gray16FromStream = Raster<Gray16BitColor>.LoadFromPng(gray16Stream);
+Raster<Gray16BitColor> gray16FromStream = RasterImageLoader.LoadGray16FromPng(gray16Stream);
 
-Raster<Gray8BitColor> gray8FromFile = Raster<Gray8BitColor>.LoadFromPng("mask.png");
+Raster<Gray8BitColor> gray8FromFile = RasterImageLoader.LoadGray8FromPng("mask.png");
 using Stream gray8Stream = File.OpenRead("mask.png");
-Raster<Gray8BitColor> gray8FromStream = Raster<Gray8BitColor>.LoadFromPng(gray8Stream);
+Raster<Gray8BitColor> gray8FromStream = RasterImageLoader.LoadGray8FromPng(gray8Stream);
 ```
 
 The PNG color type and bit depth must match the requested raster type:
@@ -132,16 +133,17 @@ row, matching `SaveAsPng`. PNG does not retain `RasterGeometry` spatial bounds.
 
 Stream loading starts at the current position, stops after the PNG trailer, and leaves the
 stream open. Seeking is not required. Invalid or truncated PNG data throws `InvalidDataException`;
-unsupported PNG color formats or raster value types throw `NotSupportedException`.
+unsupported PNG color formats or bit depths throw `NotSupportedException`.
 
 ## Reading BMP
 
-Use the static `LoadFromBmp` overloads on `Raster<Gray8BitColor>` or `Raster<RGBA8BitColor>`:
+Use `RasterImageLoader.LoadGray8FromBmp` or `RasterImageLoader.LoadRgba8FromBmp`.
+Each method has overloads for a file path and a stream:
 
 ```csharp
-Raster<Gray8BitColor> mask = Raster<Gray8BitColor>.LoadFromBmp("mask.bmp");
+Raster<Gray8BitColor> mask = RasterImageLoader.LoadGray8FromBmp("mask.bmp");
 using Stream bmpStream = File.OpenRead("preview.bmp");
-Raster<RGBA8BitColor> preview = Raster<RGBA8BitColor>.LoadFromBmp(bmpStream);
+Raster<RGBA8BitColor> preview = RasterImageLoader.LoadRgba8FromBmp(bmpStream);
 ```
 
 Both types support uncompressed indexed 8-bit BMP. Palette indices are resolved to colors;
@@ -154,5 +156,5 @@ Loading handles row padding and both bottom-up and top-down images. The returned
 new, mutable, and owned by the caller, with Y increasing from the bottom image row.
 Spatial bounds are not stored in BMP. Stream loading starts at the current position, consumes
 the declared BMP file size, and leaves the stream open. Seeking is not required.
-Invalid or truncated data throws `InvalidDataException`; unsupported formats or raster value
-types throw `NotSupportedException`.
+Invalid or truncated data throws `InvalidDataException`; unsupported BMP formats throw
+`NotSupportedException`.

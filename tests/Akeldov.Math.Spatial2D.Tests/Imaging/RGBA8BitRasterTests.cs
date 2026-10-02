@@ -132,7 +132,7 @@ public class RGBA8BitRasterTests
         stream.WriteByte(0x42);
         stream.Position = 1;
 
-        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromPng(stream);
+        Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromPng(stream);
 
         Assert.Multiple(() =>
         {
@@ -155,7 +155,7 @@ public class RGBA8BitRasterTests
         {
             source.SaveAsPng(path);
 
-            Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromPng(path);
+            Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromPng(path);
 
             Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
             Assert.That(loaded.Values, Is.EqualTo(source.Values));
@@ -182,7 +182,7 @@ public class RGBA8BitRasterTests
         string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", fileName);
         using var stream = new ShortReadStream(File.ReadAllBytes(path));
 
-        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromPng(stream);
+        Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromPng(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
         for (int pngY = 0; pngY < height; pngY++)
@@ -202,11 +202,11 @@ public class RGBA8BitRasterTests
     [Test]
     public void LoadFromPng_WithInvalidArguments_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Raster<RGBA8BitColor>.LoadFromPng((Stream)null!));
-        Assert.Throws<ArgumentNullException>(() => Raster<RGBA8BitColor>.LoadFromPng((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadRgba8FromPng((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadRgba8FromPng((string)null!));
         using var stream = new MemoryStream();
         stream.Dispose();
-        Assert.Throws<ArgumentException>(() => Raster<RGBA8BitColor>.LoadFromPng(stream));
+        Assert.Throws<ArgumentException>(() => RasterImageLoader.LoadRgba8FromPng(stream));
     }
 
     [TestCase("rgba16")]
@@ -224,7 +224,7 @@ public class RGBA8BitRasterTests
         }
         stream.Position = 0;
 
-        Assert.Throws<NotSupportedException>(() => Raster<RGBA8BitColor>.LoadFromPng(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadRgba8FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -239,7 +239,7 @@ public class RGBA8BitRasterTests
             png[29] ^= 1;
         using var stream = new MemoryStream(defect == "truncated" ? png[..^1] : png);
 
-        Assert.Throws<InvalidDataException>(() => Raster<RGBA8BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadRgba8FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 

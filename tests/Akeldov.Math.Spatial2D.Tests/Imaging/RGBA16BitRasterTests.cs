@@ -94,7 +94,7 @@ public class RGBA16BitRasterTests
         stream.WriteByte(0x42);
         stream.Position = 1;
 
-        Raster<RGBA16BitColor> loaded = Raster<RGBA16BitColor>.LoadFromPng(stream);
+        Raster<RGBA16BitColor> loaded = RasterImageLoader.LoadRgba16FromPng(stream);
 
         Assert.Multiple(() =>
         {
@@ -117,7 +117,7 @@ public class RGBA16BitRasterTests
         {
             source.SaveAsPng(path);
 
-            Raster<RGBA16BitColor> loaded = Raster<RGBA16BitColor>.LoadFromPng(path);
+            Raster<RGBA16BitColor> loaded = RasterImageLoader.LoadRgba16FromPng(path);
 
             Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
             Assert.That(loaded.Values, Is.EqualTo(source.Values));
@@ -144,7 +144,7 @@ public class RGBA16BitRasterTests
         string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", fileName);
         using var stream = new ShortReadStream(File.ReadAllBytes(path));
 
-        Raster<RGBA16BitColor> loaded = Raster<RGBA16BitColor>.LoadFromPng(stream);
+        Raster<RGBA16BitColor> loaded = RasterImageLoader.LoadRgba16FromPng(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
         for (int pngY = 0; pngY < height; pngY++)
@@ -162,19 +162,15 @@ public class RGBA16BitRasterTests
     }
 
     [Test]
-    public void LoadFromPng_WithInvalidArguments_ThrowsBeforeReading()
+    public void LoadFromPng_WithInvalidArguments_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Raster<RGBA16BitColor>.LoadFromPng((Stream)null!));
-        Assert.Throws<ArgumentNullException>(() => Raster<RGBA16BitColor>.LoadFromPng((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadRgba16FromPng((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadRgba16FromPng((string)null!));
         using var unreadable = new MemoryStream(new byte[1]);
         unreadable.Dispose();
-        Assert.Throws<ArgumentException>(() => Raster<RGBA16BitColor>.LoadFromPng(unreadable));
-        using var stream = new MemoryStream(new byte[1]);
-        Assert.Throws<NotSupportedException>(() => Raster<int>.LoadFromPng(stream));
-        Assert.That(stream.Position, Is.Zero);
-        Assert.Throws<NotSupportedException>(() => Raster<int>.LoadFromPng("nonexistent.png"));
+        Assert.Throws<ArgumentException>(() => RasterImageLoader.LoadRgba16FromPng(unreadable));
         Assert.Throws<FileNotFoundException>(() =>
-            Raster<RGBA16BitColor>.LoadFromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
+            RasterImageLoader.LoadRgba16FromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
     }
 
     [TestCase(8, 6)]
@@ -184,7 +180,7 @@ public class RGBA16BitRasterTests
     {
         using var stream = new MemoryStream(CreatePng(new byte[9], depth: depth, colorType: colorType));
 
-        Assert.Throws<NotSupportedException>(() => Raster<RGBA16BitColor>.LoadFromPng(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadRgba16FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -198,7 +194,7 @@ public class RGBA16BitRasterTests
         byte[] png = CreatePng(new byte[9]);
         using var stream = new MemoryStream(png[..(length < 0 ? png.Length - 1 : length)]);
 
-        Assert.Throws<InvalidDataException>(() => Raster<RGBA16BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadRgba16FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -208,7 +204,7 @@ public class RGBA16BitRasterTests
     {
         using var stream = new MemoryStream(CreatePng(new byte[length]));
 
-        Assert.Throws<InvalidDataException>(() => Raster<RGBA16BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadRgba16FromPng(stream));
     }
 
     [Test]
@@ -218,7 +214,7 @@ public class RGBA16BitRasterTests
         scanline[0] = 5;
         using var stream = new MemoryStream(CreatePng(scanline));
 
-        Assert.Throws<InvalidDataException>(() => Raster<RGBA16BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadRgba16FromPng(stream));
     }
 
     [TestCase("signature")]
@@ -234,7 +230,7 @@ public class RGBA16BitRasterTests
     {
         using var stream = new MemoryStream(CreatePng(new byte[9], defect));
 
-        Assert.Throws<InvalidDataException>(() => Raster<RGBA16BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadRgba16FromPng(stream));
     }
 
     [Test]
@@ -242,7 +238,7 @@ public class RGBA16BitRasterTests
     {
         using var stream = new MemoryStream(CreatePng(new byte[9], "critical"));
 
-        Assert.Throws<NotSupportedException>(() => Raster<RGBA16BitColor>.LoadFromPng(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadRgba16FromPng(stream));
     }
 
     private static byte[] CreatePng(byte[] scanlines, string? defect = null, byte depth = 16, byte colorType = 6)

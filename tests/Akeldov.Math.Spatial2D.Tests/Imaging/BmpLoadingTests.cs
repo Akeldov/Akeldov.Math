@@ -22,7 +22,7 @@ public class BmpLoadingTests
         stream.WriteByte(0x42);
         stream.Position = 1;
 
-        Raster<Gray8BitColor> loaded = Raster<Gray8BitColor>.LoadFromBmp(stream);
+        Raster<Gray8BitColor> loaded = RasterImageLoader.LoadGray8FromBmp(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
         Assert.That(loaded.Values, Is.EqualTo(values));
@@ -49,7 +49,7 @@ public class BmpLoadingTests
         stream.WriteByte(0x42);
         stream.Position = 1;
 
-        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromBmp(stream);
+        Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromBmp(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
         Assert.That(loaded.Values, Is.EqualTo(values));
@@ -66,8 +66,8 @@ public class BmpLoadingTests
             new Gray8BitColor[] { new(0), new(1), new(128), new(255) });
         var rgba = new Raster<RGBA8BitColor>(new VectorXYInt(2, 2),
             new[] { RGBA8BitColor.Red, RGBA8BitColor.Transparent, RGBA8BitColor.Blue, new RGBA8BitColor(1, 2, 3, 4) });
-        AssertFileRoundTrip(gray, gray.SaveAsBmp);
-        AssertFileRoundTrip(rgba, rgba.SaveAsBmp);
+        AssertFileRoundTrip(gray, gray.SaveAsBmp, RasterImageLoader.LoadGray8FromBmp);
+        AssertFileRoundTrip(rgba, rgba.SaveAsBmp, RasterImageLoader.LoadRgba8FromBmp);
     }
 
     [TestCase("gray8-bottom-up.bmp", false)]
@@ -77,7 +77,7 @@ public class BmpLoadingTests
     {
         using var stream = new ShortReadStream(ReadFixture(fileName));
 
-        Raster<Gray8BitColor> loaded = Raster<Gray8BitColor>.LoadFromBmp(stream);
+        Raster<Gray8BitColor> loaded = RasterImageLoader.LoadGray8FromBmp(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         byte[] expected = fileName == "gray8-v5.bmp"
@@ -93,7 +93,7 @@ public class BmpLoadingTests
     {
         using var stream = new ShortReadStream(ReadFixture(fileName));
 
-        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromBmp(stream);
+        Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromBmp(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         for (int i = 0; i < 6; i++)
@@ -111,7 +111,7 @@ public class BmpLoadingTests
     {
         using var stream = new ShortReadStream(ReadFixture("rgba32-top-down.bmp"));
 
-        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromBmp(stream);
+        Raster<RGBA8BitColor> loaded = RasterImageLoader.LoadRgba8FromBmp(stream);
 
         RGBA8BitColor[] expected =
         {
@@ -128,24 +128,23 @@ public class BmpLoadingTests
     {
         using var stream = new MemoryStream(ReadFixture(fileName));
 
-        Assert.Throws<NotSupportedException>(() => Raster<Gray8BitColor>.LoadFromBmp(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadGray8FromBmp(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
     [Test]
-    public void LoadFromBmp_WithInvalidArguments_ThrowsBeforeReading()
+    public void LoadFromBmp_WithInvalidArguments_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Raster<Gray8BitColor>.LoadFromBmp((Stream)null!));
-        Assert.Throws<ArgumentNullException>(() => Raster<RGBA8BitColor>.LoadFromBmp((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadGray8FromBmp((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadRgba8FromBmp((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadGray8FromBmp((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadRgba8FromBmp((Stream)null!));
         using var unreadable = new MemoryStream();
         unreadable.Dispose();
-        Assert.Throws<ArgumentException>(() => Raster<RGBA8BitColor>.LoadFromBmp(unreadable));
-        using var stream = new MemoryStream(new byte[1]);
-        Assert.Throws<NotSupportedException>(() => Raster<int>.LoadFromBmp(stream));
-        Assert.That(stream.Position, Is.Zero);
-        Assert.Throws<NotSupportedException>(() => Raster<Gray16BitColor>.LoadFromBmp("nonexistent.bmp"));
+        Assert.Throws<ArgumentException>(() => RasterImageLoader.LoadRgba8FromBmp(unreadable));
+        Assert.Throws<ArgumentException>(() => RasterImageLoader.LoadGray8FromBmp(unreadable));
         Assert.Throws<FileNotFoundException>(() =>
-            Raster<Gray8BitColor>.LoadFromBmp(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".bmp")));
+            RasterImageLoader.LoadGray8FromBmp(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".bmp")));
     }
 
     [TestCase("signature")]
@@ -178,7 +177,7 @@ public class BmpLoadingTests
         }
         using var stream = new MemoryStream(bmp);
 
-        Assert.Throws<InvalidDataException>(() => Raster<Gray8BitColor>.LoadFromBmp(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadGray8FromBmp(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -193,7 +192,7 @@ public class BmpLoadingTests
         byte[] bmp = ReadFixture("gray8-bottom-up.bmp");
         using var stream = new ShortReadStream(bmp[..(length < 0 ? bmp.Length - 1 : length)]);
 
-        Assert.Throws<InvalidDataException>(() => Raster<RGBA8BitColor>.LoadFromBmp(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadRgba8FromBmp(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -206,19 +205,20 @@ public class BmpLoadingTests
         bmp[offset] = (byte)value;
         using var stream = new MemoryStream(bmp);
 
-        Assert.Throws<NotSupportedException>(() => Raster<RGBA8BitColor>.LoadFromBmp(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadRgba8FromBmp(stream));
     }
 
     private static byte[] ReadFixture(string name) =>
         File.ReadAllBytes(Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", name));
 
-    private static void AssertFileRoundTrip<TValue>(Raster<TValue> source, Action<string> save)
+    private static void AssertFileRoundTrip<TValue>(Raster<TValue> source, Action<string> save,
+        Func<string, Raster<TValue>> load)
     {
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".bmp");
         try
         {
             save(path);
-            Raster<TValue> loaded = Raster<TValue>.LoadFromBmp(path);
+            Raster<TValue> loaded = load(path);
             Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
             Assert.That(loaded.Values, Is.EqualTo(source.Values));
             using FileStream exclusive = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);

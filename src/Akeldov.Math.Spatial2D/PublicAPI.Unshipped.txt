@@ -1,5 +1,14 @@
 #nullable enable
-static Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>.LoadFromBmp(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>!
-static Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>.LoadFromBmp(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>!
-static Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>.LoadFromPng(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>!
-static Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>.LoadFromPng(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<TValue>!
+Akeldov.Math.Spatial2D.Imaging.RasterImageLoader
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadRgba8FromPng(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadRgba8FromPng(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadRgba16FromPng(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadRgba16FromPng(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.RGBA16BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadGray8FromPng(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadGray8FromPng(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadGray16FromPng(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadGray16FromPng(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.Gray16BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadRgba8FromBmp(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadRgba8FromBmp(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadGray8FromBmp(System.IO.Stream! stream) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!
+static Akeldov.Math.Spatial2D.Imaging.RasterImageLoader.LoadGray8FromBmp(string! path) -> Akeldov.Math.Spatial2D.Rasterization.Raster<Akeldov.Math.Spatial2D.Imaging.Gray8BitColor>!

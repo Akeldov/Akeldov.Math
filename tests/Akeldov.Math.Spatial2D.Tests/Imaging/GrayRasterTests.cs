@@ -126,7 +126,7 @@ public class GrayRasterTests
         stream.WriteByte(0x42);
         stream.Position = 1;
 
-        Raster<Gray8BitColor> loaded = Raster<Gray8BitColor>.LoadFromPng(stream);
+        Raster<Gray8BitColor> loaded = RasterImageLoader.LoadGray8FromPng(stream);
 
         Assert.Multiple(() =>
         {
@@ -149,7 +149,7 @@ public class GrayRasterTests
         {
             source.SaveAsPng(path);
 
-            Raster<Gray8BitColor> loaded = Raster<Gray8BitColor>.LoadFromPng(path);
+            Raster<Gray8BitColor> loaded = RasterImageLoader.LoadGray8FromPng(path);
 
             Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
             Assert.That(loaded.Values, Is.EqualTo(source.Values));
@@ -178,7 +178,7 @@ public class GrayRasterTests
         string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", fileName);
         using var stream = new ShortReadStream(File.ReadAllBytes(path));
 
-        Raster<Gray8BitColor> loaded = Raster<Gray8BitColor>.LoadFromPng(stream);
+        Raster<Gray8BitColor> loaded = RasterImageLoader.LoadGray8FromPng(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
         for (int pngY = 0; pngY < height; pngY++)
@@ -194,13 +194,13 @@ public class GrayRasterTests
     [Test]
     public void LoadFromPng_WithInvalidGray8BitArguments_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Raster<Gray8BitColor>.LoadFromPng((Stream)null!));
-        Assert.Throws<ArgumentNullException>(() => Raster<Gray8BitColor>.LoadFromPng((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadGray8FromPng((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadGray8FromPng((string)null!));
         using var stream = new MemoryStream(new byte[1]);
         stream.Dispose();
-        Assert.Throws<ArgumentException>(() => Raster<Gray8BitColor>.LoadFromPng(stream));
+        Assert.Throws<ArgumentException>(() => RasterImageLoader.LoadGray8FromPng(stream));
         Assert.Throws<FileNotFoundException>(() =>
-            Raster<Gray8BitColor>.LoadFromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
+            RasterImageLoader.LoadGray8FromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
     }
 
     [TestCase("gray16")]
@@ -217,7 +217,7 @@ public class GrayRasterTests
             new Raster<RGBA16BitColor>(new VectorXYInt(1, 1), new RGBA16BitColor[1]).SaveAsPng(stream);
         stream.Position = 0;
 
-        Assert.Throws<NotSupportedException>(() => Raster<Gray8BitColor>.LoadFromPng(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadGray8FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -236,7 +236,7 @@ public class GrayRasterTests
             bytes = bytes[..^1];
         using var stream = new MemoryStream(bytes);
 
-        Assert.Throws<InvalidDataException>(() => Raster<Gray8BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadGray8FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -300,7 +300,7 @@ public class GrayRasterTests
         stream.WriteByte(0x42);
         stream.Position = 1;
 
-        Raster<Gray16BitColor> loaded = Raster<Gray16BitColor>.LoadFromPng(stream);
+        Raster<Gray16BitColor> loaded = RasterImageLoader.LoadGray16FromPng(stream);
 
         Assert.Multiple(() =>
         {
@@ -323,7 +323,7 @@ public class GrayRasterTests
         {
             source.SaveAsPng(path);
 
-            Raster<Gray16BitColor> loaded = Raster<Gray16BitColor>.LoadFromPng(path);
+            Raster<Gray16BitColor> loaded = RasterImageLoader.LoadGray16FromPng(path);
 
             Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
             Assert.That(loaded.Values, Is.EqualTo(source.Values));
@@ -352,7 +352,7 @@ public class GrayRasterTests
         string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", fileName);
         using var stream = new ShortReadStream(File.ReadAllBytes(path));
 
-        Raster<Gray16BitColor> loaded = Raster<Gray16BitColor>.LoadFromPng(stream);
+        Raster<Gray16BitColor> loaded = RasterImageLoader.LoadGray16FromPng(stream);
 
         Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
         for (int pngY = 0; pngY < height; pngY++)
@@ -368,13 +368,13 @@ public class GrayRasterTests
     [Test]
     public void LoadFromPng_WithInvalidGray16BitArguments_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Raster<Gray16BitColor>.LoadFromPng((Stream)null!));
-        Assert.Throws<ArgumentNullException>(() => Raster<Gray16BitColor>.LoadFromPng((string)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadGray16FromPng((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => RasterImageLoader.LoadGray16FromPng((string)null!));
         using var stream = new MemoryStream(new byte[1]);
         stream.Dispose();
-        Assert.Throws<ArgumentException>(() => Raster<Gray16BitColor>.LoadFromPng(stream));
+        Assert.Throws<ArgumentException>(() => RasterImageLoader.LoadGray16FromPng(stream));
         Assert.Throws<FileNotFoundException>(() =>
-            Raster<Gray16BitColor>.LoadFromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
+            RasterImageLoader.LoadGray16FromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
     }
 
     [TestCase("gray8")]
@@ -391,7 +391,7 @@ public class GrayRasterTests
             new Raster<RGBA16BitColor>(new VectorXYInt(1, 1), new RGBA16BitColor[1]).SaveAsPng(stream);
         stream.Position = 0;
 
-        Assert.Throws<NotSupportedException>(() => Raster<Gray16BitColor>.LoadFromPng(stream));
+        Assert.Throws<NotSupportedException>(() => RasterImageLoader.LoadGray16FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
@@ -410,7 +410,7 @@ public class GrayRasterTests
             bytes = bytes[..^1];
         using var stream = new MemoryStream(bytes);
 
-        Assert.Throws<InvalidDataException>(() => Raster<Gray16BitColor>.LoadFromPng(stream));
+        Assert.Throws<InvalidDataException>(() => RasterImageLoader.LoadGray16FromPng(stream));
         Assert.That(stream.CanRead, Is.True);
     }
 
