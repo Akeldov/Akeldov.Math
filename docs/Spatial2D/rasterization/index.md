@@ -93,9 +93,9 @@ Raster<Gray16BitColor> distance = new SpatialRaster<Gray16BitColor>(
 distance.SaveAsPng("distance.png");
 ```
 
-## Reading RGBA PNG
+## Reading PNG
 
-Use the static `LoadFromPng` overloads on `Raster<RGBA8BitColor>` or `Raster<RGBA16BitColor>`
+Use the static `LoadFromPng` overloads on `Raster<RGBA8BitColor>`, `Raster<RGBA16BitColor>`, or `Raster<Gray16BitColor>`
 to load a file or a stream:
 
 ```csharp
@@ -111,10 +111,15 @@ Raster<RGBA16BitColor> fromStream = Raster<RGBA16BitColor>.LoadFromPng(stream);
 Raster<RGBA8BitColor> rgba8FromFile = Raster<RGBA8BitColor>.LoadFromPng("preview.png");
 using Stream rgba8Stream = File.OpenRead("preview.png");
 Raster<RGBA8BitColor> rgba8FromStream = Raster<RGBA8BitColor>.LoadFromPng(rgba8Stream);
+
+Raster<Gray16BitColor> gray16FromFile = Raster<Gray16BitColor>.LoadFromPng("heightmap.png");
+using Stream gray16Stream = File.OpenRead("heightmap.png");
+Raster<Gray16BitColor> gray16FromStream = Raster<Gray16BitColor>.LoadFromPng(gray16Stream);
 ```
 
-The PNG must use RGBA channels with the same bit depth as the requested raster type:
-8-bit channels for `RGBA8BitColor`, or 16-bit channels for `RGBA16BitColor`.
+The PNG color type and bit depth must match the requested raster type:
+8-bit RGBA for `RGBA8BitColor`, 16-bit RGBA for `RGBA16BitColor`,
+or 16-bit grayscale without alpha for `Gray16BitColor`.
 Loading preserves channel values and alpha without
 color-space conversion, and supports all five scanline filters and Adam7 interlacing.
 The loaded raster is new, mutable, and owned by the caller. Y increases from the bottom image

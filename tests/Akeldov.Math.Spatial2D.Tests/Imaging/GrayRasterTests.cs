@@ -1,5 +1,6 @@
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
+using System.IO.Compression;
 
 namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
@@ -151,6 +152,136 @@ public class GrayRasterTests
         Assert.That(bytes[0..8], Is.EqualTo(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }));
         Assert.That(bytes[24], Is.EqualTo(16));
         Assert.That(bytes[25], Is.EqualTo(0));
+    }
+
+    [TestCase(CompressionLevel.NoCompression)]
+    [TestCase(CompressionLevel.Fastest)]
+    [TestCase(CompressionLevel.Optimal)]
+    [TestCase(CompressionLevel.SmallestSize)]
+    public void LoadFromPng_WhenGray16BitIsSavedToStream_PreservesSamplesAndRowOrientation(
+        CompressionLevel compressionLevel)
+    {
+        Gray16BitColor[] values = { new(0), new(1), new(0x1234), new(0xabcd), new(32768), new(65535) };
+        var source = new Raster<Gray16BitColor>(new VectorXYInt(2, 3), values);
+        using var stream = new MemoryStream();
+        stream.WriteByte(0xff);
+        source.SaveAsPng(stream, compressionLevel);
+        long imageEnd = stream.Position;
+        stream.WriteByte(0x42);
+        stream.Position = 1;
+
+        Raster<Gray16BitColor> loaded = Raster<Gray16BitColor>.LoadFromPng(stream);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
+            Assert.That(loaded.Values, Is.EqualTo(values));
+            Assert.That(loaded.Values, Is.Not.SameAs(values));
+            Assert.That(stream.CanRead, Is.True);
+            Assert.That(stream.Position, Is.EqualTo(imageEnd));
+            Assert.That(stream.ReadByte(), Is.EqualTo(0x42));
+        });
+    }
+
+    [Test]
+    public void LoadFromPng_WhenGray16BitIsSavedToFile_PreservesSamplesAndClosesFile()
+    {
+        var source = new SpatialRaster<Gray16BitColor>(CreateGrid(),
+            new Gray16BitColor[] { new(0x1234), new(0x5678), new(0x9abc), new(0xdef0) });
+        string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "gray16-roundtrip.png");
+        try
+        {
+            source.SaveAsPng(path);
+
+            Raster<Gray16BitColor> loaded = Raster<Gray16BitColor>.LoadFromPng(path);
+
+            Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
+            Assert.That(loaded.Values, Is.EqualTo(source.Values));
+            using FileStream exclusive = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            Assert.That(exclusive.Length, Is.GreaterThan(0));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [TestCase("gray16-filter-0.png", 3, 3)]
+    [TestCase("gray16-filter-1.png", 3, 3)]
+    [TestCase("gray16-filter-2.png", 3, 3)]
+    [TestCase("gray16-filter-3.png", 3, 3)]
+    [TestCase("gray16-filter-4.png", 3, 3)]
+    [TestCase("gray16-adam7.png", 9, 9)]
+    [TestCase("gray16-adam7-single.png", 1, 1)]
+    [TestCase("gray16-adam7-column.png", 1, 9)]
+    [TestCase("gray16-adam7-row.png", 9, 1)]
+    public void LoadFromPng_WithIndependentGray16BitFixture_DecodesFiltersInterlacingAndSplitIdat(
+        string fileName, int width, int height)
+    {
+        // Fixtures were encoded with Python's zlib, independently of the library encoder.
+        string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", fileName);
+        using var stream = new ShortReadStream(File.ReadAllBytes(path));
+
+        Raster<Gray16BitColor> loaded = Raster<Gray16BitColor>.LoadFromPng(stream);
+
+        Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
+        for (int pngY = 0; pngY < height; pngY++)
+        for (int x = 0; x < width; x++)
+        {
+            var expected = new Gray16BitColor(unchecked((ushort)(0x1234 + x * 7919 + pngY * 2347)));
+            Assert.That(loaded[x, height - 1 - pngY], Is.EqualTo(expected), $"{fileName}: x={x}, PNG row={pngY}");
+        }
+
+        Assert.That(stream.CanRead, Is.True);
+    }
+
+    [Test]
+    public void LoadFromPng_WithInvalidGray16BitArguments_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => Raster<Gray16BitColor>.LoadFromPng((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => Raster<Gray16BitColor>.LoadFromPng((string)null!));
+        using var stream = new MemoryStream(new byte[1]);
+        stream.Dispose();
+        Assert.Throws<ArgumentException>(() => Raster<Gray16BitColor>.LoadFromPng(stream));
+        Assert.Throws<FileNotFoundException>(() =>
+            Raster<Gray16BitColor>.LoadFromPng(Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid() + ".png")));
+    }
+
+    [TestCase("gray8")]
+    [TestCase("rgba8")]
+    [TestCase("rgba16")]
+    public void LoadFromPng_WithUnsupportedGray16BitColorFormat_Throws(string format)
+    {
+        using var stream = new MemoryStream();
+        if (format == "gray8")
+            new Raster<Gray8BitColor>(new VectorXYInt(1, 1), new Gray8BitColor[1]).SaveAsPng(stream);
+        else if (format == "rgba8")
+            new Raster<RGBA8BitColor>(new VectorXYInt(1, 1), new RGBA8BitColor[1]).SaveAsPng(stream);
+        else
+            new Raster<RGBA16BitColor>(new VectorXYInt(1, 1), new RGBA16BitColor[1]).SaveAsPng(stream);
+        stream.Position = 0;
+
+        Assert.Throws<NotSupportedException>(() => Raster<Gray16BitColor>.LoadFromPng(stream));
+        Assert.That(stream.CanRead, Is.True);
+    }
+
+    [TestCase("signature")]
+    [TestCase("crc")]
+    [TestCase("truncated")]
+    public void LoadFromPng_WithMalformedGray16BitData_ThrowsAndLeavesStreamOpen(string defect)
+    {
+        string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", "gray16-filter-0.png");
+        byte[] bytes = File.ReadAllBytes(path);
+        if (defect == "signature")
+            bytes[0] = 0;
+        else if (defect == "crc")
+            bytes[29] ^= 1;
+        else
+            bytes = bytes[..^1];
+        using var stream = new MemoryStream(bytes);
+
+        Assert.Throws<InvalidDataException>(() => Raster<Gray16BitColor>.LoadFromPng(stream));
+        Assert.That(stream.CanRead, Is.True);
     }
 
     private static RasterGeometry CreateGrid()

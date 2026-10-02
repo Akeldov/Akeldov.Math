@@ -7,17 +7,21 @@ using System.Text;
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
-    /// Decodes PNG images with 8-bit or 16-bit RGBA samples without changing their color space.
+    /// Decodes PNG images with 8-bit or 16-bit RGBA samples or 16-bit grayscale samples without changing their color space.
     /// </summary>
     internal static class PngDecoder
     {
         public static Raster<RGBA8BitColor> LoadRgba8(Stream stream) =>
-            Load(stream, 8, ReadRgba8);
+            Load(stream, 8, 6, 4, ReadRgba8);
 
         public static Raster<RGBA16BitColor> LoadRgba16(Stream stream) =>
-            Load(stream, 16, ReadRgba16);
+            Load(stream, 16, 6, 8, ReadRgba16);
 
-        private static Raster<TValue> Load<TValue>(Stream stream, byte bitDepth, Func<byte[], int, TValue> readPixel)
+        public static Raster<Gray16BitColor> LoadGray16(Stream stream) =>
+            Load(stream, 16, 0, 2, ReadGray16);
+
+        private static Raster<TValue> Load<TValue>(Stream stream, byte bitDepth, byte colorType,
+            int bytesPerPixel, Func<byte[], int, TValue> readPixel)
         {
             byte[] signature = new byte[8];
             ReadExactly(stream, signature);
@@ -31,15 +35,14 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
             uint width = ReadUInt32(header, 0);
             uint height = ReadUInt32(header, 4);
-            int bytesPerPixel = bitDepth / 2;
             if (width == 0 || height == 0 || width > int.MaxValue / bytesPerPixel ||
                 height > int.MaxValue || (ulong)width * height > int.MaxValue)
             {
                 throw new InvalidDataException("PNG dimensions exceed supported raster sizes.");
             }
 
-            if (header[8] != bitDepth || header[9] != 6)
-                throw new NotSupportedException("PNG must have RGBA channels with the requested bit depth.");
+            if (header[8] != bitDepth || header[9] != colorType)
+                throw new NotSupportedException("PNG must have the requested color type and bit depth.");
 
             if (header[10] != 0 || header[11] != 0 || header[12] > 1)
                 throw new InvalidDataException("Invalid PNG compression, filter, or interlace method.");
@@ -262,6 +265,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
         private static RGBA16BitColor ReadRgba16(byte[] data, int offset) =>
             new RGBA16BitColor(ReadUInt16(data, offset), ReadUInt16(data, offset + 2),
                 ReadUInt16(data, offset + 4), ReadUInt16(data, offset + 6));
+
+        private static Gray16BitColor ReadGray16(byte[] data, int offset) =>
+            new Gray16BitColor(ReadUInt16(data, offset));
 
         private static ushort ReadUInt16(byte[] data, int offset) =>
             (ushort)((data[offset] << 8) | data[offset + 1]);
