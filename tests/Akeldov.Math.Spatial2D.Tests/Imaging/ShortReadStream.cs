@@ -1,7 +1,7 @@
 namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 /// <summary>
-/// Exercises PNG loading from a non-seekable stream that returns partial reads.
+/// Exercises image loading from a non-seekable stream that returns partial reads.
 /// </summary>
 internal sealed class ShortReadStream : Stream
 {

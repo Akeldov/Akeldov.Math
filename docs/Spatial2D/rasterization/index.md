@@ -133,3 +133,26 @@ row, matching `SaveAsPng`. PNG does not retain `RasterGeometry` spatial bounds.
 Stream loading starts at the current position, stops after the PNG trailer, and leaves the
 stream open. Seeking is not required. Invalid or truncated PNG data throws `InvalidDataException`;
 unsupported PNG color formats or raster value types throw `NotSupportedException`.
+
+## Reading BMP
+
+Use the static `LoadFromBmp` overloads on `Raster<Gray8BitColor>` or `Raster<RGBA8BitColor>`:
+
+```csharp
+Raster<Gray8BitColor> mask = Raster<Gray8BitColor>.LoadFromBmp("mask.bmp");
+using Stream bmpStream = File.OpenRead("preview.bmp");
+Raster<RGBA8BitColor> preview = Raster<RGBA8BitColor>.LoadFromBmp(bmpStream);
+```
+
+Both types support uncompressed indexed 8-bit BMP. Palette indices are resolved to colors;
+`Gray8BitColor` requires a grayscale palette, while `RGBA8BitColor` accepts any palette and
+returns opaque palette colors. `RGBA8BitColor` also reads uncompressed 32-bit BGRA BMP and
+preserves the fourth pixel byte as alpha, matching `SaveAsBmp` output.
+Other bit depths, compression methods, and OS/2 headers are unsupported.
+
+Loading handles row padding and both bottom-up and top-down images. The returned raster is
+new, mutable, and owned by the caller, with Y increasing from the bottom image row.
+Spatial bounds are not stored in BMP. Stream loading starts at the current position, consumes
+the declared BMP file size, and leaves the stream open. Seeking is not required.
+Invalid or truncated data throws `InvalidDataException`; unsupported formats or raster value
+types throw `NotSupportedException`.

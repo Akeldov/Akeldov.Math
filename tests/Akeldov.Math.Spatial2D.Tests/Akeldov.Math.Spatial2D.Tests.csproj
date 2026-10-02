@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <None Update="Imaging\Fixtures\*.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Imaging\Fixtures\*.bmp" CopyToOutputDirectory="PreserveNewest" />
     <None Update="**\Approved\*.svg" CopyToOutputDirectory="PreserveNewest" />
     <None Update="**\Approved\*.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
