@@ -13,13 +13,14 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         // PNG factories live on the raster type so callers select the requested pixel type.
 #pragma warning disable CA1000 // Do not declare static members on generic types
         /// <summary>
-        /// Loads a PNG file into a raster with 8-bit or 16-bit RGBA values or 16-bit grayscale values.
+        /// Loads a PNG file into a raster with 8-bit or 16-bit RGBA or grayscale values.
         /// </summary>
         /// <param name="path">The input PNG file path.</param>
         /// <returns>A new mutable raster owned by the caller, with Y increasing from the bottom image row.</returns>
         /// <remarks>
-        /// Supported only when <typeparamref name="TValue"/> is <see cref="RGBA8BitColor"/>, <see cref="RGBA16BitColor"/>, or <see cref="Gray16BitColor"/>.
-        /// The PNG color type and bit depth must match the raster value type: RGBA or 16-bit grayscale without alpha.
+        /// Supported only when <typeparamref name="TValue"/> is <see cref="RGBA8BitColor"/>, <see cref="RGBA16BitColor"/>,
+        /// <see cref="Gray8BitColor"/>, or <see cref="Gray16BitColor"/>.
+        /// The PNG color type and bit depth must match the raster value type: RGBA or grayscale without alpha.
         /// All PNG scanline filters and Adam7 interlacing are supported.
         /// Channel values are preserved without color-space conversion. Spatial bounds are not stored in PNG.
         /// </remarks>
@@ -32,21 +33,22 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentNullException(nameof(path));
 
             if (typeof(TValue) != typeof(RGBA8BitColor) && typeof(TValue) != typeof(RGBA16BitColor) &&
-                typeof(TValue) != typeof(Gray16BitColor))
-                throw new NotSupportedException("PNG loading is supported only for RGBA8BitColor, RGBA16BitColor, and Gray16BitColor rasters.");
+                typeof(TValue) != typeof(Gray8BitColor) && typeof(TValue) != typeof(Gray16BitColor))
+                throw new NotSupportedException("PNG loading is supported only for RGBA8BitColor, RGBA16BitColor, Gray8BitColor, and Gray16BitColor rasters.");
 
             using FileStream stream = File.OpenRead(path);
             return LoadFromPng(stream);
         }
 
         /// <summary>
-        /// Loads a PNG from the current position of a readable stream into a raster with 8-bit or 16-bit RGBA values or 16-bit grayscale values.
+        /// Loads a PNG from the current position of a readable stream into a raster with 8-bit or 16-bit RGBA or grayscale values.
         /// </summary>
         /// <param name="stream">The input PNG stream. It need not support seeking and remains open after loading.</param>
         /// <returns>A new mutable raster owned by the caller, with Y increasing from the bottom image row.</returns>
         /// <remarks>
-        /// Supported only when <typeparamref name="TValue"/> is <see cref="RGBA8BitColor"/>, <see cref="RGBA16BitColor"/>, or <see cref="Gray16BitColor"/>.
-        /// The PNG color type and bit depth must match the raster value type: RGBA or 16-bit grayscale without alpha.
+        /// Supported only when <typeparamref name="TValue"/> is <see cref="RGBA8BitColor"/>, <see cref="RGBA16BitColor"/>,
+        /// <see cref="Gray8BitColor"/>, or <see cref="Gray16BitColor"/>.
+        /// The PNG color type and bit depth must match the raster value type: RGBA or grayscale without alpha.
         /// All PNG scanline filters and Adam7 interlacing are supported.
         /// Channel values are preserved without color-space conversion. Reading stops after the PNG IEND chunk.
         /// Spatial bounds are not stored in PNG.
@@ -66,11 +68,14 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (typeof(TValue) == typeof(RGBA8BitColor))
                 return (Raster<TValue>)(object)PngDecoder.LoadRgba8(stream);
 
+            if (typeof(TValue) == typeof(Gray8BitColor))
+                return (Raster<TValue>)(object)PngDecoder.LoadGray8(stream);
+
             if (typeof(TValue) == typeof(Gray16BitColor))
                 return (Raster<TValue>)(object)PngDecoder.LoadGray16(stream);
 
             if (typeof(TValue) != typeof(RGBA16BitColor))
-                throw new NotSupportedException("PNG loading is supported only for RGBA8BitColor, RGBA16BitColor, and Gray16BitColor rasters.");
+                throw new NotSupportedException("PNG loading is supported only for RGBA8BitColor, RGBA16BitColor, Gray8BitColor, and Gray16BitColor rasters.");
 
             return (Raster<TValue>)(object)PngDecoder.LoadRgba16(stream);
         }

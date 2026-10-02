@@ -7,7 +7,7 @@ using System.Text;
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
-    /// Decodes PNG images with 8-bit or 16-bit RGBA samples or 16-bit grayscale samples without changing their color space.
+    /// Decodes PNG images with 8-bit or 16-bit RGBA or grayscale samples without changing their color space.
     /// </summary>
     internal static class PngDecoder
     {
@@ -19,6 +19,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
         public static Raster<Gray16BitColor> LoadGray16(Stream stream) =>
             Load(stream, 16, 0, 2, ReadGray16);
+
+        public static Raster<Gray8BitColor> LoadGray8(Stream stream) =>
+            Load(stream, 8, 0, 1, ReadGray8);
 
         private static Raster<TValue> Load<TValue>(Stream stream, byte bitDepth, byte colorType,
             int bytesPerPixel, Func<byte[], int, TValue> readPixel)
@@ -268,6 +271,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
         private static Gray16BitColor ReadGray16(byte[] data, int offset) =>
             new Gray16BitColor(ReadUInt16(data, offset));
+
+        private static Gray8BitColor ReadGray8(byte[] data, int offset) =>
+            new Gray8BitColor(data[offset]);
 
         private static ushort ReadUInt16(byte[] data, int offset) =>
             (ushort)((data[offset] << 8) | data[offset + 1]);
