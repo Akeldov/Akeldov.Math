@@ -1,5 +1,6 @@
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
+using System.IO.Compression;
 
 namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
@@ -109,6 +110,137 @@ public class RGBA8BitRasterTests
         Assert.That(bytes[pixelOffset + 1], Is.EqualTo(0x34));
         Assert.That(bytes[pixelOffset + 2], Is.EqualTo(0x12));
         Assert.That(bytes[pixelOffset + 3], Is.EqualTo(0x78));
+    }
+
+    [TestCase(CompressionLevel.NoCompression)]
+    [TestCase(CompressionLevel.Fastest)]
+    [TestCase(CompressionLevel.Optimal)]
+    [TestCase(CompressionLevel.SmallestSize)]
+    public void LoadFromPng_AfterSavingToStream_PreservesPixelsAndRowOrientation(CompressionLevel compressionLevel)
+    {
+        RGBA8BitColor[] values =
+        {
+            new(0x12, 0x34, 0x56, 0x78), RGBA8BitColor.Transparent,
+            RGBA8BitColor.White, new(1, 2, 3, 4),
+            new(byte.MaxValue, 0, 0, 0), new(0, 1, 128, byte.MaxValue)
+        };
+        var source = new SpatialRaster<RGBA8BitColor>(CreateGrid(), values);
+        using var stream = new MemoryStream();
+        stream.WriteByte(0xff);
+        source.SaveAsPng(stream, compressionLevel);
+        long imageEnd = stream.Position;
+        stream.WriteByte(0x42);
+        stream.Position = 1;
+
+        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromPng(stream);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
+            Assert.That(loaded.Values, Is.EqualTo(values));
+            Assert.That(loaded.Values, Is.Not.SameAs(values));
+            Assert.That(stream.CanRead, Is.True);
+            Assert.That(stream.Position, Is.EqualTo(imageEnd));
+            Assert.That(stream.ReadByte(), Is.EqualTo(0x42));
+        });
+    }
+
+    [Test]
+    public void LoadFromPng_AfterSavingToFile_PreservesPixelsAndClosesFile()
+    {
+        var source = new Raster<RGBA8BitColor>(new VectorXYInt(1, 2),
+            new[] { new RGBA8BitColor(1, 2, 3, 4), RGBA8BitColor.White });
+        string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rgba8-roundtrip.png");
+        try
+        {
+            source.SaveAsPng(path);
+
+            Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromPng(path);
+
+            Assert.That(loaded.Resolution, Is.EqualTo(source.Resolution));
+            Assert.That(loaded.Values, Is.EqualTo(source.Values));
+            using FileStream exclusive = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            Assert.That(exclusive.Length, Is.GreaterThan(0));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [TestCase("rgba8-filter-0.png", 3, 3)]
+    [TestCase("rgba8-filter-1.png", 3, 3)]
+    [TestCase("rgba8-filter-2.png", 3, 3)]
+    [TestCase("rgba8-filter-3.png", 3, 3)]
+    [TestCase("rgba8-filter-4.png", 3, 3)]
+    [TestCase("rgba8-adam7.png", 9, 9)]
+    [TestCase("rgba8-adam7-single.png", 1, 1)]
+    public void LoadFromPng_WithIndependentFixture_DecodesFiltersInterlacingAndSplitIdat(
+        string fileName, int width, int height)
+    {
+        // Fixtures were encoded with Python's zlib, independently of the library encoder.
+        string path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Imaging", "Fixtures", fileName);
+        using var stream = new ShortReadStream(File.ReadAllBytes(path));
+
+        Raster<RGBA8BitColor> loaded = Raster<RGBA8BitColor>.LoadFromPng(stream);
+
+        Assert.That(loaded.Resolution, Is.EqualTo(new VectorXYInt(width, height)));
+        for (int pngY = 0; pngY < height; pngY++)
+        for (int x = 0; x < width; x++)
+        {
+            var expected = new RGBA8BitColor(
+                unchecked((byte)(0x12 + x * 79 + pngY * 23)),
+                unchecked((byte)(0xab + x * 35 - pngY * 45)),
+                unchecked((byte)(x * 12 + pngY * 98)),
+                unchecked((byte)(255 - x * 100 - pngY * 77)));
+            Assert.That(loaded[x, height - 1 - pngY], Is.EqualTo(expected), $"{fileName}: x={x}, PNG row={pngY}");
+        }
+
+        Assert.That(stream.CanRead, Is.True);
+    }
+
+    [Test]
+    public void LoadFromPng_WithInvalidArguments_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => Raster<RGBA8BitColor>.LoadFromPng((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => Raster<RGBA8BitColor>.LoadFromPng((string)null!));
+        using var stream = new MemoryStream();
+        stream.Dispose();
+        Assert.Throws<ArgumentException>(() => Raster<RGBA8BitColor>.LoadFromPng(stream));
+    }
+
+    [TestCase("rgba16")]
+    [TestCase("gray8")]
+    public void LoadFromPng_WithUnsupportedColorFormat_Throws(string format)
+    {
+        using var stream = new MemoryStream();
+        if (format == "rgba16")
+        {
+            new Raster<RGBA16BitColor>(new VectorXYInt(1, 1), new RGBA16BitColor[1]).SaveAsPng(stream);
+        }
+        else
+        {
+            new Raster<Gray8BitColor>(new VectorXYInt(1, 1), new Gray8BitColor[1]).SaveAsPng(stream);
+        }
+        stream.Position = 0;
+
+        Assert.Throws<NotSupportedException>(() => Raster<RGBA8BitColor>.LoadFromPng(stream));
+        Assert.That(stream.CanRead, Is.True);
+    }
+
+    [TestCase("truncated")]
+    [TestCase("crc")]
+    public void LoadFromPng_WithMalformedData_ThrowsAndLeavesStreamOpen(string defect)
+    {
+        using var encoded = new MemoryStream();
+        CreateRasterWithFirstPixel().SaveAsPng(encoded);
+        byte[] png = encoded.ToArray();
+        if (defect == "crc")
+            png[29] ^= 1;
+        using var stream = new MemoryStream(defect == "truncated" ? png[..^1] : png);
+
+        Assert.Throws<InvalidDataException>(() => Raster<RGBA8BitColor>.LoadFromPng(stream));
+        Assert.That(stream.CanRead, Is.True);
     }
 
     private static SpatialRaster<RGBA8BitColor> CreateRasterWithFirstPixel()

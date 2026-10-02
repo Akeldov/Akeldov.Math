@@ -7,11 +7,17 @@ using System.Text;
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
-    /// Decodes PNG images with 16-bit RGBA samples without changing their color space.
+    /// Decodes PNG images with 8-bit or 16-bit RGBA samples without changing their color space.
     /// </summary>
     internal static class PngDecoder
     {
-        public static Raster<RGBA16BitColor> LoadRgba16(Stream stream)
+        public static Raster<RGBA8BitColor> LoadRgba8(Stream stream) =>
+            Load(stream, 8, ReadRgba8);
+
+        public static Raster<RGBA16BitColor> LoadRgba16(Stream stream) =>
+            Load(stream, 16, ReadRgba16);
+
+        private static Raster<TValue> Load<TValue>(Stream stream, byte bitDepth, Func<byte[], int, TValue> readPixel)
         {
             byte[] signature = new byte[8];
             ReadExactly(stream, signature);
@@ -25,20 +31,21 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
             uint width = ReadUInt32(header, 0);
             uint height = ReadUInt32(header, 4);
-            if (width == 0 || height == 0 || width > int.MaxValue / 8 ||
+            int bytesPerPixel = bitDepth / 2;
+            if (width == 0 || height == 0 || width > int.MaxValue / bytesPerPixel ||
                 height > int.MaxValue || (ulong)width * height > int.MaxValue)
             {
                 throw new InvalidDataException("PNG dimensions exceed supported raster sizes.");
             }
 
-            if (header[8] != 16 || header[9] != 6)
-                throw new NotSupportedException("Only PNG images with 16-bit RGBA channels are supported.");
+            if (header[8] != bitDepth || header[9] != 6)
+                throw new NotSupportedException("PNG must have RGBA channels with the requested bit depth.");
 
             if (header[10] != 0 || header[11] != 0 || header[12] > 1)
                 throw new InvalidDataException("Invalid PNG compression, filter, or interlace method.");
 
             byte[] imageData = ReadImageData(stream);
-            return DecodeImageData(imageData, (int)width, (int)height, header[12] == 1);
+            return DecodeImageData(imageData, (int)width, (int)height, header[12] == 1, bytesPerPixel, readPixel);
         }
 
         private static byte[] ReadImageData(Stream stream)
@@ -88,7 +95,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return imageData.ToArray();
         }
 
-        private static Raster<RGBA16BitColor> DecodeImageData(byte[] data, int width, int height, bool interlaced)
+        private static Raster<TValue> DecodeImageData<TValue>(byte[] data, int width, int height, bool interlaced,
+            int bytesPerPixel, Func<byte[], int, TValue> readPixel)
         {
             if (data.Length < 6 || (data[0] & 15) != 8 || (data[0] >> 4) > 7 ||
                 ((data[0] << 8) + data[1]) % 31 != 0 || (data[1] & 32) != 0)
@@ -98,7 +106,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
             using var compressed = new MemoryStream(data, 2, data.Length - 6);
             using var deflate = new DeflateStream(compressed, CompressionMode.Decompress);
-            var values = new RGBA16BitColor[checked(width * height)];
+            var values = new TValue[checked(width * height)];
             uint adlerA = 1;
             uint adlerB = 0;
             if (interlaced)
@@ -110,11 +118,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 int[] stepY = { 8, 8, 8, 4, 4, 2, 2 };
                 for (int pass = 0; pass < 7; pass++)
                     ReadPass(deflate, values, width, height, startX[pass], startY[pass],
-                        stepX[pass], stepY[pass], ref adlerA, ref adlerB);
+                        stepX[pass], stepY[pass], bytesPerPixel, readPixel, ref adlerA, ref adlerB);
             }
             else
             {
-                ReadPass(deflate, values, width, height, 0, 0, 1, 1, ref adlerA, ref adlerB);
+                ReadPass(deflate, values, width, height, 0, 0, 1, 1, bytesPerPixel, readPixel, ref adlerA, ref adlerB);
             }
 
             if (deflate.ReadByte() != -1)
@@ -123,17 +131,18 @@ namespace Akeldov.Math.Spatial2D.Imaging
             if (((adlerB << 16) | adlerA) != ReadUInt32(data, data.Length - 4))
                 throw new InvalidDataException("PNG zlib checksum mismatch.");
 
-            return new Raster<RGBA16BitColor>(new VectorXYInt(width, height), values);
+            return new Raster<TValue>(new VectorXYInt(width, height), values);
         }
 
-        private static void ReadPass(Stream stream, RGBA16BitColor[] values, int width, int height,
-            int startX, int startY, int stepX, int stepY, ref uint adlerA, ref uint adlerB)
+        private static void ReadPass<TValue>(Stream stream, TValue[] values, int width, int height,
+            int startX, int startY, int stepX, int stepY, int bytesPerPixel, Func<byte[], int, TValue> readPixel,
+            ref uint adlerA, ref uint adlerB)
         {
             if (startX >= width || startY >= height)
                 return;
 
             int passWidth = (width - 1 - startX) / stepX + 1;
-            var scanline = new byte[checked(passWidth * 8 + 1)];
+            var scanline = new byte[checked(passWidth * bytesPerPixel + 1)];
             var previous = new byte[scanline.Length];
             for (int row = startY; row < height; row += stepY)
             {
@@ -150,9 +159,9 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
                 for (int i = 1; i < scanline.Length; i++)
                 {
-                    int left = i > 8 ? scanline[i - 8] : 0;
+                    int left = i > bytesPerPixel ? scanline[i - bytesPerPixel] : 0;
                     int above = previous[i];
-                    int upperLeft = i > 8 ? previous[i - 8] : 0;
+                    int upperLeft = i > bytesPerPixel ? previous[i - bytesPerPixel] : 0;
                     int predictor = filter switch
                     {
                         0 => 0,
@@ -167,10 +176,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 int y = height - 1 - row;
                 for (int x = 0; x < passWidth; x++)
                 {
-                    int offset = 1 + x * 8;
-                    values[y * width + startX + x * stepX] = new RGBA16BitColor(
-                        ReadUInt16(scanline, offset), ReadUInt16(scanline, offset + 2),
-                        ReadUInt16(scanline, offset + 4), ReadUInt16(scanline, offset + 6));
+                    int offset = 1 + x * bytesPerPixel;
+                    values[y * width + startX + x * stepX] = readPixel(scanline, offset);
                 }
 
                 byte[] swap = previous;
@@ -248,6 +255,13 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 offset += read;
             }
         }
+
+        private static RGBA8BitColor ReadRgba8(byte[] data, int offset) =>
+            new RGBA8BitColor(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+
+        private static RGBA16BitColor ReadRgba16(byte[] data, int offset) =>
+            new RGBA16BitColor(ReadUInt16(data, offset), ReadUInt16(data, offset + 2),
+                ReadUInt16(data, offset + 4), ReadUInt16(data, offset + 6));
 
         private static ushort ReadUInt16(byte[] data, int offset) =>
             (ushort)((data[offset] << 8) | data[offset + 1]);

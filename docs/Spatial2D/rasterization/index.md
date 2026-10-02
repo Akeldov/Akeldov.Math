@@ -93,9 +93,10 @@ Raster<Gray16BitColor> distance = new SpatialRaster<Gray16BitColor>(
 distance.SaveAsPng("distance.png");
 ```
 
-## Reading 16-bit RGBA PNG
+## Reading RGBA PNG
 
-Use the static `Raster<RGBA16BitColor>.LoadFromPng` overloads to load a file or a stream:
+Use the static `LoadFromPng` overloads on `Raster<RGBA8BitColor>` or `Raster<RGBA16BitColor>`
+to load a file or a stream:
 
 ```csharp
 using System.IO;
@@ -106,9 +107,15 @@ Raster<RGBA16BitColor> fromFile = Raster<RGBA16BitColor>.LoadFromPng("scene.png"
 
 using Stream stream = File.OpenRead("scene.png");
 Raster<RGBA16BitColor> fromStream = Raster<RGBA16BitColor>.LoadFromPng(stream);
+
+Raster<RGBA8BitColor> rgba8FromFile = Raster<RGBA8BitColor>.LoadFromPng("preview.png");
+using Stream rgba8Stream = File.OpenRead("preview.png");
+Raster<RGBA8BitColor> rgba8FromStream = Raster<RGBA8BitColor>.LoadFromPng(rgba8Stream);
 ```
 
-The PNG must use 16-bit RGBA channels. Loading preserves channel values and alpha without
+The PNG must use RGBA channels with the same bit depth as the requested raster type:
+8-bit channels for `RGBA8BitColor`, or 16-bit channels for `RGBA16BitColor`.
+Loading preserves channel values and alpha without
 color-space conversion, and supports all five scanline filters and Adam7 interlacing.
 The loaded raster is new, mutable, and owned by the caller. Y increases from the bottom image
 row, matching `SaveAsPng`. PNG does not retain `RasterGeometry` spatial bounds.
