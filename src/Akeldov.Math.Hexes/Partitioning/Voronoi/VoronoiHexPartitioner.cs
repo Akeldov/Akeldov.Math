@@ -42,7 +42,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// Use <see cref="VoronoiHexPartitionMap.ToMutableHexMap"/> to create a mutable
         /// caller-owned assignment copy.
         /// </returns>
@@ -77,10 +77,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
 
-            var assignments = new VoronoiCell[count];
+            var assignments = new int[count];
             for (int i = 0; i < assignments.Length; i++)
             {
-                assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
+                assignments[i] = cellIndexesBySite[cellIndexes[i]];
             }
 
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
@@ -166,7 +166,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// </returns>
         /// <remarks>
         /// A site's region is the mask value at the hex containing its position, using the center map's
@@ -225,10 +225,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
 
-            var assignments = new VoronoiCell[count];
+            var assignments = new int[count];
             for (int i = 0; i < assignments.Length; i++)
             {
-                assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
+                assignments[i] = cellIndexesBySite[cellIndexes[i]];
             }
 
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);

@@ -5,7 +5,8 @@ Partitions group hex indexes. Voronoi partitioning assigns hex centers to weight
 ## Partition Cells and Partitions
 
 `IHexPartitionCell` in `Akeldov.Math.Hexes` represents one part of a partition and exposes the
-read-only `HexIndexes` sequence. `HexPartitionCell` implements this contract by copying the
+non-negative `Id` and read-only `HexIndexes` sequence. `HexPartitionCell` accepts the ID in its
+constructor and implements this contract by copying the
 constructor input into a read-only snapshot.
 Later changes to the input collection do not affect the cell, and the returned collection
 cannot be modified through a mutable collection interface. Empty cells are allowed;
@@ -14,37 +15,55 @@ input order and duplicate indexes are preserved. Index bounds and map membership
 `VoronoiCell` derives from `HexPartitionCell`, so code that needs only the assigned hex indexes
 can accept `IHexPartitionCell` for both manually constructed cells and Voronoi cells.
 
-`IHexPartition` represents the whole partition through its read-only `Cells` collection.
-`HexPartition` copies the supplied collection, retaining the cell objects in their original
-order. It accepts an empty collection and empty cells, but rejects null collections and null
-cells. It does not validate map coverage or overlap between cells. Custom `IHexPartitionCell`
-implementations are retained as-is, so their own contract determines whether their state can change.
+`IHexPartition` inherits `IHexMap<int>`: both map indexers return the assigned cell's `Id`.
+Every hex in its `Topology` belongs to exactly one cell. IDs are unique within a partition;
+they need not be consecutive or match positions in its read-only `Cells` collection.
+
+`HexPartition` accepts an explicit `HexMapTopology` and copies the supplied collection,
+retaining the cell objects in their original order. It validates identifiers, index bounds,
+overlap between different cells, and complete map coverage. Empty cells are allowed;
+an empty cell collection is valid only for an empty topology. Null collections and null cells
+are rejected. Custom `IHexPartitionCell` implementations must keep their IDs and indexes stable
+to remain consistent with the stored assignment snapshot.
 
 ```csharp
-IHexPartitionCell cell = new HexPartitionCell(
+var topology = new HexMapTopology(2, 1, Layout.OddR);
+IHexPartitionCell cell = new HexPartitionCell(42,
     new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) });
-IHexPartition partition = new HexPartition(new[] { cell });
+IHexPartition partition = new HexPartition(topology, new[] { cell });
+int cellId = partition[new VectorXYInt(1, 0)]; // 42
 IReadOnlyList<VectorXYInt> indexes = partition.Cells[0].HexIndexes;
 ```
 
 ## Voronoi Cells
 
-- `VoronoiCell` stores the site index and assigned hex indexes.
+- `VoronoiCell` stores the site index and assigned hex indexes. Its `Id` equals `SiteIndex`.
 - Empty cells are preserved by default when a site receives no hexes.
 - Cell inputs are validated before construction.
 
 ## Partition Maps
 
-- `VoronoiHexPartitionMap` stores Voronoi cells in a hex map.
+- `VoronoiHexPartitionMap` stores Voronoi cell IDs in a spatial hex map.
 - `MaskedVoronoiHexPartitionMap` stores nullable assignments for a masked partition.
-- Both maps implement `IHexPartition`, exposing the same cell objects through the common
-  contract while preserving their strongly typed `IReadOnlyList<VoronoiCell>` properties.
+- `VoronoiHexPartitionMap` implements `IHexPartition` and `ISpatialHexMap<int>`.
+  Both public indexers return the assigned cell's ID. Access the corresponding `VoronoiCell`
+  through `partition.Cells[partition[index]]`. `Cells` remains an `IReadOnlyList<VoronoiCell>`.
+- `MaskedVoronoiHexPartitionMap` has excluded hexes with null assignments and therefore does
+  not implement the complete-coverage `IHexPartition` contract.
 - The map preserves layout and index metadata.
 - Hex centers provide the sampled point set for partitioning.
 - Cell assignments are read-only on the partition result, so they remain consistent with `Cells`.
 - `Cells` is a read-only semantic result in source-site order, with empty cells handled by the
   selected policy. `SiteIndex` matches the cell's index in this result, without gaps.
-- Use `ToMutableHexMap()` to create a mutable caller-owned copy of the per-hex assignments.
+- On `VoronoiHexPartitionMap`, `ToMutableHexMap()` returns a mutable caller-owned `HexMap<int>`
+  containing a copy of the cell IDs. On the masked map, it copies the nullable cell assignments.
+
+```csharp
+var voronoiPartition = hexCenters.ToVoronoiHexPartitionMap(sites);
+int cellId = voronoiPartition[new VectorXYInt(1, 0)];
+VoronoiCell assignedCell = voronoiPartition.Cells[cellId];
+HexMap<int> editableIds = voronoiPartition.ToMutableHexMap();
+```
 
 ## Empty Cells
 
@@ -52,8 +71,8 @@ Pass `EmptyCellPolicy` from `Akeldov.Math.Spatial2D.Partitioning.Voronoi` to
 `VoronoiHexPartitioner` or `ToVoronoiHexPartitionMap`:
 
 - `LeaveAsIs` preserves empty cells. Calls without a policy keep this behavior.
-- `Exclude` removes empty cells and renumbers the remaining `SiteIndex` values from zero.
-  Per-hex assignments reference the corresponding cells in the compacted `Cells` list.
+- `Exclude` removes empty cells and renumbers the remaining `SiteIndex` and `Id` values from zero.
+  Per-hex IDs index the corresponding cells in the compacted `Cells` list.
 - `ThrowException` throws `InvalidOperationException` if any site receives no participating hexes.
 
 ```csharp

@@ -24,12 +24,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Thrown when <paramref name="hexIndexes"/> is null.
         /// </exception>
         public VoronoiCell(int siteIndex, Site site, IReadOnlyList<VectorXYInt> hexIndexes)
-            : base(hexIndexes)
+            : base(siteIndex >= 0 ? siteIndex : throw new ArgumentOutOfRangeException(nameof(siteIndex)), hexIndexes)
         {
-            if (siteIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(siteIndex));
-
-            SiteIndex = siteIndex;
             Site = site;
         }
 
@@ -39,8 +35,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <remarks>
         /// When empty cells are excluded, the partitioner renumbers the remaining cells without gaps.
         /// The index then may differ from the site's index in the original input list.
+        /// This value is also the cell's <see cref="HexPartitionCell.Id"/>.
         /// </remarks>
-        public int SiteIndex { get; }
+        public int SiteIndex => Id;
 
         /// <summary>
         /// Gets the weighted site represented by this cell.

@@ -19,7 +19,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// with the original partition result. Use <see cref="ToMutableHexMap"/> to create a new
     /// mutable caller-owned copy of the assignments.
     /// </remarks>
-    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<VoronoiCell?>, IHexPartition
+    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<VoronoiCell?>
     {
         private readonly VoronoiCell?[] _assignments;
         private readonly bool[] _participationMask;
@@ -117,8 +117,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Cells { get; }
-
-        IReadOnlyList<IHexPartitionCell> IHexPartition.Cells => Cells;
 
         /// <summary>
         /// Returns whether the specified hex index was included by the participation mask.

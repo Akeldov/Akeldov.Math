@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="hexCenters">The hex center map to partition.</param>
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// Empty cells are preserved.
         /// </returns>
         public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="emptyCellPolicy">The policy used for cells that receive no hexes.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// </returns>
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
@@ -110,7 +110,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// Empty cells are preserved.
         /// </returns>
         /// <remarks>
@@ -142,7 +142,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </param>
         /// <param name="emptyCellPolicy">The policy used for cells that receive no hexes.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// </returns>
         /// <remarks>
         /// A site's region is the mask value at the hex containing its position, using the center map's

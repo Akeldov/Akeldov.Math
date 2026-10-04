@@ -42,12 +42,12 @@ public class VoronoiHexPartitionSnapshotTests
         }
     }
 
-    private static RGBA16BitColor ToSnapshotColor(VoronoiCell cell) => cell.SiteIndex switch
+    private static RGBA16BitColor ToSnapshotColor(int cellId) => cellId switch
     {
         0 => new RGBA16BitColor(0xe800, 0x4800, 0x5000, ushort.MaxValue),
         1 => new RGBA16BitColor(0x3800, 0xb800, 0x7000, ushort.MaxValue),
         2 => new RGBA16BitColor(0x4000, 0x7000, 0xe800, ushort.MaxValue),
         3 => new RGBA16BitColor(0xe000, 0xb800, 0x3800, ushort.MaxValue),
-        _ => throw new InvalidOperationException($"Unexpected Voronoi site index: {cell.SiteIndex}.")
+        _ => throw new InvalidOperationException($"Unexpected Voronoi cell identifier: {cellId}.")
     };
 }

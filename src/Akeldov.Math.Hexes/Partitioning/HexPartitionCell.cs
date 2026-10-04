@@ -18,12 +18,19 @@ namespace Akeldov.Math.Hexes
         /// <summary>
         /// Initializes a new partition cell with a read-only copy of the supplied hex indexes.
         /// </summary>
+        /// <param name="id">The non-negative cell identifier, unique within its partition.</param>
         /// <param name="hexIndexes">The hex indexes to copy into the partition cell.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="id"/> is negative.
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="hexIndexes"/> is null.
         /// </exception>
-        public HexPartitionCell(IReadOnlyList<VectorXYInt> hexIndexes)
+        public HexPartitionCell(int id, IReadOnlyList<VectorXYInt> hexIndexes)
         {
+            if (id < 0)
+                throw new ArgumentOutOfRangeException(nameof(id));
+
             if (hexIndexes == null)
                 throw new ArgumentNullException(nameof(hexIndexes));
 
@@ -32,7 +39,11 @@ namespace Akeldov.Math.Hexes
                 copy[i] = hexIndexes[i];
 
             _hexIndexes = Array.AsReadOnly(copy);
+            Id = id;
         }
+
+        /// <inheritdoc/>
+        public int Id { get; }
 
         /// <summary>
         /// Gets the read-only structural snapshot of hex indexes belonging to this partition cell.
