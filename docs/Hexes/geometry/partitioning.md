@@ -143,6 +143,25 @@ hex can still receive participating hexes in the same region. Sites outside the 
 hexes. Missing eligible sites in a participating region cause `InvalidOperationException`;
 empty cells follow the selected policy after assignment.
 
+## Nullable Region Masks
+
+Use an `IHexMap<int?>` to combine participation and region identifiers in one map:
+
+```csharp
+var selectedRegions = hexCenters.ToVoronoiHexPartitionMap(
+    sites, nullableRegionMask, EmptyCellPolicy.Exclude,
+    ExclavePolicy.ReassignToClosestCell);
+```
+
+`null` excludes a hex, which also returns `null` in the resulting `MaskedVoronoiHexPartitionMap`.
+Any integer, including zero and negative values, makes the hex participate in that region.
+The mask must match the center-map topology. Sites belong to the region at their position;
+sites outside the map or in a hex with a null region receive no hexes and follow the empty-cell
+policy. A participating region without an eligible site causes `InvalidOperationException`.
+
+Omitting `EmptyCellPolicy` preserves empty cells. `VoronoiHexPartitioner.Partition` also
+accepts the nullable region mask. Both forms support the same optional `ExclavePolicy`.
+
 ## Exclaves
 
 Every overload with a participation or region mask accepts an optional `ExclavePolicy` from

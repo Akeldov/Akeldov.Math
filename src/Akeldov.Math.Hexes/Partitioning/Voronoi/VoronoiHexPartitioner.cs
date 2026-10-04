@@ -254,6 +254,59 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         }
 
         /// <summary>
+        /// Assigns hex centers with non-null region identifiers to weighted Voronoi sites in their region.
+        /// </summary>
+        /// <param name="hexCenters">The hex center map to partition.</param>
+        /// <param name="regionsMask">
+        /// Region identifiers with the same topology as the center map. Null excludes a hex;
+        /// all integer values, including zero and negative values, identify participating regions.
+        /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
+        /// <returns>A new read-only masked partition map with a semantic cell list. Excluded hexes return null.</returns>
+        /// <remarks>
+        /// A site's region comes from the hex containing its position. Sites outside the map or in
+        /// a hex with a null region receive no hexes and follow the configured empty-cell policy.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">A map is null.</exception>
+        /// <exception cref="ArgumentException">The maps have different topologies.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The exclave policy is invalid or a participating center is not finite.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// A participating hex has no eligible site in its region, or the empty-cell policy requires throwing.
+        /// A zero-weight site is eligible only at its position within the geometry tolerance.
+        /// </exception>
+        public MaskedVoronoiHexPartitionMap Partition(
+            HexCenterMap hexCenters,
+            IHexMap<int?> regionsMask,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+        {
+            if (hexCenters == null)
+                throw new ArgumentNullException(nameof(hexCenters));
+
+            if (regionsMask == null)
+                throw new ArgumentNullException(nameof(regionsMask));
+
+            if (hexCenters.Topology != regionsMask.Topology)
+                throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
+
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
+            var participationValues = new bool[hexCenters.Topology.Count];
+            var regionValues = new int[hexCenters.Topology.Count];
+            for (int i = 0; i < regionValues.Length; i++)
+            {
+                int? region = regionsMask[i];
+                participationValues[i] = region.HasValue;
+                regionValues[i] = region.GetValueOrDefault();
+            }
+
+            var participation = new BoolHexMap(hexCenters.Topology, participationValues);
+            var regions = new IntHexMap(hexCenters.Topology, regionValues);
+            var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regions, participation);
+            return PartitionMaskedRegions(hexCenters, participation, regions, siteIndexesByRegion, exclavePolicy);
+        }
+
+        /// <summary>
         /// Assigns participating hex centers to their nearest weighted Voronoi site in the same region.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
@@ -303,6 +356,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
                 throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
+            return PartitionMaskedRegions(hexCenters, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy);
+        }
+
+        private MaskedVoronoiHexPartitionMap PartitionMaskedRegions(
+            HexCenterMap hexCenters, IHexMap<bool> participationMask, IHexMap<int> regionsMask,
+            Dictionary<int, List<int>> siteIndexesByRegion, ExclavePolicy exclavePolicy)
+        {
             var cellIndexes = new int[hexCenters.Topology.Count];
             var participationMaskValues = new bool[hexCenters.Topology.Count];
             var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
@@ -560,7 +620,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return dx * dx + dy * dy;
         }
 
-        private Dictionary<int, List<int>> GroupSiteIndexesByRegion(HexMapGeometry geometry, IHexMap<int> regionsMask)
+        private Dictionary<int, List<int>> GroupSiteIndexesByRegion(
+            HexMapGeometry geometry, IHexMap<int> regionsMask, BoolHexMap? participationMask = null)
         {
             var siteIndexesByRegion = new Dictionary<int, List<int>>();
             for (int i = 0; i < _sites.Length; i++)
@@ -568,6 +629,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 VectorXYInt index = _sites[i].Position.ToXYIndex(geometry.Radius, geometry.Origin, geometry.Topology.Layout);
                 if (index.X < 0 || index.X >= geometry.Topology.Resolution.X ||
                     index.Y < 0 || index.Y >= geometry.Topology.Resolution.Y)
+                    continue;
+
+                if (!(participationMask is null) && !participationMask[index])
                     continue;
 
                 int region = regionsMask[index];
