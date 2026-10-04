@@ -9,8 +9,8 @@ Akeldov.Math.Hexes.HexPartitionCell
 Akeldov.Math.Hexes.HexPartitionCell.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
 Akeldov.Math.Hexes.HexPartitionCell.HexPartitionCell(int id, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
 Akeldov.Math.Hexes.HexPartitionCell.Id.get -> int
-Akeldov.Math.Hexes.IHexPartition
-Akeldov.Math.Hexes.IHexPartition.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>!
+Akeldov.Math.Hexes.IHexPartition<THexPartitionCell>
+Akeldov.Math.Hexes.IHexPartition<THexPartitionCell>.Cells.get -> System.Collections.Generic.IReadOnlyList<THexPartitionCell>!
 Akeldov.Math.Hexes.IHexPartitionCell
 Akeldov.Math.Hexes.IHexPartitionCell.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
 Akeldov.Math.Hexes.IHexPartitionCell.Id.get -> int
@@ -20,8 +20,8 @@ Akeldov.Math.Hexes.IHexPartitionCell.Id.get -> int
 Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> int
 Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[int index].get -> int
 Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<int>!
-Akeldov.Math.Hexes.IPartialHexPartition
-Akeldov.Math.Hexes.IPartialHexPartition.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>!
+Akeldov.Math.Hexes.IPartialHexPartition<THexPartitionCell>
+Akeldov.Math.Hexes.IPartialHexPartition<THexPartitionCell>.Cells.get -> System.Collections.Generic.IReadOnlyList<THexPartitionCell>!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.this[int index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?>!

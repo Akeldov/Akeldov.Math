@@ -11,11 +11,13 @@ namespace Akeldov.Math.Hexes
     /// Unassigned hexes contain <see langword="null"/>. Each assigned hex belongs to exactly one cell.
     /// Cell identifiers are unique within the partition and need not match positions in <see cref="Cells"/>.
     /// </remarks>
-    public interface IPartialHexPartition : IHexMap<int?>
+    /// <typeparam name="THexPartitionCell">The type of cell in this partial partition.</typeparam>
+    public interface IPartialHexPartition<out THexPartitionCell> : IHexMap<int?>
+        where THexPartitionCell : IHexPartitionCell
     {
         /// <summary>
         /// Gets the read-only structural collection of cells that make up this partial partition.
         /// </summary>
-        IReadOnlyList<IHexPartitionCell> Cells { get; }
+        IReadOnlyList<THexPartitionCell> Cells { get; }
     }
 }

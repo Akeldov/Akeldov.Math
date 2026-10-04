@@ -15,7 +15,7 @@ input order and duplicate indexes are preserved. Index bounds and map membership
 `VoronoiCell` derives from `HexPartitionCell`, so code that needs only the assigned hex indexes
 can accept `IHexPartitionCell` for both manually constructed cells and Voronoi cells.
 
-`IHexPartition` inherits `IHexMap<int>`: both map indexers return the assigned cell's `Id`.
+`IHexPartition<THexPartitionCell>` inherits `IHexMap<int>`: both map indexers return the assigned cell's `Id`.
 Every hex in its `Topology` belongs to exactly one cell. IDs are unique within a partition;
 they need not be consecutive or match positions in its read-only `Cells` collection.
 
@@ -26,15 +26,20 @@ an empty cell collection is valid only for an empty topology. Null collections a
 are rejected. Custom `IHexPartitionCell` implementations must keep their IDs and indexes stable
 to remain consistent with the stored assignment snapshot.
 
-`IPartialHexPartition` inherits `IHexMap<int?>` and exposes the same read-only `Cells` contract.
+`IPartialHexPartition<THexPartitionCell>` inherits `IHexMap<int?>` and exposes the same read-only `Cells` contract.
 Assigned hexes contain their cell IDs; unassigned hexes contain `null`. Each assigned hex belongs
 to exactly one cell, while complete map coverage is not required.
+
+Both interfaces constrain `THexPartitionCell` to `IHexPartitionCell` and expose
+`IReadOnlyList<THexPartitionCell> Cells`. Their type parameter is covariant: a partition of
+`VoronoiCell` can also be used as a partition of `IHexPartitionCell`, preserving the same cells
+and map assignments. `HexPartition` implements `IHexPartition<IHexPartitionCell>`.
 
 ```csharp
 var topology = new HexMapTopology(2, 1, Layout.OddR);
 IHexPartitionCell cell = new HexPartitionCell(42,
     new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) });
-IHexPartition partition = new HexPartition(topology, new[] { cell });
+IHexPartition<IHexPartitionCell> partition = new HexPartition(topology, new[] { cell });
 int cellId = partition[new VectorXYInt(1, 0)]; // 42
 IReadOnlyList<VectorXYInt> indexes = partition.Cells[0].HexIndexes;
 ```
@@ -48,9 +53,9 @@ IReadOnlyList<VectorXYInt> indexes = partition.Cells[0].HexIndexes;
 ## Partition Maps
 
 - `VoronoiHexPartitionMap` stores Voronoi cell IDs in a spatial hex map.
-- `MaskedVoronoiHexPartitionMap` implements `IPartialHexPartition` and `ISpatialHexMap<int?>`.
+- `MaskedVoronoiHexPartitionMap` implements `IPartialHexPartition<VoronoiCell>` and `ISpatialHexMap<int?>`.
   Its indexers return nullable cell IDs: `null` identifies an excluded hex.
-- `VoronoiHexPartitionMap` implements `IHexPartition` and `ISpatialHexMap<int>`.
+- `VoronoiHexPartitionMap` implements `IHexPartition<VoronoiCell>` and `ISpatialHexMap<int>`.
   Both public indexers return the assigned cell's ID. Access the corresponding `VoronoiCell`
   through `partition.Cells[partition[index]]`. `Cells` remains an `IReadOnlyList<VoronoiCell>`.
 - `MaskedVoronoiHexPartitionMap` follows the partial partition contract, allowing excluded hexes.
@@ -71,11 +76,11 @@ HexMap<int> editableIds = voronoiPartition.ToMutableHexMap();
 
 ```csharp
 var maskedPartition = hexCenters.ToVoronoiHexPartitionMap(sites, participationMask);
-IPartialHexPartition partial = maskedPartition;
+IPartialHexPartition<VoronoiCell> partial = maskedPartition;
 int? cellId = partial[new VectorXYInt(1, 0)];
 if (cellId.HasValue)
 {
-    VoronoiCell assignedCell = maskedPartition.Cells[cellId.Value];
+    VoronoiCell assignedCell = partial.Cells[cellId.Value];
 }
 HexMap<int?> editableIds = maskedPartition.ToMutableHexMap();
 ```

@@ -14,7 +14,7 @@ public class HexPartitionTests
         var second = new HexPartitionCell(7, Array.Empty<VectorXYInt>());
         var source = new List<HexPartitionCell> { first, second };
         var topology = new HexMapTopology(1, 1, Layout.OddR);
-        IHexPartition partition = new HexPartition(topology, source);
+        IHexPartition<IHexPartitionCell> partition = new HexPartition(topology, source);
 
         source[0] = second;
         source.Clear();
@@ -58,7 +58,7 @@ public class HexPartitionTests
     [Test]
     public void Constructor_WithEmptyInput_CreatesEmptyPartition()
     {
-        IHexPartition partition = new HexPartition(default, Array.Empty<IHexPartitionCell>());
+        IHexPartition<IHexPartitionCell> partition = new HexPartition(default, Array.Empty<IHexPartitionCell>());
 
         Assert.That(partition.Cells, Is.Empty);
     }
@@ -71,11 +71,13 @@ public class HexPartitionTests
         var sites = new[] { new Site(new PointXY(100f, 0f), 1f), new Site(centers[0], 1f) };
         var partitioner = new VoronoiHexPartitioner(sites, policy);
         var map = partitioner.Partition(centers);
-        IHexPartition partition = map;
+        IHexPartition<VoronoiCell> partition = map;
         IHexMap<int> idMap = partition;
-        IReadOnlyList<VoronoiCell> typedCells = map.Cells;
+        IReadOnlyList<VoronoiCell> typedCells = partition.Cells;
+        IHexPartition<IHexPartitionCell> commonPartition = partition;
 
-        Assert.That(partition.Cells, Is.SameAs(typedCells));
+        Assert.That(partition.Cells, Is.SameAs(map.Cells));
+        Assert.That(commonPartition.Cells, Is.SameAs(typedCells));
         Assert.That(partition.Cells, Has.Count.EqualTo(policy == EmptyCellPolicy.Exclude ? 1 : 2));
         int assignedId = policy == EmptyCellPolicy.Exclude ? 0 : 1;
         Assert.That(partition.Topology, Is.EqualTo(centers.Topology));
@@ -89,11 +91,13 @@ public class HexPartitionTests
             Assert.That(partition.Cells[i], Is.SameAs(typedCells[i]));
             Assert.That(snapshot.Cells[i], Is.SameAs(typedCells[i]));
             Assert.That(partition.Cells[i].Id, Is.EqualTo(typedCells[i].SiteIndex));
+            Assert.That(commonPartition.Cells[i], Is.SameAs(partition.Cells[i]));
         }
         for (int i = 0; i < partition.Topology.Count; i++)
         {
             var index = new VectorXYInt(i, 0);
             Assert.That(partition[i], Is.EqualTo(assignedId));
+            Assert.That(commonPartition[i], Is.EqualTo(assignedId));
             Assert.That(idMap[index], Is.EqualTo(assignedId));
             Assert.That(snapshot[i], Is.EqualTo(assignedId));
             Assert.That(snapshot[index], Is.EqualTo(assignedId));
@@ -112,7 +116,7 @@ public class HexPartitionTests
         var mask = new BoolHexMap(centers.Topology, new[] { true, false });
         var map = new VoronoiHexPartitioner(sites).Partition(centers, mask);
 
-        Assert.That(map, Is.Not.InstanceOf<IHexPartition>());
+        Assert.That(map, Is.Not.InstanceOf<IHexPartition<IHexPartitionCell>>());
         Assert.That(map[1], Is.Null);
         Assert.Throws<ArgumentException>(() => new HexPartition(map.Topology, map.Cells));
     }
@@ -205,7 +209,7 @@ public class HexPartitionTests
     {
         var topology = new HexMapTopology(2, 1, Layout.OddR);
         var cells = new[] { new HexPartitionCell(0, new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }) };
-        IHexPartition partition = new HexPartition(topology, cells);
+        IHexPartition<IHexPartitionCell> partition = new HexPartition(topology, cells);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[new VectorXYInt(x, y)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[-1]);

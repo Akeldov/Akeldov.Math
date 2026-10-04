@@ -17,7 +17,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <see cref="VoronoiCell.SiteIndex"/> and its index in <see cref="Cells"/>.
     /// Use <c>Cells[this[index]]</c> to access the assigned cell's site and grouped hex indexes.
     /// </remarks>
-    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<int>, IHexPartition
+    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<int>, IHexPartition<VoronoiCell>
     {
         private readonly int[] _assignments;
 
@@ -92,8 +92,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Cells { get; }
-
-        IReadOnlyList<IHexPartitionCell> IHexPartition.Cells => Cells;
 
         /// <summary>
         /// Creates a new mutable caller-owned hex map of cell identifiers copied from this partition map.

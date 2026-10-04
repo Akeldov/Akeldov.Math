@@ -20,7 +20,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// mutable caller-owned copy of the assignments.
     /// Assigned identifiers equal <see cref="VoronoiCell.SiteIndex"/> and index <see cref="Cells"/>.
     /// </remarks>
-    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<int?>, IPartialHexPartition
+    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<int?>, IPartialHexPartition<VoronoiCell>
     {
         private readonly int?[] _assignments;
         private readonly bool[] _participationMask;
@@ -118,8 +118,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Cells { get; }
-
-        IReadOnlyList<IHexPartitionCell> IPartialHexPartition.Cells => Cells;
 
         /// <summary>
         /// Returns whether the specified hex index was included by the participation mask.

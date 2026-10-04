@@ -26,11 +26,14 @@ public class PartialHexPartitionTests
         };
         var mask = new BoolHexMap(centers.Topology, new[] { true, false, true, true, false, true });
         var map = new VoronoiHexPartitioner(sites, policy).Partition(centers, mask);
-        IPartialHexPartition partition = map;
+        IPartialHexPartition<VoronoiCell> partition = map;
+        IPartialHexPartition<IHexPartitionCell> commonPartition = partition;
+        IReadOnlyList<VoronoiCell> typedCells = partition.Cells;
         IHexMap<int?> ids = partition;
         ISpatialHexMap<int?> spatialMap = map;
 
         Assert.That(partition.Cells, Is.SameAs(map.Cells));
+        Assert.That(commonPartition.Cells, Is.SameAs(typedCells));
         Assert.That(partition.Topology, Is.EqualTo(centers.Topology));
         Assert.That(spatialMap.Geometry, Is.EqualTo(centers.Geometry));
         Assert.That(map, Is.Not.InstanceOf<IHexMap<VoronoiCell?>>());
@@ -44,6 +47,7 @@ public class PartialHexPartitionTests
             var index = new VectorXYInt(i % 3, i / 3);
             int? id = ids[i];
             Assert.That(ids[index], Is.EqualTo(id), $"Flat index {i}, layout {layout}.");
+            Assert.That(commonPartition[index], Is.EqualTo(id));
             Assert.That(id.HasValue, Is.EqualTo(mask[i]));
             Assert.That(map.Participates(index), Is.EqualTo(id.HasValue));
             if (!id.HasValue)
@@ -51,6 +55,7 @@ public class PartialHexPartitionTests
 
             assignedCount++;
             Assert.That(partition.Cells[id.Value], Is.SameAs(map.Cells[id.Value]));
+            Assert.That(commonPartition.Cells[id.Value], Is.SameAs(partition.Cells[id.Value]));
             Assert.That(partition.Cells[id.Value].Id, Is.EqualTo(id.Value));
             Assert.That(partition.Cells[id.Value].HexIndexes, Does.Contain(index));
         }
@@ -68,7 +73,7 @@ public class PartialHexPartitionTests
         var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(centers[0], 1f) };
         var mask = new BoolHexMap(centers.Topology, new[] { participates, participates });
-        IPartialHexPartition partition = centers.ToVoronoiHexPartitionMap(sites, mask);
+        IPartialHexPartition<VoronoiCell> partition = centers.ToVoronoiHexPartitionMap(sites, mask);
 
         int? expected = participates ? 0 : null;
         Assert.That(partition[0], Is.EqualTo(expected));

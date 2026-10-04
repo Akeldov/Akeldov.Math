@@ -10,11 +10,13 @@ namespace Akeldov.Math.Hexes
     /// Every hex in the topology must be assigned to exactly one partition cell.
     /// Cell identifiers need not match positions in <see cref="Cells"/>.
     /// </remarks>
-    public interface IHexPartition : IHexMap<int>
+    /// <typeparam name="THexPartitionCell">The type of cell in this partition.</typeparam>
+    public interface IHexPartition<out THexPartitionCell> : IHexMap<int>
+        where THexPartitionCell : IHexPartitionCell
     {
         /// <summary>
         /// Gets the read-only structural collection of cells that make up this partition.
         /// </summary>
-        IReadOnlyList<IHexPartitionCell> Cells { get; }
+        IReadOnlyList<THexPartitionCell> Cells { get; }
     }
 }
