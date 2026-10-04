@@ -63,7 +63,8 @@ IReadOnlyList<VectorXYInt> indexes = partition.Cells[0].HexIndexes;
 - Hex centers provide the sampled point set for partitioning.
 - Cell assignments are read-only on the partition result, so they remain consistent with `Cells`.
 - `Cells` is a read-only semantic result in source-site order, with empty cells handled by the
-  selected policy. `SiteIndex` matches the cell's index in this result, without gaps.
+  selected policy. Exclave handling can append new cells after the source sites.
+  `SiteIndex` matches the cell's index in this result, without gaps.
 - On `VoronoiHexPartitionMap`, `ToMutableHexMap()` returns a mutable caller-owned `HexMap<int>`
   containing a copy of the cell IDs. On the masked map, it returns a `HexMap<int?>` with nullable IDs.
 
@@ -141,6 +142,35 @@ in any cell's `HexIndexes`. Site eligibility comes from the region mask: a site 
 hex can still receive participating hexes in the same region. Sites outside the map receive no
 hexes. Missing eligible sites in a participating region cause `InvalidOperationException`;
 empty cells follow the selected policy after assignment.
+
+## Exclaves
+
+Every overload with a participation or region mask accepts an optional `ExclavePolicy` from
+`Akeldov.Math.Hexes.Partitioning.Voronoi`. The default, `LeaveAsIs`, preserves the initial
+assignments. `ReassignToClosestCell` keeps each cell's six-connected component containing the
+hex closest to its site and processes the other components as exclaves.
+
+Exclave hexes join adjacent cells in simultaneous layers growing from the retained components.
+Each hex chooses the neighboring grown cell whose site is closest by ordinary Euclidean
+distance, without applying site weights. Equal distances favor the earlier source site.
+Excluded hexes remain excluded, and assignments never cross region boundaries.
+
+An exclave without a path to a retained component in its region becomes a separate new cell.
+Its site is the component hex closest to the original site; ties use row-major order.
+The new site preserves the original weight. New cells follow the source cells in row-major
+component discovery order. Empty-cell handling runs afterward, including ID compaction when
+`EmptyCellPolicy.Exclude` is selected.
+
+```csharp
+var repaired = hexCenters.ToVoronoiHexPartitionMap(
+    sites, participationMask, exclavePolicy: ExclavePolicy.ReassignToClosestCell);
+var repairedRegions = hexCenters.ToVoronoiHexPartitionMap(
+    sites, participationMask, regionMask, EmptyCellPolicy.Exclude,
+    ExclavePolicy.ReassignToClosestCell);
+```
+
+The same optional parameter is available on the masked `VoronoiHexPartitioner.Partition`
+overloads. Rebuild previously compiled consumers after adopting these updated signatures.
 
 ## Weighted Sites
 

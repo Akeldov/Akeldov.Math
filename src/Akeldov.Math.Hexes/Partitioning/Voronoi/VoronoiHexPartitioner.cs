@@ -12,6 +12,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Assigns hex centers to weighted Voronoi sites.
     /// </summary>
+    #pragma warning disable RS0026 // Mask overloads intentionally expose the same optional exclave policy.
     public sealed class VoronoiHexPartitioner
     {
         private readonly Site[] _sites;
@@ -75,7 +76,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
             }
 
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, _sites);
 
             var assignments = new int[count];
             for (int i = 0; i < assignments.Length; i++)
@@ -94,6 +95,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="participationMask">
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only masked hex partition map with nullable per-hex cell identifiers and a semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
@@ -103,7 +105,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public MaskedVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
-            IHexMap<bool> participationMask)
+            IHexMap<bool> participationMask,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -113,6 +116,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             if (hexCenters.Topology != participationMask.Topology)
                 throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
+
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
             var count = hexCenters.Topology.Count;
             var cellIndexes = new int[count];
@@ -144,7 +150,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
             }
 
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
+            var partitionSites = _sites;
+            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
+                partitionSites = ReassignExclaves(hexCenters, cellIndexes, ref hexIndexBuckets, participationMaskValues, null);
+
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, partitionSites);
 
             var assignments = new int?[count];
             for (int i = 0; i < assignments.Length; i++)
@@ -165,6 +175,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Equal values identify the same region, including disconnected hexes. All integer values,
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// </returns>
@@ -183,7 +194,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public VoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
-            IHexMap<int> regionsMask)
+            IHexMap<int> regionsMask,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -195,6 +207,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(regionsMask));
 
             var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regionsMask);
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
             var count = hexCenters.Topology.Count;
             var cellIndexes = new int[count];
             var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
@@ -223,7 +238,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
             }
 
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
+            var partitionSites = _sites;
+            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
+                partitionSites = ReassignExclaves(hexCenters, cellIndexes, ref hexIndexBuckets, null, regionsMask);
+
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, partitionSites);
 
             var assignments = new int[count];
             for (int i = 0; i < assignments.Length; i++)
@@ -243,6 +262,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// The region identifiers, with the same topology as the center map. Equal integer values
         /// identify the same region, including disconnected hexes; zero and negative values are valid.
         /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only masked partition map of nullable cell identifiers with a semantic cell list. Excluded hexes return null.
         /// </returns>
@@ -261,7 +281,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public MaskedVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
-            IHexMap<int> regionsMask)
+            IHexMap<int> regionsMask,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -279,6 +300,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
 
             var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regionsMask);
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
             var cellIndexes = new int[hexCenters.Topology.Count];
             var participationMaskValues = new bool[hexCenters.Topology.Count];
             var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
@@ -314,7 +338,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
             }
 
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
+            var partitionSites = _sites;
+            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
+                partitionSites = ReassignExclaves(hexCenters, cellIndexes, ref hexIndexBuckets, participationMaskValues, regionsMask);
+
+            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, partitionSites);
 
             var assignments = new int?[hexCenters.Topology.Count];
             for (int i = 0; i < assignments.Length; i++)
@@ -322,6 +350,214 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                     assignments[i] = cellIndexesBySite[cellIndexes[i]];
 
             return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+        }
+
+        private Site[] ReassignExclaves(
+            HexCenterMap centers,
+            int[] cellIndexes,
+            ref List<VectorXYInt>[] buckets,
+            bool[]? participation,
+            IHexMap<int>? regions)
+        {
+            var queue = new int[cellIndexes.Length];
+            var (components, mainComponents) = FindCellComponents(centers, cellIndexes, participation, queue);
+            bool[] settled = GrowMainComponents(centers.Topology, centers, cellIndexes, components, mainComponents, regions, queue);
+            Site[] sites = CreateExclaveSites(centers, cellIndexes, components, settled, ref buckets);
+
+            // Rebuild in row-major order before applying the empty-cell policy and compacting IDs.
+            for (int i = 0; i < buckets.Length; i++)
+                buckets[i].Clear();
+
+            int width = centers.Topology.Resolution.X;
+            for (int i = 0; i < cellIndexes.Length; i++)
+                if (components[i] != 0)
+                    buckets[cellIndexes[i]].Add(new VectorXYInt(i % width, i / width));
+
+            return sites;
+        }
+
+        private (int[] Components, int[] MainComponents) FindCellComponents(
+            HexCenterMap centers, int[] cellIndexes, bool[]? participation, int[] queue)
+        {
+            HexMapTopology topology = centers.Topology;
+            var components = new int[cellIndexes.Length];
+            var mainComponents = new int[_sites.Length];
+            var closestDistances = new double[_sites.Length];
+            for (int i = 0; i < closestDistances.Length; i++)
+                closestDistances[i] = double.PositiveInfinity;
+
+            int component = 0;
+            for (int seed = 0; seed < cellIndexes.Length; seed++)
+            {
+                if (components[seed] != 0 || (participation != null && !participation[seed]))
+                    continue;
+
+                component++;
+                int siteIndex = cellIndexes[seed];
+                int head = 0;
+                int tail = 0;
+                components[seed] = component;
+                queue[tail++] = seed;
+                while (head < tail)
+                {
+                    int current = queue[head++];
+                    double distance = GetDistanceSquared(centers[current], _sites[siteIndex].Position);
+                    if (distance < closestDistances[siteIndex])
+                    {
+                        closestDistances[siteIndex] = distance;
+                        mainComponents[siteIndex] = component;
+                    }
+
+                    for (int direction = 0; direction < 6; direction++)
+                    {
+                        if (!TryGetAdjacentFlatIndex(current, direction, topology, out int neighbor) ||
+                            components[neighbor] != 0 || cellIndexes[neighbor] != siteIndex ||
+                            (participation != null && !participation[neighbor]))
+                            continue;
+
+                        components[neighbor] = component;
+                        queue[tail++] = neighbor;
+                    }
+                }
+            }
+
+            return (components, mainComponents);
+        }
+
+        private bool[] GrowMainComponents(
+            HexMapTopology topology, HexCenterMap centers, int[] cellIndexes,
+            int[] components, int[] mainComponents, IHexMap<int>? regions, int[] queue)
+        {
+            // Grow only from retained components so neighboring exclaves cannot exchange owners
+            // or create another disconnected component. Each layer is committed simultaneously.
+            var settled = new bool[cellIndexes.Length];
+            var queued = new bool[cellIndexes.Length];
+            int frontierHead = 0;
+            int frontierTail = 0;
+            for (int i = 0; i < cellIndexes.Length; i++)
+            {
+                if (components[i] == 0 || components[i] != mainComponents[cellIndexes[i]])
+                    continue;
+
+                settled[i] = true;
+                queued[i] = true;
+                queue[frontierTail++] = i;
+            }
+
+            while (frontierHead < frontierTail)
+            {
+                int layerEnd = frontierTail;
+                while (frontierHead < layerEnd)
+                {
+                    int current = queue[frontierHead++];
+                    for (int direction = 0; direction < 6; direction++)
+                    {
+                        if (!TryGetAdjacentFlatIndex(current, direction, topology, out int neighbor) ||
+                            queued[neighbor] || components[neighbor] == 0 ||
+                            (regions != null && regions[current] != regions[neighbor]))
+                            continue;
+
+                        queued[neighbor] = true;
+                        queue[frontierTail++] = neighbor;
+                    }
+                }
+
+                for (int i = layerEnd; i < frontierTail; i++)
+                {
+                    int current = queue[i];
+                    cellIndexes[current] = GetClosestAdjacentCell(current, topology, centers, cellIndexes, settled, regions);
+                }
+
+                for (int i = layerEnd; i < frontierTail; i++)
+                    settled[queue[i]] = true;
+            }
+
+            return settled;
+        }
+
+        private int GetClosestAdjacentCell(
+            int current, HexMapTopology topology, HexCenterMap centers,
+            int[] cellIndexes, bool[] settled, IHexMap<int>? regions)
+        {
+            int bestSite = -1;
+            double bestDistance = double.PositiveInfinity;
+            for (int direction = 0; direction < 6; direction++)
+            {
+                if (!TryGetAdjacentFlatIndex(current, direction, topology, out int neighbor) ||
+                    !settled[neighbor] ||
+                    (regions != null && regions[current] != regions[neighbor]))
+                    continue;
+
+                int siteIndex = cellIndexes[neighbor];
+                double distance = GetDistanceSquared(centers[current], _sites[siteIndex].Position);
+                if (distance < bestDistance || (distance == bestDistance && siteIndex < bestSite))
+                {
+                    bestDistance = distance;
+                    bestSite = siteIndex;
+                }
+            }
+
+            return bestSite;
+        }
+
+        private Site[] CreateExclaveSites(
+            HexCenterMap centers, int[] cellIndexes, int[] components, bool[] settled,
+            ref List<VectorXYInt>[] buckets)
+        {
+            // A component blocked by a mask becomes its own cell with a center inside it.
+            var sites = new List<Site>(_sites);
+            var expandedBuckets = new List<List<VectorXYInt>>(buckets);
+            var newSitesByComponent = new Dictionary<int, int>();
+            var newSiteDistances = new List<double>();
+            for (int i = 0; i < cellIndexes.Length; i++)
+            {
+                if (components[i] == 0 || settled[i])
+                    continue;
+
+                int originalSite = cellIndexes[i];
+                double distance = GetDistanceSquared(centers[i], _sites[originalSite].Position);
+                if (!newSitesByComponent.TryGetValue(components[i], out int newSite))
+                {
+                    newSite = sites.Count;
+                    newSitesByComponent.Add(components[i], newSite);
+                    sites.Add(new Site(centers[i], _sites[originalSite].Weight));
+                    expandedBuckets.Add(new List<VectorXYInt>());
+                    newSiteDistances.Add(distance);
+                }
+                else if (distance < newSiteDistances[newSite - _sites.Length])
+                {
+                    sites[newSite] = new Site(centers[i], _sites[originalSite].Weight);
+                    newSiteDistances[newSite - _sites.Length] = distance;
+                }
+
+                cellIndexes[i] = newSite;
+            }
+
+            buckets = expandedBuckets.ToArray();
+
+            return sites.ToArray();
+        }
+
+        private static bool TryGetAdjacentFlatIndex(int flatIndex, int direction, HexMapTopology topology, out int neighbor)
+        {
+            int width = topology.Resolution.X;
+            var index = new VectorXYInt(flatIndex % width, flatIndex / width);
+            VectorXYInt adjacent = index.GetAdjacent((HexEdge)direction, topology.Layout);
+            if ((uint)adjacent.X >= (uint)width || (uint)adjacent.Y >= (uint)topology.Resolution.Y)
+            {
+                neighbor = -1;
+                return false;
+            }
+
+            neighbor = adjacent.Y * width + adjacent.X;
+            return true;
+        }
+
+        private static double GetDistanceSquared(PointXY point, PointXY site)
+        {
+            double dx = (double)point.X - site.X;
+            double dy = (double)point.Y - site.Y;
+            return dx * dx + dy * dy;
         }
 
         private Dictionary<int, List<int>> GroupSiteIndexesByRegion(HexMapGeometry geometry, IHexMap<int> regionsMask)
@@ -391,11 +627,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return buckets;
         }
 
-        private VoronoiCell[] CreateCells(List<VectorXYInt>[] hexIndexBuckets, out int[] cellIndexesBySite)
+        private VoronoiCell[] CreateCells(List<VectorXYInt>[] hexIndexBuckets, out int[] cellIndexesBySite, Site[] sites)
         {
-            var cells = new List<VoronoiCell>(_sites.Length);
-            cellIndexesBySite = new int[_sites.Length];
-            for (int i = 0; i < _sites.Length; i++)
+            var cells = new List<VoronoiCell>(sites.Length);
+            cellIndexesBySite = new int[sites.Length];
+            for (int i = 0; i < sites.Length; i++)
             {
                 if (hexIndexBuckets[i].Count == 0)
                 {
@@ -403,11 +639,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                         continue;
 
                     if (_emptyCellPolicy != EmptyCellPolicy.LeaveAsIs)
-                        throw new InvalidOperationException($"Couldn't tessellate by empty cells, empty cell: {_sites[i]}.");
+                        throw new InvalidOperationException($"Couldn't tessellate by empty cells, empty cell: {sites[i]}.");
                 }
 
                 cellIndexesBySite[i] = cells.Count;
-                cells.Add(new VoronoiCell(cells.Count, _sites[i], hexIndexBuckets[i]));
+                cells.Add(new VoronoiCell(cells.Count, sites[i], hexIndexBuckets[i]));
             }
 
             return cells.ToArray();
@@ -488,4 +724,5 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return false;
         }
     }
+    #pragma warning restore RS0026
 }

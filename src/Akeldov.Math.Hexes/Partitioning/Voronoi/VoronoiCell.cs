@@ -45,7 +45,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public Site Site { get; }
 
         /// <summary>
-        /// Gets the center point of this cell, taken from the source site position.
+        /// Gets the center point of this cell, taken from its site position.
+        /// For a cell created from an isolated exclave, the site is a hex center inside that component.
         /// </summary>
         public PointXY Center => Site.Position;
 

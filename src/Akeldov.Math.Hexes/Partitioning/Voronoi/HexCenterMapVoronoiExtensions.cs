@@ -8,6 +8,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Provides Voronoi partitioning extensions for hex center maps.
     /// </summary>
+    #pragma warning disable RS0026 // Mask overloads intentionally expose the same optional exclave policy.
     public static class HexCenterMapVoronoiExtensions
     {
         /// <summary>
@@ -58,6 +59,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="participationMask">
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only masked hex partition map with nullable per-hex cell identifiers and a semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
@@ -66,9 +68,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
-            IHexMap<bool> participationMask)
+            IHexMap<bool> participationMask,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
-            return hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.LeaveAsIs);
+            return hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.LeaveAsIs, exclavePolicy);
         }
 
         /// <summary>
@@ -80,6 +83,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
         /// <param name="emptyCellPolicy">The policy used for cells that receive no participating hexes.</param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only masked hex partition map with nullable per-hex cell identifiers and a semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
@@ -91,12 +95,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
-            EmptyCellPolicy emptyCellPolicy)
+            EmptyCellPolicy emptyCellPolicy,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask);
+            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask, exclavePolicy);
         }
 
         /// <summary>
@@ -109,6 +114,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Equal values identify the same region, including disconnected hexes. All integer values,
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// Empty cells are preserved.
@@ -124,9 +130,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
-            IHexMap<int> participationMask)
+            IHexMap<int> participationMask,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
-            return hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.LeaveAsIs);
+            return hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.LeaveAsIs, exclavePolicy);
         }
 
         /// <summary>
@@ -141,6 +148,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
         /// <param name="emptyCellPolicy">The policy used for cells that receive no hexes.</param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
         /// </returns>
@@ -157,12 +165,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<int> regionsMask,
-            EmptyCellPolicy emptyCellPolicy)
+            EmptyCellPolicy emptyCellPolicy,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, regionsMask);
+            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, regionsMask, exclavePolicy);
         }
 
         /// <summary>
@@ -176,6 +185,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// The region identifiers, with the same topology as the center map. Equal integer values
         /// identify the same region, including disconnected hexes; zero and negative values are valid.
         /// </param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
         /// A new read-only masked partition map of nullable cell identifiers with a semantic cell list. Excluded hexes return null.
         /// </returns>
@@ -196,12 +206,14 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
-            EmptyCellPolicy emptyCellPolicy)
+            EmptyCellPolicy emptyCellPolicy,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask, regionsMask);
+            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask, regionsMask, exclavePolicy);
         }
     }
+    #pragma warning restore RS0026
 }

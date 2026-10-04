@@ -8,6 +8,181 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.Voronoi;
 public class VoronoiHexPartitionerTests
 {
     [Test]
+    public void Partition_WithParticipationExclaves_GrowsThroughMultipleHexes(
+        [Values] bool useExtension,
+        [Values(EmptyCellPolicy.LeaveAsIs, EmptyCellPolicy.Exclude, EmptyCellPolicy.ThrowException)] EmptyCellPolicy emptyPolicy)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(5, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var mask = new BoolHexMap(centers.Topology, new[] { true, false, true, true, true });
+        var sites = new[] { new Site(centers[0], 10f), new Site(centers[4], 1f) };
+
+        var unchanged = centers.ToVoronoiHexPartitionMap(sites, mask);
+        var map = useExtension
+            ? centers.ToVoronoiHexPartitionMap(sites, mask, emptyPolicy, ExclavePolicy.ReassignToClosestCell)
+            : new VoronoiHexPartitioner(sites, emptyPolicy).Partition(centers, mask, ExclavePolicy.ReassignToClosestCell);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(unchanged[2], Is.EqualTo(0));
+            Assert.That(unchanged[3], Is.EqualTo(0));
+            Assert.That(map[0], Is.EqualTo(0));
+            Assert.That(map[1], Is.Null);
+            Assert.That(map[2], Is.EqualTo(1));
+            Assert.That(map[3], Is.EqualTo(1));
+            Assert.That(map[4], Is.EqualTo(1));
+            Assert.That(map.Cells, Has.Count.EqualTo(2));
+            Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[]
+            {
+                new VectorXYInt(2, 0), new VectorXYInt(3, 0), new VectorXYInt(4, 0)
+            }));
+            Assert.That(mask[1], Is.False);
+        });
+    }
+
+    [Test]
+    public void Partition_WithRegionExclave_ReassignsOnlyWithinRegion(
+        [Values] bool useExtension, [Values] bool combinedMasks)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(7, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var regions = new IntHexMap(centers.Topology, new[] { -7, -7, 42, -7, -7, -7, -7 });
+        var participation = new BoolHexMap(centers.Topology, Enumerable.Repeat(true, 7).ToArray());
+        var sites = new[] { new Site(centers[0], 1f), new Site(centers[6], 1f), new Site(centers[2], 1f) };
+        var partitioner = new VoronoiHexPartitioner(sites);
+        int[] assignments;
+        IReadOnlyList<VoronoiCell> cells;
+        if (combinedMasks)
+        {
+            var map = useExtension
+                ? centers.ToVoronoiHexPartitionMap(sites, participation, regions, EmptyCellPolicy.LeaveAsIs,
+                    ExclavePolicy.ReassignToClosestCell)
+                : partitioner.Partition(centers, participation, regions, ExclavePolicy.ReassignToClosestCell);
+            assignments = Enumerable.Range(0, 7).Select(i => map[i]!.Value).ToArray();
+            cells = map.Cells;
+        }
+        else
+        {
+            var map = useExtension
+                ? centers.ToVoronoiHexPartitionMap(sites, regions, exclavePolicy: ExclavePolicy.ReassignToClosestCell)
+                : partitioner.Partition(centers, regions, ExclavePolicy.ReassignToClosestCell);
+            assignments = Enumerable.Range(0, 7).Select(i => map[i]).ToArray();
+            cells = map.Cells;
+        }
+
+        Assert.That(assignments, Is.EqualTo(new[] { 0, 0, 2, 1, 1, 1, 1 }));
+        Assert.That(cells, Has.Count.EqualTo(3));
+        Assert.That(regions[3], Is.EqualTo(-7));
+    }
+
+    [Test]
+    public void Partition_WithBlockedRegionExclaves_CreatesOneCellPerComponent(
+        [Values] bool useExtension, [Values] bool combinedMasks,
+        [Values(EmptyCellPolicy.LeaveAsIs, EmptyCellPolicy.Exclude)] EmptyCellPolicy emptyPolicy)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(7, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var regions = new IntHexMap(centers.Topology, new[] { 0, 1, 0, 0, 1, 0, 0 });
+        var participation = new BoolHexMap(centers.Topology, Enumerable.Repeat(true, 7).ToArray());
+        var sites = new[] { new Site(centers[0], 3f), new Site(centers[1], 1f), new Site(centers[4], 1f),
+            new Site(new PointXY(-100f, -100f), 1f) };
+        var partitioner = new VoronoiHexPartitioner(sites, emptyPolicy);
+        int[] assignments;
+        IReadOnlyList<VoronoiCell> cells;
+        if (combinedMasks)
+        {
+            var map = useExtension
+                ? centers.ToVoronoiHexPartitionMap(sites, participation, regions, emptyPolicy,
+                    ExclavePolicy.ReassignToClosestCell)
+                : partitioner.Partition(centers, participation, regions, ExclavePolicy.ReassignToClosestCell);
+            assignments = Enumerable.Range(0, 7).Select(i => map[i]!.Value).ToArray();
+            cells = map.Cells;
+        }
+        else
+        {
+            var map = useExtension
+                ? centers.ToVoronoiHexPartitionMap(sites, regions, emptyPolicy, ExclavePolicy.ReassignToClosestCell)
+                : partitioner.Partition(centers, regions, ExclavePolicy.ReassignToClosestCell);
+            assignments = Enumerable.Range(0, 7).Select(i => map[i]).ToArray();
+            cells = map.Cells;
+        }
+
+        int firstNew = emptyPolicy == EmptyCellPolicy.Exclude ? 3 : 4;
+        Assert.Multiple(() =>
+        {
+            Assert.That(cells, Has.Count.EqualTo(firstNew + 2));
+            Assert.That(assignments, Is.EqualTo(new[] { 0, 1, firstNew, firstNew, 2, firstNew + 1, firstNew + 1 }));
+            Assert.That(cells[firstNew].Center, Is.EqualTo(centers[2]));
+            Assert.That(cells[firstNew + 1].Center, Is.EqualTo(centers[5]));
+            Assert.That(cells[firstNew].Site.Weight, Is.EqualTo(3f));
+            Assert.That(cells[firstNew].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0), new VectorXYInt(3, 0) }));
+            Assert.That(cells.Select(cell => cell.Id), Is.EqualTo(Enumerable.Range(0, cells.Count)));
+        });
+    }
+
+    [Test]
+    public void Partition_WithIsolatedParticipationComponents_CreatesCellsAndPreservesExcludedHexes()
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(7, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var mask = new BoolHexMap(centers.Topology, new[] { true, true, false, true, true, false, true });
+        var sites = new[] { new Site(centers[0], 2f) };
+
+        var map = centers.ToVoronoiHexPartitionMap(sites, mask, ExclavePolicy.ReassignToClosestCell);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(Enumerable.Range(0, 7).Select(i => map[i]), Is.EqualTo(new int?[] { 0, 0, null, 1, 1, null, 2 }));
+            Assert.That(map.Cells[1].Center, Is.EqualTo(centers[3]));
+            Assert.That(map.Cells[2].Center, Is.EqualTo(centers[6]));
+            Assert.That(map.Cells, Has.Count.EqualTo(3));
+        });
+    }
+
+    [Test]
+    public void Partition_WithInvalidExclavePolicy_Throws()
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(centers[0], 1f) };
+        var mask = new BoolHexMap(centers.Topology, new[] { true });
+        var regions = new IntHexMap(centers.Topology);
+        var invalid = (ExclavePolicy)123;
+
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
+            centers.ToVoronoiHexPartitionMap(sites, mask, invalid))!.ParamName, Is.EqualTo("exclavePolicy"));
+        Assert.Throws<ArgumentOutOfRangeException>(() => centers.ToVoronoiHexPartitionMap(sites, regions, invalid));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            centers.ToVoronoiHexPartitionMap(sites, mask, regions, EmptyCellPolicy.LeaveAsIs, invalid));
+    }
+
+    [Test]
+    public void Partition_WithExclave_SelectsClosestAdjacentCenterWithoutWeights()
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(5, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var regions = new IntHexMap(centers.Topology, new[] { 0, 1, 0, 0, 0 });
+        var fartherPosition = new PointXY(centers[4].X + (centers[4].X - centers[3].X) * 0.25f, centers[4].Y);
+        var sites = new[] { new Site(centers[0], 10f), new Site(centers[2], 0.01f),
+            new Site(fartherPosition, 1f), new Site(centers[1], 1f) };
+
+        var unchanged = centers.ToVoronoiHexPartitionMap(sites, regions);
+        var map = centers.ToVoronoiHexPartitionMap(sites, regions, ExclavePolicy.ReassignToClosestCell);
+
+        Assert.That(unchanged[3], Is.EqualTo(0));
+        Assert.That(map[3], Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Partition_WithMaskedSite_KeepsComponentClosestToSite()
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(5, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var mask = new BoolHexMap(centers.Topology, new[] { true, true, false, false, true });
+        var sites = new[] { new Site(centers[3], 1f) };
+
+        var map = centers.ToVoronoiHexPartitionMap(sites, mask, ExclavePolicy.ReassignToClosestCell);
+
+        Assert.That(map[4], Is.EqualTo(0));
+        Assert.That(map[0], Is.EqualTo(1));
+        Assert.That(map[1], Is.EqualTo(1));
+        Assert.That(map.Cells[1].Center, Is.EqualTo(centers[1]));
+    }
+
+    [Test]
     public void Partition_WithBothMasks_RestrictsSitesByRegionAndSkipsExcludedRegions(
         [Values] bool useExtension,
         [Values(EmptyCellPolicy.LeaveAsIs, EmptyCellPolicy.Exclude)] EmptyCellPolicy policy)
