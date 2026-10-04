@@ -10,23 +10,24 @@ using System.Runtime.CompilerServices;
 namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 {
     /// <summary>
-    /// Stores masked Voronoi cell assignments for a hex center map.
+    /// Stores nullable Voronoi cell identifiers for a hex center map.
     /// </summary>
     /// <remarks>
     /// The map is a read-only semantic result produced by the partitioner. Hexes included by the
-    /// participation mask receive a Voronoi cell assignment; excluded hexes return
+    /// participation mask receive a Voronoi cell identifier; excluded hexes return
     /// <see langword="null"/>. Per-hex assignments and <see cref="Cells"/> are kept consistent
     /// with the original partition result. Use <see cref="ToMutableHexMap"/> to create a new
     /// mutable caller-owned copy of the assignments.
+    /// Assigned identifiers equal <see cref="VoronoiCell.SiteIndex"/> and index <see cref="Cells"/>.
     /// </remarks>
-    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<VoronoiCell?>
+    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<int?>, IPartialHexPartition
     {
-        private readonly VoronoiCell?[] _assignments;
+        private readonly int?[] _assignments;
         private readonly bool[] _participationMask;
 
         internal MaskedVoronoiHexPartitionMap(
             HexCenterMap centers,
-            VoronoiCell?[] assignments,
+            int?[] assignments,
             VoronoiCell[] cells,
             bool[] participationMask)
         {
@@ -79,11 +80,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public HexMapGeometry Geometry => Centers.Geometry;
 
         /// <summary>
-        /// Gets the Voronoi cell assigned to the specified participating hex index, or
+        /// Gets the identifier of the Voronoi cell assigned to the specified participating hex index, or
         /// <see langword="null"/> when the hex was excluded by the participation mask.
         /// </summary>
         /// <param name="index">The X/Y coordinates of the hex cell.</param>
-        public VoronoiCell? this[VectorXYInt index]
+        public int? this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -97,11 +98,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         }
 
         /// <summary>
-        /// Gets the Voronoi cell assigned to the specified participating flat hex index, or
+        /// Gets the identifier of the Voronoi cell assigned to the specified participating flat hex index, or
         /// <see langword="null"/> when the hex was excluded by the participation mask.
         /// </summary>
         /// <param name="index">The zero-based flat hex index.</param>
-        public VoronoiCell? this[int index]
+        public int? this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _assignments[index];
@@ -117,6 +118,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Cells { get; }
+
+        IReadOnlyList<IHexPartitionCell> IPartialHexPartition.Cells => Cells;
 
         /// <summary>
         /// Returns whether the specified hex index was included by the participation mask.
@@ -138,15 +141,15 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public bool Participates(int index) => _participationMask[index];
 
         /// <summary>
-        /// Creates a new mutable caller-owned hex map initialized from this partition map's assignments.
+        /// Creates a new mutable caller-owned hex map of nullable cell identifiers copied from this partition map.
         /// </summary>
         /// <returns>
-        /// A new mutable hex map. Mutating the returned map does not affect this partition map or
+        /// A new mutable hex map of nullable cell identifiers. Mutating the returned map does not affect this partition map or
         /// the <see cref="Cells"/> semantic result.
         /// </returns>
-        public HexMap<VoronoiCell?> ToMutableHexMap()
+        public HexMap<int?> ToMutableHexMap()
         {
-            return new HexMap<VoronoiCell?>(Topology, CopyAssignments(_assignments));
+            return new HexMap<int?>(Topology, CopyAssignments(_assignments));
         }
 
         /// <summary>
@@ -161,9 +164,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return new BoolHexMap(Topology, CopyParticipationMask(_participationMask));
         }
 
-        private static VoronoiCell?[] CopyAssignments(VoronoiCell?[] assignments)
+        private static int?[] CopyAssignments(int?[] assignments)
         {
-            var copy = new VoronoiCell?[assignments.Length];
+            var copy = new int?[assignments.Length];
             Array.Copy(assignments, copy, assignments.Length);
             return copy;
         }

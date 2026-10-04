@@ -25,8 +25,8 @@ public class VoronoiHexPartitionerTests
         {
             Assert.That(map[0], Is.Null);
             Assert.That(map[3], Is.Null);
-            Assert.That(map[1]!.Site, Is.EqualTo(sites[1]));
-            Assert.That(map[2]!.Site, Is.EqualTo(sites[0]));
+            Assert.That(map.Cells[map[1]!.Value].Site, Is.EqualTo(sites[1]));
+            Assert.That(map.Cells[map[2]!.Value].Site, Is.EqualTo(sites[0]));
             Assert.That(map.Participates(0), Is.False);
             Assert.That(map.Participates(2), Is.True);
             Assert.That(map.Cells, Has.Count.EqualTo(policy == EmptyCellPolicy.Exclude ? 2 : 3));
@@ -151,16 +151,16 @@ public class VoronoiHexPartitionerTests
         var partitioner = new VoronoiHexPartitioner(sites);
 
         MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
-        ISpatialHexMap<VoronoiCell?> spatialMap = map;
+        ISpatialHexMap<int?> spatialMap = map;
 
         Assert.Multiple(() =>
         {
             Assert.That(map.Centers, Is.SameAs(hexCenters));
             Assert.That(spatialMap.Geometry, Is.EqualTo(hexCenters.Geometry));
-            Assert.That(map[0], Is.SameAs(map.Cells[0]));
+            Assert.That(map[0], Is.EqualTo(map.Cells[0].Id));
             Assert.That(map[1], Is.Null);
-            Assert.That(map[2], Is.SameAs(map.Cells[1]));
-            Assert.That(map[new VectorXYInt(0, 0)], Is.SameAs(map.Cells[0]));
+            Assert.That(map[2], Is.EqualTo(map.Cells[1].Id));
+            Assert.That(map[new VectorXYInt(0, 0)], Is.EqualTo(map.Cells[0].Id));
             Assert.That(map[new VectorXYInt(1, 0)], Is.Null);
             Assert.That(map.Participates(0), Is.True);
             Assert.That(map.Participates(1), Is.False);
@@ -184,9 +184,9 @@ public class VoronoiHexPartitionerTests
 
         MaskedVoronoiHexPartitionMap map = hexCenters.ToVoronoiHexPartitionMap(sites, participationMask);
 
-        Assert.That(map[0], Is.SameAs(map.Cells[0]));
+        Assert.That(map[0], Is.EqualTo(map.Cells[0].Id));
         Assert.That(map[1], Is.Null);
-        Assert.That(map[2], Is.SameAs(map.Cells[1]));
+        Assert.That(map[2], Is.EqualTo(map.Cells[1].Id));
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
         Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
     }
@@ -461,14 +461,14 @@ public class VoronoiHexPartitionerTests
         var partitioner = new VoronoiHexPartitioner(sites);
         MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
 
-        HexMap<VoronoiCell?> mutableMap = map.ToMutableHexMap();
+        HexMap<int?> mutableMap = map.ToMutableHexMap();
         BoolHexMap mutableMask = map.ToMutableParticipationMask();
-        mutableMap[1] = map.Cells[1];
+        mutableMap[1] = map.Cells[1].Id;
         mutableMask[0] = false;
 
         Assert.Multiple(() =>
         {
-            Assert.That(mutableMap[1], Is.SameAs(map.Cells[1]));
+            Assert.That(mutableMap[1], Is.EqualTo(map.Cells[1].Id));
             Assert.That(map[1], Is.Null);
             Assert.That(mutableMask[0], Is.False);
             Assert.That(map.Participates(0), Is.True);
@@ -604,7 +604,7 @@ public class VoronoiHexPartitionerTests
 
         MaskedVoronoiHexPartitionMap map = partitioner.Partition(hexCenters, participationMask);
 
-        Assert.That(map[0], Is.SameAs(map.Cells[0]));
+        Assert.That(map[0], Is.EqualTo(map.Cells[0].Id));
         Assert.That(map[1], Is.Null);
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
     }
@@ -723,13 +723,13 @@ public class VoronoiHexPartitionerTests
         {
             Assert.That(map.Cells, Has.Count.EqualTo(policy == EmptyCellPolicy.Exclude ? 2 : 5));
             Assert.That(map.Cells.Select(cell => cell.SiteIndex), Is.EqualTo(Enumerable.Range(0, map.Cells.Count)));
-            Assert.That(map[0], Is.SameAs(map.Cells[secondCellIndex]));
+            Assert.That(map[0], Is.EqualTo(map.Cells[secondCellIndex].Id));
             Assert.That(map[1], Is.Null);
-            Assert.That(map[2], Is.SameAs(map.Cells[firstCellIndex]));
-            Assert.That(map[0]!.Site, Is.EqualTo(sites[3]));
-            Assert.That(map[2]!.Site, Is.EqualTo(sites[1]));
-            Assert.That(map[0]!.HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
-            Assert.That(map[2]!.HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
+            Assert.That(map[2], Is.EqualTo(map.Cells[firstCellIndex].Id));
+            Assert.That(map.Cells[map[0]!.Value].Site, Is.EqualTo(sites[3]));
+            Assert.That(map.Cells[map[2]!.Value].Site, Is.EqualTo(sites[1]));
+            Assert.That(map.Cells[map[0]!.Value].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0) }));
+            Assert.That(map.Cells[map[2]!.Value].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
             Assert.That(map.Participates(0), Is.True);
             Assert.That(map.Participates(1), Is.False);
             Assert.That(map.Participates(2), Is.True);
@@ -805,9 +805,9 @@ public class VoronoiHexPartitionerTests
                 Assert.That(map[i], Is.EqualTo(map.Cells[i].Id));
                 Assert.That(map[i], Is.EqualTo(i));
                 Assert.That(map.Cells[map[i]].Site, Is.EqualTo(sites[i]));
-                Assert.That(maskedMap[i], Is.SameAs(maskedMap.Cells[i]));
-                Assert.That(maskedMap[i]!.SiteIndex, Is.EqualTo(i));
-                Assert.That(maskedMap[i]!.Site, Is.EqualTo(sites[i]));
+                Assert.That(maskedMap[i], Is.EqualTo(maskedMap.Cells[i].Id));
+                Assert.That(maskedMap[i], Is.EqualTo(i));
+                Assert.That(maskedMap.Cells[maskedMap[i]!.Value].Site, Is.EqualTo(sites[i]));
             }
         });
     }

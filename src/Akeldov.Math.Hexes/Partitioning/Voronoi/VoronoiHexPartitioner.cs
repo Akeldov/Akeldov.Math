@@ -95,7 +95,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
         /// <returns>
-        /// A new read-only masked hex partition map with per-hex assignments and a semantic cell list.
+        /// A new read-only masked hex partition map with nullable per-hex cell identifiers and a semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
         /// </returns>
         /// <exception cref="InvalidOperationException">
@@ -146,11 +146,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
 
-            var assignments = new VoronoiCell?[count];
+            var assignments = new int?[count];
             for (int i = 0; i < assignments.Length; i++)
             {
                 if (participationMaskValues[i])
-                    assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
+                    assignments[i] = cellIndexesBySite[cellIndexes[i]];
             }
 
             return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
@@ -244,7 +244,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// identify the same region, including disconnected hexes; zero and negative values are valid.
         /// </param>
         /// <returns>
-        /// A new read-only masked partition map with a semantic cell list. Excluded hexes return null.
+        /// A new read-only masked partition map of nullable cell identifiers with a semantic cell list. Excluded hexes return null.
         /// </returns>
         /// <remarks>
         /// A site's region is determined by the hex containing its position, regardless of that hex's
@@ -316,10 +316,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite);
 
-            var assignments = new VoronoiCell?[hexCenters.Topology.Count];
+            var assignments = new int?[hexCenters.Topology.Count];
             for (int i = 0; i < assignments.Length; i++)
                 if (participationMaskValues[i])
-                    assignments[i] = cells[cellIndexesBySite[cellIndexes[i]]];
+                    assignments[i] = cellIndexesBySite[cellIndexes[i]];
 
             return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
         }

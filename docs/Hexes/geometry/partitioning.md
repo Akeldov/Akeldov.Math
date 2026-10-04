@@ -26,6 +26,10 @@ an empty cell collection is valid only for an empty topology. Null collections a
 are rejected. Custom `IHexPartitionCell` implementations must keep their IDs and indexes stable
 to remain consistent with the stored assignment snapshot.
 
+`IPartialHexPartition` inherits `IHexMap<int?>` and exposes the same read-only `Cells` contract.
+Assigned hexes contain their cell IDs; unassigned hexes contain `null`. Each assigned hex belongs
+to exactly one cell, while complete map coverage is not required.
+
 ```csharp
 var topology = new HexMapTopology(2, 1, Layout.OddR);
 IHexPartitionCell cell = new HexPartitionCell(42,
@@ -44,25 +48,36 @@ IReadOnlyList<VectorXYInt> indexes = partition.Cells[0].HexIndexes;
 ## Partition Maps
 
 - `VoronoiHexPartitionMap` stores Voronoi cell IDs in a spatial hex map.
-- `MaskedVoronoiHexPartitionMap` stores nullable assignments for a masked partition.
+- `MaskedVoronoiHexPartitionMap` implements `IPartialHexPartition` and `ISpatialHexMap<int?>`.
+  Its indexers return nullable cell IDs: `null` identifies an excluded hex.
 - `VoronoiHexPartitionMap` implements `IHexPartition` and `ISpatialHexMap<int>`.
   Both public indexers return the assigned cell's ID. Access the corresponding `VoronoiCell`
   through `partition.Cells[partition[index]]`. `Cells` remains an `IReadOnlyList<VoronoiCell>`.
-- `MaskedVoronoiHexPartitionMap` has excluded hexes with null assignments and therefore does
-  not implement the complete-coverage `IHexPartition` contract.
+- `MaskedVoronoiHexPartitionMap` follows the partial partition contract, allowing excluded hexes.
 - The map preserves layout and index metadata.
 - Hex centers provide the sampled point set for partitioning.
 - Cell assignments are read-only on the partition result, so they remain consistent with `Cells`.
 - `Cells` is a read-only semantic result in source-site order, with empty cells handled by the
   selected policy. `SiteIndex` matches the cell's index in this result, without gaps.
 - On `VoronoiHexPartitionMap`, `ToMutableHexMap()` returns a mutable caller-owned `HexMap<int>`
-  containing a copy of the cell IDs. On the masked map, it copies the nullable cell assignments.
+  containing a copy of the cell IDs. On the masked map, it returns a `HexMap<int?>` with nullable IDs.
 
 ```csharp
 var voronoiPartition = hexCenters.ToVoronoiHexPartitionMap(sites);
 int cellId = voronoiPartition[new VectorXYInt(1, 0)];
 VoronoiCell assignedCell = voronoiPartition.Cells[cellId];
 HexMap<int> editableIds = voronoiPartition.ToMutableHexMap();
+```
+
+```csharp
+var maskedPartition = hexCenters.ToVoronoiHexPartitionMap(sites, participationMask);
+IPartialHexPartition partial = maskedPartition;
+int? cellId = partial[new VectorXYInt(1, 0)];
+if (cellId.HasValue)
+{
+    VoronoiCell assignedCell = maskedPartition.Cells[cellId.Value];
+}
+HexMap<int?> editableIds = maskedPartition.ToMutableHexMap();
 ```
 
 ## Empty Cells
