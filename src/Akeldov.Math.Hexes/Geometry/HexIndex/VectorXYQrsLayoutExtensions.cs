@@ -30,13 +30,13 @@ namespace Akeldov.Math.Hexes.Geometry
                 case Layout.OddR:
                 case Layout.EvenR:
                     return new VectorQRS(
-                        0.5f * Constants.Apothem2Radius * vector.X - (1f / 3f) * vector.Y,
-                        (2f / 3f) * vector.Y);
+                        0.5f * Constants.Apothem2Radius * vector.X - 1f / 3f * vector.Y,
+                        2f / 3f * vector.Y);
                 case Layout.OddQ:
                 case Layout.EvenQ:
                     return new VectorQRS(
-                        (2f / 3f) * vector.X,
-                        0.5f * Constants.Apothem2Radius * vector.Y - (1f / 3f) * vector.X);
+                        2f / 3f * vector.X,
+                        0.5f * Constants.Apothem2Radius * vector.Y - 1f / 3f * vector.X);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
