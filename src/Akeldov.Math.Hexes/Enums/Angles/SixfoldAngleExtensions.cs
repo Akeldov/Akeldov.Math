@@ -166,7 +166,7 @@ namespace Akeldov.Math.Hexes
                 case SixfoldAngle.Deg300:
                     return SixfoldAngle.Deg120;
                 default:
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new System.ArgumentOutOfRangeException(nameof(angle), angle, $"The {angle} value is not supported.");
             }
         }
 
@@ -192,7 +192,7 @@ namespace Akeldov.Math.Hexes
                 case SixfoldAngle.Deg300:
                     return SixfoldAngle.Deg60;
                 default:
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new System.ArgumentOutOfRangeException(nameof(angle), angle, $"The {angle} value is not supported.");
             }
         }
 
@@ -218,7 +218,7 @@ namespace Akeldov.Math.Hexes
                 case SixfoldAngle.Deg300:
                     return SixfoldAngle.Deg0;
                 default:
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new System.ArgumentOutOfRangeException(nameof(angle), angle, $"The {angle} value is not supported.");
             }
         }
 
@@ -244,7 +244,7 @@ namespace Akeldov.Math.Hexes
                 case SixfoldAngle.Deg300:
                     return SixfoldAngle.Deg180;
                 default:
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new System.ArgumentOutOfRangeException(nameof(angle), angle, $"The {angle} value is not supported.");
             }
         }
 
@@ -270,7 +270,7 @@ namespace Akeldov.Math.Hexes
                 case SixfoldAngle.Deg300:
                     return SixfoldAngle.Deg240;
                 default:
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new System.ArgumentOutOfRangeException(nameof(angle), angle, $"The {angle} value is not supported.");
             }
         }
     }
