@@ -1,6 +1,22 @@
 # Partitioning
 
-Partitioning assigns hex centers to weighted Voronoi sites.
+Partitions group hex indexes. Voronoi partitioning assigns hex centers to weighted sites.
+
+## Partition Contract
+
+`IPartition` in `Akeldov.Math.Hexes` exposes the read-only `HexIndexes` sequence.
+`Partition` implements this contract by copying the constructor input into a read-only snapshot.
+Later changes to the input collection do not affect the partition, and the returned collection
+cannot be modified through a mutable collection interface. Empty partitions are allowed;
+input order and duplicate indexes are preserved. Index bounds and map membership are not validated.
+
+`VoronoiCell` derives from `Partition`, so code that needs only the assigned hex indexes can
+accept `IPartition` for both manually constructed partitions and Voronoi cells.
+
+```csharp
+IPartition group = new Partition(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) });
+IReadOnlyList<VectorXYInt> indexes = group.HexIndexes;
+```
 
 ## Voronoi Cells
 

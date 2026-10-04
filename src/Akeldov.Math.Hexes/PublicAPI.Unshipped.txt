@@ -1,1 +1,6 @@
 #nullable enable
+Akeldov.Math.Hexes.IPartition
+Akeldov.Math.Hexes.IPartition.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
+Akeldov.Math.Hexes.Partition
+Akeldov.Math.Hexes.Partition.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
+Akeldov.Math.Hexes.Partition.Partition(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void

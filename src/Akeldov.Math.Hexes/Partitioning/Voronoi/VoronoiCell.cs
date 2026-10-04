@@ -9,14 +9,14 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Represents a Voronoi cell associated with one weighted site.
     /// </summary>
-    public sealed class VoronoiCell : IEquatable<VoronoiCell>
+    public sealed class VoronoiCell : Partition, IEquatable<VoronoiCell>
     {
         /// <summary>
         /// Initializes a new Voronoi cell.
         /// </summary>
         /// <param name="siteIndex">The zero-based cell index in the partition result.</param>
         /// <param name="site">The weighted site represented by this cell.</param>
-        /// <param name="hexIndexes">The hex indexes assigned to this cell.</param>
+        /// <param name="hexIndexes">The hex indexes assigned to this cell, copied into a read-only snapshot.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="siteIndex"/> is negative.
         /// </exception>
@@ -24,13 +24,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Thrown when <paramref name="hexIndexes"/> is null.
         /// </exception>
         public VoronoiCell(int siteIndex, Site site, IReadOnlyList<VectorXYInt> hexIndexes)
+            : base(hexIndexes)
         {
             if (siteIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(siteIndex));
 
             SiteIndex = siteIndex;
             Site = site;
-            HexIndexes = CopyHexIndexes(hexIndexes);
         }
 
         /// <summary>
@@ -55,45 +55,44 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <summary>
         /// Gets the read-only semantic result of hex indexes assigned to this cell.
         /// </summary>
-        public IReadOnlyList<VectorXYInt> HexIndexes { get; }
+        /// <remarks>
+        /// The indexes are stored by the base partition as a snapshot of the constructor input.
+        /// </remarks>
+        public new IReadOnlyList<VectorXYInt> HexIndexes => base.HexIndexes;
 
         /// <summary>
         /// Indicates whether this cell has the same site index and site as another cell.
         /// </summary>
         /// <param name="other">The cell to compare with this cell.</param>
         /// <returns><see langword="true"/> if both cells are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(VoronoiCell? other) =>
-            other != null &&
-            SiteIndex == other.SiteIndex &&
-            Site.Equals(other.Site);
+        public bool Equals(VoronoiCell? other)
+        {
+            return other != null &&
+                SiteIndex == other.SiteIndex &&
+                Site.Equals(other.Site);
+        }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is VoronoiCell other && Equals(other);
+        public override bool Equals(object? obj)
+        {
+            return obj is VoronoiCell other && Equals(other);
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(SiteIndex, Site);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(SiteIndex, Site);
+        }
 
         /// <inheritdoc/>
-        public override string ToString() =>
-            string.Format(
+        public override string ToString()
+        {
+            return string.Format(
                 CultureInfo.InvariantCulture,
                 "VoronoiCell(siteIndex: {0}, site: {1}, hexCount: {2})",
                 SiteIndex,
                 Site,
                 HexIndexes.Count);
-
-        private static IReadOnlyList<VectorXYInt> CopyHexIndexes(IReadOnlyList<VectorXYInt> hexIndexes)
-        {
-            if (hexIndexes == null)
-                throw new ArgumentNullException(nameof(hexIndexes));
-
-            var copy = new VectorXYInt[hexIndexes.Count];
-            for (int i = 0; i < hexIndexes.Count; i++)
-            {
-                copy[i] = hexIndexes[i];
-            }
-
-            return Array.AsReadOnly(copy);
         }
     }
 }
