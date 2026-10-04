@@ -2,20 +2,29 @@
 
 Partitions group hex indexes. Voronoi partitioning assigns hex centers to weighted sites.
 
-## Partition Contract
+## Partition Cells and Partitions
 
-`IPartition` in `Akeldov.Math.Hexes` exposes the read-only `HexIndexes` sequence.
-`Partition` implements this contract by copying the constructor input into a read-only snapshot.
-Later changes to the input collection do not affect the partition, and the returned collection
-cannot be modified through a mutable collection interface. Empty partitions are allowed;
+`IHexPartitionCell` in `Akeldov.Math.Hexes` represents one part of a partition and exposes the
+read-only `HexIndexes` sequence. `HexPartitionCell` implements this contract by copying the
+constructor input into a read-only snapshot.
+Later changes to the input collection do not affect the cell, and the returned collection
+cannot be modified through a mutable collection interface. Empty cells are allowed;
 input order and duplicate indexes are preserved. Index bounds and map membership are not validated.
 
-`VoronoiCell` derives from `Partition`, so code that needs only the assigned hex indexes can
-accept `IPartition` for both manually constructed partitions and Voronoi cells.
+`VoronoiCell` derives from `HexPartitionCell`, so code that needs only the assigned hex indexes
+can accept `IHexPartitionCell` for both manually constructed cells and Voronoi cells.
+
+`IHexPartition` represents the whole partition through its read-only `Cells` collection.
+`HexPartition` copies the supplied collection, retaining the cell objects in their original
+order. It accepts an empty collection and empty cells, but rejects null collections and null
+cells. It does not validate map coverage or overlap between cells. Custom `IHexPartitionCell`
+implementations are retained as-is, so their own contract determines whether their state can change.
 
 ```csharp
-IPartition group = new Partition(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) });
-IReadOnlyList<VectorXYInt> indexes = group.HexIndexes;
+IHexPartitionCell cell = new HexPartitionCell(
+    new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) });
+IHexPartition partition = new HexPartition(new[] { cell });
+IReadOnlyList<VectorXYInt> indexes = partition.Cells[0].HexIndexes;
 ```
 
 ## Voronoi Cells
@@ -28,6 +37,8 @@ IReadOnlyList<VectorXYInt> indexes = group.HexIndexes;
 
 - `VoronoiHexPartitionMap` stores Voronoi cells in a hex map.
 - `MaskedVoronoiHexPartitionMap` stores nullable assignments for a masked partition.
+- Both maps implement `IHexPartition`, exposing the same cell objects through the common
+  contract while preserving their strongly typed `IReadOnlyList<VoronoiCell>` properties.
 - The map preserves layout and index metadata.
 - Hex centers provide the sampled point set for partitioning.
 - Cell assignments are read-only on the partition result, so they remain consistent with `Cells`.

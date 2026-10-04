@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Represents a Voronoi cell associated with one weighted site.
     /// </summary>
-    public sealed class VoronoiCell : Partition, IEquatable<VoronoiCell>
+    public sealed class VoronoiCell : HexPartitionCell, IEquatable<VoronoiCell>
     {
         /// <summary>
         /// Initializes a new Voronoi cell.
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Gets the read-only semantic result of hex indexes assigned to this cell.
         /// </summary>
         /// <remarks>
-        /// The indexes are stored by the base partition as a snapshot of the constructor input.
+        /// The indexes are stored by the base partition cell as a snapshot of the constructor input.
         /// </remarks>
         public new IReadOnlyList<VectorXYInt> HexIndexes => base.HexIndexes;
 

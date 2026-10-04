@@ -4,7 +4,7 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 namespace Akeldov.Math.Hexes.Tests.Partitioning;
 
-public class PartitionTests
+public class HexPartitionCellTests
 {
     [TestCase(false)]
     [TestCase(true)]
@@ -13,10 +13,10 @@ public class PartitionTests
         var first = new VectorXYInt(2, -1);
         var second = new VectorXYInt(0, 3);
         var source = new List<VectorXYInt> { first, second, first };
-        Partition partition = useVoronoiCell
+        HexPartitionCell partition = useVoronoiCell
             ? new VoronoiCell(0, new Site(new PointXY(0f, 0f), 1f), source)
-            : new Partition(source);
-        IPartition contract = partition;
+            : new HexPartitionCell(source);
+        IHexPartitionCell contract = partition;
 
         source[0] = new VectorXYInt(99, 99);
         source.Clear();
@@ -39,7 +39,7 @@ public class PartitionTests
     {
         var original = new VectorXYInt(1, 2);
         var source = new[] { original };
-        var partition = new Partition(source);
+        var partition = new HexPartitionCell(source);
 
         source[0] = new VectorXYInt(3, 4);
 
@@ -49,15 +49,15 @@ public class PartitionTests
     [Test]
     public void Constructor_WhenHexIndexesIsNull_Throws()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => new Partition(null!));
+        var exception = Assert.Throws<ArgumentNullException>(() => new HexPartitionCell(null!));
 
         Assert.That(exception!.ParamName, Is.EqualTo("hexIndexes"));
     }
 
     [Test]
-    public void Constructor_WithEmptyInput_CreatesEmptyPartition()
+    public void Constructor_WithEmptyInput_CreatesEmptyCell()
     {
-        IPartition partition = new Partition(Array.Empty<VectorXYInt>());
+        IHexPartitionCell partition = new HexPartitionCell(Array.Empty<VectorXYInt>());
 
         Assert.That(partition.HexIndexes, Is.Empty);
     }

@@ -14,7 +14,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <see cref="Cells"/> are kept consistent with the original partition result. Use
     /// <see cref="ToMutableHexMap"/> to create a new mutable caller-owned copy of the assignments.
     /// </remarks>
-    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<VoronoiCell>
+    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<VoronoiCell>, IHexPartition
     {
         private readonly VoronoiCell[] _assignments;
 
@@ -89,6 +89,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// </remarks>
         public IReadOnlyList<VoronoiCell> Cells { get; }
+
+        IReadOnlyList<IHexPartitionCell> IHexPartition.Cells => Cells;
 
         /// <summary>
         /// Creates a new mutable caller-owned hex map initialized from this partition map's assignments.

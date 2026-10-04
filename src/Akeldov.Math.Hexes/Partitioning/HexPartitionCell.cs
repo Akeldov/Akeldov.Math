@@ -5,24 +5,24 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Represents a group of hex indexes stored as a read-only snapshot.
+    /// Represents one cell of a hex-grid partition, storing its hex indexes as a read-only snapshot.
     /// </summary>
     /// <remarks>
     /// The input sequence is copied, preserving its order and any duplicate indexes.
-    /// Empty partitions are allowed. Index bounds and membership in a particular map are not validated.
+    /// Empty cells are allowed. Index bounds and membership in a particular map are not validated.
     /// </remarks>
-    public class Partition : IPartition
+    public class HexPartitionCell : IHexPartitionCell
     {
         private readonly IReadOnlyList<VectorXYInt> _hexIndexes;
 
         /// <summary>
-        /// Initializes a new partition with a read-only copy of the supplied hex indexes.
+        /// Initializes a new partition cell with a read-only copy of the supplied hex indexes.
         /// </summary>
-        /// <param name="hexIndexes">The hex indexes to copy into the partition.</param>
+        /// <param name="hexIndexes">The hex indexes to copy into the partition cell.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="hexIndexes"/> is null.
         /// </exception>
-        public Partition(IReadOnlyList<VectorXYInt> hexIndexes)
+        public HexPartitionCell(IReadOnlyList<VectorXYInt> hexIndexes)
         {
             if (hexIndexes == null)
                 throw new ArgumentNullException(nameof(hexIndexes));
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Gets the read-only structural snapshot of hex indexes belonging to this partition.
+        /// Gets the read-only structural snapshot of hex indexes belonging to this partition cell.
         /// </summary>
         /// <remarks>
         /// Changes to the constructor's input collection do not affect this sequence.

@@ -1,6 +1,11 @@
 #nullable enable
-Akeldov.Math.Hexes.IPartition
-Akeldov.Math.Hexes.IPartition.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
-Akeldov.Math.Hexes.Partition
-Akeldov.Math.Hexes.Partition.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
-Akeldov.Math.Hexes.Partition.Partition(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
+Akeldov.Math.Hexes.HexPartition
+Akeldov.Math.Hexes.HexPartition.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>!
+Akeldov.Math.Hexes.HexPartition.HexPartition(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>! cells) -> void
+Akeldov.Math.Hexes.HexPartitionCell
+Akeldov.Math.Hexes.HexPartitionCell.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
+Akeldov.Math.Hexes.HexPartitionCell.HexPartitionCell(System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
+Akeldov.Math.Hexes.IHexPartition
+Akeldov.Math.Hexes.IHexPartition.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>!
+Akeldov.Math.Hexes.IHexPartitionCell
+Akeldov.Math.Hexes.IHexPartitionCell.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
