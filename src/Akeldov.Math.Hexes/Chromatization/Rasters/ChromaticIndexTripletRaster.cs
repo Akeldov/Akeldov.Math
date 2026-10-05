@@ -78,7 +78,10 @@ namespace Akeldov.Math.Hexes.Topology
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => (uint)index.X >= (uint)Resolution.X ||
                    (uint)index.Y >= (uint)Resolution.Y
-                ? throw new IndexOutOfRangeException($"Raster index out of bounds: {index}")
+                ? throw new ArgumentOutOfRangeException(
+                        nameof(index),
+                        index,
+                        $"Raster index must satisfy 0 <= X < {Resolution.X} and 0 <= Y < {Resolution.Y}.")
                 : _values[index.Y * Resolution.X + index.X];
         }
 

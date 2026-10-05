@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Provides Voronoi partitioning extensions for hex center maps.
     /// </summary>
-    #pragma warning disable RS0026 // Mask overloads intentionally expose the same optional exclave policy.
+#pragma warning disable RS0026 // Mask overloads intentionally expose the same optional exclave policy.
     public static class HexCenterMapVoronoiExtensions
     {
         /// <summary>
@@ -271,5 +271,5 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask, regionsMask, exclavePolicy);
         }
     }
-    #pragma warning restore RS0026
+#pragma warning restore RS0026
 }

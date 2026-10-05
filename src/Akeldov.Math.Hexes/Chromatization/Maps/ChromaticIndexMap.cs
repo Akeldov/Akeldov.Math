@@ -64,7 +64,10 @@ namespace Akeldov.Math.Hexes.Chromatization
             {
                 if (index.X < 0 || index.X >= Topology.Resolution.X ||
                     index.Y < 0 || index.Y >= Topology.Resolution.Y)
-                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(index),
+                        index,
+                        $"Hex index must satisfy 0 <= X < {Topology.Resolution.X} and 0 <= Y < {Topology.Resolution.Y}.");
 
                 return _values[index.Y * Topology.Resolution.X + index.X];
             }

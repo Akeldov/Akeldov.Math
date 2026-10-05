@@ -100,8 +100,8 @@ public class ChromaticIndexMapTests
     {
         var chromatization = new ChromaticIndexMap(new HexMapTopology(3, 2, Layout.OddR));
 
-        Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(3, 0)]);
-        Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(0, 2)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = chromatization[new VectorXYInt(3, 0)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = chromatization[new VectorXYInt(0, 2)]);
     }
 
     [Test]
