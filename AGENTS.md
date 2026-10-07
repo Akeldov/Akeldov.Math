@@ -94,7 +94,7 @@ access to `bin` and `obj`.
 Versioned documentation lives under `docfx\versioned\<Library>\<Version>`. Treat the first
 documented version as the complete article base. A later version must contain only its package,
 DocFX adapter, and article overrides that are genuinely new or different from the base. Follow
-the `Spatial2D\0.8.0` and `Spatial2D\0.9.0` base-plus-overrides pattern; do not copy a complete
+the `Spatial2D\1.0.0` and `Spatial2D\1.1.0` base-plus-overrides pattern; do not copy a complete
 EN/RU article tree into every new version.
 
 Before keeping an override, compare it semantically with the inherited article. A byte or hash

@@ -118,7 +118,7 @@ Publish the current-version documentation under its canonical numbered path and 
 from matching paths below the `latest` alias, for example:
 
 ```text
-/Akeldov.Math/en/Spatial2D/0.9.0/index.html  (canonical)
+/Akeldov.Math/en/Spatial2D/1.3.0/index.html  (canonical)
 /Akeldov.Math/en/Spatial2D/latest/index.html (redirect alias)
 ```
 
@@ -157,13 +157,13 @@ API URLs are language-neutral and must never include `/en/` or `/ru/`. Preserve 
 language with the `lang` query parameter instead. For example, use:
 
 ```text
-/Akeldov.Math/api/Spatial2D/0.8.0/Akeldov.Math.Spatial2D.html?lang=ru
+/Akeldov.Math/api/Spatial2D/1.0.0/Akeldov.Math.Spatial2D.html?lang=ru
 ```
 
 Do not generate:
 
 ```text
-/Akeldov.Math/en/api/Spatial2D/0.8.0/Akeldov.Math.Spatial2D.html
+/Akeldov.Math/en/api/Spatial2D/1.0.0/Akeldov.Math.Spatial2D.html
 ```
 
 When adding a library API:

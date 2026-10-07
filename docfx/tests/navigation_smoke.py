@@ -138,7 +138,7 @@ class NavigationSmokeTests(unittest.TestCase):
         self.page.wait_for_function("document.querySelectorAll('#search-results a').length > 0")
 
     def test_version_and_language_switches_preserve_section(self):
-        for library, current, target in (("Spatial2D", "1.3.0", "0.9.0"), ("Hexes", "0.7.0", "0.2.0")):
+        for library, current, target in (("Spatial2D", "1.3.0", "1.0.0"), ("Hexes", "0.7.0", "0.5.0")):
             with self.subTest(library=library):
                 self.load_ready(f"ru/{library}/{current}/concepts/index.html")
                 self.page.locator("#akeldov-docs-version").select_option(target)
@@ -203,7 +203,7 @@ class NavigationSmokeTests(unittest.TestCase):
                  "ru/Spatial2D/1.1.0/tutorials/index.html",
                  "api/Spatial2D/1.1.0/index.html?lang=ru",
                  "api/Hexes/0.7.0/index.html",
-                 "ru/Spatial2D/0.8.0/concepts/index.html",
+                 "ru/Spatial2D/1.0.0/concepts/index.html",
                  "en/Hexes/upcoming/concepts/index.html")
         self.context.add_init_script("localStorage.setItem('theme', 'dark')")
         for width in (1440, 1024, 375):
