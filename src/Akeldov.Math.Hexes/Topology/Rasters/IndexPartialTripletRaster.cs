@@ -121,7 +121,7 @@ namespace Akeldov.Math.Hexes.Topology
                 case Layout.EvenR: FillEvenR(); break;
                 case Layout.OddQ: FillOddQ(); break;
                 case Layout.EvenQ: FillEvenQ(); break;
-                default: throw new ArgumentOutOfRangeException(nameof(SourceHexMapGeometry.Topology.Layout));
+                default: throw new InvalidOperationException($"The {SourceHexMapGeometry.Topology.Layout} layout is not supported.");
             }
         }
 

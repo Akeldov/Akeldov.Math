@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
     /// <summary>
     /// Provides edge segment generation extensions for hex map geometry and topology values.
     /// </summary>
@@ -146,12 +147,18 @@ namespace Akeldov.Math.Hexes.Geometry
             return (columnIsShifted ? FlatTopShiftedEdgeOffsets : FlatTopUnshiftedEdgeOffsets)[edgeIndex];
         }
 
-        private static bool IsInside(VectorXYInt index, int width, int height) =>
-            index.X >= 0 &&
+        private static bool IsInside(VectorXYInt index, int width, int height)
+        {
+            return index.X >= 0 &&
             index.X < width &&
             index.Y >= 0 &&
             index.Y < height;
+        }
 
-        private static int GetFlatIndex(VectorXYInt index, int width) => index.Y * width + index.X;
+        private static int GetFlatIndex(VectorXYInt index, int width)
+        {
+            return index.Y * width + index.X;
+        }
     }
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 }

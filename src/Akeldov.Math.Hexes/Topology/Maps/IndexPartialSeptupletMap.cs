@@ -64,7 +64,7 @@ namespace Akeldov.Math.Hexes.Topology
             {
                 if (index.X < 0 || index.X >= Topology.Resolution.X ||
                     index.Y < 0 || index.Y >= Topology.Resolution.Y)
-                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+                    throw new ArgumentOutOfRangeException(nameof(index), index, $"Hex index out of bounds: {index}");
 
                 return _values[index.Y * Topology.Resolution.X + index.X];
             }
