@@ -18,17 +18,17 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <see langword="null"/>. Per-hex assignments and <see cref="Cells"/> are kept consistent
     /// with the original partition result. Use <see cref="ToMutableHexMap"/> to create a new
     /// mutable caller-owned copy of the assignments.
-    /// Assigned identifiers equal <see cref="VoronoiCell.SiteIndex"/> and index <see cref="Cells"/>.
+    /// Assigned identifiers equal <see cref="VoronoiHexPartitionCell.SiteIndex"/> and index <see cref="Cells"/>.
     /// </remarks>
-    public sealed class MaskedVoronoiHexPartitionMap : ISpatialHexMap<int?>, IPartialHexPartition<VoronoiCell>
+    public sealed class PartialVoronoiHexPartitionMap : ISpatialHexMap<int?>, IPartialHexPartitionMap<VoronoiHexPartitionCell>
     {
         private readonly int?[] _assignments;
         private readonly bool[] _participationMask;
 
-        internal MaskedVoronoiHexPartitionMap(
+        internal PartialVoronoiHexPartitionMap(
             HexCenterMap centers,
             int?[] assignments,
-            VoronoiCell[] cells,
+            VoronoiHexPartitionCell[] cells,
             bool[] participationMask)
         {
             Centers = centers ?? throw new ArgumentNullException(nameof(centers));
@@ -115,10 +115,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// This list represents the partitioner's cells and their grouped participating hex indexes.
         /// It remains consistent with this map's read-only per-hex assignments.
         /// Empty cells may be excluded by the partitioner's policy. Each cell's
-        /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
+        /// <see cref="VoronoiHexPartitionCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// Cells created for isolated exclaves follow the source cells in row-major component order.
         /// </remarks>
-        public IReadOnlyList<VoronoiCell> Cells { get; }
+        public IReadOnlyList<VoronoiHexPartitionCell> Cells { get; }
 
         /// <summary>
         /// Returns whether the specified hex index was included by the participation mask.
@@ -177,9 +177,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return copy;
         }
 
-        private static VoronoiCell[] CopyCells(VoronoiCell[] cells)
+        private static VoronoiHexPartitionCell[] CopyCells(VoronoiHexPartitionCell[] cells)
         {
-            var copy = new VoronoiCell[cells.Length];
+            var copy = new VoronoiHexPartitionCell[cells.Length];
             Array.Copy(cells, copy, cells.Length);
             return copy;
         }

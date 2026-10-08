@@ -17,7 +17,7 @@ namespace Akeldov.Math.Hexes
     /// Custom cell implementations must keep their identifiers and indexes stable to remain consistent
     /// with the assignment snapshot.
     /// </remarks>
-    public sealed class HexPartition : IHexPartition<IHexPartitionCell>
+    public sealed class HexPartitionMap : IHexPartitionMap<IHexPartitionCell>
     {
         private readonly IReadOnlyList<IHexPartitionCell> _cells;
         private readonly int[] _assignments;
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Hexes
         /// null hex indexes, an index outside <paramref name="topology"/>, a hex assigned to different cells,
         /// or does not cover every hex in <paramref name="topology"/>.
         /// </exception>
-        public HexPartition(HexMapTopology topology, IReadOnlyList<IHexPartitionCell> cells)
+        public HexPartitionMap(HexMapTopology topology, IReadOnlyList<IHexPartitionCell> cells)
         {
             if (cells == null)
                 throw new ArgumentNullException(nameof(cells));

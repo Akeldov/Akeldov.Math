@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Represents a Voronoi cell associated with one weighted site.
     /// </summary>
-    public sealed class VoronoiCell : HexPartitionCell, IEquatable<VoronoiCell>
+    public sealed class VoronoiHexPartitionCell : HexPartitionCell, IEquatable<VoronoiHexPartitionCell>
     {
         /// <summary>
         /// Initializes a new Voronoi cell.
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="hexIndexes"/> is null.
         /// </exception>
-        public VoronoiCell(int siteIndex, Site site, IReadOnlyList<VectorXYInt> hexIndexes)
+        public VoronoiHexPartitionCell(int siteIndex, Site site, IReadOnlyList<VectorXYInt> hexIndexes)
             : base(siteIndex >= 0 ? siteIndex : throw new ArgumentOutOfRangeException(nameof(siteIndex)), hexIndexes)
         {
             Site = site;
@@ -63,7 +63,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </summary>
         /// <param name="other">The cell to compare with this cell.</param>
         /// <returns><see langword="true"/> if both cells are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(VoronoiCell? other)
+        public bool Equals(VoronoiHexPartitionCell? other)
         {
             return other != null &&
                 SiteIndex == other.SiteIndex &&
@@ -73,7 +73,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <inheritdoc/>
         public override bool Equals(object? obj)
         {
-            return obj is VoronoiCell other && Equals(other);
+            return obj is VoronoiHexPartitionCell other && Equals(other);
         }
 
         /// <inheritdoc/>
@@ -87,7 +87,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         {
             return string.Format(
                 CultureInfo.InvariantCulture,
-                "VoronoiCell(siteIndex: {0}, site: {1}, hexCount: {2})",
+                "VoronoiHexPartitionCell(siteIndex: {0}, site: {1}, hexCount: {2})",
                 SiteIndex,
                 Site,
                 HexIndexes.Count);

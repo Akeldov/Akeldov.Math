@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// Provides Voronoi partitioning extensions for hex center maps.
     /// </summary>
 #pragma warning disable RS0026 // Mask overloads intentionally expose the same optional exclave policy.
-    public static class HexCenterMapVoronoiExtensions
+    public static class HexCenterMapExtensions
     {
         /// <summary>
         /// Assigns every center from the specified hex center map to its nearest weighted Voronoi site.
@@ -65,13 +65,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
         /// Empty cells are preserved.
         /// </returns>
-        public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
             ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
-            return hexCenters.ToVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.LeaveAsIs, exclavePolicy);
+            return hexCenters.ToPartialVoronoiHexPartitionMap(sites, participationMask, EmptyCellPolicy.LeaveAsIs, exclavePolicy);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// </exception>
-        public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
@@ -186,13 +186,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>A new read-only masked partition map. Excluded hexes return null; empty cells are preserved.</returns>
-        public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<int?> regionsMask,
             ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
         {
-            return hexCenters.ToVoronoiHexPartitionMap(sites, regionsMask, EmptyCellPolicy.LeaveAsIs, exclavePolicy);
+            return hexCenters.ToPartialVoronoiHexPartitionMap(sites, regionsMask, EmptyCellPolicy.LeaveAsIs, exclavePolicy);
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// A participating hex has no eligible site in its region, or the empty-cell policy requires throwing.
         /// </exception>
-        public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<int?> regionsMask,
@@ -257,7 +257,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// A zero-weight site is eligible only at its position within the geometry tolerance.
         /// </exception>
-        public static MaskedVoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,

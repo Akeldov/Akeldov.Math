@@ -14,7 +14,7 @@ public class HexPartitionCellTests
         var second = new VectorXYInt(0, 3);
         var source = new List<VectorXYInt> { first, second, first };
         HexPartitionCell partition = useVoronoiCell
-            ? new VoronoiCell(42, new Site(new PointXY(0f, 0f), 1f), source)
+            ? new VoronoiHexPartitionCell(42, new Site(new PointXY(0f, 0f), 1f), source)
             : new HexPartitionCell(42, source);
         IHexPartitionCell contract = partition;
 
@@ -24,7 +24,7 @@ public class HexPartitionCellTests
         Assert.That(contract.HexIndexes, Is.EqualTo(new[] { first, second, first }));
         Assert.That(contract.Id, Is.EqualTo(42));
         Assert.That(contract.HexIndexes, Is.SameAs(partition.HexIndexes));
-        if (partition is VoronoiCell cell)
+        if (partition is VoronoiHexPartitionCell cell)
         {
             Assert.That(cell.HexIndexes, Is.SameAs(contract.HexIndexes));
             Assert.That(cell.SiteIndex, Is.EqualTo(contract.Id));
@@ -77,10 +77,10 @@ public class HexPartitionCellTests
     }
 
     [Test]
-    public void VoronoiCell_WhenSiteIndexIsNegative_PreservesParameterName()
+    public void VoronoiHexPartitionCell_WhenSiteIndexIsNegative_PreservesParameterName()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new VoronoiCell(-1, new Site(new PointXY(0f, 0f), 1f), Array.Empty<VectorXYInt>()));
+            () => new VoronoiHexPartitionCell(-1, new Site(new PointXY(0f, 0f), 1f), Array.Empty<VectorXYInt>()));
 
         Assert.That(exception!.ParamName, Is.EqualTo("siteIndex"));
     }

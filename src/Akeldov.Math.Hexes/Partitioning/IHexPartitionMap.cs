@@ -11,7 +11,7 @@ namespace Akeldov.Math.Hexes
     /// Cell identifiers need not match positions in <see cref="Cells"/>.
     /// </remarks>
     /// <typeparam name="THexPartitionCell">The type of cell in this partition.</typeparam>
-    public interface IHexPartition<out THexPartitionCell> : IHexMap<int>
+    public interface IHexPartitionMap<out THexPartitionCell> : IHexMap<int>
         where THexPartitionCell : IHexPartitionCell
     {
         /// <summary>

@@ -14,14 +14,14 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <see cref="Cells"/> are kept consistent with the original partition result. Use
     /// <see cref="ToMutableHexMap"/> to create a new mutable caller-owned copy of the assignments.
     /// Map indexers return the assigned cell's <see cref="HexPartitionCell.Id"/>, equal to its
-    /// <see cref="VoronoiCell.SiteIndex"/> and its index in <see cref="Cells"/>.
+    /// <see cref="VoronoiHexPartitionCell.SiteIndex"/> and its index in <see cref="Cells"/>.
     /// Use <c>Cells[this[index]]</c> to access the assigned cell's site and grouped hex indexes.
     /// </remarks>
-    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<int>, IHexPartition<VoronoiCell>
+    public sealed class VoronoiHexPartitionMap : ISpatialHexMap<int>, IHexPartitionMap<VoronoiHexPartitionCell>
     {
         private readonly int[] _assignments;
 
-        internal VoronoiHexPartitionMap(HexCenterMap centers, int[] assignments, VoronoiCell[] cells)
+        internal VoronoiHexPartitionMap(HexCenterMap centers, int[] assignments, VoronoiHexPartitionCell[] cells)
         {
             Centers = centers ?? throw new ArgumentNullException(nameof(centers));
 
@@ -89,10 +89,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// This list represents the partitioner's cells and their grouped hex indexes. It remains
         /// consistent with this map's read-only per-hex assignments.
         /// Empty cells may be excluded by the partitioner's policy. Each cell's
-        /// <see cref="VoronoiCell.SiteIndex"/> is its zero-based index in this list, without gaps.
+        /// <see cref="VoronoiHexPartitionCell.SiteIndex"/> is its zero-based index in this list, without gaps.
         /// Cells created for isolated exclaves follow the source cells in row-major component order.
         /// </remarks>
-        public IReadOnlyList<VoronoiCell> Cells { get; }
+        public IReadOnlyList<VoronoiHexPartitionCell> Cells { get; }
 
         /// <summary>
         /// Creates a new mutable caller-owned hex map of cell identifiers copied from this partition map.
@@ -113,9 +113,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return copy;
         }
 
-        private static VoronoiCell[] CopyCells(VoronoiCell[] cells)
+        private static VoronoiHexPartitionCell[] CopyCells(VoronoiHexPartitionCell[] cells)
         {
-            var copy = new VoronoiCell[cells.Length];
+            var copy = new VoronoiHexPartitionCell[cells.Length];
             Array.Copy(cells, copy, cells.Length);
             return copy;
         }

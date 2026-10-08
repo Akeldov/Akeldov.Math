@@ -35,9 +35,9 @@ public class VoronoiHexPartitionPropertyFuzzTests
             var siteHexes = regionValues.Distinct().Select(region => Array.IndexOf(regionValues, region))
                 .Concat(Enumerable.Range(0, 5).Select(_ => random.Next(centers.Topology.Count))).ToArray();
             var sites = siteHexes.Select(index => new Site(centers[index], random.Next(1, 21) / 4f)).ToArray();
-            var map = centers.ToVoronoiHexPartitionMap(sites, participation, regions,
+            var map = centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions,
                 EmptyCellPolicy.Exclude, ExclavePolicy.ReassignToClosestCell);
-            var repeated = centers.ToVoronoiHexPartitionMap(sites, participation, regions,
+            var repeated = centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions,
                 EmptyCellPolicy.Exclude, ExclavePolicy.ReassignToClosestCell);
 
             Assert.That(Enumerable.Range(0, centers.Topology.Count).Select(i => map[i]),
@@ -53,7 +53,7 @@ public class VoronoiHexPartitionPropertyFuzzTests
                         Does.Contain(new VectorXYInt(i % 9, i / 9)), context);
             }
 
-            foreach (VoronoiCell cell in map.Cells)
+            foreach (VoronoiHexPartitionCell cell in map.Cells)
             {
                 var remaining = new HashSet<VectorXYInt>(cell.HexIndexes);
                 Assert.That(remaining, Is.Not.Empty, context);

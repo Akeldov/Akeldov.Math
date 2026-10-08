@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<None Include="README.md" Pack="true" PackagePath="\" />
+		<InternalsVisibleTo Include="Akeldov.Math.Hexes.Tests" />
 	</ItemGroup>
 
 	<ItemGroup>

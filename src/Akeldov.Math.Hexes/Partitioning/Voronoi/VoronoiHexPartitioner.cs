@@ -12,8 +12,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// <summary>
     /// Assigns hex centers to weighted Voronoi sites.
     /// </summary>
-    #pragma warning disable RS0026 // Mask overloads intentionally expose the same optional exclave policy.
-    public sealed class VoronoiHexPartitioner
+    internal sealed class VoronoiHexPartitioner
     {
         private readonly Site[] _sites;
         private readonly EmptyCellPolicy _emptyCellPolicy;
@@ -103,7 +102,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// </exception>
-        public MaskedVoronoiHexPartitionMap Partition(
+        public PartialVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
             ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
@@ -163,7 +162,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                     assignments[i] = cellIndexesBySite[cellIndexes[i]];
             }
 
-            return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
         }
 
         /// <summary>
@@ -274,7 +273,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// A participating hex has no eligible site in its region, or the empty-cell policy requires throwing.
         /// A zero-weight site is eligible only at its position within the geometry tolerance.
         /// </exception>
-        public MaskedVoronoiHexPartitionMap Partition(
+        public PartialVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<int?> regionsMask,
             ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
@@ -331,7 +330,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// A zero-weight site is eligible only at its position within the geometry tolerance.
         /// </exception>
-        public MaskedVoronoiHexPartitionMap Partition(
+        public PartialVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
@@ -359,7 +358,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return PartitionMaskedRegions(hexCenters, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy);
         }
 
-        private MaskedVoronoiHexPartitionMap PartitionMaskedRegions(
+        private PartialVoronoiHexPartitionMap PartitionMaskedRegions(
             HexCenterMap hexCenters, IHexMap<bool> participationMask, IHexMap<int> regionsMask,
             Dictionary<int, List<int>> siteIndexesByRegion, ExclavePolicy exclavePolicy)
         {
@@ -409,7 +408,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 if (participationMaskValues[i])
                     assignments[i] = cellIndexesBySite[cellIndexes[i]];
 
-            return new MaskedVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
         }
 
         private Site[] ReassignExclaves(
@@ -691,9 +690,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return buckets;
         }
 
-        private VoronoiCell[] CreateCells(List<VectorXYInt>[] hexIndexBuckets, out int[] cellIndexesBySite, Site[] sites)
+        private VoronoiHexPartitionCell[] CreateCells(List<VectorXYInt>[] hexIndexBuckets, out int[] cellIndexesBySite, Site[] sites)
         {
-            var cells = new List<VoronoiCell>(sites.Length);
+            var cells = new List<VoronoiHexPartitionCell>(sites.Length);
             cellIndexesBySite = new int[sites.Length];
             for (int i = 0; i < sites.Length; i++)
             {
@@ -707,7 +706,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 }
 
                 cellIndexesBySite[i] = cells.Count;
-                cells.Add(new VoronoiCell(cells.Count, sites[i], hexIndexBuckets[i]));
+                cells.Add(new VoronoiHexPartitionCell(cells.Count, sites[i], hexIndexBuckets[i]));
             }
 
             return cells.ToArray();
@@ -788,5 +787,4 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return false;
         }
     }
-    #pragma warning restore RS0026
 }

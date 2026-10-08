@@ -5,7 +5,7 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 namespace Akeldov.Math.Hexes.Tests.Partitioning;
 
-public class HexPartitionTests
+public class HexPartitionMapTests
 {
     [Test]
     public void Constructor_WithMutableInput_KeepsReadOnlyCollectionAndOriginalCells()
@@ -14,7 +14,7 @@ public class HexPartitionTests
         var second = new HexPartitionCell(7, Array.Empty<VectorXYInt>());
         var source = new List<HexPartitionCell> { first, second };
         var topology = new HexMapTopology(1, 1, Layout.OddR);
-        IHexPartition<IHexPartitionCell> partition = new HexPartition(topology, source);
+        IHexPartitionMap<IHexPartitionCell> partition = new HexPartitionMap(topology, source);
 
         source[0] = second;
         source.Clear();
@@ -37,7 +37,7 @@ public class HexPartitionTests
     [Test]
     public void Constructor_WhenCellsIsNull_Throws()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => new HexPartition(default, null!));
+        var exception = Assert.Throws<ArgumentNullException>(() => new HexPartitionMap(default, null!));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -50,7 +50,7 @@ public class HexPartitionTests
         var cells = new IHexPartitionCell[] { cell, cell };
         cells[nullIndex] = null!;
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(default, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(default, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -58,7 +58,7 @@ public class HexPartitionTests
     [Test]
     public void Constructor_WithEmptyInput_CreatesEmptyPartition()
     {
-        IHexPartition<IHexPartitionCell> partition = new HexPartition(default, Array.Empty<IHexPartitionCell>());
+        IHexPartitionMap<IHexPartitionCell> partition = new HexPartitionMap(default, Array.Empty<IHexPartitionCell>());
 
         Assert.That(partition.Cells, Is.Empty);
     }
@@ -71,10 +71,10 @@ public class HexPartitionTests
         var sites = new[] { new Site(new PointXY(100f, 0f), 1f), new Site(centers[0], 1f) };
         var partitioner = new VoronoiHexPartitioner(sites, policy);
         var map = partitioner.Partition(centers);
-        IHexPartition<VoronoiCell> partition = map;
+        IHexPartitionMap<VoronoiHexPartitionCell> partition = map;
         IHexMap<int> idMap = partition;
-        IReadOnlyList<VoronoiCell> typedCells = partition.Cells;
-        IHexPartition<IHexPartitionCell> commonPartition = partition;
+        IReadOnlyList<VoronoiHexPartitionCell> typedCells = partition.Cells;
+        IHexPartitionMap<IHexPartitionCell> commonPartition = partition;
 
         Assert.That(partition.Cells, Is.SameAs(map.Cells));
         Assert.That(commonPartition.Cells, Is.SameAs(typedCells));
@@ -84,7 +84,7 @@ public class HexPartitionTests
         Assert.That(partition.Cells[assignedId].HexIndexes,
             Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }));
 
-        var snapshot = new HexPartition(partition.Topology, typedCells);
+        var snapshot = new HexPartitionMap(partition.Topology, typedCells);
         Assert.That(snapshot.Cells, Is.Not.SameAs(typedCells));
         for (int i = 0; i < typedCells.Count; i++)
         {
@@ -109,16 +109,16 @@ public class HexPartitionTests
     }
 
     [Test]
-    public void MaskedVoronoiMap_WithExcludedHexes_DoesNotImplementFullPartitionContract()
+    public void PartialVoronoiMap_WithExcludedHexes_DoesNotImplementFullPartitionContract()
     {
         var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(centers[0], 1f) };
         var mask = new BoolHexMap(centers.Topology, new[] { true, false });
         var map = new VoronoiHexPartitioner(sites).Partition(centers, mask);
 
-        Assert.That(map, Is.Not.InstanceOf<IHexPartition<IHexPartitionCell>>());
+        Assert.That(map, Is.Not.InstanceOf<IHexPartitionMap<IHexPartitionCell>>());
         Assert.That(map[1], Is.Null);
-        Assert.Throws<ArgumentException>(() => new HexPartition(map.Topology, map.Cells));
+        Assert.Throws<ArgumentException>(() => new HexPartitionMap(map.Topology, map.Cells));
     }
 
     [TestCase(Layout.OddR)]
@@ -135,7 +135,7 @@ public class HexPartitionTests
             new HexPartitionCell(7, new[] { new VectorXYInt(1, 0), new VectorXYInt(0, 1) }),
             new HexPartitionCell(0, Array.Empty<VectorXYInt>())
         };
-        var partition = new HexPartition(topology, cells);
+        var partition = new HexPartitionMap(topology, cells);
         source[0] = new VectorXYInt(99, 99);
         cells[0] = cells[1];
 
@@ -157,7 +157,7 @@ public class HexPartitionTests
             ? Array.Empty<HexPartitionCell>()
             : new[] { new HexPartitionCell(0, new[] { new VectorXYInt(0, 0) }) };
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(topology, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(topology, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -170,7 +170,7 @@ public class HexPartitionTests
         var cells = new[] { new HexPartitionCell(7, indexes), new HexPartitionCell(7, indexes) };
         var topology = emptyCells ? default : new HexMapTopology(1, 1, Layout.OddR);
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(topology, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(topology, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -182,7 +182,7 @@ public class HexPartitionTests
         var indexes = new[] { new VectorXYInt(0, 0) };
         var cells = new[] { new HexPartitionCell(7, indexes), new HexPartitionCell(42, indexes) };
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(topology, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(topology, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -196,7 +196,7 @@ public class HexPartitionTests
         var topology = new HexMapTopology(2, 2, Layout.OddR);
         var cells = new[] { new HexPartitionCell(0, new[] { new VectorXYInt(x, y) }) };
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(topology, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(topology, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -209,7 +209,7 @@ public class HexPartitionTests
     {
         var topology = new HexMapTopology(2, 1, Layout.OddR);
         var cells = new[] { new HexPartitionCell(0, new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }) };
-        IHexPartition<IHexPartitionCell> partition = new HexPartition(topology, cells);
+        IHexPartitionMap<IHexPartitionCell> partition = new HexPartitionMap(topology, cells);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[new VectorXYInt(x, y)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[-1]);
@@ -222,7 +222,7 @@ public class HexPartitionTests
     {
         var cells = new[] { new CustomCell(id, Array.Empty<VectorXYInt>()) };
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(default, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(default, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
@@ -232,7 +232,7 @@ public class HexPartitionTests
     {
         var cells = new[] { new CustomCell(0, null!) };
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexPartition(default, cells));
+        var exception = Assert.Throws<ArgumentException>(() => new HexPartitionMap(default, cells));
 
         Assert.That(exception!.ParamName, Is.EqualTo("cells"));
     }
