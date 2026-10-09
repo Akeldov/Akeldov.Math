@@ -17,7 +17,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="hexCenters">The hex center map to partition.</param>
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
+        /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
         /// Empty cells are preserved.
         /// </returns>
         public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="emptyCellPolicy">The policy used for cells that receive no hexes.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
+        /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
         /// </returns>
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
@@ -61,7 +61,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
-        /// A new read-only masked hex partition map with nullable per-hex cell identifiers and a semantic cell list.
+        /// A new mutable partial hex partition map with nullable per-hex cell identifiers and a read-only semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
         /// Empty cells are preserved.
         /// </returns>
@@ -85,7 +85,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="emptyCellPolicy">The policy used for cells that receive no participating hexes.</param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
-        /// A new read-only masked hex partition map with nullable per-hex cell identifiers and a semantic cell list.
+        /// A new mutable partial hex partition map with nullable per-hex cell identifiers and a read-only semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
         /// </returns>
         /// <exception cref="InvalidOperationException">
@@ -116,7 +116,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
+        /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
         /// Empty cells are preserved.
         /// </returns>
         /// <remarks>
@@ -150,7 +150,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="emptyCellPolicy">The policy used for cells that receive no hexes.</param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
-        /// A new read-only hex partition map with per-hex cell identifiers and a semantic cell list.
+        /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
         /// </returns>
         /// <remarks>
         /// A site's region is the mask value at the hex containing its position, using the center map's
@@ -185,7 +185,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// all integer values, including zero and negative values, identify participating regions.
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
-        /// <returns>A new read-only masked partition map. Excluded hexes return null; empty cells are preserved.</returns>
+        /// <returns>A new mutable partial partition map. Excluded hexes initially return null; empty cells are preserved.</returns>
         public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
@@ -207,7 +207,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </param>
         /// <param name="emptyCellPolicy">The policy for cells receiving no participating hexes.</param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
-        /// <returns>A new read-only masked partition map with a semantic cell list. Excluded hexes return null.</returns>
+        /// <returns>A new mutable partial partition map with a read-only semantic cell list. Excluded hexes return null.</returns>
         /// <remarks>
         /// Sites outside the map or in a hex with a null region receive no hexes and follow the empty-cell policy.
         /// </remarks>
@@ -243,7 +243,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
         /// <returns>
-        /// A new read-only masked partition map of nullable cell identifiers with a semantic cell list. Excluded hexes return null.
+        /// A new mutable partial partition map of nullable cell identifiers with a read-only semantic cell list. Excluded hexes return null.
         /// </returns>
         /// <remarks>
         /// A site's region is determined by the hex containing its position, regardless of that hex's

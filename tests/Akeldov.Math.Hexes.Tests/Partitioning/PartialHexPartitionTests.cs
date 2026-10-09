@@ -26,6 +26,7 @@ public class PartialHexPartitionTests
         };
         var mask = new BoolHexMap(centers.Topology, new[] { true, false, true, true, false, true });
         var map = new VoronoiHexPartitioner(sites, policy).Partition(centers, mask);
+        PartialHexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
         IPartialHexPartitionMap<VoronoiHexPartitionCell> partition = map;
         IPartialHexPartitionMap<IHexPartitionCell> commonPartition = partition;
         IReadOnlyList<VoronoiHexPartitionCell> typedCells = partition.Cells;
@@ -33,6 +34,8 @@ public class PartialHexPartitionTests
         ISpatialHexMap<int?> spatialMap = map;
 
         Assert.That(partition.Cells, Is.SameAs(map.Cells));
+        Assert.That(partitionMap.Cells, Is.SameAs(map.Cells));
+        Assert.That(map, Is.InstanceOf<HexMap<int?>>());
         Assert.That(commonPartition.Cells, Is.SameAs(typedCells));
         Assert.That(partition.Topology, Is.EqualTo(centers.Topology));
         Assert.That(spatialMap.Geometry, Is.EqualTo(centers.Geometry));

@@ -424,7 +424,7 @@ public class VoronoiHexPartitionerTests
     }
 
     [Test]
-    public void Partition_ReturnsReadOnlyHexMapOfCellIds()
+    public void Partition_ReturnsHexPartitionMapOfCellIds()
     {
         var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
         var hexCenters = new HexCenterMap(new HexMapGeometry(2, 2, VectorXY.Zero, 1f, Layout.EvenQ));
@@ -433,7 +433,9 @@ public class VoronoiHexPartitionerTests
         var map = partitioner.Partition(hexCenters);
         IHexMap<int> hexMap = map;
 
-        Assert.That(map, Is.Not.InstanceOf<HexMap<int>>());
+        HexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
+        Assert.That(map, Is.InstanceOf<HexMap<int>>());
+        Assert.That(partitionMap.Cells, Is.SameAs(map.Cells));
         Assert.That(map.Centers, Is.SameAs(hexCenters));
         Assert.That(hexMap.Topology.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
         Assert.That(hexMap.Topology.Layout, Is.EqualTo(Layout.EvenQ));
@@ -798,6 +800,13 @@ public class VoronoiHexPartitionerTests
             Assert.That(mutableMask[0], Is.False);
             Assert.That(map.Participates(0), Is.True);
         });
+
+        PartialHexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
+        partitionMap[1] = map.Cells[1].Id;
+        var updatedCopy = map.ToMutableHexMap();
+        map[1] = null;
+        Assert.That(updatedCopy[1], Is.EqualTo(map.Cells[1].Id));
+        Assert.That(map.Participates(1), Is.False);
     }
 
     [Test]
@@ -822,6 +831,12 @@ public class VoronoiHexPartitionerTests
             Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }));
             Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(2, 0) }));
         });
+
+        HexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
+        partitionMap[0] = map.Cells[1].Id;
+        var updatedCopy = map.ToMutableHexMap();
+        map[0] = map.Cells[0].Id;
+        Assert.That(updatedCopy[0], Is.EqualTo(map.Cells[1].Id));
     }
 
     [Test]

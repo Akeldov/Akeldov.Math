@@ -4,37 +4,35 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Represents a hex-grid partition with a read-only snapshot of cells and mutable per-hex cell identifiers.
+    /// Represents a partial hex-grid partition with a read-only snapshot of cells and mutable nullable cell identifiers.
     /// </summary>
     /// <typeparam name="THexPartitionCell">The type of cells retained by the partition.</typeparam>
     /// <remarks>
     /// The input collection is copied in its original order. Cell objects are retained as-is.
-    /// Empty cells are allowed. An empty partition requires an empty topology.
-    /// At construction, cell identifiers must be unique and non-negative, and every hex must belong to exactly one cell.
+    /// Empty cells and unassigned hexes are allowed. Unassigned hexes contain null identifiers.
+    /// At construction, cell identifiers must be unique and non-negative, and each assigned hex
+    /// must belong to exactly one cell.
     /// Custom cell implementations must keep their identifiers and indexes stable to remain consistent
     /// with the identifier map.
     /// Inherited indexer setters change only the identifier map; they do not update the retained cells
     /// or their hex indexes. Callers must keep map assignments consistent with the retained cells.
     /// </remarks>
-    public class HexPartitionMap<THexPartitionCell> : HexMap<int>, IHexPartitionMap<THexPartitionCell>
+    public class PartialHexPartitionMap<THexPartitionCell> : HexMap<int?>, IPartialHexPartitionMap<THexPartitionCell>
         where THexPartitionCell : IHexPartitionCell
     {
         private readonly IReadOnlyList<THexPartitionCell> _cells;
 
         /// <summary>
-        /// Initializes a new partition with a read-only copy of the supplied cells and their assignments.
+        /// Initializes a new partial partition with a read-only copy of the supplied cells and their assignments.
         /// </summary>
         /// <param name="topology">The topology containing the partition's hex indexes.</param>
         /// <param name="cells">The partition cells to retain in the copied collection.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="cells"/> is null.
-        /// </exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="cells"/> is null.</exception>
         /// <exception cref="ArgumentException">
         /// Thrown when <paramref name="cells"/> contains a null cell, a negative or duplicate identifier,
-        /// null hex indexes, an index outside <paramref name="topology"/>, a hex assigned to different cells,
-        /// or does not cover every hex in <paramref name="topology"/>.
+        /// null hex indexes, an index outside <paramref name="topology"/>, or a hex assigned to different cells.
         /// </exception>
-        public HexPartitionMap(HexMapTopology topology, IReadOnlyList<THexPartitionCell> cells)
+        public PartialHexPartitionMap(HexMapTopology topology, IReadOnlyList<THexPartitionCell> cells)
             : base(topology)
         {
             if (cells == null)
@@ -67,7 +65,7 @@ namespace Akeldov.Math.Hexes
         }
 
         /// <summary>
-        /// Gets the read-only structural snapshot of cells that make up this partition.
+        /// Gets the read-only structural snapshot of cells that make up this partial partition.
         /// </summary>
         /// <remarks>
         /// Changes to the constructor's input collection do not affect this collection.
@@ -77,9 +75,6 @@ namespace Akeldov.Math.Hexes
 
         private void BuildAssignments(THexPartitionCell[] cells)
         {
-            for (int i = 0; i < Topology.Count; i++)
-                this[i] = -1;
-
             for (int i = 0; i < cells.Length; i++)
             {
                 int id = cells[i].Id;
@@ -92,17 +87,11 @@ namespace Akeldov.Math.Hexes
                         throw new ArgumentException($"Partition hex index out of bounds: {index}.", nameof(cells));
 
                     int flatIndex = index.Y * Topology.Resolution.X + index.X;
-                    if (this[flatIndex] >= 0 && this[flatIndex] != id)
+                    if (this[flatIndex].HasValue && this[flatIndex] != id)
                         throw new ArgumentException($"Hex index belongs to different partition cells: {index}.", nameof(cells));
 
                     this[flatIndex] = id;
                 }
-            }
-
-            for (int i = 0; i < Topology.Count; i++)
-            {
-                if (this[i] < 0)
-                    throw new ArgumentException($"Hex at flat index {i} has no assigned partition cell.", nameof(cells));
             }
         }
     }

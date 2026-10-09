@@ -1,10 +1,10 @@
 #nullable enable
-Akeldov.Math.Hexes.HexPartitionMap
-Akeldov.Math.Hexes.HexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>!
-Akeldov.Math.Hexes.HexPartitionMap.HexPartitionMap(Akeldov.Math.Hexes.HexMapTopology topology, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.IHexPartitionCell!>! cells) -> void
-Akeldov.Math.Hexes.HexPartitionMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
-Akeldov.Math.Hexes.HexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> int
-Akeldov.Math.Hexes.HexPartitionMap.this[int index].get -> int
+Akeldov.Math.Hexes.HexPartitionMap<THexPartitionCell>
+Akeldov.Math.Hexes.HexPartitionMap<THexPartitionCell>.Cells.get -> System.Collections.Generic.IReadOnlyList<THexPartitionCell>!
+Akeldov.Math.Hexes.HexPartitionMap<THexPartitionCell>.HexPartitionMap(Akeldov.Math.Hexes.HexMapTopology topology, System.Collections.Generic.IReadOnlyList<THexPartitionCell>! cells) -> void
+Akeldov.Math.Hexes.PartialHexPartitionMap<THexPartitionCell>
+Akeldov.Math.Hexes.PartialHexPartitionMap<THexPartitionCell>.Cells.get -> System.Collections.Generic.IReadOnlyList<THexPartitionCell>!
+Akeldov.Math.Hexes.PartialHexPartitionMap<THexPartitionCell>.PartialHexPartitionMap(Akeldov.Math.Hexes.HexMapTopology topology, System.Collections.Generic.IReadOnlyList<THexPartitionCell>! cells) -> void
 Akeldov.Math.Hexes.HexPartitionCell
 Akeldov.Math.Hexes.HexPartitionCell.HexIndexes.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>!
 Akeldov.Math.Hexes.HexPartitionCell.HexPartitionCell(int id, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
@@ -17,16 +17,12 @@ Akeldov.Math.Hexes.IHexPartitionCell.Id.get -> int
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[int index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!>!
-Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> int
-Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.this[int index].get -> int
 Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<int>!
 Akeldov.Math.Hexes.IPartialHexPartitionMap<THexPartitionCell>
 Akeldov.Math.Hexes.IPartialHexPartitionMap<THexPartitionCell>.Cells.get -> System.Collections.Generic.IReadOnlyList<THexPartitionCell>!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.this[int index].get -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell?>!
-Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> int?
-Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.this[int index].get -> int?
 Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.ToMutableHexMap() -> Akeldov.Math.Hexes.HexMap<int?>!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitioner.Partition(Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, Akeldov.Math.Hexes.IHexMap<bool>! participationMask) -> Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap!
 *REMOVED*static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Hexes.IHexMap<bool>! participationMask) -> Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap!
@@ -49,7 +45,6 @@ static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToPartialV
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap
 Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!>!
-Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionCell!>!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Centers.get -> Akeldov.Math.Hexes.Geometry.HexCenterMap!
 Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.Centers.get -> Akeldov.Math.Hexes.Geometry.HexCenterMap!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
@@ -61,7 +56,6 @@ Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.Participat
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.ToMutableParticipationMask() -> Akeldov.Math.Hexes.BoolHexMap!
 Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.ToMutableParticipationMask() -> Akeldov.Math.Hexes.BoolHexMap!
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.MaskedVoronoiHexPartitionMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
-Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell
 Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionCell
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.Center.get -> Akeldov.Math.Spatial2D.PointXY
@@ -77,7 +71,6 @@ Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionCell.SiteIndex.get ->
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.VoronoiCell(int siteIndex, Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site site, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
 Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionCell.VoronoiHexPartitionCell(int siteIndex, Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site site, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.VectorXYInt>! hexIndexes) -> void
 *REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell!>!
-Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Cells.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionCell!>!
 *REMOVED*override Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.Equals(object? obj) -> bool
 override Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionCell.Equals(object? obj) -> bool
 *REMOVED*override Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiCell.GetHashCode() -> int
@@ -94,3 +87,4 @@ Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
 *REMOVED*static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapVoronoiExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
+*REMOVED*Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
