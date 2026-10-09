@@ -7,7 +7,7 @@ end_of_line = lf
 # CA1510: ArgumentNullException.ThrowIfNull is unavailable for netstandard2.1.
 dotnet_diagnostic.CA1510.severity = none
 # IDE0008: Use explicit type
-csharp_style_var_when_type_is_apparent = false
+csharp_style_var_when_type_is_apparent = false:none
 # IDE0011: Add braces
 csharp_prefer_braces = false
 # IDE0032: Use auto property
