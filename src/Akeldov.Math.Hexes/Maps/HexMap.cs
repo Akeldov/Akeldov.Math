@@ -14,6 +14,11 @@ namespace Akeldov.Math.Hexes
         private readonly TValue[] _values;
 
         /// <summary>
+        /// Gets the backing array shared by map facades within this assembly.
+        /// </summary>
+        internal TValue[] BackingValues => _values;
+
+        /// <summary>
         /// Initializes an empty map whose cells contain the default value of <typeparamref name="TValue"/>.
         /// </summary>
         /// <param name="topology">The layout and resolution of the map.</param>

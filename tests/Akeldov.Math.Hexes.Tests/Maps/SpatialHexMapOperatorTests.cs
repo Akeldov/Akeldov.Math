@@ -240,6 +240,7 @@ public class SpatialHexMapOperatorTests
     private static MethodInfo[] GetSpecializedMapOperators(Type[] types) => types
         .SelectMany(type => type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly))
         .Where(method => method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
+        .Where(method => method.Name is not ("op_Implicit" or "op_Explicit"))
         .Where(method => method.GetParameters().All(parameter =>
             !parameter.ParameterType.IsGenericType ||
             parameter.ParameterType.GetGenericTypeDefinition() != typeof(HexMap<>)))

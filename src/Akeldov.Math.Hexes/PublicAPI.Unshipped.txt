@@ -1,4 +1,10 @@
 #nullable enable
+static Akeldov.Math.Hexes.SpatialBoolHexMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<bool>?(Akeldov.Math.Hexes.SpatialBoolHexMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<bool>?
+static Akeldov.Math.Hexes.SpatialBoolHexMap.implicit operator Akeldov.Math.Hexes.SpatialBoolHexMap?(Akeldov.Math.Hexes.SpatialHexMap<bool>? map) -> Akeldov.Math.Hexes.SpatialBoolHexMap?
+static Akeldov.Math.Hexes.SpatialFloatHexMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<float>?(Akeldov.Math.Hexes.SpatialFloatHexMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<float>?
+static Akeldov.Math.Hexes.SpatialFloatHexMap.implicit operator Akeldov.Math.Hexes.SpatialFloatHexMap?(Akeldov.Math.Hexes.SpatialHexMap<float>? map) -> Akeldov.Math.Hexes.SpatialFloatHexMap?
+static Akeldov.Math.Hexes.SpatialIntHexMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<int>?(Akeldov.Math.Hexes.SpatialIntHexMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<int>?
+static Akeldov.Math.Hexes.SpatialIntHexMap.implicit operator Akeldov.Math.Hexes.SpatialIntHexMap?(Akeldov.Math.Hexes.SpatialHexMap<int>? map) -> Akeldov.Math.Hexes.SpatialIntHexMap?
 Akeldov.Math.Hexes.SpatialBoolHexMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
 Akeldov.Math.Hexes.SpatialFloatHexMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
 *REMOVED*Akeldov.Math.Hexes.SpatialFloatHexMap.Min.get -> float
