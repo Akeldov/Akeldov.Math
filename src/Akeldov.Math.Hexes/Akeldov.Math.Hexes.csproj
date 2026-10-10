@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Hexes</PackageId>
-		<Version>0.7.0</Version>
+		<Version>0.8.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, and weighted Voronoi utilities.</Description>
-		<PackageReleaseNotes>Added multi-ring and per-cell distance-limited Boolean dilation and erosion with linear-time traversal and spatial geometry preservation. Added Voronoi empty-cell policies, region masks, and combined participation and region masks. Region assignments are restricted to sites in the same region. Breaking API change: Dilate, Erode, Open, and Close moved from BooleanHexMapExtensions to IHexMapBoolExtensions and ISpatialHexMapBoolExtensions; extension-call syntax is unchanged, but explicit static calls and previously compiled consumers must be updated or rebuilt. The minimum Akeldov.Math.Spatial2D dependency remains 1.1.0, with compatible 1.x releases accepted.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added generic full and partial partition maps storing mutable int and nullable-int cell identifiers, nullable Voronoi region masks, and ExclavePolicy.ReassignToClosestCell. Added specialized-map operators with HexMap operands and constant-time shared-storage implicit conversions for spatial maps, center maps, and Voronoi partition maps. Breaking changes: MaskedVoronoiHexPartitionMap is now PartialVoronoiHexPartitionMap; VoronoiCell is now VoronoiHexPartitionCell; partial partition extensions are now ToPartialVoronoiHexPartitionMap; VoronoiHexPartitioner is internal. Specialized spatial maps now inherit their topology-only counterparts, and HexCenterMap inherits HexMap&lt;PointXY&gt;. Moved geometry and chromatization helpers to receiver-specific classes and HexVerticesHelpers. Explicit map and raster index guards now use informative ArgumentOutOfRangeException messages. Rebuild consumers and update partition indexer usage from cell objects to identifiers. The minimum Akeldov.Math.Spatial2D dependency remains 1.1.0, with compatible 1.x releases accepted.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>

@@ -19,9 +19,9 @@ The library is organized around practical hex-grid workflows.
 - Rectangular map topology with edge, vertex, pair, triplet, and six-neighbor adjacency helpers.
 - Mutable `HexMap<T>` and geometry-aware `SpatialHexMap<T>` value storage.
 - Versioned binary stream and file serialization for Boolean, integer, and floating-point maps, including spatial geometry and exact floating-point bits.
-- Dedicated Boolean, integer, and floating-point maps in topology-only and geometry-preserving spatial variants, with copy conversions between them.
+- Dedicated Boolean, integer, and floating-point maps in topology-only and geometry-preserving spatial variants, with independent copy methods and constant-time shared-storage spatial conversions.
 - Generic and specialized value mapping from individual cells or partial six-neighbor sets, with spatial geometry preserved when present.
-- Element-wise, scalar, mixed numeric, and spatial/non-spatial arithmetic, remainder, comparison-mask, clamping, and range-rescaling operations for numeric maps.
+- Element-wise, scalar, mixed numeric, and spatial/non-spatial arithmetic, remainder, and comparison-mask operators, including operands typed as `HexMap<int>` and `HexMap<float>`, plus clamping and range rescaling.
 - Sampling of Spatial2D integer and floating-point fields at hex centers, including randomized pointwise ranges.
 - Logical operations, multi-ring and per-cell distance-limited morphology, outlines, flood fill, connected components, and distance transforms for Boolean maps.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point maps.
@@ -46,7 +46,8 @@ The library is organized around practical hex-grid workflows.
 
 - Weighted shortest-path search using separate cell entry and exit costs.
 - Impassable cells represented by positive-infinity transfer costs.
-- Weighted Voronoi partitioning with participation and region masks and configurable empty-cell handling with read-only cell assignments.
+- Generic full and partial partition maps with mutable cell identifiers and read-only cell groups.
+- Weighted Voronoi partitioning with participation and nullable region masks, configurable empty-cell handling, and disconnected-component reassignment.
 
 ## Documentation
 
