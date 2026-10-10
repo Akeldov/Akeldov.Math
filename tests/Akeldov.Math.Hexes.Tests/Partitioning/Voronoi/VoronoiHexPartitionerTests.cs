@@ -548,6 +548,63 @@ public class VoronoiHexPartitionerTests
         });
     }
 
+    [TestCase(3, 2, Layout.OddR)]
+    [TestCase(3, 2, Layout.EvenR)]
+    [TestCase(3, 2, Layout.OddQ)]
+    [TestCase(3, 2, Layout.EvenQ)]
+    [TestCase(0, 0, Layout.OddR)]
+    public void PartialImplicitConversion_ToSpatialHexMap_SharesNullableAssignmentsAndPreservesGeometry(int width, int height, Layout layout)
+    {
+        var geometry = new HexMapGeometry(width, height, new VectorXY(10f, -20f), 2f, layout);
+        var centers = new HexCenterMap(geometry);
+        var sites = new[] { new Site(new PointXY(10f, -20f), 1f) };
+        var participation = Enumerable.Range(0, geometry.Topology.Count).Select(index => index % 2 == 0).ToArray();
+        var mask = new BoolHexMap(geometry.Topology, participation);
+        var map = centers.ToPartialVoronoiHexPartitionMap(sites, mask);
+        var cells = map.Cells;
+        var originalIndexes = cells.Select(cell => cell.HexIndexes.ToArray()).ToArray();
+        var originalAssignments = Enumerable.Range(0, map.Topology.Count).Select(index => map[index]).ToArray();
+        var independentCopy = map.ToMutableHexMap();
+
+        SpatialHexMap<int?> facade = map;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(facade, Is.Not.SameAs(map));
+            Assert.That(facade.Geometry, Is.EqualTo(geometry));
+            Assert.That(facade.Topology, Is.EqualTo(map.Topology));
+            Assert.That(Enumerable.Range(0, facade.Topology.Count).Select(index => facade[index]),
+                Is.EqualTo(originalAssignments));
+        });
+
+        if (map.Topology.Count == 0)
+            return;
+
+        Assert.That(facade[0], Is.Not.Null);
+        Assert.That(facade[1], Is.Null);
+        facade[new VectorXYInt(0, 0)] = null;
+        Assert.That(map[0], Is.Null);
+        map[1] = 23;
+        Assert.That(facade[1], Is.EqualTo(23));
+        map[2] = null;
+        Assert.That(facade[2], Is.Null);
+        Assert.That(map.Cells, Is.SameAs(cells));
+        Assert.That(map.Cells.Select(cell => cell.HexIndexes.ToArray()), Is.EqualTo(originalIndexes));
+        Assert.That(Enumerable.Range(0, map.Topology.Count).Select(map.Participates), Is.EqualTo(participation));
+        Assert.That(Enumerable.Range(0, independentCopy.Topology.Count).Select(index => independentCopy[index]),
+            Is.EqualTo(originalAssignments));
+    }
+
+    [Test]
+    public void PartialImplicitConversion_ToSpatialHexMap_WhenPartitionIsNull_ReturnsNull()
+    {
+        PartialVoronoiHexPartitionMap? map = null;
+
+        SpatialHexMap<int?>? facade = map;
+
+        Assert.That(facade, Is.Null);
+    }
+
     [Test]
     public void ToPartialVoronoiHexPartitionMap_WithParticipationMask_PartitionsOnlyParticipatingHexCenters()
     {

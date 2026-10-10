@@ -1,6 +1,7 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable CA2201 // Hex map indexers use IndexOutOfRangeException for out-of-bounds indexes.
 #pragma warning disable MA0012 // Preserve the established hex-map indexer exception behavior.
@@ -69,6 +70,24 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Gets the spatial geometry used by the partition map.
         /// </summary>
         public HexMapGeometry Geometry => Centers.Geometry;
+
+        /// <summary>
+        /// Creates a spatial facade sharing this partition map's geometry and nullable assignment array.
+        /// </summary>
+        /// <param name="map">The source partition map, or <see langword="null"/>.</param>
+        /// <returns>
+        /// A new mutable spatial facade sharing the source map's nullable assignments, or <see langword="null"/>
+        /// if <paramref name="map"/> is null. Changes through either map are visible through the other.
+        /// </returns>
+        /// <remarks>
+        /// The conversion takes constant time and allocates only the facade object. Assignments are not copied.
+        /// Changes through the facade do not update the partition's retained cells, their hex indexes,
+        /// or the original participation mask.
+        /// Use <see cref="ToMutableHexMap"/> to create an independent mutable copy.
+        /// </remarks>
+        [return: NotNullIfNotNull("map")]
+        public static implicit operator SpatialHexMap<int?>?(PartialVoronoiHexPartitionMap? map)
+            => map is null ? null : new SpatialHexMap<int?>(map.Geometry, map.BackingValues);
 
         /// <summary>
         /// Returns whether the specified hex index was included by the original participation mask.
