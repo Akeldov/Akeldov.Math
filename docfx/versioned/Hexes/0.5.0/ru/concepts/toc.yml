@@ -10,10 +10,11 @@
           href: fundamentals/coordinate-systems/row-and-column-indices.md
         - name: Пространственные координаты
           href: fundamentals/coordinate-systems/spatial-coordinates.md
-    - name: Раскладки
-      href: fundamentals/layouts.md
     - name: Топология
       href: hex-grid-model/topology.md
+      items:
+        - name: Раскладки
+          href: fundamentals/layouts.md
     - name: Геометрия
       href: hex-grid-model/geometry.md
     - name: Дискретизация координат

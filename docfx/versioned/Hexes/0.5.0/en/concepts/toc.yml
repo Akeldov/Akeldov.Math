@@ -10,10 +10,11 @@
           href: fundamentals/coordinate-systems/row-and-column-indices.md
         - name: Spatial Coordinates
           href: fundamentals/coordinate-systems/spatial-coordinates.md
-    - name: Layouts
-      href: fundamentals/layouts.md
     - name: Topology
       href: hex-grid-model/topology.md
+      items:
+        - name: Layouts
+          href: fundamentals/layouts.md
     - name: Geometry
       href: hex-grid-model/geometry.md
     - name: Coordinate Discretization
