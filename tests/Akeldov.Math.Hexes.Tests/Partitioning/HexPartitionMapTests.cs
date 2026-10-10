@@ -132,7 +132,7 @@ public class HexPartitionMapTests
         }
         Assert.Throws<IndexOutOfRangeException>(() => _ = idMap[-1]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = idMap[partition.Topology.Count]);
-        Assert.Throws<IndexOutOfRangeException>(() => _ = partition[new VectorXYInt(2, 0)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = partition[new VectorXYInt(2, 0)]);
     }
 
     [Test]
@@ -238,7 +238,7 @@ public class HexPartitionMapTests
         var cells = new[] { new HexPartitionCell(0, new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }) };
         IHexPartitionMap<IHexPartitionCell> partition = new HexPartitionMap<HexPartitionCell>(topology, cells);
 
-        Assert.Throws<IndexOutOfRangeException>(() => _ = partition[new VectorXYInt(x, y)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = partition[new VectorXYInt(x, y)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[-1]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[topology.Count]);
     }

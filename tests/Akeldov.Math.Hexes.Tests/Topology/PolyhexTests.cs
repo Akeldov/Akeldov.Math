@@ -35,9 +35,9 @@ public class PolyhexTests
 
         Assert.Multiple(() =>
         {
-            Assert.Throws<IndexOutOfRangeException>(() => _ = polyhex[0, 3]);
-            Assert.Throws<IndexOutOfRangeException>(() => _ = polyhex[-1, 3]);
-            Assert.Throws<IndexOutOfRangeException>(() => _ = polyhex[new Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt(-1, 3)]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = polyhex[0, 3]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = polyhex[-1, 3]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = polyhex[new Akeldov.Math.Hexes.Vectors.QRS.VectorQRSInt(-1, 3)]);
         });
     }
 
@@ -76,10 +76,10 @@ public class PolyhexTests
 
         Assert.Multiple(() =>
         {
-            Assert.Throws<IndexOutOfRangeException>(() => _ = builder[0, 3]);
-            Assert.Throws<IndexOutOfRangeException>(() => _ = builder[-1, 3]);
-            Assert.Throws<IndexOutOfRangeException>(() => builder[0, 3] = true);
-            Assert.Throws<IndexOutOfRangeException>(() => builder[-1, 3] = true);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = builder[0, 3]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = builder[-1, 3]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => builder[0, 3] = true);
+            Assert.Throws<ArgumentOutOfRangeException>(() => builder[-1, 3] = true);
         });
     }
 

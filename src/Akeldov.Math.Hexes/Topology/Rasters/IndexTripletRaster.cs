@@ -83,7 +83,11 @@ namespace Akeldov.Math.Hexes.Topology
             {
                 if ((uint)index.X >= (uint)Resolution.X ||
                     (uint)index.Y >= (uint)Resolution.Y)
-                    throw new IndexOutOfRangeException($"Raster index out of bounds: {index}");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(index),
+                        index,
+                        $"Raster index {index} is outside the bounds. " +
+                        $"Expected 0 <= X < {Resolution.X} and 0 <= Y < {Resolution.Y}.");
 
                 return _values[index.Y * Resolution.X + index.X];
             }

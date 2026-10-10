@@ -113,8 +113,8 @@ public class IndexPartialSeptupletMapTests
     {
         var topology = new IndexPartialSeptupletMap(new HexMapTopology(3, 2, Layout.OddR));
 
-        Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(3, 0)]);
-        Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(0, 2)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = topology[new VectorXYInt(3, 0)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = topology[new VectorXYInt(0, 2)]);
     }
 
     [Test]

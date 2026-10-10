@@ -339,7 +339,7 @@ public class HexCenterMapTests
     {
         var geometry = new HexCenterMap(new HexMapGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR));
 
-        Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(3, 0)]);
-        Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(0, 2)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = geometry[new VectorXYInt(3, 0)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = geometry[new VectorXYInt(0, 2)]);
     }
 }

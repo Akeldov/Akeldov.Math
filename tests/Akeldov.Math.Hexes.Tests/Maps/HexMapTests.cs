@@ -97,8 +97,8 @@ public class HexMapTests
     {
         var map = new HexMap<int>(new HexMapTopology(3, 2, Layout.OddR));
 
-        Assert.Throws<IndexOutOfRangeException>(() => _ = map[new VectorXYInt(3, 0)]);
-        Assert.Throws<IndexOutOfRangeException>(() => map[new VectorXYInt(0, 2)] = 1);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = map[new VectorXYInt(3, 0)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => map[new VectorXYInt(0, 2)] = 1);
     }
 
     [Test]

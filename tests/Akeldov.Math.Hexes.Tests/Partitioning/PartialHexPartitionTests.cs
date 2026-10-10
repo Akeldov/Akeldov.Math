@@ -66,7 +66,7 @@ public class PartialHexPartitionTests
         Assert.Throws<NotSupportedException>(() => ((IList<VoronoiHexPartitionCell>)map.Cells).Clear());
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[-1]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = partition[partition.Topology.Count]);
-        Assert.Throws<IndexOutOfRangeException>(() => _ = partition[new VectorXYInt(3, 0)]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = partition[new VectorXYInt(3, 0)]);
     }
 
     [TestCase(false)]
