@@ -87,7 +87,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </remarks>
         [return: NotNullIfNotNull("map")]
         public static implicit operator SpatialHexMap<int?>?(PartialVoronoiHexPartitionMap? map)
-            => map is null ? null : new SpatialHexMap<int?>(map.Geometry, map.BackingValues);
+        {
+            return map is null ? null : new SpatialHexMap<int?>(map.Geometry, map.BackingValues);
+        }
 
         /// <summary>
         /// Returns whether the specified hex index was included by the original participation mask.

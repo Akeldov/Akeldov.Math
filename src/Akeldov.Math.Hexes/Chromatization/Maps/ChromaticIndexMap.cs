@@ -67,7 +67,8 @@ namespace Akeldov.Math.Hexes.Chromatization
                     throw new ArgumentOutOfRangeException(
                         nameof(index),
                         index,
-                        $"Hex index must satisfy 0 <= X < {Topology.Resolution.X} and 0 <= Y < {Topology.Resolution.Y}.");
+                        $"Hex index {index} is outside the map bounds. " +
+                        $"Expected 0 <= X < {Topology.Resolution.X} and 0 <= Y < {Topology.Resolution.Y}.");
 
                 return _values[index.Y * Topology.Resolution.X + index.X];
             }

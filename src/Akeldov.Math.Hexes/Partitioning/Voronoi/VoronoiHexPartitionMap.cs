@@ -62,7 +62,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </remarks>
         [return: NotNullIfNotNull("map")]
         public static implicit operator SpatialHexMap<int>?(VoronoiHexPartitionMap? map)
-            => map is null ? null : new SpatialHexMap<int>(map.Geometry, map.BackingValues);
+        {
+            return map is null ? null : new SpatialHexMap<int>(map.Geometry, map.BackingValues);
+        }
 
         /// <summary>
         /// Creates a new mutable caller-owned hex map of cell identifiers copied from this partition map.
