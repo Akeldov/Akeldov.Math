@@ -92,7 +92,7 @@ public class HexMapValueMappingExtensionsTests
         var geometry = new HexMapGeometry(3, 1, new(4f, -2f), 1.5f, Layout.EvenQ);
         ISpatialHexMap<int> source = new SpatialHexMap<int>(geometry, new[] { 2, 4, 8 });
 
-        SpatialHexMap<int> result = source.MapValues((int value) => value * 2);
+        SpatialIntHexMap result = source.MapValues((int value) => value * 2);
 
         Assert.Multiple(() =>
         {
@@ -143,7 +143,7 @@ public class HexMapValueMappingExtensionsTests
             geometry,
             Enumerable.Range(1, geometry.Topology.Count).ToArray());
 
-        SpatialHexMap<int> result = source.MapValues(GetPresentValueSum);
+        SpatialIntHexMap result = source.MapValues(GetPresentValueSum);
 
         Assert.Multiple(() =>
         {

@@ -13,15 +13,18 @@ public class SpatialHexMapOperatorTests
         { typeof(SpatialBoolHexMap), typeof(SpatialFloatHexMap), typeof(SpatialIntHexMap) };
 
     [Test]
-    public void ConcreteMaps_InheritSpatialHexMapAndRetainBackingArrays()
+    public void ConcreteMaps_InheritSpecializedMapsAndRetainBackingArrays()
     {
         HexMapGeometry geometry = Geometry();
         bool[] boolValues = { false, true };
         float[] floatValues = { -2f, 4f };
         int[] intValues = { -3, 5 };
-        SpatialHexMap<bool> boolMap = new SpatialBoolHexMap(geometry, boolValues);
-        SpatialHexMap<float> floatMap = new SpatialFloatHexMap(geometry, floatValues);
-        SpatialHexMap<int> intMap = new SpatialIntHexMap(geometry, intValues);
+        var spatialBoolMap = new SpatialBoolHexMap(geometry, boolValues);
+        var spatialFloatMap = new SpatialFloatHexMap(geometry, floatValues);
+        var spatialIntMap = new SpatialIntHexMap(geometry, intValues);
+        BoolHexMap boolMap = spatialBoolMap;
+        FloatHexMap floatMap = spatialFloatMap;
+        IntHexMap intMap = spatialIntMap;
 
         boolValues[0] = true;
         floatMap[1] = 7f;
@@ -29,7 +32,12 @@ public class SpatialHexMapOperatorTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(boolMap.Geometry, Is.EqualTo(geometry));
+            Assert.That(boolMap, Is.SameAs(spatialBoolMap));
+            Assert.That(floatMap, Is.SameAs(spatialFloatMap));
+            Assert.That(intMap, Is.SameAs(spatialIntMap));
+            Assert.That(((ISpatialHexMap<bool>)boolMap).Geometry, Is.EqualTo(geometry));
+            Assert.That(((ISpatialFloatHexMap)floatMap).Geometry, Is.EqualTo(geometry));
+            Assert.That(((ISpatialIntHexMap)intMap).Geometry, Is.EqualTo(geometry));
             Assert.That(boolMap[0], Is.True);
             Assert.That(floatValues[1], Is.EqualTo(7f));
             Assert.That(intValues[0], Is.EqualTo(-8));

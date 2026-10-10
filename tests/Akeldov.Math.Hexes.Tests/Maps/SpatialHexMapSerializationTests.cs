@@ -87,7 +87,7 @@ public class SpatialHexMapSerializationTests<T>
         using var stream = new MemoryStream(bytes);
         using var reader = new BinaryReader(stream);
 
-        SpatialHexMap<T> map = Read(reader, 6);
+        ISpatialHexMap<T> map = Read(reader, 6);
 
         AssertGeometry(map.Geometry, GoldenGeometry(layout));
         Assert.That(map.Topology, Is.EqualTo(map.Geometry.Topology));
@@ -120,7 +120,7 @@ public class SpatialHexMapSerializationTests<T>
         stream.Position = 0;
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
 
-        SpatialHexMap<T> restored = Read(reader);
+        ISpatialHexMap<T> restored = Read(reader);
 
         Type expectedType = _kind switch
         {
@@ -131,7 +131,7 @@ public class SpatialHexMapSerializationTests<T>
         Assert.That(restored, Is.TypeOf(expectedType));
         AssertGeometry(restored.Geometry, original.Geometry);
         AssertValues(restored, GoldenValues);
-        restored[1] = GoldenValues[0];
+        ((HexMap<T>)restored)[1] = GoldenValues[0];
         Assert.That(original[1], Is.EqualTo(GoldenValues[1]));
     }
 
@@ -373,7 +373,7 @@ public class SpatialHexMapSerializationTests<T>
         Assert.That(stream.Position, Is.Zero);
     }
 
-    private SpatialHexMap<T> CreateMap(HexMapGeometry geometry, T[] values) => (SpatialHexMap<T>)(_kind switch
+    private ISpatialHexMap<T> CreateMap(HexMapGeometry geometry, T[] values) => (ISpatialHexMap<T>)(_kind switch
     {
         1 => (object)new SpatialBoolHexMap(geometry, (bool[])(object)values),
         2 => new SpatialIntHexMap(geometry, (int[])(object)values),
@@ -387,14 +387,14 @@ public class SpatialHexMapSerializationTests<T>
         else writer.Write((ISpatialHexMap<float>)(object)map);
     }
 
-    private SpatialHexMap<T> Read(BinaryReader reader, int maxCellCount = int.MaxValue) => (SpatialHexMap<T>)(_kind switch
+    private ISpatialHexMap<T> Read(BinaryReader reader, int maxCellCount = int.MaxValue) => (ISpatialHexMap<T>)(_kind switch
     {
         1 => (object)reader.ReadSpatialBoolHexMap(maxCellCount),
         2 => reader.ReadSpatialIntHexMap(maxCellCount),
         _ => reader.ReadSpatialFloatHexMap(maxCellCount),
     });
 
-    private void AssertValues(SpatialHexMap<T> map, T[] expected)
+    private void AssertValues(IHexMap<T> map, T[] expected)
     {
         for (int index = 0; index < expected.Length; index++)
         {

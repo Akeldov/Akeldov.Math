@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable integer value for every cell in a spatial hex map.
     /// </summary>
-    public sealed partial class SpatialIntHexMap : SpatialHexMap<int>, ISpatialIntHexMap
+    public sealed partial class SpatialIntHexMap : IntHexMap, ISpatialIntHexMap
     {
         /// <summary>
         /// Initializes an empty map whose cells contain zero.
@@ -16,8 +16,15 @@ namespace Akeldov.Math.Hexes
         /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
         /// </exception>
         public SpatialIntHexMap(HexMapGeometry geometry)
-            : base(geometry)
+            : base(geometry.Topology)
         {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
+
+            Geometry = geometry;
         }
 
         /// <summary>
@@ -44,43 +51,21 @@ namespace Akeldov.Math.Hexes
         /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
         /// </exception>
         public SpatialIntHexMap(HexMapGeometry geometry, int[] values)
-            : base(geometry, values)
+            : base(geometry.Topology, values)
         {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
+
+            Geometry = geometry;
         }
 
-        /// <inheritdoc/>
-        /// <exception cref="InvalidOperationException">Thrown when the map contains no cells.</exception>
-        public int Min
-        {
-            get
-            {
-                if (Topology.Count == 0)
-                    throw new InvalidOperationException("Cannot get the minimum value of an empty map.");
-
-                int min = this[0];
-                for (int index = 1; index < Topology.Count; index++)
-                    min = System.Math.Min(min, this[index]);
-
-                return min;
-            }
-        }
-
-        /// <inheritdoc/>
-        /// <exception cref="InvalidOperationException">Thrown when the map contains no cells.</exception>
-        public int Max
-        {
-            get
-            {
-                if (Topology.Count == 0)
-                    throw new InvalidOperationException("Cannot get the maximum value of an empty map.");
-
-                int max = this[0];
-                for (int index = 1; index < Topology.Count; index++)
-                    max = System.Math.Max(max, this[index]);
-
-                return max;
-            }
-        }
+        /// <summary>
+        /// Gets the spatial geometry of the hex map. Its topology equals <see cref="HexMap{TValue}.Topology"/>.
+        /// </summary>
+        public HexMapGeometry Geometry { get; }
 
         /// <summary>
         /// Creates a map whose cells contain the arithmetic negation of the corresponding cells in the source map.

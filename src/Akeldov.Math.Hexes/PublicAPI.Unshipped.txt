@@ -1,4 +1,11 @@
 #nullable enable
+Akeldov.Math.Hexes.SpatialBoolHexMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.SpatialFloatHexMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+*REMOVED*Akeldov.Math.Hexes.SpatialFloatHexMap.Min.get -> float
+*REMOVED*Akeldov.Math.Hexes.SpatialFloatHexMap.Max.get -> float
+Akeldov.Math.Hexes.SpatialIntHexMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+*REMOVED*Akeldov.Math.Hexes.SpatialIntHexMap.Min.get -> int
+*REMOVED*Akeldov.Math.Hexes.SpatialIntHexMap.Max.get -> int
 static Akeldov.Math.Hexes.SpatialBoolHexMap.operator !=(Akeldov.Math.Hexes.HexMap<bool>! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.SpatialBoolHexMap.operator !=(Akeldov.Math.Hexes.SpatialBoolHexMap! left, Akeldov.Math.Hexes.HexMap<bool>! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!
 static Akeldov.Math.Hexes.SpatialBoolHexMap.operator &(Akeldov.Math.Hexes.HexMap<bool>! left, Akeldov.Math.Hexes.SpatialBoolHexMap! right) -> Akeldov.Math.Hexes.SpatialBoolHexMap!

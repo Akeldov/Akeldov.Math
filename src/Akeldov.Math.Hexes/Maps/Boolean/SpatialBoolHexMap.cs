@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Stores one mutable Boolean value for every cell in a spatial hex map.
     /// </summary>
-    public sealed partial class SpatialBoolHexMap : SpatialHexMap<bool>
+    public sealed partial class SpatialBoolHexMap : BoolHexMap, ISpatialHexMap<bool>
     {
         /// <summary>
         /// Initializes an empty map whose cells contain <see langword="false"/>.
@@ -16,8 +16,15 @@ namespace Akeldov.Math.Hexes
         /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
         /// </exception>
         public SpatialBoolHexMap(HexMapGeometry geometry)
-            : base(geometry)
+            : base(geometry.Topology)
         {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
+
+            Geometry = geometry;
         }
 
         /// <summary>
@@ -44,9 +51,21 @@ namespace Akeldov.Math.Hexes
         /// Thrown when the geometry origin contains a non-finite component or its radius is not finite and positive.
         /// </exception>
         public SpatialBoolHexMap(HexMapGeometry geometry, bool[] values)
-            : base(geometry, values)
+            : base(geometry.Topology, values)
         {
+            if (!geometry.Origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
+
+            if (float.IsNaN(geometry.Radius) || float.IsInfinity(geometry.Radius) || geometry.Radius <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
+
+            Geometry = geometry;
         }
+
+        /// <summary>
+        /// Gets the spatial geometry of the hex map. Its topology equals <see cref="HexMap{TValue}.Topology"/>.
+        /// </summary>
+        public HexMapGeometry Geometry { get; }
 
         /// <summary>
         /// Creates a map whose cells contain the logical negation of the corresponding cells in the source map.
