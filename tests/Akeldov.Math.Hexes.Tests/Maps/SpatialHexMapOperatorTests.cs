@@ -43,7 +43,7 @@ public class SpatialHexMapOperatorTests
     [Test]
     public void NativeOperatorSurface_ExactlyMatchesOrdinaryMaps()
     {
-        MethodInfo[] ordinary = GetOperators(OrdinaryTypes);
+        MethodInfo[] ordinary = GetSpecializedMapOperators(OrdinaryTypes);
         MethodInfo[] spatial = GetNativeSpatialOperators();
 
         Assert.Multiple(() =>
@@ -63,7 +63,7 @@ public class SpatialHexMapOperatorTests
     public void EveryOperator_MatchesOrdinaryCellwiseSemantics()
     {
         HexMapGeometry geometry = Geometry();
-        MethodInfo[] ordinary = GetOperators(OrdinaryTypes);
+        MethodInfo[] ordinary = GetSpecializedMapOperators(OrdinaryTypes);
         Dictionary<string, MethodInfo> spatial = GetNativeSpatialOperators().ToDictionary(Signature);
 
         foreach (MethodInfo ordinaryOperator in ordinary)
@@ -228,12 +228,16 @@ public class SpatialHexMapOperatorTests
         });
     }
 
-    private static MethodInfo[] GetOperators(Type[] types) => types
+    // Mixed HexMap<T> overloads are covered separately by HexMapCrossOperatorTests.
+    private static MethodInfo[] GetSpecializedMapOperators(Type[] types) => types
         .SelectMany(type => type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly))
         .Where(method => method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
+        .Where(method => method.GetParameters().All(parameter =>
+            !parameter.ParameterType.IsGenericType ||
+            parameter.ParameterType.GetGenericTypeDefinition() != typeof(HexMap<>)))
         .ToArray();
 
-    private static MethodInfo[] GetNativeSpatialOperators() => GetOperators(SpatialTypes)
+    private static MethodInfo[] GetNativeSpatialOperators() => GetSpecializedMapOperators(SpatialTypes)
         .Where(method => method.GetParameters().All(parameter => !OrdinaryTypes.Contains(parameter.ParameterType)))
         .ToArray();
 
