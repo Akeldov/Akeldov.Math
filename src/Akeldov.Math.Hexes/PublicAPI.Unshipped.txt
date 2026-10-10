@@ -1,4 +1,5 @@
 #nullable enable
+static Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<int>?(Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<int>?
 static Akeldov.Math.Hexes.SpatialBoolHexMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<bool>?(Akeldov.Math.Hexes.SpatialBoolHexMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<bool>?
 static Akeldov.Math.Hexes.SpatialBoolHexMap.implicit operator Akeldov.Math.Hexes.SpatialBoolHexMap?(Akeldov.Math.Hexes.SpatialHexMap<bool>? map) -> Akeldov.Math.Hexes.SpatialBoolHexMap?
 static Akeldov.Math.Hexes.SpatialFloatHexMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<float>?(Akeldov.Math.Hexes.SpatialFloatHexMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<float>?

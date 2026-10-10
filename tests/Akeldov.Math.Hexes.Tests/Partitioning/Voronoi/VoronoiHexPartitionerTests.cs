@@ -444,6 +444,56 @@ public class VoronoiHexPartitionerTests
         Assert.That(map.Cells[0].HexIndexes, Has.Count.EqualTo(4));
     }
 
+    [TestCase(3, 2, Layout.OddR)]
+    [TestCase(3, 2, Layout.EvenR)]
+    [TestCase(3, 2, Layout.OddQ)]
+    [TestCase(3, 2, Layout.EvenQ)]
+    [TestCase(0, 0, Layout.OddR)]
+    public void ImplicitConversion_ToSpatialHexMap_SharesAssignmentsAndPreservesGeometry(int width, int height, Layout layout)
+    {
+        var geometry = new HexMapGeometry(width, height, new VectorXY(10f, -20f), 2f, layout);
+        var centers = new HexCenterMap(geometry);
+        var sites = new[] { new Site(new PointXY(10f, -20f), 1f) };
+        var map = centers.ToVoronoiHexPartitionMap(sites);
+        var cells = map.Cells;
+        var originalIndexes = cells[0].HexIndexes.ToArray();
+        var originalAssignments = Enumerable.Range(0, map.Topology.Count).Select(index => map[index]).ToArray();
+        var independentCopy = map.ToMutableHexMap();
+
+        SpatialHexMap<int> facade = map;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(facade, Is.Not.SameAs(map));
+            Assert.That(facade.Geometry, Is.EqualTo(geometry));
+            Assert.That(facade.Topology, Is.EqualTo(map.Topology));
+            Assert.That(Enumerable.Range(0, facade.Topology.Count).Select(index => facade[index]),
+                Is.EqualTo(originalAssignments));
+        });
+
+        if (map.Topology.Count == 0)
+            return;
+
+        facade[new VectorXYInt(0, 0)] = 17;
+        Assert.That(map[0], Is.EqualTo(17));
+        map[1] = 23;
+        Assert.That(facade[1], Is.EqualTo(23));
+        Assert.That(map.Cells, Is.SameAs(cells));
+        Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(originalIndexes));
+        Assert.That(Enumerable.Range(0, independentCopy.Topology.Count).Select(index => independentCopy[index]),
+            Is.EqualTo(originalAssignments));
+    }
+
+    [Test]
+    public void ImplicitConversion_ToSpatialHexMap_WhenPartitionIsNull_ReturnsNull()
+    {
+        VoronoiHexPartitionMap? map = null;
+
+        SpatialHexMap<int>? facade = map;
+
+        Assert.That(facade, Is.Null);
+    }
+
     [Test]
     public void ToVoronoiHexPartitionMap_PartitionsHexCenters()
     {
