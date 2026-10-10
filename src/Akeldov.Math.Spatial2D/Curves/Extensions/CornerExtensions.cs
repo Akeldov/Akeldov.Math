@@ -1,4 +1,3 @@
-using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using System;
 
@@ -23,7 +22,11 @@ namespace Akeldov.Math.Spatial2D.Curves
             var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC))
-                throw new ArgumentException("The angle must not be degenerate.");
+            {
+#pragma warning disable MA0015 // The invalid angle is defined by all three points, not a single parameter.
+                throw new ArgumentException($"The points {nameof(firstSidePoint)}, {nameof(vertex)}, and {nameof(secondSidePoint)} must define a non-degenerate angle.");
+#pragma warning restore MA0015
+            }
 
             VectorXY bisector = GetAngleBisectorDirection(firstSidePoint, vertex, secondSidePoint, out _);
             float angle = MathF.Atan2(bisector.Y, bisector.X);
@@ -50,7 +53,11 @@ namespace Akeldov.Math.Spatial2D.Curves
             var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC))
-                throw new ArgumentException("The angle must not be degenerate.");
+            {
+#pragma warning disable MA0015 // The invalid angle is defined by all three points, not a single parameter.
+                throw new ArgumentException($"The points {nameof(firstSidePoint)}, {nameof(vertex)}, and {nameof(secondSidePoint)} must define a non-degenerate angle.");
+#pragma warning restore MA0015
+            }
 
             return CreateFilletArc(firstSidePoint, vertex, secondSidePoint, radius, lineBA, lineBC);
         }
@@ -78,7 +85,11 @@ namespace Akeldov.Math.Spatial2D.Curves
             var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC) || lineBA.Distance(secondSidePoint) <= epsilon)
-                throw new ArgumentException("The angle must not be degenerate.");
+            {
+#pragma warning disable MA0015 // The invalid angle is defined by all three points, not a single parameter.
+                throw new ArgumentException($"The points {nameof(firstSidePoint)}, {nameof(vertex)}, and {nameof(secondSidePoint)} must define a non-degenerate angle.");
+#pragma warning restore MA0015
+            }
 
             return CreateFilletArc(firstSidePoint, vertex, secondSidePoint, radius, lineBA, lineBC);
         }
@@ -157,7 +168,11 @@ namespace Akeldov.Math.Spatial2D.Curves
             var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC))
-                throw new ArgumentException("The angle must not be degenerate.");
+            {
+#pragma warning disable MA0015 // The invalid angle is defined by all three points, not a single parameter.
+                throw new ArgumentException($"The points {nameof(firstSidePoint)}, {nameof(vertex)}, and {nameof(secondSidePoint)} must define a non-degenerate angle.");
+#pragma warning restore MA0015
+            }
 
             PointXY center = GetIncircleCenter(firstSidePoint, vertex, secondSidePoint, radius);
 
@@ -187,7 +202,11 @@ namespace Akeldov.Math.Spatial2D.Curves
             var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC) || lineBA.Distance(secondSidePoint) <= epsilon)
-                throw new ArgumentException("The angle must not be degenerate.");
+            {
+#pragma warning disable MA0015 // The invalid angle is defined by all three points, not a single parameter.
+                throw new ArgumentException($"The points {nameof(firstSidePoint)}, {nameof(vertex)}, and {nameof(secondSidePoint)} must define a non-degenerate angle.");
+#pragma warning restore MA0015
+            }
 
             PointXY center = GetIncircleCenter(firstSidePoint, vertex, secondSidePoint, radius);
 

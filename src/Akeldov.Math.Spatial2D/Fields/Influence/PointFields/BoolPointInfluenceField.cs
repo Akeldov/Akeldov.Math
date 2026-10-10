@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Akeldov.Math.Spatial2D.Fields
 {
@@ -40,7 +41,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         public IReadOnlyList<bool> DistinctValues => _distinctValues;
 
-        private static IReadOnlyList<bool> GetDistinctValues(
+        private static ReadOnlyCollection<bool> GetDistinctValues(
             IReadOnlyList<BoolPointInfluenceSource> influenceSources)
         {
             bool firstValue = influenceSources[0].Value;

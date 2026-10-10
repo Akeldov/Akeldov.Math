@@ -1,12 +1,14 @@
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
     /// <summary>
     /// Describes the dimensions, layout, origin, and size of a rectangular hex map.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct HexMapGeometry : IEquatable<HexMapGeometry>
     {
         /// <summary>

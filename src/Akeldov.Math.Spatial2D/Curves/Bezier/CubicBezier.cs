@@ -112,7 +112,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="segmentCount">The positive number of line segments to create.</param>
         /// <returns>A new mutable list of directed segments owned by the caller.</returns>
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
         public List<ParameterizedSegment> Flatten(int segmentCount)
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
         {
             return BezierPathApproximation.Flatten(GetPointAtUnchecked, segmentCount);
         }
@@ -148,13 +150,15 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public int CountRightwardCrossings(PointXY origin) =>
-            BezierPathApproximation.CountRightwardCrossings(
+        public int CountRightwardCrossings(PointXY origin)
+        {
+            return BezierPathApproximation.CountRightwardCrossings(
                 StartPoint,
                 ControlPointA,
                 ControlPointB,
                 EndPoint,
                 origin);
+        }
 
         /// <summary>
         /// Returns the point at the specified approximate curve length coordinate.
@@ -174,24 +178,31 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="other">The curve to compare with this curve.</param>
         /// <returns><see langword="true"/> if both curves are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(CubicBezier other) =>
-            StartPoint.Equals(other.StartPoint) &&
+        public bool Equals(CubicBezier other)
+        {
+            return StartPoint.Equals(other.StartPoint) &&
             ControlPointA.Equals(other.ControlPointA) &&
             ControlPointB.Equals(other.ControlPointB) &&
             EndPoint.Equals(other.EndPoint);
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(StartPoint, ControlPointA, ControlPointB, EndPoint);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(StartPoint, ControlPointA, ControlPointB, EndPoint);
+        }
 
         /// <inheritdoc/>
-        public override string ToString() =>
-            string.Format(
+        public override string ToString()
+        {
+            return string.Format(
                 CultureInfo.InvariantCulture,
                 "CubicBezier({0}, {1}, {2}, {3})",
                 StartPoint,
                 ControlPointA,
                 ControlPointB,
                 EndPoint);
+        }
 
         /// <summary>
         /// Indicates whether two curves are equal.
@@ -199,7 +210,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first curve.</param>
         /// <param name="right">The second curve.</param>
         /// <returns><see langword="true"/> if the curves are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(CubicBezier left, CubicBezier right) => left.Equals(right);
+        public static bool operator ==(CubicBezier left, CubicBezier right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Indicates whether two curves are different.
@@ -207,7 +221,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first curve.</param>
         /// <param name="right">The second curve.</param>
         /// <returns><see langword="true"/> if the curves are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(CubicBezier left, CubicBezier right) => !(left == right);
+        public static bool operator !=(CubicBezier left, CubicBezier right)
+        {
+            return !(left == right);
+        }
 
         /// <summary>
         /// Translates a curve by a vector.
@@ -215,11 +232,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The curve to translate.</param>
         /// <param name="right">The translation vector.</param>
         /// <returns>The translated curve.</returns>
-        public static CubicBezier operator +(CubicBezier left, VectorXY right) => new CubicBezier(
+        public static CubicBezier operator +(CubicBezier left, VectorXY right)
+        {
+            return new CubicBezier(
             left.StartPoint + right,
             left.ControlPointA + right,
             left.ControlPointB + right,
             left.EndPoint + right);
+        }
 
         /// <summary>
         /// Translates a curve by the negated vector.
@@ -227,11 +247,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The curve to translate.</param>
         /// <param name="right">The translation vector to subtract.</param>
         /// <returns>The translated curve.</returns>
-        public static CubicBezier operator -(CubicBezier left, VectorXY right) => new CubicBezier(
+        public static CubicBezier operator -(CubicBezier left, VectorXY right)
+        {
+            return new CubicBezier(
             left.StartPoint - right,
             left.ControlPointA - right,
             left.ControlPointB - right,
             left.EndPoint - right);
+        }
 
         private PointXY GetPointAtUnchecked(float t)
         {
@@ -267,6 +290,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
                 for (int iteration = 0; iteration < 6; iteration++)
                 {
+#pragma warning disable IDE0047 // Remove unnecessary parentheses
                     float inverse = 1f - parameter;
                     PointXY curvePoint = GetPointAtUnchecked(parameter);
                     VectorXY firstDerivative = 3f * (
@@ -283,6 +307,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
                     float next = parameter - VectorXY.Dot(delta, firstDerivative) / denominator;
                     parameter = MathF.Max(0f, MathF.Min(1f, next));
+#pragma warning restore IDE0047 // Remove unnecessary parentheses
                 }
 
                 PointXY candidate = GetPointAtUnchecked(parameter);

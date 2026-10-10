@@ -206,11 +206,11 @@ namespace Akeldov.Math.Spatial2D.Contours
             }
         }
 
-        private static float GetLength(IReadOnlyList<IContourPath> curves, string parameterName)
+        private static float GetLength(IContourPath[] curves, string parameterName)
         {
             float length = 0f;
 
-            for (int i = 0; i < curves.Count; i++)
+            for (int i = 0; i < curves.Length; i++)
             {
                 float curveLength = curves[i].Length;
                 if (curveLength < 0f || float.IsNaN(curveLength) || float.IsInfinity(curveLength))

@@ -28,6 +28,8 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// A new mutable list owned by the caller. The list must contain at least one source, and
         /// every returned source must come from <see cref="Sources"/>.
         /// </returns>
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
         List<TInfluenceSource> SelectSources(PointXY point);
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
     }
 }

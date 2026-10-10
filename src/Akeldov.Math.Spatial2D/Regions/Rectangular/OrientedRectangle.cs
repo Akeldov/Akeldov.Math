@@ -1,4 +1,3 @@
-using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using System;
 using System.Globalization;
@@ -259,25 +258,35 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// </summary>
         /// <param name="other">The rectangle to compare with this rectangle.</param>
         /// <returns><see langword="true"/> if both rectangles are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(OrientedRectangle other) =>
-            Center.Equals(other.Center) &&
+        public bool Equals(OrientedRectangle other)
+        {
+            return Center.Equals(other.Center) &&
             Size.Equals(other.Size) &&
             Rotation.Equals(other.Rotation);
+        }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is OrientedRectangle other && Equals(other);
+        public override bool Equals(object? obj)
+        {
+            return obj is OrientedRectangle other && Equals(other);
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Center, Size, Rotation);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Center, Size, Rotation);
+        }
 
         /// <inheritdoc/>
-        public override string ToString() =>
-            string.Format(
+        public override string ToString()
+        {
+            return string.Format(
                 CultureInfo.InvariantCulture,
                 "OrientedRectangle(center: {0}, size: {1}, rotation: {2} rad)",
                 Center,
                 Size,
                 Rotation);
+        }
 
         /// <summary>
         /// Indicates whether two oriented rectangles are equal.
@@ -285,7 +294,10 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <param name="left">The first rectangle.</param>
         /// <param name="right">The second rectangle.</param>
         /// <returns><see langword="true"/> if both rectangles are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(OrientedRectangle left, OrientedRectangle right) => left.Equals(right);
+        public static bool operator ==(OrientedRectangle left, OrientedRectangle right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Indicates whether two oriented rectangles are different.
@@ -293,6 +305,9 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <param name="left">The first rectangle.</param>
         /// <param name="right">The second rectangle.</param>
         /// <returns><see langword="true"/> if the rectangles are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(OrientedRectangle left, OrientedRectangle right) => !left.Equals(right);
+        public static bool operator !=(OrientedRectangle left, OrientedRectangle right)
+        {
+            return !left.Equals(right);
+        }
     }
 }
