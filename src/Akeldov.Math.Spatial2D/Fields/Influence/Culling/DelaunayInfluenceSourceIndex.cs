@@ -527,6 +527,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct HullEdge
         {
             public HullEdge(int startIndex, int endIndex, float projectionParameter, float distanceSquared)
@@ -579,10 +580,8 @@ namespace Akeldov.Math.Spatial2D.Fields
                 return true;
             }
 
-            public bool ContainsInCircumcircle(PointXY point)
-            {
-                return SquaredDistance(point, _circumcenter) <= _circumradiusSquared + GeometryConstants.GeometryEpsilon;
-            }
+            public bool ContainsInCircumcircle(PointXY point) =>
+                SquaredDistance(point, _circumcenter) <= _circumradiusSquared + GeometryConstants.GeometryEpsilon;
         }
 
         private readonly struct Edge : IEquatable<Edge>
@@ -605,20 +604,11 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             public int Second { get; }
 
-            public bool Equals(Edge other)
-            {
-                return First == other.First && Second == other.Second;
-            }
+            public bool Equals(Edge other) => First == other.First && Second == other.Second;
 
-            public override bool Equals(object? obj)
-            {
-                return obj is Edge other && Equals(other);
-            }
+            public override bool Equals(object? obj) => obj is Edge other && Equals(other);
 
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(First, Second);
-            }
+            public override int GetHashCode() => HashCode.Combine(First, Second);
         }
 
         private sealed class TriangleSpatialIndex

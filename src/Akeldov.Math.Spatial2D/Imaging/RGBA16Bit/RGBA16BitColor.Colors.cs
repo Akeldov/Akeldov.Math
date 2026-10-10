@@ -5,7 +5,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <summary>
         /// Represents a fully transparent 16-bit RGBA color.
         /// </summary>
-        public static readonly RGBA16BitColor Transparent = default(RGBA16BitColor);
+        public static readonly RGBA16BitColor Transparent;
 
         /// <summary>
         /// Represents an opaque black 16-bit RGBA color.

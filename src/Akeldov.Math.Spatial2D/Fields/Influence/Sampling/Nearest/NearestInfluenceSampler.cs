@@ -5,6 +5,7 @@ using System;
 namespace Akeldov.Math.Spatial2D.Fields
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
+#pragma warning disable IDE0270 // Use coalesce expression
     /// <summary>
     /// Samples the value contributed by the nearest influence source.
     /// </summary>
@@ -38,19 +39,19 @@ namespace Akeldov.Math.Spatial2D.Fields
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            var nearestSource = sources[0];
+            TSource nearestSource = sources[0];
             if (nearestSource is null)
                 throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
-            var nearestInfluence = nearestSource.GetInfluence(point);
+            InfluenceSample<TValue> nearestInfluence = nearestSource.GetInfluence(point);
 
-            for (var i = 1; i < sources.Count; i++)
+            for (int i = 1; i < sources.Count; i++)
             {
-                var candidateSource = sources[i];
+                TSource candidateSource = sources[i];
                 if (candidateSource is null)
                     throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
-                var candidateInfluence = candidateSource.GetInfluence(point);
+                InfluenceSample<TValue> candidateInfluence = candidateSource.GetInfluence(point);
 
                 if (candidateInfluence.Distance < nearestInfluence.Distance)
                     nearestInfluence = candidateInfluence;
@@ -59,4 +60,5 @@ namespace Akeldov.Math.Spatial2D.Fields
             return nearestInfluence.Value;
         }
     }
+#pragma warning restore IDE0270 // Use coalesce expression
 }

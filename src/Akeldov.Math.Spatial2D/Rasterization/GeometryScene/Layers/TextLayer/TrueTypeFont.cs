@@ -6,6 +6,8 @@ using System.Text;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
+#pragma warning disable MA0051 // Method is too long
+#pragma warning disable IDE0008 // Use explicit type
     /// <summary>
     /// Represents a loaded TrueType font with quadratic glyph outlines and horizontal metrics.
     /// </summary>
@@ -101,11 +103,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (!stream.CanRead)
                 throw new ArgumentException("Font stream must be readable.", nameof(stream));
 
-            using (var memoryStream = new MemoryStream())
-            {
-                stream.CopyTo(memoryStream);
-                return Load(memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+            return Load(memoryStream.ToArray());
         }
 
         /// <summary>
@@ -680,10 +680,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return (ushort)((data[offset] << 8) | data[offset + 1]);
         }
 
-        private static short ReadInt16(byte[] data, int offset)
-        {
-            return unchecked((short)ReadUInt16(data, offset));
-        }
+        private static short ReadInt16(byte[] data, int offset) =>
+            unchecked((short)ReadUInt16(data, offset));
 
         private static uint ReadUInt32(byte[] data, int offset)
         {
@@ -694,10 +692,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 data[offset + 3];
         }
 
-        private static float ReadF2Dot14(byte[] data, int offset)
-        {
-            return ReadInt16(data, offset) / 16384f;
-        }
+        private static float ReadF2Dot14(byte[] data, int offset) =>
+            ReadInt16(data, offset) / 16384f;
 
         private static void EnsureRange(byte[] data, int offset, int length)
         {
@@ -705,6 +701,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new FormatException("TrueType font data is truncated or contains invalid offsets.");
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct TableRecord
         {
             public TableRecord(int offset, int length)
@@ -859,89 +856,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             public uint StartGlyphIndex { get; }
         }
     }
-
-    internal sealed class TrueTypeGlyphOutline
-    {
-        public static readonly TrueTypeGlyphOutline Empty = new TrueTypeGlyphOutline(Array.Empty<TrueTypeGlyphContour>());
-
-        public TrueTypeGlyphOutline(IReadOnlyList<TrueTypeGlyphContour> contours)
-        {
-            Contours = contours ?? throw new ArgumentNullException(nameof(contours));
-        }
-
-        public IReadOnlyList<TrueTypeGlyphContour> Contours { get; }
-
-        public TrueTypeGlyphOutline Transform(float a, float b, float c, float d, float dx, float dy)
-        {
-            var contours = new TrueTypeGlyphContour[Contours.Count];
-            for (int i = 0; i < contours.Length; i++)
-            {
-                contours[i] = Contours[i].Transform(a, b, c, d, dx, dy);
-            }
-
-            return new TrueTypeGlyphOutline(contours);
-        }
-    }
-
-    internal sealed class TrueTypeGlyphContour
-    {
-        public TrueTypeGlyphContour(IReadOnlyList<TrueTypeGlyphSegment> segments)
-        {
-            Segments = segments ?? throw new ArgumentNullException(nameof(segments));
-        }
-
-        public IReadOnlyList<TrueTypeGlyphSegment> Segments { get; }
-
-        public TrueTypeGlyphContour Transform(float a, float b, float c, float d, float dx, float dy)
-        {
-            var segments = new TrueTypeGlyphSegment[Segments.Count];
-            for (int i = 0; i < segments.Length; i++)
-            {
-                segments[i] = Segments[i].Transform(a, b, c, d, dx, dy);
-            }
-
-            return new TrueTypeGlyphContour(segments);
-        }
-    }
-
-    internal readonly struct TrueTypeGlyphSegment
-    {
-        private TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind kind, PointXY startPoint, PointXY controlPoint, PointXY endPoint)
-        {
-            Kind = kind;
-            StartPoint = startPoint;
-            ControlPoint = controlPoint;
-            EndPoint = endPoint;
-        }
-
-        public TrueTypeGlyphSegmentKind Kind { get; }
-
-        public PointXY StartPoint { get; }
-
-        public PointXY ControlPoint { get; }
-
-        public PointXY EndPoint { get; }
-
-        public static TrueTypeGlyphSegment Line(PointXY startPoint, PointXY endPoint) =>
-            new TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind.Line, startPoint, startPoint, endPoint);
-
-        public static TrueTypeGlyphSegment Quadratic(PointXY startPoint, PointXY controlPoint, PointXY endPoint) =>
-            new TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind.Quadratic, startPoint, controlPoint, endPoint);
-
-        public TrueTypeGlyphSegment Transform(float a, float b, float c, float d, float dx, float dy)
-        {
-            return new TrueTypeGlyphSegment(
-                Kind,
-                Transform(StartPoint, a, b, c, d, dx, dy),
-                Transform(ControlPoint, a, b, c, d, dx, dy),
-                Transform(EndPoint, a, b, c, d, dx, dy));
-        }
-
-        private static PointXY Transform(PointXY point, float a, float b, float c, float d, float dx, float dy)
-        {
-            return new PointXY(
-                point.X * a + point.Y * b + dx,
-                point.X * c + point.Y * d + dy);
-        }
-    }
+#pragma warning restore IDE0008 // Use explicit type
+#pragma warning restore MA0051 // Method is too long
 }

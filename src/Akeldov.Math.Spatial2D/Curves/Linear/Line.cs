@@ -196,10 +196,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "({0} + t*{1})", ClosestPointToOrigin, Direction);
-        }
+        public override string ToString() => string.Format(CultureInfo.InvariantCulture, "({0} + t*{1})", ClosestPointToOrigin, Direction);
 
         /// <summary>
         /// Indicates whether two lines are equal.
@@ -207,10 +204,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first line.</param>
         /// <param name="right">The second line.</param>
         /// <returns><see langword="true"/> if the lines are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(Line left, Line right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(Line left, Line right) => left.Equals(right);
 
         /// <summary>
         /// Indicates whether two lines are different.
@@ -218,15 +212,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first line.</param>
         /// <param name="right">The second line.</param>
         /// <returns><see langword="true"/> if the lines are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(Line left, Line right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(Line left, Line right) => !(left == right);
 
-        private float GetSignedDistance(PointXY point)
-        {
-            return EquationA * point.X + EquationB * point.Y + EquationC;
-        }
+        private float GetSignedDistance(PointXY point) => EquationA * point.X + EquationB * point.Y + EquationC;
 
         private static void Initialize(
             float equationA,

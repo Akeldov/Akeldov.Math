@@ -3,6 +3,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Contours
 {
@@ -13,6 +14,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// A zero size component collapses the contour to a line segment traversed in both directions. When both
     /// components are zero, the contour represents its center point and has zero length. The default value is the origin point.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct OrientedRectangleContour : IContour, IEquatable<OrientedRectangleContour>
     {
         private readonly PointXY _center;
@@ -211,10 +213,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Creates an oriented rectangular region bounded by this contour.
         /// </summary>
         /// <returns>The oriented rectangular region bounded by this contour.</returns>
-        public OrientedRectangle ToRegion()
-        {
-            return new OrientedRectangle(Center, Size, Rotation);
-        }
+        public OrientedRectangle ToRegion() => new OrientedRectangle(Center, Size, Rotation);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is OrientedRectangleContour other && Equals(other);
@@ -245,19 +244,13 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Converts an oriented rectangular contour to its bounded rectangular region.
         /// </summary>
         /// <param name="contour">The oriented rectangular contour to convert.</param>
-        public static explicit operator OrientedRectangle(OrientedRectangleContour contour)
-        {
-            return contour.Rectangle;
-        }
+        public static explicit operator OrientedRectangle(OrientedRectangleContour contour) => contour.Rectangle;
 
         /// <summary>
         /// Converts an oriented rectangular contour to a parameterized oriented rectangular contour.
         /// </summary>
         /// <param name="contour">The oriented rectangular contour to convert.</param>
-        public static explicit operator ParameterizedOrientedRectangleContour(OrientedRectangleContour contour)
-        {
-            return new ParameterizedOrientedRectangleContour(contour.Center, contour.Size, contour.Rotation);
-        }
+        public static explicit operator ParameterizedOrientedRectangleContour(OrientedRectangleContour contour) => new ParameterizedOrientedRectangleContour(contour.Center, contour.Size, contour.Rotation);
 
         /// <summary>
         /// Indicates whether two oriented rectangular contours are equal.
@@ -327,10 +320,7 @@ namespace Akeldov.Math.Spatial2D.Contours
                 VectorXY.Dot(centered, AxisY));
         }
 
-        private PointXY ToWorldPoint(PointXY localPoint)
-        {
-            return Center + AxisX * localPoint.X + AxisY * localPoint.Y;
-        }
+        private PointXY ToWorldPoint(PointXY localPoint) => Center + AxisX * localPoint.X + AxisY * localPoint.Y;
 
         private static void AddProjectionCandidate(
             PointXY projectedPoint,

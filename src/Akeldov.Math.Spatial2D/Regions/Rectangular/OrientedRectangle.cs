@@ -1,6 +1,7 @@
 using Akeldov.Math.Spatial2D.Contours;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Regions
 {
@@ -11,6 +12,7 @@ namespace Akeldov.Math.Spatial2D.Regions
     /// A zero size component collapses the rectangle to a line segment. When both components are zero,
     /// the rectangle represents its center point. Consequently, the default value represents the coordinate origin.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct OrientedRectangle : IRegion, IEquatable<OrientedRectangle>
     {
         private readonly VectorXY _axisX;
@@ -170,19 +172,13 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// Creates a closed contour representing this rectangle boundary.
         /// </summary>
         /// <returns>The rectangle boundary contour.</returns>
-        public OrientedRectangleContour ToContour()
-        {
-            return new OrientedRectangleContour(Center, Size, Rotation);
-        }
+        public OrientedRectangleContour ToContour() => new OrientedRectangleContour(Center, Size, Rotation);
 
         /// <summary>
         /// Creates a contour-based region representing this rectangle.
         /// </summary>
         /// <returns>The rectangle as a contour-based region.</returns>
-        public ContourBasedRegion ToRegion()
-        {
-            return new ContourBasedRegion(new IContour[] { ToContour() });
-        }
+        public ContourBasedRegion ToRegion() => new ContourBasedRegion(new IContour[] { ToContour() });
 
         private float GetLocalDistanceToBoundary(VectorXY local)
         {
@@ -248,10 +244,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// </summary>
         /// <param name="rectangle">The axis-aligned rectangle to convert.</param>
         /// <returns>The equivalent oriented rectangle.</returns>
-        public static implicit operator OrientedRectangle(Rectangle rectangle)
-        {
-            return new OrientedRectangle(rectangle.Center, rectangle.Size, 0f);
-        }
+        public static implicit operator OrientedRectangle(Rectangle rectangle) => new OrientedRectangle(rectangle.Center, rectangle.Size, 0f);
 
         /// <summary>
         /// Indicates whether this rectangle has the same center, size, and rotation as another rectangle.
@@ -266,16 +259,10 @@ namespace Akeldov.Math.Spatial2D.Regions
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj)
-        {
-            return obj is OrientedRectangle other && Equals(other);
-        }
+        public override bool Equals(object? obj) => obj is OrientedRectangle other && Equals(other);
 
         /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Center, Size, Rotation);
-        }
+        public override int GetHashCode() => HashCode.Combine(Center, Size, Rotation);
 
         /// <inheritdoc/>
         public override string ToString()
@@ -294,10 +281,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <param name="left">The first rectangle.</param>
         /// <param name="right">The second rectangle.</param>
         /// <returns><see langword="true"/> if both rectangles are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(OrientedRectangle left, OrientedRectangle right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(OrientedRectangle left, OrientedRectangle right) => left.Equals(right);
 
         /// <summary>
         /// Indicates whether two oriented rectangles are different.
@@ -305,9 +289,6 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// <param name="left">The first rectangle.</param>
         /// <param name="right">The second rectangle.</param>
         /// <returns><see langword="true"/> if the rectangles are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(OrientedRectangle left, OrientedRectangle right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(OrientedRectangle left, OrientedRectangle right) => !left.Equals(right);
     }
 }
