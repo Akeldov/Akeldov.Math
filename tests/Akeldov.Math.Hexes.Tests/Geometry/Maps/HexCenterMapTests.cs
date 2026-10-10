@@ -264,21 +264,74 @@ public class HexCenterMapTests
     }
 
     [Test]
-    public void HexCenterMap_ImplementsReadOnlyISpatialHexMap()
+    public void HexCenterMap_InheritsHexMapAndImplementsSpatialContract()
     {
         var source = new HexCenterMap(new HexMapGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR));
         ISpatialHexMap<PointXY> map = source;
+        HexMap<PointXY> mutableMap = source;
 
         PointXY center = source[5];
 
-        Assert.That(source, Is.Not.InstanceOf<HexMap<PointXY>>());
-        Assert.That(typeof(HexCenterMap).GetProperty("Item", new[] { typeof(VectorXYInt) })!.SetMethod, Is.Null);
-        Assert.That(typeof(HexCenterMap).GetProperty("Item", new[] { typeof(int) })!.SetMethod, Is.Null);
+        Assert.That(mutableMap, Is.SameAs(source));
         Assert.That(map.Topology.Resolution, Is.EqualTo(new VectorXYInt(3, 2)));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(map.Geometry, Is.EqualTo(source.Geometry));
         Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(center));
         Assert.That(map[5], Is.EqualTo(center));
+
+        var first = new PointXY(17f, -23f);
+        source[new VectorXYInt(0, 0)] = first;
+        Assert.That(mutableMap[0], Is.EqualTo(first));
+        Assert.That(map[0], Is.EqualTo(first));
+        var last = new PointXY(-31f, 47f);
+        mutableMap[5] = last;
+        Assert.That(source[new VectorXYInt(2, 1)], Is.EqualTo(last));
+        Assert.That(map[5], Is.EqualTo(last));
+        Assert.That(source.Geometry, Is.EqualTo(new HexMapGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR)));
+    }
+
+    [TestCase(3, 2, Layout.OddR)]
+    [TestCase(3, 2, Layout.EvenR)]
+    [TestCase(3, 2, Layout.OddQ)]
+    [TestCase(3, 2, Layout.EvenQ)]
+    [TestCase(0, 0, Layout.OddR)]
+    public void ImplicitConversion_ToSpatialHexMap_SharesPointsAndPreservesGeometry(int width, int height, Layout layout)
+    {
+        var geometry = new HexMapGeometry(width, height, new VectorXY(10f, -20f), 2f, layout);
+        var centers = new HexCenterMap(geometry);
+        var initialPoints = Enumerable.Range(0, centers.Topology.Count).Select(index => centers[index]).ToArray();
+
+        SpatialHexMap<PointXY> facade = centers;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(facade, Is.Not.SameAs(centers));
+            Assert.That(facade.Geometry, Is.EqualTo(geometry));
+            Assert.That(facade.Topology, Is.EqualTo(centers.Topology));
+            Assert.That(Enumerable.Range(0, facade.Topology.Count).Select(index => facade[index]), Is.EqualTo(initialPoints));
+        });
+
+        if (centers.Topology.Count == 0)
+            return;
+
+        var first = new PointXY(17f, -23f);
+        facade[new VectorXYInt(0, 0)] = first;
+        Assert.That(centers[0], Is.EqualTo(first));
+        var second = new PointXY(-31f, 47f);
+        centers[1] = second;
+        Assert.That(facade[new VectorXYInt(1, 0)], Is.EqualTo(second));
+        Assert.That(centers.Geometry, Is.EqualTo(geometry));
+        Assert.That(facade.Geometry, Is.EqualTo(geometry));
+    }
+
+    [Test]
+    public void ImplicitConversion_ToSpatialHexMap_WhenCenterMapIsNull_ReturnsNull()
+    {
+        HexCenterMap? centers = null;
+
+        SpatialHexMap<PointXY>? facade = centers;
+
+        Assert.That(facade, Is.Null);
     }
 
     [Test]

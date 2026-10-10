@@ -1,4 +1,8 @@
 #nullable enable
+*REMOVED*Akeldov.Math.Hexes.Geometry.HexCenterMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
+*REMOVED*Akeldov.Math.Hexes.Geometry.HexCenterMap.this[int index].get -> Akeldov.Math.Spatial2D.PointXY
+*REMOVED*Akeldov.Math.Hexes.Geometry.HexCenterMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Spatial2D.PointXY
+static Akeldov.Math.Hexes.Geometry.HexCenterMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<Akeldov.Math.Spatial2D.PointXY>?(Akeldov.Math.Hexes.Geometry.HexCenterMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<Akeldov.Math.Spatial2D.PointXY>?
 static Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<int?>?(Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<int?>?
 static Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<int>?(Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<int>?
 static Akeldov.Math.Hexes.SpatialBoolHexMap.implicit operator Akeldov.Math.Hexes.SpatialHexMap<bool>?(Akeldov.Math.Hexes.SpatialBoolHexMap? map) -> Akeldov.Math.Hexes.SpatialHexMap<bool>?

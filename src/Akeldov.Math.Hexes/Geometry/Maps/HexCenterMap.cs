@@ -1,6 +1,6 @@
 using Akeldov.Math.Spatial2D;
 using System;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
@@ -8,12 +8,13 @@ namespace Akeldov.Math.Hexes.Geometry
     /// Precomputes the world-space center of every hex in a map geometry.
     /// </summary>
     /// <remarks>
-    /// Centers are derived from <see cref="Geometry"/> and cannot be replaced through this map.
+    /// Initial centers are derived from <see cref="Geometry"/>.
+    /// Inherited indexer setters and shared spatial facades change only the stored points;
+    /// the geometry remains unchanged. Callers must keep points consistent with the geometry
+    /// when using geometric algorithms.
     /// </remarks>
-    public sealed class HexCenterMap : ISpatialHexMap<PointXY>
+    public sealed class HexCenterMap : HexMap<PointXY>, ISpatialHexMap<PointXY>
     {
-        private readonly PointXY[] _values;
-
         /// <summary>
         /// Initializes a new instance with the specified topology and unit hex radius.
         /// </summary>
@@ -28,6 +29,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// </summary>
         /// <param name="geometry">The topology, origin, and cell size used to compute the centers.</param>
         public HexCenterMap(HexMapGeometry geometry)
+            : base(geometry.Topology)
         {
             if (!geometry.Origin.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry origin components must be finite.");
@@ -36,7 +38,7 @@ namespace Akeldov.Math.Hexes.Geometry
                 throw new ArgumentOutOfRangeException(nameof(geometry), geometry, "Hex map geometry radius must be finite and positive.");
 
             Geometry = geometry;
-            _values = CreateValues(geometry);
+            FillValues(BackingValues, geometry);
         }
 
         /// <summary>
@@ -45,41 +47,23 @@ namespace Akeldov.Math.Hexes.Geometry
         public HexMapGeometry Geometry { get; }
 
         /// <summary>
-        /// Gets the layout and resolution of the center map.
+        /// Creates a spatial facade sharing this center map's geometry and point array.
         /// </summary>
-        public HexMapTopology Topology => Geometry.Topology;
+        /// <param name="map">The source center map, or <see langword="null"/>.</param>
+        /// <returns>
+        /// A new mutable spatial facade sharing the source map's points, or <see langword="null"/>
+        /// if <paramref name="map"/> is null. Changes through either map are visible through the other.
+        /// </returns>
+        /// <remarks>
+        /// The conversion takes constant time and allocates only the facade object. Points are not copied.
+        /// Changes through the facade do not update the center map's geometry.
+        /// </remarks>
+        [return: NotNullIfNotNull("map")]
+        public static implicit operator SpatialHexMap<PointXY>?(HexCenterMap? map)
+            => map is null ? null : new SpatialHexMap<PointXY>(map.Geometry, map.BackingValues);
 
-        /// <summary>
-        /// Gets the world-space center at the specified hex coordinates.
-        /// </summary>
-        /// <param name="index">The X/Y coordinates of the hex cell.</param>
-        public PointXY this[VectorXYInt index]
+        private static void FillValues(PointXY[] values, HexMapGeometry geometry)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (index.X < 0 || index.X >= Topology.Resolution.X ||
-                    index.Y < 0 || index.Y >= Topology.Resolution.Y)
-                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
-
-                return _values[index.Y * Topology.Resolution.X + index.X];
-            }
-        }
-
-        /// <summary>
-        /// Gets the world-space center at the specified flat index.
-        /// </summary>
-        /// <param name="index">The zero-based row-major index.</param>
-        public PointXY this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _values[index];
-        }
-
-        private static PointXY[] CreateValues(HexMapGeometry geometry)
-        {
-            var values = new PointXY[geometry.Topology.Count];
-
             switch (geometry.Topology.Layout)
             {
                 case Layout.OddR:
@@ -98,7 +82,6 @@ namespace Akeldov.Math.Hexes.Geometry
                     throw new ArgumentOutOfRangeException(nameof(geometry));
             }
 
-            return values;
         }
 
         private static void FillOddRCenters(PointXY[] values, HexMapGeometry geometry)
