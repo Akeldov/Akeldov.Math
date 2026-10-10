@@ -67,7 +67,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     if (!polyhexGeometry[q, r])
                         continue;
 
-                    VectorXY[] points = VectorXYExtensions.GetHexVertices(q, r, hexRadius, layout);
+                    VectorXY[] points = HexVerticesHelpers.GetHexVertices(q, r, hexRadius, layout);
 
                     bool qminClause = q < 1;
                     bool rminClause = r < 1;

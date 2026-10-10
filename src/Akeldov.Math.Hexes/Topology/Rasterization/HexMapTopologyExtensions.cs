@@ -10,9 +10,9 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides rasterization extension methods for hex map topology values.
+    /// Provides extension methods for hex map topology values.
     /// </summary>
-    public static class HexMapTopologyExtensions
+    public static partial class HexMapTopologyExtensions
     {
         /// <summary>
         /// Rasterizes unique hex edge segments for the whole topology with the zero hex center at the coordinate origin.

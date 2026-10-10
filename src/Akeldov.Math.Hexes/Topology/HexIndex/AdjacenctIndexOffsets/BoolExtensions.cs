@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
@@ -37,10 +36,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="layout">The offset-coordinate layout.</param>
         /// <returns>A new, mutable array owned by the caller.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXYInt[] GetRelativeOffsets(this bool axisIsEven, Layout layout)
-        {
-            return (VectorXYInt[])axisIsEven.GetSharedRelativeOffsets(layout).Clone();
-        }
+        public static VectorXYInt[] GetRelativeOffsets(this bool axisIsEven, Layout layout) =>
+            (VectorXYInt[])axisIsEven.GetSharedRelativeOffsets(layout).Clone();
 
         /// <summary>
         /// Gets library-owned mutable relative offsets for the six adjacent hexes.
@@ -73,10 +70,8 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="hexEdge">The edge shared with the neighbor.</param>
         /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXYInt GetRelativeOffset(this bool axisIsEven, HexEdge hexEdge, Layout layout)
-        {
-            return axisIsEven.GetSharedRelativeOffsets(layout)[(int)hexEdge];
-        }
+        public static VectorXYInt GetRelativeOffset(this bool axisIsEven, HexEdge hexEdge, Layout layout) =>
+            axisIsEven.GetSharedRelativeOffsets(layout)[(int)hexEdge];
 
         /// <summary>
         /// Gets the relative offset to the neighbor across the edge with the specified ordinal.
@@ -85,9 +80,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="hexEdge">The zero-based edge ordinal.</param>
         /// <param name="layout">The offset-coordinate layout.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXYInt GetRelativeOffset(this bool axisIsEven, int hexEdge, Layout layout)
-        {
-            return axisIsEven.GetSharedRelativeOffsets(layout)[hexEdge];
-        }
+        public static VectorXYInt GetRelativeOffset(this bool axisIsEven, int hexEdge, Layout layout) =>
+            axisIsEven.GetSharedRelativeOffsets(layout)[hexEdge];
     }
 }

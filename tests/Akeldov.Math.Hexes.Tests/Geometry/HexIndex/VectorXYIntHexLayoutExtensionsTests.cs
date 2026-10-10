@@ -75,7 +75,7 @@ public class VectorXYIntHexLayoutExtensionsTests
     public void GetHexCenter_WithoutOrigin_MatchesQrsPathForEveryLayout(Layout layout, int q, int r)
     {
         float radius = 2f.ConvertHexApothemToRadius();
-        VectorXY expected = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(q, r, radius, layout);
+        VectorXY expected = HexVerticesHelpers.GetHexCenter(q, r, radius, layout);
 
         VectorXY actual = new VectorQRSInt(q, r)
             .ToXYIndex(layout)

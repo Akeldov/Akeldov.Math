@@ -1,4 +1,11 @@
 #nullable enable
+Akeldov.Math.Hexes.Geometry.HexVerticesHelpers
+*REMOVED*static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexCenter(int q, int r, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+*REMOVED*static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(int q, int r, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY[]!
+static Akeldov.Math.Hexes.Geometry.HexVerticesHelpers.GetHexCenter(int q, int r, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY
+static Akeldov.Math.Hexes.Geometry.HexVerticesHelpers.GetHexVertices(int q, int r, float hexRadius, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Spatial2D.VectorXY[]!
+*REMOVED*static Akeldov.Math.Hexes.Geometry.HexMapGeometryExtensions.GetBoundingBox(this Akeldov.Math.Hexes.HexMapTopology topology, Akeldov.Math.Spatial2D.VectorXY origin, float radius) -> Akeldov.Math.Spatial2D.Regions.Rectangle
+static Akeldov.Math.Hexes.HexMapTopologyExtensions.GetBoundingBox(this Akeldov.Math.Hexes.HexMapTopology topology, Akeldov.Math.Spatial2D.VectorXY origin, float radius) -> Akeldov.Math.Spatial2D.Regions.Rectangle
 Akeldov.Math.Hexes.Geometry.PointXYExtensions
 *REMOVED*static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetClosestHexVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin, Akeldov.Math.Hexes.Layout layout) -> (Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Topology.HexVertex hexVertex)
 *REMOVED*static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetClosestVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexCenter, Akeldov.Math.Hexes.Layout layout) -> int

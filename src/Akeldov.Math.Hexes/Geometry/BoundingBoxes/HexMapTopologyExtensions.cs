@@ -1,14 +1,15 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Akeldov.Math.Hexes.Geometry
+namespace Akeldov.Math.Hexes
 {
     /// <summary>
-    /// Provides bounding-box extension methods for hex map geometry and topology.
+    /// Provides bounding-box extension methods for hex map topology.
     /// </summary>
-    public static partial class HexMapGeometryExtensions
+    public static partial class HexMapTopologyExtensions
     {
         /// <summary>
         /// Returns the axis-aligned bounding box of the whole hex map as a rectangle.
@@ -23,9 +24,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// when <paramref name="topology"/> has empty dimensions, or when its layout is unsupported.
         /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Rectangle GetBoundingBox(this HexMapTopology topology, VectorXY origin, float radius)
-        {
-            return new HexMapGeometry(topology, origin, radius).GetBoundingBox();
-        }
+        public static Rectangle GetBoundingBox(this HexMapTopology topology, VectorXY origin, float radius) =>
+            new HexMapGeometry(topology, origin, radius).GetBoundingBox();
     }
 }
