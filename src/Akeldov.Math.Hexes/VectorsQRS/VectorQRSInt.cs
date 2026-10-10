@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
     /// Represents an integer cube-coordinate vector stored by its independent Q and R components.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct VectorQRSInt : IEquatable<VectorQRSInt>
     {
         /// <summary>
@@ -71,20 +73,32 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         public static VectorQRSInt One => new VectorQRSInt(1, 1);
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is VectorQRSInt other && Equals(other);
+        public override bool Equals(object? obj)
+        {
+            return obj is VectorQRSInt other && Equals(other);
+        }
 
         /// <summary>
         /// Determines whether this vector and another vector have equal Q and R components.
         /// </summary>
         /// <param name="other">The vector to compare with this vector.</param>
         /// <returns><see langword="true"/> when both independent components are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(VectorQRSInt other) => Q == other.Q && R == other.R;
+        public bool Equals(VectorQRSInt other)
+        {
+            return Q == other.Q && R == other.R;
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Q, R);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Q, R);
+        }
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Q}, {R})";
+        public override string ToString()
+        {
+            return $"({Q}, {R})";
+        }
 
         /// <summary>
         /// Deconstructs the vector into its independent Q and R components.
@@ -102,46 +116,60 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         /// </summary>
         /// <param name="left">The first vector.</param>
         /// <param name="right">The second vector.</param>
-        public static bool operator ==(VectorQRSInt left, VectorQRSInt right) => left.Equals(right);
+        public static bool operator ==(VectorQRSInt left, VectorQRSInt right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Determines whether two vectors differ in either independent component.
         /// </summary>
         /// <param name="left">The first vector.</param>
         /// <param name="right">The second vector.</param>
-        public static bool operator !=(VectorQRSInt left, VectorQRSInt right) => !left.Equals(right);
+        public static bool operator !=(VectorQRSInt left, VectorQRSInt right)
+        {
+            return !left.Equals(right);
+        }
 
         /// <summary>
         /// Adds two integer QRS vectors component-wise using checked arithmetic.
         /// </summary>
         /// <param name="left">The first vector.</param>
         /// <param name="right">The vector to add.</param>
-        public static VectorQRSInt operator +(VectorQRSInt left, VectorQRSInt right) =>
-            new VectorQRSInt(checked(left.Q + right.Q), checked(left.R + right.R));
+        public static VectorQRSInt operator +(VectorQRSInt left, VectorQRSInt right)
+        {
+            return new VectorQRSInt(checked(left.Q + right.Q), checked(left.R + right.R));
+        }
 
         /// <summary>
         /// Subtracts one integer QRS vector from another using checked arithmetic.
         /// </summary>
         /// <param name="left">The vector to subtract from.</param>
         /// <param name="right">The vector to subtract.</param>
-        public static VectorQRSInt operator -(VectorQRSInt left, VectorQRSInt right) =>
-            new VectorQRSInt(checked(left.Q - right.Q), checked(left.R - right.R));
+        public static VectorQRSInt operator -(VectorQRSInt left, VectorQRSInt right)
+        {
+            return new VectorQRSInt(checked(left.Q - right.Q), checked(left.R - right.R));
+        }
 
         /// <summary>
         /// Multiplies every component of an integer QRS vector by a scalar using checked arithmetic.
         /// </summary>
         /// <param name="vector">The vector to scale.</param>
         /// <param name="scalar">The integer scale factor.</param>
-        public static VectorQRSInt operator *(VectorQRSInt vector, int scalar) =>
-            new VectorQRSInt(checked(vector.Q * scalar), checked(vector.R * scalar));
+        public static VectorQRSInt operator *(VectorQRSInt vector, int scalar)
+        {
+            return new VectorQRSInt(checked(vector.Q * scalar), checked(vector.R * scalar));
+        }
 
         /// <summary>
         /// Multiplies every component of an integer QRS vector by a scalar using checked arithmetic.
         /// </summary>
         /// <param name="scalar">The integer scale factor.</param>
         /// <param name="vector">The vector to scale.</param>
-        public static VectorQRSInt operator *(int scalar, VectorQRSInt vector) =>
-            new VectorQRSInt(checked(vector.Q * scalar), checked(vector.R * scalar));
+        public static VectorQRSInt operator *(int scalar, VectorQRSInt vector)
+        {
+            return new VectorQRSInt(checked(vector.Q * scalar), checked(vector.R * scalar));
+        }
 
         /// <summary>
         /// Divides the independent components of an integer QRS vector using integer division.

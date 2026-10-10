@@ -1,5 +1,6 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using System;
+using System.Reflection;
 
 namespace Akeldov.Math.Hexes.Topology
 {
@@ -74,7 +75,9 @@ namespace Akeldov.Math.Hexes.Topology
             {
                 if ((uint)qIndex >= (uint)QRSResolution.Q ||
                     (uint)rIndex >= (uint)QRSResolution.R)
-                    throw new IndexOutOfRangeException($"Polyhex builder index out of bounds: ({qIndex}, {rIndex})");
+                    throw new ArgumentOutOfRangeException(
+                    $"Polyhex index ({qIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {rIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)}) is outside the bounds. " +
+                        $"Expected 0 <= Q < {QRSResolution.Q.ToString(System.Globalization.CultureInfo.InvariantCulture)} and 0 <= R < {QRSResolution.R.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
 
                 return _cells[GetFlatIndex(qIndex, rIndex)];
             }
@@ -82,7 +85,9 @@ namespace Akeldov.Math.Hexes.Topology
             {
                 if ((uint)qIndex >= (uint)QRSResolution.Q ||
                     (uint)rIndex >= (uint)QRSResolution.R)
-                    throw new IndexOutOfRangeException($"Polyhex builder index out of bounds: ({qIndex}, {rIndex})");
+                    throw new ArgumentOutOfRangeException(
+                        $"Polyhex index ({qIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {rIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)}) is outside the bounds. " +
+                        $"Expected 0 <= Q < {QRSResolution.Q.ToString(System.Globalization.CultureInfo.InvariantCulture)} and 0 <= R < {QRSResolution.R.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
 
                 _cells[GetFlatIndex(qIndex, rIndex)] = value;
             }
@@ -96,6 +101,9 @@ namespace Akeldov.Math.Hexes.Topology
             return new Polyhex(QRSResolution.Q, QRSResolution.R, _cells);
         }
 
-        private int GetFlatIndex(int q, int r) => q * QRSResolution.R + r;
+        private int GetFlatIndex(int q, int r)
+        {
+            return q * QRSResolution.R + r;
+        }
     }
 }

@@ -1,5 +1,6 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using System;
+using System.Reflection;
 using System.Text;
 
 namespace Akeldov.Math.Hexes.Topology
@@ -101,7 +102,7 @@ namespace Akeldov.Math.Hexes.Topology
             var hash = new HashCode();
             hash.Add(QRSResolution);
 
-            var hexCount = 0;
+            int hexCount = 0;
             for (int i = 0; i < cells.Length; i++)
             {
                 bool value = cells[i];
@@ -132,7 +133,18 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="index">The integer QRS index to test.</param>
         public bool this[VectorQRSInt index]
         {
-            get => this[index.Q, index.R];
+            get
+            {
+                if ((uint)index.Q >= (uint)QRSResolution.Q ||
+                    (uint)index.R >= (uint)QRSResolution.R)
+                    throw new ArgumentOutOfRangeException(
+                        nameof(index),
+                        index,
+                        $"Polyhex index {index} is outside the bounds. " +
+                        $"Expected 0 <= Q < {QRSResolution.Q.ToString(System.Globalization.CultureInfo.InvariantCulture)} and 0 <= R < {QRSResolution.R.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
+
+                return _cells[GetFlatIndex(index.Q, index.R)];
+            }
         }
 
         /// <summary>
@@ -146,7 +158,9 @@ namespace Akeldov.Math.Hexes.Topology
             {
                 if ((uint)QIndex >= (uint)QRSResolution.Q ||
                     (uint)RIndex >= (uint)QRSResolution.R)
-                    throw new IndexOutOfRangeException($"Polyhex index out of bounds: ({QIndex}, {RIndex})");
+                    throw new ArgumentOutOfRangeException(
+                        $"Polyhex index ({QIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {RIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)}) is outside the bounds. " +
+                        $"Expected 0 <= Q < {QRSResolution.Q.ToString(System.Globalization.CultureInfo.InvariantCulture)} and 0 <= R < {QRSResolution.R.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
 
                 return _cells[GetFlatIndex(QIndex, RIndex)];
             }
@@ -188,10 +202,16 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => _hash;
+        public override int GetHashCode()
+        {
+            return _hash;
+        }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is Polyhex other && Equals(other);
+        public override bool Equals(object? obj)
+        {
+            return obj is Polyhex other && Equals(other);
+        }
 
         /// <summary>
         /// Determines whether another polyhex has the same resolution and cell mask.
@@ -235,7 +255,10 @@ namespace Akeldov.Math.Hexes.Topology
         /// Creates a polyhex by copying a Boolean Q/R mask.
         /// </summary>
         /// <param name="boolMask">A mask in which <see langword="true"/> cells belong to the polyhex.</param>
-        public static implicit operator Polyhex(bool[,] boolMask) => new Polyhex(boolMask);
+        public static implicit operator Polyhex(bool[,] boolMask)
+        {
+            return new Polyhex(boolMask);
+        }
 
         /// <summary>
         /// Determines whether two polyhexes have the same resolution and cell mask.
@@ -258,8 +281,14 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="left">The first polyhex to compare.</param>
         /// <param name="right">The second polyhex to compare.</param>
-        public static bool operator !=(Polyhex? left, Polyhex? right) => !(left == right);
+        public static bool operator !=(Polyhex? left, Polyhex? right)
+        {
+            return !(left == right);
+        }
 
-        private int GetFlatIndex(int q, int r) => q * QRSResolution.R + r;
+        private int GetFlatIndex(int q, int r)
+        {
+            return q * QRSResolution.R + r;
+        }
     }
 }

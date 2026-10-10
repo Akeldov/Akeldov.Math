@@ -80,17 +80,17 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets whether the position for chromatic index zero is present.
         /// </summary>
-        public bool HasIndex0 => (Presence & ChromaticTripletPresenceFlags.Index0) != 0;
+        public bool HasIndex0 => (Presence & ChromaticTripletPresenceFlags.Index0) != ChromaticTripletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether the position for chromatic index one is present.
         /// </summary>
-        public bool HasIndex1 => (Presence & ChromaticTripletPresenceFlags.Index1) != 0;
+        public bool HasIndex1 => (Presence & ChromaticTripletPresenceFlags.Index1) != ChromaticTripletPresenceFlags.None;
 
         /// <summary>
         /// Gets whether the position for chromatic index two is present.
         /// </summary>
-        public bool HasIndex2 => (Presence & ChromaticTripletPresenceFlags.Index2) != 0;
+        public bool HasIndex2 => (Presence & ChromaticTripletPresenceFlags.Index2) != ChromaticTripletPresenceFlags.None;
 
         /// <summary>
         /// Returns the values without presence information.

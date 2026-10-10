@@ -1,4 +1,8 @@
 #nullable enable
+*REMOVED*Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions
+*REMOVED*static Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions.GetChromaticTriplet(this Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> vertexHexIndexTriplet, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<byte>
+Akeldov.Math.Hexes.Chromatization.VectorXYIntTripletExtensions
+static Akeldov.Math.Hexes.Chromatization.VectorXYIntTripletExtensions.GetChromaticTriplet(this Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> vertexHexIndexTriplet, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<byte>
 *REMOVED*Akeldov.Math.Hexes.Geometry.HexCenterMap.Topology.get -> Akeldov.Math.Hexes.HexMapTopology
 *REMOVED*Akeldov.Math.Hexes.Geometry.HexCenterMap.this[int index].get -> Akeldov.Math.Spatial2D.PointXY
 *REMOVED*Akeldov.Math.Hexes.Geometry.HexCenterMap.this[Akeldov.Math.Spatial2D.VectorXYInt index].get -> Akeldov.Math.Spatial2D.PointXY

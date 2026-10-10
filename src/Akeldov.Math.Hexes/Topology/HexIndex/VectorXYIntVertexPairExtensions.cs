@@ -14,9 +14,9 @@ namespace Akeldov.Math.Hexes.Topology
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Pair<VectorXYInt> GetAdjacentPair(this VectorXYInt hexIndex, HexVertex hexVertex, Layout layout)
         {
-            var (leftEdge, rightEdge) = hexVertex.GetAdjacentEdges(layout);
-            var leftIndex = hexIndex.GetAdjacent(leftEdge, layout);
-            var rightIndex = hexIndex.GetAdjacent(rightEdge, layout);
+            (HexEdge leftEdge, HexEdge rightEdge) = hexVertex.GetAdjacentEdges(layout);
+            VectorXYInt leftIndex = hexIndex.GetAdjacent(leftEdge, layout);
+            VectorXYInt rightIndex = hexIndex.GetAdjacent(rightEdge, layout);
             return new Pair<VectorXYInt>(leftIndex, rightIndex);
         }
     }

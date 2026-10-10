@@ -66,12 +66,12 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets whether the left position is present.
         /// </summary>
-        public bool HasLeft => (Presence & PairPresenceFlags.Left) != 0;
+        public bool HasLeft => (Presence & PairPresenceFlags.Left) != PairPresenceFlags.None;
 
         /// <summary>
         /// Gets whether the right position is present.
         /// </summary>
-        public bool HasRight => (Presence & PairPresenceFlags.Right) != 0;
+        public bool HasRight => (Presence & PairPresenceFlags.Right) != PairPresenceFlags.None;
 
         /// <summary>
         /// Returns the stored values as a complete pair, discarding presence information.

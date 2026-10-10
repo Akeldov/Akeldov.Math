@@ -474,7 +474,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 coordinate <= 1f + GeometryConstants.GeometryEpsilon;
         }
 
-        private static List<IContour> OrderClosedContours(IReadOnlyList<IContourPath> curves)
+        private static List<IContour> OrderClosedContours(List<IContourPath> curves)
         {
             var used = new bool[curves.Count];
             var contours = new List<IContour>();

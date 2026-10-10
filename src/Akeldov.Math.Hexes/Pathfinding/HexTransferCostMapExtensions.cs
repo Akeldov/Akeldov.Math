@@ -208,9 +208,10 @@ namespace Akeldov.Math.Hexes.Pathfinding
                 return result;
             }
 
-            private static bool HasHigherPriority(QueueEntry left, QueueEntry right) =>
-                left.Cost < right.Cost ||
-                left.Cost == right.Cost && left.Order < right.Order;
+            private static bool HasHigherPriority(QueueEntry left, QueueEntry right)
+            {
+                return left.Cost < right.Cost || left.Cost == right.Cost && left.Order < right.Order;
+            }
         }
     }
 }

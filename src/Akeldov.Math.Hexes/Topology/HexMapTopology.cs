@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Akeldov.Math.Spatial2D;
 
 namespace Akeldov.Math.Hexes
@@ -7,6 +8,7 @@ namespace Akeldov.Math.Hexes
     /// <summary>
     /// Describes the dimensions and layout of a rectangular hex map.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct HexMapTopology : IEquatable<HexMapTopology>
     {
         /// <summary>
@@ -97,24 +99,33 @@ namespace Akeldov.Math.Hexes
         /// </summary>
         /// <param name="other">The topology to compare with this topology.</param>
         /// <returns><see langword="true"/> if both topologies are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(HexMapTopology other) =>
-            Resolution == other.Resolution &&
-            Layout == other.Layout;
+        public bool Equals(HexMapTopology other)
+        {
+            return Resolution == other.Resolution && Layout == other.Layout;
+        }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is HexMapTopology other && Equals(other);
+        public override bool Equals(object? obj)
+        {
+            return obj is HexMapTopology other && Equals(other);
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Resolution, Layout);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Resolution, Layout);
+        }
 
         /// <inheritdoc/>
-        public override string ToString() =>
-            string.Format(
+        public override string ToString()
+        {
+            return string.Format(
                 CultureInfo.InvariantCulture,
                 "HexMapTopology(width: {0}, height: {1}, layout: {2})",
                 Resolution.X,
                 Resolution.Y,
                 Layout);
+        }
 
         /// <summary>
         /// Deconstructs this topology into its width, height, and layout.
@@ -135,7 +146,10 @@ namespace Akeldov.Math.Hexes
         /// <param name="left">The first topology.</param>
         /// <param name="right">The second topology.</param>
         /// <returns><see langword="true"/> if both topologies are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(HexMapTopology left, HexMapTopology right) => left.Equals(right);
+        public static bool operator ==(HexMapTopology left, HexMapTopology right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Indicates whether two topologies are different.
@@ -143,6 +157,9 @@ namespace Akeldov.Math.Hexes
         /// <param name="left">The first topology.</param>
         /// <param name="right">The second topology.</param>
         /// <returns><see langword="true"/> if the topologies differ; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(HexMapTopology left, HexMapTopology right) => !left.Equals(right);
+        public static bool operator !=(HexMapTopology left, HexMapTopology right)
+        {
+            return !left.Equals(right);
+        }
     }
 }

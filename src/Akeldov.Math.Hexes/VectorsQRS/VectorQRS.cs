@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
     /// <summary>
     /// Represents a fractional cube-coordinate vector stored by its independent Q and R components.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct VectorQRS : IEquatable<VectorQRS>
     {
         /// <summary>
@@ -50,16 +52,28 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         /// </summary>
         /// <param name="other">The vector to compare with this vector.</param>
         /// <returns><see langword="true"/> when both independent components are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(VectorQRS other) => Q.Equals(other.Q) && R.Equals(other.R);
+        public bool Equals(VectorQRS other)
+        {
+            return Q.Equals(other.Q) && R.Equals(other.R);
+        }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is VectorQRS other && Equals(other);
+        public override bool Equals(object? obj)
+        {
+            return obj is VectorQRS other && Equals(other);
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Q, R);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Q, R);
+        }
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Q.ToString(CultureInfo.InvariantCulture)}, {R.ToString(CultureInfo.InvariantCulture)})";
+        public override string ToString()
+        {
+            return $"({Q.ToString(CultureInfo.InvariantCulture)}, {R.ToString(CultureInfo.InvariantCulture)})";
+        }
 
         /// <summary>
         /// Deconstructs the vector into its independent Q and R components.
@@ -77,54 +91,70 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         /// </summary>
         /// <param name="left">The first vector.</param>
         /// <param name="right">The second vector.</param>
-        public static bool operator ==(VectorQRS left, VectorQRS right) => left.Equals(right);
+        public static bool operator ==(VectorQRS left, VectorQRS right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Determines whether two vectors differ in either independent component.
         /// </summary>
         /// <param name="left">The first vector.</param>
         /// <param name="right">The second vector.</param>
-        public static bool operator !=(VectorQRS left, VectorQRS right) => !left.Equals(right);
+        public static bool operator !=(VectorQRS left, VectorQRS right)
+        {
+            return !left.Equals(right);
+        }
 
         /// <summary>
         /// Adds two QRS vectors component-wise.
         /// </summary>
         /// <param name="left">The first vector.</param>
         /// <param name="right">The vector to add.</param>
-        public static VectorQRS operator +(VectorQRS left, VectorQRS right) =>
-            new VectorQRS(left.Q + right.Q, left.R + right.R);
+        public static VectorQRS operator +(VectorQRS left, VectorQRS right)
+        {
+            return new VectorQRS(left.Q + right.Q, left.R + right.R);
+        }
 
         /// <summary>
         /// Subtracts one QRS vector from another component-wise.
         /// </summary>
         /// <param name="left">The vector to subtract from.</param>
         /// <param name="right">The vector to subtract.</param>
-        public static VectorQRS operator -(VectorQRS left, VectorQRS right) =>
-            new VectorQRS(left.Q - right.Q, left.R - right.R);
+        public static VectorQRS operator -(VectorQRS left, VectorQRS right)
+        {
+            return new VectorQRS(left.Q - right.Q, left.R - right.R);
+        }
 
         /// <summary>
         /// Multiplies every component of a QRS vector by a scalar.
         /// </summary>
         /// <param name="vector">The vector to scale.</param>
         /// <param name="scalar">The scale factor.</param>
-        public static VectorQRS operator *(VectorQRS vector, float scalar) =>
-            new VectorQRS(vector.Q * scalar, vector.R * scalar);
+        public static VectorQRS operator *(VectorQRS vector, float scalar)
+        {
+            return new VectorQRS(vector.Q * scalar, vector.R * scalar);
+        }
 
         /// <summary>
         /// Multiplies every component of a QRS vector by a scalar.
         /// </summary>
         /// <param name="scalar">The scale factor.</param>
         /// <param name="vector">The vector to scale.</param>
-        public static VectorQRS operator *(float scalar, VectorQRS vector) =>
-            new VectorQRS(vector.Q * scalar, vector.R * scalar);
+        public static VectorQRS operator *(float scalar, VectorQRS vector)
+        {
+            return new VectorQRS(vector.Q * scalar, vector.R * scalar);
+        }
 
         /// <summary>
         /// Divides every component of a QRS vector by a scalar.
         /// </summary>
         /// <param name="vector">The vector to divide.</param>
         /// <param name="scalar">The divisor.</param>
-        public static VectorQRS operator /(VectorQRS vector, float scalar) =>
-            new VectorQRS(vector.Q / scalar, vector.R / scalar);
+        public static VectorQRS operator /(VectorQRS vector, float scalar)
+        {
+            return new VectorQRS(vector.Q / scalar, vector.R / scalar);
+        }
 
         /// <summary>
         /// Converts an integer QRS vector to its exact fractional representation.
