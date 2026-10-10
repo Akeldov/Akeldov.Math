@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Spatial2D;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Hexes.Pathfinding
 {
@@ -132,6 +133,7 @@ namespace Akeldov.Math.Hexes.Pathfinding
             return new HexPath(path, distances[destinationIndex]);
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct QueueEntry
         {
             internal QueueEntry(int index, float cost, long order)

@@ -123,7 +123,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             return new ParameterizedSegment((PointXY)endpointA, (PointXY)endpointB);
         }
 
-        private static ContourBasedRegion CreateContourBasedRegion(IReadOnlyList<ParameterizedSegment> segments)
+        private static ContourBasedRegion CreateContourBasedRegion(List<ParameterizedSegment> segments)
         {
             if (segments.Count == 0)
                 throw new InvalidOperationException("Polyhex contour must contain at least one boundary segment.");

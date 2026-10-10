@@ -495,7 +495,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         }
 
         private static List<IContourPath> BuildClosedChain(
-            IReadOnlyList<IContourPath> curves,
+            List<IContourPath> curves,
             bool[] used,
             int startIndex)
         {
@@ -524,7 +524,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         }
 
         private static int FindNextCurve(
-            IReadOnlyList<IFinitePath> curves,
+            List<IFinitePath> curves,
             bool[] used,
             PointXY point,
             out bool reverse)
