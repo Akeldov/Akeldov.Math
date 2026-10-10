@@ -92,12 +92,11 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
         private static ParameterizedSegment[] GetSourceSegments(IContour contour)
         {
-            ICompositeContour? compositeContour = contour as ICompositeContour;
-            if (compositeContour == null)
-            {
-                throw new InvalidOperationException(
-                    "Polyhex source contour must be a composite contour.");
-            }
+#pragma warning disable IDE0019 // Use pattern matching
+#pragma warning disable IDE0083 // Use pattern matching
+
+            ICompositeContour? compositeContour = contour as ICompositeContour ??
+                throw new InvalidOperationException("Polyhex source contour must be a composite contour.");
 
             var segments = new ParameterizedSegment[compositeContour.Curves.Count];
 
@@ -113,6 +112,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             }
 
             return segments;
+#pragma warning restore IDE0083 // Use pattern matching
+#pragma warning restore IDE0019 // Use pattern matching
         }
 
         private static ParameterizedSegment[] OffsetOutward(
@@ -524,7 +525,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         }
 
         private static int FindNextCurve(
-            List<IFinitePath> curves,
+            List<IContourPath> curves,
             bool[] used,
             PointXY point,
             out bool reverse)

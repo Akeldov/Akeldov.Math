@@ -1,8 +1,8 @@
-using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Contours
 {
@@ -14,6 +14,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// <remarks>
     /// The default value represents the point at the coordinate origin with counterclockwise traversal.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct ParameterizedRectangleContour : IParameterizedContour, IEquatable<ParameterizedRectangleContour>
     {
         private readonly PointXY _min;

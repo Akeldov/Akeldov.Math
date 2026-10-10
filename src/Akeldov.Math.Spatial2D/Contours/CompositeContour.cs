@@ -194,12 +194,12 @@ namespace Akeldov.Math.Spatial2D.Contours
             return curves;
         }
 
-        private static void ValidateCurvesFormClosedChain(IReadOnlyList<IContourPath> curves, string parameterName)
+        private static void ValidateCurvesFormClosedChain(IContourPath[] curves, string parameterName)
         {
-            for (int i = 0; i < curves.Count; i++)
+            for (int i = 0; i < curves.Length; i++)
             {
                 IContourPath currentCurve = curves[i];
-                IContourPath nextCurve = curves[(i + 1) % curves.Count];
+                IContourPath nextCurve = curves[(i + 1) % curves.Length];
 
                 if (!currentCurve.EndPoint.AlmostEquals(nextCurve.StartPoint))
                     throw new ArgumentException("CompositeContour curves must form a closed continuous chain.", parameterName);

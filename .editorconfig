@@ -10,6 +10,10 @@ dotnet_diagnostic.CA1510.severity = none
 csharp_style_var_when_type_is_apparent = false:none
 # IDE0011: Add braces
 csharp_prefer_braces = false
+# IDE0022: Prefer expression bodies for single-line methods
+csharp_style_expression_bodied_methods = when_on_single_line
+# IDE0024: Use block body for operator
+csharp_style_expression_bodied_operators = when_on_single_line
 # IDE0032: Use auto property
 dotnet_style_prefer_auto_properties = false
 # IDE0046: Convert to conditional expression
@@ -25,9 +29,13 @@ dotnet_style_namespace_match_folder = false
 # CA1510: ArgumentNullException.ThrowIfNull is unavailable for netstandard2.1.
 dotnet_diagnostic.CA1510.severity = none
 # IDE0008: Use explicit type
-csharp_style_var_when_type_is_apparent = false
+csharp_style_var_when_type_is_apparent = false:none
 # IDE0011: Add braces
 csharp_prefer_braces = false
+# IDE0022: Prefer expression bodies for single-line methods
+csharp_style_expression_bodied_methods = when_on_single_line
+# IDE0024: Use block body for operator
+csharp_style_expression_bodied_operators = when_on_single_line
 # IDE0032: Use auto property
 dotnet_style_prefer_auto_properties = false
 # IDE0046: Convert to conditional expression

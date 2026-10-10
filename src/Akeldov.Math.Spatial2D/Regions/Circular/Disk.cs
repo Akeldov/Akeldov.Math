@@ -1,13 +1,14 @@
-using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Regions
 {
     /// <summary>
     /// Represents a filled circular region in two-dimensional space.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct Disk : IRegion, IEquatable<Disk>
     {
         private readonly PointXY _center;
@@ -84,10 +85,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// Creates a closed contour representing this disk boundary.
         /// </summary>
         /// <returns>The disk boundary contour.</returns>
-        public Circle ToContour()
-        {
-            return new Circle(Center, Radius);
-        }
+        public Circle ToContour() => new Circle(Center, Radius);
 
         /// <summary>
         /// Indicates whether this disk has the same center and radius as another disk.
@@ -103,8 +101,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         public override int GetHashCode() => HashCode.Combine(Center, Radius);
 
         /// <inheritdoc/>
-        public override string ToString() =>
-            string.Format(CultureInfo.InvariantCulture, "Disk(center: {0}, radius: {1})", Center, Radius);
+        public override string ToString() => string.Format(CultureInfo.InvariantCulture, "Disk(center: {0}, radius: {1})", Center, Radius);
 
         /// <summary>
         /// Indicates whether two disks are equal.

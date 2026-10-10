@@ -1,8 +1,8 @@
-using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Contours
 {
@@ -13,6 +13,7 @@ namespace Akeldov.Math.Spatial2D.Contours
     /// A zero size component collapses the contour to a line segment traversed in both directions. When both
     /// components are zero, the contour represents its center point and has zero length. The default value is the origin point.
     /// </remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct ParameterizedOrientedRectangleContour : IParameterizedContour, IEquatable<ParameterizedOrientedRectangleContour>
     {
         private readonly PointXY _center;

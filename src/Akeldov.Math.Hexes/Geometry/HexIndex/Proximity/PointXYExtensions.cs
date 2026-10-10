@@ -5,7 +5,10 @@ using System;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
-    public static partial class VectorXYExtensions
+    /// <summary>
+    /// Provides methods for finding hex vertices closest to world-space points.
+    /// </summary>
+    public static partial class PointXYExtensions
     {
         /// <summary>
         /// Returns the containing hex index and the closest vertex of that hex.
@@ -54,7 +57,7 @@ namespace Akeldov.Math.Hexes.Geometry
             if (!hexCenter.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(hexCenter), hexCenter, "Hex center components must be finite.");
 
-            var normalizedHexVertices = GetNormalizedHexVertices(layout);
+            var normalizedHexVertices = VectorXYExtensions.GetNormalizedHexVertices(layout);
 
             float minDist = float.MaxValue;
             int closestVertexIndex = 0;

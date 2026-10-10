@@ -77,7 +77,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 0; i < influenceSources.Count; i++)
             {
-                var value = influenceSources[i].Value;
+                int value = influenceSources[i].Value;
 
                 if (value < min)
                     min = value;
@@ -85,9 +85,8 @@ namespace Akeldov.Math.Spatial2D.Fields
                 if (value > max)
                     max = value;
 
-                if (!distinctValuesHashSet.Contains(value))
+                if (distinctValuesHashSet.Add(value))
                 {
-                    distinctValuesHashSet.Add(value);
                     distinctValues.Add(value);
                 }
             }

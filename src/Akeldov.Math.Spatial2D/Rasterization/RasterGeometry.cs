@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
     /// Describes an axis-aligned rectangular raster sampling grid in two-dimensional space.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct RasterGeometry : IEquatable<RasterGeometry>
     {
         private readonly PointXY _origin;

@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 {
     /// <summary>
     /// Represents a point produced by Poisson disk sampling.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct PoissonDiskPointSample
     {
         /// <summary>

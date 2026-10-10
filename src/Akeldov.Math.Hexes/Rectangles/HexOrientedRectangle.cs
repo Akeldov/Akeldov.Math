@@ -1,12 +1,14 @@
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Hexes.Rectangles
 {
     /// <summary>
     /// Represents a rectangle rotated in 60-degree increments to align with hex-grid directions.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct HexOrientedRectangle
     {
         private readonly PointXY _center;
@@ -161,10 +163,7 @@ namespace Akeldov.Math.Hexes.Rectangles
             return new HexOrientedRectangle(center, size, rotation);
         }
 
-        private static PointXY RotateAround(PointXY point, PointXY pivot, SixfoldAngle rotation)
-        {
-            return pivot + (point - pivot).Rotate(rotation);
-        }
-
+        private static PointXY RotateAround(PointXY point, PointXY pivot, SixfoldAngle rotation) =>
+            pivot + (point - pivot).Rotate(rotation);
     }
 }

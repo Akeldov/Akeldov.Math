@@ -2,6 +2,7 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Regions
 {
@@ -11,6 +12,7 @@ namespace Akeldov.Math.Spatial2D.Regions
     /// with both dimensions equal to zero represents a point.
     /// </summary>
     /// <remarks>The default value represents the point at the coordinate origin.</remarks>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct Rectangle : IRegion, IEquatable<Rectangle>
     {
         /// <summary>

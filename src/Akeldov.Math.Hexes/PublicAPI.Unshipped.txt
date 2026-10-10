@@ -1,4 +1,9 @@
 #nullable enable
+Akeldov.Math.Hexes.Geometry.PointXYExtensions
+*REMOVED*static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetClosestHexVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin, Akeldov.Math.Hexes.Layout layout) -> (Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Topology.HexVertex hexVertex)
+*REMOVED*static Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetClosestVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexCenter, Akeldov.Math.Hexes.Layout layout) -> int
+static Akeldov.Math.Hexes.Geometry.PointXYExtensions.GetClosestHexVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexFieldOrigin, Akeldov.Math.Hexes.Layout layout) -> (Akeldov.Math.Spatial2D.VectorXYInt hexIndex, Akeldov.Math.Hexes.Topology.HexVertex hexVertex)
+static Akeldov.Math.Hexes.Geometry.PointXYExtensions.GetClosestVertexIndex(this Akeldov.Math.Spatial2D.PointXY point, float radius, Akeldov.Math.Spatial2D.VectorXY hexCenter, Akeldov.Math.Hexes.Layout layout) -> int
 *REMOVED*Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions
 *REMOVED*static Akeldov.Math.Hexes.Chromatization.VertexHexTripletExtensions.GetChromaticTriplet(this Akeldov.Math.Hexes.Topology.Triplet<Akeldov.Math.Spatial2D.VectorXYInt> vertexHexIndexTriplet, Akeldov.Math.Hexes.Layout layout) -> Akeldov.Math.Hexes.Topology.Triplet<byte>
 Akeldov.Math.Hexes.Chromatization.VectorXYIntTripletExtensions

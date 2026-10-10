@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
@@ -841,6 +842,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct CharacterMapGroup
         {
             public CharacterMapGroup(uint startCode, uint endCode, uint startGlyphIndex)
@@ -920,15 +922,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
         public PointXY EndPoint { get; }
 
-        public static TrueTypeGlyphSegment Line(PointXY startPoint, PointXY endPoint)
-        {
-            return new TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind.Line, startPoint, startPoint, endPoint);
-        }
+        public static TrueTypeGlyphSegment Line(PointXY startPoint, PointXY endPoint) =>
+            new TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind.Line, startPoint, startPoint, endPoint);
 
-        public static TrueTypeGlyphSegment Quadratic(PointXY startPoint, PointXY controlPoint, PointXY endPoint)
-        {
-            return new TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind.Quadratic, startPoint, controlPoint, endPoint);
-        }
+        public static TrueTypeGlyphSegment Quadratic(PointXY startPoint, PointXY controlPoint, PointXY endPoint) =>
+            new TrueTypeGlyphSegment(TrueTypeGlyphSegmentKind.Quadratic, startPoint, controlPoint, endPoint);
 
         public TrueTypeGlyphSegment Transform(float a, float b, float c, float d, float dx, float dy)
         {
@@ -945,11 +943,5 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 point.X * a + point.Y * b + dx,
                 point.X * c + point.Y * d + dy);
         }
-    }
-
-    internal enum TrueTypeGlyphSegmentKind
-    {
-        Line,
-        Quadratic
     }
 }

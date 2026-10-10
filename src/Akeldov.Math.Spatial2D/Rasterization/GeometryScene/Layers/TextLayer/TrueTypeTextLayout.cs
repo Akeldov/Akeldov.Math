@@ -2,6 +2,7 @@ using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
@@ -312,6 +313,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct TextSegment
         {
             private TextSegment(TextSegmentKind kind, PointXY startPoint, PointXY controlPoint, PointXY endPoint)

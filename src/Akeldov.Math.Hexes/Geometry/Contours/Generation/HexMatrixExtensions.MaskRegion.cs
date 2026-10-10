@@ -54,7 +54,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 layout != Layout.EvenQ)
                 throw new ArgumentOutOfRangeException(nameof(layout));
 
-            var hexRadius = polyhexGeometry.HexRadius;
+            float hexRadius = polyhexGeometry.HexRadius;
             int qsize = polyhexGeometry.QRSResolution.Q;
             int rsize = polyhexGeometry.QRSResolution.R;
 
@@ -67,19 +67,19 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     if (!polyhexGeometry[q, r])
                         continue;
 
-                    VectorXY[] points = Akeldov.Math.Hexes.Geometry.VectorXYExtensions.GetHexVertices(q, r, hexRadius, layout);
+                    VectorXY[] points = VectorXYExtensions.GetHexVertices(q, r, hexRadius, layout);
 
-                    var qminClause = q < 1;
-                    var rminClause = r < 1;
-                    var qmaxClause = q >= qsize - 1;
-                    var rmaxClause = r >= rsize - 1;
+                    bool qminClause = q < 1;
+                    bool rminClause = r < 1;
+                    bool qmaxClause = q >= qsize - 1;
+                    bool rmaxClause = r >= rsize - 1;
 
-                    var leftIsBorder = qminClause || !polyhexGeometry[q - 1, r];
-                    var rightIsBorder = qmaxClause || !polyhexGeometry[q + 1, r];
-                    var topLeftIsBorder = qminClause || rmaxClause || !polyhexGeometry[q - 1, r + 1];
-                    var topRightIsBorder = rmaxClause || !polyhexGeometry[q, r + 1];
-                    var bottomLeftIsBorder = rminClause || !polyhexGeometry[q, r - 1];
-                    var bottomRightIsBorder = qmaxClause || rminClause || !polyhexGeometry[q + 1, r - 1];
+                    bool leftIsBorder = qminClause || !polyhexGeometry[q - 1, r];
+                    bool rightIsBorder = qmaxClause || !polyhexGeometry[q + 1, r];
+                    bool topLeftIsBorder = qminClause || rmaxClause || !polyhexGeometry[q - 1, r + 1];
+                    bool topRightIsBorder = rmaxClause || !polyhexGeometry[q, r + 1];
+                    bool bottomLeftIsBorder = rminClause || !polyhexGeometry[q, r - 1];
+                    bool bottomRightIsBorder = qmaxClause || rminClause || !polyhexGeometry[q + 1, r - 1];
 
                     if (layout == Layout.OddR || layout == Layout.EvenR)
                     {
@@ -118,11 +118,6 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 includesEndpointB);
         }
 
-        private static ParameterizedSegment CreateSegment(VectorXY endpointA, VectorXY endpointB)
-        {
-            return new ParameterizedSegment((PointXY)endpointA, (PointXY)endpointB);
-        }
-
         private static ContourBasedRegion CreateContourBasedRegion(List<ParameterizedSegment> segments)
         {
             if (segments.Count == 0)
@@ -143,7 +138,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         }
 
         private static List<IContourPath> BuildClosedSegmentChain(
-            IReadOnlyList<ParameterizedSegment> segments,
+            List<ParameterizedSegment> segments,
             bool[] used,
             int startIndex)
         {
@@ -170,7 +165,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         }
 
         private static int FindSegmentStartingAt(
-            IReadOnlyList<ParameterizedSegment> segments,
+            List<ParameterizedSegment> segments,
             bool[] used,
             PointXY point)
         {
