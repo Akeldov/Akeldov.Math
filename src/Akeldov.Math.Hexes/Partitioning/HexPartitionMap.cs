@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes
     /// Inherited indexer setters change only the identifier map; they do not update the retained cells
     /// or their hex indexes. Callers must keep map assignments consistent with the retained cells.
     /// </remarks>
-    public class HexPartitionMap<THexPartitionCell> : HexMap<int>, IHexPartitionMap<THexPartitionCell>
+    public class HexPartitionMap<THexPartitionCell> : IntHexMap, IHexPartitionMap<THexPartitionCell>
         where THexPartitionCell : IHexPartitionCell
     {
         private readonly IReadOnlyList<THexPartitionCell> _cells;
