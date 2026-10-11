@@ -1,12 +1,13 @@
 using System;
-using System.Drawing;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
     /// Represents a 16-bit RGBA color.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly partial struct RGBA16BitColor : IEquatable<RGBA16BitColor>
     {
         /// <summary>
@@ -127,20 +128,13 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public RGBA16BitColor ScaleAlpha(float coverage)
         {
             if (coverage <= 0f || A == 0)
-                return default(RGBA16BitColor);
+                return default;
 
             if (coverage >= 1f)
                 return this;
 
-            var newNormalizedAlpha = A * coverage;
-            ushort newAlpha = 0;
-            if (newNormalizedAlpha <= 0f)
-                newAlpha = 0;
-
-            if (newNormalizedAlpha >= ushort.MaxValue)
-                newAlpha = ushort.MaxValue;
-
-            newAlpha = (ushort)MathF.Round(newNormalizedAlpha);
+            float newNormalizedAlpha = A * coverage;
+            ushort newAlpha = (ushort)MathF.Round(newNormalizedAlpha);
 
             return new RGBA16BitColor(
                 R,
@@ -162,7 +156,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             float outputAlpha = foregroundAlpha + backgroundAlpha * (1f - foregroundAlpha);
 
             if (outputAlpha <= 0f)
-                return default(RGBA16BitColor);
+                return default;
 
             float backgroundAmount = backgroundAlpha * (1f - foregroundAlpha);
 
@@ -243,10 +237,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return MathF.Min(MathF.Max(value, 0f), 1f);
         }
 
-        private static ushort BlendChannel(ushort from, ushort to, float amount, float inverseAmount)
-        {
-            return (ushort)MathF.Round(from * inverseAmount + to * amount);
-        }
+        private static ushort BlendChannel(ushort from, ushort to, float amount, float inverseAmount) =>
+            (ushort)MathF.Round(from * inverseAmount + to * amount);
 
         private static RGBA16BitColor FromRGBA8BitColor(RGBA8BitColor color)
         {

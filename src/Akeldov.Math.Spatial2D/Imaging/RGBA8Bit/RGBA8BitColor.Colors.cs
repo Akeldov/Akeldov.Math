@@ -5,7 +5,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <summary>
         /// Represents a fully transparent 8-bit RGBA color.
         /// </summary>
-        public static readonly RGBA8BitColor Transparent = default(RGBA8BitColor);
+        public static readonly RGBA8BitColor Transparent;
 
         /// <summary>
         /// Represents an opaque black 8-bit RGBA color.

@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
     /// Represents an 8-bit RGBA color.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly partial struct RGBA8BitColor : IEquatable<RGBA8BitColor>
     {
         internal static readonly RGBA8BitColor[] TemperaturePalette =
@@ -435,10 +437,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
             return MathF.Min(MathF.Max(value, 0f), 1f);
         }
 
-        private static byte BlendChannel(byte from, byte to, float amount, float inverseAmount)
-        {
-            return (byte)MathF.Round(from * inverseAmount + to * amount);
-        }
+        private static byte BlendChannel(byte from, byte to, float amount, float inverseAmount) =>
+            (byte)MathF.Round(from * inverseAmount + to * amount);
 
         private static int ToTemperaturePaletteIndex(float normalizedValue)
         {
