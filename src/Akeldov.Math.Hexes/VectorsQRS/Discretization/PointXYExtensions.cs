@@ -17,7 +17,9 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         /// <param name="hexFieldOrigin">The world-space center of the zero hex.</param>
         /// <param name="layout">The offset layout of the destination index.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable MA0051 // Method is too long
         public static VectorXYInt ToXYIndex(this PointXY point, float hexRadius, VectorXY hexFieldOrigin, Layout layout)
+#pragma warning restore MA0051 // Method is too long
         {
             if (float.IsNaN(point.X) || float.IsInfinity(point.X) ||
                 float.IsNaN(point.Y) || float.IsInfinity(point.Y))
