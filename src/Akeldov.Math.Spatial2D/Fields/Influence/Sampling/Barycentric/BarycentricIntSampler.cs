@@ -60,7 +60,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="point">The point to sample.</param>
         /// <returns>The interpolated or extrapolated value, rounded to the nearest integer.</returns>
 #pragma warning disable CA1725 // Preserve named-argument compatibility until 2.0.
+#pragma warning disable MA0051 // Method is too long
         public int Sample(IReadOnlyList<TSource> sources, PointXY point)
+#pragma warning restore MA0051 // Method is too long
 #pragma warning restore CA1725
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));

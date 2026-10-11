@@ -81,8 +81,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
         private static void ValidateRasterSize(int width, int height)
         {
-            if (width <= 0 || height <= 0)
-                throw new ArgumentException("Raster width and height must be positive.");
+            if (width <= 0)
+                throw new ArgumentException("Raster width and height must be positive.", nameof(width));
+
+            if (height <= 0)
+                throw new ArgumentException("Raster width and height must be positive.", nameof(height));
         }
 
         private static void WriteGray8(IRaster<Gray8BitColor> raster, Stream stream)
