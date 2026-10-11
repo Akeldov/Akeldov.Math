@@ -41,6 +41,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Assigns every center from the specified hex center map to its nearest weighted Voronoi site.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
+        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations.</param>
+        /// <param name="exclavePolicy">The policy for disconnected cell components in the final partition.</param>
         /// <returns>
         /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
         /// Use <see cref="VoronoiHexPartitionMap.ToMutableHexMap"/> to create an independent mutable
@@ -49,40 +51,21 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
         /// </exception>
-        public VoronoiHexPartitionMap Partition(HexCenterMap hexCenters)
+        public VoronoiHexPartitionMap Partition(
+            HexCenterMap hexCenters,
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs,
+            int relaxationIterations = 0)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            var count = hexCenters.Topology.Count;
-            var cellIndexes = new int[count];
-            var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            int flatIndex = 0;
-            for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
-            {
-                for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
-                {
-                    PointXY center = hexCenters[flatIndex];
-                    if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
-                        float.IsNaN(center.Y) || float.IsInfinity(center.Y))
-                        throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
-                    int cellIndex = GetNearestWeightedCellIndex(center);
-                    cellIndexes[flatIndex] = cellIndex;
-                    hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
-                    flatIndex++;
-                }
-            }
-
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, _sites);
-
-            var assignments = new int[count];
-            for (int i = 0; i < assignments.Length; i++)
-            {
-                assignments[i] = cellIndexesBySite[cellIndexes[i]];
-            }
-
+            var (assignments, cells, _) = PartitionCore(hexCenters, null, null, null, exclavePolicy, relaxationIterations);
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
         }
 
@@ -95,6 +78,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
+        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations.</param>
         /// <returns>
         /// A new mutable partial hex partition map with nullable per-hex cell identifiers and a read-only semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
@@ -105,7 +89,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public PartialVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs,
+            int relaxationIterations = 0)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -119,50 +104,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
                 throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
-            var count = hexCenters.Topology.Count;
-            var cellIndexes = new int[count];
-            var participationMaskValues = new bool[count];
-            var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            int flatIndex = 0;
-            for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
-            {
-                for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
-                {
-                    if (!participationMask[flatIndex])
-                    {
-                        flatIndex++;
-                        continue;
-                    }
-
-                    participationMaskValues[flatIndex] = true;
-
-                    PointXY center = hexCenters[flatIndex];
-                    if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
-                        float.IsNaN(center.Y) || float.IsInfinity(center.Y))
-                        throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
-
-                    int cellIndex = GetNearestWeightedCellIndex(center);
-                    cellIndexes[flatIndex] = cellIndex;
-                    hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
-                    flatIndex++;
-                }
-            }
-
-            var partitionSites = _sites;
-            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
-                partitionSites = ReassignExclaves(hexCenters, cellIndexes, ref hexIndexBuckets, participationMaskValues, null);
-
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, partitionSites);
-
-            var assignments = new int?[count];
-            for (int i = 0; i < assignments.Length; i++)
-            {
-                if (participationMaskValues[i])
-                    assignments[i] = cellIndexesBySite[cellIndexes[i]];
-            }
-
-            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+            return PartitionMaskedRegions(hexCenters, participationMask, null, null, exclavePolicy, relaxationIterations);
         }
 
         /// <summary>
@@ -175,6 +120,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
+        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations.</param>
         /// <returns>
         /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
         /// </returns>
@@ -194,7 +140,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public VoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<int> regionsMask,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs,
+            int relaxationIterations = 0)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -209,46 +156,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
                 throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
-            var count = hexCenters.Topology.Count;
-            var cellIndexes = new int[count];
-            var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            int flatIndex = 0;
-            for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
-            {
-                for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
-                {
-                    PointXY center = hexCenters[flatIndex];
-                    if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
-                        float.IsNaN(center.Y) || float.IsInfinity(center.Y))
-                        throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
-
-                    int region = regionsMask[flatIndex];
-                    if (!siteIndexesByRegion.TryGetValue(region, out var siteIndexes))
-                        throw new InvalidOperationException($"Region {region} contains no Voronoi sites.");
-
-                    int cellIndex = GetNearestWeightedCellIndex(center, siteIndexes);
-                    if (cellIndex < 0)
-                        throw new InvalidOperationException($"Region {region} has no eligible Voronoi site for hex ({x}, {y}).");
-
-                    cellIndexes[flatIndex] = cellIndex;
-                    hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
-                    flatIndex++;
-                }
-            }
-
-            var partitionSites = _sites;
-            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
-                partitionSites = ReassignExclaves(hexCenters, cellIndexes, ref hexIndexBuckets, null, regionsMask);
-
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, partitionSites);
-
-            var assignments = new int[count];
-            for (int i = 0; i < assignments.Length; i++)
-            {
-                assignments[i] = cellIndexesBySite[cellIndexes[i]];
-            }
-
+            var (assignments, cells, _) = PartitionCore(hexCenters, null, regionsMask, siteIndexesByRegion, exclavePolicy, relaxationIterations);
             return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
         }
 
@@ -261,6 +172,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// all integer values, including zero and negative values, identify participating regions.
         /// </param>
         /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
+        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations.</param>
         /// <returns>A new mutable partial partition map with a read-only semantic cell list. Excluded hexes return null.</returns>
         /// <remarks>
         /// A site's region comes from the hex containing its position. Sites outside the map or in
@@ -276,7 +188,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         public PartialVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<int?> regionsMask,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs,
+            int relaxationIterations = 0)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -290,6 +203,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
                 throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
+
             var participationValues = new bool[hexCenters.Topology.Count];
             var regionValues = new int[hexCenters.Topology.Count];
             for (int i = 0; i < regionValues.Length; i++)
@@ -302,7 +218,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             var participation = new BoolHexMap(hexCenters.Topology, participationValues);
             var regions = new IntHexMap(hexCenters.Topology, regionValues);
             var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regions, participation);
-            return PartitionMaskedRegions(hexCenters, participation, regions, siteIndexesByRegion, exclavePolicy);
+            return PartitionMaskedRegions(hexCenters, participation, regions, siteIndexesByRegion, exclavePolicy, relaxationIterations);
         }
 
         /// <summary>
@@ -320,7 +236,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </returns>
         /// <remarks>
         /// A site's region is determined by the hex containing its position, regardless of that hex's
-        /// participation. Sites outside the map receive no hexes. Empty-cell handling applies to all sites.
+        /// participation and is preserved throughout relaxation. Sites outside the map receive no hexes.
+        /// Empty-cell and exclave handling apply after all relaxation iterations.
         /// </remarks>
         /// <exception cref="ArgumentNullException">A map is null.</exception>
         /// <exception cref="ArgumentException">The maps have different topologies.</exception>
@@ -330,11 +247,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// A zero-weight site is eligible only at its position within the geometry tolerance.
         /// </exception>
+        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations.</param>
         public PartialVoronoiHexPartitionMap Partition(
             HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs,
+            int relaxationIterations = 0)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
@@ -351,64 +270,127 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (hexCenters.Topology != regionsMask.Topology)
                 throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
 
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
+
             var siteIndexesByRegion = GroupSiteIndexesByRegion(hexCenters.Geometry, regionsMask);
             if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
                 throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
-            return PartitionMaskedRegions(hexCenters, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy);
+            return PartitionMaskedRegions(hexCenters, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy, relaxationIterations);
         }
 
         private PartialVoronoiHexPartitionMap PartitionMaskedRegions(
-            HexCenterMap hexCenters, IHexMap<bool> participationMask, IHexMap<int> regionsMask,
-            Dictionary<int, List<int>> siteIndexesByRegion, ExclavePolicy exclavePolicy)
+            HexCenterMap centers, IHexMap<bool> participationMask, IHexMap<int>? regionsMask,
+            Dictionary<int, List<int>>? siteIndexesByRegion, ExclavePolicy exclavePolicy, int relaxationIterations = 0)
         {
-            var cellIndexes = new int[hexCenters.Topology.Count];
-            var participationMaskValues = new bool[hexCenters.Topology.Count];
-            var hexIndexBuckets = CreateHexIndexBuckets(_sites.Length);
+            var (cellIndexes, cells, participation) = PartitionCore(
+                centers, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy, relaxationIterations);
+            var assignments = new int?[cellIndexes.Length];
+            for (int i = 0; i < assignments.Length; i++)
+                if (participation![i])
+                    assignments[i] = cellIndexes[i];
 
+            return new PartialVoronoiHexPartitionMap(centers, assignments, cells, participation!);
+        }
+
+        private (int[] Assignments, VoronoiHexPartitionCell[] Cells, bool[]? Participation) PartitionCore(
+            HexCenterMap centers, IHexMap<bool>? participationMask, IHexMap<int>? regionsMask,
+            Dictionary<int, List<int>>? siteIndexesByRegion, ExclavePolicy exclavePolicy, int relaxationIterations)
+        {
+            var cellIndexes = new int[centers.Topology.Count];
+            var participation = participationMask == null ? null : new bool[cellIndexes.Length];
+            var buckets = CreateHexIndexBuckets(_sites.Length);
+            var sites = _sites;
+
+            // Region membership remains fixed even when a centroid moves outside its original region.
+            for (int remainingIterations = relaxationIterations; ; remainingIterations--)
+            {
+                AssignHexCenters(centers, participationMask, regionsMask, siteIndexesByRegion,
+                    sites, cellIndexes, buckets, participation);
+                if (remainingIterations == 0)
+                    break;
+
+                sites = CreateCentroidSites(centers, buckets, sites);
+                for (int i = 0; i < buckets.Length; i++)
+                    buckets[i].Clear();
+            }
+
+            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
+                sites = ReassignExclaves(centers, cellIndexes, ref buckets, participation, regionsMask, sites);
+
+            var cells = CreateCells(buckets, out var cellIndexesBySite, sites);
+            for (int i = 0; i < cellIndexes.Length; i++)
+                if (participation == null || participation[i])
+                    cellIndexes[i] = cellIndexesBySite[cellIndexes[i]];
+
+            return (cellIndexes, cells, participation);
+        }
+
+        private void AssignHexCenters(
+            HexCenterMap hexCenters, IHexMap<bool>? participationMask, IHexMap<int>? regionsMask,
+            Dictionary<int, List<int>>? siteIndexesByRegion, Site[] sites, int[] cellIndexes,
+            List<VectorXYInt>[] buckets, bool[]? participation)
+        {
             int flatIndex = 0;
             for (int y = 0; y < hexCenters.Topology.Resolution.Y; y++)
             {
                 for (int x = 0; x < hexCenters.Topology.Resolution.X; x++)
                 {
-                    if (!participationMask[flatIndex])
+                    if (participationMask != null && !participationMask[flatIndex])
                     {
                         flatIndex++;
                         continue;
                     }
 
-                    participationMaskValues[flatIndex] = true;
+                    if (participation != null)
+                        participation[flatIndex] = true;
                     PointXY center = hexCenters[flatIndex];
                     if (float.IsNaN(center.X) || float.IsInfinity(center.X) ||
                         float.IsNaN(center.Y) || float.IsInfinity(center.Y))
                         throw new ArgumentOutOfRangeException(nameof(hexCenters), "Hex center coordinates must be finite.");
 
-                    int region = regionsMask[flatIndex];
-                    if (!siteIndexesByRegion.TryGetValue(region, out var siteIndexes))
+                    List<int>? candidates = null;
+                    int region = regionsMask == null ? 0 : regionsMask[flatIndex];
+                    if (siteIndexesByRegion != null && !siteIndexesByRegion.TryGetValue(region, out candidates))
                         throw new InvalidOperationException($"Region {region} contains no Voronoi sites.");
 
-                    int cellIndex = GetNearestWeightedCellIndex(center, siteIndexes);
+                    int cellIndex = GetNearestWeightedCellIndex(center, candidates, sites);
                     if (cellIndex < 0)
                         throw new InvalidOperationException($"Region {region} has no eligible Voronoi site for hex ({x}, {y}).");
 
                     cellIndexes[flatIndex] = cellIndex;
-                    hexIndexBuckets[cellIndex].Add(new VectorXYInt(x, y));
+                    buckets[cellIndex].Add(new VectorXYInt(x, y));
                     flatIndex++;
                 }
             }
+        }
 
-            var partitionSites = _sites;
-            if (exclavePolicy == ExclavePolicy.ReassignToClosestCell)
-                partitionSites = ReassignExclaves(hexCenters, cellIndexes, ref hexIndexBuckets, participationMaskValues, regionsMask);
+        private static Site[] CreateCentroidSites(HexCenterMap centers, List<VectorXYInt>[] buckets, Site[] sites)
+        {
+            var centroidSites = new Site[sites.Length];
+            for (int i = 0; i < sites.Length; i++)
+            {
+                var bucket = buckets[i];
+                if (bucket.Count == 0)
+                {
+                    centroidSites[i] = sites[i];
+                    continue;
+                }
 
-            var cells = CreateCells(hexIndexBuckets, out var cellIndexesBySite, partitionSites);
+                double x = 0d;
+                double y = 0d;
+                foreach (var index in bucket)
+                {
+                    var center = centers[index];
+                    x += center.X;
+                    y += center.Y;
+                }
 
-            var assignments = new int?[hexCenters.Topology.Count];
-            for (int i = 0; i < assignments.Length; i++)
-                if (participationMaskValues[i])
-                    assignments[i] = cellIndexesBySite[cellIndexes[i]];
+                centroidSites[i] = new Site(new PointXY((float)(x / bucket.Count), (float)(y / bucket.Count)), sites[i].Weight);
+            }
 
-            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationMaskValues);
+            return centroidSites;
         }
 
         private Site[] ReassignExclaves(
@@ -416,12 +398,14 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             int[] cellIndexes,
             ref List<VectorXYInt>[] buckets,
             bool[]? participation,
-            IHexMap<int>? regions)
+            IHexMap<int>? regions,
+            Site[]? sites = null)
         {
+            sites ??= _sites;
             var queue = new int[cellIndexes.Length];
-            var (components, mainComponents) = FindCellComponents(centers, cellIndexes, participation, queue);
-            bool[] settled = GrowMainComponents(centers.Topology, centers, cellIndexes, components, mainComponents, regions, queue);
-            Site[] sites = CreateExclaveSites(centers, cellIndexes, components, settled, ref buckets);
+            var (components, mainComponents) = FindCellComponents(centers, cellIndexes, participation, queue, sites);
+            bool[] settled = GrowMainComponents(centers.Topology, centers, cellIndexes, components, mainComponents, regions, queue, sites);
+            sites = CreateExclaveSites(centers, cellIndexes, components, settled, ref buckets, sites);
 
             // Rebuild in row-major order before applying the empty-cell policy and compacting IDs.
             for (int i = 0; i < buckets.Length; i++)
@@ -435,13 +419,13 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return sites;
         }
 
-        private (int[] Components, int[] MainComponents) FindCellComponents(
-            HexCenterMap centers, int[] cellIndexes, bool[]? participation, int[] queue)
+        private static (int[] Components, int[] MainComponents) FindCellComponents(
+            HexCenterMap centers, int[] cellIndexes, bool[]? participation, int[] queue, Site[] sites)
         {
             HexMapTopology topology = centers.Topology;
             var components = new int[cellIndexes.Length];
-            var mainComponents = new int[_sites.Length];
-            var closestDistances = new double[_sites.Length];
+            var mainComponents = new int[sites.Length];
+            var closestDistances = new double[sites.Length];
             for (int i = 0; i < closestDistances.Length; i++)
                 closestDistances[i] = double.PositiveInfinity;
 
@@ -460,7 +444,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 while (head < tail)
                 {
                     int current = queue[head++];
-                    double distance = GetDistanceSquared(centers[current], _sites[siteIndex].Position);
+                    double distance = GetDistanceSquared(centers[current], sites[siteIndex].Position);
                     if (distance < closestDistances[siteIndex])
                     {
                         closestDistances[siteIndex] = distance;
@@ -483,9 +467,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return (components, mainComponents);
         }
 
-        private bool[] GrowMainComponents(
+        private static bool[] GrowMainComponents(
             HexMapTopology topology, HexCenterMap centers, int[] cellIndexes,
-            int[] components, int[] mainComponents, IHexMap<int>? regions, int[] queue)
+            int[] components, int[] mainComponents, IHexMap<int>? regions, int[] queue, Site[] sites)
         {
             // Grow only from retained components so neighboring exclaves cannot exchange owners
             // or create another disconnected component. Each layer is committed simultaneously.
@@ -524,7 +508,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 for (int i = layerEnd; i < frontierTail; i++)
                 {
                     int current = queue[i];
-                    cellIndexes[current] = GetClosestAdjacentCell(current, topology, centers, cellIndexes, settled, regions);
+                    cellIndexes[current] = GetClosestAdjacentCell(current, topology, centers, cellIndexes, settled, regions, sites);
                 }
 
                 for (int i = layerEnd; i < frontierTail; i++)
@@ -534,9 +518,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return settled;
         }
 
-        private int GetClosestAdjacentCell(
+        private static int GetClosestAdjacentCell(
             int current, HexMapTopology topology, HexCenterMap centers,
-            int[] cellIndexes, bool[] settled, IHexMap<int>? regions)
+            int[] cellIndexes, bool[] settled, IHexMap<int>? regions, Site[] sites)
         {
             int bestSite = -1;
             double bestDistance = double.PositiveInfinity;
@@ -548,7 +532,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                     continue;
 
                 int siteIndex = cellIndexes[neighbor];
-                double distance = GetDistanceSquared(centers[current], _sites[siteIndex].Position);
+                double distance = GetDistanceSquared(centers[current], sites[siteIndex].Position);
                 if (distance < bestDistance || (distance == bestDistance && siteIndex < bestSite))
                 {
                     bestDistance = distance;
@@ -559,12 +543,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return bestSite;
         }
 
-        private Site[] CreateExclaveSites(
+        private static Site[] CreateExclaveSites(
             HexCenterMap centers, int[] cellIndexes, int[] components, bool[] settled,
-            ref List<VectorXYInt>[] buckets)
+            ref List<VectorXYInt>[] buckets, Site[] originalSites)
         {
             // A component blocked by a mask becomes its own cell with a center inside it.
-            var sites = new List<Site>(_sites);
+            var sites = new List<Site>(originalSites);
             var expandedBuckets = new List<List<VectorXYInt>>(buckets);
             var newSitesByComponent = new Dictionary<int, int>();
             var newSiteDistances = new List<double>();
@@ -574,19 +558,19 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                     continue;
 
                 int originalSite = cellIndexes[i];
-                double distance = GetDistanceSquared(centers[i], _sites[originalSite].Position);
+                double distance = GetDistanceSquared(centers[i], originalSites[originalSite].Position);
                 if (!newSitesByComponent.TryGetValue(components[i], out int newSite))
                 {
                     newSite = sites.Count;
                     newSitesByComponent.Add(components[i], newSite);
-                    sites.Add(new Site(centers[i], _sites[originalSite].Weight));
+                    sites.Add(new Site(centers[i], originalSites[originalSite].Weight));
                     expandedBuckets.Add(new List<VectorXYInt>());
                     newSiteDistances.Add(distance);
                 }
-                else if (distance < newSiteDistances[newSite - _sites.Length])
+                else if (distance < newSiteDistances[newSite - originalSites.Length])
                 {
-                    sites[newSite] = new Site(centers[i], _sites[originalSite].Weight);
-                    newSiteDistances[newSite - _sites.Length] = distance;
+                    sites[newSite] = new Site(centers[i], originalSites[originalSite].Weight);
+                    newSiteDistances[newSite - originalSites.Length] = distance;
                 }
 
                 cellIndexes[i] = newSite;
@@ -712,8 +696,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             return cells.ToArray();
         }
 
-        private int GetNearestWeightedCellIndex(PointXY point, List<int>? siteIndexes = null)
+        private int GetNearestWeightedCellIndex(PointXY point, List<int>? siteIndexes = null, Site[]? sites = null)
         {
+            sites ??= _sites;
             double px = point.X;
             double py = point.Y;
             double bestWeightedDistance = double.PositiveInfinity;
@@ -721,11 +706,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             double bestInfiniteDistance = double.PositiveInfinity;
             int bestInfiniteIndex = -1;
 
-            int count = siteIndexes?.Count ?? _sites.Length;
+            int count = siteIndexes?.Count ?? sites.Length;
             for (int candidateIndex = 0; candidateIndex < count; candidateIndex++)
             {
                 int i = siteIndexes == null ? candidateIndex : siteIndexes[candidateIndex];
-                ref readonly var site = ref _sites[i];
+                ref readonly var site = ref sites[i];
                 if (TryUpdate(
                     ref bestWeightedDistance,
                     ref bestWeightedIndex,
