@@ -87,7 +87,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="point">The point to sample.</param>
         /// <returns>The interpolated or extrapolated floating-point value.</returns>
 #pragma warning disable CA1725 // Preserve named-argument compatibility until 2.0.
+#pragma warning disable MA0051 // Method is too long
         public float Sample(IReadOnlyList<TSource> sources, PointXY point)
+#pragma warning restore MA0051 // Method is too long
 #pragma warning restore CA1725
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));
@@ -101,30 +103,27 @@ namespace Akeldov.Math.Spatial2D.Fields
                 nameof(point),
                 "Point coordinates must be finite.");
 
-            var sourceA = sources[0];
-            if (sourceA is null)
+            TSource sourceA = sources[0] ??
                 throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
-            var sampleA = sourceA.GetInfluence(point);
+            InfluenceSample<float> sampleA = sourceA.GetInfluence(point);
             if (n == 1) return sampleA.Value;
 
-            var sourceB = sources[1];
-            if (sourceB is null)
+            TSource sourceB = sources[1] ??
                 throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
-            var sampleB = sourceB.GetInfluence(point);
+            InfluenceSample<float> sampleB = sourceB.GetInfluence(point);
             if (n == 2) return LerpOnSegment(sampleA, sampleB, point);
 
-            var sourceC = sources[2];
-            if (sourceC is null)
+            TSource sourceC = sources[2] ??
                 throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
-            var sampleC = sourceC.GetInfluence(point);
+            InfluenceSample<float> sampleC = sourceC.GetInfluence(point);
             if (n == 3)
                 return InterpolateTriangle(sampleA, sampleB, sampleC, point);
 
             int k = System.Math.Min(MaxCandidateSamples, n);
-            var nearest = GetNearestSamples(sources, point, k, sampleA, sampleB, sampleC);
+            InfluenceSample<float>[] nearest = GetNearestSamples(sources, point, k, sampleA, sampleB, sampleC);
 
             for (int i = 0; i < k; i++)
             {
@@ -132,9 +131,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                 {
                     for (int m = j + 1; m < k; m++)
                     {
-                        var a = nearest[i];
-                        var b = nearest[j];
-                        var c = nearest[m];
+                        InfluenceSample<float> a = nearest[i];
+                        InfluenceSample<float> b = nearest[j];
+                        InfluenceSample<float> c = nearest[m];
 
                         if (!TryBarycentric(a.SourcePoint, b.SourcePoint, c.SourcePoint, point,
                             out float lA, out float lB, out float lC))
@@ -151,9 +150,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             }
 
             float bestPenalty = float.PositiveInfinity;
-            var bestA = nearest[0];
-            var bestB = nearest[1];
-            var bestC = nearest[2];
+            InfluenceSample<float> bestA = nearest[0];
+            InfluenceSample<float> bestB = nearest[1];
+            InfluenceSample<float> bestC = nearest[2];
             float bestLA = 0, bestLB = 0, bestLC = 0;
 
             for (int i = 0; i < k; i++)
@@ -162,13 +161,13 @@ namespace Akeldov.Math.Spatial2D.Fields
                 {
                     for (int m = j + 1; m < k; m++)
                     {
-                        var a = nearest[i];
-                        var b = nearest[j];
-                        var c = nearest[m];
+                        InfluenceSample<float> a = nearest[i];
+                        InfluenceSample<float> b = nearest[j];
+                        InfluenceSample<float> c = nearest[m];
 
-                        var pa = a.SourcePoint;
-                        var pb = b.SourcePoint;
-                        var pc = c.SourcePoint;
+                        PointXY pa = a.SourcePoint;
+                        PointXY pb = b.SourcePoint;
+                        PointXY pc = c.SourcePoint;
 
                         if (!TryBarycentric(pa, pb, pc, point,
                             out float lA, out float lB, out float lC))
@@ -244,11 +243,11 @@ namespace Akeldov.Math.Spatial2D.Fields
             InfluenceSample<float> b,
             PointXY p)
         {
-            var pa = a.SourcePoint;
-            var pb = b.SourcePoint;
+            PointXY pa = a.SourcePoint;
+            PointXY pb = b.SourcePoint;
 
-            var ab = pb - pa;
-            var ap = p - pa;
+            VectorXY ab = pb - pa;
+            VectorXY ap = p - pa;
 
             float ab2 = ab.X * ab.X + ab.Y * ab.Y;
             if (ab2 <= GeometryConstants.GeometryEpsilonSquared)
@@ -283,11 +282,10 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 3; i < sources.Count; i++)
             {
-                var source = sources[i];
-                if (source is null)
+                TSource source = sources[i] ??
                     throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
-                var sample = source.GetInfluence(point);
+                InfluenceSample<float> sample = source.GetInfluence(point);
                 float effectiveDistance = EffectiveDistance(sample);
 
                 if (i < count || effectiveDistance < effectiveDistances[count - 1])
@@ -301,10 +299,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             InfluenceSample<float>[] nearest,
             float[] effectiveDistances,
             int existingCount,
-            InfluenceSample<float> sample)
-        {
-            InsertNearest(nearest, effectiveDistances, existingCount, sample, EffectiveDistance(sample));
-        }
+            InfluenceSample<float> sample) => InsertNearest(nearest, effectiveDistances, existingCount, sample, EffectiveDistance(sample));
 
         private static void InsertNearest(
             InfluenceSample<float>[] nearest,

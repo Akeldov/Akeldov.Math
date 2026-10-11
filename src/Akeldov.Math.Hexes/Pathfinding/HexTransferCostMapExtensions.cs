@@ -35,7 +35,9 @@ namespace Akeldov.Math.Hexes.Pathfinding
         /// <exception cref="InvalidOperationException">
         /// Thrown when an entry or exit cost is negative, <see cref="float.NaN"/>, or negative infinity.
         /// </exception>
+#pragma warning disable MA0051 // Method is too long
         public static HexPath? FindShortestPath(
+#pragma warning restore MA0051 // Method is too long
             this HexTransferCostMap costs,
             VectorXYInt from,
             VectorXYInt to)

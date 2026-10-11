@@ -8,7 +8,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// The factor for converting a regular hex apothem to its radius.
         /// </summary>
-        public const float Apothem2Radius = 1.1547005f;
+        public const float Apothem2Radius = 1.15470054f;
 
         /// <summary>
         /// The factor for converting a regular hex radius to its apothem.
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Hexes.Geometry
         /// <summary>
         /// An angle of 60 degrees expressed in radians.
         /// </summary>
-        public const float Deg60InRadians = 1.0471976f;
+        public const float Deg60InRadians = 1.04719755f;
 
         /// <summary>
         /// The cosine of 0 degrees.

@@ -8,7 +8,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 {
     internal static class TrueTypeTextLayout
     {
+#pragma warning disable MA0051 // Method is too long
         public static TextSignedDistanceProvider CreateText(
+#pragma warning restore MA0051 // Method is too long
             TrueTypeFont font,
             string text,
             PointXY origin,
@@ -288,10 +290,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             public int Count => _segments.Count;
 
-            public void Add(TextSegment segment)
-            {
-                _segments.Add(segment);
-            }
+            public void Add(TextSegment segment) => _segments.Add(segment);
 
             public CompositeContour? ToCompositeContour(VectorXY offset)
             {
@@ -332,15 +331,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             public PointXY EndPoint { get; }
 
-            public static TextSegment Line(PointXY startPoint, PointXY endPoint)
-            {
-                return new TextSegment(TextSegmentKind.Line, startPoint, startPoint, endPoint);
-            }
+            public static TextSegment Line(PointXY startPoint, PointXY endPoint) => new TextSegment(TextSegmentKind.Line, startPoint, startPoint, endPoint);
 
-            public static TextSegment Quadratic(PointXY startPoint, PointXY controlPoint, PointXY endPoint)
-            {
-                return new TextSegment(TextSegmentKind.Quadratic, startPoint, controlPoint, endPoint);
-            }
+            public static TextSegment Quadratic(PointXY startPoint, PointXY controlPoint, PointXY endPoint) => new TextSegment(TextSegmentKind.Quadratic, startPoint, controlPoint, endPoint);
 
             public TextSegment Translate(VectorXY offset)
             {

@@ -47,7 +47,9 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// <param name="fieldSize">The finite positive field size.</param>
         /// <param name="minimalDistanceField">The finite positive minimal distance field.</param>
         /// <returns>A new mutable list of generated point samples owned by the caller.</returns>
+#pragma warning disable MA0051 // Method is too long
         public List<PoissonDiskPointSample> Sample(VectorXY fieldSize, IFloatField minimalDistanceField)
+#pragma warning restore MA0051 // Method is too long
         {
             if (fieldSize.X <= 0f || float.IsNaN(fieldSize.X) || float.IsInfinity(fieldSize.X) ||
                 fieldSize.Y <= 0f || float.IsNaN(fieldSize.Y) || float.IsInfinity(fieldSize.Y))
@@ -72,9 +74,9 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             var samples = new List<PoissonDiskPointSample>();
             var grid = new Grid(fieldSize, cellSize);
 
-            var first = _random.SelectRandomPoint(fieldSize);
+            PointXY first = _random.SelectRandomPoint(fieldSize);
             processList.Add(first);
-            var firstMinimalDistance = SampleMinimalDistance(minimalDistanceField, first);
+            float firstMinimalDistance = SampleMinimalDistance(minimalDistanceField, first);
 
             if (grid.TryAdd(first, firstMinimalDistance))
             {
@@ -84,18 +86,18 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             while (processList.Count > 0)
             {
                 int index = _random.Next(processList.Count);
-                var currentPoint = processList[index];
+                PointXY currentPoint = processList[index];
                 bool found = false;
 
-                var minimalDistance = SampleMinimalDistance(minimalDistanceField, currentPoint);
+                float minimalDistance = SampleMinimalDistance(minimalDistanceField, currentPoint);
 
                 for (int i = 0; i < _maxAttempts; i++)
                 {
-                    var candidate = _random.SelectRandomAroundPoint(currentPoint, minimalDistance);
+                    PointXY candidate = _random.SelectRandomAroundPoint(currentPoint, minimalDistance);
                     if (!grid.Contains(candidate))
                         continue;
 
-                    var candidateMinimalDistance = SampleMinimalDistance(minimalDistanceField, candidate);
+                    float candidateMinimalDistance = SampleMinimalDistance(minimalDistanceField, candidate);
 
                     if (grid.TryAdd(candidate, candidateMinimalDistance))
                     {
