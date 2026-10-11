@@ -98,8 +98,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 0; i < pointSources.Count; i++)
             {
-                TPointSource source = pointSources[i];
-                if (source is null)
+                TPointSource source = pointSources[i] ??
                     throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(pointSources));
 
                 if (!PointXYValidation.IsFinite(source.Position))
@@ -584,6 +583,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 SquaredDistance(point, _circumcenter) <= _circumradiusSquared + GeometryConstants.GeometryEpsilon;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private readonly struct Edge : IEquatable<Edge>
         {
             public Edge(int first, int second)

@@ -18,10 +18,8 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="epsilon">The inclusive comparison tolerance.</param>
         /// <returns><see langword="true"/> when the values are within tolerance; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool AlmostEquals(this float left, float right, float epsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return MathF.Abs(left - right) <= epsilon;
-        }
+        public static bool AlmostEquals(this float left, float right, float epsilon = GeometryConstants.GeometryEpsilon) =>
+            MathF.Abs(left - right) <= epsilon;
 
         /// <summary>
         /// Indicates whether a value is within the specified tolerance of zero.
@@ -30,9 +28,7 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="epsilon">The inclusive zero tolerance.</param>
         /// <returns><see langword="true"/> when the value is within tolerance of zero; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsAlmostZero(this float value, float epsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return MathF.Abs(value) <= epsilon;
-        }
+        public static bool IsAlmostZero(this float value, float epsilon = GeometryConstants.GeometryEpsilon) =>
+            MathF.Abs(value) <= epsilon;
     }
 }

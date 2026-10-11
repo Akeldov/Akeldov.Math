@@ -1,9 +1,12 @@
 using Akeldov.Math.Spatial2D.Imaging;
+using System.Runtime.InteropServices;
+
 namespace Akeldov.Math.Hexes
 {
     /// <summary>
     /// Defines rendering and output parameters for rasterizing a hex map topology.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct HexMapTopologyRasterizationOptions
     {
         /// <summary>

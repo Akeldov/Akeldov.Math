@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+#pragma warning disable MA0051 // Method is too long
     /// <summary>
     /// Represents a finite directed quadratic Bezier curve segment.
     /// </summary>
@@ -95,40 +96,32 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="segmentCount">The positive number of line segments to create.</param>
         /// <returns>A new mutable list of directed segments owned by the caller.</returns>
-        public List<ParameterizedSegment> Flatten(int segmentCount)
-        {
-            return BezierPathApproximation.Flatten(GetPointAtUnchecked, segmentCount);
-        }
+#pragma warning disable MA0016 // Prefer using collection abstraction instead of implementation
+        public List<ParameterizedSegment> Flatten(int segmentCount) =>
+            BezierPathApproximation.Flatten(GetPointAtUnchecked, segmentCount);
+#pragma warning restore MA0016 // Prefer using collection abstraction instead of implementation
 
         /// <summary>
         /// Returns the shortest approximate distance from the specified point to this curve.
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The approximate distance to this curve.</returns>
-        public float Distance(PointXY point)
-        {
-            return ProjectClosest(point).Distance;
-        }
+        public float Distance(PointXY point) => ProjectClosest(point).Distance;
 
         /// <summary>
         /// Projects the specified point onto this curve using the curve approximation.
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The approximate projection point and distance to this curve.</returns>
-        public CurveProjection Project(PointXY point)
-        {
-            return ProjectClosest(point);
-        }
+        public CurveProjection Project(PointXY point) => ProjectClosest(point);
 
         /// <summary>
         /// Projects the specified point onto this curve using the curve approximation and reports the approximate length coordinate.
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The approximate projection point, length coordinate, and distance to this curve.</returns>
-        public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
-        {
-            return BezierPathApproximation.ProjectWithParameter(GetPointAtUnchecked, point);
-        }
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point) =>
+            BezierPathApproximation.ProjectWithParameter(GetPointAtUnchecked, point);
 
         /// <inheritdoc/>
         public int CountRightwardCrossings(PointXY origin) =>
@@ -139,10 +132,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="curveCoordinate">The finite curve coordinate in world coordinate units.</param>
         /// <returns>The point on this curve.</returns>
-        public PointXY GetPoint(float curveCoordinate)
-        {
-            return BezierPathApproximation.GetPoint(GetPointAtUnchecked, Length, curveCoordinate);
-        }
+        public PointXY GetPoint(float curveCoordinate) =>
+            BezierPathApproximation.GetPoint(GetPointAtUnchecked, Length, curveCoordinate);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is QuadraticBezier other && Equals(other);
@@ -318,4 +309,5 @@ namespace Akeldov.Math.Spatial2D.Curves
                 boundaries[count++] = value;
         }
     }
+#pragma warning restore MA0051 // Method is too long
 }

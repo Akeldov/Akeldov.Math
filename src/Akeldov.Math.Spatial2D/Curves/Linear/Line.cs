@@ -224,9 +224,11 @@ namespace Akeldov.Math.Spatial2D.Curves
             out float normalizedBMinusOne,
             out float normalizedC)
         {
+#pragma warning disable MA0015 // Specify the parameter name in ArgumentException
             float scale = MathF.Sqrt(equationA * equationA + equationB * equationB);
             if (scale == 0f)
                 throw new ArgumentException("Line equation must have at least one non-zero linear coefficient.");
+#pragma warning restore MA0015 // Specify the parameter name in ArgumentException
 
             normalizedA = equationA / scale;
             float normalizedB = equationB / scale;
