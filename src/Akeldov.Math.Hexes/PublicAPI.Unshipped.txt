@@ -13,3 +13,89 @@ static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToPartialV
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToPartialVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Hexes.IHexMap<int?>! regionsMask, int relaxationIterations = 0, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy = Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy.LeaveAsIs, Akeldov.Math.Hexes.Partitioning.Voronoi.ExclavePolicy exclavePolicy = Akeldov.Math.Hexes.Partitioning.Voronoi.ExclavePolicy.LeaveAsIs) -> Akeldov.Math.Hexes.Partitioning.Voronoi.PartialVoronoiHexPartitionMap!
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, Akeldov.Math.Hexes.IHexMap<int>! regionsMask, int relaxationIterations = 0, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy = Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy.LeaveAsIs, Akeldov.Math.Hexes.Partitioning.Voronoi.ExclavePolicy exclavePolicy = Akeldov.Math.Hexes.Partitioning.Voronoi.ExclavePolicy.LeaveAsIs) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
 static Akeldov.Math.Hexes.Partitioning.Voronoi.HexCenterMapExtensions.ToVoronoiHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexCenterMap! hexCenters, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site>! sites, int relaxationIterations = 0, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy = Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy.LeaveAsIs, Akeldov.Math.Hexes.Partitioning.Voronoi.ExclavePolicy exclavePolicy = Akeldov.Math.Hexes.Partitioning.Voronoi.ExclavePolicy.LeaveAsIs) -> Akeldov.Math.Hexes.Partitioning.Voronoi.VoronoiHexPartitionMap!
+*REMOVED*Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.All = Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index0 | Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index1 | Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index2 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.All = Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.Index0 | Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.Index1 | Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.Index2 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index0 = 1 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.Index0 = 1 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index1 = 2 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.Index1 = 2 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.Index2 = 4 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.Index2 = 4 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.ChromaticTripletPresence.None = 0 -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PairPresenceFlags.All = Akeldov.Math.Hexes.Topology.PairPresenceFlags.Left | Akeldov.Math.Hexes.Topology.PairPresenceFlags.Right -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresence.All = Akeldov.Math.Hexes.Topology.PairPresence.Left | Akeldov.Math.Hexes.Topology.PairPresence.Right -> Akeldov.Math.Hexes.Topology.PairPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PairPresenceFlags.Left = 1 -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresence.Left = 1 -> Akeldov.Math.Hexes.Topology.PairPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PairPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresence.None = 0 -> Akeldov.Math.Hexes.Topology.PairPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PairPresenceFlags.Right = 2 -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PairPresence.Right = 2 -> Akeldov.Math.Hexes.Topology.PairPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Deconstruct(out T index0, out T index1, out T index2, out Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Deconstruct(out T index0, out T index1, out T index2, out Akeldov.Math.Hexes.Topology.ChromaticTripletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(Akeldov.Math.Hexes.Topology.ChromaticTriplet<T> triplet, Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(Akeldov.Math.Hexes.Topology.ChromaticTriplet<T> triplet, Akeldov.Math.Hexes.Topology.ChromaticTripletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(T index0, T index1, T index2, Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.PartialChromaticTriplet(T index0, T index1, T index2, Akeldov.Math.Hexes.Topology.ChromaticTripletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialChromaticTriplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.ChromaticTripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialPair<T>.Deconstruct(out T left, out T right, out Akeldov.Math.Hexes.Topology.PairPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Deconstruct(out T left, out T right, out Akeldov.Math.Hexes.Topology.PairPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(Akeldov.Math.Hexes.Topology.Pair<T> pair, Akeldov.Math.Hexes.Topology.PairPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(Akeldov.Math.Hexes.Topology.Pair<T> pair, Akeldov.Math.Hexes.Topology.PairPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(T left, T right, Akeldov.Math.Hexes.Topology.PairPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialPair<T>.PartialPair(T left, T right, Akeldov.Math.Hexes.Topology.PairPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialPair<T>.Presence.get -> Akeldov.Math.Hexes.Topology.PairPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialPair<T>.Presence.get -> Akeldov.Math.Hexes.Topology.PairPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Deconstruct(out T main, out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5, out Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Deconstruct(out T main, out T adjacent0, out T adjacent1, out T adjacent2, out T adjacent3, out T adjacent4, out T adjacent5, out Akeldov.Math.Hexes.Topology.SeptupletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(Akeldov.Math.Hexes.Topology.Septuplet<T> septuplet, Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(Akeldov.Math.Hexes.Topology.Septuplet<T> septuplet, Akeldov.Math.Hexes.Topology.SeptupletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(T main, T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.PartialSeptuplet(T main, T adjacent0, T adjacent1, T adjacent2, T adjacent3, T adjacent4, T adjacent5, Akeldov.Math.Hexes.Topology.SeptupletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialSeptuplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Deconstruct(out T main, out T left, out T right, out Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Deconstruct(out T main, out T left, out T right, out Akeldov.Math.Hexes.Topology.TripletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(Akeldov.Math.Hexes.Topology.Triplet<T> triplet, Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(Akeldov.Math.Hexes.Topology.Triplet<T> triplet, Akeldov.Math.Hexes.Topology.TripletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(T main, T left, T right, Akeldov.Math.Hexes.Topology.TripletPresenceFlags presence) -> void
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.PartialTriplet(T main, T left, T right, Akeldov.Math.Hexes.Topology.TripletPresence presence) -> void
+*REMOVED*Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.PartialTriplet<T>.Presence.get -> Akeldov.Math.Hexes.Topology.TripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent0 = 2 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent0 = 2 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent1 = 4 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent1 = 4 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent2 = 8 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent2 = 8 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent3 = 16 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent3 = 16 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent4 = 32 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent4 = 32 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent5 = 64 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent5 = 64 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.All = Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Main | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent0 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent1 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent2 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent3 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent4 | Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Adjacent5 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.All = Akeldov.Math.Hexes.Topology.SeptupletPresence.Main | Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent0 | Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent1 | Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent2 | Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent3 | Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent4 | Akeldov.Math.Hexes.Topology.SeptupletPresence.Adjacent5 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.Main = 1 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.Main = 1 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.SeptupletPresenceFlags
+Akeldov.Math.Hexes.Topology.SeptupletPresence.None = 0 -> Akeldov.Math.Hexes.Topology.SeptupletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.TripletPresenceFlags.All = Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Main | Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Left | Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Right -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresence.All = Akeldov.Math.Hexes.Topology.TripletPresence.Main | Akeldov.Math.Hexes.Topology.TripletPresence.Left | Akeldov.Math.Hexes.Topology.TripletPresence.Right -> Akeldov.Math.Hexes.Topology.TripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Left = 2 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresence.Left = 2 -> Akeldov.Math.Hexes.Topology.TripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Main = 1 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresence.Main = 1 -> Akeldov.Math.Hexes.Topology.TripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.TripletPresenceFlags.None = 0 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresence.None = 0 -> Akeldov.Math.Hexes.Topology.TripletPresence
+*REMOVED*Akeldov.Math.Hexes.Topology.TripletPresenceFlags.Right = 4 -> Akeldov.Math.Hexes.Topology.TripletPresenceFlags
+Akeldov.Math.Hexes.Topology.TripletPresence.Right = 4 -> Akeldov.Math.Hexes.Topology.TripletPresence

@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// Identifies which positions of a <see cref="PartialSeptuplet{TValue}"/> contain values.
     /// </summary>
     [Flags]
-    public enum SeptupletPresenceFlags : byte
+    public enum SeptupletPresence : byte
     {
         /// <summary>
         /// No position is present.

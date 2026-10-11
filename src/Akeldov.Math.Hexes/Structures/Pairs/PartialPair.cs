@@ -15,7 +15,7 @@ namespace Akeldov.Math.Hexes.Topology
         public PartialPair(
             T left,
             T right,
-            PairPresenceFlags presence)
+            PairPresence presence)
         {
             Left = left;
             Right = right;
@@ -43,7 +43,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="pair">The complete pair whose values are stored.</param>
         /// <param name="presence">The positions that are semantically present.</param>
-        public PartialPair(Pair<T> pair, PairPresenceFlags presence)
+        public PartialPair(Pair<T> pair, PairPresence presence)
             : this(pair.Left, pair.Right, presence)
         {
         }
@@ -61,17 +61,17 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets the flags identifying the semantically present positions.
         /// </summary>
-        public PairPresenceFlags Presence { get; }
+        public PairPresence Presence { get; }
 
         /// <summary>
         /// Gets whether the left position is present.
         /// </summary>
-        public bool HasLeft => (Presence & PairPresenceFlags.Left) != PairPresenceFlags.None;
+        public bool HasLeft => (Presence & PairPresence.Left) != PairPresence.None;
 
         /// <summary>
         /// Gets whether the right position is present.
         /// </summary>
-        public bool HasRight => (Presence & PairPresenceFlags.Right) != PairPresenceFlags.None;
+        public bool HasRight => (Presence & PairPresence.Right) != PairPresence.None;
 
         /// <summary>
         /// Returns the stored values as a complete pair, discarding presence information.
@@ -101,22 +101,22 @@ namespace Akeldov.Math.Hexes.Topology
         public void Deconstruct(
             out T left,
             out T right,
-            out PairPresenceFlags presence)
+            out PairPresence presence)
         {
             left = Left;
             right = Right;
             presence = Presence;
         }
 
-        private static PairPresenceFlags CreatePresence(bool hasLeft, bool hasRight)
+        private static PairPresence CreatePresence(bool hasLeft, bool hasRight)
         {
-            PairPresenceFlags presence = PairPresenceFlags.None;
+            PairPresence presence = PairPresence.None;
 
             if (hasLeft)
-                presence |= PairPresenceFlags.Left;
+                presence |= PairPresence.Left;
 
             if (hasRight)
-                presence |= PairPresenceFlags.Right;
+                presence |= PairPresence.Right;
 
             return presence;
         }

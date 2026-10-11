@@ -17,7 +17,7 @@ namespace Akeldov.Math.Hexes.Topology
             T main,
             T left,
             T right,
-            TripletPresenceFlags presence)
+            TripletPresence presence)
         {
             Main = main;
             Left = left;
@@ -50,7 +50,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="triplet">The complete triplet whose values are stored.</param>
         /// <param name="presence">The positions that are semantically present.</param>
-        public PartialTriplet(Triplet<T> triplet, TripletPresenceFlags presence)
+        public PartialTriplet(Triplet<T> triplet, TripletPresence presence)
             : this(triplet.Main, triplet.Left, triplet.Right, presence)
         {
         }
@@ -73,22 +73,22 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets the flags identifying the semantically present positions.
         /// </summary>
-        public TripletPresenceFlags Presence { get; }
+        public TripletPresence Presence { get; }
 
         /// <summary>
         /// Gets whether the primary position is present.
         /// </summary>
-        public bool HasMain => (Presence & TripletPresenceFlags.Main) != TripletPresenceFlags.None;
+        public bool HasMain => (Presence & TripletPresence.Main) != TripletPresence.None;
 
         /// <summary>
         /// Gets whether the left position is present.
         /// </summary>
-        public bool HasLeft => (Presence & TripletPresenceFlags.Left) != TripletPresenceFlags.None;
+        public bool HasLeft => (Presence & TripletPresence.Left) != TripletPresence.None;
 
         /// <summary>
         /// Gets whether the right position is present.
         /// </summary>
-        public bool HasRight => (Presence & TripletPresenceFlags.Right) != TripletPresenceFlags.None;
+        public bool HasRight => (Presence & TripletPresence.Right) != TripletPresence.None;
 
         /// <summary>
         /// Returns the stored values as a complete triplet, discarding presence information.
@@ -122,7 +122,7 @@ namespace Akeldov.Math.Hexes.Topology
             out T main,
             out T left,
             out T right,
-            out TripletPresenceFlags presence)
+            out TripletPresence presence)
         {
             main = Main;
             left = Left;
@@ -130,18 +130,18 @@ namespace Akeldov.Math.Hexes.Topology
             presence = Presence;
         }
 
-        private static TripletPresenceFlags CreatePresence(bool hasMain, bool hasLeft, bool hasRight)
+        private static TripletPresence CreatePresence(bool hasMain, bool hasLeft, bool hasRight)
         {
-            TripletPresenceFlags presence = TripletPresenceFlags.None;
+            TripletPresence presence = TripletPresence.None;
 
             if (hasMain)
-                presence |= TripletPresenceFlags.Main;
+                presence |= TripletPresence.Main;
 
             if (hasLeft)
-                presence |= TripletPresenceFlags.Left;
+                presence |= TripletPresence.Left;
 
             if (hasRight)
-                presence |= TripletPresenceFlags.Right;
+                presence |= TripletPresence.Right;
 
             return presence;
         }

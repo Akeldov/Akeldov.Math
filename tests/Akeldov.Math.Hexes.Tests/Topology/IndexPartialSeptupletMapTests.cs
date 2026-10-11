@@ -51,11 +51,11 @@ public class IndexPartialSeptupletMapTests
         Assert.That(adjacency.Adjacent4, Is.EqualTo(new VectorXYInt(0, -1)));
         Assert.That(adjacency.Adjacent5, Is.EqualTo(new VectorXYInt(1, -1)));
         Assert.That(adjacency.Presence, Is.EqualTo(
-            SeptupletPresenceFlags.Main |
-            SeptupletPresenceFlags.Adjacent0 |
-            SeptupletPresenceFlags.Adjacent1 |
-            SeptupletPresenceFlags.Adjacent2 |
-            SeptupletPresenceFlags.Adjacent3));
+            SeptupletPresence.Main |
+            SeptupletPresence.Adjacent0 |
+            SeptupletPresence.Adjacent1 |
+            SeptupletPresence.Adjacent2 |
+            SeptupletPresence.Adjacent3));
         Assert.That(adjacency.HasMain, Is.True);
         Assert.That(adjacency.HasAdjacent0, Is.True);
         Assert.That(adjacency.HasAdjacent1, Is.True);
@@ -79,7 +79,7 @@ public class IndexPartialSeptupletMapTests
         Assert.That(adjacency.Adjacent3, Is.EqualTo(new VectorXYInt(-1, 0)));
         Assert.That(adjacency.Adjacent4, Is.EqualTo(new VectorXYInt(-1, -1)));
         Assert.That(adjacency.Adjacent5, Is.EqualTo(new VectorXYInt(0, -1)));
-        Assert.That(adjacency.Presence, Is.EqualTo(SeptupletPresenceFlags.Main));
+        Assert.That(adjacency.Presence, Is.EqualTo(SeptupletPresence.Main));
     }
 
     [TestCase(Layout.OddR)]
@@ -103,7 +103,7 @@ public class IndexPartialSeptupletMapTests
                 Assert.That(adjacency.Adjacent3, Is.EqualTo(index.GetAdjacent(HexEdge.Edge3, layout)));
                 Assert.That(adjacency.Adjacent4, Is.EqualTo(index.GetAdjacent(HexEdge.Edge4, layout)));
                 Assert.That(adjacency.Adjacent5, Is.EqualTo(index.GetAdjacent(HexEdge.Edge5, layout)));
-                Assert.That(adjacency.Presence, Is.EqualTo(SeptupletPresenceFlags.All));
+                Assert.That(adjacency.Presence, Is.EqualTo(SeptupletPresence.All));
             });
         }
     }

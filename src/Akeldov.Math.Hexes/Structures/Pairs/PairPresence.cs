@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// Identifies which positions of a <see cref="PartialPair{TValue}"/> contain values.
     /// </summary>
     [Flags]
-    public enum PairPresenceFlags : byte
+    public enum PairPresence : byte
     {
         /// <summary>
         /// Neither position is present.

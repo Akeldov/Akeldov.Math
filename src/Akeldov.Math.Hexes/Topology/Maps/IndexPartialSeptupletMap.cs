@@ -222,25 +222,25 @@ namespace Akeldov.Math.Hexes.Topology
                 main + offsets[4],
                 main + offsets[5]);
 
-            SeptupletPresenceFlags presence = SeptupletPresenceFlags.Main;
+            SeptupletPresence presence = SeptupletPresence.Main;
 
             if (ContainsIndex(adjacency.Adjacent0, width, height))
-                presence |= SeptupletPresenceFlags.Adjacent0;
+                presence |= SeptupletPresence.Adjacent0;
 
             if (ContainsIndex(adjacency.Adjacent1, width, height))
-                presence |= SeptupletPresenceFlags.Adjacent1;
+                presence |= SeptupletPresence.Adjacent1;
 
             if (ContainsIndex(adjacency.Adjacent2, width, height))
-                presence |= SeptupletPresenceFlags.Adjacent2;
+                presence |= SeptupletPresence.Adjacent2;
 
             if (ContainsIndex(adjacency.Adjacent3, width, height))
-                presence |= SeptupletPresenceFlags.Adjacent3;
+                presence |= SeptupletPresence.Adjacent3;
 
             if (ContainsIndex(adjacency.Adjacent4, width, height))
-                presence |= SeptupletPresenceFlags.Adjacent4;
+                presence |= SeptupletPresence.Adjacent4;
 
             if (ContainsIndex(adjacency.Adjacent5, width, height))
-                presence |= SeptupletPresenceFlags.Adjacent5;
+                presence |= SeptupletPresence.Adjacent5;
 
             return new PartialSeptuplet<VectorXYInt>(adjacency, presence);
         }

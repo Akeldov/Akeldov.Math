@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Topology
     /// Identifies which chromatic-index positions are present in a partial chromatic triplet.
     /// </summary>
     [Flags]
-    public enum ChromaticTripletPresenceFlags : byte
+    public enum ChromaticTripletPresence : byte
     {
         /// <summary>
         /// No chromatic-index positions are present.

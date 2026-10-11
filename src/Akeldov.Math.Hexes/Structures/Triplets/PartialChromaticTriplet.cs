@@ -17,7 +17,7 @@ namespace Akeldov.Math.Hexes.Topology
             T index0,
             T index1,
             T index2,
-            ChromaticTripletPresenceFlags presence)
+            ChromaticTripletPresence presence)
         {
             Index0 = index0;
             Index1 = index1;
@@ -52,7 +52,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// <param name="presence">The present chromatic-index positions.</param>
         public PartialChromaticTriplet(
             ChromaticTriplet<T> triplet,
-            ChromaticTripletPresenceFlags presence)
+            ChromaticTripletPresence presence)
             : this(triplet.Index0, triplet.Index1, triplet.Index2, presence)
         {
         }
@@ -75,22 +75,22 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets the present chromatic-index positions.
         /// </summary>
-        public ChromaticTripletPresenceFlags Presence { get; }
+        public ChromaticTripletPresence Presence { get; }
 
         /// <summary>
         /// Gets whether the position for chromatic index zero is present.
         /// </summary>
-        public bool HasIndex0 => (Presence & ChromaticTripletPresenceFlags.Index0) != ChromaticTripletPresenceFlags.None;
+        public bool HasIndex0 => (Presence & ChromaticTripletPresence.Index0) != ChromaticTripletPresence.None;
 
         /// <summary>
         /// Gets whether the position for chromatic index one is present.
         /// </summary>
-        public bool HasIndex1 => (Presence & ChromaticTripletPresenceFlags.Index1) != ChromaticTripletPresenceFlags.None;
+        public bool HasIndex1 => (Presence & ChromaticTripletPresence.Index1) != ChromaticTripletPresence.None;
 
         /// <summary>
         /// Gets whether the position for chromatic index two is present.
         /// </summary>
-        public bool HasIndex2 => (Presence & ChromaticTripletPresenceFlags.Index2) != ChromaticTripletPresenceFlags.None;
+        public bool HasIndex2 => (Presence & ChromaticTripletPresence.Index2) != ChromaticTripletPresence.None;
 
         /// <summary>
         /// Returns the values without presence information.
@@ -125,7 +125,7 @@ namespace Akeldov.Math.Hexes.Topology
             out T index0,
             out T index1,
             out T index2,
-            out ChromaticTripletPresenceFlags presence)
+            out ChromaticTripletPresence presence)
         {
             index0 = Index0;
             index1 = Index1;
@@ -133,21 +133,21 @@ namespace Akeldov.Math.Hexes.Topology
             presence = Presence;
         }
 
-        private static ChromaticTripletPresenceFlags CreatePresence(
+        private static ChromaticTripletPresence CreatePresence(
             bool hasIndex0,
             bool hasIndex1,
             bool hasIndex2)
         {
-            ChromaticTripletPresenceFlags presence = ChromaticTripletPresenceFlags.None;
+            ChromaticTripletPresence presence = ChromaticTripletPresence.None;
 
             if (hasIndex0)
-                presence |= ChromaticTripletPresenceFlags.Index0;
+                presence |= ChromaticTripletPresence.Index0;
 
             if (hasIndex1)
-                presence |= ChromaticTripletPresenceFlags.Index1;
+                presence |= ChromaticTripletPresence.Index1;
 
             if (hasIndex2)
-                presence |= ChromaticTripletPresenceFlags.Index2;
+                presence |= ChromaticTripletPresence.Index2;
 
             return presence;
         }

@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes.Topology
             T adjacent3,
             T adjacent4,
             T adjacent5,
-            SeptupletPresenceFlags presence)
+            SeptupletPresence presence)
         {
             Main = main;
             Adjacent0 = adjacent0;
@@ -93,7 +93,7 @@ namespace Akeldov.Math.Hexes.Topology
         /// </summary>
         /// <param name="septuplet">The complete septuplet whose values are stored.</param>
         /// <param name="presence">The positions that are semantically present.</param>
-        public PartialSeptuplet(Septuplet<T> septuplet, SeptupletPresenceFlags presence)
+        public PartialSeptuplet(Septuplet<T> septuplet, SeptupletPresence presence)
             : this(
                 septuplet.Main,
                 septuplet.Adjacent0,
@@ -144,42 +144,42 @@ namespace Akeldov.Math.Hexes.Topology
         /// <summary>
         /// Gets the flags identifying the semantically present positions.
         /// </summary>
-        public SeptupletPresenceFlags Presence { get; }
+        public SeptupletPresence Presence { get; }
 
         /// <summary>
         /// Gets whether the primary position is present.
         /// </summary>
-        public bool HasMain => (Presence & SeptupletPresenceFlags.Main) != SeptupletPresenceFlags.None;
+        public bool HasMain => (Presence & SeptupletPresence.Main) != SeptupletPresence.None;
 
         /// <summary>
         /// Gets whether adjacent position 0 is present.
         /// </summary>
-        public bool HasAdjacent0 => (Presence & SeptupletPresenceFlags.Adjacent0) != SeptupletPresenceFlags.None;
+        public bool HasAdjacent0 => (Presence & SeptupletPresence.Adjacent0) != SeptupletPresence.None;
 
         /// <summary>
         /// Gets whether adjacent position 1 is present.
         /// </summary>
-        public bool HasAdjacent1 => (Presence & SeptupletPresenceFlags.Adjacent1) != SeptupletPresenceFlags.None;
+        public bool HasAdjacent1 => (Presence & SeptupletPresence.Adjacent1) != SeptupletPresence.None;
 
         /// <summary>
         /// Gets whether adjacent position 2 is present.
         /// </summary>
-        public bool HasAdjacent2 => (Presence & SeptupletPresenceFlags.Adjacent2) != SeptupletPresenceFlags.None;
+        public bool HasAdjacent2 => (Presence & SeptupletPresence.Adjacent2) != SeptupletPresence.None;
 
         /// <summary>
         /// Gets whether adjacent position 3 is present.
         /// </summary>
-        public bool HasAdjacent3 => (Presence & SeptupletPresenceFlags.Adjacent3) != SeptupletPresenceFlags.None;
+        public bool HasAdjacent3 => (Presence & SeptupletPresence.Adjacent3) != SeptupletPresence.None;
 
         /// <summary>
         /// Gets whether adjacent position 4 is present.
         /// </summary>
-        public bool HasAdjacent4 => (Presence & SeptupletPresenceFlags.Adjacent4) != SeptupletPresenceFlags.None;
+        public bool HasAdjacent4 => (Presence & SeptupletPresence.Adjacent4) != SeptupletPresence.None;
 
         /// <summary>
         /// Gets whether adjacent position 5 is present.
         /// </summary>
-        public bool HasAdjacent5 => (Presence & SeptupletPresenceFlags.Adjacent5) != SeptupletPresenceFlags.None;
+        public bool HasAdjacent5 => (Presence & SeptupletPresence.Adjacent5) != SeptupletPresence.None;
 
         /// <summary>
         /// Returns the stored values as a complete septuplet, discarding presence information.
@@ -243,7 +243,7 @@ namespace Akeldov.Math.Hexes.Topology
             out T adjacent3,
             out T adjacent4,
             out T adjacent5,
-            out SeptupletPresenceFlags presence)
+            out SeptupletPresence presence)
         {
             main = Main;
             adjacent0 = Adjacent0;
@@ -255,7 +255,7 @@ namespace Akeldov.Math.Hexes.Topology
             presence = Presence;
         }
 
-        private static SeptupletPresenceFlags CreatePresence(
+        private static SeptupletPresence CreatePresence(
             bool hasMain,
             bool hasAdjacent0,
             bool hasAdjacent1,
@@ -264,28 +264,28 @@ namespace Akeldov.Math.Hexes.Topology
             bool hasAdjacent4,
             bool hasAdjacent5)
         {
-            SeptupletPresenceFlags presence = SeptupletPresenceFlags.None;
+            SeptupletPresence presence = SeptupletPresence.None;
 
             if (hasMain)
-                presence |= SeptupletPresenceFlags.Main;
+                presence |= SeptupletPresence.Main;
 
             if (hasAdjacent0)
-                presence |= SeptupletPresenceFlags.Adjacent0;
+                presence |= SeptupletPresence.Adjacent0;
 
             if (hasAdjacent1)
-                presence |= SeptupletPresenceFlags.Adjacent1;
+                presence |= SeptupletPresence.Adjacent1;
 
             if (hasAdjacent2)
-                presence |= SeptupletPresenceFlags.Adjacent2;
+                presence |= SeptupletPresence.Adjacent2;
 
             if (hasAdjacent3)
-                presence |= SeptupletPresenceFlags.Adjacent3;
+                presence |= SeptupletPresence.Adjacent3;
 
             if (hasAdjacent4)
-                presence |= SeptupletPresenceFlags.Adjacent4;
+                presence |= SeptupletPresence.Adjacent4;
 
             if (hasAdjacent5)
-                presence |= SeptupletPresenceFlags.Adjacent5;
+                presence |= SeptupletPresence.Adjacent5;
 
             return presence;
         }

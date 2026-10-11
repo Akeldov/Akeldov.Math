@@ -104,7 +104,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
 
             barycentricCoordinates = _values[gridIndex.Y * Resolution.X + gridIndex.X];
-            return barycentricCoordinates.Presence != TripletPresenceFlags.None;
+            return barycentricCoordinates.Presence != TripletPresence.None;
         }
 
         private void Fill()

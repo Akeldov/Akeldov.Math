@@ -78,7 +78,7 @@ public class ChromaticBarycentricTripletRasterTests
             (float Coordinate, bool IsPresent) expected1 = GetCoordinate(1, barycentric, chromaticIndices);
             (float Coordinate, bool IsPresent) expected2 = GetCoordinate(2, barycentric, chromaticIndices);
 
-            foundPartialValue |= actual.Presence != ChromaticTripletPresenceFlags.All;
+            foundPartialValue |= actual.Presence != ChromaticTripletPresence.All;
 
             Assert.Multiple(() =>
             {
@@ -132,7 +132,7 @@ public class ChromaticBarycentricTripletRasterTests
         var triplet = new ChromaticTriplet<int>(10, 20, 30);
         var partial = new PartialChromaticTriplet<int>(
             triplet,
-            ChromaticTripletPresenceFlags.Index0 | ChromaticTripletPresenceFlags.Index2);
+            ChromaticTripletPresence.Index0 | ChromaticTripletPresence.Index2);
 
         (int index0, int index1, int index2) = triplet;
 

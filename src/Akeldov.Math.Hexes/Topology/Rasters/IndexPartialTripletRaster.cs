@@ -114,7 +114,7 @@ namespace Akeldov.Math.Hexes.Topology
             }
 
             indexTriplet = _values[gridIndex.Y * Resolution.X + gridIndex.X];
-            return indexTriplet.Presence != TripletPresenceFlags.None;
+            return indexTriplet.Presence != TripletPresence.None;
         }
 
         private void Fill()
