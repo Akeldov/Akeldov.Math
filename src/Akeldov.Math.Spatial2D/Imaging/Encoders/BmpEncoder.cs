@@ -26,8 +26,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            using (var stream = File.Create(path))
-                Save(raster, stream);
+            using FileStream stream = File.Create(path);
+            Save(raster, stream);
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 throw new ArgumentNullException(nameof(raster));
 
             ValidateRasterSize(raster.Resolution.X, raster.Resolution.Y);
-            using (var stream = File.Create(path))
-                Save(raster, stream);
+            using FileStream stream = File.Create(path);
+            Save(raster, stream);
         }
 
         /// <summary>
@@ -94,13 +94,11 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int imageSize = checked(rowStride * height);
             int fileSize = checked(pixelDataOffset + imageSize);
 
-            using (var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
-            {
-                WriteFileHeader(writer, fileSize, pixelDataOffset);
-                WriteInfoHeader(writer, width, height, 8, imageSize, 256);
-                WriteGrayscalePalette(writer);
-                WriteGray8Pixels(writer, raster, rowStride);
-            }
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            WriteFileHeader(writer, fileSize, pixelDataOffset);
+            WriteInfoHeader(writer, width, height, 8, imageSize, 256);
+            WriteGrayscalePalette(writer);
+            WriteGray8Pixels(writer, raster, rowStride);
         }
 
         private static void WriteRgba8(IRaster<RGBA8BitColor> raster, Stream stream)
@@ -112,12 +110,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int imageSize = checked(rowStride * height);
             int fileSize = checked(pixelDataOffset + imageSize);
 
-            using (var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
-            {
-                WriteFileHeader(writer, fileSize, pixelDataOffset);
-                WriteInfoHeader(writer, width, height, 32, imageSize, 0);
-                WriteRgba8Pixels(writer, raster, rowStride);
-            }
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            WriteFileHeader(writer, fileSize, pixelDataOffset);
+            WriteInfoHeader(writer, width, height, 32, imageSize, 0);
+            WriteRgba8Pixels(writer, raster, rowStride);
         }
 
         private static void WriteFileHeader(BinaryWriter writer, int fileSize, int pixelDataOffset)
@@ -205,9 +201,6 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 writer.Write((byte)0);
         }
 
-        private static int GetAlignedRowStride(int rowBytes)
-        {
-            return checked((rowBytes + 3) & ~3);
-        }
+        private static int GetAlignedRowStride(int rowBytes) => checked((rowBytes + 3) & ~3);
     }
 }

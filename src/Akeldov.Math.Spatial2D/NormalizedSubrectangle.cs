@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Akeldov.Math.Spatial2D
 {
@@ -8,6 +9,7 @@ namespace Akeldov.Math.Spatial2D
     /// The subrectangle's axes are aligned with the source rectangle's axes, and all coordinates
     /// are relative to the source rectangle in the inclusive range [0, 1].
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct NormalizedSubrectangle : IEquatable<NormalizedSubrectangle>
     {
         /// <summary>

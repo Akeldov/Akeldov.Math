@@ -73,10 +73,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                 "Point coordinates must be finite.");
 
             var samples = new InfluenceSample<int>[n];
-            for (var i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
-                var source = sources[i];
-                if (source is null)
+                TSource source = sources[i] ??
                     throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
 
                 samples[i] = source.GetInfluence(point);
@@ -89,15 +88,15 @@ namespace Akeldov.Math.Spatial2D.Fields
                 return (int)MathF.Round(InterpolateTriangle(samples[0], samples[1], samples[2], point));
 
             int k = System.Math.Min(MaxCandidateSamples, n);
-            var nearest = GetNearestSamples(samples, k);
+            InfluenceSample<int>[] nearest = GetNearestSamples(samples, k);
 
             for (int i = 0; i < k; i++)
                 for (int j = i + 1; j < k; j++)
                     for (int m = j + 1; m < k; m++)
                     {
-                        var a = nearest[i];
-                        var b = nearest[j];
-                        var c = nearest[m];
+                        InfluenceSample<int> a = nearest[i];
+                        InfluenceSample<int> b = nearest[j];
+                        InfluenceSample<int> c = nearest[m];
 
                         if (!TryBarycentric(a.SourcePoint, b.SourcePoint, c.SourcePoint, point, out float lA, out float lB, out float lC))
                             continue;
@@ -109,22 +108,22 @@ namespace Akeldov.Math.Spatial2D.Fields
                     }
 
             float bestPenalty = float.PositiveInfinity;
-            var bestA = nearest[0];
-            var bestB = nearest[1];
-            var bestC = nearest[2];
+            InfluenceSample<int> bestA = nearest[0];
+            InfluenceSample<int> bestB = nearest[1];
+            InfluenceSample<int> bestC = nearest[2];
             float bestLA = 0, bestLB = 0, bestLC = 0;
 
             for (int i = 0; i < k; i++)
                 for (int j = i + 1; j < k; j++)
                     for (int m = j + 1; m < k; m++)
                     {
-                        var a = nearest[i];
-                        var b = nearest[j];
-                        var c = nearest[m];
+                        InfluenceSample<int> a = nearest[i];
+                        InfluenceSample<int> b = nearest[j];
+                        InfluenceSample<int> c = nearest[m];
 
-                        var pa = a.SourcePoint;
-                        var pb = b.SourcePoint;
-                        var pc = c.SourcePoint;
+                        PointXY pa = a.SourcePoint;
+                        PointXY pb = b.SourcePoint;
+                        PointXY pc = c.SourcePoint;
 
                         if (!TryBarycentric(pa, pb, pc, point, out float lA, out float lB, out float lC))
                             continue;
@@ -182,11 +181,11 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private static float LerpOnSegment(InfluenceSample<int> a, InfluenceSample<int> b, PointXY p)
         {
-            var pa = a.SourcePoint;
-            var pb = b.SourcePoint;
+            PointXY pa = a.SourcePoint;
+            PointXY pb = b.SourcePoint;
 
-            var ab = pb - pa;
-            var ap = p - pa;
+            VectorXY ab = pb - pa;
+            VectorXY ap = p - pa;
 
             float ab2 = ab.X * ab.X + ab.Y * ab.Y;
             if (ab2 <= GeometryConstants.GeometryEpsilonSquared) return a.Value;
@@ -209,7 +208,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 0; i < samples.Length; i++)
             {
-                var sample = samples[i];
+                InfluenceSample<int> sample = samples[i];
                 float effectiveDistance = EffectiveDistance(sample);
 
                 if (i < count || effectiveDistance < effectiveDistances[count - 1])

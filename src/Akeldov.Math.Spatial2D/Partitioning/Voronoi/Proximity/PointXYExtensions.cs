@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
+#pragma warning disable MA0051 // Method is too long
     internal static partial class PointXYExtensions
     {
         /// <summary>
@@ -144,4 +145,5 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             return false;
         }
     }
+#pragma warning restore MA0051 // Method is too long
 }

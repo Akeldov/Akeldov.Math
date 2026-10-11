@@ -47,13 +47,13 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             {
                 for (int j = (int)MathF.Max(0, gy - 1); j <= (int)MathF.Min(_points.GetLength(1) - 1, gy + 1); j++)
                 {
-                    var list = _points[i, j];
+                    List<GridPoint> list = _points[i, j];
                     if (list != null)
                     {
                         for (int k = 0; k < list.Count; k++)
                         {
-                            var otherPoint = list[k];
-                            var requiredDistance = MathF.Max(minimalDistance, otherPoint.MinimalDistance);
+                            GridPoint otherPoint = list[k];
+                            float requiredDistance = MathF.Max(minimalDistance, otherPoint.MinimalDistance);
 
                             if (point.Distance(otherPoint.Point) < requiredDistance)
                                 return false;
@@ -65,10 +65,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             return true;
         }
 
-        public bool Contains(PointXY point)
-        {
-            return point.X >= 0 && point.X < _fieldSize.X && point.Y >= 0 && point.Y < _fieldSize.Y;
-        }
+        public bool Contains(PointXY point) => point.X >= 0 && point.X < _fieldSize.X && point.Y >= 0 && point.Y < _fieldSize.Y;
 
         private void Add(PointXY point, float minimalDistance)
         {

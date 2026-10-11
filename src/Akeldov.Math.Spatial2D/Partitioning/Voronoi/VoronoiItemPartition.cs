@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
@@ -31,7 +32,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// </summary>
         public IReadOnlyList<TItem> Items { get; }
 
-        private static IReadOnlyList<TItem> CopyItems(IReadOnlyList<TItem> items)
+        private static ReadOnlyCollection<TItem> CopyItems(IReadOnlyList<TItem> items)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
@@ -39,8 +40,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             var copy = new TItem[items.Count];
             for (int i = 0; i < items.Count; i++)
             {
-                var item = items[i];
-                if (item is null)
+                TItem item = items[i] ??
                     throw new ArgumentException("Voronoi item partition items cannot contain null elements.", nameof(items));
 
                 copy[i] = item;
