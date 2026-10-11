@@ -1,6 +1,5 @@
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Regions;
 using System.Collections.Generic;
@@ -22,10 +21,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="polyhexGeometry"/> is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the polyhex contains no occupied cells.</exception>
         public static ContourBasedRegion ToRegion<TPolyhexGeometry>(this TPolyhexGeometry polyhexGeometry)
-            where TPolyhexGeometry : IPolyhexGeometry
-        {
-            return polyhexGeometry.ToRegion(Layout.OddR);
-        }
+            where TPolyhexGeometry : IPolyhexGeometry => polyhexGeometry.ToRegion(Layout.OddR);
 
         /// <summary>
         /// Creates a filled region for the occupied hex cells using the specified hex layout.
@@ -40,7 +36,9 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="polyhexGeometry"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="layout"/> is not a defined layout.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the polyhex contains no occupied cells.</exception>
+#pragma warning disable MA0051 // Method is too long
         public static ContourBasedRegion ToRegion<TPolyhexGeometry>(
+#pragma warning restore MA0051 // Method is too long
             this TPolyhexGeometry polyhexGeometry,
             Layout layout)
             where TPolyhexGeometry : IPolyhexGeometry
