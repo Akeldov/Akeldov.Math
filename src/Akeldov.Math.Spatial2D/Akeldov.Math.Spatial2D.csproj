@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>1.3.0</Version>
+		<Version>1.3.1</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry and vector math with linear, circular, Bezier, B-spline, and NURBS curves; pairwise curve intersection APIs; contours and regions; rasterization and imaging; spatial sampling and partitioning; and influence fields.</Description>
-		<PackageReleaseNotes>Added RasterImageLoader for PNG and BMP loading from files and readable streams. PNG supports 8- and 16-bit grayscale and RGBA, all scanline filters, and Adam7 interlacing. BMP supports uncompressed indexed 8-bit and 32-bit BGRA images, including top-down images. Loaded rasters preserve sample values and use bottom-up Y coordinates; caller streams remain open. PNG export now throws ArgumentOutOfRangeException for non-positive raster dimensions. Existing geometry API signatures are unchanged.</PackageReleaseNotes>
+		<PackageReleaseNotes>Maintenance release: clarified validation errors for degenerate corners, extracted internal TrueType glyph types, and simplified BMP encoding, Voronoi item copying, and influence sampling internals. Added explicit sequential layout to geometry and rasterization value types and addressed analyzer warnings. Public API signatures and supported target frameworks are unchanged.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;b-spline;nurbs;contours;regions;rasterization;imaging;perlin-noise;gaussian-blur;sampling;voronoi;delaunay;poisson-disk</PackageTags>
