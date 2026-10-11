@@ -86,7 +86,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="sources">The influence sources used for interpolation. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The interpolated or extrapolated floating-point value.</returns>
+#pragma warning disable CA1725 // Preserve named-argument compatibility until 2.0.
         public float Sample(IReadOnlyList<TSource> sources, PointXY point)
+#pragma warning restore CA1725
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));
 
