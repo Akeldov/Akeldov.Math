@@ -234,7 +234,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             int directoryEnd = 12 + checked(tableCount * 16);
             EnsureRange(data, 0, directoryEnd);
 
-            var tables = new Dictionary<string, TableRecord>(tableCount);
+            var tables = new Dictionary<string, TableRecord>(tableCount, StringComparer.Ordinal);
             for (int i = 0; i < tableCount; i++)
             {
                 int entryOffset = 12 + i * 16;

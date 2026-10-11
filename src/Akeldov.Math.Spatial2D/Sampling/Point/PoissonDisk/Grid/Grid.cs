@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 {
-    internal class Grid
+    internal sealed class Grid
     {
         private readonly VectorXY _fieldSize;
         private readonly float _cellSize;
