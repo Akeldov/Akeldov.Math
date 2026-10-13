@@ -1,1 +1,2 @@
 #nullable enable
+static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.Rasterize<T, TResult>(this T pointDistanceProvider, System.Func<float, TResult>! distanceToGrayLevel, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TResult>!
