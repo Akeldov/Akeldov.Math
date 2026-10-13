@@ -142,18 +142,12 @@ namespace Akeldov.Math.Spatial2D
         /// Converts a point to its coordinate vector.
         /// </summary>
         /// <param name="point">The point to convert.</param>
-        public static explicit operator VectorXY(PointXY point)
-        {
-            return new VectorXY(point.X, point.Y);
-        }
+        public static explicit operator VectorXY(PointXY point) => new VectorXY(point.X, point.Y);
 
         /// <summary>
         /// Converts a coordinate vector to a point.
         /// </summary>
         /// <param name="coordinates">The coordinate vector to convert.</param>
-        public static explicit operator PointXY(VectorXY coordinates)
-        {
-            return new PointXY(coordinates.X, coordinates.Y);
-        }
+        public static explicit operator PointXY(VectorXY coordinates) => new PointXY(coordinates.X, coordinates.Y);
     }
 }

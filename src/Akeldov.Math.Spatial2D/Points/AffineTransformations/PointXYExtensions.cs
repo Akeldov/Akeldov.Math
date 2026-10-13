@@ -29,10 +29,8 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The transformed point.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PointXY Transform(this PointXY point, float angle, VectorXYInt offset)
-        {
-            return point.Transform(angle, (VectorXY)offset);
-        }
+        public static PointXY Transform(this PointXY point, float angle, VectorXYInt offset) =>
+            point.Transform(angle, (VectorXY)offset);
 
         /// <summary>
         /// Scales a point relative to the origin, rotates it around the origin, and then applies an offset.
@@ -61,10 +59,8 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The transformed point.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PointXY Transform(this PointXY point, float scaleFactor, float angle, VectorXYInt offset)
-        {
-            return point.Transform(scaleFactor, angle, (VectorXY)offset);
-        }
+        public static PointXY Transform(this PointXY point, float scaleFactor, float angle, VectorXYInt offset) =>
+            point.Transform(scaleFactor, angle, (VectorXY)offset);
 
         /// <summary>
         /// Rotates a point around the specified pivot.
@@ -90,9 +86,7 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The rotated point.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PointXY Rotate(this PointXY point, VectorXYInt pivot, float angle)
-        {
-            return point.Rotate(new PointXY(pivot.X, pivot.Y), angle);
-        }
+        public static PointXY Rotate(this PointXY point, VectorXYInt pivot, float angle) =>
+            point.Rotate(new PointXY(pivot.X, pivot.Y), angle);
     }
 }

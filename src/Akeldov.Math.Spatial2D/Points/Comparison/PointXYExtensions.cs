@@ -15,9 +15,7 @@ namespace Akeldov.Math.Spatial2D
         public static bool AlmostEquals(
             this PointXY source,
             PointXY target,
-            float epsilon = GeometryConstants.GeometryEpsilon)
-        {
-            return source.SquaredDistanceTo(target) <= epsilon * epsilon;
-        }
+            float epsilon = GeometryConstants.GeometryEpsilon) =>
+            source.SquaredDistanceTo(target) <= epsilon * epsilon;
     }
 }
