@@ -7,6 +7,15 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.Voronoi;
 
 public class HexCenterMapExtensionsTests
 {
+    public enum PartitionOverload
+    {
+        Full,
+        Regions,
+        Participation,
+        NullableRegions,
+        CombinedMasks
+    }
+
     [Test]
     public void PartitionExtensions_WithEquivalentMasks_ApplyRelaxationAndPoliciesConsistently(
         [Values(0, 1, 2)] int iterations, [Values] ExclavePolicy exclavePolicy)
@@ -65,7 +74,8 @@ public class HexCenterMapExtensionsTests
     }
 
     [Test]
-    public void PartitionExtensions_WithNegativeIterations_RejectArgumentInEveryOverload()
+    public void PartitionExtensions_WithNegativeIterations_RejectArgumentInEveryOverload(
+        [Values(-1, int.MinValue)] int iterations)
     {
         var centers = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
         var participation = new BoolHexMap(centers.Topology, new[] { true });
@@ -75,11 +85,11 @@ public class HexCenterMapExtensionsTests
 
         var calls = new TestDelegate[]
         {
-            () => centers.ToVoronoiHexPartitionMap(sites, -1),
-            () => centers.ToVoronoiHexPartitionMap(sites, regions, -1),
-            () => centers.ToPartialVoronoiHexPartitionMap(sites, participation, -1),
-            () => centers.ToPartialVoronoiHexPartitionMap(sites, nullableRegions, -1),
-            () => centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions, -1)
+            () => centers.ToVoronoiHexPartitionMap(sites, iterations),
+            () => centers.ToVoronoiHexPartitionMap(sites, regions, iterations),
+            () => centers.ToPartialVoronoiHexPartitionMap(sites, participation, iterations),
+            () => centers.ToPartialVoronoiHexPartitionMap(sites, nullableRegions, iterations),
+            () => centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions, iterations)
         };
         foreach (var call in calls)
             Assert.That(Assert.Throws<ArgumentOutOfRangeException>(call)!.ParamName, Is.EqualTo("relaxationIterations"));
@@ -194,20 +204,18 @@ public class HexCenterMapExtensionsTests
     }
 
     [Test]
-    public void ToPartialVoronoiHexPartitionMap_WithRelaxation_AppliesEmptyPolicyOnlyAfterFinalAssignment(
-        [Values] EmptyCellPolicy policy)
+    public void PartitionExtensions_WithRelaxation_AppliesEmptyPolicyOnlyAfterFinalAssignment(
+        [Values] PartitionOverload overload, [Values] EmptyCellPolicy policy)
     {
         var centers = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
-        var participation = new BoolHexMap(centers.Topology, new[] { true, true, true });
-        var regions = new IntHexMap(centers.Topology);
         var sites = new[] { new Site(centers[0], 1f), new Site(centers[0], 1f) };
 
-        var map = centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions, 1, emptyCellPolicy: policy);
+        var result = PartitionForOverload(overload, centers, sites, 1, policy);
 
-        Assert.That(map.Cells, Has.Count.EqualTo(2));
-        Assert.That(Enumerable.Range(0, 3).Select(i => map[i]), Is.EqualTo(new int?[] { 1, 0, 0 }));
-        Assert.That(map.Cells[0].Center.X, Is.EqualTo(centers[1].X).Within(0.00001f));
-        Assert.That(map.Cells[1].Site, Is.EqualTo(sites[1]));
+        Assert.That(result.Cells, Has.Count.EqualTo(2));
+        Assert.That(result.Assignments, Is.EqualTo(new int?[] { 1, 0, 0 }));
+        Assert.That(result.Cells[0].Center.X, Is.EqualTo(centers[1].X).Within(0.00001f));
+        Assert.That(result.Cells[1].Site, Is.EqualTo(sites[1]));
     }
 
     [Test]
@@ -505,19 +513,15 @@ public class HexCenterMapExtensionsTests
     }
 
     [Test]
-    public void Partition_WithInvalidExclavePolicy_Throws()
+    public void Partition_WithInvalidExclavePolicy_Throws(
+        [Values] PartitionOverload overload, [Values(-1, 123)] int invalidPolicy)
     {
         var centers = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(centers[0], 1f) };
-        var mask = new BoolHexMap(centers.Topology, new[] { true });
-        var regions = new IntHexMap(centers.Topology);
-        var invalid = (ExclavePolicy)123;
 
         Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
-            centers.ToPartialVoronoiHexPartitionMap(sites, mask, exclavePolicy: invalid))!.ParamName, Is.EqualTo("exclavePolicy"));
-        Assert.Throws<ArgumentOutOfRangeException>(() => centers.ToVoronoiHexPartitionMap(sites, regions, exclavePolicy: invalid));
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            centers.ToPartialVoronoiHexPartitionMap(sites, mask, regions, emptyCellPolicy: EmptyCellPolicy.LeaveAsIs, exclavePolicy: invalid));
+            PartitionForOverload(overload, centers, sites, exclavePolicy: (ExclavePolicy)invalidPolicy))!.ParamName,
+            Is.EqualTo("exclavePolicy"));
     }
 
     [Test]
@@ -1448,37 +1452,46 @@ public class HexCenterMapExtensionsTests
     }
 
     [Test]
-    public void ToVoronoiHexPartitionMap_WhenSitesIsNull_Throws()
+    public void PartitionExtensions_WhenSitesIsNull_Throws([Values] PartitionOverload overload)
     {
-        Assert.Throws<ArgumentNullException>(() => new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR)).ToVoronoiHexPartitionMap(null!));
+        var centers = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+
+        Assert.That(Assert.Throws<ArgumentNullException>(() =>
+            PartitionForOverload(overload, centers, null!))!.ParamName, Is.EqualTo("sites"));
     }
 
     [Test]
-    public void ToVoronoiHexPartitionMap_WhenSitesIsEmpty_Throws()
+    public void PartitionExtensions_WhenSitesIsEmpty_Throws([Values] PartitionOverload overload)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR)).ToVoronoiHexPartitionMap(Array.Empty<Site>()));
+        var centers = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
+            PartitionForOverload(overload, centers, Array.Empty<Site>()))!.ParamName, Is.EqualTo("sites"));
     }
 
     [Test]
-    public void ToVoronoiHexPartitionMap_WhenAllSiteWeightsAreZero_Throws()
+    public void PartitionExtensions_WhenAllSiteWeightsAreZero_Throws(
+        [Values] PartitionOverload overload, [Values] bool useDefaultSite)
     {
-        var sites = new[]
+        var centers = new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = useDefaultSite ? new Site[1] : new[]
         {
             new Site(new PointXY(0f, 0f), 0f),
             new Site(new PointXY(1f, 0f), 0f)
         };
 
-        var exception = Assert.Throws<ArgumentException>(() => new HexCenterMap(new HexMapGeometry(1, 1, VectorXY.Zero, 1f, Layout.OddR)).ToVoronoiHexPartitionMap(sites));
+        var exception = Assert.Throws<ArgumentException>(() => PartitionForOverload(overload, centers, sites));
 
         Assert.That(exception!.ParamName, Is.EqualTo("sites"));
     }
 
     [Test]
-    public void Partition_WhenHexCenterMapIsNull_Throws()
+    public void PartitionExtensions_WhenHexCenterMapIsNull_Throws([Values] PartitionOverload overload)
     {
         var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
 
-        Assert.Throws<ArgumentNullException>(() => ((HexCenterMap)null!).ToVoronoiHexPartitionMap(sites));
+        Assert.That(Assert.Throws<ArgumentNullException>(() =>
+            PartitionForOverload(overload, null!, sites))!.ParamName, Is.EqualTo("hexCenters"));
     }
 
     [Test]
@@ -1528,5 +1541,307 @@ public class HexCenterMapExtensionsTests
             hexCenters.ToPartialVoronoiHexPartitionMap(sites, (IHexMap<bool>)null!));
 
         Assert.That(exception!.ParamName, Is.EqualTo("participationMask"));
+    }
+
+    [Test]
+    public void PartitionExtensions_WithEmptyDimensions_AppliesEmptyPolicyAfterRelaxation(
+        [Values] PartitionOverload overload, [Values] bool emptyWidth, [Values] EmptyCellPolicy policy)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(
+            emptyWidth ? 0 : 3, emptyWidth ? 3 : 0, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f), new Site(new PointXY(1f, 0f), 2f) };
+
+        if (policy == EmptyCellPolicy.ThrowException)
+        {
+            Assert.Throws<InvalidOperationException>(() => PartitionForOverload(overload, centers, sites,
+                relaxationIterations: 2, emptyCellPolicy: policy, exclavePolicy: ExclavePolicy.ReassignToClosestCell));
+            return;
+        }
+
+        var result = PartitionForOverload(overload, centers, sites,
+            relaxationIterations: 2, emptyCellPolicy: policy, exclavePolicy: ExclavePolicy.ReassignToClosestCell);
+
+        Assert.That(result.Assignments, Is.Empty);
+        Assert.That(result.Cells, Has.Count.EqualTo(policy == EmptyCellPolicy.Exclude ? 0 : 2));
+        Assert.That(result.Cells.All(cell => cell.HexIndexes.Count == 0), Is.True);
+        if (policy == EmptyCellPolicy.LeaveAsIs)
+            Assert.That(result.Cells.Select(cell => cell.Site), Is.EqualTo(sites));
+    }
+
+    [Test]
+    public void PartitionExtensions_WithEqualDistances_PrefersFirstSite(
+        [Values] PartitionOverload overload, [Values(1f, float.PositiveInfinity)] float weight,
+        [Values] bool reverseSites)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(centers[0], weight), new Site(centers[2], weight) };
+        if (reverseSites)
+            Array.Reverse(sites);
+
+        var result = PartitionForOverload(overload, centers, sites);
+
+        Assert.That(result.Assignments, Is.EqualTo(reverseSites ? new int?[] { 1, 0, 0 } : new int?[] { 0, 0, 1 }));
+        Assert.That(result.Cells[0].Site, Is.EqualTo(sites[0]));
+        Assert.That(result.Cells[0].HexIndexes, Does.Contain(new VectorXYInt(1, 0)));
+    }
+
+    [Test]
+    public void PartitionExtensions_WithInfiniteWeights_PrefersNearestInfiniteSiteAndExactFiniteSite(
+        [Values] PartitionOverload overload, [Values(0f, 1f)] float finiteWeight)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(5, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[]
+        {
+            new Site(centers[0], float.PositiveInfinity),
+            new Site(centers[4], float.PositiveInfinity),
+            new Site(centers[2], finiteWeight)
+        };
+
+        var result = PartitionForOverload(overload, centers, sites, emptyCellPolicy: EmptyCellPolicy.ThrowException);
+
+        Assert.That(result.Assignments, Is.EqualTo(new int?[] { 0, 0, 2, 1, 1 }));
+        Assert.That(result.Cells.Select(cell => cell.Site), Is.EqualTo(sites));
+    }
+
+    [Test]
+    public void PartitionExtensions_WithReadOnlySites_RelaxesWithoutChangingInput(
+        [Values] PartitionOverload overload)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(9, 1, new VectorXY(13f, -21f), 1f, Layout.OddR));
+        var original = new[] { new Site(centers[0], 2f), new Site(centers[2], 2f) };
+        var sites = Array.AsReadOnly(original.ToArray());
+
+        var result = PartitionForOverload(overload, centers, sites, relaxationIterations: 2);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Assignments, Is.EqualTo(new int?[] { 0, 0, 0, 0, 1, 1, 1, 1, 1 }));
+            Assert.That(result.Cells[0].Center.X, Is.EqualTo(centers[1].X).Within(0.00001f));
+            Assert.That(result.Cells[1].Center.X, Is.EqualTo((centers[5].X + centers[6].X) / 2f).Within(0.00001f));
+            Assert.That(result.Cells.Select(cell => cell.Center.Y), Is.All.EqualTo(-21f));
+            Assert.That(result.Cells.Select(cell => cell.Site.Weight), Is.EqualTo(new[] { 2f, 2f }));
+            Assert.That(sites, Is.EqualTo(original));
+            Assert.That(result.Cells[0].HexIndexes, Is.EqualTo(Enumerable.Range(0, 4).Select(x => new VectorXYInt(x, 0))));
+            Assert.That(result.Cells[1].HexIndexes, Is.EqualTo(Enumerable.Range(4, 5).Select(x => new VectorXYInt(x, 0))));
+        });
+    }
+
+    [Test]
+    public void PartitionExtensions_WhenSiteListChanges_PreservesPreviousCellsAndUsesNewSites(
+        [Values] PartitionOverload overload)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new List<Site> { new Site(centers[0], 1f), new Site(centers[2], 1f) };
+        var original = sites.ToArray();
+        var first = PartitionForOverload(overload, centers, sites);
+        sites.Reverse();
+        var second = PartitionForOverload(overload, centers, sites);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(first.Assignments, Is.EqualTo(new int?[] { 0, 0, 1 }));
+            Assert.That(first.Cells.Select(cell => cell.Site), Is.EqualTo(original));
+            Assert.That(first.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 0) }));
+            Assert.That(second.Assignments, Is.EqualTo(new int?[] { 1, 0, 0 }));
+            Assert.That(second.Cells.Select(cell => cell.Site), Is.EqualTo(sites));
+            Assert.That(second.Cells, Is.Not.SameAs(first.Cells));
+            Assert.That(second.Cells[0], Is.Not.SameAs(first.Cells[0]));
+        });
+    }
+
+    [Test]
+    public void PartitionExtensions_WhenCalledRepeatedly_ReturnIndependentMutableMaps()
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(centers[0], 1f), new Site(centers[2], 1f) };
+        var participation = new BoolHexMap(centers.Topology, new[] { true, true, true });
+        var regions = new IntHexMap(centers.Topology);
+        var nullableRegions = new HexMap<int?>(centers.Topology, new int?[] { 0, 0, 0 });
+
+        var fullFactories = new Func<VoronoiHexPartitionMap>[]
+        {
+            () => centers.ToVoronoiHexPartitionMap(sites),
+            () => centers.ToVoronoiHexPartitionMap(sites, regions)
+        };
+        foreach (var create in fullFactories)
+        {
+            var first = create();
+            var second = create();
+            first[0] = 1;
+            Assert.That(second[0], Is.EqualTo(0));
+            Assert.That(first.Cells, Is.Not.SameAs(second.Cells));
+            Assert.That(first.Cells[0].HexIndexes, Does.Contain(new VectorXYInt(0, 0)));
+            Assert.That(second.Cells[0].HexIndexes, Does.Contain(new VectorXYInt(0, 0)));
+        }
+
+        var partialFactories = new Func<PartialVoronoiHexPartitionMap>[]
+        {
+            () => centers.ToPartialVoronoiHexPartitionMap(sites, participation),
+            () => centers.ToPartialVoronoiHexPartitionMap(sites, nullableRegions),
+            () => centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions)
+        };
+        foreach (var create in partialFactories)
+        {
+            var first = create();
+            var second = create();
+            first[0] = null;
+            Assert.That(second[0], Is.EqualTo(0));
+            Assert.That(second.Participates(0), Is.True);
+            Assert.That(first.Cells, Is.Not.SameAs(second.Cells));
+            Assert.That(first.Cells[0].HexIndexes, Does.Contain(new VectorXYInt(0, 0)));
+            Assert.That(second.Cells[0].HexIndexes, Does.Contain(new VectorXYInt(0, 0)));
+        }
+
+        Assert.That(Enumerable.Range(0, 3).Select(i => participation[i]), Is.All.True);
+        Assert.That(Enumerable.Range(0, 3).Select(i => regions[i]), Is.All.EqualTo(0));
+        Assert.That(Enumerable.Range(0, 3).Select(i => nullableRegions[i]), Is.All.EqualTo(0));
+    }
+
+    [Test]
+    public void PartitionExtensions_WithDefaultExclavePolicy_RetainsDisconnectedAssignments()
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(7, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(centers[0], 10f), new Site(centers[3], 1f), new Site(centers[6], 1f) };
+        var participation = new BoolHexMap(centers.Topology, Enumerable.Repeat(true, 7).ToArray());
+        var regions = new IntHexMap(centers.Topology);
+        var nullableRegions = new HexMap<int?>(centers.Topology, Enumerable.Repeat((int?)0, 7).ToArray());
+        var expected = new int?[] { 0, 0, 0, 1, 0, 0, 2 };
+
+        foreach (var map in new[]
+        {
+            centers.ToVoronoiHexPartitionMap(sites),
+            centers.ToVoronoiHexPartitionMap(sites, regions)
+        })
+            Assert.That(Enumerable.Range(0, 7).Select(i => (int?)map[i]), Is.EqualTo(expected));
+
+        foreach (var map in new[]
+        {
+            centers.ToPartialVoronoiHexPartitionMap(sites, participation),
+            centers.ToPartialVoronoiHexPartitionMap(sites, nullableRegions),
+            centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions)
+        })
+            Assert.That(Enumerable.Range(0, 7).Select(i => map[i]), Is.EqualTo(expected));
+
+        foreach (PartitionOverload overload in Enum.GetValues<PartitionOverload>())
+            Assert.That(PartitionForOverload(overload, centers, sites,
+                exclavePolicy: ExclavePolicy.ReassignToClosestCell).Assignments, Is.EqualTo(new int?[] { 0, 0, 0, 1, 1, 2, 2 }),
+                $"Overload {overload}");
+    }
+
+    [Test]
+    public void ToPartialVoronoiHexPartitionMap_WithNullableRegionsAndRelaxation_RetainsRegionWhenCentroidIsExcluded(
+        [Values(1, 3)] int iterations, [Values] EmptyCellPolicy policy)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(5, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var regions = new HexMap<int?>(centers.Topology, new int?[] { -7, 42, null, 42, -7 });
+        var sites = new[] { new Site(centers[0], 3f), new Site(centers[1], 1f) };
+        var original = sites.ToArray();
+
+        var map = centers.ToPartialVoronoiHexPartitionMap(sites, regions, iterations, emptyCellPolicy: policy);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(Enumerable.Range(0, 5).Select(i => map[i]), Is.EqualTo(new int?[] { 0, 1, null, 1, 0 }));
+            Assert.That(map.Cells, Has.Count.EqualTo(2));
+            Assert.That(map.Cells.Select(cell => cell.Center.X), Is.All.EqualTo(centers[2].X).Within(0.00001f));
+            Assert.That(map.Cells.Select(cell => cell.Site.Weight), Is.EqualTo(new[] { 3f, 1f }));
+            Assert.That(map.Participates(2), Is.False);
+            Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(4, 0) }));
+            Assert.That(map.Cells[1].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(1, 0), new VectorXYInt(3, 0) }));
+            Assert.That(Enumerable.Range(0, 5).Select(i => regions[i]), Is.EqualTo(new int?[] { -7, 42, null, 42, -7 }));
+            Assert.That(sites, Is.EqualTo(original));
+        });
+    }
+
+    [Test]
+    public void PartitionExtensions_WithNonFiniteParticipatingCenter_Throws(
+        [Values] PartitionOverload overload,
+        [Values(float.PositiveInfinity, float.NegativeInfinity)] float coordinate,
+        [Values] bool invalidY)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var sites = new[] { new Site(centers[0], 1f) };
+        centers[1] = invalidY ? new PointXY(centers[1].X, coordinate) : new PointXY(coordinate, centers[1].Y);
+
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
+            PartitionForOverload(overload, centers, sites, relaxationIterations: 1))!.ParamName,
+            Is.EqualTo("hexCenters"));
+    }
+
+    [Test]
+    public void PartitionExtensions_WithZeroWeightSite_UsesGeometryTolerance(
+        [Values] PartitionOverload overload, [Values] bool withinTolerance)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        float offset = GeometryConstants.GeometryEpsilon * (withinTolerance ? 0.5f : 2f);
+        var sites = new[] { new Site(new PointXY(offset, 0f), 0f), new Site(centers[2], 1f) };
+
+        var result = PartitionForOverload(overload, centers, sites);
+
+        Assert.That(result.Assignments, Is.EqualTo(new int?[] { withinTolerance ? 0 : 1, 1, 1 }));
+        Assert.That(result.Cells[0].HexIndexes, Has.Count.EqualTo(withinTolerance ? 1 : 0));
+        Assert.That(result.Cells.Select(cell => cell.Site), Is.EqualTo(sites));
+    }
+
+    [Test]
+    public void ToPartialVoronoiHexPartitionMap_WithRelaxation_SkipsNonFiniteExcludedCenterEvenWhenCentroidMovesIntoIt(
+        [Values(1, 3)] int iterations)
+    {
+        var centers = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
+        var expectedCentroid = centers[1];
+        var sites = new[] { new Site(centers[0], 3f) };
+        centers[1] = new PointXY(float.NegativeInfinity, float.PositiveInfinity);
+        var participation = new BoolHexMap(centers.Topology, new[] { true, false, true });
+        var regions = new IntHexMap(centers.Topology, new[] { -7, 42, -7 });
+        var nullableRegions = new HexMap<int?>(centers.Topology, new int?[] { -7, null, -7 });
+
+        var maps = new[]
+        {
+            centers.ToPartialVoronoiHexPartitionMap(sites, participation, iterations),
+            centers.ToPartialVoronoiHexPartitionMap(sites, nullableRegions, iterations),
+            centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions, iterations)
+        };
+        foreach (var map in maps)
+        {
+            Assert.That(Enumerable.Range(0, 3).Select(i => map[i]), Is.EqualTo(new int?[] { 0, null, 0 }));
+            Assert.That(map.Cells, Has.Count.EqualTo(1));
+            Assert.That(map.Cells[0].Center, Is.EqualTo(expectedCentroid));
+            Assert.That(map.Cells[0].Site.Weight, Is.EqualTo(3f));
+            Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(2, 0) }));
+            Assert.That(map.Participates(1), Is.False);
+        }
+        Assert.That(sites[0], Is.EqualTo(new Site(centers[0], 3f)));
+        Assert.That(centers[1].X, Is.EqualTo(float.NegativeInfinity));
+        Assert.That(centers[1].Y, Is.EqualTo(float.PositiveInfinity));
+    }
+
+    private static (int?[] Assignments, IReadOnlyList<VoronoiHexPartitionCell> Cells) PartitionForOverload(
+        PartitionOverload overload, HexCenterMap centers, IReadOnlyList<Site> sites,
+        int relaxationIterations = 0, EmptyCellPolicy emptyCellPolicy = EmptyCellPolicy.LeaveAsIs,
+        ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+    {
+        var topology = centers?.Topology ?? new HexMapTopology(1, 1, Layout.OddR);
+        var regions = new IntHexMap(topology);
+        if (overload == PartitionOverload.Full || overload == PartitionOverload.Regions)
+        {
+            var map = overload == PartitionOverload.Full
+                ? centers!.ToVoronoiHexPartitionMap(sites, relaxationIterations, emptyCellPolicy, exclavePolicy)
+                : centers!.ToVoronoiHexPartitionMap(sites, regions, relaxationIterations, emptyCellPolicy, exclavePolicy);
+            return (Enumerable.Range(0, topology.Count).Select(i => (int?)map[i]).ToArray(), map.Cells);
+        }
+
+        var participation = new BoolHexMap(topology, Enumerable.Repeat(true, topology.Count).ToArray());
+        var nullableRegions = new HexMap<int?>(topology, Enumerable.Repeat((int?)0, topology.Count).ToArray());
+        var partial = overload switch
+        {
+            PartitionOverload.Participation => centers!.ToPartialVoronoiHexPartitionMap(
+                sites, participation, relaxationIterations, emptyCellPolicy, exclavePolicy),
+            PartitionOverload.NullableRegions => centers!.ToPartialVoronoiHexPartitionMap(
+                sites, nullableRegions, relaxationIterations, emptyCellPolicy, exclavePolicy),
+            PartitionOverload.CombinedMasks => centers!.ToPartialVoronoiHexPartitionMap(
+                sites, participation, regions, relaxationIterations, emptyCellPolicy, exclavePolicy),
+            _ => throw new ArgumentOutOfRangeException(nameof(overload))
+        };
+        return (Enumerable.Range(0, topology.Count).Select(i => partial[i]).ToArray(), partial.Cells);
     }
 }
