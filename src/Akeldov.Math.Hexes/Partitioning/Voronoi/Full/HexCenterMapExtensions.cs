@@ -44,7 +44,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (relaxationIterations < 0)
                 throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, exclavePolicy, relaxationIterations);
+            var validatedSites = CopyAndValidateSites(sites);
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
+            var (assignments, cells, _) = PartitionCore(hexCenters, validatedSites, emptyCellPolicy, null, null, null, exclavePolicy, relaxationIterations);
+            return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
         }
 
         /// <summary>
@@ -88,7 +93,19 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (relaxationIterations < 0)
                 throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, regionsMask, exclavePolicy, relaxationIterations);
+            var validatedSites = CopyAndValidateSites(sites);
+            if (regionsMask == null)
+                throw new ArgumentNullException(nameof(regionsMask));
+
+            if (hexCenters.Topology != regionsMask.Topology)
+                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(regionsMask));
+
+            var siteIndexesByRegion = GroupSiteIndexesByRegion(validatedSites, hexCenters.Geometry, regionsMask);
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
+            var (assignments, cells, _) = PartitionCore(hexCenters, validatedSites, emptyCellPolicy, null, regionsMask, siteIndexesByRegion, exclavePolicy, relaxationIterations);
+            return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
         }
     }
 #pragma warning restore RS0026

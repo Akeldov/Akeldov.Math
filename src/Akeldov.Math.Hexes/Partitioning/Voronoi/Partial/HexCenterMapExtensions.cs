@@ -49,7 +49,24 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (relaxationIterations < 0)
                 throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, participationMask, exclavePolicy, relaxationIterations);
+            var validatedSites = CopyAndValidateSites(sites);
+            if (participationMask == null)
+                throw new ArgumentNullException(nameof(participationMask));
+
+            if (hexCenters.Topology != participationMask.Topology)
+                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
+
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
+            var (cellIndexes, cells, participationFlags) = PartitionCore(
+                hexCenters, validatedSites, emptyCellPolicy, participationMask, null, null, exclavePolicy, relaxationIterations);
+            var assignments = new int?[cellIndexes.Length];
+            for (int i = 0; i < assignments.Length; i++)
+                if (participationFlags![i])
+                    assignments[i] = cellIndexes[i];
+
+            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationFlags!);
         }
 
         /// <summary>
@@ -89,7 +106,36 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (relaxationIterations < 0)
                 throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy).Partition(hexCenters, regionsMask, exclavePolicy, relaxationIterations);
+            var validatedSites = CopyAndValidateSites(sites);
+            if (regionsMask == null)
+                throw new ArgumentNullException(nameof(regionsMask));
+
+            if (hexCenters.Topology != regionsMask.Topology)
+                throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
+
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
+            var participationValues = new bool[hexCenters.Topology.Count];
+            var regionValues = new int[hexCenters.Topology.Count];
+            for (int i = 0; i < regionValues.Length; i++)
+            {
+                int? region = regionsMask[i];
+                participationValues[i] = region.HasValue;
+                regionValues[i] = region.GetValueOrDefault();
+            }
+
+            var participation = new BoolHexMap(hexCenters.Topology, participationValues);
+            var regions = new IntHexMap(hexCenters.Topology, regionValues);
+            var siteIndexesByRegion = GroupSiteIndexesByRegion(validatedSites, hexCenters.Geometry, regions, participation);
+            var (cellIndexes, cells, participationFlags) = PartitionCore(
+                hexCenters, validatedSites, emptyCellPolicy, participation, regions, siteIndexesByRegion, exclavePolicy, relaxationIterations);
+            var assignments = new int?[cellIndexes.Length];
+            for (int i = 0; i < assignments.Length; i++)
+                if (participationFlags![i])
+                    assignments[i] = cellIndexes[i];
+
+            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationFlags!);
         }
 
         /// <summary>
@@ -135,8 +181,31 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (relaxationIterations < 0)
                 throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
-            return new VoronoiHexPartitioner(sites, emptyCellPolicy)
-                .Partition(hexCenters, participationMask, regionsMask, exclavePolicy, relaxationIterations);
+            var validatedSites = CopyAndValidateSites(sites);
+            if (participationMask == null)
+                throw new ArgumentNullException(nameof(participationMask));
+
+            if (hexCenters.Topology != participationMask.Topology)
+                throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
+
+            if (regionsMask == null)
+                throw new ArgumentNullException(nameof(regionsMask));
+
+            if (hexCenters.Topology != regionsMask.Topology)
+                throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
+
+            var siteIndexesByRegion = GroupSiteIndexesByRegion(validatedSites, hexCenters.Geometry, regionsMask);
+            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
+                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
+
+            var (cellIndexes, cells, participationFlags) = PartitionCore(
+                hexCenters, validatedSites, emptyCellPolicy, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy, relaxationIterations);
+            var assignments = new int?[cellIndexes.Length];
+            for (int i = 0; i < assignments.Length; i++)
+                if (participationFlags![i])
+                    assignments[i] = cellIndexes[i];
+
+            return new PartialVoronoiHexPartitionMap(hexCenters, assignments, cells, participationFlags!);
         }
     }
 #pragma warning restore RS0026
