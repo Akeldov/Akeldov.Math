@@ -82,10 +82,7 @@ namespace Akeldov.Math.Spatial2D
         /// Rounds each component to the nearest integer component.
         /// </summary>
         /// <returns>The rounded integer vector.</returns>
-        public VectorXYInt RoundToInt()
-        {
-            return new VectorXYInt((int)MathF.Round(X), (int)MathF.Round(Y));
-        }
+        public VectorXYInt RoundToInt() => new VectorXYInt((int)MathF.Round(X), (int)MathF.Round(Y));
 
         /// <summary>
         /// Indicates whether this vector has the same components as another vector.
@@ -228,18 +225,12 @@ namespace Akeldov.Math.Spatial2D
         /// Converts an integer vector to a floating-point vector.
         /// </summary>
         /// <param name="v">The integer vector to convert.</param>
-        public static implicit operator VectorXY(VectorXYInt v)
-        {
-            return new VectorXY(v.X, v.Y);
-        }
+        public static implicit operator VectorXY(VectorXYInt v) => new VectorXY(v.X, v.Y);
 
         /// <summary>
         /// Converts a floating-point vector to an integer vector by truncating each component.
         /// </summary>
         /// <param name="v">The floating-point vector to convert.</param>
-        public static explicit operator VectorXYInt(VectorXY v)
-        {
-            return new VectorXYInt((int)v.X, (int)v.Y);
-        }
+        public static explicit operator VectorXYInt(VectorXY v) => new VectorXYInt((int)v.X, (int)v.Y);
     }
 }
