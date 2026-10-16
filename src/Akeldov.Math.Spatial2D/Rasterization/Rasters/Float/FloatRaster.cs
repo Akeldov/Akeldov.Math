@@ -170,5 +170,109 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new FloatRaster(raster.Resolution, values);
         }
 
+        /// <summary>
+        /// Creates a raster containing the sums of corresponding source cells.
+        /// </summary>
+        /// <param name="left">The left source raster.</param>
+        /// <param name="right">The right source raster.</param>
+        /// <returns>A new mutable raster owned by the caller. Neither source raster is modified.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when either source raster is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown when the source rasters have different resolutions.</exception>
+        public static FloatRaster operator +(FloatRaster left, Raster<float> right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Resolution != right.Resolution)
+                throw new ArgumentException("Rasters must have the same resolution.", nameof(right));
+
+            var values = new float[left.Values.Length];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] + right[index];
+
+            return new FloatRaster(left.Resolution, values);
+        }
+
+        /// <summary>
+        /// Creates a raster containing the sums of corresponding source cells.
+        /// </summary>
+        /// <param name="left">The left source raster.</param>
+        /// <param name="right">The right source raster.</param>
+        /// <returns>A new mutable raster owned by the caller. Neither source raster is modified.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when either source raster is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown when the source rasters have different resolutions.</exception>
+        public static FloatRaster operator +(Raster<float> left, FloatRaster right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Resolution != right.Resolution)
+                throw new ArgumentException("Rasters must have the same resolution.", nameof(right));
+
+            var values = new float[left.Values.Length];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] + right[index];
+
+            return new FloatRaster(left.Resolution, values);
+        }
+
+        /// <summary>
+        /// Creates a raster containing the differences of corresponding source cells.
+        /// </summary>
+        /// <param name="left">The left source raster.</param>
+        /// <param name="right">The right source raster.</param>
+        /// <returns>A new mutable raster owned by the caller. Neither source raster is modified.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when either source raster is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown when the source rasters have different resolutions.</exception>
+        public static FloatRaster operator -(FloatRaster left, Raster<float> right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Resolution != right.Resolution)
+                throw new ArgumentException("Rasters must have the same resolution.", nameof(right));
+
+            var values = new float[left.Values.Length];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] - right[index];
+
+            return new FloatRaster(left.Resolution, values);
+        }
+
+        /// <summary>
+        /// Creates a raster containing the differences of corresponding source cells.
+        /// </summary>
+        /// <param name="left">The left source raster.</param>
+        /// <param name="right">The right source raster.</param>
+        /// <returns>A new mutable raster owned by the caller. Neither source raster is modified.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when either source raster is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown when the source rasters have different resolutions.</exception>
+        public static FloatRaster operator -(Raster<float> left, FloatRaster right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+
+            if (left.Resolution != right.Resolution)
+                throw new ArgumentException("Rasters must have the same resolution.", nameof(right));
+
+            var values = new float[left.Values.Length];
+            for (int index = 0; index < values.Length; index++)
+                values[index] = left[index] - right[index];
+
+            return new FloatRaster(left.Resolution, values);
+        }
+
     }
 }

@@ -1,4 +1,8 @@
 #nullable enable
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<float>! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.Raster<float>! left, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator -(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<float>! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator -(Akeldov.Math.Spatial2D.Rasterization.Raster<float>! left, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
 Akeldov.Math.Spatial2D.Rasterization.FloatRaster
 Akeldov.Math.Spatial2D.Rasterization.FloatRaster.FloatRaster(Akeldov.Math.Spatial2D.VectorXYInt resolution, float[]! values) -> void
 static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! left, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!

@@ -27,6 +27,35 @@ public class FloatRasterTests
         });
     }
 
+    [TestCase(false, false)]
+    [TestCase(false, true)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public void MixedBinaryOperators_PreserveOperandOrderAndSources(bool subtract, bool baseFirst)
+    {
+        var resolution = new VectorXYInt(2, 2);
+        var raster = new FloatRaster(resolution, new[] { 1.5f, -2f, 0f, 4f });
+        var baseRaster = new Raster<float>(resolution, new[] { 0.5f, 3f, -1f, 4f });
+
+        FloatRaster result = subtract
+            ? (baseFirst ? baseRaster - raster : raster - baseRaster)
+            : (baseFirst ? baseRaster + raster : raster + baseRaster);
+
+        float[] expected = subtract
+            ? (baseFirst ? new[] { -1f, 5f, -1f, 0f } : new[] { 1f, -5f, 1f, 0f })
+            : new[] { 2f, 1f, -1f, 8f };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Resolution, Is.EqualTo(resolution));
+            Assert.That(result.Values, Is.EqualTo(expected));
+            Assert.That(result.Values, Is.Not.SameAs(raster.Values));
+            Assert.That(result.Values, Is.Not.SameAs(baseRaster.Values));
+            Assert.That(raster.Values, Is.EqualTo(new[] { 1.5f, -2f, 0f, 4f }));
+            Assert.That(baseRaster.Values, Is.EqualTo(new[] { 0.5f, 3f, -1f, 4f }));
+        });
+    }
+
     [TestCase(false, false, 3.5f, 0f)]
     [TestCase(false, true, 3.5f, 0f)]
     [TestCase(true, false, -0.5f, -4f)]
@@ -77,6 +106,10 @@ public class FloatRasterTests
         {
             Assert.That(Assert.Throws<ArgumentException>(() => _ = left + right)!.ParamName, Is.EqualTo("right"));
             Assert.That(Assert.Throws<ArgumentException>(() => _ = left - right)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentException>(() => _ = (Raster<float>)left + right)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentException>(() => _ = left + (Raster<float>)right)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentException>(() => _ = (Raster<float>)left - right)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentException>(() => _ = left - (Raster<float>)right)!.ParamName, Is.EqualTo("right"));
         });
     }
 
@@ -85,6 +118,8 @@ public class FloatRasterTests
     {
         var raster = new FloatRaster(new VectorXYInt(1, 1), new float[1]);
         FloatRaster missing = null!;
+        var baseRaster = new Raster<float>(raster.Resolution, new float[1]);
+        Raster<float> missingBase = null!;
 
         Assert.Multiple(() =>
         {
@@ -97,6 +132,14 @@ public class FloatRasterTests
             Assert.That(Assert.Throws<ArgumentNullException>(() => _ = missing - 2f)!.ParamName, Is.EqualTo("raster"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => _ = 2f - missing)!.ParamName, Is.EqualTo("raster"));
             Assert.That(Assert.Throws<ArgumentNullException>(() => _ = -missing)!.ParamName, Is.EqualTo("raster"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = missing + baseRaster)!.ParamName, Is.EqualTo("left"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = baseRaster + missing)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = missingBase + raster)!.ParamName, Is.EqualTo("left"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = raster + missingBase)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = missing - baseRaster)!.ParamName, Is.EqualTo("left"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = baseRaster - missing)!.ParamName, Is.EqualTo("right"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = missingBase - raster)!.ParamName, Is.EqualTo("left"));
+            Assert.That(Assert.Throws<ArgumentNullException>(() => _ = raster - missingBase)!.ParamName, Is.EqualTo("right"));
         });
     }
 }
