@@ -273,6 +273,5 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             return new FloatRaster(left.Resolution, values);
         }
-
     }
 }
