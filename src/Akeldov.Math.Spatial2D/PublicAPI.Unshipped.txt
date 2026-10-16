@@ -1,4 +1,11 @@
 #nullable enable
 Akeldov.Math.Spatial2D.Rasterization.FloatRaster
 Akeldov.Math.Spatial2D.Rasterization.FloatRaster.FloatRaster(Akeldov.Math.Spatial2D.VectorXYInt resolution, float[]! values) -> void
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! left, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! raster, float value) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator +(float value, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! raster) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator -(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! left, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator -(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! raster, float value) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator -(float value, Akeldov.Math.Spatial2D.Rasterization.FloatRaster! raster) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
+static Akeldov.Math.Spatial2D.Rasterization.FloatRaster.operator -(Akeldov.Math.Spatial2D.Rasterization.FloatRaster! raster) -> Akeldov.Math.Spatial2D.Rasterization.FloatRaster!
 static Akeldov.Math.Spatial2D.Rasterization.RasterizationExtensions.Rasterize<T, TResult>(this T pointDistanceProvider, System.Func<float, TResult>! distanceToGrayLevel, Akeldov.Math.Spatial2D.Rasterization.RasterGeometry rasterGeometry) -> Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<TResult>!
