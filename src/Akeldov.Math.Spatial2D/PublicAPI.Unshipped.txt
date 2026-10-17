@@ -1,4 +1,26 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Rasterization.BoolRaster
+Akeldov.Math.Spatial2D.Rasterization.BoolRaster.BoolRaster(Akeldov.Math.Spatial2D.VectorXYInt resolution, bool[]! values) -> void
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator !(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! raster) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator &(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator |(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ^(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ==(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator !=(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator &(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator &(Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator |(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator |(Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ^(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ^(Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ==(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ==(Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator !=(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! left, Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator !=(Akeldov.Math.Spatial2D.Rasterization.Raster<bool>! left, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ==(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! raster, bool value) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator ==(bool value, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! raster) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator !=(Akeldov.Math.Spatial2D.Rasterization.BoolRaster! raster, bool value) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
+static Akeldov.Math.Spatial2D.Rasterization.BoolRaster.operator !=(bool value, Akeldov.Math.Spatial2D.Rasterization.BoolRaster! raster) -> Akeldov.Math.Spatial2D.Rasterization.BoolRaster!
 static Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster! left, Akeldov.Math.Spatial2D.Rasterization.IntRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster!
 static Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster.operator +(Akeldov.Math.Spatial2D.Rasterization.IntRaster! left, Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster!
 static Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster.operator -(Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster! left, Akeldov.Math.Spatial2D.Rasterization.IntRaster! right) -> Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster!
