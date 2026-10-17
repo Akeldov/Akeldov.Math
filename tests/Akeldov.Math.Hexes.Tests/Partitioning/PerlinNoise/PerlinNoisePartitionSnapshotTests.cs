@@ -1,5 +1,6 @@
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Partitioning.PerlinNoise;
+using Akeldov.Math.Hexes.Tests.Partitioning.CellularPotts;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -8,6 +9,53 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.PerlinNoise;
 
 public class PerlinNoisePartitionSnapshotTests
 {
+    [Test]
+    public void SplitDisconnectedCells_WithPerlinNoisePartition_MatchesApprovedImage()
+    {
+        const int seed = 42;
+        const string fileName = "perlin-noise-split-disconnected-cells-rgba16.png";
+        const string context = "seed=42, scale=18, shares=30/50/20, layout=OddR";
+        var topology = new HexMapTopology(64, 48, Layout.OddR);
+        var targets = new[]
+        {
+            new PerlinNoisePartitionTarget(7, 0.3),
+            new PerlinNoisePartitionTarget(42, 0.5),
+            new PerlinNoisePartitionTarget(99, 0.2)
+        };
+        var source = topology.ToPerlinNoiseHexPartitionMap(targets, seed, scale: 18f);
+
+        var result = source.SplitDisconnectedCells();
+
+        Assert.That(result.Cells.Count, Is.GreaterThan(source.Cells.Count), context);
+        CellularPottsTests.AssertConsistentAndConnected(result, context);
+        foreach (var cell in result.Cells)
+            Assert.That(cell.HexIndexes.Select(index => source[index]).Distinct().Count(), Is.EqualTo(1),
+                $"Result cell {cell.Id} mixes source territories. {context}");
+        TestContext.WriteLine($"Split {source.Cells.Count} territories into {result.Cells.Count} connected cells ({context}).");
+
+        // Give each component its own deterministic color, including components from the same territory.
+        RGBA16BitColor ColorForComponent(int id)
+        {
+            uint color = unchecked(((uint)id + 1) * 2654435761u);
+            return new RGBA16BitColor(
+                (ushort)(((color >> 16) & 255) * 257),
+                (ushort)(((color >> 8) & 255) * 257),
+                (ushort)((color & 255) * 257),
+                ushort.MaxValue);
+        }
+
+        string actualPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, fileName.Replace(".png", ".actual.png"));
+        result.Rasterize(topology.Resolution * 12, ColorForComponent).SaveAsPng(actualPath);
+        string approvedPath = Path.Combine(TestContext.CurrentContext.TestDirectory,
+            "Partitioning", "PerlinNoise", "Approved", fileName);
+        if (!File.Exists(approvedPath) ||
+            !PngSnapshotComparer.AreEquivalent(File.ReadAllBytes(actualPath), File.ReadAllBytes(approvedPath)))
+        {
+            TestContext.AddTestAttachment(actualPath, $"Perlin-noise partition after splitting disconnected cells: {context}");
+            Assert.Fail($"Split Perlin-noise partition snapshot changed or is missing ({context}). Actual image: {actualPath}");
+        }
+    }
+
     [TestCase(false)]
     [TestCase(true)]
     public void Partition_WithThreeAreaShares_MatchesApprovedImage(bool spatial)
