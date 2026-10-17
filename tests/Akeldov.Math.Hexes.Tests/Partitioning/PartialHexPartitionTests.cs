@@ -25,7 +25,7 @@ public class PartialHexPartitionTests
             new Site(centers[5], 1f)
         };
         var mask = new BoolHexMap(centers.Topology, new[] { true, false, true, true, false, true });
-        var map = centers.ToPartialVoronoiHexPartitionMap(sites, mask, emptyCellPolicy: policy);
+        var map = centers.ToPartialVoronoiHexPartitionMap(sites, mask, new VoronoiHexPartitionParameters(emptyCellPolicy: policy));
         PartialHexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
         IPartialHexPartitionMap<VoronoiHexPartitionCell> partition = map;
         IPartialHexPartitionMap<IHexPartitionCell> commonPartition = partition;

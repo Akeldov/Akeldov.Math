@@ -24,14 +24,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="participationMask">
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
-        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations. Defaults to zero, disabling relaxation.</param>
-        /// <param name="emptyCellPolicy">The policy used for cells that receive no participating hexes.</param>
-        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
+        /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>
         /// A new mutable partial hex partition map with nullable per-hex cell identifiers and a read-only semantic cell list.
         /// Excluded hexes have no assignment and return <see langword="null"/> from the result map.
         /// </returns>
-        /// <exception cref="ArgumentOutOfRangeException">The iteration count is negative, the exclave policy is invalid, or a participating center is not finite.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A participating center is not finite.</exception>
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// </exception>
@@ -39,15 +37,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
-            int relaxationIterations = 0,
-            EmptyCellPolicy emptyCellPolicy = EmptyCellPolicy.LeaveAsIs,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            if (relaxationIterations < 0)
-                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
+            parameters ??= new VoronoiHexPartitionParameters();
 
             var validatedSites = CopyAndValidateSites(sites);
             if (participationMask == null)
@@ -56,11 +51,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             if (hexCenters.Topology != participationMask.Topology)
                 throw new ArgumentException("Hex center map and participation mask must have the same topology.", nameof(participationMask));
 
-            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
-                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
-
             var (cellIndexes, cells, participationFlags) = PartitionCore(
-                hexCenters, validatedSites, emptyCellPolicy, participationMask, null, null, exclavePolicy, relaxationIterations);
+                hexCenters, validatedSites, parameters.EmptyCellPolicy, participationMask, null, null,
+                parameters.ExclavePolicy, parameters.RelaxationIterations);
             var assignments = new int?[cellIndexes.Length];
             for (int i = 0; i < assignments.Length; i++)
                 if (participationFlags![i])
@@ -79,16 +72,14 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Region identifiers with the same topology as the center map. Null excludes a hex;
         /// all integer values, including zero and negative values, identify participating regions.
         /// </param>
-        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations. Defaults to zero, disabling relaxation.</param>
-        /// <param name="emptyCellPolicy">The policy for cells receiving no participating hexes.</param>
-        /// <param name="exclavePolicy">The policy for disconnected cell components; region boundaries are preserved.</param>
+        /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>A new mutable partial partition map with a read-only semantic cell list. Excluded hexes return null.</returns>
         /// <remarks>
         /// Sites outside the map or in a hex with a null region receive no hexes and follow the empty-cell policy.
         /// </remarks>
         /// <exception cref="ArgumentNullException">A map or the site list is null.</exception>
         /// <exception cref="ArgumentException">The maps have different topologies.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The iteration count is negative, the exclave policy is invalid, or a participating center is not finite.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A participating center is not finite.</exception>
         /// <exception cref="InvalidOperationException">
         /// A participating hex has no eligible site in its region, or the empty-cell policy requires throwing.
         /// </exception>
@@ -96,15 +87,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             IHexMap<int?> regionsMask,
-            int relaxationIterations = 0,
-            EmptyCellPolicy emptyCellPolicy = EmptyCellPolicy.LeaveAsIs,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            if (relaxationIterations < 0)
-                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
+            parameters ??= new VoronoiHexPartitionParameters();
 
             var validatedSites = CopyAndValidateSites(sites);
             if (regionsMask == null)
@@ -112,9 +100,6 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             if (hexCenters.Topology != regionsMask.Topology)
                 throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
-
-            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
-                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
             var participationValues = new bool[hexCenters.Topology.Count];
             var regionValues = new int[hexCenters.Topology.Count];
@@ -129,7 +114,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             var regions = new IntHexMap(hexCenters.Topology, regionValues);
             var siteIndexesByRegion = GroupSiteIndexesByRegion(validatedSites, hexCenters.Geometry, regions, participation);
             var (cellIndexes, cells, participationFlags) = PartitionCore(
-                hexCenters, validatedSites, emptyCellPolicy, participation, regions, siteIndexesByRegion, exclavePolicy, relaxationIterations);
+                hexCenters, validatedSites, parameters.EmptyCellPolicy, participation, regions, siteIndexesByRegion,
+                parameters.ExclavePolicy, parameters.RelaxationIterations);
             var assignments = new int?[cellIndexes.Length];
             for (int i = 0; i < assignments.Length; i++)
                 if (participationFlags![i])
@@ -146,9 +132,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="sites">The initial Voronoi sites; their weights and input values are preserved.</param>
         /// <param name="participationMask">The Boolean map indicating which hex centers participate.</param>
         /// <param name="regionsMask">Region identifiers with the same topology as the center map.</param>
-        /// <param name="relaxationIterations">The non-negative number of centroid relaxation iterations. Defaults to zero, disabling relaxation.</param>
-        /// <param name="emptyCellPolicy">The policy for cells receiving no participating hexes in the final partition.</param>
-        /// <param name="exclavePolicy">The policy for disconnected components in the final partition.</param>
+        /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>A new mutable partial partition map with a read-only semantic cell list. Excluded hexes return null.</returns>
         /// <remarks>
         /// Each iteration moves non-empty sites to the arithmetic mean of their assigned participating
@@ -159,8 +143,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="ArgumentNullException">A map or the site list is null.</exception>
         /// <exception cref="ArgumentException">The maps have different topologies or all site weights are zero.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// The iteration count is negative, the exclave policy is invalid, a participating center or site
-        /// position is not finite, the site list is empty, or a site weight is negative or NaN.
+        /// A participating center or site position is not finite, the site list is empty,
+        /// or a site weight is negative or NaN.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// A participating hex has no eligible site in its region, or the final partition contains an
@@ -171,15 +155,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
             IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
-            int relaxationIterations = 0,
-            EmptyCellPolicy emptyCellPolicy = EmptyCellPolicy.LeaveAsIs,
-            ExclavePolicy exclavePolicy = ExclavePolicy.LeaveAsIs)
+            VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)
                 throw new ArgumentNullException(nameof(hexCenters));
 
-            if (relaxationIterations < 0)
-                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
+            parameters ??= new VoronoiHexPartitionParameters();
 
             var validatedSites = CopyAndValidateSites(sites);
             if (participationMask == null)
@@ -195,11 +176,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
                 throw new ArgumentException("Hex center map and regions mask must have the same topology.", nameof(regionsMask));
 
             var siteIndexesByRegion = GroupSiteIndexesByRegion(validatedSites, hexCenters.Geometry, regionsMask);
-            if (exclavePolicy != ExclavePolicy.LeaveAsIs && exclavePolicy != ExclavePolicy.ReassignToClosestCell)
-                throw new ArgumentOutOfRangeException(nameof(exclavePolicy));
 
             var (cellIndexes, cells, participationFlags) = PartitionCore(
-                hexCenters, validatedSites, emptyCellPolicy, participationMask, regionsMask, siteIndexesByRegion, exclavePolicy, relaxationIterations);
+                hexCenters, validatedSites, parameters.EmptyCellPolicy, participationMask, regionsMask, siteIndexesByRegion,
+                parameters.ExclavePolicy, parameters.RelaxationIterations);
             var assignments = new int?[cellIndexes.Length];
             for (int i = 0; i < assignments.Length; i++)
                 if (participationFlags![i])

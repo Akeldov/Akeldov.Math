@@ -12,6 +12,7 @@ public class VoronoiHexPartitionBenchmarks
 {
     private HexCenterMap _centers = null!;
     private Site[] _sites = null!;
+    private VoronoiHexPartitionParameters _parameters = null!;
     private BoolHexMap _participation = null!;
     private IntHexMap _regions = null!;
     private HexMap<int?> _nullableRegions = null!;
@@ -34,6 +35,7 @@ public class VoronoiHexPartitionBenchmarks
     [GlobalSetup]
     public void Setup()
     {
+        _parameters = new VoronoiHexPartitionParameters(RelaxationIterations, EmptyCellPolicy, ExclavePolicy);
         _centers = new HexCenterMap(new HexMapGeometry(Size, Size, new VectorXY(13f, -21f), 1f, Layout.OddR));
         var topology = _centers.Topology;
         var participation = new bool[topology.Count];
@@ -87,34 +89,34 @@ public class VoronoiHexPartitionBenchmarks
     public VoronoiHexPartitionMap Partition()
     {
         return _centers.ToVoronoiHexPartitionMap(
-            _sites, RelaxationIterations, EmptyCellPolicy, ExclavePolicy);
+            _sites, _parameters);
     }
 
     [Benchmark]
     public VoronoiHexPartitionMap PartitionByRegions()
     {
         return _centers.ToVoronoiHexPartitionMap(
-            _sites, _regions, RelaxationIterations, EmptyCellPolicy, ExclavePolicy);
+            _sites, _regions, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionParticipatingHexes()
     {
         return _centers.ToPartialVoronoiHexPartitionMap(
-            _sites, _participation, RelaxationIterations, EmptyCellPolicy, ExclavePolicy);
+            _sites, _participation, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionNullableRegions()
     {
         return _centers.ToPartialVoronoiHexPartitionMap(
-            _sites, _nullableRegions, RelaxationIterations, EmptyCellPolicy, ExclavePolicy);
+            _sites, _nullableRegions, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionParticipatingHexesByRegions()
     {
         return _centers.ToPartialVoronoiHexPartitionMap(
-            _sites, _participation, _regions, RelaxationIterations, EmptyCellPolicy, ExclavePolicy);
+            _sites, _participation, _regions, _parameters);
     }
 }

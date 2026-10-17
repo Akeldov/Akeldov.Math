@@ -14,7 +14,7 @@ public class VoronoiStressTests
         var random = new Random(seed);
         Site[] sites = CreateSites(random, siteCount: 96);
         TestItem[] items = CreateItems(random, itemCount: 5_000);
-        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, new VoronoiPartitionParameters(emptyCellPolicy: EmptyCellPolicy.LeaveAsIs));
 
         IReadOnlyList<VoronoiItemPartition<TestItem>> cells = partitioner.Partition(items);
 

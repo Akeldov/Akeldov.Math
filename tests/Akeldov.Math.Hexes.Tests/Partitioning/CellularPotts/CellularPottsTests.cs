@@ -20,7 +20,7 @@ public class CellularPottsTests
             new HexPartitionCell(42, new[] { new VectorXYInt(1, 0) })
         });
 
-        var result = source.ApplyCellularPotts(0);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(0));
 
         Assert.That(result, Is.Not.SameAs(source));
         Assert.That(result.Topology, Is.EqualTo(topology));
@@ -41,7 +41,7 @@ public class CellularPottsTests
     public void Apply_EmptyAndSingleCellMaps_AreUnchanged(int width, int height)
     {
         var source = Partition(new HexMapTopology(width, height, Layout.OddR), _ => 7, 7, 42);
-        var result = source.ApplyCellularPotts(10);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(10));
 
         Assert.That(Values(result), Is.EqualTo(Values(source)));
         Assert.That(result.Cells[1].HexIndexes, Is.Empty);
@@ -53,9 +53,9 @@ public class CellularPottsTests
     {
         var source = Partition(new HexMapTopology(3, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
         var random = new FixedAttemptRandom(0, 0);
-        var options = new CellularPottsOptions(0, 0, 1, new Dictionary<int, double> { [7] = 0, [42] = 3 });
+        var parameters = new CellularPottsParameters(4, 0, 0, 1, new Dictionary<int, double> { [7] = 0, [42] = 3 }, connectivity);
 
-        var result = source.ApplyCellularPotts(4, options, connectivity, random);
+        var result = source.ApplyCellularPotts(parameters, random: random);
 
         bool preserve = connectivity == CellularPottsConnectivity.Preserve;
         Assert.That(result[0], Is.EqualTo(preserve ? 7 : 42));
@@ -63,7 +63,7 @@ public class CellularPottsTests
         Assert.That(result.Cells.Select(c => c.Id), Is.EqualTo(new[] { 7, 42 }));
         Assert.That(source[0], Is.EqualTo(7));
         Assert.That(random.SiteDraws, Is.EqualTo(12));
-        var continued = result.ApplyCellularPotts(4, options, connectivity, new Random(42));
+        var continued = result.ApplyCellularPotts(parameters, random: new Random(42));
         Assert.That(continued.Cells[0].HexIndexes, Has.Count.EqualTo(preserve ? 1 : 0));
     }
 
@@ -77,7 +77,7 @@ public class CellularPottsTests
         var source = Partition(new HexMapTopology(5, 5, Layout.OddR), p => donor.Contains(p) ? 7 : 42, 7, 42);
         var random = Attempt(source, center, 42);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(1e100, 0, 0), connectivity, random);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 1e100, 0, 0, connectivity: connectivity), random: random);
 
         bool preserve = connectivity == CellularPottsConnectivity.Preserve;
         Assert.That(result[center], Is.EqualTo(preserve ? 7 : 42));
@@ -100,7 +100,7 @@ public class CellularPottsTests
             p => donor.Contains(p) ? 7 : third.Contains(p) ? 99 : 42, 7, 42, 99);
         var random = Attempt(source, center, 42);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(1e100, 0, 0), connectivity, random);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 1e100, 0, 0, connectivity: connectivity), random: random);
 
         Assert.That(result[center], Is.EqualTo(42));
         Assert.That(random.EnergyDraws, Is.Zero);
@@ -119,7 +119,7 @@ public class CellularPottsTests
         var site = center.GetAdjacents(layout)[0];
         var source = Partition(topology, p => ring.Contains(p) ? 7 : p == center ? 99 : 42, 7, 42, 99);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 0), random: Attempt(source, site, 42));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(7));
         Assert.That(result.Cells[0].HexIndexes, Has.Count.EqualTo(6));
@@ -137,7 +137,7 @@ public class CellularPottsTests
         var donor = new HashSet<VectorXYInt> { site, new VectorXYInt(1, 0), new VectorXYInt(3, 0) };
         var source = Partition(new HexMapTopology(5, 5, layout), p => donor.Contains(p) ? 7 : 42, 7, 42);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 0), random: Attempt(source, site, 42));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
 
         Assert.That(Values(result), Is.EqualTo(Values(source)));
         AssertConsistentAndConnected(result);
@@ -154,7 +154,7 @@ public class CellularPottsTests
         var donor = new HashSet<VectorXYInt> { site, neighbors[5], neighbors[0] };
         var source = Partition(new HexMapTopology(5, 5, layout), p => donor.Contains(p) ? 7 : 42, 7, 42);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 0), random: Attempt(source, site, 42));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(42));
         Assert.That(result.Cells[0].HexIndexes, Is.EquivalentTo(new[] { neighbors[5], neighbors[0] }));
@@ -172,7 +172,7 @@ public class CellularPottsTests
         var site = new VectorXYInt(1, 2);
         var random = Attempt(source, site, 42);
 
-        var result = source.ApplyCellularPotts(2, new CellularPottsOptions(0, 0, 0), random: random);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(2, 0, 0, 0), random: random);
 
         Assert.That(result[site], Is.EqualTo(42));
         Assert.That(Values(source), Is.EqualTo(before));
@@ -199,7 +199,7 @@ public class CellularPottsTests
         var random = Attempt(source, site, 42, draw);
         double temperature = draw == 0d ? 0d : 2d;
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(temperature, 0, 1), connectivity, random);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, temperature, 0, 1, connectivity: connectivity), random: random);
 
         Assert.That(result[site], Is.EqualTo(accepted ? 42 : 7));
         Assert.That(random.EnergyDraws, Is.EqualTo(temperature == 0d ? 0 : accepted ? 1 : 4));
@@ -213,7 +213,7 @@ public class CellularPottsTests
         var site = new VectorXYInt(1, 0);
         var targets = new Dictionary<int, double> { [7] = favorsCopy ? 1 : 3, [42] = favorsCopy ? 3 : 1 };
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 1, targets), random: Attempt(source, site, 42));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 1, targets), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(favorsCopy ? 42 : 7));
     }
@@ -227,7 +227,7 @@ public class CellularPottsTests
         var donor = new HashSet<VectorXYInt> { center, neighbors[0], neighbors[1], neighbors[2], neighbors[3] };
         var source = Partition(new HexMapTopology(5, 5, Layout.OddR), p => donor.Contains(p) ? 7 : 42, 7, 42);
         // Four donor contacts versus two target contacts: delta H = J * (4 - 2) = 2.
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(1, 1, 0), random: Attempt(source, center, 42, draw));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 1, 1, 0), random: Attempt(source, center, 42, draw));
 
         Assert.That(result[center], Is.EqualTo(accepted ? 42 : 7));
     }
@@ -241,8 +241,7 @@ public class CellularPottsTests
         var source = Partition(new HexMapTopology(5, 5, Layout.OddR), p => donor.Contains(p) ? 7 : 42, 7, 42);
         var before = Values(source);
 
-        Assert.Throws<InvalidOperationException>(() => source.ApplyCellularPotts(1,
-            new CellularPottsOptions(1, double.MaxValue, 0), random: Attempt(source, center, 42)));
+        Assert.Throws<InvalidOperationException>(() => source.ApplyCellularPotts(new CellularPottsParameters(1, 1, double.MaxValue, 0), random: Attempt(source, center, 42)));
         Assert.That(Values(source), Is.EqualTo(before));
     }
 
@@ -255,7 +254,7 @@ public class CellularPottsTests
         var source = Partition(new HexMapTopology(4, 1, layout), p => p.X < 2 ? 7 : 42, 7, 42);
         var site = new VectorXYInt(1, 0);
         // One donor edge is removed and one target edge is added: delta H = 0.
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 10, 0), random: Attempt(source, site, 42));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 10, 0), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(42));
         AssertConsistentAndConnected(result);
@@ -271,7 +270,7 @@ public class CellularPottsTests
             p => p == center || p == neighbors[0] ? 7 : 42, 7, 42);
         var random = Attempt(source, center, 42);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 0), connectivity, random);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: connectivity), random: random);
 
         Assert.That(result[center], Is.EqualTo(42));
         Assert.That(random.TargetBounds, Is.All.EqualTo(6));
@@ -299,7 +298,7 @@ public class CellularPottsTests
             p => p == center || p == neighbors[0] ? 7 : p == neighbors[5] ? 99 : 42, 7, 42, 99);
         var random = new FixedAttemptRandom(center.Y * source.Topology.Resolution.X + center.X, targetChoice);
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 0), connectivity, random);
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: connectivity), random: random);
 
         Assert.That(result[center], Is.EqualTo(expectedId));
         Assert.That(random.TargetBounds, Is.All.EqualTo(6));
@@ -316,7 +315,7 @@ public class CellularPottsTests
     {
         var source = Partition(new HexMapTopology(5, 1, layout), p => p.X == 0 || p.X == 4 ? 7 : 42, 7, 42);
 
-        var exception = Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(0));
+        var exception = Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(new CellularPottsParameters(0)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("partition"));
     }
@@ -328,11 +327,10 @@ public class CellularPottsTests
     public void Apply_WithoutConnectivity_AcceptsDisconnectedInput(Layout layout)
     {
         var source = Partition(new HexMapTopology(5, 1, layout), p => p.X == 0 || p.X == 4 ? 7 : 42, 7, 42);
-        var copy = source.ApplyCellularPotts(0, connectivity: CellularPottsConnectivity.None);
+        var copy = source.ApplyCellularPotts(new CellularPottsParameters(0, connectivity: CellularPottsConnectivity.None));
         Assert.That(Values(copy), Is.EqualTo(Values(source)));
 
-        var result = source.ApplyCellularPotts(1, new CellularPottsOptions(0, 0, 0),
-            CellularPottsConnectivity.None, new FixedAttemptRandom(0, 0));
+        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: CellularPottsConnectivity.None), random: new FixedAttemptRandom(0, 0));
 
         Assert.That(result[0], Is.EqualTo(42));
         Assert.That(result[4], Is.EqualTo(7));
@@ -342,12 +340,10 @@ public class CellularPottsTests
     [TestCase(-1)]
     [TestCase(2)]
     [TestCase(int.MaxValue)]
-    public void Apply_InvalidConnectivity_IsRejected(int value)
+    public void Parameters_InvalidConnectivity_IsRejected(int value)
     {
-        var source = Partition(new HexMapTopology(1, 1, Layout.OddR), _ => 7, 7);
-
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => source.ApplyCellularPotts(0, connectivity: (CellularPottsConnectivity)value));
+            () => new CellularPottsParameters(0, connectivity: (CellularPottsConnectivity)value));
 
         Assert.That(exception!.ParamName, Is.EqualTo("connectivity"));
     }
@@ -359,7 +355,7 @@ public class CellularPottsTests
         source[0] = 42;
         var before = Values(source);
 
-        Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(1));
+        Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(new CellularPottsParameters(1)));
         Assert.That(Values(source), Is.EqualTo(before));
     }
 
@@ -367,36 +363,52 @@ public class CellularPottsTests
     public void Apply_InvalidArguments_AreRejected()
     {
         HexPartitionMap<HexPartitionCell> missing = null!;
-        Assert.Throws<ArgumentNullException>(() => missing.ApplyCellularPotts(0));
+        Assert.Throws<ArgumentNullException>(() => missing.ApplyCellularPotts(new CellularPottsParameters(0)));
         var source = Partition(new HexMapTopology(1, 1, Layout.OddR), _ => 7, 7);
-        Assert.Throws<ArgumentOutOfRangeException>(() => source.ApplyCellularPotts(-1));
-        var options = new CellularPottsOptions(targetAreas: new Dictionary<int, double> { [42] = 1 });
-        Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(0, options));
+        Assert.That(Assert.Throws<ArgumentNullException>(() => source.ApplyCellularPotts(null!))!.ParamName, Is.EqualTo("parameters"));
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(-1))!.ParamName, Is.EqualTo("stepCount"));
+        var parameters = new CellularPottsParameters(0, targetAreas: new Dictionary<int, double> { [42] = 1 });
+        Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(parameters));
     }
 
     [TestCase(-1d)]
     [TestCase(double.NaN)]
     [TestCase(double.PositiveInfinity)]
     [TestCase(double.NegativeInfinity)]
-    public void Options_InvalidEnergyParameters_AreRejected(double value)
+    public void Parameters_InvalidEnergyParameters_AreRejected(double value)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsOptions(temperature: value));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsOptions(boundaryEnergy: value));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsOptions(areaPenalty: value));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsOptions(targetAreas: new Dictionary<int, double> { [7] = value }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, temperature: value));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, boundaryEnergy: value));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, areaPenalty: value));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, targetAreas: new Dictionary<int, double> { [7] = value }));
     }
 
     [Test]
-    public void Options_TargetAreas_AreReadOnlySnapshot()
+    public void Parameters_TargetAreas_AreReadOnlySnapshot()
     {
         var targets = new Dictionary<int, double> { [7] = 2.5 };
-        var options = new CellularPottsOptions(targetAreas: targets);
+        var parameters = new CellularPottsParameters(0, targetAreas: targets);
         targets[7] = 100;
 
-        Assert.That(options.TargetAreas[7], Is.EqualTo(2.5));
-        Assert.Throws<NotSupportedException>(() => ((IDictionary<int, double>)options.TargetAreas)[7] = 10);
-        Assert.Throws<ArgumentException>(() => new CellularPottsOptions(targetAreas: new Dictionary<int, double> { [-1] = 1 }));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsOptions(targetAreas: new Dictionary<int, double> { [7] = (double)int.MaxValue + 1 }));
+        Assert.That(parameters.TargetAreas[7], Is.EqualTo(2.5));
+        Assert.Throws<NotSupportedException>(() => ((IDictionary<int, double>)parameters.TargetAreas)[7] = 10);
+        Assert.Throws<ArgumentException>(() => new CellularPottsParameters(0, targetAreas: new Dictionary<int, double> { [-1] = 1 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, targetAreas: new Dictionary<int, double> { [7] = (double)int.MaxValue + 1 }));
+    }
+
+    [Test]
+    public void Parameters_DefaultsPreserveConnectivityWithUnitEnergyCoefficients()
+    {
+        var parameters = new CellularPottsParameters(17);
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameters.StepCount, Is.EqualTo(17));
+            Assert.That(parameters.Connectivity, Is.EqualTo(CellularPottsConnectivity.Preserve));
+            Assert.That(parameters.Temperature, Is.EqualTo(1d));
+            Assert.That(parameters.BoundaryEnergy, Is.EqualTo(1d));
+            Assert.That(parameters.AreaPenalty, Is.EqualTo(1d));
+            Assert.That(parameters.TargetAreas, Is.Empty);
+        });
     }
 
     internal static HexPartitionMap<HexPartitionCell> Partition(HexMapTopology topology, Func<VectorXYInt, int> assign, params int[] ids)

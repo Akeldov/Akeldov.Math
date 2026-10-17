@@ -92,7 +92,7 @@ public class HexPartitionMapTests
     {
         var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(new PointXY(100f, 0f), 1f), new Site(centers[0], 1f) };
-        var map = centers.ToVoronoiHexPartitionMap(sites, emptyCellPolicy: policy);
+        var map = centers.ToVoronoiHexPartitionMap(sites, new VoronoiHexPartitionParameters(emptyCellPolicy: policy));
         IHexPartitionMap<VoronoiHexPartitionCell> partition = map;
         IHexMap<int> idMap = partition;
         IReadOnlyList<VoronoiHexPartitionCell> typedCells = partition.Cells;

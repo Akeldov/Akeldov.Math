@@ -27,7 +27,7 @@ public class PartialPerlinNoisePartitionPropertyFuzzTests
             var offset = new VectorXY(random.Next(-20, 20), random.Next(-20, 20));
             var noise = geometry.CreatePerlinNoise(seed, scale, octaves, persistence, lacunarity, offset);
 
-            var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, mask, seed, scale, octaves, persistence, lacunarity, offset);
+            var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, mask, new PerlinNoisePartitionParameters(seed, scale, octaves, persistence, lacunarity, offset));
 
             PartialPerlinNoisePartitionTests.AssertPartition(partition, noise, mask, targets,
                 $"seed={seed}, layout={layout}, iteration={iteration}");

@@ -9,9 +9,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <summary>Applies the Cellular Potts model with the specified cell connectivity policy.</summary>
         /// <typeparam name="THexPartitionCell">The source partition cell type.</typeparam>
         /// <param name="partition">The full partition whose assignments must agree with its retained cells.</param>
-        /// <param name="stepCount">The non-negative number of steps; each step makes exactly one copy attempt per map hex, sampled with replacement.</param>
-        /// <param name="options">The energy and temperature parameters, or null for defaults.</param>
-        /// <param name="connectivity">The connectivity policy. Defaults to preserving each non-empty cell as one six-connected component.</param>
+        /// <param name="parameters">The immutable duration, energy, temperature, and connectivity settings.</param>
         /// <param name="random">The random generator, or null for a new generator. Supply a seeded generator for reproducible runs.</param>
         /// <returns>
         /// A new mutable partition map owned by the caller, with new cell snapshots consistent with its assignments.
@@ -39,14 +37,11 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <example>
         /// <code>
         /// var evolved = partition.ApplyCellularPotts(
-        ///     stepCount: 100,
-        ///     options: new CellularPottsOptions(temperature: 5, boundaryEnergy: 2, areaPenalty: 1),
-        ///     connectivity: CellularPottsConnectivity.Preserve,
+        ///     new CellularPottsParameters(stepCount: 100, temperature: 5, boundaryEnergy: 2, areaPenalty: 1),
         ///     random: new Random(42));
         /// </code>
         /// </example>
-        /// <exception cref="ArgumentNullException">The partition is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The step count is negative or the connectivity policy is invalid.</exception>
+        /// <exception cref="ArgumentNullException">The partition or parameters are null.</exception>
         /// <exception cref="ArgumentException">
         /// Source cells or assignments are inconsistent, a non-empty cell is disconnected in Preserve mode,
         /// or an explicit target identifier is absent from the partition.
@@ -54,20 +49,15 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static HexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this HexPartitionMap<THexPartitionCell> partition,
-            int stepCount,
-            CellularPottsOptions? options = null,
-            CellularPottsConnectivity connectivity = CellularPottsConnectivity.Preserve,
+            CellularPottsParameters parameters,
             Random? random = null)
             where THexPartitionCell : IHexPartitionCell
         {
             if (partition is null)
                 throw new ArgumentNullException(nameof(partition));
-            if (stepCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(stepCount));
-            if (connectivity != CellularPottsConnectivity.None && connectivity != CellularPottsConnectivity.Preserve)
-                throw new ArgumentOutOfRangeException(nameof(connectivity));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
 
-            options ??= new CellularPottsOptions();
             // Revalidate custom cells and compare the mutable map with their current structural snapshot.
             var snapshot = new HexPartitionMap<THexPartitionCell>(partition.Topology, partition.Cells);
             var ids = new int[snapshot.Cells.Count];
@@ -78,10 +68,10 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                 cellIndexById.Add(ids[i], i);
             }
 
-            foreach (int id in options.TargetAreas.Keys)
+            foreach (int id in parameters.TargetAreas.Keys)
             {
                 if (!cellIndexById.ContainsKey(id))
-                    throw new ArgumentException($"Target-area identifier {id} is absent from the partition.", nameof(options));
+                    throw new ArgumentException($"Target-area identifier {id} is absent from the partition.", nameof(parameters));
             }
 
             var assignments = new int[snapshot.Topology.Count];
@@ -92,11 +82,11 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                 assignments[i] = cellIndexById[snapshot[i]];
             }
 
-            var simulation = new CellularPottsSimulation(partition.Topology, assignments, ids, options, connectivity);
-            if (connectivity == CellularPottsConnectivity.Preserve && !simulation.HasConnectedCells())
+            var simulation = new CellularPottsSimulation(partition.Topology, assignments, ids, parameters);
+            if (parameters.Connectivity == CellularPottsConnectivity.Preserve && !simulation.HasConnectedCells())
                 throw new ArgumentException("Every non-empty partition cell must be six-connected.", nameof(partition));
 
-            simulation.Run(stepCount, random ?? new Random());
+            simulation.Run(parameters.StepCount, random ?? new Random());
             return simulation.CreatePartition();
         }
     }
