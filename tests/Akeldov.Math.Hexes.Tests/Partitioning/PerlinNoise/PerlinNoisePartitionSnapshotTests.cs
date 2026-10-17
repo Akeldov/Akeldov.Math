@@ -10,6 +10,63 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.PerlinNoise;
 public class PerlinNoisePartitionSnapshotTests
 {
     [Test]
+    public void PartialPartition_WithParticipationMask_MatchesApprovedImage()
+    {
+        const int seed = 42;
+        const float scale = 45f;
+        const string fileName = "perlin-noise-partial-partition-rgba16.png";
+        const string context = "seed=42, scale=45, shares=30/50/20, layout=OddR";
+        var geometry = new HexMapGeometry(64, 48, new VectorXY(-30f, 50f), 2.5f, Layout.OddR);
+        var targets = new[]
+        {
+            new PerlinNoisePartitionTarget(7, 0.3),
+            new PerlinNoisePartitionTarget(42, 0.5),
+            new PerlinNoisePartitionTarget(99, 0.2)
+        };
+        var mask = new BoolHexMap(geometry.Topology);
+        for (int y = 0; y < geometry.Topology.Resolution.Y; y++)
+        for (int x = 0; x < geometry.Topology.Resolution.X; x++)
+        {
+            // An ellipse with a hole and a dividing channel, plus a separate island.
+            int dx = x - 29;
+            int dy = y - 24;
+            bool ellipse = dx * dx * 18 * 18 + dy * dy * 25 * 25 <= 25 * 25 * 18 * 18;
+            bool hole = (x - 23) * (x - 23) + (y - 22) * (y - 22) <= 5 * 5;
+            bool channel = x >= 37 && x <= 39;
+            bool island = (x - 58) * (x - 58) + (y - 8) * (y - 8) <= 4 * 4;
+            mask[new VectorXYInt(x, y)] = (ellipse && !hole && !channel) || island;
+        }
+
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, mask, seed, scale);
+
+        PartialPerlinNoisePartitionTests.AssertPartition(partition, geometry.CreatePerlinNoise(seed, scale),
+            mask, targets, context);
+        int participatingCount = partition.Cells.Sum(cell => cell.HexIndexes.Count);
+        Assert.That(participatingCount, Is.GreaterThan(0).And.LessThan(geometry.Topology.Count), context);
+        foreach (var cell in partition.Cells)
+            TestContext.WriteLine($"Territory {cell.Id}: {cell.HexIndexes.Count}/{participatingCount} participating hexes");
+
+        Func<int?, RGBA16BitColor> colorSelector = id => id switch
+        {
+            null => new RGBA16BitColor(0x2800, 0x3000, 0x3800, ushort.MaxValue),
+            7 => new RGBA16BitColor(0x3800, 0x7800, 0xc800, ushort.MaxValue),
+            42 => new RGBA16BitColor(0x5000, 0xa000, 0x5800, ushort.MaxValue),
+            99 => new RGBA16BitColor(0xc800, 0xb000, 0x7000, ushort.MaxValue),
+            _ => throw new InvalidOperationException($"Unexpected territory: {id}")
+        };
+        string actualPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, fileName.Replace(".png", ".actual.png"));
+        partition.Rasterize(6f, colorSelector).SaveAsPng(actualPath);
+        string approvedPath = Path.Combine(TestContext.CurrentContext.TestDirectory,
+            "Partitioning", "PerlinNoise", "Approved", fileName);
+        if (!File.Exists(approvedPath) ||
+            !PngSnapshotComparer.AreEquivalent(File.ReadAllBytes(actualPath), File.ReadAllBytes(approvedPath)))
+        {
+            TestContext.AddTestAttachment(actualPath, $"Partial Perlin-noise partition: {context}");
+            Assert.Fail($"Partial Perlin-noise partition snapshot changed or is missing ({context}). Actual image: {actualPath}");
+        }
+    }
+
+    [Test]
     public void SplitDisconnectedCells_WithPerlinNoisePartition_MatchesApprovedImage()
     {
         const int seed = 42;

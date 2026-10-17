@@ -35,10 +35,10 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             _maximumShare = maximumShare;
         }
 
-        internal HexPartitionCell[] Partition(FloatHexMap noise)
+        internal HexPartitionCell[] Partition(FloatHexMap noise, bool[]? participationFlags = null)
         {
             var topology = noise.Topology;
-            var thresholds = CreateThresholds(noise, _targets, _maximumShare);
+            var thresholds = CreateThresholds(noise, _targets, _maximumShare, participationFlags);
             var groups = new List<VectorXYInt>[_targets.Length];
             for (int i = 0; i < groups.Length; i++)
                 groups[i] = new List<VectorXYInt>();
@@ -46,6 +46,9 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             int width = topology.Resolution.X;
             for (int site = 0; site < topology.Count; site++)
             {
+                if (participationFlags != null && !participationFlags[site])
+                    continue;
+
                 int lower = 0;
                 int upper = thresholds.Length;
                 while (lower < upper)
@@ -65,16 +68,26 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             return cells;
         }
 
-        private static float[] CreateThresholds(FloatHexMap noise, PerlinNoisePartitionTarget[] targets, double maximumShare)
+        private static float[] CreateThresholds(FloatHexMap noise, PerlinNoisePartitionTarget[] targets,
+            double maximumShare, bool[]? participationFlags)
         {
             var thresholds = new float[targets.Length - 1];
             int count = noise.Topology.Count;
+            if (participationFlags != null)
+            {
+                count = 0;
+                foreach (bool participates in participationFlags)
+                    if (participates)
+                        count++;
+            }
             if (count == 0 || thresholds.Length == 0)
                 return thresholds;
 
             var sorted = new float[count];
-            for (int site = 0; site < count; site++)
-                sorted[site] = noise[site];
+            int sample = 0;
+            for (int site = 0; site < noise.Topology.Count; site++)
+                if (participationFlags == null || participationFlags[site])
+                    sorted[sample++] = noise[site];
             Array.Sort(sorted);
 
             // Boundaries may fall only between runs of equal values, never inside a run.

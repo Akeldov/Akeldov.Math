@@ -1,4 +1,7 @@
 #nullable enable
+Akeldov.Math.Hexes.Partitioning.PerlinNoise.PartialPerlinNoiseHexPartitionMap
+Akeldov.Math.Hexes.Partitioning.PerlinNoise.PartialPerlinNoiseHexPartitionMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+static Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapGeometryExtensions.ToPerlinNoiseHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget!>! targets, Akeldov.Math.Hexes.IHexMap<bool>! participationMask, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Hexes.Partitioning.PerlinNoise.PartialPerlinNoiseHexPartitionMap!
 Akeldov.Math.Hexes.HexPartitionMapExtensions
 static Akeldov.Math.Hexes.HexPartitionMapExtensions.SplitDisconnectedCells<THexPartitionCell>(this Akeldov.Math.Hexes.HexPartitionMap<THexPartitionCell>! partition) -> Akeldov.Math.Hexes.HexPartitionMap<Akeldov.Math.Hexes.HexPartitionCell!>!
 Akeldov.Math.Hexes.HexMapGeometryPerlinNoiseExtensions
