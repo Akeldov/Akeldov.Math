@@ -7,12 +7,10 @@ Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapGeometryExtensions
 static Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapGeometryExtensions.ToPerlinNoiseHexPartitionMap(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget!>! targets, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoiseHexPartitionMap!
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoiseHexPartitionMap
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoiseHexPartitionMap.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
-Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapTopologyExtensions
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget.PerlinNoisePartitionTarget(int id, double areaShare) -> void
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget.Id.get -> int
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget.AreaShare.get -> double
-static Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapTopologyExtensions.ToPerlinNoiseHexPartitionMap(this Akeldov.Math.Hexes.HexMapTopology topology, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget!>! targets, int seed, float scale, int octaves = 4, float persistence = 0.5, float lacunarity = 2, Akeldov.Math.Spatial2D.VectorXY offset = default(Akeldov.Math.Spatial2D.VectorXY)) -> Akeldov.Math.Hexes.HexPartitionMap<Akeldov.Math.Hexes.HexPartitionCell!>!
 Akeldov.Math.Hexes.Partitioning.CellularPotts.CellularPottsConnectivity
 Akeldov.Math.Hexes.Partitioning.CellularPotts.CellularPottsConnectivity.None = 0 -> Akeldov.Math.Hexes.Partitioning.CellularPotts.CellularPottsConnectivity
 Akeldov.Math.Hexes.Partitioning.CellularPotts.CellularPottsConnectivity.Preserve = 1 -> Akeldov.Math.Hexes.Partitioning.CellularPotts.CellularPottsConnectivity

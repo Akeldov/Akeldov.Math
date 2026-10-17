@@ -1,3 +1,4 @@
+using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Partitioning.PerlinNoise;
 using Akeldov.Math.Spatial2D;
 
@@ -12,6 +13,7 @@ public class PerlinNoisePartitionTests
     public void Partition_CoversMapWithOrderedNoiseBandsAndRequestedShares(Layout layout)
     {
         var topology = new HexMapTopology(40, 31, layout);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[]
         {
             new PerlinNoisePartitionTarget(int.MaxValue, 0.2),
@@ -19,9 +21,9 @@ public class PerlinNoisePartitionTests
             new PerlinNoisePartitionTarget(42, 0.3)
         };
         var offset = new VectorXY(-2.5f, 7.25f);
-        var noise = topology.CreatePerlinNoise(123, 9f, 3, 0.4f, 2.25f, offset);
+        var noise = geometry.CreatePerlinNoise(123, 9f, 3, 0.4f, 2.25f, offset);
 
-        var partition = topology.ToPerlinNoiseHexPartitionMap(targets, 123, 9f, 3, 0.4f, 2.25f, offset);
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, 123, 9f, 3, 0.4f, 2.25f, offset);
 
         AssertPartition(partition, noise, targets, $"layout={layout}");
         for (int i = 0; i < targets.Length; i++)
@@ -33,11 +35,12 @@ public class PerlinNoisePartitionTests
     public void Partition_IsReproducibleAndSeedChangesTheMap()
     {
         var topology = new HexMapTopology(20, 18, Layout.OddR);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[] { new PerlinNoisePartitionTarget(7, 2), new PerlinNoisePartitionTarget(42, 3) };
 
-        var first = topology.ToPerlinNoiseHexPartitionMap(targets, 37, 6f);
-        var replay = topology.ToPerlinNoiseHexPartitionMap(targets, 37, 6f);
-        var other = topology.ToPerlinNoiseHexPartitionMap(targets, 38, 6f);
+        var first = geometry.ToPerlinNoiseHexPartitionMap(targets, 37, 6f);
+        var replay = geometry.ToPerlinNoiseHexPartitionMap(targets, 37, 6f);
+        var other = geometry.ToPerlinNoiseHexPartitionMap(targets, 38, 6f);
 
         Assert.That(Values(replay), Is.EqualTo(Values(first)));
         Assert.That(Values(other), Is.Not.EqualTo(Values(first)));
@@ -47,20 +50,22 @@ public class PerlinNoisePartitionTests
     public void Partition_NormalizesSharesWithoutOverflowOrUnderflowOfTheTotal()
     {
         var topology = new HexMapTopology(20, 18, Layout.EvenQ);
+        var geometry = new HexMapGeometry(topology, 1f);
         var fractions = new[] { new PerlinNoisePartitionTarget(7, 0.4), new PerlinNoisePartitionTarget(42, 0.6) };
         var percentages = new[] { new PerlinNoisePartitionTarget(7, 40), new PerlinNoisePartitionTarget(42, 60) };
         var enormous = new[] { new PerlinNoisePartitionTarget(7, 1e308), new PerlinNoisePartitionTarget(42, 1.5e308) };
         var small = new[] { new PerlinNoisePartitionTarget(7, 2 * double.Epsilon), new PerlinNoisePartitionTarget(42, 3 * double.Epsilon) };
-        var expected = topology.ToPerlinNoiseHexPartitionMap(fractions, 42, 7f);
+        var expected = geometry.ToPerlinNoiseHexPartitionMap(fractions, 42, 7f);
 
         foreach (var targets in new[] { percentages, enormous, small })
-            Assert.That(Values(topology.ToPerlinNoiseHexPartitionMap(targets, 42, 7f)), Is.EqualTo(Values(expected)));
+            Assert.That(Values(geometry.ToPerlinNoiseHexPartitionMap(targets, 42, 7f)), Is.EqualTo(Values(expected)));
     }
 
     [Test]
     public void Partition_ZeroSharesStayEmptyAtEveryPosition()
     {
         var topology = new HexMapTopology(13, 9, Layout.OddQ);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[]
         {
             new PerlinNoisePartitionTarget(0, 0), new PerlinNoisePartitionTarget(7, 1),
@@ -68,9 +73,9 @@ public class PerlinNoisePartitionTests
             new PerlinNoisePartitionTarget(2, 0)
         };
 
-        var partition = topology.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
 
-        AssertPartition(partition, topology.CreatePerlinNoise(42, 5f), targets, "zero shares");
+        AssertPartition(partition, geometry.CreatePerlinNoise(42, 5f), targets, "zero shares");
         foreach (int index in new[] { 0, 2, 4 })
             Assert.That(partition.Cells[index].HexIndexes, Is.Empty);
     }
@@ -79,11 +84,12 @@ public class PerlinNoisePartitionTests
     public void Partition_ConstantField_KeepsEqualValuesTogetherAndBreaksCutTiesDownward()
     {
         var topology = new HexMapTopology(7, 5, Layout.OddR);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[] { new PerlinNoisePartitionTarget(7, 1), new PerlinNoisePartitionTarget(42, 1) };
-        var noise = topology.CreatePerlinNoise(42, float.MaxValue);
+        var noise = geometry.CreatePerlinNoise(42, float.MaxValue);
         Assert.That(Enumerable.Range(0, topology.Count).Select(i => noise[i]).Distinct().Count(), Is.EqualTo(1));
 
-        var partition = topology.ToPerlinNoiseHexPartitionMap(targets, 42, float.MaxValue);
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, 42, float.MaxValue);
 
         Assert.That(partition.Cells[0].HexIndexes, Is.Empty);
         Assert.That(Values(partition), Is.All.EqualTo(42));
@@ -96,9 +102,10 @@ public class PerlinNoisePartitionTests
     public void Partition_EmptyMap_RetainsAllTargets(int width, int height)
     {
         var topology = new HexMapTopology(width, height, Layout.EvenR);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[] { new PerlinNoisePartitionTarget(42, 0), new PerlinNoisePartitionTarget(7, 1) };
 
-        var partition = topology.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
 
         Assert.That(partition.Topology, Is.EqualTo(topology));
         Assert.That(partition.Cells.Select(c => c.Id), Is.EqualTo(new[] { 42, 7 }));
@@ -109,14 +116,15 @@ public class PerlinNoisePartitionTests
     public void Partition_SingleTargetOwnsEveryHexAndResultDoesNotRetainInputList()
     {
         var topology = new HexMapTopology(5, 4, Layout.EvenQ);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new List<PerlinNoisePartitionTarget> { new PerlinNoisePartitionTarget(42, 0.1) };
 
-        var partition = topology.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
         targets.Clear();
 
         Assert.That(Values(partition), Is.All.EqualTo(42));
         Assert.That(partition.Cells.Single().HexIndexes, Has.Count.EqualTo(topology.Count));
-        var other = topology.ToPerlinNoiseHexPartitionMap(new[] { new PerlinNoisePartitionTarget(42, 1) }, 42, 5f);
+        var other = geometry.ToPerlinNoiseHexPartitionMap(new[] { new PerlinNoisePartitionTarget(42, 1) }, 42, 5f);
         partition[0] = 99;
         Assert.That(other[0], Is.EqualTo(42));
     }
@@ -125,9 +133,10 @@ public class PerlinNoisePartitionTests
     public void Partition_SingleHex_CanLeavePositiveShareTargetsEmpty()
     {
         var topology = new HexMapTopology(1, 1, Layout.OddR);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[] { new PerlinNoisePartitionTarget(7, 0.2), new PerlinNoisePartitionTarget(42, 0.8) };
 
-        var partition = topology.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, 42, 5f);
 
         Assert.That(partition[0], Is.EqualTo(42));
         Assert.That(partition.Cells[0].HexIndexes, Is.Empty);
@@ -137,12 +146,13 @@ public class PerlinNoisePartitionTests
     public void Partition_InvalidTargetListsAreRejected()
     {
         var topology = new HexMapTopology(2, 2, Layout.OddR);
-        Assert.Throws<ArgumentNullException>(() => topology.ToPerlinNoiseHexPartitionMap(null!, 42, 5f));
-        Assert.Throws<ArgumentException>(() => topology.ToPerlinNoiseHexPartitionMap(Array.Empty<PerlinNoisePartitionTarget>(), 42, 5f));
-        Assert.Throws<ArgumentException>(() => topology.ToPerlinNoiseHexPartitionMap(new PerlinNoisePartitionTarget[] { null! }, 42, 5f));
-        Assert.Throws<ArgumentException>(() => topology.ToPerlinNoiseHexPartitionMap(
+        var geometry = new HexMapGeometry(topology, 1f);
+        Assert.Throws<ArgumentNullException>(() => geometry.ToPerlinNoiseHexPartitionMap(null!, 42, 5f));
+        Assert.Throws<ArgumentException>(() => geometry.ToPerlinNoiseHexPartitionMap(Array.Empty<PerlinNoisePartitionTarget>(), 42, 5f));
+        Assert.Throws<ArgumentException>(() => geometry.ToPerlinNoiseHexPartitionMap(new PerlinNoisePartitionTarget[] { null! }, 42, 5f));
+        Assert.Throws<ArgumentException>(() => geometry.ToPerlinNoiseHexPartitionMap(
             new[] { new PerlinNoisePartitionTarget(7, 1), new PerlinNoisePartitionTarget(7, 2) }, 42, 5f));
-        Assert.Throws<ArgumentException>(() => topology.ToPerlinNoiseHexPartitionMap(
+        Assert.Throws<ArgumentException>(() => geometry.ToPerlinNoiseHexPartitionMap(
             new[] { new PerlinNoisePartitionTarget(7, 0), new PerlinNoisePartitionTarget(42, 0) }, 42, 5f));
     }
 
@@ -162,12 +172,13 @@ public class PerlinNoisePartitionTests
     public void Partition_ValidatesNoiseArgumentsEvenForEmptyMapsAndSingleTargets(int width)
     {
         var topology = new HexMapTopology(width, 1, Layout.OddR);
+        var geometry = new HexMapGeometry(topology, 1f);
         var targets = new[] { new PerlinNoisePartitionTarget(7, 1) };
-        Assert.Throws<ArgumentOutOfRangeException>(() => topology.ToPerlinNoiseHexPartitionMap(targets, 1, 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => topology.ToPerlinNoiseHexPartitionMap(targets, 1, 1, octaves: 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => topology.ToPerlinNoiseHexPartitionMap(targets, 1, 1, persistence: float.NaN));
-        Assert.Throws<ArgumentOutOfRangeException>(() => topology.ToPerlinNoiseHexPartitionMap(targets, 1, 1, lacunarity: 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => topology.ToPerlinNoiseHexPartitionMap(targets, 1, 1,
+        Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToPerlinNoiseHexPartitionMap(targets, 1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToPerlinNoiseHexPartitionMap(targets, 1, 1, octaves: 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToPerlinNoiseHexPartitionMap(targets, 1, 1, persistence: float.NaN));
+        Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToPerlinNoiseHexPartitionMap(targets, 1, 1, lacunarity: 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToPerlinNoiseHexPartitionMap(targets, 1, 1,
             offset: new VectorXY(float.PositiveInfinity, 0)));
     }
 

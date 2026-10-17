@@ -36,12 +36,13 @@ public class PerlinNoiseGeometryPartitionTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Partition_UnitGeometryMatchesTopology(Layout layout)
+    public void Partition_UnitGeometryUsesTopologyNoiseBands(Layout layout)
     {
         var topology = new HexMapTopology(20, 18, layout);
-        var expected = topology.ToPerlinNoiseHexPartitionMap(Targets, 42, 7f);
-        var actual = new HexMapGeometry(topology, 1f).ToPerlinNoiseHexPartitionMap(Targets, 42, 7f);
-        Assert.That(Values(actual), Is.EqualTo(Values(expected)));
+        var noise = topology.CreatePerlinNoise(42, 7f);
+        var partition = new HexMapGeometry(topology, 1f).ToPerlinNoiseHexPartitionMap(Targets, 42, 7f);
+
+        AssertPartition(partition, noise, Targets, $"layout={layout}");
     }
 
     [Test]
