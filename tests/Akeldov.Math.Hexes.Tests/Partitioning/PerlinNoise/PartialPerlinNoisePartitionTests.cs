@@ -134,7 +134,7 @@ public class PartialPerlinNoisePartitionTests
     {
         var geometry = new HexMapGeometry(new HexMapTopology(3, 2, Layout.OddR), 1f);
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
-            geometry.ToPerlinNoiseHexPartitionMap(Targets, null!, new PerlinNoisePartitionParameters(42, 5f)))!.ParamName, Is.EqualTo("participationMask"));
+            geometry.ToPerlinNoiseHexPartitionMap(Targets, participationMask: null!, new PerlinNoisePartitionParameters(42, 5f)))!.ParamName, Is.EqualTo("participationMask"));
         foreach (var topology in new[] { new HexMapTopology(2, 3, Layout.OddR), new HexMapTopology(3, 2, Layout.EvenR) })
             Assert.That(Assert.Throws<ArgumentException>(() =>
                 geometry.ToPerlinNoiseHexPartitionMap(Targets, new BoolHexMap(topology), new PerlinNoisePartitionParameters(42, 5f)))!.ParamName,

@@ -35,10 +35,11 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             _maximumShare = maximumShare;
         }
 
-        internal HexPartitionCell[] Partition(FloatHexMap noise, bool[]? participationFlags = null)
+        internal HexPartitionCell[] Partition(FloatHexMap noise, bool[]? participationFlags = null, int[]? regions = null)
         {
             var topology = noise.Topology;
-            var thresholds = CreateThresholds(noise, _targets, _maximumShare, participationFlags);
+            var thresholds = regions == null ? CreateThresholds(noise, _targets, _maximumShare, participationFlags) : null;
+            var regionThresholds = regions == null ? null : CreateRegionThresholds(noise, participationFlags, regions);
             var groups = new List<VectorXYInt>[_targets.Length];
             for (int i = 0; i < groups.Length; i++)
                 groups[i] = new List<VectorXYInt>();
@@ -49,12 +50,13 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
                 if (participationFlags != null && !participationFlags[site])
                     continue;
 
+                var siteThresholds = regionThresholds == null ? thresholds! : regionThresholds[regions![site]];
                 int lower = 0;
-                int upper = thresholds.Length;
+                int upper = siteThresholds.Length;
                 while (lower < upper)
                 {
                     int middle = lower + (upper - lower) / 2;
-                    if (noise[site] >= thresholds[middle])
+                    if (noise[site] >= siteThresholds[middle])
                         lower = middle + 1;
                     else
                         upper = middle;
@@ -68,10 +70,32 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             return cells;
         }
 
+        private Dictionary<int, float[]> CreateRegionThresholds(FloatHexMap noise, bool[]? participationFlags, int[] regions)
+        {
+            var samplesByRegion = new Dictionary<int, List<float>>();
+            for (int site = 0; site < noise.Topology.Count; site++)
+            {
+                if (participationFlags != null && !participationFlags[site])
+                    continue;
+
+                int region = regions[site];
+                if (!samplesByRegion.TryGetValue(region, out var samples))
+                {
+                    samples = new List<float>();
+                    samplesByRegion.Add(region, samples);
+                }
+                samples.Add(noise[site]);
+            }
+
+            var thresholds = new Dictionary<int, float[]>(samplesByRegion.Count);
+            foreach (var pair in samplesByRegion)
+                thresholds.Add(pair.Key, CreateThresholds(pair.Value.ToArray(), _targets, _maximumShare));
+            return thresholds;
+        }
+
         private static float[] CreateThresholds(FloatHexMap noise, PerlinNoisePartitionTarget[] targets,
             double maximumShare, bool[]? participationFlags)
         {
-            var thresholds = new float[targets.Length - 1];
             int count = noise.Topology.Count;
             if (participationFlags != null)
             {
@@ -80,14 +104,25 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
                     if (participates)
                         count++;
             }
-            if (count == 0 || thresholds.Length == 0)
-                return thresholds;
+            if (count == 0 || targets.Length == 1)
+                return new float[targets.Length - 1];
 
             var sorted = new float[count];
             int sample = 0;
             for (int site = 0; site < noise.Topology.Count; site++)
                 if (participationFlags == null || participationFlags[site])
                     sorted[sample++] = noise[site];
+
+            return CreateThresholds(sorted, targets, maximumShare);
+        }
+
+        private static float[] CreateThresholds(float[] sorted, PerlinNoisePartitionTarget[] targets, double maximumShare)
+        {
+            var thresholds = new float[targets.Length - 1];
+            int count = sorted.Length;
+            if (count == 0 || thresholds.Length == 0)
+                return thresholds;
+
             Array.Sort(sorted);
 
             // Boundaries may fall only between runs of equal values, never inside a run.

@@ -9,8 +9,10 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.PerlinNoise;
 
 public class PerlinNoisePartitionSnapshotTests
 {
-    [Test]
-    public void PartialPartition_WithParticipationMask_MatchesApprovedImage()
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(2)]
+    public void PartialPartition_WithEquivalentMasks_MatchesApprovedImage(int maskKind)
     {
         const int seed = 42;
         const float scale = 45f;
@@ -37,7 +39,17 @@ public class PerlinNoisePartitionSnapshotTests
             mask[new VectorXYInt(x, y)] = (ellipse && !hole && !channel) || island;
         }
 
-        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, mask, new PerlinNoisePartitionParameters(seed, scale));
+        var parameters = new PerlinNoisePartitionParameters(seed, scale);
+        var regions = new IntHexMap(geometry.Topology, Enumerable.Repeat(-7, geometry.Topology.Count).ToArray());
+        var nullableRegions = new HexMap<int?>(geometry.Topology,
+            Enumerable.Range(0, geometry.Topology.Count).Select(i => mask[i] ? (int?)-7 : null).ToArray());
+        var partition = maskKind switch
+        {
+            0 => geometry.ToPerlinNoiseHexPartitionMap(targets, mask, parameters),
+            1 => geometry.ToPerlinNoiseHexPartitionMap(targets, nullableRegions, parameters),
+            2 => geometry.ToPerlinNoiseHexPartitionMap(targets, mask, regions, parameters),
+            _ => throw new ArgumentOutOfRangeException(nameof(maskKind))
+        };
 
         PartialPerlinNoisePartitionTests.AssertPartition(partition, geometry.CreatePerlinNoise(seed, scale),
             mask, targets, context);
@@ -54,7 +66,7 @@ public class PerlinNoisePartitionSnapshotTests
             99 => new RGBA16BitColor(0xc800, 0xb000, 0x7000, ushort.MaxValue),
             _ => throw new InvalidOperationException($"Unexpected territory: {id}")
         };
-        string actualPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, fileName.Replace(".png", ".actual.png"));
+        string actualPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, fileName.Replace(".png", $".mask-{maskKind}.actual.png"));
         partition.Rasterize(6f, colorSelector).SaveAsPng(actualPath);
         string approvedPath = Path.Combine(TestContext.CurrentContext.TestDirectory,
             "Partitioning", "PerlinNoise", "Approved", fileName);
