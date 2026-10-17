@@ -1,0 +1,208 @@
+using Akeldov.Math.Hexes.Topology;
+using Akeldov.Math.Spatial2D;
+using System;
+using System.Collections.Generic;
+
+namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
+{
+    internal sealed class CellularPottsSimulation
+    {
+        private const int MaxNeighbors = 6;
+
+        private readonly HexMapTopology _topology;
+        private readonly int[] _owners;
+        private readonly int[] _cellIds;
+        private readonly int[] _cellAreas;
+        private readonly double[] _targetAreas;
+        private readonly CellularPottsOptions _options;
+        private readonly bool _preserveConnectivity;
+        private readonly int[] _neighbors;
+        private readonly byte[] _neighborCounts;
+        private readonly byte[] _neighborPresence;
+
+        internal CellularPottsSimulation(HexMapTopology topology, int[] assignments, int[] ids,
+            CellularPottsOptions options, CellularPottsConnectivity connectivity)
+        {
+            _topology = topology;
+            _owners = assignments;
+            _cellIds = ids;
+            _options = options;
+            _preserveConnectivity = connectivity == CellularPottsConnectivity.Preserve;
+            _cellAreas = new int[ids.Length];
+            _targetAreas = new double[ids.Length];
+            (_neighbors, _neighborCounts, _neighborPresence) = BuildNeighbors(topology);
+
+            foreach (int owner in assignments)
+                _cellAreas[owner]++;
+            for (int cell = 0; cell < ids.Length; cell++)
+                _targetAreas[cell] = options.TargetAreas.TryGetValue(ids[cell], out double area) ? area : _cellAreas[cell];
+        }
+
+        internal bool HasConnectedCells()
+        {
+            var visited = new bool[_owners.Length];
+            var queue = new int[_owners.Length];
+            for (int seed = 0; seed < _owners.Length; seed++)
+            {
+                if (visited[seed])
+                    continue;
+                int cell = _owners[seed];
+                int head = 0;
+                int tail = 1;
+                queue[0] = seed;
+                visited[seed] = true;
+                while (head < tail)
+                {
+                    int current = queue[head++];
+                    int offset = current * MaxNeighbors;
+                    for (int i = 0; i < _neighborCounts[current]; i++)
+                    {
+                        int neighbor = _neighbors[offset + i];
+                        if (visited[neighbor] || _owners[neighbor] != cell)
+                            continue;
+                        visited[neighbor] = true;
+                        queue[tail++] = neighbor;
+                    }
+                }
+                if (tail != _cellAreas[cell])
+                    return false;
+            }
+            return true;
+        }
+
+        internal void Run(int steps, Random random)
+        {
+            if (_owners.Length == 0)
+                return;
+
+            for (int step = 0; step < steps; step++)
+            {
+                for (int attempt = 0; attempt < _owners.Length; attempt++)
+                {
+                    int site = random.Next(_owners.Length);
+                    int count = _neighborCounts[site];
+                    if (count == 0)
+                        continue;
+
+                    int neighbor = _neighbors[site * MaxNeighbors + random.Next(count)];
+                    TryTransfer(site, _owners[neighbor], random);
+                }
+            }
+        }
+
+        private void TryTransfer(int site, int receiver, Random random)
+        {
+            int donor = _owners[site];
+            if (donor == receiver)
+                return;
+            if (_preserveConnectivity && !CanRemoveSite(site, donor))
+                return;
+
+            double energyChange = CalculateEnergyChange(site, donor, receiver);
+            if (energyChange > 0d && (_options.Temperature == 0d ||
+                random.NextDouble() >= System.Math.Exp(-energyChange / _options.Temperature)))
+                return;
+
+            // The receiving cell is attached through the sampled neighbor. Only the donor can split.
+            _owners[site] = receiver;
+            _cellAreas[donor]--;
+            _cellAreas[receiver]++;
+        }
+
+        private double CalculateEnergyChange(int site, int donor, int receiver)
+        {
+            int edgeChange = 0;
+            int offset = site * MaxNeighbors;
+            for (int i = 0; i < _neighborCounts[site]; i++)
+            {
+                int neighborOwner = _owners[_neighbors[offset + i]];
+                if (neighborOwner == donor)
+                    edgeChange++;
+                else if (neighborOwner == receiver)
+                    edgeChange--;
+            }
+
+            double donorDeviation = _cellAreas[donor] - _targetAreas[donor];
+            double receiverDeviation = _cellAreas[receiver] - _targetAreas[receiver];
+            // Expanding the two changed squares avoids subtracting large total energies.
+            double areaChange = 2d * (receiverDeviation - donorDeviation + 1d);
+            double change = _options.BoundaryEnergy * edgeChange + _options.AreaPenalty * areaChange;
+            if (!double.IsFinite(change))
+                throw new InvalidOperationException("Energy change overflowed; reduce the Cellular Potts energy coefficients.");
+            return change;
+        }
+
+        private bool CanRemoveSite(int site, int cell)
+        {
+            if (_cellAreas[cell] == 1)
+                return false;
+
+            int mask = 0;
+            int presence = _neighborPresence[site];
+            int offset = site * MaxNeighbors;
+            for (int direction = 0; direction < MaxNeighbors; direction++)
+            {
+                if ((presence & (1 << direction)) == 0)
+                    continue;
+                int neighbor = _neighbors[offset++];
+                if (_owners[neighbor] == cell)
+                    mask |= 1 << direction;
+            }
+
+            if (mask == 0)
+                return false;
+            // Consecutive directions share edges. A single cyclic run connects every donor neighbor.
+            int preceding = ((mask << 1) | (mask >> (MaxNeighbors - 1))) & 0x3f;
+            int runStarts = mask & ~preceding;
+            return (runStarts & (runStarts - 1)) == 0;
+        }
+
+        internal HexPartitionMap<HexPartitionCell> CreatePartition()
+        {
+            var groups = new List<VectorXYInt>[_cellIds.Length];
+            for (int cell = 0; cell < groups.Length; cell++)
+                groups[cell] = new List<VectorXYInt>(_cellAreas[cell]);
+            int width = _topology.Resolution.X;
+            for (int site = 0; site < _owners.Length; site++)
+                groups[_owners[site]].Add(new VectorXYInt(site % width, site / width));
+
+            var cells = new HexPartitionCell[_cellIds.Length];
+            for (int cell = 0; cell < cells.Length; cell++)
+                cells[cell] = new HexPartitionCell(_cellIds[cell], groups[cell]);
+            return new HexPartitionMap<HexPartitionCell>(_topology, cells);
+        }
+
+        private static (int[] Neighbors, byte[] Counts, byte[] Presence) BuildNeighbors(HexMapTopology topology)
+        {
+            int count = topology.Count;
+            var neighbors = new int[checked(count * MaxNeighbors)];
+            var counts = new byte[count];
+            var presence = new byte[count];
+            var evenOffsets = true.GetSharedRelativeOffsets(topology.Layout);
+            var oddOffsets = false.GetSharedRelativeOffsets(topology.Layout);
+            bool rowParity = topology.Layout.IsPointyTop();
+            int width = topology.Resolution.X;
+            int height = topology.Resolution.Y;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int site = y * width + x;
+                    var offsets = (((rowParity ? y : x) & 1) == 0) ? evenOffsets : oddOffsets;
+                    for (int direction = 0; direction < MaxNeighbors; direction++)
+                    {
+                        int nx = x + offsets[direction].X;
+                        int ny = y + offsets[direction].Y;
+                        if ((uint)nx < (uint)width && (uint)ny < (uint)height)
+                        {
+                            neighbors[site * MaxNeighbors + counts[site]++] = ny * width + nx;
+                            presence[site] |= (byte)(1 << direction);
+                        }
+                    }
+                }
+            }
+            return (neighbors, counts, presence);
+        }
+    }
+}
