@@ -46,7 +46,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// Source cells or assignments are inconsistent, a non-empty cell is disconnected in Preserve mode,
         /// or an explicit target identifier is absent from the partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static HexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this HexPartitionMap<THexPartitionCell> partition,
             CellularPottsParameters parameters,

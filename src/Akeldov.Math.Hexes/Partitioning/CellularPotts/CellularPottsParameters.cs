@@ -13,6 +13,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
     /// Areas are measured in participating hex counts; every eligible shared edge has unit length.
     /// Masked applications omit excluded hexes and edges across region boundaries. With a region mask,
     /// area penalties and connectivity are evaluated independently for each cell in each region.
+    /// Energy changes and acceptance probabilities are calculated in double precision.
     /// </remarks>
     public sealed class CellularPottsParameters
     {
@@ -33,31 +34,31 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <exception cref="ArgumentException">A target-area identifier is negative.</exception>
         public CellularPottsParameters(
             int stepCount,
-            double temperature = 1d,
-            double boundaryEnergy = 1d,
-            double areaPenalty = 1d,
-            IReadOnlyDictionary<int, double>? targetAreas = null,
+            float temperature = 1f,
+            float boundaryEnergy = 1f,
+            float areaPenalty = 1f,
+            IReadOnlyDictionary<int, float>? targetAreas = null,
             CellularPottsConnectivity connectivity = CellularPottsConnectivity.Preserve)
         {
             if (stepCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(stepCount));
             if (connectivity != CellularPottsConnectivity.None && connectivity != CellularPottsConnectivity.Preserve)
                 throw new ArgumentOutOfRangeException(nameof(connectivity));
-            if (!double.IsFinite(temperature) || temperature < 0d)
+            if (!float.IsFinite(temperature) || temperature < 0f)
                 throw new ArgumentOutOfRangeException(nameof(temperature));
-            if (!double.IsFinite(boundaryEnergy) || boundaryEnergy < 0d)
+            if (!float.IsFinite(boundaryEnergy) || boundaryEnergy < 0f)
                 throw new ArgumentOutOfRangeException(nameof(boundaryEnergy));
-            if (!double.IsFinite(areaPenalty) || areaPenalty < 0d)
+            if (!float.IsFinite(areaPenalty) || areaPenalty < 0f)
                 throw new ArgumentOutOfRangeException(nameof(areaPenalty));
 
-            var copy = new Dictionary<int, double>();
+            var copy = new Dictionary<int, float>();
             if (targetAreas != null)
             {
                 foreach (var pair in targetAreas)
                 {
                     if (pair.Key < 0)
                         throw new ArgumentException("Target-area identifiers must be non-negative.", nameof(targetAreas));
-                    if (!double.IsFinite(pair.Value) || pair.Value < 0d || pair.Value > int.MaxValue)
+                    if (!float.IsFinite(pair.Value) || pair.Value < 0f || (double)pair.Value > int.MaxValue)
                         throw new ArgumentOutOfRangeException(nameof(targetAreas), "Target areas must be finite hex counts between zero and int.MaxValue.");
                     copy.Add(pair.Key, pair.Value);
                 }
@@ -68,7 +69,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             Temperature = temperature;
             BoundaryEnergy = boundaryEnergy;
             AreaPenalty = areaPenalty;
-            TargetAreas = new ReadOnlyDictionary<int, double>(copy);
+            TargetAreas = new ReadOnlyDictionary<int, float>(copy);
         }
 
         /// <summary>Gets the number of steps, each making one copy attempt per participating hex.</summary>
@@ -78,15 +79,15 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         public CellularPottsConnectivity Connectivity { get; }
 
         /// <summary>Gets the fluctuation temperature in energy units.</summary>
-        public double Temperature { get; }
+        public float Temperature { get; }
 
         /// <summary>Gets the energy per unit edge separating different cells.</summary>
-        public double BoundaryEnergy { get; }
+        public float BoundaryEnergy { get; }
 
         /// <summary>Gets the quadratic area coefficient in energy units per squared hex count.</summary>
-        public double AreaPenalty { get; }
+        public float AreaPenalty { get; }
 
         /// <summary>Gets the retained read-only snapshot of explicit target hex counts, keyed by cell identifier.</summary>
-        public IReadOnlyDictionary<int, double> TargetAreas { get; }
+        public IReadOnlyDictionary<int, float> TargetAreas { get; }
     }
 }

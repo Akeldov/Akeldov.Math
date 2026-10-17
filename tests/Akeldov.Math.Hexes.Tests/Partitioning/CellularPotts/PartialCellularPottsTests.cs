@@ -40,7 +40,7 @@ public class PartialCellularPottsTests
         var partial = new PartialHexPartitionMap<HexPartitionCell>(source.Topology, source.Cells);
         var participation = new BoolHexMap(source.Topology, Enumerable.Repeat(true, source.Topology.Count).ToArray());
         var regions = new IntHexMap(source.Topology, Enumerable.Repeat(-7, source.Topology.Count).ToArray());
-        var parameters = new CellularPottsParameters(10, 5, 2, 0.5, connectivity: connectivity);
+        var parameters = new CellularPottsParameters(10, 5, 2, 0.5f, connectivity: connectivity);
         var expected = source.ApplyCellularPotts(parameters, new Random(42));
 
         var variants = Variants(source, partial, participation, regions, parameters, includeBoolean: true).ToList();
@@ -65,7 +65,7 @@ public class PartialCellularPottsTests
         var effective = new BoolHexMap(source.Topology,
             Enumerable.Range(0, source.Topology.Count).Select(i => participation[i] && partial[i].HasValue).ToArray());
         var regions = new IntHexMap(source.Topology);
-        var parameters = new CellularPottsParameters(5, 2, 1, 0.5);
+        var parameters = new CellularPottsParameters(5, 2, 1, 0.5f);
         var expected = source.ApplyCellularPotts(effective, parameters, new Random(42));
 
         foreach (var result in Variants(null, partial, participation, regions, parameters, includeBoolean: true))
@@ -118,7 +118,7 @@ public class PartialCellularPottsTests
         var source = CellularPottsTests.Partition(new HexMapTopology(4, 1, Layout.OddR), p => p.X < 2 ? 7 : 42, 7, 42);
         var participation = new BoolHexMap(source.Topology, new[] { true, true, true, true });
         var regions = new IntHexMap(source.Topology, new[] { int.MinValue, int.MinValue, int.MaxValue, int.MaxValue });
-        var parameters = new CellularPottsParameters(100, 1e6, 0, 0, connectivity: CellularPottsConnectivity.None);
+        var parameters = new CellularPottsParameters(100, 1e6f, 0, 0, connectivity: CellularPottsConnectivity.None);
         foreach (var result in Variants(source, new PartialHexPartitionMap<HexPartitionCell>(source.Topology, source.Cells),
             participation, regions, parameters, false))
             Assert.That(Values(result), Is.EqualTo(new int?[] { 7, 7, 42, 42 }));
@@ -160,7 +160,7 @@ public class PartialCellularPottsTests
         var source = CellularPottsTests.Partition(topology, p => p.X == 2 || p.X == 3 || p.X == 7 ? 42 : 7, 7, 42);
         var participation = new BoolHexMap(topology, Enumerable.Range(0, 8).Select(i => regional || i < 4).ToArray());
         var regions = new IntHexMap(topology, new[] { -7, -7, -7, -7, 0, 0, 0, 0 });
-        var parameters = new CellularPottsParameters(1, 0, 0, 1, new Dictionary<int, double> { [7] = 2, [42] = 2 }, CellularPottsConnectivity.None);
+        var parameters = new CellularPottsParameters(1, 0, 0, 1, new Dictionary<int, float> { [7] = 2, [42] = 2 }, CellularPottsConnectivity.None);
         var random = Attempt(topology, participation, regional ? regions : null, new VectorXYInt(1, 0), new VectorXYInt(2, 0));
         var result = regional
             ? source.ApplyCellularPotts(participation, regions, parameters, random)

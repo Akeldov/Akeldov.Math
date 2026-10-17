@@ -16,7 +16,9 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         private readonly int[] _activeSites;
         private readonly int[] _cellAreas;
         private readonly double[] _targetAreas;
-        private readonly CellularPottsParameters _parameters;
+        private readonly double _temperature;
+        private readonly double _boundaryEnergy;
+        private readonly double _areaPenalty;
         private readonly bool _preserveConnectivity;
         private readonly int[] _neighbors;
         private readonly byte[] _neighborCounts;
@@ -28,7 +30,10 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             _topology = topology;
             _owners = assignments;
             _cellIds = ids;
-            _parameters = parameters;
+            // Widen coefficients before any arithmetic, including multiplication by integer edge counts.
+            _temperature = parameters.Temperature;
+            _boundaryEnergy = parameters.BoundaryEnergy;
+            _areaPenalty = parameters.AreaPenalty;
             _preserveConnectivity = parameters.Connectivity == CellularPottsConnectivity.Preserve;
             var activeSites = new List<int>();
             for (int site = 0; site < assignments.Length; site++)
@@ -70,8 +75,8 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                 if (owner >= 0)
                     _cellAreas[owner]++;
             for (int group = 0; group < _groupCellIndexes.Length; group++)
-                _targetAreas[group] = parameters.TargetAreas.TryGetValue(ids[_groupCellIndexes[group]], out double area)
-                    ? area : _cellAreas[group];
+                _targetAreas[group] = parameters.TargetAreas.TryGetValue(ids[_groupCellIndexes[group]], out float area)
+                    ? (double)area : _cellAreas[group];
         }
 
         internal bool HasConnectedCells()
@@ -135,8 +140,8 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                 return;
 
             double energyChange = CalculateEnergyChange(site, donor, receiver);
-            if (energyChange > 0d && (_parameters.Temperature == 0d ||
-                random.NextDouble() >= System.Math.Exp(-energyChange / _parameters.Temperature)))
+            if (energyChange > 0d && (_temperature == 0d ||
+                random.NextDouble() >= System.Math.Exp(-energyChange / _temperature)))
                 return;
 
             // The receiving cell is attached through the sampled neighbor. Only the donor can split.
@@ -162,10 +167,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             double receiverDeviation = _cellAreas[receiver] - _targetAreas[receiver];
             // Expanding the two changed squares avoids subtracting large total energies.
             double areaChange = 2d * (receiverDeviation - donorDeviation + 1d);
-            double change = _parameters.BoundaryEnergy * edgeChange + _parameters.AreaPenalty * areaChange;
-            if (!double.IsFinite(change))
-                throw new InvalidOperationException("Energy change overflowed; reduce the Cellular Potts energy coefficients.");
-            return change;
+            return _boundaryEnergy * edgeChange + _areaPenalty * areaChange;
         }
 
         private bool CanRemoveSite(int site, int cell)

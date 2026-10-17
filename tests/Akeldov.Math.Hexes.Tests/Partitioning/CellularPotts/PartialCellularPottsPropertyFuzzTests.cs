@@ -30,7 +30,7 @@ public class PartialCellularPottsPropertyFuzzTests
             var before = PartialCellularPottsTests.Values(current);
             var initialAreas = Enumerable.Range(0, topology.Count).Where(i => current[i].HasValue)
                 .GroupBy(i => (Region: regions[i], Id: current[i]!.Value)).ToDictionary(g => g.Key, g => g.Count());
-            var parameters = new CellularPottsParameters(2, 0, 1.75, 0.3, connectivity: connectivity);
+            var parameters = new CellularPottsParameters(2, 0, 1.75f, 0.3f, connectivity: connectivity);
             var evolutionRandom = new Random(seed);
             for (int iteration = 0; iteration < 8; iteration++)
             {
@@ -82,7 +82,7 @@ public class PartialCellularPottsPropertyFuzzTests
                 if (next > i && map[next].HasValue && regions[next] == regions[i] && map[next] != map[i]) edges++;
             }
         }
-        double energy = parameters.BoundaryEnergy * edges;
+        double energy = (double)parameters.BoundaryEnergy * edges;
         foreach (var target in targets)
         {
             areas.TryGetValue(target.Key, out int area);

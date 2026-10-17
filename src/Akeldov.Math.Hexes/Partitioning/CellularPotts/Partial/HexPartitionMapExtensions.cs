@@ -31,7 +31,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this HexPartitionMap<THexPartitionCell> partition,
             IHexMap<bool> participationMask,
@@ -87,7 +86,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this HexPartitionMap<THexPartitionCell> partition,
             IHexMap<int?> regionsMask,
@@ -149,7 +147,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this HexPartitionMap<THexPartitionCell> partition,
             IHexMap<bool> participationMask,
@@ -209,7 +206,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             CellularPottsParameters parameters,
@@ -251,7 +247,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             IHexMap<bool> participationMask,
@@ -307,7 +302,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             IHexMap<int?> regionsMask,
@@ -369,7 +363,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// A mask topology differs, source cells or assignments are inconsistent, a participating cell is disconnected
         /// in Preserve mode, or an explicit target identifier is absent from the source partition.
         /// </exception>
-        /// <exception cref="InvalidOperationException">Energy coefficients are too large to calculate an energy change.</exception>
         public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             IHexMap<bool> participationMask,

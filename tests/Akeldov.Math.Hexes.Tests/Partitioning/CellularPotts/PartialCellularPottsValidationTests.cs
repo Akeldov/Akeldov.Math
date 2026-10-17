@@ -24,7 +24,7 @@ public class PartialCellularPottsValidationTests
             Invoke(overload, null!, null!, mask, nullable, regions, parameters))!.ParamName, Is.EqualTo("partition"));
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
             Invoke(overload, full, partial, mask, nullable, regions, null!))!.ParamName, Is.EqualTo("parameters"));
-        var unknownTarget = new CellularPottsParameters(0, targetAreas: new Dictionary<int, double> { [99] = 1 });
+        var unknownTarget = new CellularPottsParameters(0, targetAreas: new Dictionary<int, float> { [99] = 1 });
         Assert.That(Assert.Throws<ArgumentException>(() =>
             Invoke(overload, full, partial, mask, nullable, regions, unknownTarget))!.ParamName, Is.EqualTo("parameters"));
 

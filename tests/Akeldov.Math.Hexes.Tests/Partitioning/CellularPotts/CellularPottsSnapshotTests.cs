@@ -20,7 +20,7 @@ public class CellularPottsSnapshotTests
         var topology = new HexMapTopology(30, 24, Layout.OddR);
         var source = CellularPottsTests.Partition(topology,
             p => p.X / 10 + 3 * (p.Y / 8), Enumerable.Range(0, 9).ToArray());
-        var parameters = new CellularPottsParameters(100, temperature: 1.5, boundaryEnergy: 2, areaPenalty: 1, connectivity: connectivity);
+        var parameters = new CellularPottsParameters(100, temperature: 1.5f, boundaryEnergy: 2, areaPenalty: 1, connectivity: connectivity);
         var result = source.ApplyCellularPotts(parameters, random: new Random(seed));
         string context = $"seed={seed}, connectivity={connectivity}";
         var participation = new BoolHexMap(topology, Enumerable.Repeat(true, topology.Count).ToArray());

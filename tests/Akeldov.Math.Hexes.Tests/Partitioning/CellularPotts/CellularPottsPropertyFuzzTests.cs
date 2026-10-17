@@ -21,8 +21,8 @@ public class CellularPottsPropertyFuzzTests
             var source = CellularPottsTests.Partition(topology,
                 p => p.X < 2 || p == tip || p == root ? 7 : p.X < 6 ? 42 : 99, 7, 42, 99);
             Assert.That(tip.GetAdjacents(layout).Count(p => source[p] == 7), Is.EqualTo(1), $"seed={seed}, layout={layout}");
-            var targets = source.Cells.ToDictionary(c => c.Id, c => (double)c.HexIndexes.Count);
-            var parameters = new CellularPottsParameters(2, 0, 1.75, 0.3, targets, connectivity);
+            var targets = source.Cells.ToDictionary(c => c.Id, c => (float)c.HexIndexes.Count);
+            var parameters = new CellularPottsParameters(2, 0, 1.75f, 0.3f, targets, connectivity);
             var random = new Random(seed);
             var current = source;
             double initialEnergy = FullMapEnergy(current, parameters);
@@ -51,8 +51,8 @@ public class CellularPottsPropertyFuzzTests
             var ids = new[] { 7, 42, 99, 125, 999 };
             var source = CellularPottsTests.Partition(topology, p => ids[p.X / 6 + 2 * (p.Y / 5)], ids);
             var original = CellularPottsTests.Values(source);
-            var targets = source.Cells.ToDictionary(c => c.Id, c => (double)c.HexIndexes.Count);
-            var parameters = new CellularPottsParameters(2, 1e6, 1, 0.25, targets, CellularPottsConnectivity.None);
+            var targets = source.Cells.ToDictionary(c => c.Id, c => (float)c.HexIndexes.Count);
+            var parameters = new CellularPottsParameters(2, 1e6f, 1, 0.25f, targets, CellularPottsConnectivity.None);
             var random = new Random(seed);
             var current = source;
             for (int iteration = 0; iteration < 12; iteration++)
@@ -86,8 +86,8 @@ public class CellularPottsPropertyFuzzTests
                 p => (p.X / 6 + 3 * (p.Y / 5)) * 7 + 11, Enumerable.Range(0, 9).Select(i => i * 7 + 11).ToArray());
             var original = CellularPottsTests.Values(source);
             var random = new Random(seed);
-            var targets = source.Cells.ToDictionary(c => c.Id, c => (double)c.HexIndexes.Count);
-            var parameters = new CellularPottsParameters(4, 1e6, 1, 0.25, targets);
+            var targets = source.Cells.ToDictionary(c => c.Id, c => (float)c.HexIndexes.Count);
+            var parameters = new CellularPottsParameters(4, 1e6f, 1, 0.25f, targets);
             var current = source;
             for (int iteration = 0; iteration < 12; iteration++)
             {
@@ -129,10 +129,10 @@ public class CellularPottsPropertyFuzzTests
             }
         }
 
-        double energy = parameters.BoundaryEnergy * unlikeEdges;
+        double energy = (double)parameters.BoundaryEnergy * unlikeEdges;
         foreach (var cell in map.Cells)
         {
-            double deviation = cell.HexIndexes.Count - parameters.TargetAreas[cell.Id];
+            double deviation = cell.HexIndexes.Count - (double)parameters.TargetAreas[cell.Id];
             energy += parameters.AreaPenalty * deviation * deviation;
         }
         return energy;
