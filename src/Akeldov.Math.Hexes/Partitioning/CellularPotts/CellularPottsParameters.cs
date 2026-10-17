@@ -10,21 +10,25 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
     /// <remarks>
     /// The energy is J times the number of unlike, undirected neighbor pairs, plus
     /// lambda times the sum of (area - target area) squared over all cells.
-    /// Areas are measured in hex counts; every shared edge has unit length.
+    /// Areas are measured in participating hex counts; every eligible shared edge has unit length.
+    /// Masked applications omit excluded hexes and edges across region boundaries. With a region mask,
+    /// area penalties and connectivity are evaluated independently for each cell in each region.
     /// </remarks>
     public sealed class CellularPottsParameters
     {
         /// <summary>Initializes immutable Cellular Potts parameters.</summary>
-        /// <param name="stepCount">The non-negative number of steps; each step makes one copy attempt per map hex, sampled with replacement.</param>
+        /// <param name="stepCount">The non-negative number of steps; each step makes one copy attempt per participating hex, sampled with replacement.</param>
         /// <param name="temperature">The finite, non-negative fluctuation temperature in energy units. Zero accepts only non-increasing energy changes.</param>
         /// <param name="boundaryEnergy">The finite, non-negative energy J per edge between different cells.</param>
         /// <param name="areaPenalty">The finite, non-negative quadratic area coefficient lambda, in energy units per squared hex count.</param>
         /// <param name="targetAreas">
         /// Optional target areas keyed by cell identifier, copied into a read-only snapshot.
         /// Values must be finite and between zero and <see cref="int.MaxValue"/> hexes.
-        /// Missing identifiers use their initial area for each application of the algorithm.
+        /// Missing identifiers use their initial participating area for each application of the algorithm.
+        /// With a region mask, each explicit value applies independently in every region where the cell is
+        /// initially present; missing values use the cell's initial participating area in that region.
         /// </param>
-        /// <param name="connectivity">The connectivity policy. Defaults to preserving each non-empty cell as one six-connected component.</param>
+        /// <param name="connectivity">The connectivity policy. Defaults to preserving each non-empty participating cell as one six-connected component within each region.</param>
         /// <exception cref="ArgumentOutOfRangeException">A step count, energy parameter, target area, or connectivity policy is outside its documented range.</exception>
         /// <exception cref="ArgumentException">A target-area identifier is negative.</exception>
         public CellularPottsParameters(
@@ -67,7 +71,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             TargetAreas = new ReadOnlyDictionary<int, double>(copy);
         }
 
-        /// <summary>Gets the number of steps, each making one copy attempt per map hex.</summary>
+        /// <summary>Gets the number of steps, each making one copy attempt per participating hex.</summary>
         public int StepCount { get; }
 
         /// <summary>Gets the cell connectivity policy.</summary>

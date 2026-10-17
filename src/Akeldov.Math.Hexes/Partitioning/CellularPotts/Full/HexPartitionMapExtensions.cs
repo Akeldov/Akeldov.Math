@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
 
 namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 {
+#pragma warning disable RS0026 // Full and partial overloads intentionally share an optional random generator.
     /// <summary>Provides Cellular Potts evolution of hex partitions with optional connectivity preservation.</summary>
-    public static class HexPartitionMapExtensions
+    public static partial class HexPartitionMapExtensions
     {
         /// <summary>Applies the Cellular Potts model with the specified cell connectivity policy.</summary>
         /// <typeparam name="THexPartitionCell">The source partition cell type.</typeparam>
@@ -58,36 +58,10 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             if (parameters is null)
                 throw new ArgumentNullException(nameof(parameters));
 
-            // Revalidate custom cells and compare the mutable map with their current structural snapshot.
-            var snapshot = new HexPartitionMap<THexPartitionCell>(partition.Topology, partition.Cells);
-            var ids = new int[snapshot.Cells.Count];
-            var cellIndexById = new Dictionary<int, int>(ids.Length);
-            for (int i = 0; i < ids.Length; i++)
-            {
-                ids[i] = snapshot.Cells[i].Id;
-                cellIndexById.Add(ids[i], i);
-            }
-
-            foreach (int id in parameters.TargetAreas.Keys)
-            {
-                if (!cellIndexById.ContainsKey(id))
-                    throw new ArgumentException($"Target-area identifier {id} is absent from the partition.", nameof(parameters));
-            }
-
-            var assignments = new int[snapshot.Topology.Count];
-            for (int i = 0; i < assignments.Length; i++)
-            {
-                if (partition[i] != snapshot[i])
-                    throw new ArgumentException("Partition assignments must agree with the retained cell indexes.", nameof(partition));
-                assignments[i] = cellIndexById[snapshot[i]];
-            }
-
-            var simulation = new CellularPottsSimulation(partition.Topology, assignments, ids, parameters);
-            if (parameters.Connectivity == CellularPottsConnectivity.Preserve && !simulation.HasConnectedCells())
-                throw new ArgumentException("Every non-empty partition cell must be six-connected.", nameof(partition));
-
+            var simulation = CreateSimulation(partition, partition.Cells, id => id, parameters);
             simulation.Run(parameters.StepCount, random ?? new Random());
             return simulation.CreatePartition();
         }
     }
+#pragma warning restore RS0026
 }
