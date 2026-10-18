@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes;
 using Akeldov.Math.Hexes.Chromatization;
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
+using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -43,6 +44,29 @@ var partialWeights = new ChromaticBarycentricPartialTripletRaster(
     geometry, sampling);
 
 SpatialRaster<RGBA8BitColor> finiteImage = partialWeights.MapValues(ToFiniteRgb);
+
+// Extrapolate the boundary colors into samples without in-map hexes around them.
+VectorXYInt lastHex = geometry.Topology.Resolution - VectorXYInt.One;
+for (int y = 0; y < sampling.Resolution.Y; y++)
+{
+    for (int x = 0; x < sampling.Resolution.X; x++)
+    {
+        PartialChromaticTriplet<float> sample = partialWeights[x, y];
+        if (sample.HasIndex0 || sample.HasIndex1 || sample.HasIndex2)
+            continue;
+
+        int nearestClass = sampling.GetCellCenter(x, y)
+            .ToXYIndex(geometry.Radius, geometry.Origin, geometry.Topology.Layout)
+            .Clamp(VectorXYInt.Zero, lastHex)
+            .GetChromaticClass(geometry.Topology.Layout);
+        finiteImage[x, y] = RGBA8BitColor.FromNormalized(
+            nearestClass == 0 ? 1f : 0f,
+            nearestClass == 1 ? 1f : 0f,
+            nearestClass == 2 ? 1f : 0f,
+            alpha: 1f);
+    }
+}
+
 finiteImage.SaveAsPng(Path.GetFullPath("chromatic-barycentric-finite.png"));
 
 static RGBA8BitColor ToFiniteRgb(PartialChromaticTriplet<float> w)

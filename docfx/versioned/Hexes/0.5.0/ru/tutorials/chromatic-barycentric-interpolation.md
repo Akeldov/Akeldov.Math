@@ -124,13 +124,36 @@ C(P) = Index0 * C0 + Index1 * C1 + Index2 * C2
 
 Чтобы учитывать только гексы внутри карты, используйте
 <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster>.
-Добавьте после предыдущего примера:
+Добавьте после предыдущего примера, а в начало файла добавьте `using Akeldov.Math.Hexes.Vectors.QRS;`:
 
 ```csharp
 var partialWeights = new ChromaticBarycentricPartialTripletRaster(
     geometry, sampling);
 
 SpatialRaster<RGBA8BitColor> finiteImage = partialWeights.MapValues(ToFiniteRgb);
+
+// Экстраполируем цвета границы в точки, вокруг которых нет гексов карты.
+VectorXYInt lastHex = geometry.Topology.Resolution - VectorXYInt.One;
+for (int y = 0; y < sampling.Resolution.Y; y++)
+{
+    for (int x = 0; x < sampling.Resolution.X; x++)
+    {
+        PartialChromaticTriplet<float> sample = partialWeights[x, y];
+        if (sample.HasIndex0 || sample.HasIndex1 || sample.HasIndex2)
+            continue;
+
+        int nearestClass = sampling.GetCellCenter(x, y)
+            .ToXYIndex(geometry.Radius, geometry.Origin, geometry.Topology.Layout)
+            .Clamp(VectorXYInt.Zero, lastHex)
+            .GetChromaticClass(geometry.Topology.Layout);
+        finiteImage[x, y] = RGBA8BitColor.FromNormalized(
+            nearestClass == 0 ? 1f : 0f,
+            nearestClass == 1 ? 1f : 0f,
+            nearestClass == 2 ? 1f : 0f,
+            alpha: 1f);
+    }
+}
+
 finiteImage.SaveAsPng(Path.GetFullPath("chromatic-barycentric-finite.png"));
 
 static RGBA8BitColor ToFiniteRgb(PartialChromaticTriplet<float> w)
@@ -151,7 +174,15 @@ static RGBA8BitColor ToFiniteRgb(PartialChromaticTriplet<float> w)
 Частичный растр переставляет по классам и веса, и флаги присутствия. Оставшиеся веса он не
 нормализует. Деление на их сумму сохраняет интенсивность смешивания у границы; если просто
 обнулить отсутствующие вклады, RGB-изображение в этих местах станет темнее.
-При отсутствии положительного вклада пример возвращает прозрачный чёрный цвет.
+При отсутствии положительного вклада `ToFiniteRgb` возвращает прозрачный чёрный цвет.
+
+Такие точки появляются в двух углах прямоугольника выборки. Offset-раскладка сдвигает каждый
+второй ряд или столбец на половину гекса, поэтому у ограничивающего прямоугольника карты в этих
+углах есть вырез. Точка в вырезе лежит в треугольнике из трёх гексов, которые все находятся вне
+карты, и частичный растр правильно сообщает, что присутствующих весов там нет. Рядом с вырезом
+присутствует только угловой гекс карты, поэтому нормализованное смешивание там уже имеет цвет его
+класса. Цикл экстраполирует этот цвет в вырез: если ограничить индекс содержащего точку гекса
+границами карты, получится как раз угловой гекс. Без цикла эти углы останутся прозрачными.
 
 Флаги присутствия описывают окружающие гексы, а не маску отсечения пикселя. У точки чуть за
 границей карты всё ещё может быть сосед внутри неё. Если нужен точный контур из гексов,

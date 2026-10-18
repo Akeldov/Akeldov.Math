@@ -12,7 +12,8 @@ RGB class colors with barycentric weights ordered by class on the same 5 by 4 Od
 The complete weight raster includes the implied infinite lattice at the rectangular image edges.
 
 The partial weight raster generates a third image using only present weights, normalized by
-their sum. It returns transparent black when no positive contribution remains.
+their sum. Samples without in-map hexes around them, in the bounding-box corner notches, get the
+class color of the nearest map hex, so the image has no transparent corners.
 
 Without an output-directory argument, the images are saved in the working directory.
 The EN/RU tutorial uses the same rendering code. Assets are referenced via `~/assets/...`
