@@ -1,9 +1,6 @@
-using Akeldov.Math.Hexes.Chromatization;
 using Akeldov.Math.Hexes.Geometry;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Rasterization;
-using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -12,11 +9,6 @@ namespace Akeldov.Math.Hexes.Topology
     /// <summary>
     /// Represents partial barycentric coordinates sampled from a bounded hex map and ordered by chromatic index.
     /// </summary>
-    /// <remarks>
-    /// A sample inside the hex map bounding box whose surrounding hexes all lie outside the map, such as a sample
-    /// in a corner notch of an offset layout, gets full weight for the chromatic index of the nearest map hex.
-    /// A sample outside the bounding box without surrounding map hexes has no present values.
-    /// </remarks>
     public sealed class ChromaticBarycentricPartialTripletRaster : ISpatialRaster<PartialChromaticTriplet<float>>
     {
         private readonly PartialChromaticTriplet<float>[] _values;
@@ -51,37 +43,21 @@ namespace Akeldov.Math.Hexes.Topology
 
             var barycentricRaster = new BarycentricPartialTripletRaster(hexMapGeometry, rasterGeometry);
             var chromaticIndexRaster = new ChromaticIndexTripletRaster(hexMapGeometry, rasterGeometry);
-            Rectangle hexMapBounds = hexMapGeometry.GetBoundingBox();
-            VectorXY cellSize = rasterGeometry.CellSize;
 
-            for (int index = 0, y = 0; y < Resolution.Y; y++)
+            for (int index = 0; index < _values.Length; index++)
             {
-                for (int x = 0; x < Resolution.X; x++, index++)
-                {
-                    PartialTriplet<float> barycentric = barycentricRaster[index];
-                    if (barycentric.Presence == TripletPresence.None)
-                    {
-                        var point = new PointXY(
-                            rasterGeometry.Origin.X + (x + 0.5f) * cellSize.X,
-                            rasterGeometry.Origin.Y + (y + 0.5f) * cellSize.Y);
-                        _values[index] = hexMapBounds.Contains(point)
-                            ? GetNearestHexValue(point, hexMapGeometry)
-                            : default;
-                        continue;
-                    }
-
-                    Triplet<byte> chromaticIndices = chromaticIndexRaster[index];
-                    (float Coordinate, bool IsPresent) index0 = GetCoordinate(0, barycentric, chromaticIndices);
-                    (float Coordinate, bool IsPresent) index1 = GetCoordinate(1, barycentric, chromaticIndices);
-                    (float Coordinate, bool IsPresent) index2 = GetCoordinate(2, barycentric, chromaticIndices);
-                    _values[index] = new PartialChromaticTriplet<float>(
-                        index0.Coordinate,
-                        index1.Coordinate,
-                        index2.Coordinate,
-                        index0.IsPresent,
-                        index1.IsPresent,
-                        index2.IsPresent);
-                }
+                PartialTriplet<float> barycentric = barycentricRaster[index];
+                Triplet<byte> chromaticIndices = chromaticIndexRaster[index];
+                (float Coordinate, bool IsPresent) index0 = GetCoordinate(0, barycentric, chromaticIndices);
+                (float Coordinate, bool IsPresent) index1 = GetCoordinate(1, barycentric, chromaticIndices);
+                (float Coordinate, bool IsPresent) index2 = GetCoordinate(2, barycentric, chromaticIndices);
+                _values[index] = new PartialChromaticTriplet<float>(
+                    index0.Coordinate,
+                    index1.Coordinate,
+                    index2.Coordinate,
+                    index0.IsPresent,
+                    index1.IsPresent,
+                    index2.IsPresent);
             }
         }
 
@@ -173,28 +149,6 @@ namespace Akeldov.Math.Hexes.Topology
                 return (barycentric.Right, barycentric.HasRight);
 
             throw new InvalidOperationException($"Chromatic index triplet does not contain index {chromaticIndex}.");
-        }
-
-        private static PartialChromaticTriplet<float> GetNearestHexValue(PointXY point, HexMapGeometry hexMapGeometry)
-        {
-            // Inside the bounding box, such samples only occur in corner notches next to a corner map hex,
-            // so clamping the containing hex index to the map yields the nearest map hex.
-            Layout layout = hexMapGeometry.Topology.Layout;
-            VectorXYInt maxHexIndex = new VectorXYInt(
-                hexMapGeometry.Topology.Resolution.X - 1,
-                hexMapGeometry.Topology.Resolution.Y - 1);
-            VectorXYInt hexIndex = point
-                .ToXYIndex(hexMapGeometry.Radius, hexMapGeometry.Origin, layout)
-                .Clamp(VectorXYInt.Zero, maxHexIndex);
-            int chromaticClass = hexIndex.GetChromaticClass(layout);
-
-            return new PartialChromaticTriplet<float>(
-                chromaticClass == 0 ? 1f : 0f,
-                chromaticClass == 1 ? 1f : 0f,
-                chromaticClass == 2 ? 1f : 0f,
-                chromaticClass == 0,
-                chromaticClass == 1,
-                chromaticClass == 2);
         }
     }
 }
