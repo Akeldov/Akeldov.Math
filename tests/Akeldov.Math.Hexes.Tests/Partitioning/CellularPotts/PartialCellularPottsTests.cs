@@ -44,7 +44,9 @@ public class PartialCellularPottsTests
         var variants = new[]
         {
             partial.ApplyCellularPotts(parameters, new Random(42)),
-            partial.ApplyCellularPotts(targetAreas: null, parameters, new Random(42))
+            partial.ApplyCellularPotts(targetAreas: null, parameters, new Random(42)),
+            partial.ApplyCellularPotts(new HexMap<int>(source.Topology), parameters, new Random(42)),
+            partial.ApplyCellularPotts(new HexMap<int>(source.Topology), targetAreas: null, parameters, new Random(42))
         };
         foreach (var result in variants)
         {
@@ -173,6 +175,79 @@ public class PartialCellularPottsTests
         Assert.That(result.Cells[0], Is.Not.SameAs(source.Cells[0]));
         result[1] = null;
         Assert.That(result[1], Is.Null);
+    }
+
+    [TestCase(0, 0, 42)]
+    [TestCase(-7, -7, 42)]
+    [TestCase(0, -7, 7)]
+    [TestCase(int.MinValue, int.MaxValue, 7)]
+    public void Apply_RegionsAllowCopiesOnlyWithinTheSameRegion(int firstRegion, int secondRegion, int expected)
+    {
+        var source = Partition(7, 42, null);
+        var regions = new HexMap<int>(source.Topology, new[] { firstRegion, secondRegion, secondRegion });
+        var result = source.ApplyCellularPotts(regions,
+            new CellularPottsParameters(5, 0, 0, 0, CellularPottsConnectivity.None), new FixedAttemptRandom(0, 0));
+
+        Assert.That(result[0], Is.EqualTo(expected));
+        Assert.That(result[2], Is.Null);
+        Assert.That(Values(source), Is.EqualTo(new int?[] { 7, 42, null }));
+        Assert.That(Enumerable.Range(0, 3).Select(i => regions[i]), Is.EqualTo(new[] { firstRegion, secondRegion, secondRegion }));
+    }
+
+    [Test]
+    public void Apply_RegionsKeepGlobalAreasAndConnectivity()
+    {
+        var source = Partition(7, 42, 42, 42);
+        var regions = new HexMap<int>(source.Topology, new[] { 0, 0, -7, -7 });
+        // The receiver spans two regions but is connected across the source map.
+        Assert.DoesNotThrow(() => source.ApplyCellularPotts(regions, new CellularPottsParameters(0)));
+        var result = source.ApplyCellularPotts(regions, new Dictionary<int, float> { [7] = 1, [42] = 3 },
+            new CellularPottsParameters(1, 0, 0, 1, CellularPottsConnectivity.None), new FixedAttemptRandom(0, 0));
+
+        // Global areas match the targets; per-region areas would incorrectly accept this copy.
+        Assert.That(Values(result), Is.EqualTo(Values(source)));
+    }
+
+    [Test]
+    public void Apply_RegionsKeepBoundaryEnergyAcrossTheirBorders()
+    {
+        var topology = new HexMapTopology(5, 5, Layout.OddR);
+        var center = new VectorXYInt(2, 2);
+        var receiver = center.GetAdjacents(topology.Layout)[0];
+        var full = CellularPottsTests.Partition(topology, p => p == receiver ? 42 : 7, 7, 42);
+        var source = new PartialHexPartitionMap<HexPartitionCell>(topology, full.Cells);
+        var regions = new HexMap<int>(topology);
+        regions[center] = -7;
+        regions[receiver] = -7;
+        var result = source.ApplyCellularPotts(regions,
+            new CellularPottsParameters(1, 0, 1, 0, CellularPottsConnectivity.None),
+            new FixedAttemptRandom(center.Y * 5 + center.X, 0));
+
+        // Five donor edges across the region boundary outweigh the one disappearing receiver edge.
+        Assert.That(result[center], Is.EqualTo(7));
+    }
+
+    [Test]
+    public void Apply_CapturesRegionsBeforeTheFirstRandomDraw()
+    {
+        var source = Partition(7, 42);
+        var regions = new HexMap<int>(source.Topology, new[] { 0, -7 });
+        var result = source.ApplyCellularPotts(regions,
+            new CellularPottsParameters(3, 0, 0, 0, CellularPottsConnectivity.None), new RegionChangingRandom(regions));
+
+        Assert.That(Values(result), Is.EqualTo(new int?[] { 7, 42 }));
+        Assert.That(regions[1], Is.Zero);
+    }
+
+    private sealed class RegionChangingRandom : Random
+    {
+        private readonly HexMap<int> _regions;
+        internal RegionChangingRandom(HexMap<int> regions) => _regions = regions;
+        public override int Next(int maxValue)
+        {
+            _regions[1] = 0;
+            return 0;
+        }
     }
 
     internal static int?[] Values(PartialHexPartitionMap<HexPartitionCell> partition) =>

@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
     {
         internal static CellularPottsSimulation CreateSimulation<TIdentifier, THexPartitionCell>(
             IHexMap<TIdentifier> partition, IReadOnlyList<THexPartitionCell> cells, Func<TIdentifier, int?> toNullable,
-            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters)
+            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters, int[]? regions = null)
             where THexPartitionCell : IHexPartitionCell
         {
             var topology = partition.Topology;
@@ -41,7 +41,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                     ? cellIndexById[id.Value] : -1;
             }
 
-            var simulation = new CellularPottsSimulation(topology, assignments, ids, targetAreas, parameters);
+            var simulation = new CellularPottsSimulation(topology, assignments, ids, targetAreas, parameters, regions);
             if (parameters.Connectivity == CellularPottsConnectivity.Preserve && !simulation.HasConnectedCells())
                 throw new ArgumentException("Every non-empty participating cell must be six-connected.", nameof(partition));
             return simulation;

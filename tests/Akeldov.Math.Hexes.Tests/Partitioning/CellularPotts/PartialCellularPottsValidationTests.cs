@@ -37,6 +37,32 @@ public class PartialCellularPottsValidationTests
             new Dictionary<int, float> { [7] = float.NaN }, parameters))!.ParamName, Is.EqualTo("targetAreas"));
     }
 
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Apply_ValidatesRegionalArgumentsEvenWithoutParticipants(bool explicitTargets)
+    {
+        var topology = new HexMapTopology(3, 2, Layout.OddR);
+        var source = new PartialHexPartitionMap<HexPartitionCell>(topology,
+            new[] { new HexPartitionCell(7, Array.Empty<VectorXYInt>()) });
+        var regions = new HexMap<int>(topology);
+        var parameters = new CellularPottsParameters(0);
+
+        PartialHexPartitionMap<HexPartitionCell> Apply(PartialHexPartitionMap<HexPartitionCell> partition,
+            HexMap<int> regionMap, CellularPottsParameters settings) => explicitTargets
+            ? partition.ApplyCellularPotts(regionMap, new Dictionary<int, float> { [7] = 1 }, settings)
+            : partition.ApplyCellularPotts(regionMap, settings);
+
+        Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(null!, regions, parameters))!.ParamName, Is.EqualTo("partition"));
+        Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(source, null!, parameters))!.ParamName, Is.EqualTo("regions"));
+        Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(source, regions, null!))!.ParamName, Is.EqualTo("parameters"));
+        foreach (var other in new[] { new HexMapTopology(2, 3, Layout.OddR), new HexMapTopology(3, 2, Layout.EvenR) })
+            Assert.That(Assert.Throws<ArgumentException>(() => Apply(source, new HexMap<int>(other), parameters))!.ParamName, Is.EqualTo("regions"));
+        Assert.That(PartialCellularPottsTests.Values(Apply(source, regions, parameters)), Is.All.Null);
+
+        source[0] = 7;
+        Assert.That(Assert.Throws<ArgumentException>(() => Apply(source, regions, parameters))!.ParamName, Is.EqualTo("partition"));
+    }
+
     private static PartialHexPartitionMap<HexPartitionCell> Invoke(PartialHexPartitionMap<HexPartitionCell> partial,
         CellularPottsParameters parameters, bool explicitTargets) => explicitTargets
         ? partial.ApplyCellularPotts(new Dictionary<int, float> { [7] = 6 }, parameters)

@@ -12,6 +12,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         private readonly HexMapTopology _topology;
         private readonly int[] _owners;
         private readonly int[] _cellIds;
+        private readonly int[]? _regions;
         private readonly int[] _activeSites;
         private readonly int[] _cellAreas;
         private readonly double[] _targetAreas;
@@ -24,11 +25,12 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         private readonly byte[] _neighborPresence;
 
         internal CellularPottsSimulation(HexMapTopology topology, int[] assignments, int[] ids,
-            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters)
+            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters, int[]? regions = null)
         {
             _topology = topology;
             _owners = assignments;
             _cellIds = ids;
+            _regions = regions;
             // Widen coefficients before any arithmetic, including multiplication by integer edge counts.
             _temperature = parameters.Temperature;
             _boundaryEnergy = parameters.BoundaryEnergy;
@@ -99,6 +101,9 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                         continue;
 
                     int neighbor = _neighbors[site * MaxNeighbors + random.Next(count)];
+                    // Regions restrict copies only; energy and connectivity still use the entire source map.
+                    if (_regions != null && _regions[site] != _regions[neighbor])
+                        continue;
                     TryTransfer(site, _owners[neighbor], random);
                 }
             }
