@@ -39,7 +39,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// <exception cref="ArgumentOutOfRangeException">
         /// The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.
         /// </exception>
-        public static PartialPerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
+        public static PartialPerlinNoiseHexPartitionMap PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IHexMap<bool> participationMask,
             IReadOnlyList<PerlinNoisePartitionTarget> targets,
@@ -98,7 +98,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// contains a null or duplicate identifier, or has no positive share.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
-        public static PartialPerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
+        public static PartialPerlinNoiseHexPartitionMap PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IHexMap<int?> regionsMask,
             IReadOnlyList<PerlinNoisePartitionTarget> targets,
@@ -163,7 +163,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// contains a null or duplicate identifier, or has no positive share.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
-        public static PartialPerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
+        public static PartialPerlinNoiseHexPartitionMap PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,

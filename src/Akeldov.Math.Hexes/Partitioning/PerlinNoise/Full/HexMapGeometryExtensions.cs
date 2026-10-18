@@ -36,7 +36,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// </remarks>
         /// <example>
         /// <code>
-        /// var partition = geometry.ToPerlinNoiseHexPartitionMap(
+        /// var partition = geometry.PartitionByPerlinNoise(
         ///     new[]
         ///     {
         ///         new PerlinNoisePartitionTarget(7, 0.2),
@@ -49,7 +49,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// <exception cref="ArgumentNullException">The target list or parameters are null.</exception>
         /// <exception cref="ArgumentException">The target list is empty, contains a null or duplicate identifier, or has no positive share.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
-        public static PerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
+        public static PerlinNoiseHexPartitionMap PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IReadOnlyList<PerlinNoisePartitionTarget> targets,
             PerlinNoisePartitionParameters parameters,

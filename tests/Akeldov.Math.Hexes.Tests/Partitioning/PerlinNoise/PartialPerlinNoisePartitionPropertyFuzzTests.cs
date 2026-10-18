@@ -34,8 +34,8 @@ public class PartialPerlinNoisePartitionPropertyFuzzTests
                 random.Next(1, 5),
                 (float)random.NextDouble(), (float)(1 + random.NextDouble() * 2), new VectorXY(random.Next(-20, 20), random.Next(-20, 20)));
 
-            var combined = geometry.ToPerlinNoiseHexPartitionMap(participation, regions, targets, parameters, seed: seed);
-            var nullable = geometry.ToPerlinNoiseHexPartitionMap(nullableRegions, targets, parameters, seed: seed);
+            var combined = geometry.PartitionByPerlinNoise(participation, regions, targets, parameters, seed: seed);
+            var nullable = geometry.PartitionByPerlinNoise(nullableRegions, targets, parameters, seed: seed);
 
             Assert.That(PartialPerlinNoisePartitionTests.Values(nullable),
                 Is.EqualTo(PartialPerlinNoisePartitionTests.Values(combined)), context);
@@ -45,7 +45,7 @@ public class PartialPerlinNoisePartitionPropertyFuzzTests
             // Only region equality matters. Renaming regions and changing excluded values has no effect.
             for (int i = 0; i < topology.Count; i++)
                 regions[i] = participation[i] ? ~regions[i] : 123;
-            var renamed = geometry.ToPerlinNoiseHexPartitionMap(participation, regions, targets, parameters, seed: seed);
+            var renamed = geometry.PartitionByPerlinNoise(participation, regions, targets, parameters, seed: seed);
             Assert.That(PartialPerlinNoisePartitionTests.Values(renamed),
                 Is.EqualTo(PartialPerlinNoisePartitionTests.Values(combined)), context);
         }
@@ -72,7 +72,7 @@ public class PartialPerlinNoisePartitionPropertyFuzzTests
             var offset = new VectorXY(random.Next(-20, 20), random.Next(-20, 20));
             var noise = geometry.CreatePerlinNoise(seed, scale, octaves, persistence, lacunarity, offset);
 
-            var partition = geometry.ToPerlinNoiseHexPartitionMap(mask, targets, new PerlinNoisePartitionParameters(scale, octaves, persistence, lacunarity, offset), seed: seed);
+            var partition = geometry.PartitionByPerlinNoise(mask, targets, new PerlinNoisePartitionParameters(scale, octaves, persistence, lacunarity, offset), seed: seed);
 
             PartialPerlinNoisePartitionTests.AssertPartition(partition, noise, mask, targets,
                 $"seed={seed}, layout={layout}, iteration={iteration}");

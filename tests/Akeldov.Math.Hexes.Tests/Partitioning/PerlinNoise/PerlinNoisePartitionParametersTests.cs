@@ -55,8 +55,8 @@ public class PerlinNoisePartitionParametersTests
         var mask = new BoolHexMap(geometry.Topology);
 
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
-            geometry.ToPerlinNoiseHexPartitionMap(targets, null!, seed: 42))!.ParamName, Is.EqualTo("parameters"));
+            geometry.PartitionByPerlinNoise(targets, null!, seed: 42))!.ParamName, Is.EqualTo("parameters"));
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
-            geometry.ToPerlinNoiseHexPartitionMap(mask, targets, null!, seed: 42))!.ParamName, Is.EqualTo("parameters"));
+            geometry.PartitionByPerlinNoise(mask, targets, null!, seed: 42))!.ParamName, Is.EqualTo("parameters"));
     }
 }
