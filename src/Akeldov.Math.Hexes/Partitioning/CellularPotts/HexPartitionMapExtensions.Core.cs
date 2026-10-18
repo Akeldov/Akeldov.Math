@@ -5,7 +5,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 {
     public static partial class HexPartitionMapExtensions
     {
-        private static CellularPottsSimulation CreateSimulation<TIdentifier, THexPartitionCell>(
+        internal static CellularPottsSimulation CreateSimulation<TIdentifier, THexPartitionCell>(
             IHexMap<TIdentifier> partition, IReadOnlyList<THexPartitionCell> cells, Func<TIdentifier, int?> toNullable,
             IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters, bool[]? participationFlags = null, int[]? regions = null)
             where THexPartitionCell : IHexPartitionCell
