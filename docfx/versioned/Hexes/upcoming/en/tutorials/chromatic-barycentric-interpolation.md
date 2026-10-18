@@ -135,21 +135,10 @@ finiteImage.SaveAsPng(Path.GetFullPath("chromatic-barycentric-finite.png"));
 
 ![RGB blending using only present hexes with normalized boundary weights](~/assets/hexes/chromatization/chromatic-barycentric-finite.png)
 
-The method uses the same palette: class `0` is red, class `1` is green, and class `2` is blue.
-The partial raster permutes both weights and presence flags into class order, but it does not
-renormalize the remaining weights. The method divides the present weights by their sum, which
-preserves the blend's intensity near the boundary; leaving missing contributions at zero would
-make the RGB image darker there. For 16-bit channels, use
+The method normalizes the present weights by their sum, so the blend keeps its intensity near the
+boundary. Samples with no in-map hex around them, such as two bounding-box corners of an offset
+layout, get the class color of the nearest map hex. For 16-bit channels, use
 <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRasterExtensions.ToExtrapolatedRGBA16BitRaster*>.
-
-Some samples have no present weight at all. An offset layout shifts every other row or column
-by half a hex, so the map's bounding box has a notch at two corners. A sample in the notch lies
-in a triangle of three hexes that are all outside the map, and the partial raster correctly
-reports no present weights there; the same holds for samples far enough into a raster margin.
-The method extrapolates into such samples: each gets the class color of the map hex whose center
-is nearest. Next to a notch, the only present hex is the corner hex of the map, so the
-normalized blend already has its class color and the image continues without a seam. The result
-has no transparent pixels.
 
 Presence flags describe the surrounding hexes, not a pixel clipping mask. A sample just outside
 the finite map can still have an in-map neighbor. If an exact hex-shaped outline is required,

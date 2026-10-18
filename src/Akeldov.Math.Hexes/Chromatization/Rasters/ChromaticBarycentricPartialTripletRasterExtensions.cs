@@ -13,14 +13,11 @@ namespace Akeldov.Math.Hexes.Topology
     public static class ChromaticBarycentricPartialTripletRasterExtensions
     {
         /// <summary>
-        /// Converts chromatically ordered weights to an opaque 8-bit RGBA raster and extrapolates colors into samples
-        /// without in-map hexes.
+        /// Converts chromatically ordered weights to an opaque 8-bit RGBA raster.
         /// </summary>
         /// <remarks>
-        /// Red, green, and blue carry the weights of chromatic indices zero, one, and two. A sample with present weights
-        /// gets those weights divided by their sum. A sample without a positive present weight, such as a sample in a
-        /// bounding-box corner notch of an offset layout or in a raster margin, gets the pure color of the chromatic
-        /// class of the map hex whose center is nearest to the sample.
+        /// Red, green, and blue are the weights of chromatic indices 0, 1, and 2, divided by the sum of present weights.
+        /// A sample without present weights gets the class color of the nearest map hex.
         /// </remarks>
         /// <param name="raster">The chromatic barycentric raster to convert.</param>
         /// <returns>A new raster with the same geometry as <paramref name="raster"/>, owned by the caller.</returns>
@@ -45,14 +42,11 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         /// <summary>
-        /// Converts chromatically ordered weights to an opaque 16-bit RGBA raster and extrapolates colors into samples
-        /// without in-map hexes.
+        /// Converts chromatically ordered weights to an opaque 16-bit RGBA raster.
         /// </summary>
         /// <remarks>
-        /// Red, green, and blue carry the weights of chromatic indices zero, one, and two. A sample with present weights
-        /// gets those weights divided by their sum. A sample without a positive present weight, such as a sample in a
-        /// bounding-box corner notch of an offset layout or in a raster margin, gets the pure color of the chromatic
-        /// class of the map hex whose center is nearest to the sample.
+        /// Red, green, and blue are the weights of chromatic indices 0, 1, and 2, divided by the sum of present weights.
+        /// A sample without present weights gets the class color of the nearest map hex.
         /// </remarks>
         /// <param name="raster">The chromatic barycentric raster to convert.</param>
         /// <returns>A new raster with the same geometry as <paramref name="raster"/>, owned by the caller.</returns>
