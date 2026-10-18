@@ -16,7 +16,7 @@ public class VoronoiPartitionPropertyFuzzTests
         {
             Site[] sites = CreateSites(random);
             TestItem[] items = CreateItems(random);
-            var partitioner = new VoronoiItemPartitioner<TestItem>(sites, new VoronoiPartitionParameters(emptyCellPolicy: EmptyCellPolicy.LeaveAsIs));
+            var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
             var cells = partitioner.Partition(items);
 

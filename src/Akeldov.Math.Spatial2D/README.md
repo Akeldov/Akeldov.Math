@@ -26,7 +26,7 @@ The library is organized around practical 2D geometry workflows.
 
 - Generic raster abstractions and axis-aligned raster geometry with bounds- and pixel-density-based construction.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point rasters.
-- Mutable non-spatial `Raster<T>` and world-space `SpatialRaster<T>` data.
+- Mutable `Raster<T>` and `SpatialRaster<T>` data, plus numeric and Boolean raster types with cell-wise operators and geometry-preserving spatial variants.
 - Distance, signed-distance, and stroke rasterizers for curves, contours, regions, and collections.
 - 8-bit and 16-bit grayscale and RGBA color types.
 - Color helpers for normalized values, blending, and temperature heat maps.

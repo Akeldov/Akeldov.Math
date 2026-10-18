@@ -40,7 +40,8 @@ public class VoronoiItemPartitionerBenchmarks
 
         _partitioner = new VoronoiItemPartitioner<PointItem>(
             _sites,
-            new VoronoiPartitionParameters(RelaxationIterations, EmptyCellPolicy.LeaveAsIs));
+            RelaxationIterations,
+            EmptyCellPolicy.LeaveAsIs);
     }
 
     [Benchmark]

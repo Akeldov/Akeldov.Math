@@ -35,7 +35,24 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
-            9.0.x
+            9.0.301
+
+      - name: Pin release SDK
+        shell: pwsh
+        run: |
+          @{
+            sdk = @{
+              version = '9.0.301'
+              rollForward = 'disable'
+            }
+          } |
+            ConvertTo-Json -Depth 2 |
+            Set-Content -LiteralPath global.json -Encoding utf8
+
+          $sdkVersion = (dotnet --version).Trim()
+          if ($sdkVersion -cne '9.0.301') {
+            throw "Expected .NET SDK 9.0.301, but resolved $sdkVersion."
+          }
 
       - name: Show .NET info
         shell: pwsh

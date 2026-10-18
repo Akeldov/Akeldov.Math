@@ -14,10 +14,32 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         private readonly int _relaxationIterations;
         private readonly EmptyCellPolicy _emptyCellPolicy;
 
-        /// <summary>Initializes a Voronoi item partitioner with relaxation and empty-partition settings.</summary>
-        /// <param name="sites">The initial Voronoi sites, copied into retained structural state.</param>
-        /// <param name="parameters">The immutable partition settings, or null to disable relaxation and throw on empty partitions.</param>
-        public VoronoiItemPartitioner(IReadOnlyList<Site> sites, VoronoiPartitionParameters? parameters = null)
+        /// <summary>
+        /// Initializes a new Voronoi item partitioner with the specified sites.
+        /// </summary>
+        /// <param name="sites">The Voronoi sites used for item assignment.</param>
+        public VoronoiItemPartitioner(IReadOnlyList<Site> sites)
+            : this(sites, 0, EmptyCellPolicy.ThrowException)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new Voronoi item partitioner with empty-partition handling.
+        /// </summary>
+        /// <param name="sites">The Voronoi sites used for item assignment.</param>
+        /// <param name="emptyCellPolicy">The policy used for partitions that receive no items.</param>
+        public VoronoiItemPartitioner(IReadOnlyList<Site> sites, EmptyCellPolicy emptyCellPolicy)
+            : this(sites, 0, emptyCellPolicy)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new Voronoi item partitioner with relaxation and empty-partition handling.
+        /// </summary>
+        /// <param name="sites">The initial Voronoi sites used for item assignment.</param>
+        /// <param name="relaxationIterations">The number of centroid relaxation iterations to apply.</param>
+        /// <param name="emptyCellPolicy">The policy used for partitions that receive no items.</param>
+        public VoronoiItemPartitioner(IReadOnlyList<Site> sites, int relaxationIterations, EmptyCellPolicy emptyCellPolicy)
         {
             if (sites == null)
                 throw new ArgumentNullException(nameof(sites));
@@ -25,7 +47,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             if (sites.Count == 0)
                 throw new ArgumentOutOfRangeException(nameof(sites));
 
-            parameters ??= new VoronoiPartitionParameters();
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
             bool hasNonZeroWeight = false;
 
@@ -47,8 +70,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             if (!hasNonZeroWeight)
                 throw new ArgumentException("At least one site weight must be positive.", nameof(sites));
 
-            _relaxationIterations = parameters.RelaxationIterations;
-            _emptyCellPolicy = parameters.EmptyCellPolicy;
+            _relaxationIterations = relaxationIterations;
+            _emptyCellPolicy = emptyCellPolicy;
         }
 
         /// <summary>
