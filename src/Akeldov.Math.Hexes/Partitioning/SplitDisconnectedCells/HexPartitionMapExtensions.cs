@@ -40,6 +40,11 @@ namespace Akeldov.Math.Hexes
                     throw new ArgumentException("Partition assignments must agree with the retained cell indexes.", nameof(partition));
             }
 
+            return new HexPartitionMap<HexPartitionCell>(snapshot.Topology, SplitConnectedComponents(snapshot));
+        }
+
+        internal static List<HexPartitionCell> SplitConnectedComponents<TIdentifier>(IHexMap<TIdentifier> snapshot)
+        {
             var topology = snapshot.Topology;
             int width = topology.Resolution.X;
             int height = topology.Resolution.Y;
@@ -52,10 +57,9 @@ namespace Akeldov.Math.Hexes
 
             for (int seed = 0; seed < topology.Count; seed++)
             {
-                if (visited[seed])
+                var sourceId = snapshot[seed];
+                if (visited[seed] || sourceId is null)
                     continue;
-
-                int sourceId = snapshot[seed];
                 component.Clear();
                 component.Add(new VectorXYInt(seed % width, seed / width));
                 visited[seed] = true;
@@ -73,7 +77,7 @@ namespace Akeldov.Math.Hexes
                             continue;
 
                         int neighbor = y * width + x;
-                        if (visited[neighbor] || snapshot[neighbor] != sourceId)
+                        if (visited[neighbor] || !EqualityComparer<TIdentifier>.Default.Equals(snapshot[neighbor], sourceId))
                             continue;
 
                         visited[neighbor] = true;
@@ -84,7 +88,7 @@ namespace Akeldov.Math.Hexes
                 cells.Add(new HexPartitionCell(cells.Count, component));
             }
 
-            return new HexPartitionMap<HexPartitionCell>(topology, cells);
+            return cells;
         }
     }
 }
