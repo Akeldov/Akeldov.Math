@@ -13,7 +13,7 @@ public class CellularPottsTargetAreasTests
     public CellularPottsTargetAreasTests(int overload) => _overload = overload;
 
     [Test]
-    public void Apply_SameParametersAcceptDifferentTargetsWithoutChangingInputs()
+    public void Diffuse_SameParametersAcceptDifferentTargetsWithoutChangingInputs()
     {
         var source = Source();
         var parameters = new CellularPottsParameters(1, 0, 0, 1, CellularPottsConnectivity.None);
@@ -28,7 +28,7 @@ public class CellularPottsTargetAreasTests
     }
 
     [Test]
-    public void Apply_NullEmptyAndMissingTargetsUseInitialParticipatingAreas()
+    public void Diffuse_NullEmptyAndMissingTargetsUseInitialParticipatingAreas()
     {
         var source = Source();
         var parameters = new CellularPottsParameters(1, 0, 0, 1, CellularPottsConnectivity.None);
@@ -44,7 +44,7 @@ public class CellularPottsTargetAreasTests
     }
 
     [Test]
-    public void Apply_CapturesTargetsBeforeDrawingRandomNumbers()
+    public void Diffuse_CapturesTargetsBeforeDrawingRandomNumbers()
     {
         var source = Source();
         var parameters = new CellularPottsParameters(1, 0, 0, 1, CellularPottsConnectivity.None);
@@ -62,7 +62,7 @@ public class CellularPottsTargetAreasTests
 
     [TestCase(false)]
     [TestCase(true)]
-    public void Apply_ValidatesTargetsEvenAtZeroStepsOrWithNoParticipants(bool empty)
+    public void Diffuse_ValidatesTargetsEvenAtZeroStepsOrWithNoParticipants(bool empty)
     {
         var source = empty
             ? CellularPottsTests.Partition(new HexMapTopology(0, 0, Layout.OddR), _ => 7, 7, 42)
@@ -91,11 +91,11 @@ public class CellularPottsTargetAreasTests
         var partial = new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.Cells);
         return _overload switch
         {
-            0 => new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.ApplyCellularPotts(targets, parameters, random).Cells),
-            1 => partial.ApplyCellularPotts(targets, parameters, random),
-            2 => partial.ApplyCellularPotts(new HexMap<int>(full.Topology), targets, parameters, random),
+            0 => new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.DiffuseByCellularPotts(targets, parameters, random).Cells),
+            1 => partial.DiffuseByCellularPotts(targets, parameters, random),
+            2 => partial.DiffuseByCellularPotts(new HexMap<int>(full.Topology), targets, parameters, random),
             3 => new PartialHexPartitionMap<HexPartitionCell>(full.Topology,
-                full.ApplyCellularPotts(new HexMap<int>(full.Topology), targets, parameters, random).Cells),
+                full.DiffuseByCellularPotts(new HexMap<int>(full.Topology), targets, parameters, random).Cells),
             _ => throw new ArgumentOutOfRangeException(nameof(_overload))
         };
     }

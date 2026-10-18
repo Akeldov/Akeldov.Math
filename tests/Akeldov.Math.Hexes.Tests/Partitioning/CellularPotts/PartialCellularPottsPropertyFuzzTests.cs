@@ -39,7 +39,7 @@ public class PartialCellularPottsPropertyFuzzTests
                     .GroupBy(i => current[i]!.Value).ToDictionary(g => g.Key, g => g.Count());
                 double energyBefore = Energy(current, targets, parameters);
                 var previous = current;
-                current = current.ApplyCellularPotts(parameters, evolutionRandom);
+                current = current.DiffuseByCellularPotts(parameters, evolutionRandom);
                 Assert.That(Energy(current, targets, parameters), Is.LessThanOrEqualTo(energyBefore + 1e-9), stepContext);
                 Assert.That(PartialCellularPottsTests.Values(current).Select(id => id.HasValue), Is.EqualTo(before.Select(id => id.HasValue)), stepContext);
                 var rebuilt = new PartialHexPartitionMap<HexPartitionCell>(topology, current.Cells);
@@ -52,7 +52,7 @@ public class PartialCellularPottsPropertyFuzzTests
                 // Replaying an application with a fixed seed must reproduce the evolution.
                 if (iteration == 0)
                 {
-                    var replay = previous.ApplyCellularPotts(parameters, new Random(seed));
+                    var replay = previous.DiffuseByCellularPotts(parameters, new Random(seed));
                     Assert.That(PartialCellularPottsTests.Values(replay), Is.EqualTo(PartialCellularPottsTests.Values(current)), stepContext);
                 }
             }

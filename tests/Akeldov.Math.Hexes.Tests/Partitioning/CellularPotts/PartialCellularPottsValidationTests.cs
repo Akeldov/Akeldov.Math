@@ -7,7 +7,7 @@ public class PartialCellularPottsValidationTests
 {
     [TestCase(false)]
     [TestCase(true)]
-    public void Apply_ValidatesSourceAndParameters(bool explicitTargets)
+    public void Diffuse_ValidatesSourceAndParameters(bool explicitTargets)
     {
         var full = CellularPottsTests.Partition(new HexMapTopology(3, 2, Layout.OddR), _ => 7, 7);
         var partial = new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.Cells);
@@ -26,20 +26,20 @@ public class PartialCellularPottsValidationTests
     }
 
     [Test]
-    public void Apply_ValidatesTargetsWhenEveryHexIsUnassigned()
+    public void Diffuse_ValidatesTargetsWhenEveryHexIsUnassigned()
     {
         var partial = new PartialHexPartitionMap<HexPartitionCell>(new HexMapTopology(3, 2, Layout.OddR),
             new[] { new HexPartitionCell(7, Array.Empty<VectorXYInt>()) });
         var parameters = new CellularPottsParameters(0);
-        Assert.That(Assert.Throws<ArgumentException>(() => partial.ApplyCellularPotts(
+        Assert.That(Assert.Throws<ArgumentException>(() => partial.DiffuseByCellularPotts(
             new Dictionary<int, float> { [99] = 1 }, parameters))!.ParamName, Is.EqualTo("targetAreas"));
-        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => partial.ApplyCellularPotts(
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => partial.DiffuseByCellularPotts(
             new Dictionary<int, float> { [7] = float.NaN }, parameters))!.ParamName, Is.EqualTo("targetAreas"));
     }
 
     [TestCase(false)]
     [TestCase(true)]
-    public void Apply_ValidatesRegionalArgumentsEvenWithoutParticipants(bool explicitTargets)
+    public void Diffuse_ValidatesRegionalArgumentsEvenWithoutParticipants(bool explicitTargets)
     {
         var topology = new HexMapTopology(3, 2, Layout.OddR);
         var source = new PartialHexPartitionMap<HexPartitionCell>(topology,
@@ -49,8 +49,8 @@ public class PartialCellularPottsValidationTests
 
         PartialHexPartitionMap<HexPartitionCell> Apply(PartialHexPartitionMap<HexPartitionCell> partition,
             HexMap<int> regionMap, CellularPottsParameters settings) => explicitTargets
-            ? partition.ApplyCellularPotts(regionMap, new Dictionary<int, float> { [7] = 1 }, settings)
-            : partition.ApplyCellularPotts(regionMap, settings);
+            ? partition.DiffuseByCellularPotts(regionMap, new Dictionary<int, float> { [7] = 1 }, settings)
+            : partition.DiffuseByCellularPotts(regionMap, settings);
 
         Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(null!, regions, parameters))!.ParamName, Is.EqualTo("partition"));
         Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(source, null!, parameters))!.ParamName, Is.EqualTo("regions"));
@@ -65,6 +65,6 @@ public class PartialCellularPottsValidationTests
 
     private static PartialHexPartitionMap<HexPartitionCell> Invoke(PartialHexPartitionMap<HexPartitionCell> partial,
         CellularPottsParameters parameters, bool explicitTargets) => explicitTargets
-        ? partial.ApplyCellularPotts(new Dictionary<int, float> { [7] = 6 }, parameters)
-        : partial.ApplyCellularPotts(parameters);
+        ? partial.DiffuseByCellularPotts(new Dictionary<int, float> { [7] = 6 }, parameters)
+        : partial.DiffuseByCellularPotts(parameters);
 }

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 {
 #pragma warning disable RS0026 // Region and target-area overloads intentionally share an optional random generator.
-    /// <summary>Provides Cellular Potts evolution of partial hex partitions with optional connectivity preservation.</summary>
+    /// <summary>Provides Cellular Potts diffusion of partial hex partitions with optional connectivity preservation.</summary>
     public static class PartialHexPartitionMapExtensions
     {
-        /// <summary>Evolves all assigned hexes while keeping unassigned hexes null.</summary>
+        /// <summary>Diffuses partition cells across assigned hexes while keeping unassigned hexes null.</summary>
         /// <typeparam name="THexPartitionCell">The source partition cell type.</typeparam>
         /// <param name="partition">The partial partition whose assignments must agree with its retained cells. Unassigned hexes cannot participate.</param>
         /// <param name="parameters">The immutable duration, energy, temperature, and connectivity settings.</param>
@@ -18,6 +18,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// Source-specific cell metadata is not copied. The source is neither changed nor retained.
         /// </returns>
         /// <remarks>
+        /// Diffusion changes hex ownership through copy attempts governed by energy and the connectivity policy.
         /// Target areas are the initial assigned areas at the start of this call.
         /// Each step makes one copy attempt per participating hex, sampled with replacement. A neighbor is sampled
         /// uniformly among participating edge-adjacent hexes. Unassigned hexes contribute no edge energy.
@@ -32,16 +33,16 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// Source cells or assignments are inconsistent, or a participating cell is disconnected
         /// in Preserve mode.
         /// </exception>
-        public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
+        public static PartialHexPartitionMap<HexPartitionCell> DiffuseByCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             CellularPottsParameters parameters,
             Random? random = null)
             where THexPartitionCell : IHexPartitionCell
         {
-            return partition.ApplyCellularPotts(targetAreas: null, parameters, random);
+            return partition.DiffuseByCellularPotts(targetAreas: null, parameters, random);
         }
 
-        /// <summary>Evolves all assigned hexes while keeping unassigned hexes null.</summary>
+        /// <summary>Diffuses partition cells across assigned hexes while keeping unassigned hexes null.</summary>
         /// <typeparam name="THexPartitionCell">The source partition cell type.</typeparam>
         /// <param name="partition">The partial partition whose assignments must agree with its retained cells. Unassigned hexes cannot participate.</param>
         /// <param name="targetAreas">
@@ -59,6 +60,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// Source-specific cell metadata is not copied. The source is neither changed nor retained.
         /// </returns>
         /// <remarks>
+        /// Diffusion changes hex ownership through copy attempts governed by energy and the connectivity policy.
         /// Each step makes one copy attempt per participating hex, sampled with replacement. A neighbor is sampled
         /// uniformly among participating edge-adjacent hexes. Unassigned hexes contribute no edge energy.
         /// Areas count only participating hexes. Missing explicit target areas use each cell's initial participating area.
@@ -73,7 +75,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// in Preserve mode, or an explicit target identifier is negative or absent from the source partition.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">A target area is non-finite, negative, or greater than int.MaxValue.</exception>
-        public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
+        public static PartialHexPartitionMap<HexPartitionCell> DiffuseByCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             IReadOnlyDictionary<int, float>? targetAreas,
             CellularPottsParameters parameters,
@@ -90,7 +92,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             return simulation.CreatePartialPartition();
         }
 
-        /// <summary>Evolves assigned hexes while forbidding copies between different regions.</summary>
+        /// <summary>Diffuses partition cells while forbidding copies between different regions.</summary>
         /// <typeparam name="THexPartitionCell">The source partition cell type.</typeparam>
         /// <param name="partition">The partial partition whose assignments must agree with its retained cells. Null hexes do not participate.</param>
         /// <param name="regions">
@@ -106,6 +108,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// Source-specific cell metadata is not copied. The source is neither changed nor retained.
         /// </returns>
         /// <remarks>
+        /// Diffusion changes hex ownership through copy attempts governed by energy and the connectivity policy.
         /// Regions restrict copying only. Areas, initial target areas, boundary energy, and connectivity are evaluated
         /// across the entire source map, including edges across region boundaries. A cell may span multiple regions.
         /// Each step makes one attempt per assigned hex, sampled with replacement; a participating edge-adjacent
@@ -115,17 +118,17 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// </remarks>
         /// <exception cref="ArgumentNullException">The partition, regions, or parameters are null.</exception>
         /// <exception cref="ArgumentException">The region topology differs, source cells or assignments are inconsistent, or a non-empty cell is disconnected in Preserve mode.</exception>
-        public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
+        public static PartialHexPartitionMap<HexPartitionCell> DiffuseByCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             HexMap<int> regions,
             CellularPottsParameters parameters,
             Random? random = null)
             where THexPartitionCell : IHexPartitionCell
         {
-            return partition.ApplyCellularPotts(regions, targetAreas: null, parameters, random);
+            return partition.DiffuseByCellularPotts(regions, targetAreas: null, parameters, random);
         }
 
-        /// <summary>Evolves assigned hexes with target areas while forbidding copies between different regions.</summary>
+        /// <summary>Diffuses partition cells with target areas while forbidding copies between different regions.</summary>
         /// <typeparam name="THexPartitionCell">The source partition cell type.</typeparam>
         /// <param name="partition">The partial partition whose assignments must agree with its retained cells. Null hexes do not participate.</param>
         /// <param name="regions">
@@ -148,6 +151,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// Source-specific cell metadata is not copied. The source is neither changed nor retained.
         /// </returns>
         /// <remarks>
+        /// Diffusion changes hex ownership through copy attempts governed by energy and the connectivity policy.
         /// Regions restrict copying only. Areas, boundary energy, and connectivity are evaluated across the entire
         /// source map, including edges across region boundaries. A cell may span multiple regions.
         /// Each step makes one attempt per assigned hex, sampled with replacement; a participating edge-adjacent
@@ -158,7 +162,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <exception cref="ArgumentNullException">The partition, regions, or parameters are null.</exception>
         /// <exception cref="ArgumentException">The region topology differs, source cells or assignments are inconsistent, a non-empty cell is disconnected in Preserve mode, or a target identifier is negative or absent from the source partition.</exception>
         /// <exception cref="ArgumentOutOfRangeException">A target area is non-finite, negative, or greater than int.MaxValue.</exception>
-        public static PartialHexPartitionMap<HexPartitionCell> ApplyCellularPotts<THexPartitionCell>(
+        public static PartialHexPartitionMap<HexPartitionCell> DiffuseByCellularPotts<THexPartitionCell>(
             this PartialHexPartitionMap<THexPartitionCell> partition,
             HexMap<int> regions,
             IReadOnlyDictionary<int, float>? targetAreas,

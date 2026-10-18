@@ -8,23 +8,23 @@ public class CellularPottsTests
 {
     [TestCase(false)]
     [TestCase(true)]
-    public void Apply_RegionsForbidCopiesAcrossBorders(bool explicitTargets)
+    public void Diffuse_RegionsForbidCopiesAcrossBorders(bool explicitTargets)
     {
         var source = Partition(new HexMapTopology(2, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
         var regions = new HexMap<int>(source.Topology, new[] { int.MinValue, int.MaxValue });
         var parameters = new CellularPottsParameters(5, 0, 0, 0, CellularPottsConnectivity.None);
         var targets = new Dictionary<int, float> { [7] = 0, [42] = 2 };
         var blocked = explicitTargets
-            ? source.ApplyCellularPotts(regions, targets, parameters, new FixedAttemptRandom(0, 0))
-            : source.ApplyCellularPotts(regions, parameters, new FixedAttemptRandom(0, 0));
+            ? source.DiffuseByCellularPotts(regions, targets, parameters, new FixedAttemptRandom(0, 0))
+            : source.DiffuseByCellularPotts(regions, parameters, new FixedAttemptRandom(0, 0));
 
         Assert.That(Values(blocked), Is.EqualTo(new[] { 7, 42 }));
         Assert.That(regions[0], Is.EqualTo(int.MinValue));
         Assert.That(regions[1], Is.EqualTo(int.MaxValue));
         regions[1] = int.MinValue;
         var allowed = explicitTargets
-            ? source.ApplyCellularPotts(regions, targets, parameters, new FixedAttemptRandom(0, 0))
-            : source.ApplyCellularPotts(regions, parameters, new FixedAttemptRandom(0, 0));
+            ? source.DiffuseByCellularPotts(regions, targets, parameters, new FixedAttemptRandom(0, 0))
+            : source.DiffuseByCellularPotts(regions, parameters, new FixedAttemptRandom(0, 0));
         Assert.That(Values(allowed), Is.EqualTo(new[] { 42, 42 }));
         Assert.That(Values(source), Is.EqualTo(new[] { 7, 42 }));
     }
@@ -37,7 +37,7 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR, CellularPottsConnectivity.None)]
     [TestCase(Layout.OddQ, CellularPottsConnectivity.None)]
     [TestCase(Layout.EvenQ, CellularPottsConnectivity.None)]
-    public void Apply_RegionsMatchPartialEvolution(Layout layout, CellularPottsConnectivity connectivity)
+    public void Diffuse_RegionsMatchPartialEvolution(Layout layout, CellularPottsConnectivity connectivity)
     {
         var source = Partition(new HexMapTopology(12, 8, layout), p => p.X < 6 ? 7 : 42, 7, 42, 99);
         var partial = new PartialHexPartitionMap<HexPartitionCell>(source.Topology, source.Cells);
@@ -47,13 +47,13 @@ public class CellularPottsTests
         var targets = new Dictionary<int, float> { [7] = 40, [42] = 56 };
         var results = new[]
         {
-            source.ApplyCellularPotts(regions, parameters, new Random(42)),
-            source.ApplyCellularPotts(regions, targets, parameters, new Random(42))
+            source.DiffuseByCellularPotts(regions, parameters, new Random(42)),
+            source.DiffuseByCellularPotts(regions, targets, parameters, new Random(42))
         };
         var expected = new[]
         {
-            partial.ApplyCellularPotts(regions, parameters, new Random(42)),
-            partial.ApplyCellularPotts(regions, targets, parameters, new Random(42))
+            partial.DiffuseByCellularPotts(regions, parameters, new Random(42)),
+            partial.DiffuseByCellularPotts(regions, targets, parameters, new Random(42))
         };
         for (int i = 0; i < results.Length; i++)
         {
@@ -67,7 +67,7 @@ public class CellularPottsTests
 
     [TestCase(false)]
     [TestCase(true)]
-    public void Apply_RegionsValidateArgumentsAndSource(bool explicitTargets)
+    public void Diffuse_RegionsValidateArgumentsAndSource(bool explicitTargets)
     {
         var source = Partition(new HexMapTopology(3, 2, Layout.OddR), _ => 7, 7);
         var regions = new HexMap<int>(source.Topology);
@@ -75,8 +75,8 @@ public class CellularPottsTests
 
         HexPartitionMap<HexPartitionCell> Apply(HexPartitionMap<HexPartitionCell> partition,
             HexMap<int> regionMap, CellularPottsParameters settings) => explicitTargets
-            ? partition.ApplyCellularPotts(regionMap, new Dictionary<int, float> { [7] = 6 }, settings)
-            : partition.ApplyCellularPotts(regionMap, settings);
+            ? partition.DiffuseByCellularPotts(regionMap, new Dictionary<int, float> { [7] = 6 }, settings)
+            : partition.DiffuseByCellularPotts(regionMap, settings);
 
         Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(null!, regions, parameters))!.ParamName, Is.EqualTo("partition"));
         Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(source, null!, parameters))!.ParamName, Is.EqualTo("regions"));
@@ -92,7 +92,7 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_AtZeroSteps_CopiesSparseIdsEmptyCellsAndDuplicateIndexes(Layout layout)
+    public void Diffuse_AtZeroSteps_CopiesSparseIdsEmptyCellsAndDuplicateIndexes(Layout layout)
     {
         var topology = new HexMapTopology(2, 1, layout);
         var source = new HexPartitionMap<HexPartitionCell>(topology, new[]
@@ -102,7 +102,7 @@ public class CellularPottsTests
             new HexPartitionCell(42, new[] { new VectorXYInt(1, 0) })
         });
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(0));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(0));
 
         Assert.That(result, Is.Not.SameAs(source));
         Assert.That(result.Topology, Is.EqualTo(topology));
@@ -120,10 +120,10 @@ public class CellularPottsTests
     [TestCase(0, 3)]
     [TestCase(3, 0)]
     [TestCase(1, 1)]
-    public void Apply_EmptyAndSingleCellMaps_AreUnchanged(int width, int height)
+    public void Diffuse_EmptyAndSingleCellMaps_AreUnchanged(int width, int height)
     {
         var source = Partition(new HexMapTopology(width, height, Layout.OddR), _ => 7, 7, 42);
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(10));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(10));
 
         Assert.That(Values(result), Is.EqualTo(Values(source)));
         Assert.That(result.Cells[1].HexIndexes, Is.Empty);
@@ -131,14 +131,14 @@ public class CellularPottsTests
 
     [TestCase(CellularPottsConnectivity.Preserve)]
     [TestCase(CellularPottsConnectivity.None)]
-    public void Apply_SingletonCell_DisappearsOnlyWithoutConnectivityPreservation(CellularPottsConnectivity connectivity)
+    public void Diffuse_SingletonCell_DisappearsOnlyWithoutConnectivityPreservation(CellularPottsConnectivity connectivity)
     {
         var source = Partition(new HexMapTopology(3, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
         var random = new FixedAttemptRandom(0, 0);
         var targets = new Dictionary<int, float> { [7] = 0, [42] = 3 };
         var parameters = new CellularPottsParameters(4, 0, 0, 1, connectivity);
 
-        var result = source.ApplyCellularPotts(targets, parameters, random: random);
+        var result = source.DiffuseByCellularPotts(targets, parameters, random: random);
 
         bool preserve = connectivity == CellularPottsConnectivity.Preserve;
         Assert.That(result[0], Is.EqualTo(preserve ? 7 : 42));
@@ -146,13 +146,13 @@ public class CellularPottsTests
         Assert.That(result.Cells.Select(c => c.Id), Is.EqualTo(new[] { 7, 42 }));
         Assert.That(source[0], Is.EqualTo(7));
         Assert.That(random.SiteDraws, Is.EqualTo(12));
-        var continued = result.ApplyCellularPotts(parameters, random: new Random(42));
+        var continued = result.DiffuseByCellularPotts(parameters, random: new Random(42));
         Assert.That(continued.Cells[0].HexIndexes, Has.Count.EqualTo(preserve ? 1 : 0));
     }
 
     [TestCase(CellularPottsConnectivity.Preserve)]
     [TestCase(CellularPottsConnectivity.None)]
-    public void Apply_DonorBridge_IsProtectedOnlyWithConnectivityPreservation(CellularPottsConnectivity connectivity)
+    public void Diffuse_DonorBridge_IsProtectedOnlyWithConnectivityPreservation(CellularPottsConnectivity connectivity)
     {
         var center = new VectorXYInt(2, 2);
         var neighbors = center.GetAdjacents(Layout.OddR);
@@ -160,7 +160,7 @@ public class CellularPottsTests
         var source = Partition(new HexMapTopology(5, 5, Layout.OddR), p => donor.Contains(p) ? 7 : 42, 7, 42);
         var random = Attempt(source, center, 42);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, float.MaxValue, 0, 0, connectivity: connectivity), random: random);
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, float.MaxValue, 0, 0, connectivity: connectivity), random: random);
 
         bool preserve = connectivity == CellularPottsConnectivity.Preserve;
         Assert.That(result[center], Is.EqualTo(preserve ? 7 : 42));
@@ -173,7 +173,7 @@ public class CellularPottsTests
 
     [TestCase(CellularPottsConnectivity.Preserve)]
     [TestCase(CellularPottsConnectivity.None)]
-    public void Apply_TargetWithSeparateLocalArcs_CanReceiveAHexInBothModes(CellularPottsConnectivity connectivity)
+    public void Diffuse_TargetWithSeparateLocalArcs_CanReceiveAHexInBothModes(CellularPottsConnectivity connectivity)
     {
         var center = new VectorXYInt(2, 2);
         var neighbors = center.GetAdjacents(Layout.OddR);
@@ -183,7 +183,7 @@ public class CellularPottsTests
             p => donor.Contains(p) ? 7 : third.Contains(p) ? 99 : 42, 7, 42, 99);
         var random = Attempt(source, center, 42);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, float.MaxValue, 0, 0, connectivity: connectivity), random: random);
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, float.MaxValue, 0, 0, connectivity: connectivity), random: random);
 
         Assert.That(result[center], Is.EqualTo(42));
         Assert.That(random.EnergyDraws, Is.Zero);
@@ -194,7 +194,7 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_Preserve_RejectsRemovalWhenTheOnlyAlternatePathLeavesTheNeighborhood(Layout layout)
+    public void Diffuse_Preserve_RejectsRemovalWhenTheOnlyAlternatePathLeavesTheNeighborhood(Layout layout)
     {
         var topology = new HexMapTopology(5, 5, layout);
         var center = new VectorXYInt(2, 2);
@@ -202,7 +202,7 @@ public class CellularPottsTests
         var site = center.GetAdjacents(layout)[0];
         var source = Partition(topology, p => ring.Contains(p) ? 7 : p == center ? 99 : 42, 7, 42, 99);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(7));
         Assert.That(result.Cells[0].HexIndexes, Has.Count.EqualTo(6));
@@ -214,13 +214,13 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_Preserve_MapBoundaryDoesNotJoinDisconnectedNeighborArcs(Layout layout)
+    public void Diffuse_Preserve_MapBoundaryDoesNotJoinDisconnectedNeighborArcs(Layout layout)
     {
         var site = new VectorXYInt(2, 0);
         var donor = new HashSet<VectorXYInt> { site, new VectorXYInt(1, 0), new VectorXYInt(3, 0) };
         var source = Partition(new HexMapTopology(5, 5, layout), p => donor.Contains(p) ? 7 : 42, 7, 42);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
 
         Assert.That(Values(result), Is.EqualTo(Values(source)));
         AssertConsistentAndConnected(result);
@@ -230,14 +230,14 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_Preserve_NeighborDirectionsFiveAndZeroFormOneConnectedRun(Layout layout)
+    public void Diffuse_Preserve_NeighborDirectionsFiveAndZeroFormOneConnectedRun(Layout layout)
     {
         var site = new VectorXYInt(2, 2);
         var neighbors = site.GetAdjacents(layout);
         var donor = new HashSet<VectorXYInt> { site, neighbors[5], neighbors[0] };
         var source = Partition(new HexMapTopology(5, 5, layout), p => donor.Contains(p) ? 7 : 42, 7, 42);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 0, 0), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(42));
         Assert.That(result.Cells[0].HexIndexes, Is.EquivalentTo(new[] { neighbors[5], neighbors[0] }));
@@ -248,14 +248,14 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_LegalNeutralCopy_UpdatesAssignmentsAndCellSnapshots(Layout layout)
+    public void Diffuse_LegalNeutralCopy_UpdatesAssignmentsAndCellSnapshots(Layout layout)
     {
         var source = Partition(new HexMapTopology(5, 5, layout), p => p.X < 2 ? 7 : 42, 7, 42, 99);
         var before = Values(source);
         var site = new VectorXYInt(1, 2);
         var random = Attempt(source, site, 42);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(2, 0, 0, 0), random: random);
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(2, 0, 0, 0), random: random);
 
         Assert.That(result[site], Is.EqualTo(42));
         Assert.That(Values(source), Is.EqualTo(before));
@@ -273,7 +273,7 @@ public class CellularPottsTests
     [TestCase(0d, false, CellularPottsConnectivity.None)]
     [TestCase(0.36d, true, CellularPottsConnectivity.None)]
     [TestCase(0.37d, false, CellularPottsConnectivity.None)]
-    public void Apply_AreaEnergy_UsesMetropolisThreshold(double draw, bool accepted,
+    public void Diffuse_AreaEnergy_UsesMetropolisThreshold(double draw, bool accepted,
         CellularPottsConnectivity connectivity = CellularPottsConnectivity.Preserve)
     {
         // Copying one hex from areas 2/2 with targets 2/2 costs 2. At T=2, acceptance is exp(-1).
@@ -282,7 +282,7 @@ public class CellularPottsTests
         var random = Attempt(source, site, 42, draw);
         float temperature = draw == 0d ? 0f : 2f;
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, temperature, 0, 1, connectivity: connectivity), random: random);
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, temperature, 0, 1, connectivity: connectivity), random: random);
 
         Assert.That(result[site], Is.EqualTo(accepted ? 42 : 7));
         Assert.That(random.EnergyDraws, Is.EqualTo(temperature == 0d ? 0 : accepted ? 1 : 4));
@@ -290,34 +290,34 @@ public class CellularPottsTests
 
     [TestCase(true)]
     [TestCase(false)]
-    public void Apply_ExplicitTargets_DetermineDownhillDirection(bool favorsCopy)
+    public void Diffuse_ExplicitTargets_DetermineDownhillDirection(bool favorsCopy)
     {
         var source = Partition(new HexMapTopology(4, 1, Layout.OddR), p => p.X < 2 ? 7 : 42, 7, 42);
         var site = new VectorXYInt(1, 0);
         var targets = new Dictionary<int, float> { [7] = favorsCopy ? 1 : 3, [42] = favorsCopy ? 3 : 1 };
 
-        var result = source.ApplyCellularPotts(targets, new CellularPottsParameters(1, 0, 0, 1), random: Attempt(source, site, 42));
+        var result = source.DiffuseByCellularPotts(targets, new CellularPottsParameters(1, 0, 0, 1), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(favorsCopy ? 42 : 7));
     }
 
     [TestCase(0.13d, true)]
     [TestCase(0.14d, false)]
-    public void Apply_BoundaryEnergy_CountsEachChangedEdgeOnce(double draw, bool accepted)
+    public void Diffuse_BoundaryEnergy_CountsEachChangedEdgeOnce(double draw, bool accepted)
     {
         var center = new VectorXYInt(2, 2);
         var neighbors = center.GetAdjacents(Layout.OddR);
         var donor = new HashSet<VectorXYInt> { center, neighbors[0], neighbors[1], neighbors[2], neighbors[3] };
         var source = Partition(new HexMapTopology(5, 5, Layout.OddR), p => donor.Contains(p) ? 7 : 42, 7, 42);
         // Four donor contacts versus two target contacts: delta H = J * (4 - 2) = 2.
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 1, 1, 0), random: Attempt(source, center, 42, draw));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 1, 1, 0), random: Attempt(source, center, 42, draw));
 
         Assert.That(result[center], Is.EqualTo(accepted ? 42 : 7));
     }
 
     [TestCase(0.13d, true)]
     [TestCase(0.14d, false)]
-    public void Apply_LargeFloatCoefficients_UseDoubleEnergyAndAcceptance(double draw, bool accepted)
+    public void Diffuse_LargeFloatCoefficients_UseDoubleEnergyAndAcceptance(double draw, bool accepted)
     {
         var center = new VectorXYInt(2, 2);
         var neighbors = center.GetAdjacents(Layout.OddR);
@@ -326,7 +326,7 @@ public class CellularPottsTests
         var before = Values(source);
 
         // Delta H = 2 * float.MaxValue exceeds float range; in double, delta H / T is exactly 2.
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, float.MaxValue, float.MaxValue, 0),
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, float.MaxValue, float.MaxValue, 0),
             random: Attempt(source, center, 42, draw));
 
         Assert.That(result[center], Is.EqualTo(accepted ? 42 : 7));
@@ -334,14 +334,14 @@ public class CellularPottsTests
     }
 
     [Test]
-    public void Apply_LargeFloatTargets_PreserveSmallAreaDifferencesInDouble()
+    public void Diffuse_LargeFloatTargets_PreserveSmallAreaDifferencesInDouble()
     {
         var source = Partition(new HexMapTopology(3, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
         var targets = new Dictionary<int, float> { [7] = 33554432f, [42] = 33554432f };
         var parameters = new CellularPottsParameters(1, 4, 0, 1, CellularPottsConnectivity.None);
 
         // Areas 1/2 and equal targets give delta H = 4. Rounding deviations to float would give 6.
-        var result = source.ApplyCellularPotts(targets, parameters, Attempt(source, new VectorXYInt(0, 0), 42, 0.3d));
+        var result = source.DiffuseByCellularPotts(targets, parameters, Attempt(source, new VectorXYInt(0, 0), 42, 0.3d));
 
         Assert.That(result[0], Is.EqualTo(42));
     }
@@ -350,12 +350,12 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_MapEdgeCopy_HasNoExteriorEnergyOrWrapping(Layout layout)
+    public void Diffuse_MapEdgeCopy_HasNoExteriorEnergyOrWrapping(Layout layout)
     {
         var source = Partition(new HexMapTopology(4, 1, layout), p => p.X < 2 ? 7 : 42, 7, 42);
         var site = new VectorXYInt(1, 0);
         // One donor edge is removed and one target edge is added: delta H = 0.
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 10, 0), random: Attempt(source, site, 42));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 10, 0), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(42));
         AssertConsistentAndConnected(result);
@@ -363,7 +363,7 @@ public class CellularPottsTests
 
     [TestCase(CellularPottsConnectivity.Preserve)]
     [TestCase(CellularPottsConnectivity.None)]
-    public void Apply_TargetDraw_SamplesTheSameNeighborSitesInBothModes(CellularPottsConnectivity connectivity)
+    public void Diffuse_TargetDraw_SamplesTheSameNeighborSitesInBothModes(CellularPottsConnectivity connectivity)
     {
         var center = new VectorXYInt(2, 2);
         var neighbors = center.GetAdjacents(Layout.OddR);
@@ -371,7 +371,7 @@ public class CellularPottsTests
             p => p == center || p == neighbors[0] ? 7 : 42, 7, 42);
         var random = Attempt(source, center, 42);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: connectivity), random: random);
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: connectivity), random: random);
 
         Assert.That(result[center], Is.EqualTo(42));
         Assert.That(random.TargetBounds, Is.All.EqualTo(6));
@@ -389,7 +389,7 @@ public class CellularPottsTests
     [TestCase(CellularPottsConnectivity.None, 3, 42)]
     [TestCase(CellularPottsConnectivity.None, 4, 42)]
     [TestCase(CellularPottsConnectivity.None, 5, 99)]
-    public void Apply_TargetDraw_WeightsIdentifiersByTheirNeighborCountsInBothModes(
+    public void Diffuse_TargetDraw_WeightsIdentifiersByTheirNeighborCountsInBothModes(
         CellularPottsConnectivity connectivity, int targetChoice, int expectedId)
     {
         var center = new VectorXYInt(2, 2);
@@ -399,7 +399,7 @@ public class CellularPottsTests
             p => p == center || p == neighbors[0] ? 7 : p == neighbors[5] ? 99 : 42, 7, 42, 99);
         var random = new FixedAttemptRandom(center.Y * source.Topology.Resolution.X + center.X, targetChoice);
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: connectivity), random: random);
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: connectivity), random: random);
 
         Assert.That(result[center], Is.EqualTo(expectedId));
         Assert.That(random.TargetBounds, Is.All.EqualTo(6));
@@ -412,11 +412,11 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_DisconnectedInput_IsRejected(Layout layout)
+    public void Diffuse_DisconnectedInput_IsRejected(Layout layout)
     {
         var source = Partition(new HexMapTopology(5, 1, layout), p => p.X == 0 || p.X == 4 ? 7 : 42, 7, 42);
 
-        var exception = Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(new CellularPottsParameters(0)));
+        var exception = Assert.Throws<ArgumentException>(() => source.DiffuseByCellularPotts(new CellularPottsParameters(0)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("partition"));
     }
@@ -425,13 +425,13 @@ public class CellularPottsTests
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
     [TestCase(Layout.EvenQ)]
-    public void Apply_WithoutConnectivity_AcceptsDisconnectedInput(Layout layout)
+    public void Diffuse_WithoutConnectivity_AcceptsDisconnectedInput(Layout layout)
     {
         var source = Partition(new HexMapTopology(5, 1, layout), p => p.X == 0 || p.X == 4 ? 7 : 42, 7, 42);
-        var copy = source.ApplyCellularPotts(new CellularPottsParameters(0, connectivity: CellularPottsConnectivity.None));
+        var copy = source.DiffuseByCellularPotts(new CellularPottsParameters(0, connectivity: CellularPottsConnectivity.None));
         Assert.That(Values(copy), Is.EqualTo(Values(source)));
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: CellularPottsConnectivity.None), random: new FixedAttemptRandom(0, 0));
+        var result = source.DiffuseByCellularPotts(new CellularPottsParameters(1, 0, 0, 0, connectivity: CellularPottsConnectivity.None), random: new FixedAttemptRandom(0, 0));
 
         Assert.That(result[0], Is.EqualTo(42));
         Assert.That(result[4], Is.EqualTo(7));
@@ -450,26 +450,26 @@ public class CellularPottsTests
     }
 
     [Test]
-    public void Apply_StaleAssignmentSnapshot_IsRejectedWithoutChangingSource()
+    public void Diffuse_StaleAssignmentSnapshot_IsRejectedWithoutChangingSource()
     {
         var source = Partition(new HexMapTopology(4, 1, Layout.OddR), p => p.X < 2 ? 7 : 42, 7, 42);
         source[0] = 42;
         var before = Values(source);
 
-        Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(new CellularPottsParameters(1)));
+        Assert.Throws<ArgumentException>(() => source.DiffuseByCellularPotts(new CellularPottsParameters(1)));
         Assert.That(Values(source), Is.EqualTo(before));
     }
 
     [Test]
-    public void Apply_InvalidArguments_AreRejected()
+    public void Diffuse_InvalidArguments_AreRejected()
     {
         HexPartitionMap<HexPartitionCell> missing = null!;
-        Assert.Throws<ArgumentNullException>(() => missing.ApplyCellularPotts(new CellularPottsParameters(0)));
+        Assert.Throws<ArgumentNullException>(() => missing.DiffuseByCellularPotts(new CellularPottsParameters(0)));
         var source = Partition(new HexMapTopology(1, 1, Layout.OddR), _ => 7, 7);
-        Assert.That(Assert.Throws<ArgumentNullException>(() => source.ApplyCellularPotts(null!))!.ParamName, Is.EqualTo("parameters"));
+        Assert.That(Assert.Throws<ArgumentNullException>(() => source.DiffuseByCellularPotts(null!))!.ParamName, Is.EqualTo("parameters"));
         Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(-1))!.ParamName, Is.EqualTo("stepCount"));
         var parameters = new CellularPottsParameters(0);
-        Assert.That(Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(
+        Assert.That(Assert.Throws<ArgumentException>(() => source.DiffuseByCellularPotts(
             new Dictionary<int, float> { [42] = 1 }, parameters))!.ParamName, Is.EqualTo("targetAreas"));
     }
 

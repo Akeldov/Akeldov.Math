@@ -21,10 +21,10 @@ public class CellularPottsSnapshotTests
         var source = CellularPottsTests.Partition(topology,
             p => p.X / 10 + 3 * (p.Y / 8), Enumerable.Range(0, 9).ToArray());
         var parameters = new CellularPottsParameters(100, temperature: 1.5f, boundaryEnergy: 2, areaPenalty: 1, connectivity: connectivity);
-        var result = source.ApplyCellularPotts(parameters, random: new Random(seed));
+        var result = source.DiffuseByCellularPotts(parameters, random: new Random(seed));
         string context = $"seed={seed}, connectivity={connectivity}";
         var partialSource = new PartialHexPartitionMap<HexPartitionCell>(topology, source.Cells);
-        Assert.That(PartialCellularPottsTests.Values(partialSource.ApplyCellularPotts(parameters, new Random(seed))),
+        Assert.That(PartialCellularPottsTests.Values(partialSource.DiffuseByCellularPotts(parameters, new Random(seed))),
             Is.EqualTo(CellularPottsTests.Values(result).Select(id => (int?)id)), context);
         if (connectivity == CellularPottsConnectivity.Preserve)
         {
