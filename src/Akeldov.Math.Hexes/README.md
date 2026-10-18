@@ -47,7 +47,10 @@ The library is organized around practical hex-grid workflows.
 - Weighted shortest-path search using separate cell entry and exit costs.
 - Impassable cells represented by positive-infinity transfer costs.
 - Generic full and partial partition maps with mutable cell identifiers and read-only cell groups.
-- Weighted Voronoi partitioning with participation and nullable region masks, configurable empty-cell handling, and disconnected-component reassignment.
+- `PartitionByVoronoi`: weighted Voronoi partitioning with relaxation, participation and region masks, empty-cell handling, and exclave reassignment.
+- `PartitionByPerlinNoise`: geometry-aware territory generation with relative area shares, reproducible seeds, and optional participation and region masks.
+- `DiffuseByCellularPotts`: full and partial partition diffusion with target areas, optional connectivity preservation, and region boundaries that prohibit cross-region copies.
+- `SplitDisconnectedCells`: split full or partial partitions into six-connected cells while preserving unassigned hexes.
 
 ## Documentation
 

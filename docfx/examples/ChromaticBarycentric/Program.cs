@@ -2,7 +2,6 @@ using Akeldov.Math.Hexes;
 using Akeldov.Math.Hexes.Chromatization;
 using Akeldov.Math.Hexes.Geometry;
 using Akeldov.Math.Hexes.Topology;
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -45,29 +44,55 @@ var partialWeights = new ChromaticBarycentricPartialTripletRaster(
 
 SpatialRaster<RGBA8BitColor> finiteImage = partialWeights.MapValues(ToFiniteRgb);
 
-// Extrapolate the boundary colors into samples without in-map hexes around them.
-VectorXYInt lastHex = geometry.Topology.Resolution - VectorXYInt.One;
+// Cache the centers and full colors of the actual hexes in the bounded map.
+var hexColors = new List<(VectorXY Center, RGBA8BitColor Color)>();
+for (int y = 0; y < geometry.Topology.Resolution.Y; y++)
+{
+    for (int x = 0; x < geometry.Topology.Resolution.X; x++)
+    {
+        var index = new VectorXYInt(x, y);
+        byte c = classes[index];
+        hexColors.Add((
+            index.GetHexCenter(geometry.Radius, geometry.Origin, geometry.Topology.Layout),
+            RGBA8BitColor.FromNormalized(
+                c == 0 ? 1f : 0f,
+                c == 1 ? 1f : 0f,
+                c == 2 ? 1f : 0f,
+                alpha: 1f)));
+    }
+}
+
+// Extrapolate only empty pixels using the nearest in-bounds hex center.
+int filledPixels = 0;
 for (int y = 0; y < sampling.Resolution.Y; y++)
 {
     for (int x = 0; x < sampling.Resolution.X; x++)
     {
-        PartialChromaticTriplet<float> sample = partialWeights[x, y];
-        if (sample.HasIndex0 || sample.HasIndex1 || sample.HasIndex2)
+        if (finiteImage[x, y].A != 0)
             continue;
 
-        int nearestClass = sampling.GetCellCenter(x, y)
-            .ToXYIndex(geometry.Radius, geometry.Origin, geometry.Topology.Layout)
-            .Clamp(VectorXYInt.Zero, lastHex)
-            .GetChromaticClass(geometry.Topology.Layout);
-        finiteImage[x, y] = RGBA8BitColor.FromNormalized(
-            nearestClass == 0 ? 1f : 0f,
-            nearestClass == 1 ? 1f : 0f,
-            nearestClass == 2 ? 1f : 0f,
-            alpha: 1f);
+        PointXY point = sampling.GetCellCenter(x, y);
+        float nearestDistanceSquared = float.PositiveInfinity;
+        RGBA8BitColor nearestColor = default;
+        foreach (var hex in hexColors)
+        {
+            float dx = point.X - hex.Center.X;
+            float dy = point.Y - hex.Center.Y;
+            float distanceSquared = dx * dx + dy * dy;
+            if (distanceSquared < nearestDistanceSquared)
+            {
+                nearestDistanceSquared = distanceSquared;
+                nearestColor = hex.Color;
+            }
+        }
+
+        finiteImage[x, y] = nearestColor;
+        filledPixels++;
     }
 }
 
 finiteImage.SaveAsPng(Path.GetFullPath("chromatic-barycentric-finite.png"));
+Console.WriteLine($"Filled {filledPixels} empty pixels with the nearest hex color.");
 
 static RGBA8BitColor ToFiniteRgb(PartialChromaticTriplet<float> w)
 {
