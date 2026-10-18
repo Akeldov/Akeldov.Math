@@ -12,7 +12,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         private readonly HexMapTopology _topology;
         private readonly int[] _owners;
         private readonly int[] _cellIds;
-        private readonly int[] _groupCellIndexes;
         private readonly int[] _activeSites;
         private readonly int[] _cellAreas;
         private readonly double[] _targetAreas;
@@ -25,7 +24,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         private readonly byte[] _neighborPresence;
 
         internal CellularPottsSimulation(HexMapTopology topology, int[] assignments, int[] ids,
-            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters, int[]? regions = null)
+            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters)
         {
             _topology = topology;
             _owners = assignments;
@@ -41,42 +40,16 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                     activeSites.Add(site);
             _activeSites = activeSites.ToArray();
 
-            if (regions == null)
-            {
-                _groupCellIndexes = new int[ids.Length];
-                for (int cell = 0; cell < ids.Length; cell++)
-                    _groupCellIndexes[cell] = cell;
-            }
-            else
-            {
-                // A cell has independent area and connectivity state in each participating region.
-                var groups = new Dictionary<(int Region, int Cell), int>();
-                var groupCells = new List<int>();
-                foreach (int site in _activeSites)
-                {
-                    int cell = assignments[site];
-                    var key = (regions[site], cell);
-                    if (!groups.TryGetValue(key, out int group))
-                    {
-                        group = groupCells.Count;
-                        groups.Add(key, group);
-                        groupCells.Add(cell);
-                    }
-                    assignments[site] = group;
-                }
-                _groupCellIndexes = groupCells.ToArray();
-            }
-
-            _cellAreas = new int[_groupCellIndexes.Length];
-            _targetAreas = new double[_groupCellIndexes.Length];
-            (_neighbors, _neighborCounts, _neighborPresence) = BuildNeighbors(topology, assignments, regions);
+            _cellAreas = new int[ids.Length];
+            _targetAreas = new double[ids.Length];
+            (_neighbors, _neighborCounts, _neighborPresence) = BuildNeighbors(topology, assignments);
 
             foreach (int owner in assignments)
                 if (owner >= 0)
                     _cellAreas[owner]++;
-            for (int group = 0; group < _groupCellIndexes.Length; group++)
-                _targetAreas[group] = targetAreas != null && targetAreas.TryGetValue(ids[_groupCellIndexes[group]], out float area)
-                    ? (double)area : _cellAreas[group];
+            for (int cell = 0; cell < ids.Length; cell++)
+                _targetAreas[cell] = targetAreas != null && targetAreas.TryGetValue(ids[cell], out float area)
+                    ? (double)area : _cellAreas[cell];
         }
 
         internal bool HasConnectedCells()
@@ -203,16 +176,13 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 
         private HexPartitionCell[] CreateCells()
         {
-            var areas = new int[_cellIds.Length];
-            for (int group = 0; group < _groupCellIndexes.Length; group++)
-                areas[_groupCellIndexes[group]] += _cellAreas[group];
             var groups = new List<VectorXYInt>[_cellIds.Length];
             for (int cell = 0; cell < groups.Length; cell++)
-                groups[cell] = new List<VectorXYInt>(areas[cell]);
+                groups[cell] = new List<VectorXYInt>(_cellAreas[cell]);
             int width = _topology.Resolution.X;
             for (int site = 0; site < _owners.Length; site++)
                 if (_owners[site] >= 0)
-                    groups[_groupCellIndexes[_owners[site]]].Add(new VectorXYInt(site % width, site / width));
+                    groups[_owners[site]].Add(new VectorXYInt(site % width, site / width));
 
             var cells = new HexPartitionCell[_cellIds.Length];
             for (int cell = 0; cell < cells.Length; cell++)
@@ -221,7 +191,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         }
 
         private static (int[] Neighbors, byte[] Counts, byte[] Presence) BuildNeighbors(
-            HexMapTopology topology, int[] assignments, int[]? regions)
+            HexMapTopology topology, int[] assignments)
         {
             int count = topology.Count;
             var neighbors = new int[checked(count * MaxNeighbors)];
@@ -248,7 +218,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                         if ((uint)nx < (uint)width && (uint)ny < (uint)height)
                         {
                             int neighbor = ny * width + nx;
-                            if (assignments[neighbor] < 0 || (regions != null && regions[neighbor] != regions[site]))
+                            if (assignments[neighbor] < 0)
                                 continue;
                             neighbors[site * MaxNeighbors + counts[site]++] = neighbor;
                             presence[site] |= (byte)(1 << direction);

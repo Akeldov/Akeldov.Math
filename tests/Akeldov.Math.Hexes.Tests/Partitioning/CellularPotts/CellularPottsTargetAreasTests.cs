@@ -4,12 +4,6 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.CellularPotts;
 
 [TestFixture(0)]
 [TestFixture(1)]
-[TestFixture(2)]
-[TestFixture(3)]
-[TestFixture(4)]
-[TestFixture(5)]
-[TestFixture(6)]
-[TestFixture(7)]
 public class CellularPottsTargetAreasTests
 {
     private readonly int _overload;
@@ -93,19 +87,10 @@ public class CellularPottsTargetAreasTests
         IReadOnlyDictionary<int, float>? targets, CellularPottsParameters parameters, Random random)
     {
         var partial = new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.Cells);
-        var mask = new BoolHexMap(full.Topology, Enumerable.Repeat(true, full.Topology.Count).ToArray());
-        var regions = new IntHexMap(full.Topology);
-        var nullable = new HexMap<int?>(full.Topology, Enumerable.Repeat((int?)0, full.Topology.Count).ToArray());
         return _overload switch
         {
             0 => new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.ApplyCellularPotts(targets, parameters, random).Cells),
-            1 => full.ApplyCellularPotts(mask, targets, parameters, random),
-            2 => full.ApplyCellularPotts(nullable, targets, parameters, random),
-            3 => full.ApplyCellularPotts(mask, regions, targets, parameters, random),
-            4 => partial.ApplyCellularPotts(targets, parameters, random),
-            5 => partial.ApplyCellularPotts(mask, targets, parameters, random),
-            6 => partial.ApplyCellularPotts(nullable, targets, parameters, random),
-            7 => partial.ApplyCellularPotts(mask, regions, targets, parameters, random),
+            1 => partial.ApplyCellularPotts(targets, parameters, random),
             _ => throw new ArgumentOutOfRangeException(nameof(_overload))
         };
     }

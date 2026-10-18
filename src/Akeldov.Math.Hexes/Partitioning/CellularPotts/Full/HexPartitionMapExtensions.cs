@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 {
-#pragma warning disable RS0026 // Full and partial overloads intentionally share an optional random generator.
+#pragma warning disable RS0026 // Target-area overloads intentionally share an optional random generator.
     /// <summary>Provides Cellular Potts evolution of hex partitions with optional connectivity preservation.</summary>
     public static partial class HexPartitionMapExtensions
     {
@@ -18,7 +18,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// The source map and its cells are unchanged.
         /// </returns>
         /// <remarks>
-        /// Target areas are the initial participating areas at the start of this call, separately within each region.
+        /// Target areas are the initial cell areas at the start of this call.
         /// In both modes, each attempt selects a uniformly random map hex and then a uniformly random
         /// edge-adjacent hex inside the map. The first hex may copy the second hex's identifier.
         /// Repeated neighboring identifiers retain their multiplicity; choosing the current identifier
@@ -62,7 +62,6 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <param name="targetAreas">
         /// Desired participating hex counts keyed by source cell identifier, or null to use initial areas.
         /// Missing identifiers use their initial participating area at the start of this call.
-        /// Each explicit value applies independently in every region where the cell is initially present.
         /// Values must be finite and between zero and int.MaxValue; fractional counts are allowed.
         /// Targets are soft energy preferences, not guaranteed final areas. The dictionary is neither modified
         /// nor retained; target values are captured before the first random draw.

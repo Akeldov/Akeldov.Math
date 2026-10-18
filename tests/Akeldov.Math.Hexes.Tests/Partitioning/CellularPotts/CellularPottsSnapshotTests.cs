@@ -23,11 +23,7 @@ public class CellularPottsSnapshotTests
         var parameters = new CellularPottsParameters(100, temperature: 1.5f, boundaryEnergy: 2, areaPenalty: 1, connectivity: connectivity);
         var result = source.ApplyCellularPotts(parameters, random: new Random(seed));
         string context = $"seed={seed}, connectivity={connectivity}";
-        var participation = new BoolHexMap(topology, Enumerable.Repeat(true, topology.Count).ToArray());
-        var regions = new IntHexMap(topology);
         var partialSource = new PartialHexPartitionMap<HexPartitionCell>(topology, source.Cells);
-        foreach (var masked in PartialCellularPottsTests.Variants(source, partialSource, participation, regions, parameters, true))
-            Assert.That(PartialCellularPottsTests.Values(masked), Is.EqualTo(CellularPottsTests.Values(result).Select(id => (int?)id)), context);
         Assert.That(PartialCellularPottsTests.Values(partialSource.ApplyCellularPotts(parameters, new Random(seed))),
             Is.EqualTo(CellularPottsTests.Values(result).Select(id => (int?)id)), context);
         if (connectivity == CellularPottsConnectivity.Preserve)

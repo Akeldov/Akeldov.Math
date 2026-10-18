@@ -9,8 +9,8 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
     /// The energy is J times the number of unlike, undirected neighbor pairs, plus
     /// lambda times the sum of (area - target area) squared over all cells.
     /// Areas are measured in participating hex counts; every eligible shared edge has unit length.
-    /// Masked applications omit excluded hexes and edges across region boundaries. With a region mask,
-    /// area penalties and connectivity are evaluated independently for each cell in each region.
+    /// Unassigned hexes in partial maps do not participate and contribute no edge energy.
+    /// Area penalties and connectivity are evaluated for each cell across the entire source map.
     /// Energy changes and acceptance probabilities are calculated in double precision.
     /// </remarks>
     public sealed class CellularPottsParameters
@@ -20,7 +20,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <param name="temperature">The finite, non-negative fluctuation temperature in energy units. Zero accepts only non-increasing energy changes.</param>
         /// <param name="boundaryEnergy">The finite, non-negative energy J per edge between different cells.</param>
         /// <param name="areaPenalty">The finite, non-negative quadratic area coefficient lambda, in energy units per squared hex count.</param>
-        /// <param name="connectivity">The connectivity policy. Defaults to preserving each non-empty participating cell as one six-connected component within each region.</param>
+        /// <param name="connectivity">The connectivity policy. Defaults to preserving each non-empty participating cell as one six-connected component across the source map.</param>
         /// <exception cref="ArgumentOutOfRangeException">A step count, energy parameter, or connectivity policy is outside its documented range.</exception>
         public CellularPottsParameters(
             int stepCount,
