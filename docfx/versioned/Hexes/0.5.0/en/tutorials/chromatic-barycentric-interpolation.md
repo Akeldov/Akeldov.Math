@@ -122,13 +122,36 @@ discrete class image is transparent. Complete weights still sum to approximately
 
 For contributions from in-map hexes only, use
 <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster>. Add the following
-after the example above:
+after the example above, and add `using Akeldov.Math.Hexes.Vectors.QRS;` at the top of the file:
 
 ```csharp
 var partialWeights = new ChromaticBarycentricPartialTripletRaster(
     geometry, sampling);
 
 SpatialRaster<RGBA8BitColor> finiteImage = partialWeights.MapValues(ToFiniteRgb);
+
+// Extrapolate the boundary colors into samples without in-map hexes around them.
+VectorXYInt lastHex = geometry.Topology.Resolution - VectorXYInt.One;
+for (int y = 0; y < sampling.Resolution.Y; y++)
+{
+    for (int x = 0; x < sampling.Resolution.X; x++)
+    {
+        PartialChromaticTriplet<float> sample = partialWeights[x, y];
+        if (sample.HasIndex0 || sample.HasIndex1 || sample.HasIndex2)
+            continue;
+
+        int nearestClass = sampling.GetCellCenter(x, y)
+            .ToXYIndex(geometry.Radius, geometry.Origin, geometry.Topology.Layout)
+            .Clamp(VectorXYInt.Zero, lastHex)
+            .GetChromaticClass(geometry.Topology.Layout);
+        finiteImage[x, y] = RGBA8BitColor.FromNormalized(
+            nearestClass == 0 ? 1f : 0f,
+            nearestClass == 1 ? 1f : 0f,
+            nearestClass == 2 ? 1f : 0f,
+            alpha: 1f);
+    }
+}
+
 finiteImage.SaveAsPng(Path.GetFullPath("chromatic-barycentric-finite.png"));
 
 static RGBA8BitColor ToFiniteRgb(PartialChromaticTriplet<float> w)
@@ -149,7 +172,10 @@ static RGBA8BitColor ToFiniteRgb(PartialChromaticTriplet<float> w)
 The partial raster permutes both weights and presence flags into class order. It does not
 renormalize the remaining weights. Dividing by their sum preserves the blend's intensity near
 the boundary; leaving missing contributions at zero instead makes the RGB image darker there.
-If no positive contribution remains, this example returns transparent black.
+If no positive contribution remains, `ToFiniteRgb` returns transparent black.
+
+In offset layouts, this happens in two corners of the bounding box: no in-map hex surrounds those
+samples. The loop paints them with the class color of the nearest map hex.
 
 Presence flags describe the surrounding hexes, not a pixel clipping mask. A sample just outside
 the finite map can still have an in-map neighbor. If an exact hex-shaped outline is required,
