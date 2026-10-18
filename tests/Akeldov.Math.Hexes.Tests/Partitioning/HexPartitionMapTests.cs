@@ -92,7 +92,7 @@ public class HexPartitionMapTests
     {
         var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(new PointXY(100f, 0f), 1f), new Site(centers[0], 1f) };
-        var map = centers.ToVoronoiHexPartitionMap(sites, new VoronoiHexPartitionParameters(emptyCellPolicy: policy));
+        var map = centers.PartitionByVoronoi(sites, new VoronoiHexPartitionParameters(emptyCellPolicy: policy));
         IHexPartitionMap<VoronoiHexPartitionCell> partition = map;
         IHexMap<int> idMap = partition;
         IReadOnlyList<VoronoiHexPartitionCell> typedCells = partition.Cells;
@@ -140,7 +140,7 @@ public class HexPartitionMapTests
         var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(centers[0], 1f) };
         var mask = new BoolHexMap(centers.Topology, new[] { true, false });
-        var map = centers.ToPartialVoronoiHexPartitionMap(mask, sites);
+        var map = centers.PartitionByVoronoi(mask, sites);
 
         Assert.That(map, Is.Not.InstanceOf<IHexPartitionMap<IHexPartitionCell>>());
         Assert.That(map[1], Is.Null);

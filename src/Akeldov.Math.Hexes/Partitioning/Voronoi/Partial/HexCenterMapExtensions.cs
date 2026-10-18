@@ -33,7 +33,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no participating hexes.
         /// </exception>
-        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
             IReadOnlyList<Site> sites,
@@ -83,7 +83,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// A participating hex has no eligible site in its region, or the empty-cell policy requires throwing.
         /// </exception>
-        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IHexMap<int?> regionsMask,
             IReadOnlyList<Site> sites,
@@ -150,7 +150,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// A participating hex has no eligible site in its region, or the final partition contains an
         /// empty cell when the empty-cell policy requires throwing.
         /// </exception>
-        public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
+        public static PartialVoronoiHexPartitionMap PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,

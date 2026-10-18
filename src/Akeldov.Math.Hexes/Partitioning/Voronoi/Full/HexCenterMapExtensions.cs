@@ -29,7 +29,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
         /// </exception>
-        public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static VoronoiHexPartitionMap PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             VoronoiHexPartitionParameters? parameters = null)
@@ -72,7 +72,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
         /// A zero-weight site is eligible only at its position within the geometry tolerance.
         /// </exception>
-        public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
+        public static VoronoiHexPartitionMap PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IHexMap<int> regionsMask,
             IReadOnlyList<Site> sites,

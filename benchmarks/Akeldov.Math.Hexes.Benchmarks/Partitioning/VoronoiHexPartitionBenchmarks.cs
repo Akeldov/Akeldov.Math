@@ -88,35 +88,35 @@ public class VoronoiHexPartitionBenchmarks
     [Benchmark]
     public VoronoiHexPartitionMap Partition()
     {
-        return _centers.ToVoronoiHexPartitionMap(
+        return _centers.PartitionByVoronoi(
             _sites, _parameters);
     }
 
     [Benchmark]
     public VoronoiHexPartitionMap PartitionByRegions()
     {
-        return _centers.ToVoronoiHexPartitionMap(
+        return _centers.PartitionByVoronoi(
             _regions, _sites, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionParticipatingHexes()
     {
-        return _centers.ToPartialVoronoiHexPartitionMap(
+        return _centers.PartitionByVoronoi(
             _participation, _sites, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionNullableRegions()
     {
-        return _centers.ToPartialVoronoiHexPartitionMap(
+        return _centers.PartitionByVoronoi(
             _nullableRegions, _sites, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionParticipatingHexesByRegions()
     {
-        return _centers.ToPartialVoronoiHexPartitionMap(
+        return _centers.PartitionByVoronoi(
             _participation, _regions, _sites, _parameters);
     }
 }
