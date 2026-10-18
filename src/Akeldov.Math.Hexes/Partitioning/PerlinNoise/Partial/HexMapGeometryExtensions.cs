@@ -9,13 +9,14 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
     {
         /// <summary>Partitions participating hexes into ordered noise bands with approximately the requested area shares.</summary>
         /// <param name="geometry">The geometry whose world-space hex centers are sampled.</param>
+        /// <param name="participationMask">A Boolean map with the same topology as the geometry. Only true hexes participate.</param>
         /// <param name="targets">
         /// A non-empty ordered list of unique territory identifiers and relative area shares.
         /// At least one share must be positive. List order determines bands from low to high noise.
         /// Zero-share targets remain empty.
         /// </param>
-        /// <param name="participationMask">A Boolean map with the same topology as the geometry. Only true hexes participate.</param>
-        /// <param name="parameters">The immutable noise generator settings, including seed and world-space scale.</param>
+        /// <param name="parameters">The immutable noise generator settings, including world-space scale.</param>
+        /// <param name="seed">The deterministic noise generator seed.</param>
         /// <returns>
         /// A new mutable partial partition map owned by the caller, retaining the geometry.
         /// Participating hexes belong to exactly one territory; excluded hexes contain null identifiers.
@@ -40,9 +41,10 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// </exception>
         public static PartialPerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
             this HexMapGeometry geometry,
-            IReadOnlyList<PerlinNoisePartitionTarget> targets,
             IHexMap<bool> participationMask,
-            PerlinNoisePartitionParameters parameters)
+            IReadOnlyList<PerlinNoisePartitionTarget> targets,
+            PerlinNoisePartitionParameters parameters,
+            int seed)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
@@ -58,23 +60,24 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
                 participationFlags[i] = participationMask[i];
 
             var noise = geometry.CreatePerlinNoise(
-                parameters.Seed, parameters.Scale, parameters.Octaves,
+                seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
             return new PartialPerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise, participationFlags));
         }
 
         /// <summary>Partitions hexes with non-null region identifiers into Perlin-noise bands independently within each region.</summary>
         /// <param name="geometry">The geometry whose world-space hex centers are sampled.</param>
+        /// <param name="regionsMask">
+        /// Region identifiers with the same topology as the geometry. Null excludes a hex.
+        /// Equal values identify the same region, including disconnected hexes; zero and negative values are valid.
+        /// </param>
         /// <param name="targets">
         /// A non-empty ordered list of unique territory identifiers and relative area shares, applied to every region.
         /// At least one share must be positive. List order determines bands from low to high noise.
         /// Zero-share targets remain empty.
         /// </param>
-        /// <param name="regionsMask">
-        /// Region identifiers with the same topology as the geometry. Null excludes a hex.
-        /// Equal values identify the same region, including disconnected hexes; zero and negative values are valid.
-        /// </param>
-        /// <param name="parameters">The immutable noise generator settings, including seed and world-space scale.</param>
+        /// <param name="parameters">The immutable noise generator settings, including world-space scale.</param>
+        /// <param name="seed">The deterministic noise generator seed.</param>
         /// <returns>
         /// A new mutable partial partition map owned by the caller, retaining the geometry.
         /// Excluded hexes contain null identifiers. New read-only cell snapshots retain all target identifiers
@@ -97,9 +100,10 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
         public static PartialPerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
             this HexMapGeometry geometry,
-            IReadOnlyList<PerlinNoisePartitionTarget> targets,
             IHexMap<int?> regionsMask,
-            PerlinNoisePartitionParameters parameters)
+            IReadOnlyList<PerlinNoisePartitionTarget> targets,
+            PerlinNoisePartitionParameters parameters,
+            int seed)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
@@ -119,25 +123,26 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             }
 
             var noise = geometry.CreatePerlinNoise(
-                parameters.Seed, parameters.Scale, parameters.Octaves,
+                seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
             return new PartialPerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise, participationFlags, regions));
         }
 
         /// <summary>Partitions participating hexes into Perlin-noise bands independently within each mask region.</summary>
         /// <param name="geometry">The geometry whose world-space hex centers are sampled.</param>
-        /// <param name="targets">
-        /// A non-empty ordered list of unique territory identifiers and relative area shares, applied to every region.
-        /// At least one share must be positive. List order determines bands from low to high noise.
-        /// Zero-share targets remain empty.
-        /// </param>
         /// <param name="participationMask">A Boolean map with the same topology as the geometry. Only true hexes participate.</param>
         /// <param name="regionsMask">
         /// Region identifiers with the same topology as the geometry. Equal values identify the same region,
         /// including disconnected hexes. All integer values, including zero and negative values, are valid.
         /// Region values at excluded hexes have no effect on the result.
         /// </param>
-        /// <param name="parameters">The immutable noise generator settings, including seed and world-space scale.</param>
+        /// <param name="targets">
+        /// A non-empty ordered list of unique territory identifiers and relative area shares, applied to every region.
+        /// At least one share must be positive. List order determines bands from low to high noise.
+        /// Zero-share targets remain empty.
+        /// </param>
+        /// <param name="parameters">The immutable noise generator settings, including world-space scale.</param>
+        /// <param name="seed">The deterministic noise generator seed.</param>
         /// <returns>
         /// A new mutable partial partition map owned by the caller, retaining the geometry.
         /// Excluded hexes contain null identifiers. New read-only cell snapshots retain all target identifiers
@@ -160,10 +165,11 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
         public static PartialPerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
             this HexMapGeometry geometry,
-            IReadOnlyList<PerlinNoisePartitionTarget> targets,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
-            PerlinNoisePartitionParameters parameters)
+            IReadOnlyList<PerlinNoisePartitionTarget> targets,
+            PerlinNoisePartitionParameters parameters,
+            int seed)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
@@ -187,7 +193,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             }
 
             var noise = geometry.CreatePerlinNoise(
-                parameters.Seed, parameters.Scale, parameters.Octaves,
+                seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
             return new PartialPerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise, participationFlags, regions));
         }

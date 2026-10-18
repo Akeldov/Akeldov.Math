@@ -9,10 +9,9 @@ public class PerlinNoisePartitionParametersTests
     [Test]
     public void Constructor_DefaultsMatchNoiseGenerator()
     {
-        var parameters = new PerlinNoisePartitionParameters(42, 7f);
+        var parameters = new PerlinNoisePartitionParameters(7f);
         Assert.Multiple(() =>
         {
-            Assert.That(parameters.Seed, Is.EqualTo(42));
             Assert.That(parameters.Scale, Is.EqualTo(7f));
             Assert.That(parameters.Octaves, Is.EqualTo(4));
             Assert.That(parameters.Persistence, Is.EqualTo(0.5f));
@@ -28,24 +27,24 @@ public class PerlinNoisePartitionParametersTests
     public void Constructor_InvalidNoiseSettingsAreRejected(float value)
     {
         Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new PerlinNoisePartitionParameters(42, value))!.ParamName, Is.EqualTo("scale"));
+            new PerlinNoisePartitionParameters(value))!.ParamName, Is.EqualTo("scale"));
         Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new PerlinNoisePartitionParameters(42, 7f, persistence: value))!.ParamName, Is.EqualTo("persistence"));
+            new PerlinNoisePartitionParameters(7f, persistence: value))!.ParamName, Is.EqualTo("persistence"));
         Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new PerlinNoisePartitionParameters(42, 7f, lacunarity: value))!.ParamName, Is.EqualTo("lacunarity"));
+            new PerlinNoisePartitionParameters(7f, lacunarity: value))!.ParamName, Is.EqualTo("lacunarity"));
     }
 
     [Test]
     public void Constructor_EnforcesBoundsAndAcceptsBoundaryValues()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0, 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0, 1, octaves: 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0, 1, persistence: 1.01f));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0, 1, lacunarity: 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0, 1, offset: new VectorXY(float.NaN, 0)));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0, 1, offset: new VectorXY(0, float.PositiveInfinity)));
-        Assert.DoesNotThrow(() => new PerlinNoisePartitionParameters(int.MinValue, float.Epsilon, 1, 0, float.Epsilon));
-        Assert.DoesNotThrow(() => new PerlinNoisePartitionParameters(int.MaxValue, float.MaxValue, 1, 1, float.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(1, octaves: 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(1, persistence: 1.01f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(1, lacunarity: 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(1, offset: new VectorXY(float.NaN, 0)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PerlinNoisePartitionParameters(1, offset: new VectorXY(0, float.PositiveInfinity)));
+        Assert.DoesNotThrow(() => new PerlinNoisePartitionParameters(float.Epsilon, 1, 0, float.Epsilon));
+        Assert.DoesNotThrow(() => new PerlinNoisePartitionParameters(float.MaxValue, 1, 1, float.MaxValue));
     }
 
     [Test]
@@ -56,8 +55,8 @@ public class PerlinNoisePartitionParametersTests
         var mask = new BoolHexMap(geometry.Topology);
 
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
-            geometry.ToPerlinNoiseHexPartitionMap(targets, null!))!.ParamName, Is.EqualTo("parameters"));
+            geometry.ToPerlinNoiseHexPartitionMap(targets, null!, seed: 42))!.ParamName, Is.EqualTo("parameters"));
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
-            geometry.ToPerlinNoiseHexPartitionMap(targets, mask, null!))!.ParamName, Is.EqualTo("parameters"));
+            geometry.ToPerlinNoiseHexPartitionMap(mask, targets, null!, seed: 42))!.ParamName, Is.EqualTo("parameters"));
     }
 }

@@ -51,7 +51,7 @@ public class VoronoiHexPartitionParametersTests
         foreach (var partition in new[]
         {
             centers.ToVoronoiHexPartitionMap(sites, parameters: null),
-            centers.ToVoronoiHexPartitionMap(sites, regions, parameters: null)
+            centers.ToVoronoiHexPartitionMap(regions, sites, parameters: null)
         })
         {
             Assert.That(partition.Cells, Has.Count.EqualTo(2));
@@ -59,9 +59,9 @@ public class VoronoiHexPartitionParametersTests
         }
         foreach (var partition in new[]
         {
-            centers.ToPartialVoronoiHexPartitionMap(sites, participation, parameters: null),
-            centers.ToPartialVoronoiHexPartitionMap(sites, nullableRegions, parameters: null),
-            centers.ToPartialVoronoiHexPartitionMap(sites, participation, regions, parameters: null)
+            centers.ToPartialVoronoiHexPartitionMap(participation, sites, parameters: null),
+            centers.ToPartialVoronoiHexPartitionMap(nullableRegions, sites, parameters: null),
+            centers.ToPartialVoronoiHexPartitionMap(participation, regions, sites, parameters: null)
         })
         {
             Assert.That(partition.Cells, Has.Count.EqualTo(2));

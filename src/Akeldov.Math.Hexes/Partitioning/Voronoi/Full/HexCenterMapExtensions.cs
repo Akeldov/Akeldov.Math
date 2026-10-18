@@ -52,12 +52,12 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// with empty-cell handling.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
-        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="regionsMask">
         /// The map of region identifiers with the same topology as <paramref name="hexCenters"/>.
         /// Equal values identify the same region, including disconnected hexes. All integer values,
         /// including zero and negative values, are valid region identifiers; no hexes are excluded.
         /// </param>
+        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>
         /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
@@ -74,8 +74,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public static VoronoiHexPartitionMap ToVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
-            IReadOnlyList<Site> sites,
             IHexMap<int> regionsMask,
+            IReadOnlyList<Site> sites,
             VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)

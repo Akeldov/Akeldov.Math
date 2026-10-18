@@ -14,7 +14,8 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// At least one share must be positive. List order determines the bands from low to high noise;
         /// it does not have to match identifier order. Zero-share targets remain empty.
         /// </param>
-        /// <param name="parameters">The immutable noise generator settings, including seed and world-space scale.</param>
+        /// <param name="parameters">The immutable noise generator settings, including world-space scale.</param>
+        /// <param name="seed">The deterministic noise generator seed.</param>
         /// <returns>
         /// A new mutable partition map owned by the caller that retains the geometry. Each hex belongs to exactly one territory type.
         /// New cell snapshots retain all identifiers in input order, including empty territories;
@@ -42,7 +43,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         ///         new PerlinNoisePartitionTarget(42, 0.5),
         ///         new PerlinNoisePartitionTarget(99, 0.3)
         ///     },
-        ///     new PerlinNoisePartitionParameters(seed: 42, scale: 12f));
+        ///     new PerlinNoisePartitionParameters(scale: 12f), seed: 42);
         /// </code>
         /// </example>
         /// <exception cref="ArgumentNullException">The target list or parameters are null.</exception>
@@ -51,14 +52,15 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         public static PerlinNoiseHexPartitionMap ToPerlinNoiseHexPartitionMap(
             this HexMapGeometry geometry,
             IReadOnlyList<PerlinNoisePartitionTarget> targets,
-            PerlinNoisePartitionParameters parameters)
+            PerlinNoisePartitionParameters parameters,
+            int seed)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
             var partitioner = new PerlinNoiseHexPartitioner(targets);
             var noise = geometry.CreatePerlinNoise(
-                parameters.Seed, parameters.Scale, parameters.Octaves,
+                seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
             return new PerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise));
         }

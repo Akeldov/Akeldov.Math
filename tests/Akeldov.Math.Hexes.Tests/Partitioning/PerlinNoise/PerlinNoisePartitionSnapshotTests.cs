@@ -39,15 +39,15 @@ public class PerlinNoisePartitionSnapshotTests
             mask[new VectorXYInt(x, y)] = (ellipse && !hole && !channel) || island;
         }
 
-        var parameters = new PerlinNoisePartitionParameters(seed, scale);
+        var parameters = new PerlinNoisePartitionParameters(scale);
         var regions = new IntHexMap(geometry.Topology, Enumerable.Repeat(-7, geometry.Topology.Count).ToArray());
         var nullableRegions = new HexMap<int?>(geometry.Topology,
             Enumerable.Range(0, geometry.Topology.Count).Select(i => mask[i] ? (int?)-7 : null).ToArray());
         var partition = maskKind switch
         {
-            0 => geometry.ToPerlinNoiseHexPartitionMap(targets, mask, parameters),
-            1 => geometry.ToPerlinNoiseHexPartitionMap(targets, nullableRegions, parameters),
-            2 => geometry.ToPerlinNoiseHexPartitionMap(targets, mask, regions, parameters),
+            0 => geometry.ToPerlinNoiseHexPartitionMap(mask, targets, parameters, seed: seed),
+            1 => geometry.ToPerlinNoiseHexPartitionMap(nullableRegions, targets, parameters, seed: seed),
+            2 => geometry.ToPerlinNoiseHexPartitionMap(mask, regions, targets, parameters, seed: seed),
             _ => throw new ArgumentOutOfRangeException(nameof(maskKind))
         };
 
@@ -91,7 +91,7 @@ public class PerlinNoisePartitionSnapshotTests
             new PerlinNoisePartitionTarget(42, 0.5),
             new PerlinNoisePartitionTarget(99, 0.2)
         };
-        var source = new HexMapGeometry(topology, 1f).ToPerlinNoiseHexPartitionMap(targets, new PerlinNoisePartitionParameters(seed, scale: 18f));
+        var source = new HexMapGeometry(topology, 1f).ToPerlinNoiseHexPartitionMap(targets, new PerlinNoisePartitionParameters(scale: 18f), seed: seed);
 
         var result = source.SplitDisconnectedCells();
 
@@ -139,7 +139,7 @@ public class PerlinNoisePartitionSnapshotTests
         var geometry = worldSpace
             ? new HexMapGeometry(topology, new VectorXY(-30f, 50f), 2.5f)
             : new HexMapGeometry(topology, 1f);
-        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, new PerlinNoisePartitionParameters(seed: 42, scale: worldSpace ? 45f : 18f));
+        var partition = geometry.ToPerlinNoiseHexPartitionMap(targets, new PerlinNoisePartitionParameters(scale: worldSpace ? 45f : 18f), seed: 42);
         foreach (var cell in partition.Cells)
             TestContext.WriteLine($"Territory {cell.Id}: {cell.HexIndexes.Count}/{topology.Count} hexes");
 

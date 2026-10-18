@@ -96,27 +96,27 @@ public class VoronoiHexPartitionBenchmarks
     public VoronoiHexPartitionMap PartitionByRegions()
     {
         return _centers.ToVoronoiHexPartitionMap(
-            _sites, _regions, _parameters);
+            _regions, _sites, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionParticipatingHexes()
     {
         return _centers.ToPartialVoronoiHexPartitionMap(
-            _sites, _participation, _parameters);
+            _participation, _sites, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionNullableRegions()
     {
         return _centers.ToPartialVoronoiHexPartitionMap(
-            _sites, _nullableRegions, _parameters);
+            _nullableRegions, _sites, _parameters);
     }
 
     [Benchmark]
     public PartialVoronoiHexPartitionMap PartitionParticipatingHexesByRegions()
     {
         return _centers.ToPartialVoronoiHexPartitionMap(
-            _sites, _participation, _regions, _parameters);
+            _participation, _regions, _sites, _parameters);
     }
 }

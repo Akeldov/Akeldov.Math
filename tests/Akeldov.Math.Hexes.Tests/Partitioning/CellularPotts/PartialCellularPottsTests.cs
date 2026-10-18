@@ -15,7 +15,7 @@ public class PartialCellularPottsTests
         var mask = new HexMap<int?>(geometry.Topology,
             Enumerable.Range(0, geometry.Topology.Count).Select(i => i % 15 == 7 ? null : (int?)(i % 15 < 7 ? -7 : 0)).ToArray());
         var targets = new[] { new PerlinNoisePartitionTarget(7, 1), new PerlinNoisePartitionTarget(42, 1) };
-        var source = geometry.ToPerlinNoiseHexPartitionMap(targets, mask, new PerlinNoisePartitionParameters(42, 7));
+        var source = geometry.ToPerlinNoiseHexPartitionMap(mask, targets, new PerlinNoisePartitionParameters(7), seed: 42);
         var before = Enumerable.Range(0, geometry.Topology.Count).Select(i => source[i]).ToArray();
 
         var result = source.ApplyCellularPotts(mask,

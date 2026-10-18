@@ -140,7 +140,7 @@ public class HexPartitionMapTests
         var centers = new HexCenterMap(new HexMapGeometry(2, 1, VectorXY.Zero, 1f, Layout.OddR));
         var sites = new[] { new Site(centers[0], 1f) };
         var mask = new BoolHexMap(centers.Topology, new[] { true, false });
-        var map = centers.ToPartialVoronoiHexPartitionMap(sites, mask);
+        var map = centers.ToPartialVoronoiHexPartitionMap(mask, sites);
 
         Assert.That(map, Is.Not.InstanceOf<IHexPartitionMap<IHexPartitionCell>>());
         Assert.That(map[1], Is.Null);

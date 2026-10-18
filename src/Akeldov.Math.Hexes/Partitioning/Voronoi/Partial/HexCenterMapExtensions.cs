@@ -20,10 +20,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// Assigns participating hex centers to their nearest weighted Voronoi site with empty-cell handling.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
-        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="participationMask">
         /// The Boolean map that indicates which hex centers participate in the partition.
         /// </param>
+        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>
         /// A new mutable partial hex partition map with nullable per-hex cell identifiers and a read-only semantic cell list.
@@ -35,8 +35,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
-            IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
+            IReadOnlyList<Site> sites,
             VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)
@@ -67,11 +67,11 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// with empty-cell handling.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
-        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="regionsMask">
         /// Region identifiers with the same topology as the center map. Null excludes a hex;
         /// all integer values, including zero and negative values, identify participating regions.
         /// </param>
+        /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>A new mutable partial partition map with a read-only semantic cell list. Excluded hexes return null.</returns>
         /// <remarks>
@@ -85,8 +85,8 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
-            IReadOnlyList<Site> sites,
             IHexMap<int?> regionsMask,
+            IReadOnlyList<Site> sites,
             VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)
@@ -129,9 +129,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// applying centroid relaxation before empty-cell and exclave handling.
         /// </summary>
         /// <param name="hexCenters">The hex center map to partition.</param>
-        /// <param name="sites">The initial Voronoi sites; their weights and input values are preserved.</param>
         /// <param name="participationMask">The Boolean map indicating which hex centers participate.</param>
         /// <param name="regionsMask">Region identifiers with the same topology as the center map.</param>
+        /// <param name="sites">The initial Voronoi sites; their weights and input values are preserved.</param>
         /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>A new mutable partial partition map with a read-only semantic cell list. Excluded hexes return null.</returns>
         /// <remarks>
@@ -152,9 +152,9 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// </exception>
         public static PartialVoronoiHexPartitionMap ToPartialVoronoiHexPartitionMap(
             this HexCenterMap hexCenters,
-            IReadOnlyList<Site> sites,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
+            IReadOnlyList<Site> sites,
             VoronoiHexPartitionParameters? parameters = null)
         {
             if (hexCenters == null)
