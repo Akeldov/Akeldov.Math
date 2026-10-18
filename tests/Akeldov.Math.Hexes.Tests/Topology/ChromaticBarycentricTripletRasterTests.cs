@@ -72,6 +72,11 @@ public class ChromaticBarycentricTripletRasterTests
         for (int index = 0; index < rasterGeometry.Resolution.X * rasterGeometry.Resolution.Y; index++)
         {
             PartialTriplet<float> barycentric = barycentricGrid[index];
+
+            // Samples without surrounding map hexes fall back to the nearest map hex; see the corner notch tests.
+            if (barycentric.Presence == TripletPresence.None)
+                continue;
+
             Triplet<byte> chromaticIndices = chromaticIndexGrid[index];
             PartialChromaticTriplet<float> actual = grid[index];
             (float Coordinate, bool IsPresent) expected0 = GetCoordinate(0, barycentric, chromaticIndices);
@@ -92,6 +97,69 @@ public class ChromaticBarycentricTripletRasterTests
         }
 
         Assert.That(foundPartialValue, Is.True, $"{layout} did not exercise a partial triplet.");
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void PartialValues_InsideMapBoundingBox_AreNeverEmpty(Layout layout)
+    {
+        var hexMapGeometry = new HexMapGeometry(5, 4, 1f, layout);
+        var grid = new ChromaticBarycentricPartialTripletRaster(hexMapGeometry, hexMapGeometry.ToRasterGeometry(8f));
+
+        for (int index = 0; index < grid.Resolution.X * grid.Resolution.Y; index++)
+            Assert.That(grid[index].Presence, Is.Not.EqualTo(ChromaticTripletPresence.None), $"{layout}, cell {index}");
+    }
+
+    // Each case samples a bounding-box corner notch of a 5x4 map, next to the corner hex in the comment.
+    [TestCase(Layout.OddR, true, false, ChromaticTripletPresence.Index1)] // Hex (4, 0).
+    [TestCase(Layout.OddR, false, true, ChromaticTripletPresence.Index2)] // Hex (0, 3).
+    [TestCase(Layout.EvenR, false, false, ChromaticTripletPresence.Index0)] // Hex (0, 0).
+    [TestCase(Layout.EvenR, true, true, ChromaticTripletPresence.Index2)] // Hex (4, 3).
+    [TestCase(Layout.OddQ, false, true, ChromaticTripletPresence.Index0)] // Hex (0, 3).
+    [TestCase(Layout.OddQ, true, true, ChromaticTripletPresence.Index0)] // Hex (4, 3).
+    [TestCase(Layout.EvenQ, false, false, ChromaticTripletPresence.Index0)] // Hex (0, 0).
+    [TestCase(Layout.EvenQ, true, false, ChromaticTripletPresence.Index0)] // Hex (4, 0).
+    public void PartialValues_InBoundingBoxCornerNotches_UseNearestMapHexWithFullWeight(
+        Layout layout,
+        bool isRightCorner,
+        bool isTopCorner,
+        ChromaticTripletPresence expectedPresence)
+    {
+        var hexMapGeometry = new HexMapGeometry(5, 4, 1f, layout);
+        var grid = new ChromaticBarycentricPartialTripletRaster(hexMapGeometry, hexMapGeometry.ToRasterGeometry(8f));
+
+        PartialChromaticTriplet<float> actual = grid[
+            isRightCorner ? grid.Resolution.X - 1 : 0,
+            isTopCorner ? grid.Resolution.Y - 1 : 0];
+        float presentWeight = expectedPresence switch
+        {
+            ChromaticTripletPresence.Index0 => actual.Index0,
+            ChromaticTripletPresence.Index1 => actual.Index1,
+            _ => actual.Index2,
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(actual.Presence, Is.EqualTo(expectedPresence));
+            Assert.That(presentWeight, Is.EqualTo(1f));
+        });
+    }
+
+    [Test]
+    public void PartialValues_OutsideMapBoundingBox_StayEmpty()
+    {
+        var hexMapGeometry = new HexMapGeometry(5, 4, 1f, Layout.OddR);
+        var grid = new ChromaticBarycentricPartialTripletRaster(
+            hexMapGeometry,
+            hexMapGeometry.ToRasterGeometry(8f, margin: 2f));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(grid[0, 0].Presence, Is.EqualTo(ChromaticTripletPresence.None));
+            Assert.That(grid[grid.Resolution.X - 1, grid.Resolution.Y - 1].Presence, Is.EqualTo(ChromaticTripletPresence.None));
+        });
     }
 
     [Test]
