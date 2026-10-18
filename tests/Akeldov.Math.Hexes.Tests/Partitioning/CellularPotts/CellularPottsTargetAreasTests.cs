@@ -5,6 +5,7 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.CellularPotts;
 [TestFixture(0)]
 [TestFixture(1)]
 [TestFixture(2)]
+[TestFixture(3)]
 public class CellularPottsTargetAreasTests
 {
     private readonly int _overload;
@@ -93,6 +94,8 @@ public class CellularPottsTargetAreasTests
             0 => new PartialHexPartitionMap<HexPartitionCell>(full.Topology, full.ApplyCellularPotts(targets, parameters, random).Cells),
             1 => partial.ApplyCellularPotts(targets, parameters, random),
             2 => partial.ApplyCellularPotts(new HexMap<int>(full.Topology), targets, parameters, random),
+            3 => new PartialHexPartitionMap<HexPartitionCell>(full.Topology,
+                full.ApplyCellularPotts(new HexMap<int>(full.Topology), targets, parameters, random).Cells),
             _ => throw new ArgumentOutOfRangeException(nameof(_overload))
         };
     }

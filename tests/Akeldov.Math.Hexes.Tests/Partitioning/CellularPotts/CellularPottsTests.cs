@@ -6,6 +6,88 @@ namespace Akeldov.Math.Hexes.Tests.Partitioning.CellularPotts;
 
 public class CellularPottsTests
 {
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Apply_RegionsForbidCopiesAcrossBorders(bool explicitTargets)
+    {
+        var source = Partition(new HexMapTopology(2, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
+        var regions = new HexMap<int>(source.Topology, new[] { int.MinValue, int.MaxValue });
+        var parameters = new CellularPottsParameters(5, 0, 0, 0, CellularPottsConnectivity.None);
+        var targets = new Dictionary<int, float> { [7] = 0, [42] = 2 };
+        var blocked = explicitTargets
+            ? source.ApplyCellularPotts(regions, targets, parameters, new FixedAttemptRandom(0, 0))
+            : source.ApplyCellularPotts(regions, parameters, new FixedAttemptRandom(0, 0));
+
+        Assert.That(Values(blocked), Is.EqualTo(new[] { 7, 42 }));
+        Assert.That(regions[0], Is.EqualTo(int.MinValue));
+        Assert.That(regions[1], Is.EqualTo(int.MaxValue));
+        regions[1] = int.MinValue;
+        var allowed = explicitTargets
+            ? source.ApplyCellularPotts(regions, targets, parameters, new FixedAttemptRandom(0, 0))
+            : source.ApplyCellularPotts(regions, parameters, new FixedAttemptRandom(0, 0));
+        Assert.That(Values(allowed), Is.EqualTo(new[] { 42, 42 }));
+        Assert.That(Values(source), Is.EqualTo(new[] { 7, 42 }));
+    }
+
+    [TestCase(Layout.OddR, CellularPottsConnectivity.Preserve)]
+    [TestCase(Layout.EvenR, CellularPottsConnectivity.Preserve)]
+    [TestCase(Layout.OddQ, CellularPottsConnectivity.Preserve)]
+    [TestCase(Layout.EvenQ, CellularPottsConnectivity.Preserve)]
+    [TestCase(Layout.OddR, CellularPottsConnectivity.None)]
+    [TestCase(Layout.EvenR, CellularPottsConnectivity.None)]
+    [TestCase(Layout.OddQ, CellularPottsConnectivity.None)]
+    [TestCase(Layout.EvenQ, CellularPottsConnectivity.None)]
+    public void Apply_RegionsMatchPartialEvolution(Layout layout, CellularPottsConnectivity connectivity)
+    {
+        var source = Partition(new HexMapTopology(12, 8, layout), p => p.X < 6 ? 7 : 42, 7, 42, 99);
+        var partial = new PartialHexPartitionMap<HexPartitionCell>(source.Topology, source.Cells);
+        var regions = new HexMap<int>(source.Topology,
+            Enumerable.Range(0, source.Topology.Count).Select(i => i / 12 < 4 ? -7 : 0).ToArray());
+        var parameters = new CellularPottsParameters(10, 5, 2, 0.5f, connectivity);
+        var targets = new Dictionary<int, float> { [7] = 40, [42] = 56 };
+        var results = new[]
+        {
+            source.ApplyCellularPotts(regions, parameters, new Random(42)),
+            source.ApplyCellularPotts(regions, targets, parameters, new Random(42))
+        };
+        var expected = new[]
+        {
+            partial.ApplyCellularPotts(regions, parameters, new Random(42)),
+            partial.ApplyCellularPotts(regions, targets, parameters, new Random(42))
+        };
+        for (int i = 0; i < results.Length; i++)
+        {
+            Assert.That(Values(results[i]).Select(id => (int?)id), Is.EqualTo(PartialCellularPottsTests.Values(expected[i])));
+            Assert.That(results[i].Cells.Select(c => c.Id), Is.EqualTo(new[] { 7, 42, 99 }));
+            foreach (var cell in results[i].Cells)
+                Assert.That(cell.HexIndexes, Is.EqualTo(expected[i].Cells.Single(c => c.Id == cell.Id).HexIndexes));
+        }
+        Assert.That(Values(source), Is.EqualTo(Enumerable.Range(0, source.Topology.Count).Select(i => i % 12 < 6 ? 7 : 42)));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Apply_RegionsValidateArgumentsAndSource(bool explicitTargets)
+    {
+        var source = Partition(new HexMapTopology(3, 2, Layout.OddR), _ => 7, 7);
+        var regions = new HexMap<int>(source.Topology);
+        var parameters = new CellularPottsParameters(0);
+
+        HexPartitionMap<HexPartitionCell> Apply(HexPartitionMap<HexPartitionCell> partition,
+            HexMap<int> regionMap, CellularPottsParameters settings) => explicitTargets
+            ? partition.ApplyCellularPotts(regionMap, new Dictionary<int, float> { [7] = 6 }, settings)
+            : partition.ApplyCellularPotts(regionMap, settings);
+
+        Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(null!, regions, parameters))!.ParamName, Is.EqualTo("partition"));
+        Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(source, null!, parameters))!.ParamName, Is.EqualTo("regions"));
+        Assert.That(Assert.Throws<ArgumentNullException>(() => Apply(source, regions, null!))!.ParamName, Is.EqualTo("parameters"));
+        foreach (var other in new[] { new HexMapTopology(2, 3, Layout.OddR), new HexMapTopology(3, 2, Layout.EvenR) })
+            Assert.That(Assert.Throws<ArgumentException>(() => Apply(source, new HexMap<int>(other), parameters))!.ParamName, Is.EqualTo("regions"));
+
+        source[0] = 42;
+        Assert.That(Assert.Throws<ArgumentException>(() => Apply(source, regions, parameters))!.ParamName, Is.EqualTo("partition"));
+    }
+
     [TestCase(Layout.OddR)]
     [TestCase(Layout.EvenR)]
     [TestCase(Layout.OddQ)]
