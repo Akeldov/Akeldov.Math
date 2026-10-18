@@ -22,15 +22,15 @@ public class CellularPottsPropertyFuzzTests
                 p => p.X < 2 || p == tip || p == root ? 7 : p.X < 6 ? 42 : 99, 7, 42, 99);
             Assert.That(tip.GetAdjacents(layout).Count(p => source[p] == 7), Is.EqualTo(1), $"seed={seed}, layout={layout}");
             var targets = source.Cells.ToDictionary(c => c.Id, c => (float)c.HexIndexes.Count);
-            var parameters = new CellularPottsParameters(2, 0, 1.75f, 0.3f, targets, connectivity);
+            var parameters = new CellularPottsParameters(2, 0, 1.75f, 0.3f, connectivity);
             var random = new Random(seed);
             var current = source;
-            double initialEnergy = FullMapEnergy(current, parameters);
+            double initialEnergy = FullMapEnergy(current, targets, parameters);
             double previousEnergy = initialEnergy;
             for (int iteration = 0; iteration < 20; iteration++)
             {
-                current = current.ApplyCellularPotts(parameters, random: random);
-                double energy = FullMapEnergy(current, parameters);
+                current = current.ApplyCellularPotts(targets, parameters, random: random);
+                double energy = FullMapEnergy(current, targets, parameters);
                 string context = $"seed={seed}, layout={layout}, connectivity={connectivity}, iteration={iteration}";
                 Assert.That(energy, Is.LessThanOrEqualTo(previousEnergy + 1e-9), context);
                 var rebuilt = new HexPartitionMap<HexPartitionCell>(topology, current.Cells);
@@ -52,22 +52,22 @@ public class CellularPottsPropertyFuzzTests
             var source = CellularPottsTests.Partition(topology, p => ids[p.X / 6 + 2 * (p.Y / 5)], ids);
             var original = CellularPottsTests.Values(source);
             var targets = source.Cells.ToDictionary(c => c.Id, c => (float)c.HexIndexes.Count);
-            var parameters = new CellularPottsParameters(2, 1e6f, 1, 0.25f, targets, CellularPottsConnectivity.None);
+            var parameters = new CellularPottsParameters(2, 1e6f, 1, 0.25f, CellularPottsConnectivity.None);
             var random = new Random(seed);
             var current = source;
             for (int iteration = 0; iteration < 12; iteration++)
             {
                 string context = $"seed={seed}, layout={layout}, iteration={iteration}";
-                current = current.ApplyCellularPotts(parameters, random: random);
+                current = current.ApplyCellularPotts(targets, parameters, random: random);
                 // Rebuilding from retained cells independently checks complete, non-overlapping coverage.
                 var rebuilt = new HexPartitionMap<HexPartitionCell>(topology, current.Cells);
                 Assert.That(CellularPottsTests.Values(current), Is.EqualTo(CellularPottsTests.Values(rebuilt)), context);
                 Assert.That(current.Cells.Select(c => c.Id), Is.EqualTo(ids), context);
                 Assert.That(current.Cells[^1].HexIndexes, Is.Empty, context);
             }
-            var replay = source.ApplyCellularPotts(
+            var replay = source.ApplyCellularPotts(targets,
                 new CellularPottsParameters(24, parameters.Temperature, parameters.BoundaryEnergy,
-                    parameters.AreaPenalty, parameters.TargetAreas, parameters.Connectivity),
+                    parameters.AreaPenalty, parameters.Connectivity),
                 random: new Random(seed));
             Assert.That(CellularPottsTests.Values(current), Is.EqualTo(CellularPottsTests.Values(replay)), $"seed={seed}, layout={layout}");
             Assert.That(CellularPottsTests.Values(source), Is.EqualTo(original), $"seed={seed}, layout={layout}");
@@ -87,13 +87,13 @@ public class CellularPottsPropertyFuzzTests
             var original = CellularPottsTests.Values(source);
             var random = new Random(seed);
             var targets = source.Cells.ToDictionary(c => c.Id, c => (float)c.HexIndexes.Count);
-            var parameters = new CellularPottsParameters(4, 1e6f, 1, 0.25f, targets);
+            var parameters = new CellularPottsParameters(4, 1e6f, 1, 0.25f);
             var current = source;
             for (int iteration = 0; iteration < 12; iteration++)
             {
                 using (Assert.EnterMultipleScope())
                 {
-                    current = current.ApplyCellularPotts(parameters, random: random);
+                    current = current.ApplyCellularPotts(targets, parameters, random: random);
                     CellularPottsTests.AssertConsistentAndConnected(current, $"seed={seed}, layout={layout}, iteration={iteration}");
                     Assert.That(current.Cells.Select(c => c.Id), Is.EqualTo(source.Cells.Select(c => c.Id)),
                         $"seed={seed}, layout={layout}, iteration={iteration}");
@@ -101,9 +101,9 @@ public class CellularPottsPropertyFuzzTests
                         $"seed={seed}, layout={layout}, iteration={iteration}");
                 }
             }
-            var replay = source.ApplyCellularPotts(
+            var replay = source.ApplyCellularPotts(targets,
                 new CellularPottsParameters(48, parameters.Temperature, parameters.BoundaryEnergy,
-                    parameters.AreaPenalty, parameters.TargetAreas, parameters.Connectivity),
+                    parameters.AreaPenalty, parameters.Connectivity),
                 random: new Random(seed));
             Assert.That(CellularPottsTests.Values(current), Is.EqualTo(CellularPottsTests.Values(replay)), $"seed={seed}, layout={layout}");
             Assert.That(CellularPottsTests.Values(source), Is.EqualTo(original), $"seed={seed}, layout={layout}");
@@ -111,7 +111,7 @@ public class CellularPottsPropertyFuzzTests
         }
     }
 
-    private static double FullMapEnergy(HexPartitionMap<HexPartitionCell> map, CellularPottsParameters parameters)
+    private static double FullMapEnergy(HexPartitionMap<HexPartitionCell> map, IReadOnlyDictionary<int, float> targets, CellularPottsParameters parameters)
     {
         int width = map.Topology.Resolution.X;
         int height = map.Topology.Resolution.Y;
@@ -132,7 +132,7 @@ public class CellularPottsPropertyFuzzTests
         double energy = (double)parameters.BoundaryEnergy * unlikeEdges;
         foreach (var cell in map.Cells)
         {
-            double deviation = cell.HexIndexes.Count - (double)parameters.TargetAreas[cell.Id];
+            double deviation = cell.HexIndexes.Count - (double)targets[cell.Id];
             energy += parameters.AreaPenalty * deviation * deviation;
         }
         return energy;

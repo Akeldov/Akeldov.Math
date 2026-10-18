@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 {
@@ -22,22 +20,13 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         /// <param name="temperature">The finite, non-negative fluctuation temperature in energy units. Zero accepts only non-increasing energy changes.</param>
         /// <param name="boundaryEnergy">The finite, non-negative energy J per edge between different cells.</param>
         /// <param name="areaPenalty">The finite, non-negative quadratic area coefficient lambda, in energy units per squared hex count.</param>
-        /// <param name="targetAreas">
-        /// Optional target areas keyed by cell identifier, copied into a read-only snapshot.
-        /// Values must be finite and between zero and <see cref="int.MaxValue"/> hexes.
-        /// Missing identifiers use their initial participating area for each application of the algorithm.
-        /// With a region mask, each explicit value applies independently in every region where the cell is
-        /// initially present; missing values use the cell's initial participating area in that region.
-        /// </param>
         /// <param name="connectivity">The connectivity policy. Defaults to preserving each non-empty participating cell as one six-connected component within each region.</param>
-        /// <exception cref="ArgumentOutOfRangeException">A step count, energy parameter, target area, or connectivity policy is outside its documented range.</exception>
-        /// <exception cref="ArgumentException">A target-area identifier is negative.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A step count, energy parameter, or connectivity policy is outside its documented range.</exception>
         public CellularPottsParameters(
             int stepCount,
             float temperature = 1f,
             float boundaryEnergy = 1f,
             float areaPenalty = 1f,
-            IReadOnlyDictionary<int, float>? targetAreas = null,
             CellularPottsConnectivity connectivity = CellularPottsConnectivity.Preserve)
         {
             if (stepCount < 0)
@@ -51,25 +40,11 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
             if (!float.IsFinite(areaPenalty) || areaPenalty < 0f)
                 throw new ArgumentOutOfRangeException(nameof(areaPenalty));
 
-            var copy = new Dictionary<int, float>();
-            if (targetAreas != null)
-            {
-                foreach (var pair in targetAreas)
-                {
-                    if (pair.Key < 0)
-                        throw new ArgumentException("Target-area identifiers must be non-negative.", nameof(targetAreas));
-                    if (!float.IsFinite(pair.Value) || pair.Value < 0f || (double)pair.Value > int.MaxValue)
-                        throw new ArgumentOutOfRangeException(nameof(targetAreas), "Target areas must be finite hex counts between zero and int.MaxValue.");
-                    copy.Add(pair.Key, pair.Value);
-                }
-            }
-
             StepCount = stepCount;
             Connectivity = connectivity;
             Temperature = temperature;
             BoundaryEnergy = boundaryEnergy;
             AreaPenalty = areaPenalty;
-            TargetAreas = new ReadOnlyDictionary<int, float>(copy);
         }
 
         /// <summary>Gets the number of steps, each making one copy attempt per participating hex.</summary>
@@ -86,8 +61,5 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
 
         /// <summary>Gets the quadratic area coefficient in energy units per squared hex count.</summary>
         public float AreaPenalty { get; }
-
-        /// <summary>Gets the retained read-only snapshot of explicit target hex counts, keyed by cell identifier.</summary>
-        public IReadOnlyDictionary<int, float> TargetAreas { get; }
     }
 }

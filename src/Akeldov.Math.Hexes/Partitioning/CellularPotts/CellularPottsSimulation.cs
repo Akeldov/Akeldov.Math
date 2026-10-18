@@ -25,7 +25,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         private readonly byte[] _neighborPresence;
 
         internal CellularPottsSimulation(HexMapTopology topology, int[] assignments, int[] ids,
-            CellularPottsParameters parameters, int[]? regions = null)
+            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters, int[]? regions = null)
         {
             _topology = topology;
             _owners = assignments;
@@ -75,7 +75,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                 if (owner >= 0)
                     _cellAreas[owner]++;
             for (int group = 0; group < _groupCellIndexes.Length; group++)
-                _targetAreas[group] = parameters.TargetAreas.TryGetValue(ids[_groupCellIndexes[group]], out float area)
+                _targetAreas[group] = targetAreas != null && targetAreas.TryGetValue(ids[_groupCellIndexes[group]], out float area)
                     ? (double)area : _cellAreas[group];
         }
 

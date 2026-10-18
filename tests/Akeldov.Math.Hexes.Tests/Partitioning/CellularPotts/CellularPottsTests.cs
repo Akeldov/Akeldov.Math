@@ -53,9 +53,10 @@ public class CellularPottsTests
     {
         var source = Partition(new HexMapTopology(3, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
         var random = new FixedAttemptRandom(0, 0);
-        var parameters = new CellularPottsParameters(4, 0, 0, 1, new Dictionary<int, float> { [7] = 0, [42] = 3 }, connectivity);
+        var targets = new Dictionary<int, float> { [7] = 0, [42] = 3 };
+        var parameters = new CellularPottsParameters(4, 0, 0, 1, connectivity);
 
-        var result = source.ApplyCellularPotts(parameters, random: random);
+        var result = source.ApplyCellularPotts(targets, parameters, random: random);
 
         bool preserve = connectivity == CellularPottsConnectivity.Preserve;
         Assert.That(result[0], Is.EqualTo(preserve ? 7 : 42));
@@ -213,7 +214,7 @@ public class CellularPottsTests
         var site = new VectorXYInt(1, 0);
         var targets = new Dictionary<int, float> { [7] = favorsCopy ? 1 : 3, [42] = favorsCopy ? 3 : 1 };
 
-        var result = source.ApplyCellularPotts(new CellularPottsParameters(1, 0, 0, 1, targets), random: Attempt(source, site, 42));
+        var result = source.ApplyCellularPotts(targets, new CellularPottsParameters(1, 0, 0, 1), random: Attempt(source, site, 42));
 
         Assert.That(result[site], Is.EqualTo(favorsCopy ? 42 : 7));
     }
@@ -255,10 +256,10 @@ public class CellularPottsTests
     {
         var source = Partition(new HexMapTopology(3, 1, Layout.OddR), p => p.X == 0 ? 7 : 42, 7, 42);
         var targets = new Dictionary<int, float> { [7] = 33554432f, [42] = 33554432f };
-        var parameters = new CellularPottsParameters(1, 4, 0, 1, targets, CellularPottsConnectivity.None);
+        var parameters = new CellularPottsParameters(1, 4, 0, 1, CellularPottsConnectivity.None);
 
         // Areas 1/2 and equal targets give delta H = 4. Rounding deviations to float would give 6.
-        var result = source.ApplyCellularPotts(parameters, Attempt(source, new VectorXYInt(0, 0), 42, 0.3d));
+        var result = source.ApplyCellularPotts(targets, parameters, Attempt(source, new VectorXYInt(0, 0), 42, 0.3d));
 
         Assert.That(result[0], Is.EqualTo(42));
     }
@@ -385,8 +386,9 @@ public class CellularPottsTests
         var source = Partition(new HexMapTopology(1, 1, Layout.OddR), _ => 7, 7);
         Assert.That(Assert.Throws<ArgumentNullException>(() => source.ApplyCellularPotts(null!))!.ParamName, Is.EqualTo("parameters"));
         Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(-1))!.ParamName, Is.EqualTo("stepCount"));
-        var parameters = new CellularPottsParameters(0, targetAreas: new Dictionary<int, float> { [42] = 1 });
-        Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(parameters));
+        var parameters = new CellularPottsParameters(0);
+        Assert.That(Assert.Throws<ArgumentException>(() => source.ApplyCellularPotts(
+            new Dictionary<int, float> { [42] = 1 }, parameters))!.ParamName, Is.EqualTo("targetAreas"));
     }
 
     [TestCase(-1f)]
@@ -398,31 +400,6 @@ public class CellularPottsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, temperature: value));
         Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, boundaryEnergy: value));
         Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, areaPenalty: value));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, targetAreas: new Dictionary<int, float> { [7] = value }));
-    }
-
-    [Test]
-    public void Parameters_TargetAreas_AreReadOnlySnapshot()
-    {
-        var targets = new Dictionary<int, float> { [7] = 2.5f };
-        var parameters = new CellularPottsParameters(0, targetAreas: targets);
-        targets[7] = 100;
-
-        Assert.That(parameters.TargetAreas[7], Is.EqualTo(2.5));
-        Assert.Throws<NotSupportedException>(() => ((IDictionary<int, float>)parameters.TargetAreas)[7] = 10);
-        Assert.Throws<ArgumentException>(() => new CellularPottsParameters(0, targetAreas: new Dictionary<int, float> { [-1] = 1 }));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0, targetAreas: new Dictionary<int, float> { [7] = (float)int.MaxValue }));
-    }
-
-    [Test]
-    public void Parameters_TargetAreas_EnforceIntegerLimitWithoutRoundingItToFloat()
-    {
-        // Converting int.MaxValue to float rounds up to 2147483648, which is outside the contract.
-        var parameters = new CellularPottsParameters(0,
-            targetAreas: new Dictionary<int, float> { [7] = 2147483520f });
-        Assert.That(parameters.TargetAreas[7], Is.EqualTo(2147483520f));
-        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new CellularPottsParameters(0,
-            targetAreas: new Dictionary<int, float> { [7] = 2147483648f }))!.ParamName, Is.EqualTo("targetAreas"));
     }
 
     [Test]
@@ -436,7 +413,6 @@ public class CellularPottsTests
             Assert.That(parameters.Temperature, Is.EqualTo(1d));
             Assert.That(parameters.BoundaryEnergy, Is.EqualTo(1d));
             Assert.That(parameters.AreaPenalty, Is.EqualTo(1d));
-            Assert.That(parameters.TargetAreas, Is.Empty);
         });
     }
 

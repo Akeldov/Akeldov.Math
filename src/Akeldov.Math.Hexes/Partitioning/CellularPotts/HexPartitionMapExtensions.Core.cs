@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
     {
         private static CellularPottsSimulation CreateSimulation<TIdentifier, THexPartitionCell>(
             IHexMap<TIdentifier> partition, IReadOnlyList<THexPartitionCell> cells, Func<TIdentifier, int?> toNullable,
-            CellularPottsParameters parameters, bool[]? participationFlags = null, int[]? regions = null)
+            IReadOnlyDictionary<int, float>? targetAreas, CellularPottsParameters parameters, bool[]? participationFlags = null, int[]? regions = null)
             where THexPartitionCell : IHexPartitionCell
         {
             var topology = partition.Topology;
@@ -20,9 +20,16 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                 ids[i] = snapshot.Cells[i].Id;
                 cellIndexById.Add(ids[i], i);
             }
-            foreach (int id in parameters.TargetAreas.Keys)
-                if (!cellIndexById.ContainsKey(id))
-                    throw new ArgumentException($"Target-area identifier {id} is absent from the partition.", nameof(parameters));
+            if (targetAreas != null)
+            {
+                foreach (var pair in targetAreas)
+                {
+                    if (pair.Key < 0 || !cellIndexById.ContainsKey(pair.Key))
+                        throw new ArgumentException($"Target-area identifier {pair.Key} is absent from the partition.", nameof(targetAreas));
+                    if (!float.IsFinite(pair.Value) || pair.Value < 0f || (double)pair.Value > int.MaxValue)
+                        throw new ArgumentOutOfRangeException(nameof(targetAreas), "Target areas must be finite hex counts between zero and int.MaxValue.");
+                }
+            }
 
             var assignments = new int[topology.Count];
             for (int i = 0; i < assignments.Length; i++)
@@ -34,7 +41,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
                     ? cellIndexById[id.Value] : -1;
             }
 
-            var simulation = new CellularPottsSimulation(topology, assignments, ids, parameters, regions);
+            var simulation = new CellularPottsSimulation(topology, assignments, ids, targetAreas, parameters, regions);
             if (parameters.Connectivity == CellularPottsConnectivity.Preserve && !simulation.HasConnectedCells())
                 throw new ArgumentException("Every non-empty participating cell must be six-connected within each region.", nameof(partition));
             return simulation;

@@ -24,9 +24,9 @@ public class PartialCellularPottsValidationTests
             Invoke(overload, null!, null!, mask, nullable, regions, parameters))!.ParamName, Is.EqualTo("partition"));
         Assert.That(Assert.Throws<ArgumentNullException>(() =>
             Invoke(overload, full, partial, mask, nullable, regions, null!))!.ParamName, Is.EqualTo("parameters"));
-        var unknownTarget = new CellularPottsParameters(0, targetAreas: new Dictionary<int, float> { [99] = 1 });
+        var unknownTarget = new Dictionary<int, float> { [99] = 1 };
         Assert.That(Assert.Throws<ArgumentException>(() =>
-            Invoke(overload, full, partial, mask, nullable, regions, unknownTarget))!.ParamName, Is.EqualTo("parameters"));
+            Invoke(overload, full, partial, mask, nullable, regions, parameters, unknownTarget))!.ParamName, Is.EqualTo("targetAreas"));
 
         // The stale source assignment is excluded by every supplied mask, but must still be rejected.
         full[0] = 42;
@@ -72,15 +72,15 @@ public class PartialCellularPottsValidationTests
 
     private static PartialHexPartitionMap<HexPartitionCell> Invoke(int overload,
         HexPartitionMap<HexPartitionCell> full, PartialHexPartitionMap<HexPartitionCell> partial,
-        IHexMap<bool> mask, IHexMap<int?> nullable, IHexMap<int> regions, CellularPottsParameters parameters) => overload switch
+        IHexMap<bool> mask, IHexMap<int?> nullable, IHexMap<int> regions, CellularPottsParameters parameters, IReadOnlyDictionary<int, float>? targetAreas = null) => overload switch
     {
-        0 => full.ApplyCellularPotts(mask, parameters),
-        1 => full.ApplyCellularPotts(nullable, parameters),
-        2 => full.ApplyCellularPotts(mask, regions, parameters),
-        3 => partial.ApplyCellularPotts(parameters),
-        4 => partial.ApplyCellularPotts(mask, parameters),
-        5 => partial.ApplyCellularPotts(nullable, parameters),
-        6 => partial.ApplyCellularPotts(mask, regions, parameters),
+        0 => full.ApplyCellularPotts(mask, targetAreas, parameters),
+        1 => full.ApplyCellularPotts(nullable, targetAreas, parameters),
+        2 => full.ApplyCellularPotts(mask, regions, targetAreas, parameters),
+        3 => partial.ApplyCellularPotts(targetAreas, parameters),
+        4 => partial.ApplyCellularPotts(mask, targetAreas, parameters),
+        5 => partial.ApplyCellularPotts(nullable, targetAreas, parameters),
+        6 => partial.ApplyCellularPotts(mask, regions, targetAreas, parameters),
         _ => throw new ArgumentOutOfRangeException(nameof(overload))
     };
 }

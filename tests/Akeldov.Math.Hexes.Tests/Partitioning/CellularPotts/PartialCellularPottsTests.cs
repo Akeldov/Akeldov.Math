@@ -160,11 +160,12 @@ public class PartialCellularPottsTests
         var source = CellularPottsTests.Partition(topology, p => p.X == 2 || p.X == 3 || p.X == 7 ? 42 : 7, 7, 42);
         var participation = new BoolHexMap(topology, Enumerable.Range(0, 8).Select(i => regional || i < 4).ToArray());
         var regions = new IntHexMap(topology, new[] { -7, -7, -7, -7, 0, 0, 0, 0 });
-        var parameters = new CellularPottsParameters(1, 0, 0, 1, new Dictionary<int, float> { [7] = 2, [42] = 2 }, CellularPottsConnectivity.None);
+        var targets = new Dictionary<int, float> { [7] = 2, [42] = 2 };
+        var parameters = new CellularPottsParameters(1, 0, 0, 1, CellularPottsConnectivity.None);
         var random = Attempt(topology, participation, regional ? regions : null, new VectorXYInt(1, 0), new VectorXYInt(2, 0));
         var result = regional
-            ? source.ApplyCellularPotts(participation, regions, parameters, random)
-            : source.ApplyCellularPotts(participation, parameters, random);
+            ? source.ApplyCellularPotts(participation, regions, targets, parameters, random)
+            : source.ApplyCellularPotts(participation, targets, parameters, random);
 
         // Areas 2/2 already match the targets: a transfer costs 2 and must be rejected at zero temperature.
         Assert.That(result[1], Is.EqualTo(7));
