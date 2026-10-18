@@ -175,10 +175,10 @@ the boundary; leaving missing contributions at zero instead makes the RGB image 
 If no positive contribution remains, `ToFiniteRgb` returns transparent black.
 
 Such samples appear at two corners of the sampling rectangle. An offset layout shifts every
-other row or column by half a hex, so the map's bounding box has a notch at those corners. A sample in the
-notch lies in a triangle of three hexes that are all outside the map, and the partial raster
-correctly reports no present weights there. Next to the notch, the only present hex is the
-corner hex of the map, so the normalized blend already has its class color. The loop
+other row or column by half a hex, so the map's bounding box has a notch at those corners. A
+sample in the notch lies in a triangle of three hexes that are all outside the map, and the
+partial raster correctly reports no present weights there. Next to the notch, the only present
+hex is the corner hex of the map, so the normalized blend already has its class color. The loop
 extrapolates that color into the notch: clamping the containing hex index to the map gives the
 corner hex. Without the loop, these corners stay transparent.
 
