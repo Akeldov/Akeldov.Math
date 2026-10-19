@@ -80,6 +80,25 @@ public class HexMapTests
     }
 
     [Test]
+    public void IHexMap_CovariantView_PreservesTopologyAndObservesSourceChanges()
+    {
+        var topology = new HexMapTopology(2, 1, Layout.EvenQ);
+        var source = new HexMap<string>(topology, new[] { "first", "second" });
+        IHexMap<string> strings = source;
+        IHexMap<object> objects = strings;
+
+        Assert.That(objects, Is.SameAs(source));
+        Assert.That(objects.Topology, Is.EqualTo(topology));
+        Assert.That(objects[0], Is.EqualTo("first"));
+        Assert.That(objects[new VectorXYInt(1, 0)], Is.EqualTo("second"));
+
+        source[1] = "updated";
+
+        Assert.That(objects[1], Is.EqualTo("updated"));
+        Assert.That(objects[new VectorXYInt(1, 0)], Is.EqualTo("updated"));
+    }
+
+    [Test]
     public void HexMap_ImplementsIHexMap()
     {
         var source = new HexMap<int>(new HexMapTopology(3, 2, Layout.OddR));

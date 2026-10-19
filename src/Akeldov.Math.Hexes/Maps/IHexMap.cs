@@ -10,8 +10,10 @@ namespace Akeldov.Math.Hexes
     /// An implementing map or its backing storage may remain mutable, so values observed through the
     /// interface can change over time.
     /// </remarks>
-    /// <typeparam name="TValue">The type stored in each hex cell.</typeparam>
-    public interface IHexMap<TValue>
+    /// <typeparam name="TValue">
+    /// The type stored in each hex cell. This parameter is covariant for reference types.
+    /// </typeparam>
+    public interface IHexMap<out TValue>
     {
         /// <summary>
         /// Gets the map topology.
