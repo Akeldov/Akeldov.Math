@@ -657,7 +657,7 @@ public class HexCenterMapExtensionsTests
         Assert.That(partitionMap.Cells, Is.SameAs(map.Cells));
         Assert.That(partitionMap.Geometry, Is.EqualTo(hexCenters.Geometry));
         Assert.That(spatialMap.Geometry, Is.EqualTo(map.Geometry));
-        Assert.That(map.Centers, Is.SameAs(hexCenters));
+        Assert.That(map.Geometry, Is.EqualTo(hexCenters.Geometry));
         Assert.That(hexMap.Topology.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
         Assert.That(hexMap.Topology.Layout, Is.EqualTo(Layout.EvenQ));
         Assert.That(map.Topology.Layout, Is.EqualTo(Layout.EvenQ));
@@ -670,7 +670,7 @@ public class HexCenterMapExtensionsTests
     [TestCase(3, 2, Layout.OddQ)]
     [TestCase(3, 2, Layout.EvenQ)]
     [TestCase(0, 0, Layout.OddR)]
-    public void ImplicitConversion_ToSpatialHexMap_SharesAssignmentsAndPreservesGeometry(int width, int height, Layout layout)
+    public void SpatialView_SharesAssignmentsAndPreservesGeometry(int width, int height, Layout layout)
     {
         var geometry = new HexMapGeometry(width, height, new VectorXY(10f, -20f), 2f, layout);
         var centers = new HexCenterMap(geometry);
@@ -679,13 +679,13 @@ public class HexCenterMapExtensionsTests
         var cells = map.Cells;
         var originalIndexes = cells[0].HexIndexes.ToArray();
         var originalAssignments = Enumerable.Range(0, map.Topology.Count).Select(index => map[index]).ToArray();
-        var independentCopy = map.ToMutableHexMap();
+        var independentCopy = map.MapValues((int id) => id);
 
-        SpatialHexMap<int> facade = map;
+        ISpatialHexMap<int> facade = map;
 
         Assert.Multiple(() =>
         {
-            Assert.That(facade, Is.Not.SameAs(map));
+            Assert.That(facade, Is.SameAs(map));
             Assert.That(facade.Geometry, Is.EqualTo(geometry));
             Assert.That(facade.Topology, Is.EqualTo(map.Topology));
             Assert.That(Enumerable.Range(0, facade.Topology.Count).Select(index => facade[index]),
@@ -695,24 +695,14 @@ public class HexCenterMapExtensionsTests
         if (map.Topology.Count == 0)
             return;
 
-        facade[new VectorXYInt(0, 0)] = 17;
-        Assert.That(map[0], Is.EqualTo(17));
+        map[new VectorXYInt(0, 0)] = 17;
+        Assert.That(facade[0], Is.EqualTo(17));
         map[1] = 23;
         Assert.That(facade[1], Is.EqualTo(23));
         Assert.That(map.Cells, Is.SameAs(cells));
         Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(originalIndexes));
         Assert.That(Enumerable.Range(0, independentCopy.Topology.Count).Select(index => independentCopy[index]),
             Is.EqualTo(originalAssignments));
-    }
-
-    [Test]
-    public void ImplicitConversion_ToSpatialHexMap_WhenPartitionIsNull_ReturnsNull()
-    {
-        VoronoiHexPartitionMap? map = null;
-
-        SpatialHexMap<int>? facade = map;
-
-        Assert.That(facade, Is.Null);
     }
 
     [Test]
@@ -728,7 +718,7 @@ public class HexCenterMapExtensionsTests
         var map = hexCenters.PartitionByVoronoi(sites);
         ISpatialHexMap<int> spatialMap = map;
 
-        Assert.That(map.Centers, Is.SameAs(hexCenters));
+        Assert.That(map.Geometry, Is.EqualTo(hexCenters.Geometry));
         Assert.That(spatialMap.Geometry, Is.EqualTo(hexCenters.Geometry));
         Assert.That(map[0], Is.EqualTo(0));
         Assert.That(map[1], Is.EqualTo(0));
@@ -890,7 +880,7 @@ public class HexCenterMapExtensionsTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(map.Centers, Is.SameAs(hexCenters));
+            Assert.That(map.Geometry, Is.EqualTo(hexCenters.Geometry));
             Assert.That(map.Cells, Has.Count.EqualTo(3));
             Assert.That(Enumerable.Range(0, 6).Select(i => map[i]), Is.EqualTo(new[] { 0, 1, 2, 2, 0, 1 }));
             Assert.That(map.Cells[0].HexIndexes, Is.EqualTo(new[] { new VectorXYInt(0, 0), new VectorXYInt(1, 1) }));
@@ -1010,7 +1000,7 @@ public class HexCenterMapExtensionsTests
             new Site(hexCenters[1], 1f),
             new Site(hexCenters[0], 1f)
         };
-        VoronoiHexPartitionMap Partition() => hexCenters.PartitionByVoronoi(regions, sites, new VoronoiHexPartitionParameters(emptyCellPolicy: policy));
+        SpatialHexPartitionMap<VoronoiHexPartitionCell> Partition() => hexCenters.PartitionByVoronoi(regions, sites, new VoronoiHexPartitionParameters(emptyCellPolicy: policy));
 
         if (policy == EmptyCellPolicy.ThrowException)
         {
@@ -1130,7 +1120,7 @@ public class HexCenterMapExtensionsTests
     }
 
     [Test]
-    public void ToMutableHexMap_ReturnsCallerOwnedAssignmentCopy()
+    public void MapValues_ReturnsCallerOwnedAssignmentCopy()
     {
         var sites = new[]
         {
@@ -1140,7 +1130,7 @@ public class HexCenterMapExtensionsTests
         var hexCenters = new HexCenterMap(new HexMapGeometry(3, 1, VectorXY.Zero, 1f, Layout.OddR));
         var map = hexCenters.PartitionByVoronoi(sites);
 
-        HexMap<int> mutableMap = map.ToMutableHexMap();
+        HexMap<int> mutableMap = map.MapValues((int id) => id);
         mutableMap[0] = map.Cells[1].Id;
 
         Assert.Multiple(() =>
@@ -1153,7 +1143,7 @@ public class HexCenterMapExtensionsTests
 
         HexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
         partitionMap[0] = map.Cells[1].Id;
-        var updatedCopy = map.ToMutableHexMap();
+        var updatedCopy = map.MapValues((int id) => id);
         map[0] = map.Cells[0].Id;
         Assert.That(updatedCopy[0], Is.EqualTo(map.Cells[1].Id));
     }
@@ -1664,7 +1654,7 @@ public class HexCenterMapExtensionsTests
         var regions = new IntHexMap(centers.Topology);
         var nullableRegions = new HexMap<int?>(centers.Topology, new int?[] { 0, 0, 0 });
 
-        var fullFactories = new Func<VoronoiHexPartitionMap>[]
+        var fullFactories = new Func<SpatialHexPartitionMap<VoronoiHexPartitionCell>>[]
         {
             () => centers.PartitionByVoronoi(sites),
             () => centers.PartitionByVoronoi(regions, sites)
@@ -1673,6 +1663,8 @@ public class HexCenterMapExtensionsTests
         {
             var first = create();
             var second = create();
+            Assert.That(first, Is.TypeOf<SpatialHexPartitionMap<VoronoiHexPartitionCell>>());
+            Assert.That(first.Geometry, Is.EqualTo(centers.Geometry));
             first[0] = 1;
             Assert.That(second[0], Is.EqualTo(0));
             Assert.That(first.Cells, Is.Not.SameAs(second.Cells));

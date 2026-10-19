@@ -86,14 +86,14 @@ public class VoronoiHexPartitionBenchmarks
     }
 
     [Benchmark]
-    public VoronoiHexPartitionMap Partition()
+    public SpatialHexPartitionMap<VoronoiHexPartitionCell> Partition()
     {
         return _centers.PartitionByVoronoi(
             _sites, _parameters);
     }
 
     [Benchmark]
-    public VoronoiHexPartitionMap PartitionByRegions()
+    public SpatialHexPartitionMap<VoronoiHexPartitionCell> PartitionByRegions()
     {
         return _centers.PartitionByVoronoi(
             _regions, _sites, _parameters);

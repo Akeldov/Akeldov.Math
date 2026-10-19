@@ -23,13 +23,21 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>
-        /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
+        /// A new mutable spatial partition map owned by the caller, retaining the input geometry,
+        /// with per-hex cell identifiers and a read-only semantic cell list.
         /// </returns>
+        /// <remarks>
+        /// Initial identifiers equal the assigned cell's Id, SiteIndex, and index in Cells.
+        /// Use <c>Cells[this[index]]</c> to access its site and grouped hex indexes.
+        /// Empty cells may be excluded by policy; isolated exclave cells follow source cells in row-major component order.
+        /// Indexer setters change only assignments, not the retained cells or their hex indexes.
+        /// Use <c>partition.MapValues((int id) => id)</c> for an independent mutable spatial copy.
+        /// </remarks>
         /// <exception cref="ArgumentOutOfRangeException">A participating center is not finite.</exception>
         /// <exception cref="InvalidOperationException">
         /// The policy is <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
         /// </exception>
-        public static VoronoiHexPartitionMap PartitionByVoronoi(
+        public static SpatialHexPartitionMap<VoronoiHexPartitionCell> PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IReadOnlyList<Site> sites,
             VoronoiHexPartitionParameters? parameters = null)
@@ -41,10 +49,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             var validatedSites = CopyAndValidateSites(sites);
 
-            var (assignments, cells, _) = PartitionCore(
+            var (_, cells, _) = PartitionCore(
                 hexCenters, validatedSites, parameters.EmptyCellPolicy, null, null, null,
                 parameters.ExclavePolicy, parameters.RelaxationIterations);
-            return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
+            return new SpatialHexPartitionMap<VoronoiHexPartitionCell>(hexCenters.Geometry, cells);
         }
 
         /// <summary>
@@ -60,11 +68,16 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <param name="sites">The Voronoi sites used for hex-center assignment.</param>
         /// <param name="parameters">The immutable relaxation and cell-handling settings, or null for defaults that preserve empty and disconnected cells.</param>
         /// <returns>
-        /// A new mutable hex partition map with per-hex cell identifiers and a read-only semantic cell list.
+        /// A new mutable spatial partition map owned by the caller, retaining the input geometry,
+        /// with per-hex cell identifiers and a read-only semantic cell list.
         /// </returns>
         /// <remarks>
         /// A site's region is the mask value at the hex containing its position, using the center map's
         /// geometry. Sites outside the map receive no hexes and follow the configured empty-cell policy.
+        /// Initial identifiers equal the assigned cell's Id, SiteIndex, and index in Cells.
+        /// Empty cells may be excluded by policy; isolated exclave cells follow source cells in row-major component order.
+        /// Indexer setters change only assignments, not the retained cells or their hex indexes.
+        /// Use <c>partition.MapValues((int id) => id)</c> for an independent mutable spatial copy.
         /// </remarks>
         /// <exception cref="ArgumentOutOfRangeException">A participating center is not finite.</exception>
         /// <exception cref="InvalidOperationException">
@@ -72,7 +85,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <see cref="EmptyCellPolicy.ThrowException"/> and a cell receives no hexes.
         /// A zero-weight site is eligible only at its position within the geometry tolerance.
         /// </exception>
-        public static VoronoiHexPartitionMap PartitionByVoronoi(
+        public static SpatialHexPartitionMap<VoronoiHexPartitionCell> PartitionByVoronoi(
             this HexCenterMap hexCenters,
             IHexMap<int> regionsMask,
             IReadOnlyList<Site> sites,
@@ -92,10 +105,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
 
             var siteIndexesByRegion = GroupSiteIndexesByRegion(validatedSites, hexCenters.Geometry, regionsMask);
 
-            var (assignments, cells, _) = PartitionCore(
+            var (_, cells, _) = PartitionCore(
                 hexCenters, validatedSites, parameters.EmptyCellPolicy, null, regionsMask, siteIndexesByRegion,
                 parameters.ExclavePolicy, parameters.RelaxationIterations);
-            return new VoronoiHexPartitionMap(hexCenters, assignments, cells);
+            return new SpatialHexPartitionMap<VoronoiHexPartitionCell>(hexCenters.Geometry, cells);
         }
     }
 #pragma warning restore RS0026
