@@ -5,6 +5,10 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
 {
     /// <summary>Provides territory partitioning by thresholds of a single Perlin-noise field.</summary>
+    /// <remarks>
+    /// Returned spatial partition maps retain read-only cell snapshots. Indexer setters change only
+    /// the identifier map, not the retained cells or their hex indexes.
+    /// </remarks>
     public static partial class HexMapGeometryExtensions
     {
         /// <summary>Partitions participating hexes into ordered noise bands with approximately the requested area shares.</summary>
@@ -39,7 +43,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// <exception cref="ArgumentOutOfRangeException">
         /// The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.
         /// </exception>
-        public static PartialPerlinNoiseHexPartitionMap PartitionByPerlinNoise(
+        public static SpatialPartialHexPartitionMap<HexPartitionCell> PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IHexMap<bool> participationMask,
             IReadOnlyList<PerlinNoisePartitionTarget> targets,
@@ -62,7 +66,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             var noise = geometry.CreatePerlinNoise(
                 seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
-            return new PartialPerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise, participationFlags));
+            return new SpatialPartialHexPartitionMap<HexPartitionCell>(geometry, partitioner.Partition(noise, participationFlags));
         }
 
         /// <summary>Partitions hexes with non-null region identifiers into Perlin-noise bands independently within each region.</summary>
@@ -98,7 +102,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// contains a null or duplicate identifier, or has no positive share.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
-        public static PartialPerlinNoiseHexPartitionMap PartitionByPerlinNoise(
+        public static SpatialPartialHexPartitionMap<HexPartitionCell> PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IHexMap<int?> regionsMask,
             IReadOnlyList<PerlinNoisePartitionTarget> targets,
@@ -125,7 +129,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             var noise = geometry.CreatePerlinNoise(
                 seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
-            return new PartialPerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise, participationFlags, regions));
+            return new SpatialPartialHexPartitionMap<HexPartitionCell>(geometry, partitioner.Partition(noise, participationFlags, regions));
         }
 
         /// <summary>Partitions participating hexes into Perlin-noise bands independently within each mask region.</summary>
@@ -163,7 +167,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
         /// contains a null or duplicate identifier, or has no positive share.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">The geometry is invalid or a sampled coordinate exceeds the supported noise lattice.</exception>
-        public static PartialPerlinNoiseHexPartitionMap PartitionByPerlinNoise(
+        public static SpatialPartialHexPartitionMap<HexPartitionCell> PartitionByPerlinNoise(
             this HexMapGeometry geometry,
             IHexMap<bool> participationMask,
             IHexMap<int> regionsMask,
@@ -195,7 +199,7 @@ namespace Akeldov.Math.Hexes.Partitioning.PerlinNoise
             var noise = geometry.CreatePerlinNoise(
                 seed, parameters.Scale, parameters.Octaves,
                 parameters.Persistence, parameters.Lacunarity, parameters.Offset);
-            return new PartialPerlinNoiseHexPartitionMap(geometry, partitioner.Partition(noise, participationFlags, regions));
+            return new SpatialPartialHexPartitionMap<HexPartitionCell>(geometry, partitioner.Partition(noise, participationFlags, regions));
         }
     }
 }

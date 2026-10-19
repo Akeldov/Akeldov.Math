@@ -24,6 +24,7 @@ public class PerlinNoiseGeometryPartitionTests
         var partition = geometry.PartitionByPerlinNoise(Targets, new PerlinNoisePartitionParameters(19f, 3, 0.4f, 2.25f, offset), seed: 123);
 
         SpatialHexPartitionMap<HexPartitionCell> spatialPartition = partition;
+        Assert.That(partition, Is.TypeOf<SpatialHexPartitionMap<HexPartitionCell>>());
         ISpatialIntHexMap spatialMap = partition;
         Assert.That(spatialPartition.Geometry, Is.EqualTo(geometry));
         Assert.That(spatialPartition.Cells, Is.SameAs(partition.Cells));

@@ -212,7 +212,7 @@ public class RegionalPerlinNoisePartitionTests
             .PartitionByPerlinNoise(new BoolHexMap(default), new IntHexMap(default), Targets, Parameters, seed: 42));
     }
 
-    internal static void AssertRegionalPartition(PartialPerlinNoiseHexPartitionMap partition, HexMapGeometry geometry,
+    internal static void AssertRegionalPartition(SpatialPartialHexPartitionMap<HexPartitionCell> partition, HexMapGeometry geometry,
         IReadOnlyList<PerlinNoisePartitionTarget> targets, IHexMap<bool> participation, IHexMap<int> regions,
         PerlinNoisePartitionParameters parameters, string context, int seed)
     {

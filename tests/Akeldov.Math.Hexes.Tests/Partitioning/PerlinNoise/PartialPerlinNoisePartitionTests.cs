@@ -25,8 +25,9 @@ public class PartialPerlinNoisePartitionTests
             mask[index] = true;
         var maskBefore = Enumerable.Range(0, mask.Topology.Count).Select(i => mask[i]).ToArray();
 
-        PartialPerlinNoiseHexPartitionMap result = geometry.PartitionByPerlinNoise(mask, Targets, new PerlinNoisePartitionParameters(19f), seed: 42);
+        SpatialPartialHexPartitionMap<HexPartitionCell> result = geometry.PartitionByPerlinNoise(mask, Targets, new PerlinNoisePartitionParameters(19f), seed: 42);
 
+        Assert.That(result, Is.TypeOf<SpatialPartialHexPartitionMap<HexPartitionCell>>());
         AssertPartition(result, noise, mask, Targets, $"layout={layout}");
         for (int i = 0; i < Targets.Length; i++)
             Assert.That(result.Cells[i].HexIndexes.Count / 600d, Is.EqualTo(Targets[i].AreaShare).Within(0.01));
@@ -165,10 +166,10 @@ public class PartialPerlinNoisePartitionTests
         Assert.Throws<ArgumentOutOfRangeException>(() => geometry.PartitionByPerlinNoise(mask, Targets, new PerlinNoisePartitionParameters(5f, offset: new VectorXY(float.PositiveInfinity, 0)), seed: 42));
     }
 
-    internal static int?[] Values(PartialPerlinNoiseHexPartitionMap partition) =>
+    internal static int?[] Values(SpatialPartialHexPartitionMap<HexPartitionCell> partition) =>
         Enumerable.Range(0, partition.Topology.Count).Select(i => partition[i]).ToArray();
 
-    internal static void AssertPartition(PartialPerlinNoiseHexPartitionMap partition, SpatialFloatHexMap noise,
+    internal static void AssertPartition(SpatialPartialHexPartitionMap<HexPartitionCell> partition, SpatialFloatHexMap noise,
         IHexMap<bool> mask, IReadOnlyList<PerlinNoisePartitionTarget> targets, string context)
     {
         Assert.That(partition.Geometry, Is.EqualTo(noise.Geometry), context);
