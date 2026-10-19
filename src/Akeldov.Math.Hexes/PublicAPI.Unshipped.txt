@@ -1,4 +1,7 @@
 #nullable enable
+Akeldov.Math.Hexes.SpatialPartialHexPartitionMap<THexPartitionCell>
+Akeldov.Math.Hexes.SpatialPartialHexPartitionMap<THexPartitionCell>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.SpatialPartialHexPartitionMap<THexPartitionCell>.SpatialPartialHexPartitionMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, System.Collections.Generic.IReadOnlyList<THexPartitionCell>! cells) -> void
 Akeldov.Math.Hexes.SpatialHexPartitionMap<THexPartitionCell>
 Akeldov.Math.Hexes.SpatialHexPartitionMap<THexPartitionCell>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
 Akeldov.Math.Hexes.SpatialHexPartitionMap<THexPartitionCell>.SpatialHexPartitionMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, System.Collections.Generic.IReadOnlyList<THexPartitionCell>! cells) -> void
