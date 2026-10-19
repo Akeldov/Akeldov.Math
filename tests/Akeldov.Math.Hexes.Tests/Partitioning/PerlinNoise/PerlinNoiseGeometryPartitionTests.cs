@@ -23,7 +23,11 @@ public class PerlinNoiseGeometryPartitionTests
         var noise = geometry.CreatePerlinNoise(123, 19f, 3, 0.4f, 2.25f, offset);
         var partition = geometry.PartitionByPerlinNoise(Targets, new PerlinNoisePartitionParameters(19f, 3, 0.4f, 2.25f, offset), seed: 123);
 
-        Assert.That(((ISpatialHexMap<int>)partition).Geometry, Is.EqualTo(geometry));
+        SpatialHexPartitionMap<HexPartitionCell> spatialPartition = partition;
+        ISpatialIntHexMap spatialMap = partition;
+        Assert.That(spatialPartition.Geometry, Is.EqualTo(geometry));
+        Assert.That(spatialPartition.Cells, Is.SameAs(partition.Cells));
+        Assert.That(spatialMap.Geometry, Is.EqualTo(partition.Geometry));
         AssertPartition(partition, noise, Targets, $"layout={layout}");
         for (int i = 0; i < Targets.Length; i++)
             Assert.That((double)partition.Cells[i].HexIndexes.Count / geometry.Topology.Count,
@@ -43,6 +47,32 @@ public class PerlinNoiseGeometryPartitionTests
         var partition = new HexMapGeometry(topology, 1f).PartitionByPerlinNoise(Targets, new PerlinNoisePartitionParameters(7f), seed: 42);
 
         AssertPartition(partition, noise, Targets, $"layout={layout}");
+    }
+
+    [TestCase(Layout.OddR)]
+    [TestCase(Layout.EvenR)]
+    [TestCase(Layout.OddQ)]
+    [TestCase(Layout.EvenQ)]
+    public void Partition_SplitDisconnectedCells_ReturnsSpatialMaps(Layout layout)
+    {
+        var geometry = new HexMapGeometry(3, 1, new VectorXY(-10f, 15f), 2f, layout);
+        var targets = new[] { new PerlinNoisePartitionTarget(42, 1) };
+        var parameters = new PerlinNoisePartitionParameters(7f);
+        var full = geometry.PartitionByPerlinNoise(targets, parameters, seed: 42);
+        var mask = new BoolHexMap(geometry.Topology, new[] { true, false, true });
+        var partial = geometry.PartitionByPerlinNoise(mask, targets, parameters, seed: 42);
+
+        SpatialHexPartitionMap<HexPartitionCell> fullResult = full.SplitDisconnectedCells();
+        SpatialPartialHexPartitionMap<HexPartitionCell> partialResult = partial.SplitDisconnectedCells();
+
+        Assert.That(fullResult.Geometry, Is.EqualTo(geometry));
+        Assert.That(partialResult.Geometry, Is.EqualTo(geometry));
+        Assert.That(fullResult.Cells, Has.Count.EqualTo(1));
+        Assert.That(partialResult.Cells, Has.Count.EqualTo(2));
+        Assert.That(Enumerable.Range(0, 3).Select(i => fullResult[i]), Is.EqualTo(new[] { 0, 0, 0 }));
+        Assert.That(Enumerable.Range(0, 3).Select(i => partialResult[i]), Is.EqualTo(new int?[] { 0, null, 1 }));
+        Assert.That(Values(full), Is.EqualTo(new[] { 42, 42, 42 }));
+        Assert.That(PartialPerlinNoisePartitionTests.Values(partial), Is.EqualTo(new int?[] { 42, null, 42 }));
     }
 
     [Test]

@@ -116,8 +116,11 @@ public class PartialPerlinNoisePartitionTests
         var result = geometry.PartitionByPerlinNoise(mask, targets, new PerlinNoisePartitionParameters(5f), seed: 42);
 
         IPartialHexPartitionMap<HexPartitionCell> partial = result;
+        SpatialPartialHexPartitionMap<HexPartitionCell> spatialPartition = result;
         ISpatialHexMap<int?> spatial = result;
         Assert.That(spatial.Geometry, Is.EqualTo(geometry));
+        Assert.That(spatialPartition.Geometry, Is.EqualTo(result.Geometry));
+        Assert.That(spatialPartition.Cells, Is.SameAs(result.Cells));
         Assert.That(Values(result), Is.EqualTo(new int?[] { 42, null, 42, null, 42, null }));
         targets.Clear();
         result[0] = null;
