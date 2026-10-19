@@ -179,7 +179,7 @@ namespace Akeldov.Math.Hexes.Partitioning.CellularPotts
         internal PartialHexPartitionMap<HexPartitionCell> CreatePartialPartition()
             => new PartialHexPartitionMap<HexPartitionCell>(_topology, CreateCells());
 
-        private HexPartitionCell[] CreateCells()
+        internal HexPartitionCell[] CreateCells()
         {
             var groups = new List<VectorXYInt>[_cellIds.Length];
             for (int cell = 0; cell < groups.Length; cell++)

@@ -18,9 +18,10 @@ public class PartialCellularPottsTests
         var source = geometry.PartitionByPerlinNoise(mask, targets, new PerlinNoisePartitionParameters(7), seed: 42);
         var before = Enumerable.Range(0, geometry.Topology.Count).Select(i => source[i]).ToArray();
 
-        var result = source.DiffuseByCellularPotts(
+        SpatialPartialHexPartitionMap<HexPartitionCell> result = source.DiffuseByCellularPotts(
             new CellularPottsParameters(8, connectivity: CellularPottsConnectivity.None), new Random(42));
 
+        Assert.That(result.Geometry, Is.EqualTo(geometry));
         Assert.That(Values(result).Select(id => id.HasValue), Is.EqualTo(before.Select(id => id.HasValue)));
         Assert.That(result.Cells.Select(c => c.Id), Is.EqualTo(new[] { 7, 42 }));
         Assert.That(Enumerable.Range(0, geometry.Topology.Count).Select(i => source[i]), Is.EqualTo(before));
