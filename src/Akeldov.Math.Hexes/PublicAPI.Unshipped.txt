@@ -1,4 +1,7 @@
 #nullable enable
+Akeldov.Math.Hexes.SpatialHexPartitionMap<THexPartitionCell>
+Akeldov.Math.Hexes.SpatialHexPartitionMap<THexPartitionCell>.Geometry.get -> Akeldov.Math.Hexes.Geometry.HexMapGeometry
+Akeldov.Math.Hexes.SpatialHexPartitionMap<THexPartitionCell>.SpatialHexPartitionMap(Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, System.Collections.Generic.IReadOnlyList<THexPartitionCell>! cells) -> void
 static Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapGeometryExtensions.PartitionByPerlinNoise(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, Akeldov.Math.Hexes.IHexMap<int?>! regionsMask, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget!>! targets, Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionParameters! parameters, int seed) -> Akeldov.Math.Hexes.Partitioning.PerlinNoise.PartialPerlinNoiseHexPartitionMap!
 static Akeldov.Math.Hexes.Partitioning.PerlinNoise.HexMapGeometryExtensions.PartitionByPerlinNoise(this Akeldov.Math.Hexes.Geometry.HexMapGeometry geometry, Akeldov.Math.Hexes.IHexMap<bool>! participationMask, Akeldov.Math.Hexes.IHexMap<int>! regionsMask, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionTarget!>! targets, Akeldov.Math.Hexes.Partitioning.PerlinNoise.PerlinNoisePartitionParameters! parameters, int seed) -> Akeldov.Math.Hexes.Partitioning.PerlinNoise.PartialPerlinNoiseHexPartitionMap!
 Akeldov.Math.Hexes.Partitioning.PerlinNoise.PartialPerlinNoiseHexPartitionMap
