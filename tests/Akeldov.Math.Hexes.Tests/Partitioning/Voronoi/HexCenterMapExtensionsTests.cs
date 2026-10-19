@@ -643,7 +643,7 @@ public class HexCenterMapExtensionsTests
     }
 
     [Test]
-    public void Partition_ReturnsHexPartitionMapOfCellIds()
+    public void Partition_ReturnsSpatialHexPartitionMapOfCellIds()
     {
         var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
         var hexCenters = new HexCenterMap(new HexMapGeometry(2, 2, VectorXY.Zero, 1f, Layout.EvenQ));
@@ -651,9 +651,12 @@ public class HexCenterMapExtensionsTests
         var map = hexCenters.PartitionByVoronoi(sites);
         IHexMap<int> hexMap = map;
 
-        HexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
+        SpatialHexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
+        ISpatialIntHexMap spatialMap = map;
         Assert.That(map, Is.InstanceOf<HexMap<int>>());
         Assert.That(partitionMap.Cells, Is.SameAs(map.Cells));
+        Assert.That(partitionMap.Geometry, Is.EqualTo(hexCenters.Geometry));
+        Assert.That(spatialMap.Geometry, Is.EqualTo(map.Geometry));
         Assert.That(map.Centers, Is.SameAs(hexCenters));
         Assert.That(hexMap.Topology.Resolution, Is.EqualTo(new VectorXYInt(2, 2)));
         Assert.That(hexMap.Topology.Layout, Is.EqualTo(Layout.EvenQ));
@@ -745,11 +748,14 @@ public class HexCenterMapExtensionsTests
         var participationMask = new BoolHexMap(hexCenters.Topology, new[] { true, false, true });
 
         PartialVoronoiHexPartitionMap map = hexCenters.PartitionByVoronoi(participationMask, sites);
+        SpatialPartialHexPartitionMap<VoronoiHexPartitionCell> partitionMap = map;
         ISpatialHexMap<int?> spatialMap = map;
 
         Assert.Multiple(() =>
         {
             Assert.That(map.Centers, Is.SameAs(hexCenters));
+            Assert.That(partitionMap.Cells, Is.SameAs(map.Cells));
+            Assert.That(partitionMap.Geometry, Is.EqualTo(map.Geometry));
             Assert.That(spatialMap.Geometry, Is.EqualTo(hexCenters.Geometry));
             Assert.That(map[0], Is.EqualTo(map.Cells[0].Id));
             Assert.That(map[1], Is.Null);

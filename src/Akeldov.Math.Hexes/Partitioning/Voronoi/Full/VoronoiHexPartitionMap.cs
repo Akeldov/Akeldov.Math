@@ -17,10 +17,10 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
     /// Empty cells may be excluded by the partitioner's policy.
     /// Cells created for isolated exclaves follow the source cells in row-major component order.
     /// </remarks>
-    public sealed class VoronoiHexPartitionMap : HexPartitionMap<VoronoiHexPartitionCell>, ISpatialHexMap<int>
+    public sealed class VoronoiHexPartitionMap : SpatialHexPartitionMap<VoronoiHexPartitionCell>
     {
         internal VoronoiHexPartitionMap(HexCenterMap centers, int[] assignments, VoronoiHexPartitionCell[] cells)
-            : base((centers ?? throw new ArgumentNullException(nameof(centers))).Topology, cells)
+            : base((centers ?? throw new ArgumentNullException(nameof(centers))).Geometry, cells)
         {
             if (assignments == null)
                 throw new ArgumentNullException(nameof(assignments));
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Hexes.Partitioning.Voronoi
         /// <summary>
         /// Gets the spatial geometry used by the partition map.
         /// </summary>
-        public HexMapGeometry Geometry => Centers.Geometry;
+        public new HexMapGeometry Geometry => base.Geometry;
 
         /// <summary>
         /// Creates a spatial facade sharing this partition map's geometry and assignment array.
