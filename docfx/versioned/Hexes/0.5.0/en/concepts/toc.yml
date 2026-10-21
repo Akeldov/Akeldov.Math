@@ -26,15 +26,13 @@
   items:
     - name: Polyhexes
       href: hex-grid-model/polyhexes.md
-- name: Data Storage
-  href: data-storage/index.md
+- name: Maps
+  href: data-storage/maps.md
   items:
-    - name: Maps
-      href: data-storage/maps.md
-    - name: Rasters
-      href: data-storage/rasters.md
     - name: Complete and Partial Neighborhoods
       href: data-storage/complete-and-partial-neighborhoods.md
+- name: Rasters
+  href: data-storage/rasters.md
 - name: Spatial Algorithms
   href: spatial-algorithms/index.md
   items:
