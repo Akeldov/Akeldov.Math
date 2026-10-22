@@ -26,7 +26,7 @@ public class HexMatrixApothemOffsetRegionTests
         ContourBasedRegion offsetRegion = geometry.ToApothemOffsetRegion(layout);
 
         Assert.That(offsetRegion.Contours, Is.Not.Empty);
-        AssertEveryCurvePointStaysAtApothemDistance(sourceRegion, offsetRegion);
+        AssertEveryCurvePointStaysAtOffsetDistance(sourceRegion, offsetRegion, Apothem);
     }
 
     [TestCase(Layout.OddR)]
@@ -90,6 +90,89 @@ public class HexMatrixApothemOffsetRegionTests
         Assert.Throws<InvalidOperationException>(() => geometry.ToApothemOffsetRegion());
     }
 
+    [Test]
+    public void ToOffsetRegion_UsesSpecifiedDistance(
+        [Values(Layout.OddR, Layout.EvenR, Layout.OddQ, Layout.EvenQ)] Layout layout,
+        [Values(0.25f, 0.75f, 2f)] float offsetDistance)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+        ContourBasedRegion offsetRegion = geometry.ToOffsetRegion(offsetDistance, layout);
+
+        Assert.That(offsetRegion.Contours, Is.Not.Empty);
+        AssertEveryCurvePointStaysAtOffsetDistance(geometry.ToRegion(layout), offsetRegion, offsetDistance);
+        AssertRegionContoursAreClosed(offsetRegion);
+        AssertRegionContoursHaveNoNonAdjacentIntersections(offsetRegion);
+
+        ParameterizedArc[] arcs = GetArcs(offsetRegion);
+        Assert.That(arcs, Is.Not.Empty);
+        foreach (ParameterizedArc arc in arcs)
+            Assert.That(arc.Radius, Is.EqualTo(offsetDistance).Within(Epsilon));
+    }
+
+    [Test]
+    public void ToOffsetRegion_AtApothemDistance_MatchesApothemOffsetRegion(
+        [Values(Layout.OddR, Layout.EvenR, Layout.OddQ, Layout.EvenQ)] Layout layout)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+
+        AssertContoursAreEqual(
+            geometry.ToApothemOffsetRegion(layout),
+            geometry.ToOffsetRegion(Apothem, layout));
+    }
+
+    [Test]
+    public void ToOffsetRegion_AtZeroDistance_MatchesSourceRegion(
+        [Values(Layout.OddR, Layout.EvenR, Layout.OddQ, Layout.EvenQ)] Layout layout)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+
+        AssertContoursAreEqual(geometry.ToRegion(layout), geometry.ToOffsetRegion(0f, layout));
+    }
+
+    [Test]
+    public void ToOffsetRegion_WithoutLayout_UsesOddR()
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+
+        AssertContoursAreEqual(geometry.ToOffsetRegion(0.5f, Layout.OddR), geometry.ToOffsetRegion(0.5f));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void ToOffsetRegion_WithInvalidDistance_Throws(float offsetDistance)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToOffsetRegion(offsetDistance));
+        Assert.That(exception!.ParamName, Is.EqualTo("offsetDistance"));
+    }
+
+    [Test]
+    public void ToOffsetRegion_WithNullGeometry_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => ((IPolyhexGeometry)null!).ToOffsetRegion(0.5f));
+    }
+
+    [TestCase(0f)]
+    [TestCase(0.5f)]
+    public void ToOffsetRegion_WithInvalidLayout_Throws(float offsetDistance)
+    {
+        PolyhexGeometry geometry = CreateGeometry();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => geometry.ToOffsetRegion(offsetDistance, (Layout)(-1)));
+    }
+
+    [TestCase(0f)]
+    [TestCase(0.5f)]
+    public void ToOffsetRegion_WhenPolyhexIsEmpty_Throws(float offsetDistance)
+    {
+        var geometry = new PolyhexGeometry(new[,] { { false } }, Radius);
+
+        Assert.Throws<InvalidOperationException>(() => geometry.ToOffsetRegion(offsetDistance));
+    }
+
     private static PolyhexGeometry CreateGeometry()
     {
         return new PolyhexGeometry(
@@ -104,9 +187,10 @@ public class HexMatrixApothemOffsetRegionTests
             Radius);
     }
 
-    private static void AssertEveryCurvePointStaysAtApothemDistance(
+    private static void AssertEveryCurvePointStaysAtOffsetDistance(
         ContourBasedRegion sourceRegion,
-        ContourBasedRegion offsetRegion)
+        ContourBasedRegion offsetRegion,
+        float offsetDistance)
     {
         int curveIndex = 0;
 
@@ -126,8 +210,8 @@ public class HexMatrixApothemOffsetRegionTests
 
                     Assert.That(
                         sourceRegion.Distance(point),
-                        Is.EqualTo(Apothem).Within(Epsilon),
-                        $"Offset curve {curveIndex} sample {j} must be at apothem distance from the source region.");
+                        Is.EqualTo(offsetDistance).Within(Epsilon),
+                        $"Offset curve {curveIndex} sample {j} must be at distance {offsetDistance} from the source region.");
                 }
 
                 curveIndex++;
@@ -167,7 +251,7 @@ public class HexMatrixApothemOffsetRegionTests
         {
             for (int j = i + 1; j < contour.Curves.Count; j++)
             {
-                if (AreAdjacent(i, j, contour.Curves.Count))
+                if (AreAdjacent(i, j, contour.Curves))
                     continue;
 
                 List<PointXY> intersections = GetIntersections(contour.Curves[i], contour.Curves[j]);
@@ -180,9 +264,18 @@ public class HexMatrixApothemOffsetRegionTests
         }
     }
 
-    private static bool AreAdjacent(int firstIndex, int secondIndex, int count)
+    private static bool AreAdjacent(int firstIndex, int secondIndex, IReadOnlyList<IContourPath> curves)
     {
-        return secondIndex == firstIndex + 1 || (firstIndex == 0 && secondIndex == count - 1);
+        // Treat curves separated only by a rounding-sized connector as adjacent.
+        float forwardGap = 0f;
+        for (int i = firstIndex + 1; i < secondIndex; i++)
+            forwardGap += curves[i].Length;
+
+        float backwardGap = 0f;
+        for (int i = (secondIndex + 1) % curves.Count; i != firstIndex; i = (i + 1) % curves.Count)
+            backwardGap += curves[i].Length;
+
+        return forwardGap <= Epsilon || backwardGap <= Epsilon;
     }
 
     private static List<PointXY> GetIntersections(IFinitePath first, IFinitePath second)
@@ -247,17 +340,8 @@ public class HexMatrixApothemOffsetRegionTests
         PointXY point,
         ParameterizedSegment segment)
     {
-        VectorXY segmentVector = segment.EndPoint - segment.StartPoint;
-        VectorXY startToPoint = point - segment.StartPoint;
-
-        if (!VectorXY.Cross(segmentVector, startToPoint).IsAlmostZero(Epsilon))
-            return;
-
-        float dot = VectorXY.Dot(startToPoint, segmentVector);
-        if (dot < -Epsilon || dot > segmentVector.SquaredLength + Epsilon)
-            return;
-
-        AddDistinct(intersections, point);
+        if (segment.Distance(point) <= Epsilon)
+            AddDistinct(intersections, point);
     }
 
     private static void AddSegmentArcIntersections(
