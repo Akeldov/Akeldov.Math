@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Hexes</PackageId>
-		<Version>0.9.0</Version>
+		<Version>0.10.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Hex-grid geometry, axial coordinates, topology, pathfinding, rasterization, chromatization, polyhex contours, Voronoi and Perlin-noise partitioning, and Cellular Potts diffusion.</Description>
-		<PackageReleaseNotes>Added geometry-aware Perlin-noise partitioning with target area shares, participation and region masks; Cellular Potts diffusion with target areas, optional connectivity preservation, and region constraints; and SplitDisconnectedCells for full and partial partitions. Added Voronoi relaxation and immutable partition parameter objects. Breaking changes: ToVoronoiHexPartitionMap and ToPartialVoronoiHexPartitionMap are now PartitionByVoronoi; masks precede sites, and policies are configured through VoronoiHexPartitionParameters. PairPresenceFlags, TripletPresenceFlags, SeptupletPresenceFlags, and ChromaticTripletPresenceFlags are renamed without the Flags suffix. New partition APIs are PartitionByPerlinNoise and DiffuseByCellularPotts. Rebuild consumers and migrate old Voronoi calls and enum names. Targets remain netstandard2.1 and net6.0; the minimum Spatial2D dependency remains 1.1.0, with compatible 1.x releases accepted.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added SpatialHexPartitionMap and SpatialPartialHexPartitionMap, geometry-preserving SplitDisconnectedCells and Cellular Potts extensions, covariant IHexMap, and configurable outward polyhex region offsets via ToOffsetRegion. Breaking changes: full Voronoi partitions now return SpatialHexPartitionMap&lt;VoronoiHexPartitionCell&gt;; Perlin partitions now return SpatialHexPartitionMap&lt;HexPartitionCell&gt; or SpatialPartialHexPartitionMap&lt;HexPartitionCell&gt;. Removed VoronoiHexPartitionMap, PerlinNoiseHexPartitionMap, and PartialPerlinNoiseHexPartitionMap. Rebuild consumers and migrate explicit result types and removed full-Voronoi convenience members. Targets remain netstandard2.1 and net6.0; the minimum Spatial2D dependency remains 1.1.0.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;hex;hex-grid;vectors;topology;pathfinding;rasterization;voronoi;polyhex</PackageTags>
