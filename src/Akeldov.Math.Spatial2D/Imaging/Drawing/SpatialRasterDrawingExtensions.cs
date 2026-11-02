@@ -8,7 +8,7 @@ using Akeldov.Math.Spatial2D.Regions;
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>Provides drawing operations on spatial color rasters.</summary>
-    public static class SpatialRasterDrawingExtensions
+    public static partial class SpatialRasterDrawingExtensions
     {
         /// <summary>Draws a solid closed polygonal contour.</summary>
         /// <param name="raster">The raster modified in place.</param>
