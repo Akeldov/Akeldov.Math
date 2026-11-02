@@ -75,6 +75,64 @@ namespace Akeldov.Math.Spatial2D.Imaging
             }
         }
 
+        /// <summary>Draws a dashed line into the existing raster with round-capped strokes.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="start">The start point in world coordinates, where the first dash begins.</param>
+        /// <param name="end">The end point in world coordinates.</param>
+        /// <param name="width">The finite, positive full stroke width in world units.</param>
+        /// <param name="dash">The finite, positive length of each dash and each gap in world units, measured along the line before adding round caps.</param>
+        /// <param name="color">The stroke color, including its opacity.</param>
+        /// <remarks>
+        /// Each dash uses <see cref="DrawLine"/> for clipping, antialiasing and source-over compositing.
+        /// The last dash is shortened at the end point. A zero-length line draws nothing.
+        /// Round caps extend into gaps; overlapping dashes are composited separately.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A point, width or dash is invalid, the line length exceeds the finite float range, or dash spacing is too small for float progression along the line.</exception>
+        public static void DrawDashedLine(this SpatialRaster<RGBA8BitColor> raster, PointXY start, PointXY end, float width, float dash, RGBA8BitColor color)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            if (float.IsNaN(start.X) || float.IsInfinity(start.X) || float.IsNaN(start.Y) || float.IsInfinity(start.Y))
+                throw new ArgumentOutOfRangeException(nameof(start));
+            if (float.IsNaN(end.X) || float.IsInfinity(end.X) || float.IsNaN(end.Y) || float.IsInfinity(end.Y))
+                throw new ArgumentOutOfRangeException(nameof(end));
+            if (float.IsNaN(width) || float.IsInfinity(width) || width <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(width));
+            if (float.IsNaN(dash) || float.IsInfinity(dash) || dash <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(dash));
+
+            float dx = end.X - start.X;
+            float dy = end.Y - start.Y;
+            float scale = MathF.Max(MathF.Abs(dx), MathF.Abs(dy));
+            if (float.IsInfinity(scale))
+                throw new ArgumentOutOfRangeException(nameof(end));
+            if (scale == 0f)
+                return;
+            float nx = dx / scale;
+            float ny = dy / scale;
+            float length = scale * MathF.Sqrt(nx * nx + ny * ny);
+            if (float.IsInfinity(length))
+                throw new ArgumentOutOfRangeException(nameof(end));
+            float step = dash * 2f;
+            if (length + step == length)
+                throw new ArgumentOutOfRangeException(nameof(dash), "Dash spacing is too small for the line length.");
+            if (color.A == 0)
+                return;
+
+            float ux = dx / length;
+            float uy = dy / length;
+            for (float distance = 0f; distance < length; distance += step)
+            {
+                float dashEnd = MathF.Min(length, distance + dash);
+                var a = distance == 0f ? start : new PointXY(start.X + ux * distance, start.Y + uy * distance);
+                var b = dashEnd == length ? end : new PointXY(start.X + ux * dashEnd, start.Y + uy * dashEnd);
+                raster.DrawLine(a, b, width, color);
+                if (dashEnd == length)
+                    break;
+            }
+        }
+
         private static RGBA8BitColor Composite(RGBA8BitColor target, RGBA8BitColor source, float coverage)
         {
             float sourceAlpha = source.A / 255f * coverage;
