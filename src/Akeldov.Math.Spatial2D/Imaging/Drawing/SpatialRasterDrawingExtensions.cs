@@ -138,42 +138,27 @@ namespace Akeldov.Math.Spatial2D.Imaging
         private static void DrawCurveCoverage(SpatialRaster<RGBA8BitColor> raster, ICurve curve,
             List<Segment>? strokes, float width, RGBA8BitColor color)
         {
-            var geometry = raster.Geometry;
-            float radius = width * 0.5f;
-            for (int y = 0; y < raster.Resolution.Y; y++)
+            var coverage = new CurveStrokeCoverage(raster.Geometry, width * 0.5f);
+            if (strokes == null)
+                coverage.Add(curve);
+            else
+                foreach (var stroke in strokes)
+                    coverage.Add(stroke);
+            ushort[] masks = coverage.Masks;
+            for (int i = 0; i < masks.Length; i++)
             {
-                for (int x = 0; x < raster.Resolution.X; x++)
+                uint bits = masks[i];
+                if (bits == 0)
+                    continue;
+                int count = 0;
+                while (bits != 0)
                 {
-                    int covered = 0;
-                    for (int sy = 0; sy < 4; sy++)
-                    {
-                        for (int sx = 0; sx < 4; sx++)
-                        {
-                            var point = new PointXY(
-                                geometry.Origin.X + (x + (sx + 0.5f) / 4) * geometry.CellSize.X,
-                                geometry.Origin.Y + (y + (sy + 0.5f) / 4) * geometry.CellSize.Y);
-                            bool inside = strokes == null ? curve.Distance(point) <= radius : false;
-                            if (strokes != null)
-                            {
-                                foreach (var stroke in strokes)
-                                {
-                                    if (stroke.Distance(point) <= radius)
-                                    {
-                                        inside = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (inside)
-                                covered++;
-                        }
-                    }
-                    if (covered > 0)
-                        raster[x, y] = Composite(raster[x, y], color, covered / 16f);
+                    bits &= bits - 1;
+                    count++;
                 }
+                raster.Values[i] = Composite(raster.Values[i], color, count / 16f);
             }
         }
-
         /// <summary>Fills an axis-aligned rectangle using source-over alpha compositing.</summary>
         /// <param name="raster">The raster whose retained values are modified in place.</param>
         /// <param name="rectangle">The rectangle in world coordinates.</param>
