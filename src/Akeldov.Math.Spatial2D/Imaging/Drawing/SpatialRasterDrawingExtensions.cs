@@ -1,4 +1,5 @@
 using System;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Imaging
@@ -6,6 +7,33 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>Provides drawing operations on spatial color rasters.</summary>
     public static class SpatialRasterDrawingExtensions
     {
+        /// <summary>Draws a round-capped segment into the existing raster using source-over alpha compositing.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="segment">The segment with endpoints in world coordinates.</param>
+        /// <param name="width">The finite, positive full stroke width in world units.</param>
+        /// <param name="color">The stroke color, including its opacity.</param>
+        /// <remarks>Uses the same clipping and 4-by-4 coverage sampling as the endpoint overload. A zero-length segment draws a disk.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">An endpoint is non-finite or the width is not finite and positive.</exception>
+        public static void DrawSegment(this SpatialRaster<RGBA8BitColor> raster, Segment segment, float width, RGBA8BitColor color)
+        {
+            raster.DrawSegment(segment.EndpointA, segment.EndpointB, width, color);
+        }
+
+        /// <summary>Draws a dashed segment into the existing raster with round-capped strokes.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="segment">The segment in world coordinates. The first dash begins at EndpointA and proceeds towards EndpointB.</param>
+        /// <param name="width">The finite, positive full stroke width in world units.</param>
+        /// <param name="dash">The finite, positive length of each dash and gap in world units, before adding round caps.</param>
+        /// <param name="color">The stroke color, including its opacity.</param>
+        /// <remarks>Uses the endpoint overload's clipping, antialiasing and compositing. The last dash is shortened at EndpointB. A zero-length segment draws nothing.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">An endpoint, width or dash is invalid, the length exceeds the finite float range, or dash spacing is too small for float progression.</exception>
+        public static void DrawDashedSegment(this SpatialRaster<RGBA8BitColor> raster, Segment segment, float width, float dash, RGBA8BitColor color)
+        {
+            raster.DrawDashedSegment(segment.EndpointA, segment.EndpointB, width, dash, color);
+        }
+
         /// <summary>Draws a round-capped line into the existing raster using source-over alpha compositing.</summary>
         /// <param name="raster">The raster whose retained values are modified in place.</param>
         /// <param name="start">The start point in world coordinates.</param>
@@ -20,7 +48,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">A point is non-finite or the width is not finite and positive.</exception>
-        public static void DrawLine(this SpatialRaster<RGBA8BitColor> raster, PointXY start, PointXY end, float width, RGBA8BitColor color)
+        public static void DrawSegment(this SpatialRaster<RGBA8BitColor> raster, PointXY start, PointXY end, float width, RGBA8BitColor color)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -83,13 +111,13 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="dash">The finite, positive length of each dash and each gap in world units, measured along the line before adding round caps.</param>
         /// <param name="color">The stroke color, including its opacity.</param>
         /// <remarks>
-        /// Each dash uses <see cref="DrawLine"/> for clipping, antialiasing and source-over compositing.
+        /// Each dash uses <see cref="DrawSegment(SpatialRaster{RGBA8BitColor}, PointXY, PointXY, float, RGBA8BitColor)"/> for clipping, antialiasing and source-over compositing.
         /// The last dash is shortened at the end point. A zero-length line draws nothing.
         /// Round caps extend into gaps; overlapping dashes are composited separately.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">A point, width or dash is invalid, the line length exceeds the finite float range, or dash spacing is too small for float progression along the line.</exception>
-        public static void DrawDashedLine(this SpatialRaster<RGBA8BitColor> raster, PointXY start, PointXY end, float width, float dash, RGBA8BitColor color)
+        public static void DrawDashedSegment(this SpatialRaster<RGBA8BitColor> raster, PointXY start, PointXY end, float width, float dash, RGBA8BitColor color)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -127,7 +155,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                 float dashEnd = MathF.Min(length, distance + dash);
                 var a = distance == 0f ? start : new PointXY(start.X + ux * distance, start.Y + uy * distance);
                 var b = dashEnd == length ? end : new PointXY(start.X + ux * dashEnd, start.Y + uy * dashEnd);
-                raster.DrawLine(a, b, width, color);
+                raster.DrawSegment(a, b, width, color);
                 if (dashEnd == length)
                     break;
             }
