@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
@@ -9,6 +10,146 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>Provides drawing operations on spatial color rasters.</summary>
     public static class SpatialRasterDrawingExtensions
     {
+        /// <summary>Draws a solid closed polygonal contour.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="points">World-space boundary vertices, read during the call and not retained.</param>
+        /// <param name="width">The positive full stroke width in world units.</param>
+        /// <param name="color">The stroke color and opacity.</param>
+        public static void DrawContour(this SpatialRaster<RGBA8BitColor> raster, IReadOnlyList<PointXY> points, float width, RGBA8BitColor color)
+            => raster.DrawContour(points, width, color, 0f);
+
+        /// <summary>Draws a solid contour.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="contour">The contour in world coordinates.</param>
+        /// <param name="width">The positive full stroke width in world units.</param>
+        /// <param name="color">The stroke color and opacity.</param>
+        public static void DrawContour(this SpatialRaster<RGBA8BitColor> raster, IContour contour, float width, RGBA8BitColor color)
+            => raster.DrawContour(contour, width, color, 0f);
+        /// <summary>Draws a closed polygonal contour into the existing raster.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="points">Boundary vertices in world coordinates. At least three vertices are required; the first may be repeated at the end. The list is read during this call and is not retained.</param>
+        /// <param name="width">The finite, positive full stroke width in world units.</param>
+        /// <param name="color">The stroke color and opacity.</param>
+        /// <param name="dash">The finite, non-negative dash and gap length in world units; zero selects a solid stroke.</param>
+        /// <remarks>The last vertex connects to the first. Dash phase continues across vertices from the first vertex.</remarks>
+        /// <exception cref="ArgumentNullException">The raster or points are null.</exception>
+        /// <exception cref="ArgumentException">The vertices do not form a valid contour.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Coordinates or drawing parameters are invalid.</exception>
+        public static void DrawContour(this SpatialRaster<RGBA8BitColor> raster, IReadOnlyList<PointXY> points, float width, RGBA8BitColor color, float dash)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            raster.DrawContour(new CompositeContour(points), width, color, dash);
+        }
+
+        /// <summary>Draws a contour with antialiasing and source-over compositing.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="contour">The contour in world coordinates.</param>
+        /// <param name="width">The finite, positive full stroke width in world units.</param>
+        /// <param name="color">The stroke color and opacity.</param>
+        /// <param name="dash">The finite, non-negative dash and gap length in world units; zero selects a solid stroke.</param>
+        /// <remarks>
+        /// Uses 4-by-4 coverage sampling and composites each pixel once, including overlapping strokes.
+        /// Solid strokes use the contour distance directly. Dashed strokes have round caps and continuous
+        /// phase from contour coordinate zero. Dashed curves are approximated by segments no longer in
+        /// curve coordinate than half the smaller cell dimension. The final dash is shortened at the seam.
+        /// Built-in circles, rectangles and composite contours support dashes; custom contours must implement
+        /// IParameterizedContour for dashes. Color channels are composited without gamma correction.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">The raster or contour is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Drawing parameters or contour length are invalid, or sampling cannot advance in float precision.</exception>
+        /// <exception cref="ArgumentException">A custom dashed contour has no length parameterization.</exception>
+        public static void DrawContour(this SpatialRaster<RGBA8BitColor> raster, IContour contour, float width, RGBA8BitColor color, float dash)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            if (contour == null)
+                throw new ArgumentNullException(nameof(contour));
+            if (float.IsNaN(width) || float.IsInfinity(width) || width <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(width));
+            if (float.IsNaN(dash) || float.IsInfinity(dash) || dash < 0f)
+                throw new ArgumentOutOfRangeException(nameof(dash));
+
+            List<Segment>? strokes = null;
+            if (dash > 0f)
+            {
+                IParameterizedContour parameterized = contour switch
+                {
+                    IParameterizedContour value => value,
+                    ICompositeContour value => new ParameterizedCompositeContour(value.Curves),
+                    Circle value => new ParameterizedCircle(value.Center, value.Radius),
+                    RectangleContour value => (ParameterizedRectangleContour)value,
+                    OrientedRectangleContour value => (ParameterizedOrientedRectangleContour)value,
+                    _ => throw new ArgumentException("Dashed contours require length parameterization.", nameof(contour)),
+                };
+                float length = parameterized.Length;
+                if (float.IsNaN(length) || float.IsInfinity(length) || length < 0f)
+                    throw new ArgumentOutOfRangeException(nameof(contour));
+                float sampleStep = MathF.Min(raster.Geometry.CellSize.X, raster.Geometry.CellSize.Y) * 0.5f;
+                sampleStep = MathF.Min(sampleStep, dash);
+                if (sampleStep <= 0f || length + sampleStep == length)
+                    throw new ArgumentOutOfRangeException(nameof(dash), "Sampling cannot advance at this contour length.");
+                if (color.A == 0)
+                    return;
+                strokes = new List<Segment>();
+                for (float offset = 0f; offset < length; offset += dash * 2f)
+                {
+                    float stop = MathF.Min(length, offset + dash);
+                    for (float position = offset; position < stop;)
+                    {
+                        float next = MathF.Min(stop, position + sampleStep);
+                        strokes.Add(new Segment(parameterized.GetPoint(position), parameterized.GetPoint(next)));
+                        position = next;
+                    }
+                    if (stop == length)
+                        break;
+                }
+            }
+            if (color.A == 0)
+                return;
+
+            DrawContourCoverage(raster, contour, strokes, width, color);
+        }
+
+        private static void DrawContourCoverage(SpatialRaster<RGBA8BitColor> raster, IContour contour,
+            List<Segment>? strokes, float width, RGBA8BitColor color)
+        {
+            var geometry = raster.Geometry;
+            float radius = width * 0.5f;
+            for (int y = 0; y < raster.Resolution.Y; y++)
+            {
+                for (int x = 0; x < raster.Resolution.X; x++)
+                {
+                    int covered = 0;
+                    for (int sy = 0; sy < 4; sy++)
+                    {
+                        for (int sx = 0; sx < 4; sx++)
+                        {
+                            var point = new PointXY(
+                                geometry.Origin.X + (x + (sx + 0.5f) / 4) * geometry.CellSize.X,
+                                geometry.Origin.Y + (y + (sy + 0.5f) / 4) * geometry.CellSize.Y);
+                            bool inside = strokes == null ? contour.Distance(point) <= radius : false;
+                            if (strokes != null)
+                            {
+                                foreach (var stroke in strokes)
+                                {
+                                    if (stroke.Distance(point) <= radius)
+                                    {
+                                        inside = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (inside)
+                                covered++;
+                        }
+                    }
+                    if (covered > 0)
+                        raster[x, y] = Composite(raster[x, y], color, covered / 16f);
+                }
+            }
+        }
+
         /// <summary>Fills an axis-aligned rectangle using source-over alpha compositing.</summary>
         /// <param name="raster">The raster whose retained values are modified in place.</param>
         /// <param name="rectangle">The rectangle in world coordinates.</param>
