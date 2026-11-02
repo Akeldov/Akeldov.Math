@@ -1,0 +1,90 @@
+using System;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+namespace Akeldov.Math.Spatial2D.Imaging
+{
+    /// <summary>Provides drawing operations on spatial color rasters.</summary>
+    public static class SpatialRasterDrawingExtensions
+    {
+        /// <summary>Draws a round-capped line into the existing raster using source-over alpha compositing.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="start">The start point in world coordinates.</param>
+        /// <param name="end">The end point in world coordinates.</param>
+        /// <param name="width">The finite, positive full stroke width in world units.</param>
+        /// <param name="color">The stroke color, including its opacity.</param>
+        /// <remarks>
+        /// Uses the raster geometry, with Y increasing upwards, and clips drawing to its bounds.
+        /// Coverage is approximated with a fixed 4-by-4 sample grid per cell, including rectangular cells.
+        /// A zero-length line draws a disk of diameter <paramref name="width"/>.
+        /// Color channels are composited directly without gamma correction.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A point is non-finite or the width is not finite and positive.</exception>
+        public static void DrawLine(this SpatialRaster<RGBA8BitColor> raster, PointXY start, PointXY end, float width, RGBA8BitColor color)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            if (float.IsNaN(start.X) || float.IsInfinity(start.X) || float.IsNaN(start.Y) || float.IsInfinity(start.Y))
+                throw new ArgumentOutOfRangeException(nameof(start));
+            if (float.IsNaN(end.X) || float.IsInfinity(end.X) || float.IsNaN(end.Y) || float.IsInfinity(end.Y))
+                throw new ArgumentOutOfRangeException(nameof(end));
+            if (float.IsNaN(width) || float.IsInfinity(width) || width <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(width));
+            if (color.A == 0)
+                return;
+
+            var geometry = raster.Geometry;
+            float cellWidth = geometry.Size.X / raster.Resolution.X;
+            float cellHeight = geometry.Size.Y / raster.Resolution.Y;
+            float radius = width / 2f;
+            // Clamp in floating point before converting: off-screen coordinates can exceed Int32.
+            int left = (int)MathF.Max(0, MathF.Min(raster.Resolution.X,
+                MathF.Floor((MathF.Min(start.X, end.X) - radius - geometry.Origin.X) / cellWidth)));
+            int right = (int)MathF.Max(0, MathF.Min(raster.Resolution.X,
+                MathF.Ceiling((MathF.Max(start.X, end.X) + radius - geometry.Origin.X) / cellWidth)));
+            int bottom = (int)MathF.Max(0, MathF.Min(raster.Resolution.Y,
+                MathF.Floor((MathF.Min(start.Y, end.Y) - radius - geometry.Origin.Y) / cellHeight)));
+            int top = (int)MathF.Max(0, MathF.Min(raster.Resolution.Y,
+                MathF.Ceiling((MathF.Max(start.Y, end.Y) + radius - geometry.Origin.Y) / cellHeight)));
+
+            float dx = end.X - start.X;
+            float dy = end.Y - start.Y;
+            float lengthSquared = dx * dx + dy * dy;
+            for (int y = bottom; y < top; y++)
+            {
+                for (int x = left; x < right; x++)
+                {
+                    int covered = 0;
+                    for (int sy = 0; sy < 4; sy++)
+                    {
+                        for (int sx = 0; sx < 4; sx++)
+                        {
+                            float px = (geometry.Origin.X - start.X) + (x + (sx + 0.5f) / 4) * cellWidth;
+                            float py = (geometry.Origin.Y - start.Y) + (y + (sy + 0.5f) / 4) * cellHeight;
+                            float t = lengthSquared == 0 ? 0 : MathF.Max(0, MathF.Min(1, (px * dx + py * dy) / lengthSquared));
+                            float ex = px - t * dx;
+                            float ey = py - t * dy;
+                            if (ex * ex + ey * ey <= radius * radius)
+                                covered++;
+                        }
+                    }
+
+                    if (covered != 0)
+                        raster[x, y] = Composite(raster[x, y], color, covered / 16f);
+                }
+            }
+        }
+
+        private static RGBA8BitColor Composite(RGBA8BitColor target, RGBA8BitColor source, float coverage)
+        {
+            float sourceAlpha = source.A / 255f * coverage;
+            float targetWeight = target.A / 255f * (1 - sourceAlpha);
+            float alpha = sourceAlpha + targetWeight;
+            return new RGBA8BitColor(
+                (byte)MathF.Round((source.R * sourceAlpha + target.R * targetWeight) / alpha),
+                (byte)MathF.Round((source.G * sourceAlpha + target.G * targetWeight) / alpha),
+                (byte)MathF.Round((source.B * sourceAlpha + target.B * targetWeight) / alpha),
+                (byte)MathF.Round(alpha * 255));
+        }
+    }
+}

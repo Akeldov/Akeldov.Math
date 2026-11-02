@@ -1,3 +1,5 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions
+static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawLine(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.PointXY start, Akeldov.Math.Spatial2D.PointXY end, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 Akeldov.Math.Spatial2D.Canvas
 Akeldov.Math.Spatial2D.Canvas.Canvas() -> void
