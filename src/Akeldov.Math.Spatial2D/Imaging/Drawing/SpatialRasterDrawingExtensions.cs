@@ -2,12 +2,74 @@ using System;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>Provides drawing operations on spatial color rasters.</summary>
     public static class SpatialRasterDrawingExtensions
     {
+        /// <summary>Fills an axis-aligned rectangle using source-over alpha compositing.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="rectangle">The rectangle in world coordinates.</param>
+        /// <param name="color">The fill color, including its opacity.</param>
+        /// <remarks>Coverage is the fraction of each cell's area inside the rectangle. Zero-area rectangles draw nothing.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        public static void FillRectangle(this SpatialRaster<RGBA8BitColor> raster, Rectangle rectangle, RGBA8BitColor color)
+        {
+            raster.FillRectangle(rectangle.Min, rectangle.Max, color);
+        }
+
+        /// <summary>Fills an axis-aligned rectangle using source-over alpha compositing.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="cornerA">The first finite corner in world coordinates.</param>
+        /// <param name="cornerB">The opposite finite corner in world coordinates. Corner order does not matter.</param>
+        /// <param name="color">The fill color, including its opacity.</param>
+        /// <remarks>
+        /// Uses the raster geometry with Y increasing upwards and clips to its bounds.
+        /// Antialiasing uses the fraction of each cell's area inside the rectangle, including rectangular cells.
+        /// Zero-area rectangles draw nothing. Color channels are composited without gamma correction.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A corner coordinate is non-finite.</exception>
+        public static void FillRectangle(this SpatialRaster<RGBA8BitColor> raster, PointXY cornerA, PointXY cornerB, RGBA8BitColor color)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            if (float.IsNaN(cornerA.X) || float.IsInfinity(cornerA.X) || float.IsNaN(cornerA.Y) || float.IsInfinity(cornerA.Y))
+                throw new ArgumentOutOfRangeException(nameof(cornerA));
+            if (float.IsNaN(cornerB.X) || float.IsInfinity(cornerB.X) || float.IsNaN(cornerB.Y) || float.IsInfinity(cornerB.Y))
+                throw new ArgumentOutOfRangeException(nameof(cornerB));
+            if (color.A == 0 || cornerA.X == cornerB.X || cornerA.Y == cornerB.Y)
+                return;
+
+            var geometry = raster.Geometry;
+            float cellWidth = geometry.Size.X / raster.Resolution.X;
+            float cellHeight = geometry.Size.Y / raster.Resolution.Y;
+            float left = MathF.Max(0, MathF.Min(raster.Resolution.X,
+                (MathF.Min(cornerA.X, cornerB.X) - geometry.Origin.X) / cellWidth));
+            float right = MathF.Max(0, MathF.Min(raster.Resolution.X,
+                (MathF.Max(cornerA.X, cornerB.X) - geometry.Origin.X) / cellWidth));
+            float bottom = MathF.Max(0, MathF.Min(raster.Resolution.Y,
+                (MathF.Min(cornerA.Y, cornerB.Y) - geometry.Origin.Y) / cellHeight));
+            float top = MathF.Max(0, MathF.Min(raster.Resolution.Y,
+                (MathF.Max(cornerA.Y, cornerB.Y) - geometry.Origin.Y) / cellHeight));
+            if (left >= right || bottom >= top)
+                return;
+
+            int xEnd = (int)MathF.Ceiling(right);
+            int yEnd = (int)MathF.Ceiling(top);
+            for (int y = (int)MathF.Floor(bottom); y < yEnd; y++)
+            {
+                float coverageY = MathF.Min(y + 1f, top) - MathF.Max(y, bottom);
+                for (int x = (int)MathF.Floor(left); x < xEnd; x++)
+                {
+                    float coverageX = MathF.Min(x + 1f, right) - MathF.Max(x, left);
+                    raster[x, y] = Composite(raster[x, y], color, coverageX * coverageY);
+                }
+            }
+        }
+
         /// <summary>Fills a circle in the existing raster using source-over alpha compositing.</summary>
         /// <param name="raster">The raster whose retained values are modified in place.</param>
         /// <param name="circle">The circle with center and radius in world units.</param>

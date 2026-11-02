@@ -1,12 +1,81 @@
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Regions;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 public class SpatialRasterDrawingTests
 {
+    [Test]
+    public void FillRectangle_UsesWorldCoordinatesAndExactCellCoverage()
+    {
+        var raster = CreateRaster();
+        var buffer = raster.Values;
+        raster.FillRectangle(new PointXY(11, 20.5f), new PointXY(14, 22), new RGBA8BitColor(255, 0, 0, 255));
+        Assert.That(raster.Values, Is.SameAs(buffer));
+        Assert.That(raster[0, 0], Is.EqualTo(new RGBA8BitColor(255, 0, 0, 64)));
+        Assert.That(raster[1, 0].A, Is.EqualTo(128));
+        Assert.That(raster[0, 1].A, Is.EqualTo(128));
+        Assert.That(raster[1, 1].A, Is.EqualTo(255));
+        Assert.That(raster[2, 1].A, Is.Zero);
+        Assert.That(raster[1, 2].A, Is.Zero);
+    }
+
+    [Test]
+    public void FillRectangle_RectangleOverloadClipsAndComposites()
+    {
+        var raster = CreateRaster();
+        raster[0, 0] = new RGBA8BitColor(0, 0, 255, 128);
+        raster.FillRectangle(new Rectangle(new PointXY(14, 22), new PointXY(8, 18)), new RGBA8BitColor(255, 0, 0, 128));
+        Assert.That(raster[0, 0], Is.EqualTo(new RGBA8BitColor(170, 0, 85, 192)));
+        Assert.That(raster[1, 1], Is.EqualTo(new RGBA8BitColor(255, 0, 0, 128)));
+        Assert.That(raster[2, 1].A, Is.Zero);
+    }
+
+    [Test]
+    public void FillRectangle_ReversedCornersProduceSameImage()
+    {
+        var a = CreateRaster();
+        var b = CreateRaster();
+        var color = new RGBA8BitColor(50, 100, 150, 200);
+        a.FillRectangle(new PointXY(11, 20.25f), new PointXY(17, 23.75f), color);
+        b.FillRectangle(new PointXY(17, 23.75f), new PointXY(11, 20.25f), color);
+        Assert.That(a.Values, Is.EqualTo(b.Values));
+    }
+
+    [TestCase(0, 20, 9, 24)]
+    [TestCase(19, 20, 25, 24)]
+    [TestCase(10, 0, 18, 19)]
+    [TestCase(10, 25, 18, 30)]
+    [TestCase(12, 21, 12, 23)]
+    [TestCase(12, 21, 16, 21)]
+    public void FillRectangle_OutsideOrZeroAreaDoesNotDraw(float x0, float y0, float x1, float y1)
+    {
+        var raster = CreateRaster();
+        raster.FillRectangle(new PointXY(x0, y0), new PointXY(x1, y1), new RGBA8BitColor(255, 0, 0, 255));
+        Assert.That(raster.Values, Is.All.EqualTo(default(RGBA8BitColor)));
+    }
+
+    [Test]
+    public void FillRectangle_TransparentFillPreservesPixels()
+    {
+        var raster = CreateRaster();
+        raster[0, 0] = new RGBA8BitColor(10, 20, 30, 40);
+        var before = raster.Values.ToArray();
+        raster.FillRectangle(new PointXY(10, 20), new PointXY(18, 24), default);
+        Assert.That(raster.Values, Is.EqualTo(before));
+    }
+
+    [Test]
+    public void FillRectangle_InvalidInputsThrow()
+    {
+        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.FillRectangle(null!, default(Rectangle), default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillRectangle(new PointXY(float.NaN, 0), default, default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillRectangle(default, new PointXY(0, float.PositiveInfinity), default));
+    }
+
     [Test]
     public void FillCircle_UsesWorldCoordinatesAndAntialiasesRectangularCells()
     {
