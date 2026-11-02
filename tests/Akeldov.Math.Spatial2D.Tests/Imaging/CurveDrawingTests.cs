@@ -23,6 +23,63 @@ public class CurveDrawingTests
         Assert.That(line[4, 7].A, Is.Zero);
     }
 
+    [TestCase(0f)]
+    [TestCase(1.5707964f)]
+    [TestCase(0.7f)]
+    public void DrawArrow_MatchesUnionOfShaftAndOpenHead(float angle)
+    {
+        var raster = CreateRaster();
+        var viaSegment = CreateRaster();
+        var direction = new VectorXY(MathF.Cos(angle), MathF.Sin(angle));
+        var start = new PointXY(-direction.X, -direction.Y);
+        var end = new PointXY(direction.X, direction.Y);
+        var left = new PointXY(-direction.Y * 0.5f, direction.X * 0.5f);
+        var right = new PointXY(direction.Y * 0.5f, -direction.X * 0.5f);
+        var strokes = new[] { new Segment(start, end), new Segment(end, left), new Segment(end, right) };
+        var color = new RGBA8BitColor(30, 100, 200, 128);
+        raster.DrawArrow(start, end, 0.5f, 1f, 1f, color);
+        viaSegment.DrawArrow(new ParameterizedSegment(start, end), 0.5f, 1f, 1f, color);
+        Assert.That(viaSegment.Values, Is.EqualTo(raster.Values));
+        for (int y = 0; y < 8; y++)
+            for (int x = 0; x < 8; x++)
+            {
+                int covered = 0;
+                for (int sy = 0; sy < 4; sy++)
+                    for (int sx = 0; sx < 4; sx++)
+                    {
+                        var point = new PointXY(-2f + (x + (sx + 0.5f) / 4f) * 0.5f,
+                            -2f + (y + (sy + 0.5f) / 4f) * 0.5f);
+                        if (strokes.Any(s => s.Distance(point) <= 0.25f))
+                            covered++;
+                    }
+                Assert.That(raster[x, y].A, Is.EqualTo((byte)MathF.Round(128f * covered / 16f)),
+                    $"Pixel ({x}, {y}), angle {angle}");
+            }
+    }
+
+    [Test]
+    public void DrawArrow_ValidatesDimensionsAndHandlesEmptyDrawing()
+    {
+        var raster = CreateRaster();
+        var end = new PointXY(1, 0);
+        Assert.Throws<ArgumentNullException>(() =>
+            SpatialRasterDrawingExtensions.DrawArrow(null!, default(PointXY), end, 1, 1, 1, default));
+        foreach (float invalid in new[] { 0f, -1f, float.NaN, float.PositiveInfinity })
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => raster.DrawArrow(default, end, invalid, 1, 1, default));
+            Assert.Throws<ArgumentOutOfRangeException>(() => raster.DrawArrow(default, end, 1, invalid, 1, default));
+            Assert.Throws<ArgumentOutOfRangeException>(() => raster.DrawArrow(default, end, 1, 1, invalid, default));
+        }
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            raster.DrawArrow(new PointXY(float.NaN, 0), end, 1, 1, 1, default));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            raster.DrawArrow(default, new PointXY(float.PositiveInfinity, 0), 1, 1, 1, default));
+        raster.DrawArrow(default(PointXY), default(PointXY), 1, 1, 1, RGBA8BitColor.Black);
+        raster.DrawArrow(default, end, 1, 1, 1, default);
+        raster.DrawArrow(new PointXY(100, 100), new PointXY(110, 100), 1, 1, 1, RGBA8BitColor.Black);
+        Assert.That(raster.Values, Is.All.EqualTo(default(RGBA8BitColor)));
+    }
+
     [Test]
     public void Draw_AllConcreteOverloadsRenderStrokes()
     {

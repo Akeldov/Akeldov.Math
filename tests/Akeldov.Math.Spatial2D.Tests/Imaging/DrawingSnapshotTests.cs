@@ -107,6 +107,38 @@ public class DrawingSnapshotTests
         AssertSnapshot(raster, "drawing-pixel-font-alphabets.png");
     }
 
+    [Test]
+    public void Drawing_Arrows_MatchesApprovedImage()
+    {
+        var raster = CreateRaster(640, 440);
+        raster.DrawText("DrawArrow", new PointXY(24, 400), 21, Ink);
+        raster.DrawText("Directions / ParameterizedSegment", new PointXY(24, 365), 10.5f, Ink);
+        var center = new PointXY(145, 250);
+        for (int i = 0; i < 8; i++)
+        {
+            float angle = i * MathF.PI / 4f;
+            var direction = new VectorXY(MathF.Cos(angle), MathF.Sin(angle));
+            raster.DrawArrow(new ParameterizedSegment(
+                center + direction * 24f, center + direction * 90f),
+                3, 18, 16, Blue);
+        }
+
+        raster.DrawText("Head dimensions", new PointXY(340, 365), 10.5f, Ink);
+        raster.DrawArrow(new PointXY(350, 330), new PointXY(595, 330), 2, 12, 10, Ink);
+        raster.DrawArrow(new PointXY(350, 280), new PointXY(595, 280), 4, 28, 32, Blue);
+        raster.DrawArrow(new PointXY(350, 215), new PointXY(595, 215), 7, 48, 55, Coral);
+
+        raster.DrawText("Alpha / open head", new PointXY(24, 140), 10.5f, Ink);
+        raster.FillRectangle(new PointXY(30, 30), new PointXY(260, 115), new RGBA8BitColor(210, 225, 240, 255));
+        raster.DrawArrow(new PointXY(45, 55), new PointXY(245, 95), 12, 55, 52,
+            new RGBA8BitColor(239, 90, 70, 128));
+        raster.DrawText("Short / clipped", new PointXY(340, 140), 10.5f, Ink);
+        raster.DrawArrow(new ParameterizedSegment(new PointXY(380, 60), new PointXY(395, 90)),
+            4, 55, 40, Blue);
+        raster.DrawArrow(new PointXY(500, 50), new PointXY(645, 95), 5, 38, 40, Ink);
+        AssertSnapshot(raster, "drawing-arrows.png");
+    }
+
     private static GlyphSet LoadGlyphs()
     {
         string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "times.ttf");
