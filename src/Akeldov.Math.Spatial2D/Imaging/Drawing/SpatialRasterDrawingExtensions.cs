@@ -132,10 +132,10 @@ namespace Akeldov.Math.Spatial2D.Imaging
             if (color.A == 0)
                 return;
 
-            DrawContourCoverage(raster, contour, strokes, width, color);
+            DrawCurveCoverage(raster, contour, strokes, width, color);
         }
 
-        private static void DrawContourCoverage(SpatialRaster<RGBA8BitColor> raster, IContour contour,
+        private static void DrawCurveCoverage(SpatialRaster<RGBA8BitColor> raster, ICurve curve,
             List<Segment>? strokes, float width, RGBA8BitColor color)
         {
             var geometry = raster.Geometry;
@@ -152,7 +152,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                             var point = new PointXY(
                                 geometry.Origin.X + (x + (sx + 0.5f) / 4) * geometry.CellSize.X,
                                 geometry.Origin.Y + (y + (sy + 0.5f) / 4) * geometry.CellSize.Y);
-                            bool inside = strokes == null ? contour.Distance(point) <= radius : false;
+                            bool inside = strokes == null ? curve.Distance(point) <= radius : false;
                             if (strokes != null)
                             {
                                 foreach (var stroke in strokes)
