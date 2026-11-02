@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Imaging
 {
-    /// <summary>Built-in 5-by-7 bitmap font with Latin capitals, digits and punctuation.</summary>
-    /// <remarks>Lowercase letters use uppercase glyphs. Unsupported Unicode characters use '?'.</remarks>
-    public sealed class PixelFont
+    /// <summary>Built-in 5-by-7 bitmap font with uppercase and lowercase Latin and Russian letters, digits and punctuation.</summary>
+    /// <remarks>Unsupported Unicode characters use '?'.</remarks>
+    public sealed partial class PixelFont
     {
         /// <summary>Glyph width in font dots.</summary>
         public const int GlyphWidth = 5;
@@ -35,13 +35,13 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public int LineGap { get; }
 
         /// <summary>Returns a read-only view of the seven retained glyph rows, top first, with five low bits per row.</summary>
-        /// <param name="character">The character, converted to uppercase; unsupported characters use '?'.</param>
+        /// <param name="character">The case-sensitive character; unsupported characters use '?'.</param>
         /// <returns>A read-only structural view of the built-in glyph data.</returns>
         public static ReadOnlySpan<byte> GetGlyph(char character) => Glyphs[GetCharacter(character)];
 
         internal static char GetCharacter(int codePoint)
         {
-            char character = codePoint <= char.MaxValue ? char.ToUpperInvariant((char)codePoint) : '?';
+            char character = codePoint <= char.MaxValue ? (char)codePoint : '?';
             return Glyphs.ContainsKey(character) ? character : '?';
         }
 
@@ -75,6 +75,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
                     glyph[y] = Convert.ToByte(rows[i].Substring(y * 2, 2), 16);
                 glyphs.Add(characters[i], glyph);
             }
+            AddAlphabetGlyphs(glyphs);
             return glyphs;
         }
     }

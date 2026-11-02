@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     {
         /// <summary>Draws black text using the shared, prebuilt 5-by-7 pixel glyph set.</summary>
         /// <param name="raster">The raster modified in place.</param>
-        /// <param name="text">Text; lowercase uses capitals and unsupported characters use '?'. Line breaks are supported.</param>
+        /// <param name="text">Case-sensitive Latin and Russian text; unsupported characters use '?'. Line breaks are supported.</param>
         /// <param name="origin">The first baseline in world coordinates, with Y increasing upwards.</param>
         /// <param name="height">The finite positive seven-dot glyph height in world units.</param>
         public static void DrawText(this SpatialRaster<RGBA8BitColor> raster, string text, PointXY origin, float height)
@@ -15,7 +15,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
 
         /// <summary>Draws colored text using the shared, prebuilt 5-by-7 pixel glyph set.</summary>
         /// <param name="raster">The raster modified in place.</param>
-        /// <param name="text">Text; lowercase uses capitals and unsupported characters use '?'. Line breaks are supported.</param>
+        /// <param name="text">Case-sensitive Latin and Russian text; unsupported characters use '?'. Line breaks are supported.</param>
         /// <param name="origin">The first baseline in world coordinates, with Y increasing upwards.</param>
         /// <param name="height">The finite positive seven-dot glyph height in world units.</param>
         /// <param name="color">The text color and opacity.</param>

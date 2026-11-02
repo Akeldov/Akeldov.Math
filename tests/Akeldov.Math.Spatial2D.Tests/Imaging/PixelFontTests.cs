@@ -5,6 +5,37 @@ namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 public class PixelFontTests
 {
+    [Test]
+    public void Alphabets_HaveDistinctCaseAndNoFallbackGlyphs()
+    {
+        const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+        const string lower = "abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+        byte[] fallback = PixelFont.GetGlyph('?').ToArray();
+        for (int i = 0; i < upper.Length; i++)
+        {
+            byte[] a = PixelFont.GetGlyph(upper[i]).ToArray();
+            byte[] b = PixelFont.GetGlyph(lower[i]).ToArray();
+            Assert.That(a, Is.Not.EqualTo(fallback), $"Uppercase {upper[i]} is missing.");
+            Assert.That(b, Is.Not.EqualTo(fallback), $"Lowercase {lower[i]} is missing.");
+            Assert.That(a, Is.Not.EqualTo(b), $"Case distinction is missing for {upper[i]}.");
+            Assert.That(a.Concat(b).All(row => row < 32), Is.True);
+        }
+        Assert.That(PixelFont.GetGlyph('Ё').ToArray(), Is.Not.EqualTo(PixelFont.GetGlyph('Е').ToArray()));
+        Assert.That(PixelFont.GetGlyph('ё').ToArray(), Is.Not.EqualTo(PixelFont.GetGlyph('е').ToArray()));
+    }
+
+    [Test]
+    public void RussianAndLowercase_RenderFromDefaultAndConfiguredSets()
+    {
+        var a = CreateRaster();
+        var b = CreateRaster();
+        const string text = "Ёжик\nabcЯ";
+        a.DrawText(text, new PointXY(0, 8), 7);
+        b.DrawText(text, new GlyphSet(PixelFont.Default, 14), new PointXY(0, 8), 7, RGBA8BitColor.Black);
+        Assert.That(a.Values, Is.EqualTo(b.Values));
+        Assert.That(a.Values.Any(pixel => pixel.A != 0), Is.True);
+    }
+
     private static SpatialRaster<RGBA8BitColor> CreateRaster() => new(
         new RasterGeometry(default(PointXY), new VectorXY(40, 24), new VectorXYInt(40, 24)), new RGBA8BitColor[960]);
 
@@ -12,7 +43,7 @@ public class PixelFontTests
     public void DefaultText_RendersExactFiveBySevenConstantsWithCorrectOrientation()
     {
         var raster = CreateRaster();
-        raster.DrawText("a", origin: new PointXY(2, 3), height: 7);
+        raster.DrawText("A", origin: new PointXY(2, 3), height: 7);
         byte[] rows = { 0x0E, 0x11, 0x11, 0x1F, 0x11, 0x11, 0x11 };
         for (int y = 0; y < 7; y++)
             for (int x = 0; x < 5; x++)
@@ -28,7 +59,7 @@ public class PixelFontTests
         var a = CreateRaster();
         var b = CreateRaster();
         a.DrawText("Ab!?", default, 7, new RGBA8BitColor(100, 20, 30, 128));
-        b.DrawText("AB!?", new GlyphSet(PixelFont.Default, 7), default, 7, new RGBA8BitColor(100, 20, 30, 128));
+        b.DrawText("Ab!?", new GlyphSet(PixelFont.Default, 7), default, 7, new RGBA8BitColor(100, 20, 30, 128));
         Assert.That(a.Values, Is.EqualTo(b.Values));
         Assert.That(GlyphSet.Default.Font, Is.Null);
         Assert.That(GlyphSet.Default.PixelFont, Is.SameAs(PixelFont.Default));
@@ -54,10 +85,10 @@ public class PixelFontTests
     {
         var a = CreateRaster();
         var b = CreateRaster();
-        a.DrawText("я\U0001F600", default, 7);
+        a.DrawText("漢\U0001F600", default, 7);
         b.DrawText("??", default, 7);
         Assert.That(a.Values, Is.EqualTo(b.Values));
-        Assert.That(PixelFont.GetGlyph('я').ToArray(), Is.EqualTo(PixelFont.GetGlyph('?').ToArray()));
+        Assert.That(PixelFont.GetGlyph('漢').ToArray(), Is.EqualTo(PixelFont.GetGlyph('?').ToArray()));
     }
 
     [Test]

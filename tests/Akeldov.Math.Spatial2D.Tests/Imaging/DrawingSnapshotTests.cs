@@ -90,6 +90,23 @@ public class DrawingSnapshotTests
         AssertSnapshot(raster, "drawing-lorem-ipsum-pixel-font.png");
     }
 
+    [Test]
+    public void Drawing_PixelFontAlphabets_MatchesApprovedImage()
+    {
+        var raster = CreateRaster(720, 420);
+        raster.DrawText("Latin / Русский", new PointXY(24, 370), 28);
+        const string alphabets =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n" +
+            "abcdefghijklmnopqrstuvwxyz\n\n" +
+            "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ\n" +
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя\n\n" +
+            "Съешь ещё этих мягких французских\n" +
+            "булок, да выпей чаю. Ёжик и ёлка.\n" +
+            "0123456789 !?.,: +-=/()";
+        raster.DrawText(alphabets, new PointXY(24, 315), 21, Ink);
+        AssertSnapshot(raster, "drawing-pixel-font-alphabets.png");
+    }
+
     private static GlyphSet LoadGlyphs()
     {
         string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "times.ttf");
