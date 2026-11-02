@@ -1,11 +1,65 @@
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 public class SpatialRasterDrawingTests
 {
+    [Test]
+    public void FillCircle_UsesWorldCoordinatesAndAntialiasesRectangularCells()
+    {
+        var raster = CreateRaster();
+        var values = raster.Values;
+        raster.FillCircle(new Circle(new PointXY(13, 21.5f), 1.25f), new RGBA8BitColor(255, 0, 0, 255));
+        Assert.That(raster.Values, Is.SameAs(values));
+        Assert.That(raster[1, 1], Is.EqualTo(new RGBA8BitColor(255, 0, 0, 255)));
+        Assert.That(raster[1, 0].A, Is.InRange(1, 254));
+        Assert.That(raster[1, 2], Is.EqualTo(raster[1, 0]));
+        Assert.That(raster[0, 1], Is.EqualTo(raster[2, 1]));
+        Assert.That(raster[3, 1].A, Is.Zero);
+        Assert.That(raster[1, 3].A, Is.Zero);
+    }
+
+    [Test]
+    public void FillCircle_CompositesAndClipsLargeCircle()
+    {
+        var raster = CreateRaster();
+        raster[1, 1] = new RGBA8BitColor(0, 0, 255, 128);
+        raster.FillCircle(new PointXY(14, 22), float.MaxValue, new RGBA8BitColor(255, 0, 0, 128));
+        Assert.That(raster[0, 0], Is.EqualTo(new RGBA8BitColor(255, 0, 0, 128)));
+        Assert.That(raster[1, 1], Is.EqualTo(new RGBA8BitColor(170, 0, 85, 192)));
+        Assert.That(raster[3, 3], Is.EqualTo(raster[0, 0]));
+    }
+
+    [Test]
+    public void FillCircle_OutsideZeroRadiusOrTransparent_DoesNotDraw()
+    {
+        var raster = CreateRaster();
+        var color = new RGBA8BitColor(255, 0, 0, 255);
+        raster.FillCircle(new PointXY(-10, 22), 1, color);
+        raster.FillCircle(new PointXY(13, 21.5f), 0, color);
+        raster.FillCircle(new PointXY(13, 21.5f), 10, default);
+        Assert.That(raster.Values, Is.All.EqualTo(default(RGBA8BitColor)));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    public void FillCircle_InvalidRadius_Throws(float radius)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillCircle(default(PointXY), radius, default));
+    }
+
+    [Test]
+    public void FillCircle_InvalidRasterOrCenter_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.FillCircle(null!, default(Circle), default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillCircle(new PointXY(float.NaN, 0), 1, default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillCircle(new PointXY(0, float.PositiveInfinity), 1, default));
+    }
+
     [TestCase(false)]
     [TestCase(true)]
     public void DrawDashedSegment_MatchesSeparatedStrokesAndShortensLastDash(bool vertical)

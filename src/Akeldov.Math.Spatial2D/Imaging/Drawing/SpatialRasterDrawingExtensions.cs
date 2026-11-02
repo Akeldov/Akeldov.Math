@@ -1,4 +1,5 @@
 using System;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Rasterization;
 
@@ -7,6 +8,75 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>Provides drawing operations on spatial color rasters.</summary>
     public static class SpatialRasterDrawingExtensions
     {
+        /// <summary>Fills a circle in the existing raster using source-over alpha compositing.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="circle">The circle with center and radius in world units.</param>
+        /// <param name="color">The fill color, including its opacity.</param>
+        /// <remarks>Uses 4-by-4 coverage sampling and clips to the raster bounds. A zero radius draws nothing.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        public static void FillCircle(this SpatialRaster<RGBA8BitColor> raster, Circle circle, RGBA8BitColor color)
+        {
+            raster.FillCircle(circle.Center, circle.Radius, color);
+        }
+
+        /// <summary>Fills a circle in the existing raster using source-over alpha compositing.</summary>
+        /// <param name="raster">The raster whose retained values are modified in place.</param>
+        /// <param name="center">The finite center point in world coordinates.</param>
+        /// <param name="radius">The finite, non-negative radius in world units.</param>
+        /// <param name="color">The fill color, including its opacity.</param>
+        /// <remarks>
+        /// Uses the raster geometry with Y increasing upwards and clips to its bounds.
+        /// Coverage is approximated with a fixed 4-by-4 sample grid per cell, including rectangular cells.
+        /// A zero radius draws nothing. Color channels are composited without gamma correction.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The center is non-finite or the radius is negative or non-finite.</exception>
+        public static void FillCircle(this SpatialRaster<RGBA8BitColor> raster, PointXY center, float radius, RGBA8BitColor color)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            if (float.IsNaN(center.X) || float.IsInfinity(center.X) || float.IsNaN(center.Y) || float.IsInfinity(center.Y))
+                throw new ArgumentOutOfRangeException(nameof(center));
+            if (float.IsNaN(radius) || float.IsInfinity(radius) || radius < 0f)
+                throw new ArgumentOutOfRangeException(nameof(radius));
+            if (radius == 0f || color.A == 0)
+                return;
+
+            var geometry = raster.Geometry;
+            float cellWidth = geometry.Size.X / raster.Resolution.X;
+            float cellHeight = geometry.Size.Y / raster.Resolution.Y;
+            int left = (int)MathF.Max(0, MathF.Min(raster.Resolution.X,
+                MathF.Floor((center.X - radius - geometry.Origin.X) / cellWidth)));
+            int right = (int)MathF.Max(0, MathF.Min(raster.Resolution.X,
+                MathF.Ceiling((center.X + radius - geometry.Origin.X) / cellWidth)));
+            int bottom = (int)MathF.Max(0, MathF.Min(raster.Resolution.Y,
+                MathF.Floor((center.Y - radius - geometry.Origin.Y) / cellHeight)));
+            int top = (int)MathF.Max(0, MathF.Min(raster.Resolution.Y,
+                MathF.Ceiling((center.Y + radius - geometry.Origin.Y) / cellHeight)));
+
+            for (int y = bottom; y < top; y++)
+            {
+                for (int x = left; x < right; x++)
+                {
+                    int covered = 0;
+                    for (int sy = 0; sy < 4; sy++)
+                    {
+                        for (int sx = 0; sx < 4; sx++)
+                        {
+                            // Normalize before squaring to avoid overflowing the radius squared.
+                            float dx = ((geometry.Origin.X - center.X) + (x + (sx + 0.5f) / 4) * cellWidth) / radius;
+                            float dy = ((geometry.Origin.Y - center.Y) + (y + (sy + 0.5f) / 4) * cellHeight) / radius;
+                            if (dx * dx + dy * dy <= 1f)
+                                covered++;
+                        }
+                    }
+
+                    if (covered != 0)
+                        raster[x, y] = Composite(raster[x, y], color, covered / 16f);
+                }
+            }
+        }
+
         /// <summary>Draws a round-capped segment into the existing raster using source-over alpha compositing.</summary>
         /// <param name="raster">The raster whose retained values are modified in place.</param>
         /// <param name="segment">The segment with endpoints in world coordinates.</param>
