@@ -23,8 +23,8 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="contour">The contour in world coordinates.</param>
         /// <param name="width">The positive full stroke width in world units.</param>
         /// <param name="color">The stroke color and opacity.</param>
-        public static void DrawContour(this SpatialRaster<RGBA8BitColor> raster, IContour contour, float width, RGBA8BitColor color)
-            => raster.DrawContour(contour, width, color, 0f);
+        public static void Draw(this SpatialRaster<RGBA8BitColor> raster, IContour contour, float width, RGBA8BitColor color)
+            => raster.DrawDashed(contour, width, color, 0f);
         /// <summary>Draws a closed polygonal contour into the existing raster.</summary>
         /// <param name="raster">The raster modified in place.</param>
         /// <param name="points">Boundary vertices in world coordinates. At least three vertices are required; the first may be repeated at the end. The list is read during this call and is not retained.</param>
@@ -39,7 +39,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
-            raster.DrawContour(new CompositeContour(points), width, color, dash);
+            raster.DrawDashed(new CompositeContour(points), width, color, dash);
         }
 
         /// <summary>Draws a contour with antialiasing and source-over compositing.</summary>
@@ -59,7 +59,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <exception cref="ArgumentNullException">The raster or contour is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Drawing parameters or contour length are invalid, or sampling cannot advance in float precision.</exception>
         /// <exception cref="ArgumentException">A custom dashed contour has no length parameterization.</exception>
-        public static void DrawContour(this SpatialRaster<RGBA8BitColor> raster, IContour contour, float width, RGBA8BitColor color, float dash)
+        public static void DrawDashed(this SpatialRaster<RGBA8BitColor> raster, IContour contour, float width, RGBA8BitColor color, float dash)
         {
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
@@ -156,7 +156,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="color">The fill color, including its opacity.</param>
         /// <remarks>Coverage is the fraction of each cell's area inside the rectangle. Zero-area rectangles draw nothing.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
-        public static void FillRectangle(this SpatialRaster<RGBA8BitColor> raster, Rectangle rectangle, RGBA8BitColor color)
+        public static void Fill(this SpatialRaster<RGBA8BitColor> raster, Rectangle rectangle, RGBA8BitColor color)
         {
             raster.FillRectangle(rectangle.Min, rectangle.Max, color);
         }
@@ -217,7 +217,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <param name="color">The fill color, including its opacity.</param>
         /// <remarks>Uses 4-by-4 coverage sampling and clips to the raster bounds. A zero radius draws nothing.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
-        public static void FillCircle(this SpatialRaster<RGBA8BitColor> raster, Circle circle, RGBA8BitColor color)
+        public static void Fill(this SpatialRaster<RGBA8BitColor> raster, Circle circle, RGBA8BitColor color)
         {
             raster.FillCircle(circle.Center, circle.Radius, color);
         }
@@ -288,7 +288,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <remarks>Uses the same clipping and 4-by-4 coverage sampling as the endpoint overload. A zero-length segment draws a disk.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">An endpoint is non-finite or the width is not finite and positive.</exception>
-        public static void DrawSegment(this SpatialRaster<RGBA8BitColor> raster, Segment segment, float width, RGBA8BitColor color)
+        public static void Draw(this SpatialRaster<RGBA8BitColor> raster, Segment segment, float width, RGBA8BitColor color)
         {
             raster.DrawSegment(segment.EndpointA, segment.EndpointB, width, color);
         }
@@ -302,7 +302,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// <remarks>Uses the endpoint overload's clipping, antialiasing and compositing. The last dash is shortened at EndpointB. A zero-length segment draws nothing.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="raster"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">An endpoint, width or dash is invalid, the length exceeds the finite float range, or dash spacing is too small for float progression.</exception>
-        public static void DrawDashedSegment(this SpatialRaster<RGBA8BitColor> raster, Segment segment, float width, float dash, RGBA8BitColor color)
+        public static void DrawDashed(this SpatialRaster<RGBA8BitColor> raster, Segment segment, float width, float dash, RGBA8BitColor color)
         {
             raster.DrawDashedSegment(segment.EndpointA, segment.EndpointB, width, dash, color);
         }

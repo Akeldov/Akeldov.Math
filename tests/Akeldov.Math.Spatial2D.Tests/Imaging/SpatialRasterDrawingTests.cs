@@ -17,7 +17,7 @@ public class SpatialRasterDrawingTests
         var b = CreateRaster();
         var color = new RGBA8BitColor(255, 0, 0, 128);
         a.DrawContour(points, 1, color, dash);
-        b.DrawContour(new CompositeContour(points), 1, color, dash);
+        b.DrawDashed(new CompositeContour(points), 1, color, dash);
         Assert.That(a.Values, Is.EqualTo(b.Values));
         Assert.That(a.Values.Any(p => p.A > 0), Is.True);
         Assert.That(a.Values.All(p => p.A <= 128), Is.True, "Overlapping strokes must not accumulate opacity.");
@@ -33,7 +33,7 @@ public class SpatialRasterDrawingTests
     {
         var raster = new SpatialRaster<RGBA8BitColor>(
             new RasterGeometry(new PointXY(0, 0), new VectorXY(10, 10), new VectorXYInt(20, 20)), new RGBA8BitColor[400]);
-        raster.DrawContour(new RectangleContour(new PointXY(1, 1), new PointXY(9, 9)), 0.5f, new RGBA8BitColor(255, 0, 0, 255), 2);
+        raster.DrawDashed(new RectangleContour(new PointXY(1, 1), new PointXY(9, 9)), 0.5f, new RGBA8BitColor(255, 0, 0, 255), 2);
         Assert.That(raster.Values.Any(p => p.A > 0), Is.True);
         Assert.That(raster[8, 2].A, Is.Zero, "Middle of first gap along bottom edge.");
         Assert.That(raster[4, 2].A, Is.GreaterThan(0), "First bottom-edge dash.");
@@ -44,7 +44,7 @@ public class SpatialRasterDrawingTests
     public void DrawContour_CircleDrawsBoundaryWithoutFillingCenter(float dash)
     {
         var raster = CreateRaster();
-        raster.DrawContour(new Circle(new PointXY(13, 21.5f), 1.5f), 0.5f, new RGBA8BitColor(255, 0, 0, 255), dash);
+        raster.DrawDashed(new Circle(new PointXY(13, 21.5f), 1.5f), 0.5f, new RGBA8BitColor(255, 0, 0, 255), dash);
         Assert.That(raster[1, 1].A, Is.Zero);
         Assert.That(raster.Values.Any(p => p.A > 0), Is.True);
     }
@@ -54,18 +54,18 @@ public class SpatialRasterDrawingTests
     [TestCase(float.PositiveInfinity)]
     public void DrawContour_InvalidDashThrows(float dash)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().DrawContour(new Circle(default, 1), 1, default, dash));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().DrawDashed(new Circle(default, 1), 1, default, dash));
     }
 
     [Test]
     public void DrawContour_InvalidInputsThrow()
     {
         var raster = CreateRaster();
-        Assert.Throws<ArgumentNullException>(() => raster.DrawContour((IContour)null!, 1, default));
+        Assert.Throws<ArgumentNullException>(() => raster.Draw((IContour)null!, 1, default));
         Assert.Throws<ArgumentNullException>(() => raster.DrawContour((PointXY[])null!, 1, default));
         Assert.Throws<ArgumentException>(() => raster.DrawContour(new[] { default(PointXY) }, 1, default));
-        Assert.Throws<ArgumentOutOfRangeException>(() => raster.DrawContour(new Circle(default, 1), 0, default));
-        Assert.Throws<ArgumentOutOfRangeException>(() => raster.DrawContour(new Circle(default, 1), 1, default, float.Epsilon));
+        Assert.Throws<ArgumentOutOfRangeException>(() => raster.Draw(new Circle(default, 1), 0, default));
+        Assert.Throws<ArgumentOutOfRangeException>(() => raster.DrawDashed(new Circle(default, 1), 1, default, float.Epsilon));
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class SpatialRasterDrawingTests
     {
         var raster = CreateRaster();
         raster[0, 0] = new RGBA8BitColor(0, 0, 255, 128);
-        raster.FillRectangle(new Rectangle(new PointXY(14, 22), new PointXY(8, 18)), new RGBA8BitColor(255, 0, 0, 128));
+        raster.Fill(new Rectangle(new PointXY(14, 22), new PointXY(8, 18)), new RGBA8BitColor(255, 0, 0, 128));
         Assert.That(raster[0, 0], Is.EqualTo(new RGBA8BitColor(170, 0, 85, 192)));
         Assert.That(raster[1, 1], Is.EqualTo(new RGBA8BitColor(255, 0, 0, 128)));
         Assert.That(raster[2, 1].A, Is.Zero);
@@ -131,7 +131,7 @@ public class SpatialRasterDrawingTests
     [Test]
     public void FillRectangle_InvalidInputsThrow()
     {
-        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.FillRectangle(null!, default(Rectangle), default));
+        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.Fill(null!, default(Rectangle), default));
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillRectangle(new PointXY(float.NaN, 0), default, default));
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillRectangle(default, new PointXY(0, float.PositiveInfinity), default));
     }
@@ -141,7 +141,7 @@ public class SpatialRasterDrawingTests
     {
         var raster = CreateRaster();
         var values = raster.Values;
-        raster.FillCircle(new Circle(new PointXY(13, 21.5f), 1.25f), new RGBA8BitColor(255, 0, 0, 255));
+        raster.Fill(new Circle(new PointXY(13, 21.5f), 1.25f), new RGBA8BitColor(255, 0, 0, 255));
         Assert.That(raster.Values, Is.SameAs(values));
         Assert.That(raster[1, 1], Is.EqualTo(new RGBA8BitColor(255, 0, 0, 255)));
         Assert.That(raster[1, 0].A, Is.InRange(1, 254));
@@ -184,7 +184,7 @@ public class SpatialRasterDrawingTests
     [Test]
     public void FillCircle_InvalidRasterOrCenter_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.FillCircle(null!, default(Circle), default));
+        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.Fill(null!, default(Circle), default));
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillCircle(new PointXY(float.NaN, 0), 1, default));
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateRaster().FillCircle(new PointXY(0, float.PositiveInfinity), 1, default));
     }
@@ -197,7 +197,7 @@ public class SpatialRasterDrawingTests
         var expected = CreateRaster();
         var color = new RGBA8BitColor(200, 60, 30, 128);
         PointXY At(float distance) => vertical ? new PointXY(11, 19 + distance) : new PointXY(9 + distance, 21);
-        actual.DrawDashedSegment(new Segment(At(0), At(5)), 0.5f, 2, color);
+        actual.DrawDashed(new Segment(At(0), At(5)), 0.5f, 2, color);
         expected.DrawSegment(At(0), At(2), 0.5f, color);
         expected.DrawSegment(At(4), At(5), 0.5f, color);
         Assert.That(actual.Values, Is.EqualTo(expected.Values));
@@ -260,7 +260,7 @@ public class SpatialRasterDrawingTests
         var raster = CreateRaster();
         var buffer = raster.Values;
         var color = new RGBA8BitColor(255, 0, 0, 255);
-        raster.DrawSegment(new Segment(new PointXY(8, 20.5f), new PointXY(20, 20.5f)), 1, color);
+        raster.Draw(new Segment(new PointXY(8, 20.5f), new PointXY(20, 20.5f)), 1, color);
         Assert.That(raster.Values, Is.SameAs(buffer));
         for (int x = 0; x < 4; x++)
         {
