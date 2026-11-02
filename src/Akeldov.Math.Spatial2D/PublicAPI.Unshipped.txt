@@ -1,1 +1,3 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Canvas
+Akeldov.Math.Spatial2D.Canvas.Canvas() -> void
