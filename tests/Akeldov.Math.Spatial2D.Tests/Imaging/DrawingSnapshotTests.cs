@@ -69,6 +69,27 @@ public class DrawingSnapshotTests
         AssertSnapshot(raster, "drawing-lorem-ipsum.png");
     }
 
+    [Test]
+    public void Drawing_LoremIpsumPixelFont_MatchesApprovedImage()
+    {
+        var raster = CreateRaster(720, 420);
+        raster.DrawText("Lorem ipsum", origin: new PointXY(30, 365), height: 28);
+        const string text =
+            "Lorem ipsum dolor sit amet, consectetur\n" +
+            "adipiscing elit. Sed do eiusmod tempor incididunt\n" +
+            "ut labore et dolore magna aliqua. Ut enim ad minim\n" +
+            "veniam, quis nostrud exercitation ullamco laboris\n" +
+            "nisi ut aliquip ex ea commodo consequat. Duis aute\n" +
+            "irure dolor in reprehenderit in voluptate velit\n" +
+            "esse cillum dolore eu fugiat nulla pariatur.";
+        raster.DrawText(text, origin: new PointXY(30, 310), height: 14);
+        raster.DrawText("Lorem ipsum dolor sit amet.", new PointXY(30, 140), 14, Blue);
+        raster.DrawText("Lorem ipsum dolor sit amet.", new PointXY(30, 90), 21, Coral);
+        // Fractional dot size exercises antialiased resampling of the same constant masks.
+        raster.DrawText("Lorem ipsum 0123456789 !?", new PointXY(30.25f, 45.5f), 10.5f, Ink);
+        AssertSnapshot(raster, "drawing-lorem-ipsum-pixel-font.png");
+    }
+
     private static GlyphSet LoadGlyphs()
     {
         string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "times.ttf");

@@ -3,7 +3,7 @@ static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this A
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Contours.Circle circle, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 Akeldov.Math.Spatial2D.Imaging.GlyphSet
 Akeldov.Math.Spatial2D.Imaging.GlyphSet.GlyphSet(Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont! font, int pixelHeight) -> void
-Akeldov.Math.Spatial2D.Imaging.GlyphSet.Font.get -> Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont!
+Akeldov.Math.Spatial2D.Imaging.GlyphSet.Font.get -> Akeldov.Math.Spatial2D.Rasterization.TrueTypeFont?
 Akeldov.Math.Spatial2D.Imaging.GlyphSet.PixelHeight.get -> int
 Akeldov.Math.Spatial2D.Imaging.GlyphSet.MeasureText(string! text, float height) -> Akeldov.Math.Spatial2D.Regions.Rectangle
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawText(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, string! text, Akeldov.Math.Spatial2D.Imaging.GlyphSet! glyphs, Akeldov.Math.Spatial2D.PointXY origin, float height, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
@@ -18,8 +18,6 @@ static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawDashed(
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawDashedSegment(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.PointXY start, Akeldov.Math.Spatial2D.PointXY end, float width, float dash, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawSegment(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.PointXY start, Akeldov.Math.Spatial2D.PointXY end, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
-Akeldov.Math.Spatial2D.Canvas
-Akeldov.Math.Spatial2D.Canvas.Canvas() -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawContour(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! points, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Contours.IContour! contour, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Curves.ICurve! curve, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
@@ -34,3 +32,17 @@ static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this A
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Curves.CubicBezier curve, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Curves.BSpline! curve, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Curves.Nurbs! curve, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
+
+Akeldov.Math.Spatial2D.Imaging.PixelFont
+const Akeldov.Math.Spatial2D.Imaging.PixelFont.GlyphWidth = 5 -> int
+const Akeldov.Math.Spatial2D.Imaging.PixelFont.GlyphHeight = 7 -> int
+Akeldov.Math.Spatial2D.Imaging.PixelFont.PixelFont(int advance = 6, int lineGap = 1) -> void
+Akeldov.Math.Spatial2D.Imaging.PixelFont.Advance.get -> int
+Akeldov.Math.Spatial2D.Imaging.PixelFont.LineGap.get -> int
+static Akeldov.Math.Spatial2D.Imaging.PixelFont.GetGlyph(char character) -> System.ReadOnlySpan<byte>
+static Akeldov.Math.Spatial2D.Imaging.PixelFont.Default.get -> Akeldov.Math.Spatial2D.Imaging.PixelFont!
+static Akeldov.Math.Spatial2D.Imaging.GlyphSet.Default.get -> Akeldov.Math.Spatial2D.Imaging.GlyphSet!
+Akeldov.Math.Spatial2D.Imaging.GlyphSet.PixelFont.get -> Akeldov.Math.Spatial2D.Imaging.PixelFont?
+Akeldov.Math.Spatial2D.Imaging.GlyphSet.GlyphSet(Akeldov.Math.Spatial2D.Imaging.PixelFont! font, int pixelHeight) -> void
+static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawText(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, string! text, Akeldov.Math.Spatial2D.PointXY origin, float height) -> void
+static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawText(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, string! text, Akeldov.Math.Spatial2D.PointXY origin, float height, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void

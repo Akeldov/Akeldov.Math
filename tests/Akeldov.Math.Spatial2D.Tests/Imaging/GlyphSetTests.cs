@@ -92,9 +92,9 @@ public class GlyphSetTests
     public void InvalidInputsThrow()
     {
         var glyphs = CreateGlyphs();
-        Assert.Throws<ArgumentNullException>(() => new GlyphSet(null!, 20));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new GlyphSet(glyphs.Font, 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new GlyphSet(glyphs.Font, 4097));
+        Assert.Throws<ArgumentNullException>(() => new GlyphSet((TrueTypeFont)null!, 20));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new GlyphSet(glyphs.Font!, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new GlyphSet(glyphs.Font!, 4097));
         Assert.Throws<ArgumentNullException>(() => glyphs.MeasureText(null!, 10));
         Assert.Throws<ArgumentNullException>(() => CreateRaster().DrawText("A", null!, default, 10, default));
         Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.DrawText(null!, "A", glyphs, default, 10, default));

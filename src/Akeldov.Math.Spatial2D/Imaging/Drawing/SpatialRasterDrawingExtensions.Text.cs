@@ -5,6 +5,23 @@ namespace Akeldov.Math.Spatial2D.Imaging
 {
     public static partial class SpatialRasterDrawingExtensions
     {
+        /// <summary>Draws black text using the shared, prebuilt 5-by-7 pixel glyph set.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="text">Text; lowercase uses capitals and unsupported characters use '?'. Line breaks are supported.</param>
+        /// <param name="origin">The first baseline in world coordinates, with Y increasing upwards.</param>
+        /// <param name="height">The finite positive seven-dot glyph height in world units.</param>
+        public static void DrawText(this SpatialRaster<RGBA8BitColor> raster, string text, PointXY origin, float height)
+            => raster.DrawText(text, GlyphSet.Default, origin, height, RGBA8BitColor.Black);
+
+        /// <summary>Draws colored text using the shared, prebuilt 5-by-7 pixel glyph set.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="text">Text; lowercase uses capitals and unsupported characters use '?'. Line breaks are supported.</param>
+        /// <param name="origin">The first baseline in world coordinates, with Y increasing upwards.</param>
+        /// <param name="height">The finite positive seven-dot glyph height in world units.</param>
+        /// <param name="color">The text color and opacity.</param>
+        public static void DrawText(this SpatialRaster<RGBA8BitColor> raster, string text, PointXY origin, float height, RGBA8BitColor color)
+            => raster.DrawText(text, GlyphSet.Default, origin, height, color);
+
         /// <summary>Draws text using lazily cached glyph coverage masks and source-over compositing.</summary>
         /// <param name="raster">The raster modified in place.</param>
         /// <param name="text">Unicode text. CR, LF and CRLF start a new line; unsupported characters use the font's missing glyph.</param>
