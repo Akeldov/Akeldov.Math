@@ -10,6 +10,30 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>Provides drawing operations on spatial color rasters.</summary>
     public static partial class SpatialRasterDrawingExtensions
     {
+        /// <summary>Draws the boundary of an axis-aligned rectangle with antialiasing and source-over compositing.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="rectangle">The rectangle in world coordinates.</param>
+        /// <param name="width">The finite, positive full stroke width in world units, centered on the boundary.</param>
+        /// <param name="color">The stroke color and opacity.</param>
+        /// <exception cref="ArgumentNullException">The raster is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The width is not finite and positive.</exception>
+        public static void Draw(this SpatialRaster<RGBA8BitColor> raster, Rectangle rectangle, float width, RGBA8BitColor color)
+        {
+            raster.Draw(rectangle.ToContour(), width, color);
+        }
+
+        /// <summary>Draws a circle boundary with antialiasing and source-over compositing.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="circle">The circle in world coordinates.</param>
+        /// <param name="width">The finite, positive full stroke width in world units, centered on the boundary.</param>
+        /// <param name="color">The stroke color and opacity.</param>
+        /// <exception cref="ArgumentNullException">The raster is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The width is not finite and positive.</exception>
+        public static void Draw(this SpatialRaster<RGBA8BitColor> raster, Circle circle, float width, RGBA8BitColor color)
+        {
+            raster.Draw((IContour)circle, width, color);
+        }
+
         /// <summary>Draws a solid closed polygonal contour.</summary>
         /// <param name="raster">The raster modified in place.</param>
         /// <param name="points">World-space boundary vertices, read during the call and not retained.</param>

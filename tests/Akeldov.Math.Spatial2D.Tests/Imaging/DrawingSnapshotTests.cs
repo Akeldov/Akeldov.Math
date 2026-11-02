@@ -40,7 +40,7 @@ public class DrawingSnapshotTests
         }, 4, Blue);
         raster.DrawText("DrawContour(contour)", glyphs, new PointXY(230, 218), 19, Ink);
         raster.Draw(new Circle(new PointXY(310, 145), 43), 5, Coral);
-        raster.Draw(new RectangleContour(new PointXY(270, 110), new PointXY(350, 180)), 2, Ink);
+        raster.Draw(new Rectangle(new PointXY(270, 110), new PointXY(350, 180)), 2, Ink);
 
         raster.DrawText("GlyphSet / alpha", glyphs, new PointXY(440, 218), 19, Ink);
         raster.DrawText("Aa Bb 0123", glyphs, new PointXY(438, 170), 26, Blue);
