@@ -7,11 +7,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>1.4.0</Version>
+		<Version>1.5.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry and vector math with linear, circular, Bezier, B-spline, and NURBS curves; pairwise curve intersection APIs; contours and regions; rasterization and imaging; spatial sampling and partitioning; and influence fields.</Description>
-		<PackageReleaseNotes>Added FloatRaster, IntRaster, BoolRaster, and spatial variants with cell-wise numeric or Boolean operators, mixed generic-raster operands, and shared-storage conversions to SpatialRaster&lt;T&gt;. Documented generic distance rasterization. Existing VoronoiItemPartitioner constructors are unchanged. Targets remain netstandard2.1 and net6.0.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added direct drawing on SpatialRaster&lt;RGBA8BitColor&gt;: curve and contour strokes, dashed segments, circle and rectangle fills, arrows with optional dashed shafts, and coordinate grids with labels. Added cached TrueType glyph sets and a built-in 5x7 pixel font with lowercase Latin and Russian letters. Added Darken and Lighten in sRGB, linear RGB, and OKLCH. Optimized curve coverage using bounds and tile culling. Existing 1.4.0 APIs are retained. Targets remain netstandard2.1 and net6.0.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;bezier;b-spline;nurbs;contours;regions;rasterization;imaging;perlin-noise;gaussian-blur;sampling;voronoi;delaunay;poisson-disk</PackageTags>

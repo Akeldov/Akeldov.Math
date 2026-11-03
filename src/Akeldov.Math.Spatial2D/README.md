@@ -28,9 +28,11 @@ The library is organized around practical 2D geometry workflows.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point rasters.
 - Mutable `Raster<T>` and `SpatialRaster<T>` data, plus numeric and Boolean raster types with cell-wise operators and geometry-preserving spatial variants.
 - Distance, signed-distance, and stroke rasterizers for curves, contours, regions, and collections.
+- Direct drawing of curves, contours, filled circles and rectangles, arrows, and labeled grids on spatial RGBA rasters.
 - 8-bit and 16-bit grayscale and RGBA color types.
-- Color helpers for normalized values, blending, and temperature heat maps.
+- Color helpers for normalized values, blending, temperature heat maps, and darkening/lightening in sRGB, linear RGB, or OKLCH.
 - Generic geometry scenes with composable shape and TrueType text layers.
+- Text drawing with cached TrueType glyphs or a built-in pixel font supporting Latin and Russian letters.
 - 8-bit BMP and 8-/16-bit PNG export helpers with configurable PNG compression.
 - PNG and BMP loading from files and streams into mutable rasters.
 
