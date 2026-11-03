@@ -40,6 +40,9 @@ public class CurveDrawingTests
         raster.DrawArrow(start, end, 0.5f, 1f, 1f, color);
         viaSegment.DrawArrow(new ParameterizedSegment(start, end), 0.5f, 1f, 1f, color);
         Assert.That(viaSegment.Values, Is.EqualTo(raster.Values));
+        var zeroDash = CreateRaster();
+        zeroDash.DrawArrow(start, end, 0.5f, 1f, 1f, 0f, color);
+        Assert.That(zeroDash.Values, Is.EqualTo(raster.Values));
         for (int y = 0; y < 8; y++)
             for (int x = 0; x < 8; x++)
             {
@@ -55,6 +58,69 @@ public class CurveDrawingTests
                 Assert.That(raster[x, y].A, Is.EqualTo((byte)MathF.Round(128f * covered / 16f)),
                     $"Pixel ({x}, {y}), angle {angle}");
             }
+    }
+
+    [TestCase(false, 10f)]
+    [TestCase(true, 10f)]
+    [TestCase(false, 8.5f)]
+    [TestCase(true, 8.5f)]
+    public void DrawArrow_DashedShaftAndSolidHeadMatchCoverage(bool reverse, float tipX)
+    {
+        SpatialRaster<RGBA8BitColor> Create() => new(
+            new RasterGeometry(default(PointXY), new VectorXY(12, 8), new VectorXYInt(24, 16)),
+            new RGBA8BitColor[24 * 16]);
+        PointXY Point(float x, float y) => reverse ? new PointXY(12 - x, 8 - y) : new PointXY(x, y);
+        var strokes = new List<Segment>
+        {
+            new(Point(1, 4), Point(3, 4)),
+            new(Point(5, 4), Point(7, 4)),
+            new(Point(tipX, 4), Point(tipX - 1, 5)),
+            new(Point(tipX, 4), Point(tipX - 1, 3))
+        };
+        // A shaft ending at X=10 has a shortened last dash; X=8.5 ends in a gap.
+        if (tipX == 10f)
+            strokes.Add(new Segment(Point(9, 4), Point(10, 4)));
+        var raster = Create();
+        var viaSegment = Create();
+        var color = new RGBA8BitColor(30, 100, 200, 128);
+        raster.DrawArrow(Point(1, 4), Point(tipX, 4), 0.5f, 1, 2, 2, color);
+        viaSegment.DrawArrow(new ParameterizedSegment(Point(1, 4), Point(tipX, 4)), 0.5f, 1, 2, 2, color);
+        Assert.That(viaSegment.Values, Is.EqualTo(raster.Values));
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 24; x++)
+            {
+                int covered = 0;
+                for (int sy = 0; sy < 4; sy++)
+                    for (int sx = 0; sx < 4; sx++)
+                    {
+                        var sample = new PointXY((x + (sx + 0.5f) / 4f) * 0.5f, (y + (sy + 0.5f) / 4f) * 0.5f);
+                        if (strokes.Any(s => s.Distance(sample) <= 0.25f))
+                            covered++;
+                    }
+                Assert.That(raster[x, y].A, Is.EqualTo((byte)MathF.Round(128f * covered / 16f)),
+                    $"Pixel ({x}, {y}), reverse={reverse}, tipX={tipX}");
+            }
+    }
+
+    [Test]
+    public void DrawArrow_DashesValidateSpacingAndCompositeOverlapsOnce()
+    {
+        var raster = CreateRaster();
+        var start = new PointXY(-1, 0);
+        var end = new PointXY(1, 0);
+        foreach (float dash in new[] { -1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.Epsilon })
+        {
+            Assert.That(Assert.Throws<ArgumentOutOfRangeException>(
+                () => raster.DrawArrow(start, end, 0.5f, 1, 1, dash, default))!.ParamName, Is.EqualTo("dash"));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => raster.DrawArrow(new ParameterizedSegment(start, end), 0.5f, 1, 1, dash, default));
+        }
+        raster.DrawArrow(start, end, 0.5f, 1, 1, 0.25f, default);
+        raster.DrawArrow(start, start, 0.5f, 1, 1, 0.25f, RGBA8BitColor.Black);
+        Assert.That(raster.Values, Is.All.EqualTo(default(RGBA8BitColor)));
+        raster.DrawArrow(start, end, 0.5f, 1, 1, 0.25f, new RGBA8BitColor(30, 100, 200, 128));
+        Assert.That(raster.Values.Any(p => p.A > 0), Is.True);
+        Assert.That(raster.Values.All(p => p.A <= 128), Is.True);
     }
 
     [Test]
