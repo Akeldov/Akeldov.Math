@@ -168,6 +168,111 @@ public class RGBA8BitColorTests
     }
 
     [Test]
+    public void Adjustments_DefaultToSrgbAndPreserveOriginalColor()
+    {
+        var color = new RGBA8BitColor(100, 200, 60, 73);
+        Func<float, RGBA8BitColor> darken = color.Darken;
+        Func<float, RGBA8BitColor> lighten = color.Lighten;
+
+        Assert.That(darken(0.3f), Is.EqualTo(new RGBA8BitColor(70, 140, 42, 73)));
+        Assert.That(lighten(0.5f), Is.EqualTo(new RGBA8BitColor(178, 228, 158, 73)));
+        Assert.That(color.Darken(0.3f), Is.EqualTo(color.Darken(0.3f, ColorAdjustmentMode.Srgb)));
+        Assert.That(color.Lighten(0.5f), Is.EqualTo(color.Lighten(0.5f, ColorAdjustmentMode.Srgb)));
+        Assert.That(color, Is.EqualTo(new RGBA8BitColor(100, 200, 60, 73)));
+    }
+
+    [TestCase(ColorAdjustmentMode.Srgb, 128)]
+    [TestCase(ColorAdjustmentMode.LinearRgb, 188)]
+    [TestCase(ColorAdjustmentMode.Oklch, 99)]
+    public void Adjustments_HalfwayBetweenBlackAndWhiteUsesSelectedSpace(ColorAdjustmentMode mode, byte expected)
+    {
+        // In linear RGB the halfway value is 0.5 (sRGB byte 188).
+        // For neutral OKLCH at L=0.5 the linear RGB value is L^3=0.125 (sRGB byte 99).
+        var black = new RGBA8BitColor(0, 0, 0, 42);
+        var white = new RGBA8BitColor(255, 255, 255, 42);
+        var middle = new RGBA8BitColor(expected, expected, expected, 42);
+        Assert.That(black.Lighten(0.5f, mode), Is.EqualTo(middle));
+        Assert.That(white.Darken(0.5f, mode), Is.EqualTo(middle));
+    }
+
+    [TestCase(ColorAdjustmentMode.Srgb)]
+    [TestCase(ColorAdjustmentMode.LinearRgb)]
+    [TestCase(ColorAdjustmentMode.Oklch)]
+    public void Adjustments_PreserveAlphaAndHaveExactEndpoints(ColorAdjustmentMode mode)
+    {
+        foreach (byte alpha in new byte[] { 0, 1, 128, 255 })
+        {
+            var color = new RGBA8BitColor(13, 71, 237, alpha);
+            Assert.That(color.Darken(0, mode), Is.EqualTo(color));
+            Assert.That(color.Lighten(0, mode), Is.EqualTo(color));
+            Assert.That(color.Darken(1, mode), Is.EqualTo(new RGBA8BitColor(0, 0, 0, alpha)));
+            Assert.That(color.Lighten(1, mode), Is.EqualTo(new RGBA8BitColor(255, 255, 255, alpha)));
+            Assert.That(color.Darken(0.4f, mode).A, Is.EqualTo(alpha));
+            Assert.That(color.Lighten(0.4f, mode).A, Is.EqualTo(alpha));
+        }
+    }
+
+    [TestCase(ColorAdjustmentMode.Srgb)]
+    [TestCase(ColorAdjustmentMode.LinearRgb)]
+    [TestCase(ColorAdjustmentMode.Oklch)]
+    public void Adjustments_GrayRemainsNeutralAndChangesMonotonically(ColorAdjustmentMode mode)
+    {
+        for (int channel = 0; channel <= 255; channel++)
+        {
+            var color = new RGBA8BitColor((byte)channel, (byte)channel, (byte)channel, 255);
+            var previousDark = color;
+            var previousLight = color;
+            for (int step = 0; step <= 10; step++)
+            {
+                var dark = color.Darken(step / 10f, mode);
+                var light = color.Lighten(step / 10f, mode);
+                Assert.That(dark.R, Is.EqualTo(dark.G).And.EqualTo(dark.B), $"Gray {channel}, step {step}");
+                Assert.That(light.R, Is.EqualTo(light.G).And.EqualTo(light.B), $"Gray {channel}, step {step}");
+                Assert.That(dark.R, Is.LessThanOrEqualTo(previousDark.R));
+                Assert.That(light.R, Is.GreaterThanOrEqualTo(previousLight.R));
+                previousDark = dark;
+                previousLight = light;
+            }
+        }
+    }
+
+    [TestCase(255, 0, 0)]
+    [TestCase(0, 255, 0)]
+    [TestCase(0, 0, 255)]
+    public void Adjustments_OklchDarkensSaturatedPrimariesByReducingChroma(byte r, byte g, byte b)
+    {
+        // At a primary's gamut boundary, halving L also halves maximum chroma at fixed hue.
+        // Its linear RGB channels scale by (1/2)^3, giving byte 99 for the nonzero channel.
+        var result = new RGBA8BitColor(r, g, b, 128).Darken(0.5f, ColorAdjustmentMode.Oklch);
+        Assert.That(result.R, Is.EqualTo(r == 0 ? 0 : 99).Within(1));
+        Assert.That(result.G, Is.EqualTo(g == 0 ? 0 : 99).Within(1));
+        Assert.That(result.B, Is.EqualTo(b == 0 ? 0 : 99).Within(1));
+        Assert.That(result.A, Is.EqualTo(128));
+    }
+
+    [Test]
+    public void Adjustments_InvalidAmountsAndModesThrow()
+    {
+        var color = new RGBA8BitColor(100, 200, 60, 0);
+        foreach (float amount in new[] { -0.1f, 1.1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity })
+        {
+            Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => color.Darken(amount))!.ParamName, Is.EqualTo("amount"));
+            Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => color.Lighten(amount))!.ParamName, Is.EqualTo("amount"));
+            foreach (var mode in Enum.GetValues<ColorAdjustmentMode>())
+            {
+                Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => color.Darken(amount, mode))!.ParamName, Is.EqualTo("amount"));
+                Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => color.Lighten(amount, mode))!.ParamName, Is.EqualTo("amount"));
+            }
+        }
+        foreach (float amount in new[] { 0f, 0.5f, 1f })
+            foreach (var mode in new[] { (ColorAdjustmentMode)(-1), (ColorAdjustmentMode)3 })
+            {
+                Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => color.Darken(amount, mode))!.ParamName, Is.EqualTo("mode"));
+                Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => color.Lighten(amount, mode))!.ParamName, Is.EqualTo("mode"));
+            }
+    }
+
+    [Test]
     public void ToString_ReturnsChannelValues()
     {
         var color = new RGBA8BitColor(1, 2, 3, 4);

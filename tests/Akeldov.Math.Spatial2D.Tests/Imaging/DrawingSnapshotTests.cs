@@ -7,7 +7,7 @@ using Akeldov.Math.Spatial2D.Tests.Rasterization;
 
 namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
-public class DrawingSnapshotTests
+public partial class DrawingSnapshotTests
 {
     private static readonly RGBA8BitColor Ink = new(30, 41, 59, 255);
     private static readonly RGBA8BitColor Blue = new(37, 99, 235, 220);

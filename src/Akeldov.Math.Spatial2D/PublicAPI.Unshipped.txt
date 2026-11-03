@@ -1,4 +1,12 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode
+Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode.Srgb = 0 -> Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode
+Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode.LinearRgb = 1 -> Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode
+Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode.Oklch = 2 -> Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode
+Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor.Darken(float amount) -> Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor
+Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor.Darken(float amount, Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode mode) -> Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor
+Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor.Lighten(float amount) -> Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor
+Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor.Lighten(float amount, Akeldov.Math.Spatial2D.Imaging.ColorAdjustmentMode mode) -> Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawArrow(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.PointXY start, Akeldov.Math.Spatial2D.PointXY end, float width, float headLength, float headWidth, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.DrawArrow(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Curves.ParameterizedSegment segment, float width, float headLength, float headWidth, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Regions.Rectangle rectangle, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
