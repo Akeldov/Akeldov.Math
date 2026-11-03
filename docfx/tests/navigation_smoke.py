@@ -84,9 +84,9 @@ class NavigationSmokeTests(unittest.TestCase):
     def test_responsive_header_and_controls(self):
         paths = (
             "en/index.html", "ru/index.html",
-            "ru/Spatial2D/1.1.0/concepts/index.html",
+            "ru/Spatial2D/1.4.0/concepts/index.html",
             "en/Hexes/0.9.0/concepts/index.html",
-            "api/Spatial2D/1.1.0/index.html?lang=ru",
+            "api/Spatial2D/1.4.0/index.html?lang=ru",
         )
         for path in paths:
             self.load_ready(path)
@@ -138,7 +138,7 @@ class NavigationSmokeTests(unittest.TestCase):
         self.page.wait_for_function("document.querySelectorAll('#search-results a').length > 0")
 
     def test_version_and_language_switches_preserve_section(self):
-        for library, current, target in (("Spatial2D", "1.5.0", "1.0.0"), ("Hexes", "0.9.0", "0.5.0")):
+        for library, current, target in (("Spatial2D", "1.5.0", "1.3.0"), ("Hexes", "0.10.0", "0.8.0")):
             with self.subTest(library=library):
                 self.load_ready(f"ru/{library}/{current}/concepts/index.html")
                 self.page.locator("#akeldov-docs-version").select_option(target)
@@ -199,11 +199,11 @@ class NavigationSmokeTests(unittest.TestCase):
 
     def test_controls_do_not_shift_during_page_transitions(self):
         paths = ("ru/index.html", "ru/Libraries/index.html",
-                 "ru/Spatial2D/1.1.0/concepts/index.html",
-                 "ru/Spatial2D/1.1.0/tutorials/index.html",
-                 "api/Spatial2D/1.1.0/index.html?lang=ru",
+                 "ru/Spatial2D/1.4.0/concepts/index.html",
+                 "ru/Spatial2D/1.4.0/tutorials/index.html",
+                 "api/Spatial2D/1.4.0/index.html?lang=ru",
                  "api/Hexes/0.9.0/index.html",
-                 "ru/Spatial2D/1.0.0/concepts/index.html",
+                 "ru/Spatial2D/1.3.0/concepts/index.html",
                  "en/Hexes/upcoming/concepts/index.html")
         self.context.add_init_script("localStorage.setItem('theme', 'dark')")
         for width in (1440, 1024, 375):

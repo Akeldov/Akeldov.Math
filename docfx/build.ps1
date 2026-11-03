@@ -1957,6 +1957,19 @@ function Add-VersionedLibraryDocumentation {
         throw "Invalid versioned output segment: $TargetVersionPath"
     }
 
+    # The registry controls both the version selector and published output.
+    # Older adapters remain available as article bases and package references.
+    $versionRegistryPath = Join-Path `
+        $RepositoryRoot "docfx\$Library\versions.json"
+    $publishedVersions = (
+        Get-Content -LiteralPath $versionRegistryPath -Raw -Encoding UTF8 |
+            ConvertFrom-Json
+    ).versions.path
+    if ($TargetVersionPath -notin $publishedVersions) {
+        Write-Host "Skipping $Library $TargetVersionPath (not listed in versions.json)."
+        return
+    }
+
     $temporaryParent = [System.IO.Path]::GetFullPath(
         (Join-Path $RepositoryRoot '.tmp\docfx-versioned'))
     $fragmentRoot = [System.IO.Path]::GetFullPath(
