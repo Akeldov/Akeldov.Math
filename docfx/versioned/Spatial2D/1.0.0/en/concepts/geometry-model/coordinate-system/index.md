@@ -31,7 +31,7 @@ For rotation direction and measurement conventions, see
 resolution.
 
 `PointXY` and `VectorXY` use `float` components. Conversion to `VectorXYInt` can discard a
-fractional part, so the [Vectors](../../geometry-model/vectors.md) page describes the available
+fractional part, so the [Vectors](../vectors.md) page describes the available
 conversion rules.
 
 Raster APIs connect continuous and discrete values explicitly. For example,
@@ -41,8 +41,8 @@ raster addressing and world-space mapping.
 
 ## Related topics
 
-- [Points](../../geometry-model/points.md) — positions, distance, interpolation, and point transformations.
-- [Vectors](../../geometry-model/vectors.md) — floating-point and integer vectors, direction operations, and
+- [Points](../points.md) — positions, distance, interpolation, and point transformations.
+- [Vectors](../vectors.md) — floating-point and integer vectors, direction operations, and
   conversion.
 - [Discrete Indices](discrete-indices.md) — raster indices, resolutions, offsets, and
   world-space mapping.

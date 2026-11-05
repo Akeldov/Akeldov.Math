@@ -76,7 +76,7 @@ var orientedRectangle = new OrientedRectangle(
 `Rectangle` accepts its opposite corners in either order and exposes normalized `Min` and `Max`
 bounds. `OrientedRectangle` requires positive size components; its rotation is the
 counterclockwise angle of the local X axis in radians. See
-[Angles and Units](../fundamentals/angles-and-units.md) for the rotation convention.
+[Angles and Units](angles-and-units.md) for the rotation convention.
 
 ## Test membership and measure distance
 

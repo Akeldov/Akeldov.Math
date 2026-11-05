@@ -4,7 +4,8 @@ The Spatial2D geometry model builds complex shapes from a small set of roles: po
 geometry, vectors describe displacement, curves form one-dimensional paths, contours close those
 paths into boundaries, and regions give boundaries fill semantics.
 
-This section explains how those roles relate and which abstraction to use for a spatial task.
+This section starts with coordinate and measurement conventions, then explains how these
+roles relate and which abstraction to use for a spatial task.
 
 ## Model at a glance
 
@@ -127,7 +128,7 @@ into private storage and expose read-only structural views. This prevents caller
 the order or number of retained parts after construction.
 
 New mutable collections returned by intersection and sampling operations are caller-owned. See
-[Collection Ownership and Immutability](../fundamentals/collection-ownership-and-immutability.md)
+[Collection Ownership and Immutability](../collection-ownership-and-immutability.md)
 for the full collection contract.
 
 ## Apply shared coordinate conventions
@@ -137,10 +138,13 @@ are expressed in radians, with positive rotation counterclockwise from the posit
 Public geometry constructors and queries that require finite coordinates reject `NaN` and
 infinity at their boundaries.
 
-Review [Fundamentals](../fundamentals/index.md) for coordinate conventions, units, and ownership
-rules before building larger geometry.
+See [Coordinate System](coordinate-system/index.md) and [Angles and Units](angles-and-units.md)
+for the shared coordinate and measurement conventions.
 
 ## Continue through the model
+
+- [Coordinate System](coordinate-system/index.md) explains Cartesian axes and discrete indices.
+- [Angles and Units](angles-and-units.md) explains rotation, radians, and world units.
 
 - [Points](points.md) explains positions, distance, interpolation, and point transformations.
 - [Vectors](vectors.md) explains floating-point and integer vectors, direction operations, and

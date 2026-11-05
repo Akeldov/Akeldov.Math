@@ -1,18 +1,13 @@
-- name: Fundamentals
-  href: fundamentals/index.md
-  items:
-    - name: Coordinate System
-      href: fundamentals/coordinate-system/index.md
-      items:
-        - name: Discrete Indices
-          href: fundamentals/coordinate-system/discrete-indices.md
-    - name: Angles and Units
-      href: fundamentals/angles-and-units.md
-    - name: Collection Ownership and Immutability
-      href: fundamentals/collection-ownership-and-immutability.md
 - name: Geometry Model
   href: geometry-model/index.md
   items:
+    - name: Coordinate System
+      href: geometry-model/coordinate-system/index.md
+      items:
+        - name: Discrete Indices
+          href: geometry-model/coordinate-system/discrete-indices.md
+    - name: Angles and Units
+      href: geometry-model/angles-and-units.md
     - name: Points
       href: geometry-model/points.md
     - name: Vectors
@@ -23,6 +18,8 @@
       href: geometry-model/contours.md
     - name: Regions
       href: geometry-model/regions.md
+- name: Collection Ownership and Immutability
+  href: collection-ownership-and-immutability.md
 - name: Fields
   href: fields.md
   items:

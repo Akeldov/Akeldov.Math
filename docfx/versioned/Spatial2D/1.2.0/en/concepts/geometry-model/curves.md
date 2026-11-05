@@ -55,7 +55,7 @@ becomes thicker as the curve coordinate increases, making the traversal directio
 traversal origin and direction.
 
 Angles passed to lines, rays, and arcs are expressed in radians. See
-[Angles and Units](../fundamentals/angles-and-units.md) for the coordinate and rotation
+[Angles and Units](angles-and-units.md) for the coordinate and rotation
 conventions.
 
 ## Work with curve coordinates

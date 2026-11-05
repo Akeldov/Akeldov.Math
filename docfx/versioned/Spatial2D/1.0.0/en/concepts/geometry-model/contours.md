@@ -74,7 +74,7 @@ float perimeter = rectangle.Length; // 12
 
 `RectangleContour` normalizes the two opposite corners into `Min` and `Max`, so their input
 order does not matter. `OrientedRectangleContour` instead accepts a center, a size, and a
-rotation in radians. See [Angles and Units](../fundamentals/angles-and-units.md) for the rotation
+rotation in radians. See [Angles and Units](angles-and-units.md) for the rotation
 convention.
 
 Rectangular dimensions may be zero but never negative. Positive width and height produce the

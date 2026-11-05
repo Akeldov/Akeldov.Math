@@ -2327,6 +2327,58 @@ function Update-SiteAssetRelativeLinks {
         }
 }
 
+function Add-Spatial2DArticleRedirects {
+    param(
+        [Parameter(Mandatory)]
+        [string] $SiteRoot,
+
+        [Parameter(Mandatory)]
+        [string] $SiteBaseUrl
+    )
+
+    $moves = @{
+        'fundamentals/index.html' = 'geometry-model/index.html'
+        'fundamentals/angles-and-units.html' = 'geometry-model/angles-and-units.html'
+        'fundamentals/coordinate-system/index.html' = 'geometry-model/coordinate-system/index.html'
+        'fundamentals/coordinate-system/discrete-indices.html' = 'geometry-model/coordinate-system/discrete-indices.html'
+        'fundamentals/collection-ownership-and-immutability.html' = 'collection-ownership-and-immutability.html'
+    }
+    foreach ($prefix in @('', 'en', 'ru')) {
+        $libraryRoot = Join-Path $SiteRoot "$prefix/Spatial2D"
+        foreach ($version in Get-ChildItem -LiteralPath $libraryRoot -Directory) {
+            if ($version.Name -eq 'latest') { continue }
+            foreach ($move in $moves.GetEnumerator()) {
+                $target = Join-Path $version.FullName "concepts/$($move.Value)"
+                if (-not (Test-Path -LiteralPath $target)) { continue }
+                $targetPath = Get-RelativeSitePath -Root $SiteRoot -Path $target
+                $targetUrl = "$($SiteBaseUrl.TrimEnd('/'))/$targetPath"
+                $targetHtml = [System.Net.WebUtility]::HtmlEncode("/Akeldov.Math/$targetPath")
+                $canonicalHtml = [System.Net.WebUtility]::HtmlEncode($targetUrl)
+                $targetJson = "/Akeldov.Math/$targetPath" | ConvertTo-Json -Compress
+                $redirectFile = Join-Path $version.FullName "concepts/$($move.Key)"
+                New-Item -ItemType Directory -Path (Split-Path -Parent $redirectFile) -Force | Out-Null
+                $html = @"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="$canonicalHtml">
+  <meta http-equiv="refresh" content="0; url=$targetHtml">
+  <title>Redirecting...</title>
+</head>
+<body>
+  <p><a href="$targetHtml">Continue</a></p>
+  <script>location.replace($targetJson + location.search + location.hash);</script>
+</body>
+</html>
+"@
+                [System.IO.File]::WriteAllText($redirectFile, $html, [System.Text.UTF8Encoding]::new($false))
+            }
+        }
+    }
+}
+
 function Add-VersionAliasRedirects {
     param(
         [Parameter(Mandatory)]
@@ -3322,6 +3374,7 @@ $docfxConfig = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'docfx.json') `
     -Raw -Encoding UTF8 |
     ConvertFrom-Json
 $siteBaseUrl = $docfxConfig.build.sitemap.baseUrl.TrimEnd('/') + '/'
+Add-Spatial2DArticleRedirects -SiteRoot $siteRoot -SiteBaseUrl $siteBaseUrl
 $apiRoot = Join-Path $siteRoot 'api'
 $sitemapEntries = @()
 $russianFallbackPages = @()
