@@ -173,4 +173,4 @@ string text = topology.ToString();
 <xref:Akeldov.Math.Hexes.Geometry.HexMapGeometry>; этот слой описан на странице [«Геометрия»](geometry.md).
 Хранение значений по топологии показано на странице [«Карты»](../data-storage/maps.md), а заранее
 вычисленная смежность на границах карты — на странице
-[«Полные и частичные окрестности»](../data-storage/complete-and-partial-neighborhoods.md).
+[«Полные и частичные окрестности»](../data-storage/neighborhood-values.md).

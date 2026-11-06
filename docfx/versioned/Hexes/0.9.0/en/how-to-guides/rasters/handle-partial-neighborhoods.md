@@ -148,4 +148,4 @@ See [Create an Index Triplet Raster](create-an-index-triplet-raster.md) and
 For partial interpolation weights, continue with
 [Create a Barycentric Raster](create-a-barycentric-raster.md). The underlying value types are
 described in
-[Complete and Partial Neighborhoods](../../concepts/data-storage/complete-and-partial-neighborhoods.md).
+[Complete and Partial Neighborhoods](../../concepts/data-storage/neighborhood-values.md).

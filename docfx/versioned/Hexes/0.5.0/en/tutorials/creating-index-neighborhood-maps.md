@@ -150,6 +150,6 @@ The partial map does not wrap or clamp missing neighbors to an existing cell. It
 presence; they are not a replacement value. Both maps still require an in-bounds cell index when
 reading the map itself.
 
-See [Complete and Partial Neighborhoods](../concepts/data-storage/complete-and-partial-neighborhoods.md)
+See [Complete and Partial Neighborhoods](../concepts/data-storage/neighborhood-values.md)
 for the underlying value types, or [Rasterizing a Hex Map](rasterizing-a-hex-map/index.md) for
 pixel-based index rasters and interpolation.

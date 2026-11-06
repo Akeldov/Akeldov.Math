@@ -5,6 +5,15 @@
 число ячеек, а карта хранит данные. Карты подходят для ландшафта, масок, стоимостей, меток и
 другого состояния ячеек.
 
+## Предвычисленные карты
+
+Эти карты позволяют переиспользовать значения, вычисленные по исходной сетке:
+
+- [HexCenterMap](maps/hex-center-map.md)
+- [IndexSeptupletMap](maps/index-septuplet-map.md)
+- [IndexPartialSeptupletMap](maps/index-partial-septuplet-map.md)
+- [ChromaticIndexMap](maps/chromatic-index-map.md)
+
 ## Выбор типа карты
 
 | Тип | Назначение |
@@ -195,7 +204,7 @@ FloatHexMap smoothNoise = noise.GaussianBlur(sigma: 1.25f);
 `CreatePerlinNoise` делает выборку в центрах гексов единичного радиуса и возвращает значения в
 `[0, 1]`. `GaussianBlur` возвращает новую карту и нормализует ядро у границ карты.
 
-Переходите к разделу [«Полные и частичные окрестности»](complete-and-partial-neighborhoods.md),
+Переходите к разделу [«Полные и частичные окрестности»](neighborhood-values.md),
 чтобы узнать о значениях фиксированного размера и выборке соседей с учётом раскладки.
 
 ## ?????????? ? ??????????? ???????? ? ????????????? ??????????

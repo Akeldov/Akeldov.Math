@@ -39,7 +39,7 @@ Fixed-size containers preserve the meaning and order of related values:
 Partial counterparts add presence flags for bounded domains. `SampleSextuplet` and
 `SamplePartialSextuplet` read neighbor values directly from any `IHexMap<TValue>` using layout and
 row or column parity. Precomputed septuplet maps instead store center and neighbor indices for
-repeated lookup. See [Complete and Partial Neighborhoods](complete-and-partial-neighborhoods.md).
+repeated lookup. See [Complete and Partial Neighborhoods](neighborhood-values.md).
 
 ## Rasters
 

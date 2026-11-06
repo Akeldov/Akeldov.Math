@@ -202,7 +202,7 @@ Use:
 
 Raster families are described in [Rasters](data-storage/rasters.md), and complete versus partial
 neighborhood behavior in
-[Complete and Partial Neighborhoods](data-storage/complete-and-partial-neighborhoods.md).
+[Complete and Partial Neighborhoods](data-storage/neighborhood-values.md).
 
 ## Parameter Validation
 

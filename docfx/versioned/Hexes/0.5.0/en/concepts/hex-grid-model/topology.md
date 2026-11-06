@@ -165,5 +165,5 @@ combining maps, compare their complete topology values, not only their resolutio
 Use <xref:Akeldov.Math.Hexes.Geometry.HexMapGeometry> when an operation needs world-space coordinates;
 continue to [Geometry](geometry.md) for that layer. See [Maps](../data-storage/maps.md) for
 topology-backed value storage and
-[Complete and Partial Neighborhoods](../data-storage/complete-and-partial-neighborhoods.md) for
+[Complete and Partial Neighborhoods](../data-storage/neighborhood-values.md) for
 precomputed adjacency at map boundaries.

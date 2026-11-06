@@ -136,4 +136,4 @@ Console.WriteLine($"Сумма присутствующей окрестност
 Полные варианты описаны в разделах [«Создать индексный Triplet-растр»](create-an-index-triplet-raster.md) и
 [«Создать индексный Septuplet-растр»](create-an-index-septuplet-raster.md). Для частичных весов интерполяции перейдите к разделу
 [«Создать барицентрический растр»](create-a-barycentric-raster.md). Базовые типы данных описаны в разделе
-[«Полные и частичные окрестности»](../../concepts/data-storage/complete-and-partial-neighborhoods.md).
+[«Полные и частичные окрестности»](../../concepts/data-storage/neighborhood-values.md).

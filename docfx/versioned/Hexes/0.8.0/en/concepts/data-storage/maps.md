@@ -5,6 +5,15 @@ A hex map associates one value with every cell of a rectangular
 cell count; the map supplies the data. Use maps for terrain, masks, costs, labels, or any other
 per-cell state.
 
+## Precomputed Maps
+
+Use these maps to reuse values derived from the source grid:
+
+- [HexCenterMap](maps/hex-center-map.md)
+- [IndexSeptupletMap](maps/index-septuplet-map.md)
+- [IndexPartialSeptupletMap](maps/index-partial-septuplet-map.md)
+- [ChromaticIndexMap](maps/chromatic-index-map.md)
+
 ## Choose a Map Type
 
 | Type | Purpose |
@@ -244,7 +253,7 @@ FloatHexMap smoothNoise = noise.GaussianBlur(sigma: 1.25f);
 `CreatePerlinNoise` samples unit-radius hex centers and returns values in `[0, 1]`.
 `GaussianBlur` returns a new map and normalizes its kernel at map boundaries.
 
-Continue with [Complete and Partial Neighborhoods](complete-and-partial-neighborhoods.md) for
+Continue with [Complete and Partial Neighborhoods](neighborhood-values.md) for
 fixed-size neighbor values and layout-aware sampling.
 
 ## Multi-ring and Distance-limited Morphology

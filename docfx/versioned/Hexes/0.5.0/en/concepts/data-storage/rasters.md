@@ -177,7 +177,7 @@ The available flags are:
 Never infer absence from the stored value. `(0, 0)` is a valid map index, chromatic class `0` is
 valid, and a barycentric weight can legitimately be `0`. Check the corresponding `Has...`
 property or `Presence` flag instead. Continue with
-[Complete and Partial Neighborhoods](complete-and-partial-neighborhoods.md) for the shared
+[Complete and Partial Neighborhoods](neighborhood-values.md) for the shared
 presence model.
 
 ## Index Raster Cells Safely

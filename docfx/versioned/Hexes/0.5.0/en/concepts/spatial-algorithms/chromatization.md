@@ -123,7 +123,7 @@ The three-color invariant only guarantees that cells in one class are not direct
 If an operation affects cells beyond an immediate edge neighbor, chromatization alone may not be
 sufficient for an independent parallel pass.
 
-See [Complete and Partial Neighborhoods](../data-storage/complete-and-partial-neighborhoods.md)
+See [Complete and Partial Neighborhoods](../data-storage/neighborhood-values.md)
 for geometric and chromatic structure order, and [Rasters](../data-storage/rasters.md) for the
 raster data model. Return to the [Spatial Algorithms overview](index.md) to compare
 chromatization with pathfinding and Voronoi partitioning.

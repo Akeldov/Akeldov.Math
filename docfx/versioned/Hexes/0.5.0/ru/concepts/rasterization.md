@@ -207,7 +207,7 @@ edges.SaveAsPng("hex-edges.png");
 
 Семейства растров описаны в статье [«Растры»](data-storage/rasters.md), а поведение полных и
 частичных окрестностей — в статье
-[«Полные и частичные окрестности»](data-storage/complete-and-partial-neighborhoods.md).
+[«Полные и частичные окрестности»](data-storage/neighborhood-values.md).
 
 ## Проверка параметров
 

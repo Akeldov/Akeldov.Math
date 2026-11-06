@@ -29,8 +29,14 @@
 - name: Карты
   href: data-storage/maps.md
   items:
-    - name: Полные и частичные окрестности
-      href: data-storage/complete-and-partial-neighborhoods.md
+    - name: HexCenterMap
+      href: data-storage/maps/hex-center-map.md
+    - name: IndexSeptupletMap
+      href: data-storage/maps/index-septuplet-map.md
+    - name: IndexPartialSeptupletMap
+      href: data-storage/maps/index-partial-septuplet-map.md
+    - name: ChromaticIndexMap
+      href: data-storage/maps/chromatic-index-map.md
 - name: Растры
   href: data-storage/rasters.md
   items:

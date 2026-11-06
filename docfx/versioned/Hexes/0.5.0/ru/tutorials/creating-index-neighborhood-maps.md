@@ -150,6 +150,6 @@ static RGBA16BitColor ToIndexColor(PartialSeptuplet<VectorXYInt> septuplet)
 карты обе реализации по-прежнему требуют индекс ячейки внутри её границ.
 
 Устройство значений описано в разделе
-[«Полные и частичные окрестности»](../concepts/data-storage/complete-and-partial-neighborhoods.md),
+[«Полные и частичные окрестности»](../concepts/data-storage/neighborhood-values.md),
 а индексные растры по пикселям и интерполяция — в учебнике
 [«Растеризация гексагональной карты»](rasterizing-a-hex-map/index.md).
