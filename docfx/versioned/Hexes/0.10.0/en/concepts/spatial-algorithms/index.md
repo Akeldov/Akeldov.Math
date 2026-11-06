@@ -11,6 +11,12 @@ The main distinction is which properties of the grid affect that result:
 | Find a route | Topology and entry- and exit-cost maps | Adjacency and accumulated transition cost | <xref:Akeldov.Math.Hexes.Pathfinding.HexPath> or `null` |
 | Partition a map among sites | Map geometry and weighted Spatial2D sites | World-space hex centers, site positions, and site weights | `SpatialHexPartitionMap<VoronoiHexPartitionCell>` |
 | Obtain stable hex classes | Index and layout | Position in the logical hex lattice | Class `0`, `1`, or `2` |
+| Partition by area shares | Geometry, noise settings, targets, optional regions and mask | Noise bands and relative target shares | Full or partial spatial partition |
+| Evolve territory boundaries | Partition, energy settings, random generator, optional regions | Neighbor-copy attempts, boundary energy, and area penalties | New partition with preserved cell IDs |
+| Split disconnected territories | Full or partial partition | Six-neighbor connectivity within each cell | One new cell per connected component |
+| Expand, shrink, or outline a mask | Boolean map | Cell values and six edge neighbors | Boolean map |
+| Find regions or distances in a mask | Boolean map, seed or target value | Six-neighbor connectivity and hex-step distance | Region mask, component labels, or distance map |
+| Generate or smooth a numeric field | Topology or geometry and noise settings; float map for smoothing | Perlin noise or a Gaussian neighborhood kernel | Floating-point map |
 
 ## Topology and Geometry
 
@@ -55,11 +61,80 @@ raster weights a stable order.
 Continue to [Chromatization](chromatization.md) to distinguish `Main`, `Left`, `Right` order from
 chromatic `Index0`, `Index1`, `Index2` order.
 
+## Perlin Noise Partitioning
+
+`PartitionByPerlinNoise` divides noise sampled at world-space hex centers into ordered bands.
+Targets specify unique non-negative IDs and relative area shares. Shares are approximate: equal
+noise values stay together. Region overloads compute thresholds separately in each region;
+partial overloads leave excluded hexes unassigned. One territory can contain disconnected pieces.
+
+See [Partition and Diffuse Territories](../../how-to-guides/geometry-and-polyhexes/partition-and-diffuse-territories.md)
+for targets, seeds, participation masks, and regional constraints.
+
+## Cellular Potts Diffusion
+
+`DiffuseByCellularPotts` evolves an existing partition through stochastic neighbor-copy attempts.
+Boundary energy favors shorter interfaces; area penalties favor target hex counts. These are soft
+preferences, not guarantees of exact areas or a minimum-energy result. Supply a seeded `Random`
+for repeatable runs.
+
+The default `Preserve` connectivity policy requires initially connected non-empty cells and
+prevents fragmentation or disappearance. `None` permits both. Region boundaries restrict copying;
+partial-map nulls never participate. The result preserves cell IDs and order.
+
+See [Partition and Diffuse Territories](../../how-to-guides/geometry-and-polyhexes/partition-and-diffuse-territories.md)
+for connectivity policies and energy settings.
+
+## Splitting Disconnected Cells
+
+`SplitDisconnectedCells` creates one partition cell for each six-connected component of an
+existing territory. It assigns new IDs from zero in row-major discovery order, drops empty cells
+and specialized cell metadata, and preserves unassigned hexes in partial maps.
+
+Use it before connectivity-preserving diffusion when disconnected pieces should become
+independent territories. Spatial overloads retain geometry; keep the receiver's spatial static
+type to select them. See [Space Partitioning](space-partitioning.md).
+
+## Boolean Morphology
+
+`Dilate`, `Erode`, `Open`, `Close`, and `Outline` process masks using a hex and its six
+edge neighbors. Missing neighbors beyond the finite topology are ignored. Opening applies
+erosion followed by dilation; closing applies dilation followed by erosion.
+
+Use these operations to expand or contract selected areas, remove small features, or extract
+their outline. See [Maps](../data-storage/maps.md#process-boolean-regions) for examples.
+
+## Connectivity and Distance Transforms
+
+`FloodFill` returns the six-connected region with the same Boolean value as the seed, including
+a `false` region when the seed is false. `ConnectedComponents` labels `true` components with
+positive integers and leaves false cells at zero. `DistanceTransform` returns the minimum number
+of hex steps to the requested Boolean value, or `int.MaxValue` when that value is absent.
+
+These operations use unweighted adjacency. Use pathfinding when movement costs affect distance,
+and `SplitDisconnectedCells` when the input is a territory partition rather than a Boolean mask.
+See [Maps](../data-storage/maps.md#process-boolean-regions).
+
+## Noise Generation and Smoothing
+
+`CreatePerlinNoise` generates a floating-point field; `GaussianBlur` smooths an existing field
+and normalizes its kernel at map boundaries. Topology-based noise uses unit-radius hex centers;
+geometry-based noise uses world-space centers. Choose the source according to the coordinate
+system in which the noise scale should be measured.
+
+Unlike `PartitionByPerlinNoise`, generation returns numeric values rather than territory IDs.
+See [Generate and Smooth Noise](../../how-to-guides/maps-and-topology/generate-and-smooth-noise.md).
+
 ## Choosing an Algorithm
 
 - Use pathfinding when the answer depends on a chain of adjacent transitions.
 - Use Voronoi partitioning when the answer depends on world-space distance.
 - Use chromatization when you need a repeatable class shared by the entire infinite lattice.
+- Use noise partitioning for territories with approximate area shares.
+- Use Cellular Potts diffusion to evolve boundaries with area and connectivity preferences.
+- Split disconnected cells when each connected piece should be an independent territory.
+- Use morphology to change a mask's shape, and connectivity methods to inspect its regions or distances.
+- Generate or blur noise when the desired result is a numeric field.
 
 The maps, rasters, and complete or partial neighborhoods used as inputs and results are introduced
 in [Data Storage](../data-storage/index.md).
