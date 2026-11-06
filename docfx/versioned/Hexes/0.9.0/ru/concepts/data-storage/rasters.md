@@ -68,16 +68,16 @@ var raster = new IndexPartialTripletRaster(source, sampling);
 
 | Растр | Значение отсчёта | Назначение | `TryGetValue` |
 | --- | --- | --- | --- |
-| <xref:Akeldov.Math.Hexes.Topology.IndexTripletRaster> | `Triplet<VectorXYInt>` | Главный гекс и два гекса, сходящиеся с ним в ближайшей вершине | Да |
-| <xref:Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster> | `PartialTriplet<VectorXYInt>` | Та же тройка, обрезанная по исходной топологии | Да |
-| <xref:Akeldov.Math.Hexes.Topology.IndexSeptupletRaster> | `Septuplet<VectorXYInt>` | Главный гекс и все шесть соседей по ребру | Нет |
-| <xref:Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster> | `PartialSeptuplet<VectorXYInt>` | Те же логические индексы с флагами попадания в границы, если `Main` находится внутри топологии | Нет |
-| <xref:Akeldov.Math.Hexes.Topology.BarycentricTripletRaster> | `Triplet<float>` | Веса для треугольника центров `Main`–`Left`–`Right` | Да |
-| <xref:Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster> | `PartialTriplet<float>` | Те же веса с отсутствующими позициями за пределами карты | Да |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster> | `Triplet<byte>` | Хроматические классы гексов `Main`–`Left`–`Right` | Да |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster> | `PartialTriplet<byte>` | Те же классы с отсутствующими позициями за пределами карты | Нет |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster> | `ChromaticTriplet<float>` | Веса, переупорядоченные по хроматическим классам 0, 1 и 2 | Да |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster> | `PartialChromaticTriplet<float>` | Хроматически упорядоченные веса с флагами наличия | Да |
+| [IndexTripletRaster](rasters/index-triplet-raster.md) | `Triplet<VectorXYInt>` | Главный гекс и два гекса, сходящиеся с ним в ближайшей вершине | Да |
+| [IndexPartialTripletRaster](rasters/index-partial-triplet-raster.md) | `PartialTriplet<VectorXYInt>` | Та же тройка, обрезанная по исходной топологии | Да |
+| [IndexSeptupletRaster](rasters/index-septuplet-raster.md) | `Septuplet<VectorXYInt>` | Главный гекс и все шесть соседей по ребру | Нет |
+| [IndexPartialSeptupletRaster](rasters/index-partial-septuplet-raster.md) | `PartialSeptuplet<VectorXYInt>` | Те же логические индексы с флагами попадания в границы, если `Main` находится внутри топологии | Нет |
+| [BarycentricTripletRaster](rasters/barycentric-triplet-raster.md) | `Triplet<float>` | Веса для треугольника центров `Main`–`Left`–`Right` | Да |
+| [BarycentricPartialTripletRaster](rasters/barycentric-partial-triplet-raster.md) | `PartialTriplet<float>` | Те же веса с отсутствующими позициями за пределами карты | Да |
+| [ChromaticIndexTripletRaster](rasters/chromatic-index-triplet-raster.md) | `Triplet<byte>` | Хроматические классы гексов `Main`–`Left`–`Right` | Да |
+| [ChromaticIndexPartialTripletRaster](rasters/chromatic-index-partial-triplet-raster.md) | `PartialTriplet<byte>` | Те же классы с отсутствующими позициями за пределами карты | Нет |
+| [ChromaticBarycentricTripletRaster](rasters/chromatic-barycentric-triplet-raster.md) | `ChromaticTriplet<float>` | Веса, переупорядоченные по хроматическим классам 0, 1 и 2 | Да |
+| [ChromaticBarycentricPartialTripletRaster](rasters/chromatic-barycentric-partial-triplet-raster.md) | `PartialChromaticTriplet<float>` | Хроматически упорядоченные веса с флагами наличия | Да |
 
 ### Тройки индексов
 

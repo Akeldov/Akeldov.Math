@@ -33,6 +33,27 @@
       href: data-storage/complete-and-partial-neighborhoods.md
 - name: Растры
   href: data-storage/rasters.md
+  items:
+    - name: IndexTripletRaster
+      href: data-storage/rasters/index-triplet-raster.md
+    - name: IndexPartialTripletRaster
+      href: data-storage/rasters/index-partial-triplet-raster.md
+    - name: IndexSeptupletRaster
+      href: data-storage/rasters/index-septuplet-raster.md
+    - name: IndexPartialSeptupletRaster
+      href: data-storage/rasters/index-partial-septuplet-raster.md
+    - name: BarycentricTripletRaster
+      href: data-storage/rasters/barycentric-triplet-raster.md
+    - name: BarycentricPartialTripletRaster
+      href: data-storage/rasters/barycentric-partial-triplet-raster.md
+    - name: ChromaticIndexTripletRaster
+      href: data-storage/rasters/chromatic-index-triplet-raster.md
+    - name: ChromaticIndexPartialTripletRaster
+      href: data-storage/rasters/chromatic-index-partial-triplet-raster.md
+    - name: ChromaticBarycentricTripletRaster
+      href: data-storage/rasters/chromatic-barycentric-triplet-raster.md
+    - name: ChromaticBarycentricPartialTripletRaster
+      href: data-storage/rasters/chromatic-barycentric-partial-triplet-raster.md
 - name: Пространственные алгоритмы
   href: spatial-algorithms/index.md
   items:

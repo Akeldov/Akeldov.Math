@@ -63,16 +63,16 @@ the four <xref:Akeldov.Math.Hexes.Layout> values.
 
 | Raster | Sample value | Meaning | `TryGetValue` |
 | --- | --- | --- | --- |
-| <xref:Akeldov.Math.Hexes.Topology.IndexTripletRaster> | `Triplet<VectorXYInt>` | Main hex and the two hexes meeting it at the closest vertex | Yes |
-| <xref:Akeldov.Math.Hexes.Topology.IndexPartialTripletRaster> | `PartialTriplet<VectorXYInt>` | Same triplet, clipped to the source topology | Yes |
-| <xref:Akeldov.Math.Hexes.Topology.IndexSeptupletRaster> | `Septuplet<VectorXYInt>` | Main hex and all six edge-adjacent hexes | No |
-| <xref:Akeldov.Math.Hexes.Topology.IndexPartialSeptupletRaster> | `PartialSeptuplet<VectorXYInt>` | Same logical indices, with in-bounds flags when `Main` is inside the source topology | No |
-| <xref:Akeldov.Math.Hexes.Topology.BarycentricTripletRaster> | `Triplet<float>` | Weights for the main-left-right center triangle | Yes |
-| <xref:Akeldov.Math.Hexes.Topology.BarycentricPartialTripletRaster> | `PartialTriplet<float>` | Same weights with out-of-map positions absent | Yes |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticIndexTripletRaster> | `Triplet<byte>` | Chromatic classes of the main-left-right hexes | Yes |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticIndexPartialTripletRaster> | `PartialTriplet<byte>` | Same classes with out-of-map positions absent | No |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricTripletRaster> | `ChromaticTriplet<float>` | Weights reordered by chromatic class 0, 1, and 2 | Yes |
-| <xref:Akeldov.Math.Hexes.Topology.ChromaticBarycentricPartialTripletRaster> | `PartialChromaticTriplet<float>` | Chromatically ordered weights with presence flags | Yes |
+| [IndexTripletRaster](rasters/index-triplet-raster.md) | `Triplet<VectorXYInt>` | Main hex and the two hexes meeting it at the closest vertex | Yes |
+| [IndexPartialTripletRaster](rasters/index-partial-triplet-raster.md) | `PartialTriplet<VectorXYInt>` | Same triplet, clipped to the source topology | Yes |
+| [IndexSeptupletRaster](rasters/index-septuplet-raster.md) | `Septuplet<VectorXYInt>` | Main hex and all six edge-adjacent hexes | No |
+| [IndexPartialSeptupletRaster](rasters/index-partial-septuplet-raster.md) | `PartialSeptuplet<VectorXYInt>` | Same logical indices, with in-bounds flags when `Main` is inside the source topology | No |
+| [BarycentricTripletRaster](rasters/barycentric-triplet-raster.md) | `Triplet<float>` | Weights for the main-left-right center triangle | Yes |
+| [BarycentricPartialTripletRaster](rasters/barycentric-partial-triplet-raster.md) | `PartialTriplet<float>` | Same weights with out-of-map positions absent | Yes |
+| [ChromaticIndexTripletRaster](rasters/chromatic-index-triplet-raster.md) | `Triplet<byte>` | Chromatic classes of the main-left-right hexes | Yes |
+| [ChromaticIndexPartialTripletRaster](rasters/chromatic-index-partial-triplet-raster.md) | `PartialTriplet<byte>` | Same classes with out-of-map positions absent | No |
+| [ChromaticBarycentricTripletRaster](rasters/chromatic-barycentric-triplet-raster.md) | `ChromaticTriplet<float>` | Weights reordered by chromatic class 0, 1, and 2 | Yes |
+| [ChromaticBarycentricPartialTripletRaster](rasters/chromatic-barycentric-partial-triplet-raster.md) | `PartialChromaticTriplet<float>` | Chromatically ordered weights with presence flags | Yes |
 
 ### Index Triplets
 
