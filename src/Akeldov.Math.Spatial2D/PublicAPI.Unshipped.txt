@@ -1,1 +1,3 @@
 #nullable enable
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions
+static Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions.SamplePoissonDiskSites(this Akeldov.Math.Spatial2D.Fields.IFloatField! minimalDistanceField, Akeldov.Math.Spatial2D.Regions.Rectangle bounds, int maxPoissonSamplingAttempts, System.Random! random) -> Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site[]!
