@@ -37,7 +37,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// <exception cref="InvalidOperationException">
         /// Thrown when the field returns a non-finite or non-positive value, or sampling produces no sites.
         /// </exception>
-        public static Site[] ToSites(this IFloatField minimalDistanceField, Rectangle bounds, int maxPoissonSamplingAttempts, Random random)
+        public static Site[] SamplePoissonDiskSites(this IFloatField minimalDistanceField, Rectangle bounds, int maxPoissonSamplingAttempts, Random random)
         {
             if (minimalDistanceField == null)
                 throw new ArgumentNullException(nameof(minimalDistanceField));

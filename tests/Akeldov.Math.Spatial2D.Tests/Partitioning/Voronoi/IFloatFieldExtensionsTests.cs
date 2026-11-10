@@ -9,12 +9,12 @@ public class IFloatFieldExtensionsTests
     [TestCase(100f, 200f)]
     [TestCase(-100f, -200f)]
     [TestCase(0f, 0f)]
-    public void ToSites_WithVariableField_SamplesWorldCoordinates(float minX, float minY)
+    public void SamplePoissonDiskSites_WithVariableField_SamplesWorldCoordinates(float minX, float minY)
     {
         var bounds = new Rectangle(new PointXY(minX, minY), new PointXY(minX + 20f, minY + 10f));
         var field = new WorldGradientFloatField(bounds);
 
-        var sites = field.ToSites(bounds, maxPoissonSamplingAttempts: 30, new Random(12345));
+        var sites = field.SamplePoissonDiskSites(bounds, maxPoissonSamplingAttempts: 30, new Random(12345));
 
         Assert.That(sites.Length, Is.GreaterThan(1));
         foreach (var site in sites)
@@ -26,12 +26,12 @@ public class IFloatFieldExtensionsTests
     }
 
     [Test]
-    public void ToSites_WithNullField_ThrowsArgumentNullException()
+    public void SamplePoissonDiskSites_WithNullField_ThrowsArgumentNullException()
     {
         var bounds = new Rectangle(new PointXY(100f, 200f), new PointXY(120f, 210f));
 
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            IFloatFieldExtensions.ToSites(null!, bounds, 30, new Random(12345)));
+            IFloatFieldExtensions.SamplePoissonDiskSites(null!, bounds, 30, new Random(12345)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("minimalDistanceField"));
     }
