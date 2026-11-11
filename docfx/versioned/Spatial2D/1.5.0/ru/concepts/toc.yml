@@ -1,0 +1,77 @@
+- name: Геометрическая модель
+  href: geometry-model/index.md
+  items:
+    - name: Система координат
+      href: geometry-model/coordinate-system/index.md
+      items:
+        - name: Дискретные индексы
+          href: geometry-model/coordinate-system/discrete-indices.md
+    - name: Углы и единицы измерения
+      href: geometry-model/angles-and-units.md
+    - name: Точки
+      href: geometry-model/points.md
+    - name: Векторы
+      href: geometry-model/vectors.md
+    - name: Кривые
+      href: geometry-model/curves.md
+    - name: Контуры
+      href: geometry-model/contours.md
+    - name: Регионы
+      href: geometry-model/regions.md
+- name: Владение коллекциями и неизменяемость
+  href: collection-ownership-and-immutability.md
+- name: Поля
+  href: fields.md
+  items:
+    - name: Стратегии сэмплирования
+      href: fields/sampling-strategies.md
+    - name: Индексирование источников
+      href: fields/source-indexing.md
+- name: Семплеры
+  href: samplers/index.md
+  items:
+    - name: Семплер Пуассона
+      href: samplers/poisson-disk.md
+- name: Разбиения
+  href: partitioning/index.md
+  items:
+    - name: Разбиение элементов Вороного
+      href: partitioning/voronoi.md
+- name: Растеризация
+  href: rasterization.md
+  items:
+    - name: Растры без пространственной привязки
+      href: rasterization/non-spatial-rasters.md
+      items:
+        - name: Raster<T>
+          href: rasterization/non-spatial-rasters/raster.md
+        - name: BoolRaster
+          href: rasterization/non-spatial-rasters/bool-raster.md
+        - name: IntRaster
+          href: rasterization/non-spatial-rasters/int-raster.md
+        - name: FloatRaster
+          href: rasterization/non-spatial-rasters/float-raster.md
+    - name: Пространственные растры
+      href: rasterization/spatial-rasters.md
+      items:
+        - name: SpatialRaster<T>
+          href: rasterization/spatial-rasters/spatial-raster.md
+        - name: SpatialBoolRaster
+          href: rasterization/spatial-rasters/spatial-bool-raster.md
+        - name: SpatialIntRaster
+          href: rasterization/spatial-rasters/spatial-int-raster.md
+        - name: SpatialFloatRaster
+          href: rasterization/spatial-rasters/spatial-float-raster.md
+    - name: Цветовые растры
+      href: rasterization/color-rasters.md
+      items:
+        - name: Raster<Gray8BitColor>
+          href: rasterization/color-rasters/gray8.md
+        - name: Raster<Gray16BitColor>
+          href: rasterization/color-rasters/gray16.md
+        - name: Raster<RGBA8BitColor>
+          href: rasterization/color-rasters/rgba8.md
+        - name: Raster<RGBA16BitColor>
+          href: rasterization/color-rasters/rgba16.md
+- name: Изображения
+  href: imaging.md

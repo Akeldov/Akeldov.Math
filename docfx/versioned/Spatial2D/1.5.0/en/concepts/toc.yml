@@ -1,0 +1,77 @@
+- name: Geometry Model
+  href: geometry-model/index.md
+  items:
+    - name: Coordinate System
+      href: geometry-model/coordinate-system/index.md
+      items:
+        - name: Discrete Indices
+          href: geometry-model/coordinate-system/discrete-indices.md
+    - name: Angles and Units
+      href: geometry-model/angles-and-units.md
+    - name: Points
+      href: geometry-model/points.md
+    - name: Vectors
+      href: geometry-model/vectors.md
+    - name: Curves
+      href: geometry-model/curves.md
+    - name: Contours
+      href: geometry-model/contours.md
+    - name: Regions
+      href: geometry-model/regions.md
+- name: Collection Ownership and Immutability
+  href: collection-ownership-and-immutability.md
+- name: Fields
+  href: fields.md
+  items:
+    - name: Sampling Strategies
+      href: fields/sampling-strategies.md
+    - name: Source Indexing
+      href: fields/source-indexing.md
+- name: Samplers
+  href: samplers/index.md
+  items:
+    - name: Poisson Disk Sampler
+      href: samplers/poisson-disk.md
+- name: Partitioning
+  href: partitioning/index.md
+  items:
+    - name: Voronoi Item Partitioning
+      href: partitioning/voronoi.md
+- name: Rasterization
+  href: rasterization.md
+  items:
+    - name: Non-Spatial Rasters
+      href: rasterization/non-spatial-rasters.md
+      items:
+        - name: Raster<T>
+          href: rasterization/non-spatial-rasters/raster.md
+        - name: BoolRaster
+          href: rasterization/non-spatial-rasters/bool-raster.md
+        - name: IntRaster
+          href: rasterization/non-spatial-rasters/int-raster.md
+        - name: FloatRaster
+          href: rasterization/non-spatial-rasters/float-raster.md
+    - name: Spatial Rasters
+      href: rasterization/spatial-rasters.md
+      items:
+        - name: SpatialRaster<T>
+          href: rasterization/spatial-rasters/spatial-raster.md
+        - name: SpatialBoolRaster
+          href: rasterization/spatial-rasters/spatial-bool-raster.md
+        - name: SpatialIntRaster
+          href: rasterization/spatial-rasters/spatial-int-raster.md
+        - name: SpatialFloatRaster
+          href: rasterization/spatial-rasters/spatial-float-raster.md
+    - name: Color Rasters
+      href: rasterization/color-rasters.md
+      items:
+        - name: Raster<Gray8BitColor>
+          href: rasterization/color-rasters/gray8.md
+        - name: Raster<Gray16BitColor>
+          href: rasterization/color-rasters/gray16.md
+        - name: Raster<RGBA8BitColor>
+          href: rasterization/color-rasters/rgba8.md
+        - name: Raster<RGBA16BitColor>
+          href: rasterization/color-rasters/rgba16.md
+- name: Imaging
+  href: imaging.md
