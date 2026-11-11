@@ -75,3 +75,6 @@
           href: rasterization/color-rasters/rgba16.md
 - name: Изображения
   href: imaging.md
+  items:
+    - name: Рисование
+      href: imaging/drawing.md
