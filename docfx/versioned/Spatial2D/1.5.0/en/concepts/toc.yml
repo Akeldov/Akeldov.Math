@@ -78,3 +78,5 @@
   items:
     - name: Drawing
       href: imaging/drawing.md
+    - name: Export
+      href: imaging/export.md

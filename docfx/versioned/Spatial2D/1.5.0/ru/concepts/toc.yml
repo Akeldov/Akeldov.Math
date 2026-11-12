@@ -78,3 +78,5 @@
   items:
     - name: Рисование
       href: imaging/drawing.md
+    - name: Экспорт
+      href: imaging/export.md
