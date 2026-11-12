@@ -80,3 +80,5 @@
       href: imaging/drawing.md
     - name: Экспорт
       href: imaging/export.md
+    - name: Импорт
+      href: imaging/import.md

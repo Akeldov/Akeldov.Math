@@ -2,6 +2,7 @@
 
 [Drawing](imaging/drawing.md) explains how to add shapes, grids, and text to a spatial color raster.
 [Export](imaging/export.md) covers PNG and BMP formats, file and stream output, and PNG compression.
+[Import](imaging/import.md) covers loading PNG and BMP images, pixel formats, and spatial bounds.
 
 Imaging describes how Spatial2D represents colors, combines them, and exports a color raster as
 an image. The types and export extensions live in <xref:Akeldov.Math.Spatial2D.Imaging>.
