@@ -1,0 +1,75 @@
+- name: Основы
+  href: fundamentals/index.md
+  items:
+    - name: Системы координат
+      href: fundamentals/coordinate-systems/index.md
+      items:
+        - name: QRS-координаты
+          href: fundamentals/coordinate-systems/qrs-coordinates.md
+        - name: Индексы строк и столбцов
+          href: fundamentals/coordinate-systems/row-and-column-indices.md
+        - name: Пространственные координаты
+          href: fundamentals/coordinate-systems/spatial-coordinates.md
+        - name: Дискретизация координат
+          href: fundamentals/coordinate-discretization.md
+    - name: Топология
+      href: hex-grid-model/topology.md
+      items:
+        - name: Раскладки
+          href: fundamentals/layouts.md
+    - name: Геометрия
+      href: hex-grid-model/geometry.md
+    - name: Повороты и преобразования
+      href: fundamentals/rotations-and-transformations.md
+- name: Модель гексагональной сетки
+  href: hex-grid-model/index.md
+  items:
+    - name: Полигексы
+      href: hex-grid-model/polyhexes.md
+- name: Карты
+  href: data-storage/maps.md
+  items:
+    - name: HexCenterMap
+      href: data-storage/maps/hex-center-map.md
+    - name: IndexSeptupletMap
+      href: data-storage/maps/index-septuplet-map.md
+    - name: IndexPartialSeptupletMap
+      href: data-storage/maps/index-partial-septuplet-map.md
+    - name: ChromaticIndexMap
+      href: data-storage/maps/chromatic-index-map.md
+    - name: Экспорт
+      href: data-storage/maps/export.md
+- name: Растры
+  href: data-storage/rasters.md
+  items:
+    - name: IndexTripletRaster
+      href: data-storage/rasters/index-triplet-raster.md
+    - name: IndexPartialTripletRaster
+      href: data-storage/rasters/index-partial-triplet-raster.md
+    - name: IndexSeptupletRaster
+      href: data-storage/rasters/index-septuplet-raster.md
+    - name: IndexPartialSeptupletRaster
+      href: data-storage/rasters/index-partial-septuplet-raster.md
+    - name: BarycentricTripletRaster
+      href: data-storage/rasters/barycentric-triplet-raster.md
+    - name: BarycentricPartialTripletRaster
+      href: data-storage/rasters/barycentric-partial-triplet-raster.md
+    - name: ChromaticIndexTripletRaster
+      href: data-storage/rasters/chromatic-index-triplet-raster.md
+    - name: ChromaticIndexPartialTripletRaster
+      href: data-storage/rasters/chromatic-index-partial-triplet-raster.md
+    - name: ChromaticBarycentricTripletRaster
+      href: data-storage/rasters/chromatic-barycentric-triplet-raster.md
+    - name: ChromaticBarycentricPartialTripletRaster
+      href: data-storage/rasters/chromatic-barycentric-partial-triplet-raster.md
+- name: Пространственные алгоритмы
+  href: spatial-algorithms/index.md
+  items:
+    - name: Поиск пути
+      href: spatial-algorithms/pathfinding.md
+    - name: Разбиение пространства
+      href: spatial-algorithms/space-partitioning.md
+    - name: Хроматизация
+      href: spatial-algorithms/chromatization.md
+- name: Растеризация
+  href: rasterization.md
