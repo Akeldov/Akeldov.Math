@@ -39,6 +39,8 @@
       href: data-storage/maps/chromatic-index-map.md
     - name: Экспорт
       href: data-storage/maps/export.md
+    - name: Импорт
+      href: data-storage/maps/import.md
 - name: Растры
   href: data-storage/rasters.md
   items:
