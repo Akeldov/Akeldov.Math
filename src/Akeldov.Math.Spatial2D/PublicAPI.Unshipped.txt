@@ -1,4 +1,4 @@
 #nullable enable
-static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Regions.IRegion! region, float width, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
+static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Regions.IRegion! region, float fadingDistance, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions
 static Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions.SamplePoissonDiskSites(this Akeldov.Math.Spatial2D.Fields.IFloatField! minimalDistanceField, Akeldov.Math.Spatial2D.Regions.Rectangle bounds, int maxPoissonSamplingAttempts, System.Random! random) -> Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site[]!

@@ -8,26 +8,22 @@ namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 public class SpatialRasterDrawingTests
 {
-    [Test]
-    public void DrawRegion_MatchesCircleAndRectangleBoundaries()
+    [TestCase(0f)]
+    [TestCase(2f)]
+    public void DrawRegion_FillsInteriorAndFadesLinearlyOutside(float fadingDistance)
     {
-        var color = new RGBA8BitColor(255, 0, 0, 128);
-        var actual = CreateRaster();
-        var expected = CreateRaster();
-        actual.Draw(new Disk(new PointXY(13, 21.5f), 1.5f), 0.5f, color);
-        expected.Draw(new Circle(new PointXY(13, 21.5f), 1.5f), 0.5f, color);
-        Assert.That(actual.Values, Is.EqualTo(expected.Values));
-
-        actual = CreateRaster();
-        expected = CreateRaster();
-        var rectangle = new Rectangle(new PointXY(11, 21), new PointXY(17, 23));
-        actual.Draw((IRegion)rectangle, 1, color);
-        expected.Draw(rectangle, 1, color);
-        Assert.That(actual.Values, Is.EqualTo(expected.Values));
+        var raster = new SpatialRaster<RGBA8BitColor>(
+            new RasterGeometry(default, new VectorXY(8, 4), new VectorXYInt(8, 4)), new RGBA8BitColor[32]);
+        IRegion region = new Rectangle(new PointXY(0, -10), new PointXY(4, 10));
+        raster.Draw(region, fadingDistance, new RGBA8BitColor(255, 0, 0, 128));
+        Assert.That(raster[2, 2].A, Is.EqualTo(128));
+        Assert.That(raster[4, 2].A, Is.EqualTo(fadingDistance == 0 ? 0 : 96));
+        Assert.That(raster[5, 2].A, Is.EqualTo(fadingDistance == 0 ? 0 : 32));
+        Assert.That(raster[6, 2].A, Is.Zero);
     }
 
     [Test]
-    public void DrawRegion_DrawsHolesWithoutFillingAndCompositesOverlapsOnce()
+    public void DrawRegion_FillsAroundHolesAndFadesIntoThem()
     {
         var raster = new SpatialRaster<RGBA8BitColor>(
             new RasterGeometry(default, new VectorXY(12, 12), new VectorXYInt(24, 24)), new RGBA8BitColor[576]);
@@ -35,13 +31,12 @@ public class SpatialRasterDrawingTests
         {
             new Circle(new PointXY(6, 6), 5),
             new Circle(new PointXY(6, 6), 2),
-            new Circle(new PointXY(6, 6), 2.25f),
         });
         raster.Draw(region, 1, new RGBA8BitColor(255, 0, 0, 128));
         Assert.That(raster[12, 12].A, Is.Zero);
-        Assert.That(raster[18, 12].A, Is.Zero);
-        Assert.That(raster[16, 12].A, Is.EqualTo(128), "Overlapping hole strokes composite once.");
-        Assert.That(raster[22, 12].A, Is.GreaterThan(0), "Outer boundary is drawn.");
+        Assert.That(raster[15, 12].A, Is.InRange(1, 127));
+        Assert.That(raster[18, 12].A, Is.EqualTo(128));
+        Assert.That(raster[22, 12].A, Is.InRange(1, 127));
         Assert.That(raster.Values.All(p => p.A <= 128), Is.True);
     }
 
@@ -52,12 +47,11 @@ public class SpatialRasterDrawingTests
         IRegion region = new Disk(new PointXY(13, 21.5f), 1.5f);
         Assert.Throws<ArgumentNullException>(() => raster.Draw((IRegion)null!, 1, default));
         Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.Draw(null!, region, 1, default));
-        foreach (float width in new[] { 0f, -1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity })
-            Assert.Throws<ArgumentOutOfRangeException>(() => raster.Draw(region, width, default));
+        foreach (float fadingDistance in new[] { -1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity })
+            Assert.Throws<ArgumentOutOfRangeException>(() => raster.Draw(region, fadingDistance, default));
         raster.Draw(region, 1, default);
         Assert.That(raster.Values.All(p => p.A == 0), Is.True);
     }
-
     [TestCase(0f)]
     [TestCase(2f)]
     public void DrawContour_PointsAndContourAgreeAndCloseBoundary(float dash)
