@@ -4,6 +4,80 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class ParameterizedSegmentChainTests
 {
+    [TestCase(2f, 3f, -3f)]
+    [TestCase(2f, -3f, 3f)]
+    [TestCase(2f, 0f, 0f)]
+    [TestCase(-2f, 0f, 2f)]
+    [TestCase(6f, 0f, 2f)]
+    public void SignedDistance_UsesDirectedSideAndPositiveCollinearExtensions(float x, float y, float expected)
+    {
+        var chain = new ParameterizedSegmentChain(default(PointXY), new PointXY(4, 0));
+        var point = new PointXY(x, y);
+        Assert.That(chain.SignedDistance(point), Is.EqualTo(expected));
+        Assert.That(MathF.Abs(chain.SignedDistance(point)), Is.EqualTo(chain.Distance(point)));
+        if (y != 0)
+        {
+            var reversed = new ParameterizedSegmentChain(new PointXY(4, 0), default(PointXY));
+            Assert.That(reversed.SignedDistance(point), Is.EqualTo(-expected));
+        }
+    }
+
+    [Test]
+    public void SignedDistance_CrossingAndOverlappingSegmentsSelectFirstProjection()
+    {
+        var crossing = new ParameterizedSegmentChain(new PointXY(-4, 0), new PointXY(4, 0),
+            new PointXY(0, -4), new PointXY(0, 4));
+        Assert.That(crossing.SignedDistance(default), Is.Zero);
+        var tie = new PointXY(1, 1);
+        Assert.That(crossing.SignedDistance(tie), Is.EqualTo(-1));
+        Assert.That(crossing.ProjectWithParameter(tie).CurveCoordinate, Is.EqualTo(5));
+        Assert.That(crossing.SignedDistance(new PointXY(0.5f, 1)), Is.EqualTo(0.5f));
+        var overlap = new ParameterizedSegmentChain(default(PointXY), new PointXY(4, 0), default(PointXY));
+        Assert.That(overlap.SignedDistance(new PointXY(2, 1)), Is.EqualTo(-1));
+        Assert.That(overlap.ProjectWithParameter(new PointXY(2, 1)).CurveCoordinate, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void SignedDistance_SharedVertexUsesUnitNormalBisector()
+    {
+        var chain = new ParameterizedSegmentChain(default(PointXY), new PointXY(2, 0), new PointXY(0, 2));
+        Assert.That(chain.SignedDistance(new PointXY(3, 0.5f)), Is.EqualTo(MathF.Sqrt(1.25f)).Within(1e-6));
+        Assert.That(chain.ProjectWithParameter(new PointXY(3, 0.5f)).CurveCoordinate, Is.EqualTo(2));
+        var reversed = new ParameterizedSegmentChain(new PointXY(0, 2), new PointXY(2, 0), default(PointXY));
+        Assert.That(reversed.SignedDistance(new PointXY(3, 0.5f)), Is.EqualTo(-MathF.Sqrt(1.25f)).Within(1e-6));
+        var unequal = new ParameterizedSegmentChain(new PointXY(-200, 0), new PointXY(2, 0), new PointXY(0, 2));
+        Assert.That(unequal.SignedDistance(new PointXY(3, 0.5f)), Is.EqualTo(chain.SignedDistance(new PointXY(3, 0.5f))));
+    }
+
+    [Test]
+    public void SignedDistance_ReversalAtVertexFallsBackToSelectedSegment()
+    {
+        var chain = new ParameterizedSegmentChain(default(PointXY), new PointXY(2, 0), new PointXY(-4, 0));
+        Assert.That(chain.SignedDistance(new PointXY(3, 1)), Is.EqualTo(-MathF.Sqrt(2)).Within(1e-6));
+        Assert.That(chain.SignedDistance(new PointXY(3, -1)), Is.EqualTo(MathF.Sqrt(2)).Within(1e-6));
+        Assert.That(chain.SignedDistance(new PointXY(3, 0)), Is.EqualTo(1));
+    }
+
+    [TestCase(-0.01f)]
+    [TestCase(0f)]
+    [TestCase(0.01f)]
+    public void SignedDistance_OutsideCornerKeepsSideAcrossIncomingExtension(float y)
+    {
+        var chain = new ParameterizedSegmentChain(default(PointXY), new PointXY(2, 0), new PointXY(0, 2));
+        var point = new PointXY(3, y);
+        Assert.That(chain.SignedDistance(point), Is.GreaterThan(0));
+        Assert.That(MathF.Abs(chain.SignedDistance(point)), Is.EqualTo(chain.Distance(point)));
+    }
+
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity, 0f)]
+    public void SignedDistance_RejectsNonFinitePoints(float x, float y)
+    {
+        var chain = new ParameterizedSegmentChain(default(PointXY), new PointXY(1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => chain.SignedDistance(new PointXY(x, y)));
+    }
+
     [Test]
     public void Constructor_WhenPointsAreProvided_CopiesPointsAndCreatesSegments()
     {

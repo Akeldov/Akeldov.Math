@@ -7,6 +7,28 @@ namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 public class DistanceColorDrawingTests
 {
+    [Test]
+    public void Draw_SignedParameterizedCurveUsesSignedDistanceThenCoordinate()
+    {
+        var raster = CreateRaster();
+        var curve = new ParameterizedSegmentChain(new PointXY(0, 18), new PointXY(30, 18));
+        var samples = new List<(float, float)>();
+        raster.Draw(curve, (distance, parameter) =>
+        {
+            samples.Add((distance, parameter));
+            return RGBA8BitColor.Black;
+        });
+        var expected = new List<(float, float)>();
+        for (int sy = 0; sy < 4; sy++)
+            for (int sx = 0; sx < 4; sx++)
+                expected.Add((-2.5f - sy, 10.25f + sx * 0.5f));
+        Assert.That(samples, Is.EqualTo(expected));
+        Assert.That(raster.Values[0], Is.EqualTo(RGBA8BitColor.Black));
+        Assert.Throws<ArgumentNullException>(() => raster.Draw((ISignedParameterizedCurve)null!, (_, _) => default));
+        Assert.Throws<ArgumentNullException>(() => raster.Draw(curve, (Func<float, float, RGBA8BitColor>)null!));
+        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.Draw(null!, curve, (_, _) => default));
+    }
+
     private static SpatialRaster<RGBA8BitColor> CreateRaster(RGBA8BitColor background = default) =>
         new(new RasterGeometry(new PointXY(10, 20), new VectorXY(2, 4), new VectorXYInt(1, 1)), new[] { background });
 

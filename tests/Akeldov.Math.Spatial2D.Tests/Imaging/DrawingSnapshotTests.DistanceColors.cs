@@ -8,6 +8,30 @@ namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 public partial class DrawingSnapshotTests
 {
     [Test]
+    public void Drawing_SignedParameterizedDistanceColor_MatchesApprovedImage()
+    {
+        var raster = CreateRaster(400, 300);
+        raster.DrawText("Signed distance + parameter", new PointXY(12, 275), 10.5f, Ink);
+        raster.DrawText("Left: blue / right: coral", new PointXY(12, 255), 10.5f, Ink);
+        var curve = new ParameterizedSegmentChain(
+            new PointXY(55, 45), new PointXY(345, 225),
+            new PointXY(55, 225), new PointXY(345, 45));
+        raster.Draw(curve, (distance, parameter) =>
+        {
+            float magnitude = MathF.Abs(distance);
+            if (magnitude >= 24)
+                return default;
+            var color = distance < 0 ? Blue : Coral;
+            // Bands follow accumulated length, while color distinguishes the two local sides.
+            float band = parameter % 40 < 28 ? 1f : 0.35f;
+            return new RGBA8BitColor(color.R, color.G, color.B,
+                (byte)MathF.Round(220 * band * (1 - magnitude / 24)));
+        });
+        raster.Draw((ICurve)curve, 1, Ink);
+        AssertSnapshot(raster, "drawing-signed-parameterized-distance-color.png");
+    }
+
+    [Test]
     public void Drawing_UnsignedDistanceColor_MatchesApprovedImage()
     {
         var raster = CreateRaster(320, 220);
@@ -53,7 +77,7 @@ public partial class DrawingSnapshotTests
         var curve = new ParameterizedSegmentChain(
             new PointXY(25.25f, 35.5f), new PointXY(90.5f, 155.25f),
             new PointXY(185.25f, 45.5f), new PointXY(300.5f, 155.25f));
-        raster.Draw(curve, (distance, parameter) =>
+        raster.Draw((IParameterizedCurve)curve, (distance, parameter) =>
         {
             if (distance >= 15 || parameter % 36 >= 27)
                 return default;

@@ -57,6 +57,27 @@ namespace Akeldov.Math.Spatial2D.Imaging
             DrawSampleColors(raster, point => { var projection = figure.ProjectWithParameter(point); return color(projection.Distance, projection.CurveCoordinate); });
         }
 
+        /// <summary>Draws a curve using its signed distance and nearest curve coordinate.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="figure">The curve in world coordinates.</param>
+        /// <param name="color">Receives signed distance, then curve coordinate, both in world units, and returns the sample color and opacity. The sign follows the curve's contract; the coordinate is not normalized.</param>
+        /// <remarks>Uses 4-by-4 sampling, premultiplied color averaging and one source-over composite per pixel without gamma correction. The callback is not retained. Exceptions propagate and may leave the raster partially drawn. Cast to IParameterizedCurve to select unsigned distance instead.</remarks>
+        /// <exception cref="ArgumentNullException">The raster, figure, or color function is null.</exception>
+        public static void Draw(this SpatialRaster<RGBA8BitColor> raster, ISignedParameterizedCurve figure, Func<float, float, RGBA8BitColor> color)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+            if (figure == null)
+                throw new ArgumentNullException(nameof(figure));
+            if (color == null)
+                throw new ArgumentNullException(nameof(color));
+            DrawSampleColors(raster, point =>
+            {
+                var projection = figure.ProjectWithParameter(point);
+                return color(figure.SignedDistance(point), projection.CurveCoordinate);
+            });
+        }
+
         private static void DrawSampleColors(SpatialRaster<RGBA8BitColor> raster, Func<PointXY, RGBA8BitColor> sampleColor)
         {
             var geometry = raster.Geometry;

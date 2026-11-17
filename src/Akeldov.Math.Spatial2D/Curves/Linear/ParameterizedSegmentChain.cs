@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents an open finite path made from consecutive directed line segments.
     /// </summary>
-    public sealed class ParameterizedSegmentChain : IContourPath
+    public sealed class ParameterizedSegmentChain : IContourPath, ISignedParameterizedCurve
     {
         private readonly PointXY[] _points;
         private readonly ParameterizedSegment[] _segments;
@@ -139,6 +139,60 @@ namespace Akeldov.Math.Spatial2D.Curves
             return Project(point).Distance;
         }
 
+        /// <summary>Returns the distance signed by the local directed side of this chain.</summary>
+        /// <param name="point">The finite point to measure from.</param>
+        /// <returns>Negative on the left, positive on the right, and zero on the chain, in world units.</returns>
+        /// <remarks>
+        /// Equal-distance projections select the first segment in traversal order, including at self-intersections.
+        /// At a shared vertex the sign uses the sum of the adjacent unit left normals. An exact 180-degree
+        /// reversal falls back to the selected segment's side. Collinear points beyond an open endpoint
+        /// have positive distance, as do points on the zero side of the averaged normal. The sign describes a local side,
+        /// not containment, and can jump at nonzero distance when the nearest segment changes or across endpoint extensions.
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">The point has a non-finite coordinate.</exception>
+        public float SignedDistance(PointXY point)
+        {
+            PointXYValidation.ThrowIfNotFinite(point, nameof(point), "Point coordinates must be finite.");
+            var projection = FindNearestProjection(point, out int segmentIndex);
+            if (projection.Distance == 0f)
+                return 0f;
+
+            var start = _points[segmentIndex];
+            var end = _points[segmentIndex + 1];
+            double cross = ((double)end.X - start.X) * ((double)point.Y - start.Y)
+                - ((double)end.Y - start.Y) * ((double)point.X - start.X);
+
+            var direction = end - start;
+            float localParameter = VectorXY.Dot(point - start, direction) / direction.SquaredLength;
+            int vertexIndex = localParameter <= 0f && segmentIndex > 0
+                ? segmentIndex
+                : localParameter >= 1f && segmentIndex + 1 < _segments.Length
+                    ? segmentIndex + 1
+                    : -1;
+            if (vertexIndex >= 0)
+            {
+                var previous = _points[vertexIndex - 1];
+                var vertex = _points[vertexIndex];
+                var next = _points[vertexIndex + 1];
+                double incomingX = (double)vertex.X - previous.X;
+                double incomingY = (double)vertex.Y - previous.Y;
+                double outgoingX = (double)next.X - vertex.X;
+                double outgoingY = (double)next.Y - vertex.Y;
+                double turn = incomingX * outgoingY - incomingY * outgoingX;
+                double dot = incomingX * outgoingX + incomingY * outgoingY;
+                // At an exact reversal the unit normals cancel and have no preferred side.
+                if (turn != 0 || dot >= 0)
+                {
+                    double incomingLength = System.Math.Sqrt(incomingX * incomingX + incomingY * incomingY);
+                    double outgoingLength = System.Math.Sqrt(outgoingX * outgoingX + outgoingY * outgoingY);
+                    double normalX = -incomingY / incomingLength - outgoingY / outgoingLength;
+                    double normalY = incomingX / incomingLength + outgoingX / outgoingLength;
+                    cross = normalX * ((double)point.X - vertex.X) + normalY * ((double)point.Y - vertex.Y);
+                }
+            }
+            return cross > 0 ? -projection.Distance : projection.Distance;
+        }
+
         /// <summary>
         /// Projects the specified point onto this chain.
         /// </summary>
@@ -155,6 +209,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, chain length coordinate, and distance to this chain.</returns>
+        /// <remarks>Equal-distance projections select the first segment in traversal order.</remarks>
         public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
             PointXYValidation.ThrowIfNotFinite(
@@ -162,13 +217,22 @@ namespace Akeldov.Math.Spatial2D.Curves
                 nameof(point),
                 "Point coordinates must be finite.");
 
+            return FindNearestProjection(point, out _);
+        }
+
+        private ParameterizedCurveProjection FindNearestProjection(PointXY point, out int segmentIndex)
+        {
+            segmentIndex = 0;
             ParameterizedCurveProjection closestProjection = ProjectOnSegment(0, point);
 
             for (int i = 1; i < _segments.Length; i++)
             {
                 ParameterizedCurveProjection projection = ProjectOnSegment(i, point);
                 if (projection.Distance < closestProjection.Distance)
+                {
                     closestProjection = projection;
+                    segmentIndex = i;
+                }
             }
 
             return closestProjection;
