@@ -8,6 +8,22 @@ namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 
 public class SpatialRasterDrawingTests
 {
+    [Test]
+    public void DrawRegion_DefaultFadingUsesNonSquarePixelDiagonal()
+    {
+        var geometry = new RasterGeometry(new PointXY(10, 20), new VectorXY(24, 32), new VectorXYInt(8, 8));
+        var actual = new SpatialRaster<RGBA8BitColor>(geometry, new RGBA8BitColor[64]);
+        var expected = new SpatialRaster<RGBA8BitColor>(geometry, new RGBA8BitColor[64]);
+        IRegion region = new Disk(new PointXY(22, 36), 5);
+        var color = new RGBA8BitColor(255, 0, 0, 128);
+        actual.Draw(region, color);
+        expected.Draw(region, 5, color); // A 3-by-4 world-unit pixel has a diagonal of 5.
+        Assert.That(actual.Values, Is.EqualTo(expected.Values));
+        Assert.That(actual.Values.Any(p => p.A > 0 && p.A < 128), Is.True);
+        Assert.Throws<ArgumentNullException>(() => actual.Draw((IRegion)null!, color));
+        Assert.Throws<ArgumentNullException>(() => SpatialRasterDrawingExtensions.Draw(null!, region, color));
+    }
+
     [TestCase(0f)]
     [TestCase(2f)]
     public void DrawRegion_FillsInteriorAndFadesLinearlyOutside(float fadingDistance)

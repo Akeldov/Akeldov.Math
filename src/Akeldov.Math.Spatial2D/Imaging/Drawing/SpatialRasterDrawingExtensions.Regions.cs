@@ -6,6 +6,23 @@ namespace Akeldov.Math.Spatial2D.Imaging
 {
     public static partial class SpatialRasterDrawingExtensions
     {
+        /// <summary>Fills a region with linear fading outside over one raster pixel diagonal.</summary>
+        /// <param name="raster">The raster modified in place.</param>
+        /// <param name="region">The region in world coordinates.</param>
+        /// <param name="color">The fill color and opacity.</param>
+        /// <remarks>The fading distance is the length of the cell diagonal in world units, including for non-square pixels.</remarks>
+        /// <exception cref="ArgumentNullException">The raster or region is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The cell diagonal cannot be represented as a finite float.</exception>
+        public static void Draw(this SpatialRaster<RGBA8BitColor> raster, IRegion region, RGBA8BitColor color)
+        {
+            if (raster == null)
+                throw new ArgumentNullException(nameof(raster));
+
+            var cellSize = raster.Geometry.CellSize;
+            float fadingDistance = (float)System.Math.Sqrt((double)cellSize.X * cellSize.X + (double)cellSize.Y * cellSize.Y);
+            raster.Draw(region, fadingDistance, color);
+        }
+
         /// <summary>Fills a region with full color opacity inside and linear fading outside, using source-over compositing.</summary>
         /// <param name="raster">The raster modified in place.</param>
         /// <param name="region">The region in world coordinates.</param>
