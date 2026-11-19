@@ -131,21 +131,20 @@ public class VoronoiItemPartitionerTests
     }
 
     [Test]
-    public void VoronoiItemPartition_WhenItemListChangesAfterConstruction_UsesOriginalItems()
+    public void VoronoiItemPartition_WhenCallerClearsList_ReflectsChangeInItems()
     {
         var items = new List<TestItem> { new TestItem("original", new PointXY(0f, 0f)) };
         var cell = new VoronoiItemPartition<TestItem>(new Site(new PointXY(0f, 0f), 1f), items);
 
         items.Clear();
 
-        Assert.That(cell.Items, Has.Count.EqualTo(1));
-        Assert.That(cell.Items[0].Id, Is.EqualTo("original"));
+        Assert.That(cell.Items, Is.Empty);
     }
 
     [Test]
     public void VoronoiItemPartition_WhenItemsContainNull_Throws()
     {
-        var items = new TestItem[] { null! };
+        var items = new List<TestItem> { null! };
 
         var exception = Assert.Throws<ArgumentException>(() =>
             new VoronoiItemPartition<TestItem>(new Site(new PointXY(0f, 0f), 1f), items));

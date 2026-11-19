@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
@@ -15,11 +14,25 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// Initializes a new Voronoi item partition.
         /// </summary>
         /// <param name="site">The site that owns this partition.</param>
-        /// <param name="items">The items assigned to this partition.</param>
-        public VoronoiItemPartition(Site site, IReadOnlyList<TItem> items)
+        /// <param name="items">The caller-owned list of assigned items. Changes to its contents
+        /// are visible through <see cref="Items"/>. The caller must keep its elements non-null.</param>
+        /// <exception cref="ArgumentNullException">The list is null.</exception>
+        /// <exception cref="ArgumentException">The list contains a null item.</exception>
+#pragma warning disable MA0016 // The partition exposes a live view of this list.
+        public VoronoiItemPartition(Site site, List<TItem> items)
+#pragma warning restore MA0016
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            foreach (var item in items)
+            {
+                if (item is null)
+                    throw new ArgumentException("Voronoi item partition items cannot contain null elements.", nameof(items));
+            }
+
             Site = site;
-            Items = CopyItems(items);
+            Items = items.AsReadOnly();
         }
 
         /// <summary>
@@ -28,25 +41,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         public Site Site { get; }
 
         /// <summary>
-        /// Gets the read-only structural view of the items assigned to this partition.
+        /// Gets a live, read-only view of the items in the caller-owned list.
         /// </summary>
         public IReadOnlyList<TItem> Items { get; }
 
-        private static ReadOnlyCollection<TItem> CopyItems(IReadOnlyList<TItem> items)
-        {
-            if (items == null)
-                throw new ArgumentNullException(nameof(items));
-
-            var copy = new TItem[items.Count];
-            for (int i = 0; i < items.Count; i++)
-            {
-                TItem item = items[i] ??
-                    throw new ArgumentException("Voronoi item partition items cannot contain null elements.", nameof(items));
-
-                copy[i] = item;
-            }
-
-            return Array.AsReadOnly(copy);
-        }
     }
 }
