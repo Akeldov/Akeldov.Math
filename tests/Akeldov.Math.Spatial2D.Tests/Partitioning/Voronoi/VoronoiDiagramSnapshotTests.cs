@@ -1,4 +1,8 @@
 using System.Xml.Linq;
+using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Tests.Rasterization;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 using Akeldov.Math.Spatial2D.Regions;
 
@@ -6,6 +10,42 @@ namespace Akeldov.Math.Spatial2D.Tests.Partitioning.Voronoi;
 
 public class VoronoiDiagramSnapshotTests
 {
+    [Test]
+    public void PartitionByVoronoi_WithExteriorSite_MatchesApprovedPng()
+    {
+        var bounds = new Rectangle(new PointXY(32, 16), new PointXY(336, 208));
+        PointXY[] sites = { new(18, 110), new(90, 165), new(112, 54), new(186, 117), new(261, 169), new(280, 63) };
+        RGBA8BitColor[] colors = { new(173, 204, 231, 255), new(247, 202, 157, 255),
+            new(177, 221, 196, 255), new(246, 225, 148, 255), new(203, 187, 226, 255), new(232, 177, 185, 255) };
+        var cells = VoronoiDiagram.PartitionByVoronoi(bounds, sites);
+        var pixels = new RGBA8BitColor[352 * 224];
+        Array.Fill(pixels, new RGBA8BitColor(248, 250, 252, 255));
+        var raster = new SpatialRaster<RGBA8BitColor>(
+            new RasterGeometry(default(PointXY), new VectorXY(352, 224), new VectorXYInt(352, 224)), pixels);
+        var ink = new RGBA8BitColor(40, 53, 68, 255);
+        for (int i = 0; i < cells.Count; i++)
+        {
+            var region = new ContourBasedRegion(new IContour[] { new CompositeContour(cells[i].Vertices) });
+            raster.Draw(region, colors[i]);
+        }
+
+        foreach (var cell in cells)
+        {
+            raster.DrawContour(cell.Vertices, 1.5f, ink);
+            raster.FillCircle(cell.Site, 3.5f, ink);
+        }
+
+        string directory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Partitioning", "Voronoi");
+        const string name = "bounded-exterior-site.png";
+        string actual = Path.Combine(Directory.CreateDirectory(Path.Combine(directory, "Actual")).FullName, name);
+        raster.SaveAsPng(actual);
+        TestContext.AddTestAttachment(actual, "Bounded Voronoi diagram");
+        string approved = Path.Combine(directory, "Approved", name);
+        Assert.That(File.Exists(approved), Is.True, $"Missing approved PNG. Actual: {actual}");
+        Assert.That(PngSnapshotComparer.AreEquivalent(File.ReadAllBytes(actual), File.ReadAllBytes(approved)),
+            Is.True, $"Voronoi snapshot changed. Actual: {actual}");
+    }
+
     [Test]
     public void PartitionByVoronoi_InteriorAndBoundaryCells_MatchApprovedSvg()
     {
