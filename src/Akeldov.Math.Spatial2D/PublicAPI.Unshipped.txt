@@ -9,3 +9,8 @@ static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this A
 static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor>! raster, Akeldov.Math.Spatial2D.Regions.IRegion! region, float fadingDistance, Akeldov.Math.Spatial2D.Imaging.RGBA8BitColor color) -> void
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions
 static Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions.SamplePoissonDiskSites(this Akeldov.Math.Spatial2D.Fields.IFloatField! minimalDistanceField, Akeldov.Math.Spatial2D.Regions.Rectangle bounds, int maxPoissonSamplingAttempts, System.Random! random) -> Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site[]!
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Site.get -> Akeldov.Math.Spatial2D.PointXY
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Vertices.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiDiagram
+static Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiDiagram.PartitionByVoronoi(Akeldov.Math.Spatial2D.Regions.Rectangle bounds, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! sites) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell!>!
