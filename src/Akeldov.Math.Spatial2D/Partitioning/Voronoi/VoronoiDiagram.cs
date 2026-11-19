@@ -61,6 +61,42 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             return cells;
         }
 
+        /// <summary>Partitions a rectangle and applies the specified number of Lloyd relaxation steps.</summary>
+        /// <param name="bounds">The rectangle to partition.</param>
+        /// <param name="sites">Initial distinct finite sites, in result order.</param>
+        /// <param name="relaxationIterations">Number of times to rebuild the diagram after moving each
+        /// site to its clipped cell's area centroid. Sites of empty cells keep their current position.
+        /// Zero returns the initial partition.</param>
+        /// <returns>A new, mutable list owned by the caller, with the final cells in input order.</returns>
+        /// <exception cref="ArgumentNullException">The site list is null.</exception>
+        /// <exception cref="ArgumentException">Initial or relaxed site positions coincide.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The iteration count is negative or a site coordinate is not finite.</exception>
+#pragma warning disable MA0016 // The caller owns the mutable result list.
+        public static List<VoronoiCell> PartitionByVoronoi(Rectangle bounds, IReadOnlyList<PointXY> sites, int relaxationIterations)
+#pragma warning restore MA0016
+        {
+            if (relaxationIterations < 0)
+                throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
+
+            var cells = PartitionByVoronoi(bounds, sites);
+            if (relaxationIterations == 0 || cells.Count == 0)
+                return cells;
+
+            var relaxedSites = new PointXY[cells.Count];
+            for (int iteration = 0; iteration < relaxationIterations; iteration++)
+            {
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    var cell = cells[i];
+                    relaxedSites[i] = cell.Vertices.Count == 0 ? cell.Site : cell.GetCentroid();
+                }
+
+                cells = PartitionByVoronoi(bounds, relaxedSites);
+            }
+
+            return cells;
+        }
+
         private static void ClipToBisector(List<(double X, double Y)> polygon,
             List<(double X, double Y)> output, PointXY site, PointXY other)
         {

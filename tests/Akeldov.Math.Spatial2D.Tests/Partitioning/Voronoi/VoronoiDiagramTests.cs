@@ -5,6 +5,28 @@ namespace Akeldov.Math.Spatial2D.Tests.Partitioning.Voronoi;
 
 public class VoronoiDiagramTests
 {
+    [TestCase(0, 0, 4, 2)]
+    [TestCase(1, 1, 7, 4)]
+    [TestCase(2, 2, 8, 5)]
+    public void RelaxationRebuildsCellsAndPreservesEmptySite(int iterations, int left, int right, int split)
+    {
+        var bounds = new Rectangle(new PointXY(0, 0), new PointXY(12, 2));
+        var sites = new[] { new PointXY(0, 1), new PointXY(4, 1), new PointXY(50, 1) };
+        var cells = VoronoiDiagram.PartitionByVoronoi(bounds, sites, iterations);
+
+        Assert.That(cells.Select(cell => cell.Site), Is.EqualTo(new[] { new PointXY(left, 1), new PointXY(right, 1), sites[2] }));
+        Assert.That(cells[0].Vertices.Max(p => p.X), Is.EqualTo(split));
+        Assert.That(cells[1].Vertices.Min(p => p.X), Is.EqualTo(split));
+        Assert.That(cells[2].Vertices, Is.Empty);
+    }
+
+    [Test]
+    public void NegativeRelaxationCountThrows()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            VoronoiDiagram.PartitionByVoronoi(default, Array.Empty<PointXY>(), -1));
+    }
+
     [Test]
     public void DiagonalBisectorSplitsSquareIntoTwoOrderedTriangles()
     {

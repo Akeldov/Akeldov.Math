@@ -15,3 +15,4 @@ Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Site.get -> Akeldov.Math
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Vertices.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiDiagram
 static Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiDiagram.PartitionByVoronoi(Akeldov.Math.Spatial2D.Regions.Rectangle bounds, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! sites) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell!>!
+static Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiDiagram.PartitionByVoronoi(Akeldov.Math.Spatial2D.Regions.Rectangle bounds, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! sites, int relaxationIterations) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell!>!
