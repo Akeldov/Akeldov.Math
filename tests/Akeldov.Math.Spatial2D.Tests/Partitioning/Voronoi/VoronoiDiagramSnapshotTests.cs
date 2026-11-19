@@ -17,7 +17,7 @@ public class VoronoiDiagramSnapshotTests
         PointXY[] sites = { new(18, 110), new(90, 165), new(112, 54), new(186, 117), new(261, 169), new(280, 63) };
         RGBA8BitColor[] colors = { new(173, 204, 231, 255), new(247, 202, 157, 255),
             new(177, 221, 196, 255), new(246, 225, 148, 255), new(203, 187, 226, 255), new(232, 177, 185, 255) };
-        var cells = VoronoiDiagram.PartitionByVoronoi(bounds, sites);
+        var cells = bounds.PartitionByVoronoi(sites);
         var pixels = new RGBA8BitColor[352 * 224];
         Array.Fill(pixels, new RGBA8BitColor(248, 250, 252, 255));
         var raster = new SpatialRaster<RGBA8BitColor>(
@@ -52,7 +52,7 @@ public class VoronoiDiagramSnapshotTests
         var bounds = new Rectangle(new PointXY(0, 0), new PointXY(100, 100));
         PointXY[] sites = { new(25, 25), new(75, 25), new(75, 75), new(25, 75), new(50, 50) };
         string[] colors = { "#a8d8ea", "#ffd3b6", "#d4c1ec", "#b8dfba", "#ffe59b" };
-        var cells = VoronoiDiagram.PartitionByVoronoi(bounds, sites);
+        var cells = bounds.PartitionByVoronoi(sites);
         XNamespace ns = "http://www.w3.org/2000/svg";
         var svg = new XElement(ns + "svg", new XAttribute("viewBox", "-2 -2 104 104"));
         for (int i = 0; i < cells.Count; i++)

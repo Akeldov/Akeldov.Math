@@ -1,7 +1,8 @@
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
     /// <summary>
-    /// Defines how a Voronoi partitioner handles cells that receive no items.
+    /// Defines how to handle empty cells in the final Voronoi partition.
+    /// An item partition is empty when it has no items; a geometric cell is empty when it has no area.
     /// </summary>
     public enum EmptyCellPolicy
     {
