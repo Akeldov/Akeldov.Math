@@ -10,6 +10,7 @@ static Akeldov.Math.Spatial2D.Imaging.SpatialRasterDrawingExtensions.Draw(this A
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions
 static Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions.SamplePoissonDiskSites(this Akeldov.Math.Spatial2D.Fields.IFloatField! minimalDistanceField, Akeldov.Math.Spatial2D.Regions.Rectangle bounds, int maxPoissonSamplingAttempts, System.Random! random) -> Akeldov.Math.Spatial2D.Partitioning.Voronoi.Site[]!
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.GetCentroid() -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Site.get -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Vertices.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiDiagram

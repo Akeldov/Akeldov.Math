@@ -24,7 +24,19 @@ public class VoronoiDiagramTests
         var bounds = new Rectangle(new PointXY(0, 0), new PointXY(1, 1));
         var cells = VoronoiDiagram.PartitionByVoronoi(bounds, new[] { new PointXY(x, 0), bounds.BottomLeft });
         Assert.That(cells[0].Vertices, Is.Empty);
+        Assert.Throws<InvalidOperationException>(() => cells[0].GetCentroid());
         Assert.That(cells[1].Vertices.Count, Is.EqualTo(4));
+    }
+
+    [Test]
+    public void GetCentroid_ReturnsAreaCentroidOfClippedTrapezoid()
+    {
+        var bounds = new Rectangle(new PointXY(0, 0), new PointXY(4, 2));
+        var sites = new[] { new PointXY(1, 1), new PointXY(3, 3) };
+        var cells = VoronoiDiagram.PartitionByVoronoi(bounds, sites);
+
+        // The diagonal x + y = 4 cuts a right triangle of area 2 off the rectangle.
+        Assert.That(cells[0].GetCentroid(), Is.EqualTo(new PointXY(14f / 9, 8f / 9)));
     }
 
     [Test]
