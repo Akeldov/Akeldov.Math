@@ -333,17 +333,22 @@ public class VoronoiDiagramTests
         }
     }
 
-    [Test]
-    public void ThinCircularCapHasAreaCentroidBetweenChordAndArc()
+    [TestCase(1.999f)]
+    [TestCase(1.464f)]
+    [TestCase(1.463f)]
+    [TestCase(0.25f)]
+    public void ClippedDiskAndItsComplementHaveAnalyticCentroids(float left)
     {
-        const float left = 1.999f;
-        var bounds = new Rectangle(new PointXY(left, -1), new PointXY(4, 1));
-        var cap = bounds.PartitionByVoronoi(DiskSites)[0];
+        var bounds = new Rectangle(new PointXY(left, -2), new PointXY(4, 2));
+        var cells = bounds.PartitionByVoronoi(DiskSites);
         // Integral of x * 2 sqrt(4 - x²) from left to 2, divided by the cap area.
         double height = System.Math.Sqrt(4 - (double)left * left);
         double area = 4 * System.Math.Acos(left / 2d) - left * height;
-        double expected = 2 * height * height * height / (3 * area);
-        Assert.That(cap.GetCentroid().X, Is.EqualTo(expected).Within(3e-7));
-        Assert.That(cap.GetCentroid().Y, Is.EqualTo(0).Within(1e-6));
+        double moment = 2 * height * height * height / 3;
+        double rectangleArea = (4d - left) * 4;
+        double rectangleMoment = rectangleArea * (4d + left) / 2;
+        Assert.That(cells[0].GetCentroid().X, Is.EqualTo(moment / area).Within(3e-7));
+        Assert.That(cells[1].GetCentroid().X, Is.EqualTo((rectangleMoment - moment) / (rectangleArea - area)).Within(3e-7));
+        Assert.That(cells.All(cell => MathF.Abs(cell.GetCentroid().Y) < 1e-6f), Is.True);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Akeldov.Math.Spatial2D.Contours;
 using static System.Math;
 
@@ -32,30 +33,34 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             _momentY += area * ((double)circle.Center.Y - _origin.Y);
         }
 
+        /// <param name="start">Start of the oriented chord.</param>
+        /// <param name="end">End of the oriented chord.</param>
+        /// <param name="sweep">Signed arc sweep in radians, at most a quarter turn in magnitude.</param>
         public void AddCircularSegment(PointXY start, PointXY end, double sweep)
         {
-            double dx = (double)end.X - start.X, dy = (double)end.Y - start.Y;
-            double chord = Sqrt(dx * dx + dy * dy);
-            double angle = Abs(sweep);
-            double sine = Sin(0.5 * angle);
-            double segmentArea, offset;
-            if (angle < 0.01)
+            // For chord length c and sweep magnitude t, the area is c² t * areaFactor
+            // and the centroid's distance from the chord is c t * offsetFactor.
+            float angle = (float)Abs(sweep);
+            float areaFactor, offsetFactor;
+            if (angle < 0.75f)
             {
-                // Series for theta - sin(theta) and the centroid's distance from the chord.
-                double square = angle * angle;
-                double arcLength = chord * (angle / (2 * sine));
-                segmentArea = arcLength * arcLength * angle / 12 * (1 - square / 20 + square * square / 840);
-                offset = arcLength * angle / 20 * (1 - 13 * square / 840);
+                // Taylor expansions of the two factors avoid cancellation for shallow arcs.
+                float square = angle * angle;
+                areaFactor = 1f / 12 + square * (1f / 360 + square * (1f / 10080 + square / 302400));
+                offsetFactor = 1f / 20 + square * (11f / 8400 + square * (1f / 28000 + square * (701f / 776160000)));
             }
             else
             {
-                double areaFactor = angle - Sin(angle);
-                segmentArea = chord * chord * areaFactor / (8 * sine * sine);
-                offset = 0.5 * chord * (4 * sine * sine / (3 * areaFactor) - Cos(angle * 0.5) / sine);
+                float sine = MathF.Sin(angle * 0.5f);
+                float sineSquared = sine * sine;
+                float difference = angle - MathF.Sin(angle);
+                areaFactor = difference / (8 * sineSquared * angle);
+                offsetFactor = (4 * sineSquared / (3 * difference) - MathF.Cos(angle * 0.5f) / sine) / (2 * angle);
             }
 
-            double area = Sign(sweep) * segmentArea;
-            double normalScale = Sign(sweep) * offset / chord;
+            double dx = (double)end.X - start.X, dy = (double)end.Y - start.Y;
+            double area = (dx * dx + dy * dy) * sweep * areaFactor;
+            double normalScale = sweep * offsetFactor;
             Area += area;
             _momentX += area * (((double)start.X - _origin.X) + 0.5 * dx + dy * normalScale);
             _momentY += area * (((double)start.Y - _origin.Y) + 0.5 * dy - dx * normalScale);
