@@ -1,9 +1,46 @@
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Spatial2D.Tests.Partitioning.Voronoi;
 
 public class VoronoiPartitionPropertyFuzzTests
 {
+    [TestCase(76123)]
+    [TestCase(92017)]
+    public void BoundedRegionsMatchMinimumWeightedDistance(int seed)
+    {
+        var random = new Random(seed);
+        var bounds = new Rectangle(new PointXY(-10, -8), new PointXY(10, 8));
+        for (int scenario = 0; scenario < 120; scenario++)
+        {
+            var sites = Enumerable.Range(0, random.Next(2, 9)).Select(i => new Site(
+                scenario % 2 == 0 ? new PointXY(random.Next(-13, 14), random.Next(-10, 11))
+                    : new PointXY(random.NextSingle() * 26 - 13, random.NextSingle() * 20 - 10),
+                scenario % 3 == 0 ? BitConverter.Int32BitsToSingle(BitConverter.SingleToInt32Bits(1) + random.Next(5))
+                    : random.Next(1, 6))).DistinctBy(s => s.Position).ToArray();
+            List<VoronoiCell> cells;
+            try
+            {
+                cells = bounds.PartitionByVoronoi(sites);
+            }
+            catch (Exception e)
+            {
+                throw new AssertionException($"Seed {seed}, scenario {scenario}: {string.Join(", ", sites)}: {e.Message}", e);
+            }
+            for (int sample = 0; sample < 80; sample++)
+            {
+                var p = new PointXY(random.NextSingle() * 20 - 10, random.NextSingle() * 16 - 8);
+                double best = sites.Min(s => p.Distance(s.Position) / (double)s.Weight);
+                foreach (var cell in cells)
+                {
+                    bool expected = p.Distance(cell.Site) / (double)cell.Weight == best;
+                    Assert.That(cell.Region?.Contains(p) ?? false, Is.EqualTo(expected),
+                        $"Seed {seed}, scenario {scenario}, sample {sample}, site {cell.Site}, point {p}");
+                }
+            }
+        }
+    }
+
     private const int ScenarioCount = 50;
 
     [TestCase(42424)]
