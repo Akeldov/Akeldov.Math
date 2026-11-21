@@ -25,13 +25,13 @@ public class VoronoiDiagramSnapshotTests
         var ink = new RGBA8BitColor(40, 53, 68, 255);
         for (int i = 0; i < cells.Count; i++)
         {
-            var region = new ContourBasedRegion(new IContour[] { new CompositeContour(cells[i].Vertices) });
+            var region = new ContourBasedRegion(new IContour[] { cells[i].Contour! });
             raster.Draw(region, colors[i]);
         }
 
         foreach (var cell in cells)
         {
-            raster.DrawContour(cell.Vertices, 1.5f, ink);
+            raster.Draw(cell.Contour!, 1.5f, ink);
             raster.FillCircle(cell.Site, 3.5f, ink);
         }
 
@@ -57,10 +57,9 @@ public class VoronoiDiagramSnapshotTests
         var svg = new XElement(ns + "svg", new XAttribute("viewBox", "-2 -2 104 104"));
         for (int i = 0; i < cells.Count; i++)
         {
-            var vertices = cells[i].Vertices;
-            Assert.That(vertices, Is.Not.Empty);
+            var vertices = cells[i].Contour!.Curves.Select(edge => edge.StartPoint).ToArray();
             // A polygon may begin at any vertex. Keep the winding and normalize only the start.
-            int start = Enumerable.Range(0, vertices.Count)
+            int start = Enumerable.Range(0, vertices.Length)
                 .OrderBy(j => vertices[j].X).ThenBy(j => vertices[j].Y).First();
             var points = vertices.Skip(start).Concat(vertices.Take(start))
                 .Select(p => FormattableString.Invariant($"{p.X},{p.Y}"));

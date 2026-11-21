@@ -10,7 +10,7 @@ public class VoronoiDiagramTests
     {
         var bounds = new Rectangle(new PointXY(0, 0), new PointXY(10, 2));
         var sites = new[] { new PointXY(2, 1), new PointXY(40, 1), new PointXY(8, 1) };
-        Assert.That(bounds.PartitionByVoronoi(sites, EmptyCellPolicy.LeaveAsIs)[1].Vertices, Is.Empty);
+        Assert.That(bounds.PartitionByVoronoi(sites, EmptyCellPolicy.LeaveAsIs)[1].Contour, Is.Null);
         var kept = bounds.PartitionByVoronoi(sites, EmptyCellPolicy.Exclude);
         Assert.That(kept.Select(cell => cell.Site), Is.EqualTo(new[] { sites[0], sites[2] }));
         Assert.Throws<InvalidOperationException>(() =>
@@ -23,11 +23,11 @@ public class VoronoiDiagramTests
     {
         var bounds = new Rectangle(new PointXY(0, 0), new PointXY(10, 2));
         var sites = new[] { new PointXY(-2, 1), new PointXY(0, 1), new PointXY(10, 1) };
-        Assert.That(bounds.PartitionByVoronoi(sites)[0].Vertices, Is.Empty);
+        Assert.That(bounds.PartitionByVoronoi(sites)[0].Contour, Is.Null);
         var cells = bounds.PartitionByVoronoi(sites, 1, policy);
         Assert.That(cells.Count, Is.EqualTo(3));
         Assert.That(cells[0].Site, Is.EqualTo(sites[0]));
-        Assert.That(cells[0].Vertices, Is.Not.Empty);
+        Assert.That(cells[0].Contour, Is.Not.Null);
     }
 
     [TestCase(0, 0, 4, 2)]
@@ -40,9 +40,9 @@ public class VoronoiDiagramTests
         var cells = bounds.PartitionByVoronoi(sites, iterations);
 
         Assert.That(cells.Select(cell => cell.Site), Is.EqualTo(new[] { new PointXY(left, 1), new PointXY(right, 1), sites[2] }));
-        Assert.That(cells[0].Vertices.Max(p => p.X), Is.EqualTo(split));
-        Assert.That(cells[1].Vertices.Min(p => p.X), Is.EqualTo(split));
-        Assert.That(cells[2].Vertices, Is.Empty);
+        Assert.That(cells[0].Contour!.Curves.Max(edge => edge.StartPoint.X), Is.EqualTo(split));
+        Assert.That(cells[1].Contour!.Curves.Min(edge => edge.StartPoint.X), Is.EqualTo(split));
+        Assert.That(cells[2].Contour, Is.Null);
     }
 
     [Test]
@@ -50,6 +50,17 @@ public class VoronoiDiagramTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             default(Rectangle).PartitionByVoronoi(Array.Empty<PointXY>(), -1));
+    }
+
+    [TestCase(1e20f)]
+    [TestCase(1e-25f)]
+    public void SingleSiteContourPreservesRepresentablePerimeter(float side)
+    {
+        var bounds = new Rectangle(default, new PointXY(side, side));
+        var cell = bounds.PartitionByVoronoi(new[] { bounds.Center }).Single();
+
+        Assert.That(cell.Contour!.Length, Is.EqualTo(4 * side));
+        Assert.That(cell.GetCentroid(), Is.EqualTo(bounds.Center));
     }
 
     [Test]
@@ -60,8 +71,14 @@ public class VoronoiDiagramTests
         var cells = bounds.PartitionByVoronoi(sites);
 
         Assert.That(cells.Select(cell => cell.Site), Is.EqualTo(sites));
-        Assert.That(cells[0].Vertices, Is.EqualTo(new[] { bounds.BottomLeft, bounds.BottomRight, bounds.TopLeft }));
-        Assert.That(cells[1].Vertices, Is.EqualTo(new[] { bounds.BottomRight, bounds.TopRight, bounds.TopLeft }));
+        Assert.That(cells[0].Contour!.Curves.Select(edge => (edge.StartPoint, edge.EndPoint)), Is.EqualTo(new[]
+        {
+            (bounds.BottomLeft, bounds.BottomRight), (bounds.BottomRight, bounds.TopLeft), (bounds.TopLeft, bounds.BottomLeft)
+        }));
+        Assert.That(cells[1].Contour!.Curves.Select(edge => (edge.StartPoint, edge.EndPoint)), Is.EqualTo(new[]
+        {
+            (bounds.BottomRight, bounds.TopRight), (bounds.TopRight, bounds.TopLeft), (bounds.TopLeft, bounds.BottomRight)
+        }));
     }
 
     [TestCase(2)]
@@ -70,9 +87,9 @@ public class VoronoiDiagramTests
     {
         var bounds = new Rectangle(new PointXY(0, 0), new PointXY(1, 1));
         var cells = bounds.PartitionByVoronoi(new[] { new PointXY(x, 0), bounds.BottomLeft });
-        Assert.That(cells[0].Vertices, Is.Empty);
+        Assert.That(cells[0].Contour, Is.Null);
         Assert.Throws<InvalidOperationException>(() => cells[0].GetCentroid());
-        Assert.That(cells[1].Vertices.Count, Is.EqualTo(4));
+        Assert.That(cells[1].Contour!.Curves.Count, Is.EqualTo(4));
     }
 
     [Test]
@@ -93,7 +110,7 @@ public class VoronoiDiagramTests
         var sites = new[] { new PointXY(0, 0), new PointXY(-2, 0), new PointXY(2, 0),
             new PointXY(0, -2), new PointXY(0, 2) };
         var cells = bounds.PartitionByVoronoi(sites);
-        Assert.That(cells[0].Vertices, Is.EquivalentTo(new[] { new PointXY(-1, -1), new PointXY(1, -1),
+        Assert.That(cells[0].Contour!.Curves.Select(edge => edge.StartPoint), Is.EquivalentTo(new[] { new PointXY(-1, -1), new PointXY(1, -1),
             new PointXY(1, 1), new PointXY(-1, 1) }));
     }
 }

@@ -83,7 +83,12 @@ namespace Akeldov.Math.Spatial2D
             float dx = point.X - X;
             float dy = point.Y - Y;
 
-            return MathF.Sqrt(dx * dx + dy * dy);
+            float squaredDistance = dx * dx + dy * dy;
+            // The distance can be representable even when its square overflows or rounds to zero.
+            if (float.IsPositiveInfinity(squaredDistance) || (squaredDistance == 0f && (dx != 0f || dy != 0f)))
+                return (float)System.Math.Sqrt((double)dx * dx + (double)dy * dy);
+
+            return MathF.Sqrt(squaredDistance);
         }
 
         /// <summary>

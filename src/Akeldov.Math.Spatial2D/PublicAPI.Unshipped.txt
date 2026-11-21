@@ -12,7 +12,7 @@ static Akeldov.Math.Spatial2D.Partitioning.Voronoi.IFloatFieldExtensions.SampleP
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.GetCentroid() -> Akeldov.Math.Spatial2D.PointXY
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Site.get -> Akeldov.Math.Spatial2D.PointXY
-Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Vertices.get -> System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>!
+Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell.Contour.get -> Akeldov.Math.Spatial2D.Contours.CompositeContour?
 Akeldov.Math.Spatial2D.Partitioning.Voronoi.RectangleExtensions
 static Akeldov.Math.Spatial2D.Partitioning.Voronoi.RectangleExtensions.PartitionByVoronoi(this Akeldov.Math.Spatial2D.Regions.Rectangle bounds, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! sites, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy = Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy.LeaveAsIs) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell!>!
 static Akeldov.Math.Spatial2D.Partitioning.Voronoi.RectangleExtensions.PartitionByVoronoi(this Akeldov.Math.Spatial2D.Regions.Rectangle bounds, System.Collections.Generic.IReadOnlyList<Akeldov.Math.Spatial2D.PointXY>! sites, int relaxationIterations, Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy emptyCellPolicy = Akeldov.Math.Spatial2D.Partitioning.Voronoi.EmptyCellPolicy.LeaveAsIs) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.Partitioning.Voronoi.VoronoiCell!>!

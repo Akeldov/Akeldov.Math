@@ -1,3 +1,4 @@
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Regions;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// <param name="sites">Distinct finite sites, in result order.</param>
         /// <param name="emptyCellPolicy">How to handle empty cells. The default keeps them.</param>
         /// <returns>A new, mutable list owned by the caller, with retained cells in input order.</returns>
+        /// <exception cref="ArgumentException">A cell perimeter exceeds the finite range of <see cref="float"/>.</exception>
         /// <exception cref="InvalidOperationException">A cell is empty and the policy is <see cref="EmptyCellPolicy.ThrowException"/>.</exception>
 #pragma warning disable RS0026 // Both overloads intentionally allow omitting the final empty-cell policy.
 #pragma warning disable MA0016 // The caller owns the mutable result list.
@@ -30,7 +32,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// During relaxation, an empty cell retains its site. The default keeps empty cells.</param>
         /// <returns>A new, mutable list owned by the caller, with retained cells in input order.</returns>
         /// <exception cref="ArgumentNullException">The site list is null.</exception>
-        /// <exception cref="ArgumentException">Initial or relaxed site positions coincide.</exception>
+        /// <exception cref="ArgumentException">Initial or relaxed site positions coincide, or a cell perimeter
+        /// exceeds the finite range of <see cref="float"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The iteration count is negative, a site coordinate
         /// is not finite, or the empty-cell policy is unrecognized.</exception>
         /// <exception cref="InvalidOperationException">A final cell is empty and the policy is <see cref="EmptyCellPolicy.ThrowException"/>.</exception>
@@ -49,12 +52,12 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 case EmptyCellPolicy.LeaveAsIs:
                     break;
                 case EmptyCellPolicy.Exclude:
-                    cells.RemoveAll(cell => cell.Vertices.Count == 0);
+                    cells.RemoveAll(cell => cell.Contour == null);
                     break;
                 case EmptyCellPolicy.ThrowException:
                     for (int i = 0; i < cells.Count; i++)
                     {
-                        if (cells[i].Vertices.Count == 0)
+                        if (cells[i].Contour == null)
                             throw new InvalidOperationException($"Cell {i} at site {cells[i].Site} has no area.");
                     }
                     break;
@@ -104,7 +107,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     (polygon, clipped) = (clipped, polygon);
                 }
 
-                cells.Add(new VoronoiCell(site, ToVertices(polygon)));
+                cells.Add(new VoronoiCell(site, ToContour(polygon)));
             }
 
             return cells;
@@ -125,7 +128,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 for (int i = 0; i < cells.Count; i++)
                 {
                     var cell = cells[i];
-                    relaxedSites[i] = cell.Vertices.Count == 0 ? cell.Site : cell.GetCentroid();
+                    relaxedSites[i] = cell.Contour == null ? cell.Site : cell.GetCentroid();
                 }
 
                 cells = BuildCells(bounds, relaxedSites);
@@ -163,7 +166,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             }
         }
 
-        private static List<PointXY> ToVertices(List<(double X, double Y)> polygon)
+        private static CompositeContour? ToContour(List<(double X, double Y)> polygon)
         {
             var vertices = new List<PointXY>(polygon.Count);
             foreach (var p in polygon)
@@ -186,9 +189,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     - ((double)a.Y - origin.Y) * ((double)b.X - origin.X);
             }
 
-            if (twiceArea <= 0)
-                vertices.Clear();
-            return vertices;
+            return twiceArea > 0 ? new CompositeContour(vertices) : null;
         }
     }
 }
