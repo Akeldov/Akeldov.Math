@@ -39,6 +39,7 @@ The library is organized around practical 2D geometry workflows.
 ### Spatial Sampling and Partitioning
 
 - Poisson disk point sampling with constant or spatially varying minimal distance.
+- Uniform random sampling of a fixed number of independent points in a rectangle.
 - Weighted Voronoi partitioning for positioned items.
 
 ### Influence Fields
