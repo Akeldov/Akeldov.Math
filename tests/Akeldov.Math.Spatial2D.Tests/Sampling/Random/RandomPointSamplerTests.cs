@@ -25,7 +25,7 @@ public class RandomPointSamplerTests
             raster.FillCircle(point, 2.5f, ink);
 
         const string fileName = "uniform-random-points.png";
-        string directory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Sampling", "UniformRandom");
+        string directory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Sampling", "Random");
         string actual = Path.Combine(Directory.CreateDirectory(Path.Combine(directory, "Actual")).FullName, fileName);
         raster.SaveAsPng(actual);
         TestContext.AddTestAttachment(actual, "Uniform random point sample (seed 42)");
