@@ -5,13 +5,13 @@ using Akeldov.Math.Spatial2D.Regions;
 namespace Akeldov.Math.Spatial2D.Sampling.Point.UniformRandom
 {
     /// <summary>Draws independent, uniformly distributed points in a rectangle. Points may coincide.</summary>
-    public sealed class UniformRandomPointSampler
+    public sealed class RandomPointSampler
     {
         private readonly Random _random;
 
         /// <summary>Creates a sampler using the supplied random number generator.</summary>
         /// <param name="random">The generator used for each draw. Supply a seeded generator for repeatable samples.</param>
-        public UniformRandomPointSampler(Random random)
+        public RandomPointSampler(Random random)
         {
             _random = random ?? throw new ArgumentNullException(nameof(random));
         }
