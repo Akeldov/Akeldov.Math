@@ -44,6 +44,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         public static implicit operator SpatialRaster<int>?(SpatialIntRaster? raster)
             => raster is null ? null : new SpatialRaster<int>(raster.Geometry, raster.Values);
 
+        /// <summary>Creates a specialized spatial raster sharing the source geometry and backing array.</summary>
+        /// <param name="raster">The source raster, or <see langword="null"/>.</param>
+        /// <returns>A new mutable wrapper over the same values, or <see langword="null"/> for a null source.</returns>
+        [return: NotNullIfNotNull("raster")]
+        public static implicit operator SpatialIntRaster?(SpatialRaster<int>? raster)
+            => raster is null ? null : new SpatialIntRaster(raster.Geometry, raster.Values);
+
         /// <summary>
         /// Creates a raster containing the sums of corresponding source cells.
         /// </summary>

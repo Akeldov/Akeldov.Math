@@ -37,6 +37,23 @@ public class SpatialFloatRasterTests
     }
 
     [Test]
+    public void ImplicitConversion_FromGenericRaster_PreservesGeometryAndSharesValues()
+    {
+        var geometry = new RasterGeometry(new PointXY(3, -5), new VectorXY(8, 4), new VectorXYInt(2, 1));
+        var source = new SpatialRaster<float>(geometry, new float[2]);
+        SpatialFloatRaster converted = source;
+
+        converted[0] = 3.5f;
+        Assert.That(converted.Geometry, Is.EqualTo(geometry));
+        Assert.That(converted.Values, Is.SameAs(source.Values));
+        Assert.That(source[0], Is.EqualTo(3.5f));
+
+        SpatialRaster<float>? missing = null;
+        SpatialFloatRaster? convertedNull = missing;
+        Assert.That(convertedNull, Is.Null);
+    }
+
+    [Test]
     public void ImplicitConversion_SharesArrayAndPreservesGeometry()
     {
         var geometry = new RasterGeometry(new PointXY(3f, -5f), new VectorXY(8f, 4f), new VectorXYInt(2, 1));

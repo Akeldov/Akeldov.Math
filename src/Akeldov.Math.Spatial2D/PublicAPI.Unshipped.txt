@@ -1,4 +1,7 @@
 #nullable enable
+static Akeldov.Math.Spatial2D.Rasterization.SpatialBoolRaster.implicit operator Akeldov.Math.Spatial2D.Rasterization.SpatialBoolRaster?(Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<bool>? raster) -> Akeldov.Math.Spatial2D.Rasterization.SpatialBoolRaster?
+static Akeldov.Math.Spatial2D.Rasterization.SpatialFloatRaster.implicit operator Akeldov.Math.Spatial2D.Rasterization.SpatialFloatRaster?(Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<float>? raster) -> Akeldov.Math.Spatial2D.Rasterization.SpatialFloatRaster?
+static Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster.implicit operator Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster?(Akeldov.Math.Spatial2D.Rasterization.SpatialRaster<int>? raster) -> Akeldov.Math.Spatial2D.Rasterization.SpatialIntRaster?
 Akeldov.Math.Spatial2D.Sampling.Point.UniformRandom.RandomPointSampler
 Akeldov.Math.Spatial2D.Sampling.Point.UniformRandom.RandomPointSampler.Sample(Akeldov.Math.Spatial2D.Regions.Rectangle bounds, int count) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!
 Akeldov.Math.Spatial2D.Sampling.Point.UniformRandom.RandomPointSampler.Sample(Akeldov.Math.Spatial2D.VectorXY fieldSize, int count) -> System.Collections.Generic.List<Akeldov.Math.Spatial2D.PointXY>!

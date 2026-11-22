@@ -166,6 +166,23 @@ public class SpatialBoolRasterTests
     }
 
     [Test]
+    public void ImplicitConversion_FromGenericRaster_PreservesGeometryAndSharesValues()
+    {
+        var geometry = new RasterGeometry(new PointXY(3, -5), new VectorXY(8, 4), new VectorXYInt(2, 1));
+        var source = new SpatialRaster<bool>(geometry, new bool[2]);
+        SpatialBoolRaster converted = source;
+
+        converted[0] = true;
+        Assert.That(converted.Geometry, Is.EqualTo(geometry));
+        Assert.That(converted.Values, Is.SameAs(source.Values));
+        Assert.That(source[0], Is.EqualTo(true));
+
+        SpatialRaster<bool>? missing = null;
+        SpatialBoolRaster? convertedNull = missing;
+        Assert.That(convertedNull, Is.Null);
+    }
+
+    [Test]
     public void ImplicitConversion_SharesValuesAndPreservesGeometry()
     {
         var raster = new SpatialBoolRaster(Geometry, new bool[4]);

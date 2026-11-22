@@ -95,6 +95,23 @@ public class SpatialIntRasterTests
     }
 
     [Test]
+    public void ImplicitConversion_FromGenericRaster_PreservesGeometryAndSharesValues()
+    {
+        var geometry = new RasterGeometry(new PointXY(3, -5), new VectorXY(8, 4), new VectorXYInt(2, 1));
+        var source = new SpatialRaster<int>(geometry, new int[2]);
+        SpatialIntRaster converted = source;
+
+        converted[0] = 7;
+        Assert.That(converted.Geometry, Is.EqualTo(geometry));
+        Assert.That(converted.Values, Is.SameAs(source.Values));
+        Assert.That(source[0], Is.EqualTo(7));
+
+        SpatialRaster<int>? missing = null;
+        SpatialIntRaster? convertedNull = missing;
+        Assert.That(convertedNull, Is.Null);
+    }
+
+    [Test]
     public void ImplicitConversion_SharesArrayAndPreservesGeometry()
     {
         var geometry = new RasterGeometry(new PointXY(6, -10), new VectorXY(16, 8), new VectorXYInt(2, 1));
