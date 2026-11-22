@@ -10,6 +10,7 @@ permissions:
   contents: read
 
 env:
+  DOTNET_CLI_UI_LANGUAGE: en-US
   PROJECT_PATH: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
   TEST_PROJECT_PATH: tests/Akeldov.Math.Spatial2D.Tests/Akeldov.Math.Spatial2D.Tests.csproj
   TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Spatial2D.Tests/bin/Debug/net6.0/Akeldov.Math.Spatial2D.Tests.dll
@@ -23,6 +24,9 @@ jobs:
     environment: nuget.org
 
     steps:
+      - name: Preserve committed line endings for package verification
+        run: git config --global core.autocrlf false
+
       - name: Checkout
         uses: actions/checkout@v4
         with:

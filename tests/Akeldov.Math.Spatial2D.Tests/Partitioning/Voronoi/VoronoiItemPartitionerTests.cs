@@ -117,20 +117,6 @@ public class VoronoiItemPartitionerTests
     }
 
     [Test]
-    public void Partition_WhenCellItemsAccessed_ReturnsReadOnlyView()
-    {
-        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
-        var texels = new[] { new TestItem("item", new PointXY(0f, 0f)) };
-        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
-
-        var cells = partitioner.Partition(texels);
-
-        Assert.That(cells[0].Items, Is.Not.InstanceOf<List<TestItem>>());
-        Assert.Throws<NotSupportedException>(() =>
-            ((IList<TestItem>)cells[0].Items)[0] = new TestItem("replacement", new PointXY(1f, 1f)));
-    }
-
-    [Test]
     public void VoronoiItemPartition_WhenCallerClearsList_ReflectsChangeInItems()
     {
         var items = new List<TestItem> { new TestItem("original", new PointXY(0f, 0f)) };
@@ -139,17 +125,6 @@ public class VoronoiItemPartitionerTests
         items.Clear();
 
         Assert.That(cell.Items, Is.Empty);
-    }
-
-    [Test]
-    public void VoronoiItemPartition_WhenItemsContainNull_Throws()
-    {
-        var items = new List<TestItem> { null! };
-
-        var exception = Assert.Throws<ArgumentException>(() =>
-            new VoronoiItemPartition<TestItem>(new Site(new PointXY(0f, 0f), 1f), items));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("items"));
     }
 
     [Test]

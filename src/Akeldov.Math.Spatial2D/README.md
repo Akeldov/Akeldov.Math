@@ -28,7 +28,7 @@ The library is organized around practical 2D geometry workflows.
 - Deterministic Perlin-noise generation and Gaussian blur for floating-point rasters.
 - Mutable `Raster<T>` and `SpatialRaster<T>` data, plus numeric and Boolean raster types with cell-wise operators and geometry-preserving spatial variants.
 - Distance, signed-distance, and stroke rasterizers for curves, contours, regions, and collections.
-- Direct drawing of curves, contours, filled circles and rectangles, arrows, and labeled grids on spatial RGBA rasters.
+- Direct drawing of curves, contours, filled regions, distance-based colors, arrows, and labeled grids on spatial RGBA rasters.
 - 8-bit and 16-bit grayscale and RGBA color types.
 - Color helpers for normalized values, blending, temperature heat maps, and darkening/lightening in sRGB, linear RGB, or OKLCH.
 - Generic geometry scenes with composable shape and TrueType text layers.
@@ -40,7 +40,7 @@ The library is organized around practical 2D geometry workflows.
 
 - Poisson disk point sampling with constant or spatially varying minimal distance.
 - Uniform random sampling of a fixed number of independent points in a rectangle.
-- Weighted Voronoi partitioning for positioned items.
+- Weighted Voronoi partitioning for positioned items and bounded regions, with cell centroids and Lloyd relaxation.
 
 ### Influence Fields
 

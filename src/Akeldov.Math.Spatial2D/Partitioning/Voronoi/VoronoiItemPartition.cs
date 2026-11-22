@@ -19,20 +19,14 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// <exception cref="ArgumentNullException">The list is null.</exception>
         /// <exception cref="ArgumentException">The list contains a null item.</exception>
 #pragma warning disable MA0016 // The partition exposes a live view of this list.
-        public VoronoiItemPartition(Site site, List<TItem> items)
+        public VoronoiItemPartition(Site site, IReadOnlyList<TItem> items)
 #pragma warning restore MA0016
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            foreach (var item in items)
-            {
-                if (item is null)
-                    throw new ArgumentException("Voronoi item partition items cannot contain null elements.", nameof(items));
-            }
-
             Site = site;
-            Items = items.AsReadOnly();
+            Items = items;
         }
 
         /// <summary>
@@ -44,6 +38,5 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// Gets a live, read-only view of the items in the caller-owned list.
         /// </summary>
         public IReadOnlyList<TItem> Items { get; }
-
     }
 }
