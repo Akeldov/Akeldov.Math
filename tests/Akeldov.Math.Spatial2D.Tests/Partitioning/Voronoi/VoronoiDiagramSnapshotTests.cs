@@ -10,14 +10,66 @@ namespace Akeldov.Math.Spatial2D.Tests.Partitioning.Voronoi;
 
 public class VoronoiDiagramSnapshotTests
 {
+    private static readonly Rectangle Bounds = new(new PointXY(32, 16), new PointXY(336, 208));
+
     [Test]
     public void PartitionByVoronoi_WithExteriorSite_MatchesApprovedPng()
     {
-        var bounds = new Rectangle(new PointXY(32, 16), new PointXY(336, 208));
         PointXY[] sites = { new(18, 110), new(90, 165), new(112, 54), new(186, 117), new(261, 169), new(280, 63) };
+        AssertMatchesApprovedPng(Bounds.PartitionByVoronoi(sites), "bounded-exterior-site.png");
+    }
+
+    [TestCase(1f, 1.5f, "weighted-strong-center.png")]
+    [TestCase(2f, 1f, "weighted-strong-outer-sites.png")]
+    public void PartitionByVoronoi_WithMixedWeights_MatchesApprovedPng(float outerWeight, float centerWeight, string name)
+    {
+        Site[] sites =
+        {
+            new(new PointXY(56, 106), outerWeight), new(new PointXY(90, 165), 1),
+            new(new PointXY(112, 54), 0.75f), new(new PointXY(186, 117), centerWeight),
+            new(new PointXY(261, 169), 1), new(new PointXY(280, 63), outerWeight)
+        };
+        AssertMatchesApprovedPng(Bounds.PartitionByVoronoi(sites), name);
+    }
+
+    [Test]
+    public void PartitionByVoronoi_WithWidelyDifferentWeights_MatchesApprovedPng()
+    {
+        Site[] sites =
+        {
+            new(new PointXY(62, 65), 1), new(new PointXY(110, 164), 2),
+            new(new PointXY(290, 67), 3), new(new PointXY(205, 112), 8)
+        };
+        AssertMatchesApprovedPng(Bounds.PartitionByVoronoi(sites), "weighted-sites-1-2-3-8.png");
+    }
+
+    [Test]
+    public void PartitionByVoronoi_WithCircularHole_MatchesApprovedPng()
+    {
+        Site[] sites = { new(new PointXY(149, 112), 1), new(new PointXY(233, 112), 2) };
+        var cells = Bounds.PartitionByVoronoi(sites);
+        Assert.That(cells[0].Region!.Contours.Single(), Is.TypeOf<Circle>());
+        Assert.That(cells[1].Region!.Contours.Count, Is.EqualTo(2));
+        AssertMatchesApprovedPng(cells, "weighted-circular-hole.png");
+    }
+
+    [Test]
+    public void PartitionByVoronoi_WithDisconnectedCell_MatchesApprovedPng()
+    {
+        Site[] sites = { new(new PointXY(249, 112), 3), new(new PointXY(312, 112), 4) };
+        var cells = Bounds.PartitionByVoronoi(sites);
+        var split = cells[1].Region!;
+        Assert.That(split.Contours.Count, Is.EqualTo(2));
+        Assert.That(split.Contains(new PointXY(48, 112)), Is.True);
+        Assert.That(split.Contains(new PointXY(168, 112)), Is.False);
+        Assert.That(split.Contains(new PointXY(312, 112)), Is.True);
+        AssertMatchesApprovedPng(cells, "weighted-disconnected-cell.png");
+    }
+
+    private static void AssertMatchesApprovedPng(IReadOnlyList<VoronoiCell> cells, string name)
+    {
         RGBA8BitColor[] colors = { new(173, 204, 231, 255), new(247, 202, 157, 255),
             new(177, 221, 196, 255), new(246, 225, 148, 255), new(203, 187, 226, 255), new(232, 177, 185, 255) };
-        var cells = bounds.PartitionByVoronoi(sites);
         var pixels = new RGBA8BitColor[352 * 224];
         Array.Fill(pixels, new RGBA8BitColor(248, 250, 252, 255));
         var raster = new SpatialRaster<RGBA8BitColor>(
@@ -36,7 +88,6 @@ public class VoronoiDiagramSnapshotTests
         }
 
         string directory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Partitioning", "Voronoi");
-        const string name = "bounded-exterior-site.png";
         string actual = Path.Combine(Directory.CreateDirectory(Path.Combine(directory, "Actual")).FullName, name);
         raster.SaveAsPng(actual);
         TestContext.AddTestAttachment(actual, "Bounded Voronoi diagram");
