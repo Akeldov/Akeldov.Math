@@ -18,6 +18,6 @@ dotnet add package Akeldov.Math.Spatial2D --version 1.6.0
 
 Пакет поддерживает .NET Standard 2.1 и .NET 6. Конструктор `VoronoiItemPartition<TItem>` по-прежнему копирует переданные элементы. Используйте `FromList`, если последующие изменения списка должны быть видны в разделе.
 
-В статье [«Разбиение Вороного»](concepts/partitioning/voronoi.md) описаны построение регионов и распределение элементов между сайтами.
+Подробнее о [построении областей Вороного и их контуров](concepts/partitioning/voronoi-regions.md) и [распределении элементов между сайтами](concepts/partitioning/voronoi.md).
 
 [Открыть пакет на NuGet](https://www.nuget.org/packages/Akeldov.Math.Spatial2D/)

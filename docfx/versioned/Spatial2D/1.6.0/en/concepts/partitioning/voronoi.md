@@ -90,6 +90,8 @@ the original configured positions.
 
 ## Build continuous cell regions
 
+See [Partition a rectangle into Voronoi regions](voronoi-regions.md) for illustrated examples of curved boundaries, holes, and disconnected cells.
+
 Use the same weighted sites with a bounded rectangle to obtain the region of each cell. With the default `LeaveAsIs` policy the result follows input order. An empty cell has a null `Region` and calling `GetCentroid()` on it throws. The optional relaxation step uses the area of the clipped region, including its components and holes.
 
 ```csharp

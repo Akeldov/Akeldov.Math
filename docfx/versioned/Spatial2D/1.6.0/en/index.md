@@ -18,6 +18,6 @@ dotnet add package Akeldov.Math.Spatial2D --version 1.6.0
 
 The package targets .NET Standard 2.1 and .NET 6. The `VoronoiItemPartition<TItem>` constructor still copies the supplied items. Use `FromList` when later edits to the supplied list should appear in the partition.
 
-[Voronoi partitioning](concepts/partitioning/voronoi.md) explains how to build cell regions and group positioned items.
+Learn how to [build Voronoi regions and draw their contours](concepts/partitioning/voronoi-regions.md) or [group positioned items by site](concepts/partitioning/voronoi.md).
 
 [View the package on NuGet](https://www.nuget.org/packages/Akeldov.Math.Spatial2D/)
