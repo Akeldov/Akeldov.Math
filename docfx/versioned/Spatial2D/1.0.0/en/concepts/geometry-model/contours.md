@@ -52,6 +52,13 @@ Choose a type from the boundary shape and whether it needs a traversal coordinat
 The non-parameterized types describe only the boundary geometry. The parameterized types also
 choose where coordinate zero lies and the direction in which coordinates increase.
 
+Both examples use the same closed boundary made of two segments and an arc.
+
+| Type | Preview | How to read it |
+|---|---|---|
+| `CompositeContour` | <img src="~/assets/spatial2d/contours/composite-contour-distance.png" width="64" height="64" alt="Two segments and an arc form a closed outline of uniform thickness"> | The closer a point is to the boundary, the brighter it appears. The stroke has the same width along the segments and the arc. |
+| `ParameterizedCompositeContour` | <img src="~/assets/spatial2d/contours/parameterized-composite-contour-growing-thickness.png" width="64" height="64" alt="The same outline with a stroke that thickens in the traversal direction"> | The stroke starts thin at the beginning of the first segment. It widens as the distance traveled along the contour increases, up to a fixed width. |
+
 ## Create standard contours
 
 Circular and rectangular contours expose their boundary dimensions directly:
