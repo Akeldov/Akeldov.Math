@@ -39,12 +39,14 @@ used by distance-field and rasterization APIs without depending on a concrete sh
 
 Choose the most direct representation of the filled shape:
 
-| Type | Shape model | Use when |
-|---|---|---|
-| <xref:Akeldov.Math.Spatial2D.Regions.Disk> | Center and non-negative radius | The area is circular. |
-| <xref:Akeldov.Math.Spatial2D.Regions.Rectangle> | Two opposite corners, normalized to axis-aligned bounds | The area is an axis-aligned rectangle. |
-| <xref:Akeldov.Math.Spatial2D.Regions.OrientedRectangle> | Center, size, and rotation | The rectangle follows a rotated local coordinate frame. |
-| <xref:Akeldov.Math.Spatial2D.Regions.ContourBasedRegion> | One or more arbitrary closed contours | The boundary is composite, contains holes, or has nested filled areas. |
+| Type | Preview | Shape model | Use when |
+|---|---|---|---|
+| <xref:Akeldov.Math.Spatial2D.Regions.Disk> | <img src="~/assets/spatial2d/regions/disk-region.png" width="64" height="64" alt="Filled disk"> | Center and non-negative radius | The area is circular. |
+| <xref:Akeldov.Math.Spatial2D.Regions.Rectangle> | <img src="~/assets/spatial2d/regions/rectangle-region.png" width="64" height="64" alt="Filled rectangle aligned with the coordinate axes"> | Two opposite corners, normalized to axis-aligned bounds | The area is an axis-aligned rectangle. |
+| <xref:Akeldov.Math.Spatial2D.Regions.OrientedRectangle> | <img src="~/assets/spatial2d/regions/oriented-rectangle-region.png" width="64" height="64" alt="Filled rectangle rotated by 30 degrees"> | Center, size, and rotation | The rectangle follows a rotated local coordinate frame. |
+| <xref:Akeldov.Math.Spatial2D.Regions.ContourBasedRegion> | <img src="~/assets/spatial2d/regions/contour-based-region.png" width="64" height="64" alt="Disk with an off-center circular hole"> | One or more arbitrary closed contours | The boundary is composite, contains holes, or has nested filled areas. |
+
+White shows the filled area. In the last example, the inner circle cuts a hole in the disk.
 
 `Disk`, `Rectangle`, and `OrientedRectangle` are immutable value types. They avoid the
 indirection of a general contour list and expose shape-specific properties such as radius,
