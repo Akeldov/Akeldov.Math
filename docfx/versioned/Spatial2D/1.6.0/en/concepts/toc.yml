@@ -30,6 +30,8 @@
 - name: Samplers
   href: samplers/index.md
   items:
+    - name: Random Point Sampler
+      href: samplers/random-point.md
     - name: Poisson Disk Sampler
       href: samplers/poisson-disk.md
 - name: Partitioning

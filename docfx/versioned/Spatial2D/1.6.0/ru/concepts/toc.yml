@@ -30,6 +30,8 @@
 - name: Семплеры
   href: samplers/index.md
   items:
+    - name: Семплер случайных точек
+      href: samplers/random-point.md
     - name: Семплер Пуассона
       href: samplers/poisson-disk.md
 - name: Разбиения
