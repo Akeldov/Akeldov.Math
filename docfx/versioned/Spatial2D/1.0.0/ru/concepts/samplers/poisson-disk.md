@@ -1,76 +1,65 @@
 # Семплер Пуассона
 
-<xref:Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk.PoissonDiskPointSampler> создаёт
-нерегулярный набор точек с управляемым минимальным расстоянием.
+<xref:Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk.PoissonDiskPointSampler> генерирует точки
+в прямоугольнике с заданным минимальным расстоянием между соседями. Вы задаёте расстояние,
+а число точек зависит от того, сколько кандидатов примет семплер.
 
-## Генерация точек дисками Пуассона
+## Постоянное минимальное расстояние
 
-Выборка дисков Пуассона заполняет прямоугольное поле, соблюдая минимальное расстояние между
-принятыми точками. Результат нерегулярен, но в нём нет тесных скоплений и больших случайных
-пробелов, характерных для независимой равномерной случайной выборки.
+В примере точки располагаются на расстоянии не менее 9 мировых единиц друг от друга
+в прямоугольнике шириной 120 и высотой 80 единиц.
 
 ```csharp
 using System;
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Fields;
 using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
 
-var sampler = new PoissonDiskPointSampler(
-    random: new Random(12345),
-    maxAttempts: 30);
-
-var fieldSize = new VectorXY(100f, 60f);
-
-List<PoissonDiskPointSample> samples = sampler.Sample(
-    fieldSize,
-    minimalDistance: 6f);
-
-PointXY firstPoint = samples[0].Point;
-float firstSpacing = samples[0].MinimalDistance;
+var fieldSize = new VectorXY(120f, 80f);
+var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
+List<PoissonDiskPointSample> samples = sampler.Sample(fieldSize, minimalDistance: 9f);
 ```
 
-Точки лежат в полуоткрытом прямоугольнике от `(0, 0)` включительно до `fieldSize` исключительно.
-У выборщика нет параметра начала координат; сместите возвращённые точки, если целевой мировой
-прямоугольник начинается в другом месте.
+![Точки выборки Пуассона с окружностями одинакового радиуса вокруг каждой точки](~/assets/spatial2d/samplers/poisson-constant-distance.svg)
 
-`maxAttempts` ограничивает количество кандидатов, проверяемых около каждой активной точки.
-Большее значение может дать более плотный результат ценой дополнительных вычислений. Передача
-`Random` с фиксированным зерном делает запуски повторяемыми в контролируемом окружении, что
-удобно для тестов и процедурной генерации.
+Точка на рисунке соответствует свойству `Point`, а радиус серой окружности вокруг неё равен
+`MinimalDistance`. Окружности могут пересекаться, но расстояние между их центрами всегда
+составляет не менее 9 единиц.
 
-Возвращаемый `List<PoissonDiskPointSample>` является новым изменяемым списком и принадлежит
-вызывающему коду.
+Оба размера `fieldSize` и минимальное расстояние должны быть конечными и положительными.
+Координаты точек в примере лежат в пределах `0 ≤ X < 120` и `0 ≤ Y < 80`. Чтобы перенести
+выборку в другую часть сцены, прибавьте нужное смещение к каждой точке. Каждый вызов возвращает
+новый изменяемый список `List<PoissonDiskPointSample>`, принадлежащий вызывающему коду.
 
-## Изменение расстояния с помощью поля
+Параметр `maxAttempts` задаёт число попыток подобрать соседа вокруг активной точки.
+Если все попытки неудачны, семплер исключает точку из дальнейшего поиска. Увеличение лимита
+может заполнить больше промежутков, но требует дополнительных вычислений.
 
-Минимальное расстояние может поступать из любого `IFloatField`. Это позволяет создавать области
-с разной плотностью в одном наборе точек:
+## Расстояние, заданное полем
+
+Передайте <xref:Akeldov.Math.Spatial2D.Fields.IFloatField>, чтобы расстояние зависело от положения
+точки. В примере оно растёт от 5 единиц у левого края до 13 у правого. Для сравнения двух
+выборок создайте новый семплер с тем же начальным значением генератора.
 
 ```csharp
-using Akeldov.Math.Spatial2D.Fields;
-
 var spacingField = new FloatPointInfluenceField(
     new BarycentricFloatSampler<FloatPointInfluenceSource>(),
     new[]
     {
-        new FloatPointInfluenceSource(
-            weight: 1f,
-            position: new PointXY(0f, 0f),
-            value: 4f),
-        new FloatPointInfluenceSource(
-            weight: 1f,
-            position: new PointXY(fieldSize.X, 0f),
-            value: 12f)
+        new FloatPointInfluenceSource(weight: 1f, position: new PointXY(0f, 0f), value: 5f),
+        new FloatPointInfluenceSource(weight: 1f, position: new PointXY(fieldSize.X, 0f), value: 13f)
     });
 
-List<PoissonDiskPointSample> adaptiveSamples =
-    sampler.Sample(fieldSize, spacingField);
+var adaptiveSampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
+List<PoissonDiskPointSample> adaptiveSamples = adaptiveSampler.Sample(fieldSize, spacingField);
 ```
 
-`Min`, `Max` поля и каждое выбранное значение должны быть конечными и положительными. Каждая
-принятая точка хранит расстояние, запрошенное в её положении. Для любой пары фактическое
-расстояние не меньше большего из двух сохранённых минимальных расстояний, поэтому точку с
-большим интервалом нельзя окружить соседями с малым интервалом.
+![Слева точки расположены плотнее, а к правому краю радиусы окружностей растут](~/assets/spatial2d/samplers/poisson-variable-distance.svg)
+
+Для каждой пары точек минимальное расстояние между ними равно большему из двух значений
+`MinimalDistance`. Границы поля должны быть конечными и положительными, причём `Min ≤ Max`.
+Все значения поля должны лежать в этих пределах.
 
 ## См. также
 
