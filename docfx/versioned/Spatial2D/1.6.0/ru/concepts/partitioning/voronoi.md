@@ -12,22 +12,21 @@
 `PointXY` сам реализует `IHasPosition2D`, поэтому точки можно разбивать напрямую:
 
 ```csharp
+using System;
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
+using Akeldov.Math.Spatial2D.Sampling.Point.UniformRandom;
 
 var sites = new[]
 {
-    new Site(new PointXY(0f, 0f), weight: 1f),
-    new Site(new PointXY(10f, 0f), weight: 2f)
+    new Site(new PointXY(2f, 2f), weight: 1f),
+    new Site(new PointXY(9f, 3f), weight: 1.5f),
+    new Site(new PointXY(5f, 6.5f), weight: 1f)
 };
 
-var items = new[]
-{
-    new PointXY(1f, 0f),
-    new PointXY(4f, 0f),
-    new PointXY(8f, 0f)
-};
+var sampler = new RandomPointSampler(new Random(42));
+var items = sampler.Sample(new VectorXY(12f, 8f), count: 120);
 
 var partitioner = new VoronoiItemPartitioner<PointXY>(
     sites,
@@ -41,11 +40,10 @@ IReadOnlyList<VoronoiItemPartition<PointXY>> partitions =
 квадрату расстояния, делённому на квадрат веса. Поэтому увеличение веса позволяет сайту
 получать элементы с большего расстояния.
 
-![На оси X сайту A в точке 0 принадлежит элемент в точке 1. Сайту B в точке 10 принадлежат элементы в точках 4 и 8.](~/assets/spatial2d/voronoi/weighted-item-assignment.svg)
+![На плоскости синие точки группируются вокруг нижнего левого сайта, оранжевые — справа, а зелёные — вокруг верхнего сайта.](~/assets/spatial2d/voronoi/weighted-item-assignment.svg)
 
-Ромбы обозначают сайты, а каждая дуга соединяет элемент с его сайтом. Элемент в точке
-`(4, 0)` ближе к A, но с учётом веса выигрывает B. Для него результат сравнения равен
-`6² / 2² = 9`, а для A — `4² / 1² = 16`.
+Ромбы обозначают три сайта. Каждая из 120 точек окрашена в цвет своего сайта.
+У оранжевого сайта в `(9, 3)` вес 1,5, поэтому он может получить и точки, которые ближе к одному из двух сайтов с весом 1.
 
 Особые случаи веса заданы явно:
 

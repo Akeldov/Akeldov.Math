@@ -11,22 +11,21 @@ is a semantic item partitioner: it returns item groups, not polygonal Voronoi ce
 `PointXY` itself implements `IHasPosition2D`, so it can be partitioned directly:
 
 ```csharp
+using System;
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
+using Akeldov.Math.Spatial2D.Sampling.Point.UniformRandom;
 
 var sites = new[]
 {
-    new Site(new PointXY(0f, 0f), weight: 1f),
-    new Site(new PointXY(10f, 0f), weight: 2f)
+    new Site(new PointXY(2f, 2f), weight: 1f),
+    new Site(new PointXY(9f, 3f), weight: 1.5f),
+    new Site(new PointXY(5f, 6.5f), weight: 1f)
 };
 
-var items = new[]
-{
-    new PointXY(1f, 0f),
-    new PointXY(4f, 0f),
-    new PointXY(8f, 0f)
-};
+var sampler = new RandomPointSampler(new Random(42));
+var items = sampler.Sample(new VectorXY(12f, 8f), count: 120);
 
 var partitioner = new VoronoiItemPartitioner<PointXY>(
     sites,
@@ -40,11 +39,10 @@ Away from an exact site position, finite positive-weight sites compete using squ
 divided by squared weight. Increasing a site's weight therefore lets it claim items from farther
 away.
 
-![On the x-axis, site A at 0 owns the item at 1. Site B at 10 owns the items at 4 and 8.](~/assets/spatial2d/voronoi/weighted-item-assignment.svg)
+![A scatter plot with blue points near the lower-left site, orange points on the right, and green points near the upper site.](~/assets/spatial2d/voronoi/weighted-item-assignment.svg)
 
-Diamonds mark the sites, and each arc connects an item to its assigned site. The item at
-`(4, 0)` is closer to A, but B wins after weighting. Its score is `6² / 2² = 9`,
-compared with `4² / 1² = 16` for A.
+Diamonds mark the three sites. Each of the 120 dots takes the color of its assigned site.
+The orange site at `(9, 3)` has weight 1.5 and can claim dots closer to one of the two sites of weight 1.
 
 Special weight cases are explicit:
 
