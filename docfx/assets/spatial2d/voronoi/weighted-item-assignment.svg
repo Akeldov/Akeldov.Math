@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="140" viewBox="0 0 480 140">
+  <rect width="480" height="140" rx="8" fill="#f8fafc"/>
+  <g fill="none" stroke-width="2">
+    <path d="M40 84 Q60 53 80 84" stroke="#28759a"/>
+    <path d="M200 84 C246 27 394 27 440 84 M360 84 Q400 42 440 84" stroke="#ac591e"/>
+    <path d="M22 84 H458" stroke="#a5b2bf"/>
+  </g>
+  <g fill="#28759a">
+    <path d="m40 75 9 9-9 9-9-9Z"/>
+    <circle cx="80" cy="84" r="5"/>
+  </g>
+  <g fill="#ac591e">
+    <path d="m440 75 9 9-9 9-9-9Z"/>
+    <circle cx="200" cy="84" r="5"/>
+    <circle cx="360" cy="84" r="5"/>
+  </g>
+  <g font-family="sans-serif" font-size="15" fill="#26384a">
+    <text x="24" y="30" fill="#215e7a">A (w = 1)</text>
+    <text x="456" y="30" text-anchor="end" fill="#894517">B (w = 2)</text>
+    <g text-anchor="middle">
+      <text x="40" y="112">0</text>
+      <text x="80" y="112">1</text>
+      <text x="200" y="112">4</text>
+      <text x="360" y="112">8</text>
+      <text x="440" y="112">10</text>
+    </g>
+    <text x="458" y="113" font-style="italic">x</text>
+  </g>
+</svg>

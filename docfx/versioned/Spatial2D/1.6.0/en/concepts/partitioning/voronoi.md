@@ -40,6 +40,12 @@ Away from an exact site position, finite positive-weight sites compete using squ
 divided by squared weight. Increasing a site's weight therefore lets it claim items from farther
 away.
 
+![On the x-axis, site A at 0 owns the item at 1. Site B at 10 owns the items at 4 and 8.](~/assets/spatial2d/voronoi/weighted-item-assignment.svg)
+
+Diamonds mark the sites, and each arc connects an item to its assigned site. The item at
+`(4, 0)` is closer to A, but B wins after weighting. Its score is `6² / 2² = 9`,
+compared with `4² / 1² = 16` for A.
+
 Special weight cases are explicit:
 
 - a site at the item's position wins before weighted-distance comparison;
