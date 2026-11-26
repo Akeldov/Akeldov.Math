@@ -23,6 +23,17 @@
 - name: Fields
   href: fields.md
   items:
+    - name: Source-Defined Fields
+      href: fields/source-defined/index.md
+      items:
+        - name: FloatPointInfluenceField
+          href: fields/source-defined/float-point-influence-field.md
+        - name: IntPointInfluenceField
+          href: fields/source-defined/int-point-influence-field.md
+        - name: BoolPointInfluenceField
+          href: fields/source-defined/bool-point-influence-field.md
+        - name: FloatCurveInfluenceField
+          href: fields/source-defined/float-curve-influence-field.md
     - name: Sampling Strategies
       href: fields/sampling-strategies.md
     - name: Source Indexing

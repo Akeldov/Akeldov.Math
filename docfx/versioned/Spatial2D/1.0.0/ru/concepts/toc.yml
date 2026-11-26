@@ -23,6 +23,17 @@
 - name: Поля
   href: fields.md
   items:
+    - name: Заданные источниками
+      href: fields/source-defined/index.md
+      items:
+        - name: FloatPointInfluenceField
+          href: fields/source-defined/float-point-influence-field.md
+        - name: IntPointInfluenceField
+          href: fields/source-defined/int-point-influence-field.md
+        - name: BoolPointInfluenceField
+          href: fields/source-defined/bool-point-influence-field.md
+        - name: FloatCurveInfluenceField
+          href: fields/source-defined/float-curve-influence-field.md
     - name: Стратегии сэмплирования
       href: fields/sampling-strategies.md
     - name: Индексирование источников

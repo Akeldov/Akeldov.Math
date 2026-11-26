@@ -6,6 +6,8 @@ are sampled directly at `PointXY` coordinates and do not require a raster.
 
 Field types live in the <xref:Akeldov.Math.Spatial2D.Fields> namespace.
 
+See [Source-Defined Fields](fields/source-defined/index.md) to choose a field by source geometry and value type.
+
 ## Start with the field contract
 
 | Interface | Contract |
