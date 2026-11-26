@@ -1,4 +1,5 @@
 using System;
+using Akeldov.Math.Spatial2D.Fields;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
@@ -49,21 +50,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             if (cellCount > int.MaxValue)
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Raster cell count must fit in a one-dimensional array.");
 
-            if (float.IsNaN(scale) || float.IsInfinity(scale) || scale <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(scale), scale, "Noise scale must be finite and positive.");
-
-            if (octaves <= 0)
-                throw new ArgumentOutOfRangeException(nameof(octaves), octaves, "Octave count must be positive.");
-
-            if (float.IsNaN(persistence) || float.IsInfinity(persistence) ||
-                persistence < 0f || persistence > 1f)
-                throw new ArgumentOutOfRangeException(nameof(persistence), persistence, "Persistence must be finite and lie in the inclusive range [0, 1].");
-
-            if (float.IsNaN(lacunarity) || float.IsInfinity(lacunarity) || lacunarity <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(lacunarity), lacunarity, "Lacunarity must be finite and positive.");
-
-            if (!offset.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(offset), offset, "Noise offset components must be finite.");
+            var field = new PerlinNoiseField(seed, scale, octaves, persistence, lacunarity, offset);
 
             float[] values = PerlinNoiseRasterGenerator.CreateValues(
                 resolution,
@@ -71,12 +58,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 firstY: 0.5d,
                 stepX: 1d,
                 stepY: 1d,
-                seed,
-                scale,
-                octaves,
-                persistence,
-                lacunarity,
-                offset);
+                field);
 
             return new Raster<float>(resolution, values);
         }

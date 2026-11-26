@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Akeldov.Math.Spatial2D.Rasterization
+namespace Akeldov.Math.Spatial2D.Fields
 {
     internal static class PerlinNoise2D
     {
